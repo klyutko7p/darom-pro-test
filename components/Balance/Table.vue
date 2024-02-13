@@ -54,7 +54,7 @@ onMounted(() => {
           <th scope="col" class="border-2">
             Получено
           </th>
-          <th scope="col" class="border-2">
+          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
             Кем создано
           </th>
           <th scope="col" class="border-2">
@@ -65,7 +65,7 @@ onMounted(() => {
       <tbody>
         <div id="left"></div>
         <tr v-for="row in rows" class="text-center">
-          <td class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+          <td class="border-2" v-if="(user.role === 'ADMIN' || user.role === 'ADMINISTRATOR') && !row.issued && !row.received">
             <Icon @click="openModal(row)" class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
               name="material-symbols:edit" size="32" />
           </td>
@@ -92,7 +92,7 @@ onMounted(() => {
               {{ row.received ? storeUsers.getNormalizedDate(row.received) : "" }}
             </h1>
           </td>
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
             {{ row.createdUser }}
           </th>
           <th scope="row" class="border-2">

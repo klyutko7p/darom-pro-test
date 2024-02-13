@@ -93,7 +93,8 @@ function formatPhoneNumber(phoneNumber: string) {
           <Icon name="mdi:wallet-bifold" size="20" />
         </div>
         <h1>Баланс</h1>
-        <Icon v-if="requests?.filter((row) => row.pvz === user.visiblePVZ && row.issued === null).length > 0" name="pepicons-print:exclamation" size="24" class="text-red-700" />
+        <Icon v-if="requests?.filter((row) => row.pvz === user.visiblePVZ && row.issued === null).length > 0"
+          name="pepicons-print:exclamation" size="24" class="text-red-700" />
       </div>
       <div role="button" tabindex="0" @click="signOut()"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-orange-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
@@ -159,7 +160,8 @@ function formatPhoneNumber(phoneNumber: string) {
           <Icon name="mdi:wallet-bifold" size="20" />
         </div>
         <h1>Баланс</h1>
-        <Icon v-if="requests?.filter((row) => row.pvz === user.visiblePVZ && row.issued === null).length > 0" name="pepicons-print:exclamation" size="24" class="text-red-700" />
+        <Icon v-if="requests?.filter((row) => row.pvz === user.visiblePVZ && row.issued === null).length > 0"
+          name="pepicons-print:exclamation" size="24" class="text-red-700" />
       </div>
       <div role="button" tabindex="0" @click="signOut()"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-orange-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
@@ -182,6 +184,8 @@ function formatPhoneNumber(phoneNumber: string) {
     <div class="flex items-center gap-1">
       <Icon @click="editMenu" size="40" name="material-symbols-light:menu"
         class="hover:opacity-50 duration-200 cursor-pointer" />
+      <Icon v-if="requests?.filter((row) => row.pvz === user.visiblePVZ && row.issued === null).length > 0"
+        name="pepicons-print:exclamation" size="40" class="text-red-700" />
       <h1 class="font-medium">{{ user.username }}</h1>
     </div>
     <h1 class="text-lg font-medium max-sm:text-sm"
@@ -189,11 +193,11 @@ function formatPhoneNumber(phoneNumber: string) {
         route.params.pvz }} (Наш Выкуп) </h1>
     <h1 class="text-lg font-medium max-sm:text-sm"
       v-else-if="route.fullPath.includes('/client-ransom') && route.params.pvz && !route.params.fromName">
-      Товары из {{ route.meta.name }} {{ route.params.pvz }} (Выкуп Клиента) 
+      Товары из {{ route.meta.name }} {{ route.params.pvz }} (Выкуп Клиента)
     </h1>
     <h1 class="text-lg font-medium max-sm:text-sm"
       v-else-if="route.fullPath.includes('/client-ransom') && route.params.pvz && route.params.fromName">
-      Товары по телефону: {{ formatPhoneNumber(route.params.fromName) }} (Выкуп Клиента) 
+      Товары по телефону: {{ formatPhoneNumber(route.params.fromName) }} (Выкуп Клиента)
     </h1>
     <h1 class="text-lg font-medium max-sm:text-sm"
       v-else-if="route.fullPath.includes('/our-ransom') && route.params.pvz && route.params.fromName">
@@ -201,5 +205,4 @@ function formatPhoneNumber(phoneNumber: string) {
     <h1 class="text-lg font-medium max-sm:text-sm" v-else>{{ route.meta.name }}</h1>
     <Icon @click="router.go(-1)" name="material-symbols:arrow-back-rounded" size="32"
       class="cursor-pointer hover:opacity-50 duration-200" />
-</div>
-</template>
+  </div></template>

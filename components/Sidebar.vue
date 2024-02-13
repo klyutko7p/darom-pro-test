@@ -314,6 +314,8 @@ function formatPhoneNumber(phoneNumber: string) {
     <div class="flex items-center gap-1">
       <Icon @click="editMenu" size="40" name="material-symbols-light:menu"
         class="hover:opacity-50 duration-200 cursor-pointer" />
+        <Icon v-if="requests?.filter((row) => row.issued !== null && row.received === null).length > 0"
+          name="pepicons-print:exclamation" class="text-red-700" size="40" />
       <h1 class="font-medium">{{ user.username }}</h1>
     </div>
     <h1 class="text-lg font-medium max-sm:text-sm"
