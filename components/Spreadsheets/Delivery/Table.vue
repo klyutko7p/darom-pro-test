@@ -214,10 +214,10 @@ onMounted(() => {
             сумма с клиента
           </th>
           <th scope="col" class="border-2" v-if="user.dispatchPVZ3 === 'READ' || user.dispatchPVZ3 === 'WRITE'">
-            отправка в пвз
+            отправка <br> в пвз
           </th>
           <th scope="col" class="border-2" v-if="user.orderPVZ3 === 'READ' || user.orderPVZ3 === 'WRITE'">
-            заказано на сц
+            заказано <br> на сц
           </th>
           <th scope="col" class="border-2" v-if="user.sorted === 'READ' || user.sorted === 'WRITE'">
             отсортировано
@@ -225,7 +225,7 @@ onMounted(() => {
           <th scope="col" class="border-2" v-if="user.paid === 'READ' || user.paid === 'WRITE'">
             оплачено
           </th>
-          <th scope="col" class="border-2" v-if="user.additionally3 === 'READ' || user.additionally3 === 'WRITE'">
+          <th scope="col" class="border-2 text-[10px]" v-if="user.additionally3 === 'READ' || user.additionally3 === 'WRITE'">
             дополнительно
           </th>
           <th scope="col" class="border-2" v-if="user.profit3 === 'READ' || user.profit3 === 'WRITE'">
