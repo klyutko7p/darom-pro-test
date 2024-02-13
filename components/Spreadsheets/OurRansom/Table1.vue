@@ -233,14 +233,14 @@ let showOthersVariants = ref(false)
             клиенту
         </UIActionButton>
         <div v-if="showOthersVariants" class="flex flex-col gap-3">
-            <UIActionButton v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally3')">Оплата
+            <UIActionButton2 v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally3')">Оплата
                 наличными
-            </UIActionButton>
-            <UIActionButton v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally')">Оплата
+            </UIActionButton2>
+            <UIActionButton2 v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally')">Оплата
                 онлайн
-            </UIActionButton>
-            <UIActionButton v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally1')">Отказ клиент
-            </UIActionButton>
+            </UIActionButton2>
+            <UIActionButton2 v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally1')">Отказ клиент
+            </UIActionButton2>
             <UIActionButton v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally2')">Отказ брак
             </UIActionButton>
         </div>

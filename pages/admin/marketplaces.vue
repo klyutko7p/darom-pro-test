@@ -81,7 +81,7 @@ definePageMeta({
           @open-modal="openModal"
         />
 
-        <AdminDataCreate :title="'Аккаунт Заказа'" @create-data="createMarketplace" />
+        <AdminDataCreate :title="'Маркетплейс'" @create-data="createMarketplace" />
 
         <UIModal v-show="isOpen" @close-modal="closeModal">
           <template v-slot:header>

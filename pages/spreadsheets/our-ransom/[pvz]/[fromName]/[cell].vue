@@ -57,7 +57,7 @@ function closeModal() {
 
 async function updateDeliveryRow(obj: any) {
   let answer = confirm("Вы точно хотите изменить статус доставки?");
-  if (answer) await storeRansom.updateDeliveryStatus(obj.row, obj.flag, "OurRansom");
+  if (answer) await storeRansom.updateDeliveryStatus(obj.row, obj.flag, "OurRansom", user.value.username);
   filteredRows.value = await storeRansom.getRansomRowsByFromName(fromNameString, cellString, "OurRansom");
   rows.value = await storeRansom.getRansomRowsByFromName(fromNameString, cellString, "OurRansom");
 }
@@ -68,7 +68,7 @@ async function updateDeliveryRows(obj: any) {
     `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
   );
   if (answer)
-    await storeRansom.updateDeliveryRowsStatus(obj.idArray, obj.flag, "OurRansom");
+    await storeRansom.updateDeliveryRowsStatus(obj.idArray, obj.flag, "OurRansom", user.value.username);
   filteredRows.value = await storeRansom.getRansomRowsByFromName(fromNameString, cellString, "OurRansom");
   rows.value = await storeRansom.getRansomRowsByFromName(fromNameString, cellString, "OurRansom");
   isLoading.value = false;

@@ -309,14 +309,14 @@ export const useRansomStore = defineStore("ransom", () => {
         }
     }
 
-    async function updateDeliveryStatus(row: IOurRansom | IClientRansom | IDelivery, flag: string, flagRansom: string) {
+    async function updateDeliveryStatus(row: IOurRansom | IClientRansom | IDelivery, flag: string, flagRansom: string, username: string) {
         try {
             let data = await useFetch('/api/ransom/update-delivery', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ row: row, flag: flag, flagRansom: flagRansom }),
+                body: JSON.stringify({ row: row, flag: flag, flagRansom: flagRansom, username: username }),
             })
             if (data.data.value === undefined) {
                 toast.success("Доставка успешно обновлена!")
@@ -332,14 +332,14 @@ export const useRansomStore = defineStore("ransom", () => {
         }
     }
 
-    async function updateDeliveryRowsStatus(idArray: number[], flag: string, flagRansom: string) {
+    async function updateDeliveryRowsStatus(idArray: number[], flag: string, flagRansom: string, username: string) {
         try {
             let data = await useFetch('/api/ransom/update-rows-delivery', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ idArray: idArray, flag: flag, flagRansom: flagRansom }),
+                body: JSON.stringify({ idArray: idArray, flag: flag, flagRansom: flagRansom, username: username }),
             })
             if (data.data.value === undefined) {
                 toast.success("Доставка у записей успешно обновлена!")

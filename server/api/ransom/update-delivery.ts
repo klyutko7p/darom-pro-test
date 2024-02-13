@@ -6,12 +6,13 @@ interface IRequestBody {
     row: IOurRansom | IClientRansom;
     flag: string;
     flagRansom: string;
+    username: string;
 }
 
 
 export default defineEventHandler(async (event) => {
     try {
-        const { row, flag, flagRansom } = await readBody<IRequestBody>(event);
+        const { row, flag, flagRansom, username } = await readBody<IRequestBody>(event);
 
         let updateField;
 
@@ -42,6 +43,7 @@ export default defineEventHandler(async (event) => {
                 },
                 data: {
                     [updateField]: new Date(),
+                    updatedUser: username,
                 },
             });
         } else if (flagRansom === 'ClientRansom') {
@@ -51,6 +53,7 @@ export default defineEventHandler(async (event) => {
                 },
                 data: {
                     [updateField]: new Date(),
+                    updatedUser: username,
                 },
             });
         } else if (flagRansom === 'Delivery') {
@@ -60,6 +63,7 @@ export default defineEventHandler(async (event) => {
                 },
                 data: {
                     [updateField]: new Date(),
+                    updatedUser: username,
                 },
             });
         }

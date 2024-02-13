@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
+import { useToast } from 'vue-toastification';
 
 const storeUsers = useUsersStore();
 const storePVZ = usePVZStore();
@@ -7,6 +8,7 @@ const storeRansom = useRansomStore();
 const storeBalance = useBalanceStore();
 const router = useRouter();
 
+const toast = useToast()
 let user = ref({} as User);
 let pvz = ref<Array<PVZ>>();
 let ourRansomRows = ref<Array<IOurRansom>>();
@@ -457,13 +459,17 @@ function closeModal() {
 
 async function createRow() {
   isLoading.value = true;
-  await storeBalance.createBalanceRow(rowData.value, user.value.username);
-  rows.value = await storeBalance.getBalanceRows();
-  closeModal();
-  getAllSum();
-  if (user.value.role === "PVZ") {
-    selectedPVZ.value = user.value.visiblePVZ;
-    rows.value = rows.value?.filter((row) => row.pvz === user.value.visiblePVZ)
+  if (+rowData.value.sum > Math.ceil(allSum.value)) {
+    toast.error("Сумма заявки больше баланса!")
+  } else {
+    await storeBalance.createBalanceRow(rowData.value, user.value.username);
+    rows.value = await storeBalance.getBalanceRows();
+    closeModal();
+    getAllSum();
+    if (user.value.role === "PVZ") {
+      selectedPVZ.value = user.value.visiblePVZ;
+      rows.value = rows.value?.filter((row) => row.pvz === user.value.visiblePVZ)
+    }
   }
   isLoading.value = false;
 }
@@ -586,7 +592,8 @@ async function updateRow() {
             </div>
           </div>
 
-          <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" class="mt-24" @click="openModal">Заявка на вывод средств</UIMainButton>
+          <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" class="mt-24" @click="openModal">
+            Заявка на вывод средств</UIMainButton>
           <BalanceTable @update-delivery-row="updateDeliveryRow" :rows="rows" :user="user" @open-modal="openModal" />
 
           <UIModal v-show="isOpen" @close-modal="closeModal">
@@ -713,7 +720,8 @@ async function updateRow() {
             </div>
           </div>
 
-          <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" class="mt-24" @click="openModal">Заявка на вывод средств</UIMainButton>
+          <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" class="mt-24" @click="openModal">
+            Заявка на вывод средств</UIMainButton>
           <BalanceTable @update-delivery-row="updateDeliveryRow" :rows="rows" :user="user" @open-modal="openModal" />
 
           <UIModal v-show="isOpen" @close-modal="closeModal">
