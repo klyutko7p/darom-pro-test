@@ -20,6 +20,14 @@ function getAdditionally(status: string) {
     }
 }
 
+function getPaid(status: string) {
+    if (status === 'paid1') {
+        return 'Оплачено онлайн'
+    } else if (status === 'paid2') {
+        return 'Оплачено наличными'
+    } 
+}
+
 function getAmountFromClient(status: string) {
     if (status === 'additionally') {
         return
@@ -65,6 +73,10 @@ export default defineEventHandler(async (event) => {
                 updateField = 'sorted';
                 break;
             case 'paid':
+                updateField = 'paid';
+            case 'paid1':
+                updateField = 'paid';
+            case 'paid2':
                 updateField = 'paid';
                 break;
             case 'additionally':
@@ -133,7 +145,19 @@ export default defineEventHandler(async (event) => {
                     profit2: getProfit(flag),
                 },
             });
-        } else if (flagRansom === 'Delivery') {
+        } else if (flagRansom === 'Delivery' && updateField === 'paid') {
+            const updateRow = await prisma.delivery.updateMany({
+                where: {
+                    id: {
+                        in: idArray,
+                    },
+                },
+                data: {
+                    paid: new Date(),
+                    additionally: getPaid(flag)
+                },
+            });
+        } else if (flagRansom === 'Delivery' && updateField !== 'paid') {
             const updateRow = await prisma.delivery.updateMany({
                 where: {
                     id: {

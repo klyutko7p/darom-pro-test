@@ -65,9 +65,9 @@ onMounted(() => {
       <tbody>
         <div id="left"></div>
         <tr v-for="row in rows" class="text-center">
-          <td class="border-2" v-if="(user.role === 'ADMIN' || user.role === 'ADMINISTRATOR') && !row.issued && !row.received">
+          <td class="border-2">
             <Icon @click="openModal(row)" class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
-              name="material-symbols:edit" size="32" />
+              name="material-symbols:edit" size="32" v-if="(user.role === 'ADMIN' || user.role === 'ADMINISTRATOR') && !row.issued && !row.received" />
           </td>
           <th scope="row" class="border-2">
             {{ row.pvz }}

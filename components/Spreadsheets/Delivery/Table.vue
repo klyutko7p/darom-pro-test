@@ -129,6 +129,8 @@ onMounted(() => {
   updateCurrentPageData()
 })
 
+let showOtherOptions = ref(false);
+
 
 </script>
 <template>
@@ -175,8 +177,14 @@ onMounted(() => {
       выделенные записи</UIActionButton>
     <UIActionButton v-if="user.sorted === 'WRITE'" @click="updateDeliveryRows('sorted')">Отсортировано
     </UIActionButton>
-    <UIActionButton v-if="user.paid === 'WRITE'" @click="updateDeliveryRows('paid')">Оплачено
+    <UIActionButton v-if="user.paid === 'WRITE'" @click="showOtherOptions = !showOtherOptions">Оплачено
     </UIActionButton>
+    <div v-if="showOtherOptions" class="flex flex-col gap-3">
+      <UIActionButton2 v-if="user.paid === 'WRITE'" @click="updateDeliveryRows('paid1')">Оплачено онлайн
+      </UIActionButton2>
+      <UIActionButton2 v-if="user.paid === 'WRITE'" @click="updateDeliveryRows('paid2')">Оплачено наличными
+      </UIActionButton2>
+    </div>
   </div>
 
   <div class="relative max-h-[610px] mt-5 mb-10">

@@ -271,8 +271,6 @@ export const useRansomStore = defineStore("ransom", () => {
                     row.clientLink3 = ''
                 }
 
-                console.log(row);
-
                 row.amountFromClient3 = Math.ceil(row.purchaseOfGoods * row.percentClient / 100);
                 row.profit3 = row.amountFromClient3;
             }
