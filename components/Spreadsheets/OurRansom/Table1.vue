@@ -61,13 +61,7 @@ async function exportToExcel() {
     perPage.value = await 100;
 }
 
-interface RowData {
-    rowId: number;
-    amount: number;
-    issued: Date | null | string | number;
-    deliveredPVZ: Date | null | string | number;
-    orderPVZ: Date | null | string | number;
-}
+
 
 const allSum: Ref<RowData[]> = ref([]);
 const checkedRows: Ref<number[]> = ref([]);
@@ -81,17 +75,26 @@ const isChecked = (rowId: number): boolean => {
     return checkedRows.value.includes(rowId);
 };
 
+interface RowData {
+    rowId: number;
+    amount: number;
+    issued: Date | null | string | number;
+    deliveredPVZ: Date | null | string | number;
+    deliveredSC: Date | null | string | number;
+    orderPVZ: Date | null | string | number;
+}
+
 const handleCheckboxChange = (row: IOurRansom): void => {
     if (isChecked(row.id)) {
         checkedRows.value = checkedRows.value.filter((id) => id !== row.id);
         allSum.value = allSum.value.filter((obj) => obj.rowId !== row.id);
     } else {
         checkedRows.value.push(row.id);
-        allSum.value.push({ rowId: row.id, amount: Math.ceil(row.amountFromClient1 / 10) * 10, issued: row.issued, deliveredPVZ: row.deliveredPVZ, orderPVZ: row.orderPVZ });
+        allSum.value.push({ rowId: row.id, amount: Math.ceil(row.amountFromClient1 / 10) * 10, issued: row.issued, deliveredPVZ: row.deliveredPVZ, orderPVZ: row.orderPVZ, deliveredSC: row.deliveredSC, });
     }
     getAllSum.value = allSum.value.filter((obj) => obj.issued === null).reduce((sum, obj) => sum + obj.amount, 0);
     showButton.value = allSum.value.every(obj => obj.issued === null);
-    showButtonPVZ.value = allSum.value.every(obj => obj.deliveredPVZ === null);
+    showButtonPVZ.value = allSum.value.every(obj => obj.deliveredPVZ === null && obj.deliveredSC !== null);
     showButtonSC.value = allSum.value.every(obj => obj.orderPVZ === null);
 };
 

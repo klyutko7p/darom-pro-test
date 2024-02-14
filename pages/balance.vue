@@ -243,7 +243,7 @@ function getAllSum() {
             (!startingDate.value ||
               new Date(row.issued) >= new Date(startingDate.value)) &&
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value)) &&
-            row.additionally === "Оплата наличными"
+            (row.additionally === "Оплата наличными" || row.additionally === "Отказ клиент")
         )
         .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
@@ -270,7 +270,7 @@ function getAllSum() {
             (!startingDate.value ||
               new Date(row.issued) >= new Date(startingDate.value)) &&
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value)) &&
-            row.additionally === "Оплата наличными" &&
+            (row.additionally === "Оплата наличными" || row.additionally === "Отказ клиент") &&
             row.dispatchPVZ === selectedPVZ.value
         )
         .sort((a, b) => new Date(b.issued) - new Date(a.issued));
@@ -282,7 +282,7 @@ function getAllSum() {
             (!startingDate.value ||
               new Date(row.issued) >= new Date(startingDate.value)) &&
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value)) &&
-            row.additionally === "Оплата наличными" &&
+            (row.additionally === "Оплата наличными" || row.additionally === "Отказ клиент") &&
             row.dispatchPVZ === selectedPVZ.value
         )
         .sort((a, b) => new Date(b.issued) - new Date(a.issued));

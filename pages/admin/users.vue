@@ -53,7 +53,7 @@ const fields = [
   "предоплата (наш выкуп)",
   "предоплата (выкуп клиента)",
   "товар (ссылка) (наш выкуп)",
-  "товар (ссылка) (выкуп клиента)",
+  "маркетплейс (выкуп клиента)",
   "название товара (наш выкуп)",
   "количество товаров (выкуп клиента)",
   "данные (Наш выкуп)",
@@ -531,7 +531,7 @@ const selectedPVZs = ref<string[]>([]);
             </div>
 
             <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Товар (ссылка) <br> (Выкуп клиента)</label>
+              <label for="cell">Маркетплейс <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.productLink2">
                 <option value="NONE">NONE</option>
                 <option value="READ">READ</option>
