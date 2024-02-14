@@ -249,11 +249,11 @@ let showOthersVariants = ref(false)
           <th scope="col" class="border-2" v-if="user.dataClientRansom === 'WRITE'">
             Выделение
           </th>
-          <th scope="col" class="exclude-row border-2"
+          <th scope="col" class="exclude-row border-2 text-[10px]"
             v-if="user.dataClientRansom === 'WRITE' && user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
             изменение
           </th>
-          <th scope="col" class="border-2">id</th>
+          <th scope="col" class="border-2 px-3">id</th>
           <th scope="col" class="border-2" v-if="user.clientLink2 === 'READ' || user.clientLink2 === 'WRITE'">
             ссылка для клиента
           </th>

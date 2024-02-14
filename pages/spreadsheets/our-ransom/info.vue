@@ -13,6 +13,11 @@ onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rowsOurRansom.value = await storeRansom.getRansomRows("OurRansom");
+
+  if (user.value.role === 'SORTIROVKA') {
+    router.push('/spreadsheets/our-ransom')
+  }
+  
   isLoading.value = false;
 });
 

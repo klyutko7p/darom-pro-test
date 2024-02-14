@@ -55,7 +55,7 @@ const fields = [
   "товар (ссылка) (наш выкуп)",
   "товар (ссылка) (выкуп клиента)",
   "название товара (наш выкуп)",
-  "название товара (выкуп клиента)",
+  "количество товаров (выкуп клиента)",
   "данные (Наш выкуп)",
   "данные (Выкуп клиента)",
   "данные (Доставка)",
@@ -279,7 +279,7 @@ const selectedPVZs = ref<string[]>([]);
             </div>
 
             <div class="grid grid-cols-2 mb-5">
-              <label for="cell">дополнительный доход<br> (Наш выкуп)</label>
+              <label for="cell">Дополнительный доход<br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredKGT1">
                 <option value="NONE">NONE</option>
                 <option value="READ">READ</option>
@@ -288,7 +288,7 @@ const selectedPVZs = ref<string[]>([]);
             </div>
 
             <div class="grid grid-cols-2 mb-5">
-              <label for="cell">дополнительный доход<br> (Выкуп клиента)</label>
+              <label for="cell">Дополнительный доход<br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredKGT2">
                 <option value="NONE">NONE</option>
                 <option value="READ">READ</option>
@@ -549,7 +549,7 @@ const selectedPVZs = ref<string[]>([]);
             </div>
 
             <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Название товара <br> (Выкуп клиента)</label>
+              <label for="cell">Количество товаров <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.productName2">
                 <option value="NONE">NONE</option>
                 <option value="READ">READ</option>

@@ -255,12 +255,12 @@ let showOthersVariants = ref(false)
                     <th scope="col" class="border-2" v-if="user.dataOurRansom === 'WRITE'">
                         Выделение
                     </th>
-                    <th scope="col" class="exclude-row border-2"
+                    <th scope="col" class="exclude-row border-2 text-[10px]"
                         v-if="user.dataOurRansom === 'WRITE' && user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
                         изменение
                     </th>
-                    <th scope="col" class="border-2">id</th>
-                    <th scope="col" class=" border-2" v-if="user.clientLink1 === 'READ' || user.clientLink1 === 'WRITE'">
+                    <th scope="col" class="border-2 px-3">id</th>
+                    <th scope="col" class="border-2" v-if="user.clientLink1 === 'READ' || user.clientLink1 === 'WRITE'">
                         ссылка для клиента
                     </th>
                     <th scope="col" class=" border-2" v-if="user.cell1 === 'READ' || user.cell1 === 'WRITE'">
