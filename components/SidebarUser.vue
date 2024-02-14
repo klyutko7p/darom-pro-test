@@ -15,6 +15,16 @@ function signOut() {
 
 function editMenu() {
   isOpen.value = !isOpen.value;
+  const screenWidth = window.innerWidth;
+  if (isOpen.value && screenWidth < 1280) {
+    useHead({
+      bodyAttrs: {
+        class: 'overflow-hidden'
+      }
+    });
+  } else {
+    document.body.classList.remove('overflow-hidden');
+  }
 }
 
 onBeforeMount(async () => {
@@ -112,7 +122,7 @@ function formatPhoneNumber(phoneNumber: string) {
   </div>
 
   <div
-    class="fixed bg-gradient-to-tr from-white via-white to-yellow-100 bg-image top-0 bottom-0 left-0 right-0 z-50 hidden max-xl:flex items-center justify-center bg-white"
+    class="absolute bg-gradient-to-tr from-white via-white to-yellow-100 bg-image top-0 bottom-0 left-0 right-0 z-50 hidden max-xl:flex items-center justify-center bg-white"
     v-if="isOpen">
     <Icon name="material-symbols:close" class="absolute duration-200 cursor-pointer hover:text-orange-400 top-2 right-4"
       size="40" @click="editMenu" />
