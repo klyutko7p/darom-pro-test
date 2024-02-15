@@ -12,18 +12,27 @@ const props = defineProps({
 
 const emit = defineEmits(["updateDeliveryRow"]);
 
-function updateDeliveryRow(row: IOurRansom | IClientRansom, flag: string) {
+function updateDeliveryRow(row: IOurRansom | IClientRansom | IDelivery, flag: string) {
   emit("updateDeliveryRow", { row: row, flag: flag });
 }
 
-onMounted(() => {
+const alreadyCalled = ref(false);
 
+onMounted(async () => {
   if (props.user.visiblePVZ === 'ВСЕ' || props.user.username === 'ОПТ') {
     toast.success('Нужный доступ подтвержден')
+    
   } else if (props.user.visiblePVZ !== props.row.dispatchPVZ) {
     toast.error("Это товар не Вашего ПВЗ!")
     router.push('/spreadsheets/our-ransom')
   } 
+
+  if (!alreadyCalled.value && props.user.role === 'PVZ') {
+    await updateDeliveryRow(props.row, "PVZ");
+    toast.success('Товар принят на ПВЗ!');
+    alreadyCalled.value = true;
+  }
+
 })
 
 function formatPhoneNumber(phoneNumber: string) {

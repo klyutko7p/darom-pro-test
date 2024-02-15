@@ -13,11 +13,8 @@ let user = ref({} as User);
 let row = ref({} as IDelivery);
 
 async function updateDeliveryRow(obj: any) {
-  isLoading.value = true;
-  let answer = confirm("Вы точно хотите изменить статус доставки?");
-  if (answer) await storeRansom.updateDeliveryStatus(obj.row, obj.flag, "Delivery");
+  await storeRansom.updateDeliveryStatus(obj.row, obj.flag, "Delivery", user.value.username);
   row.value = await storeRansom.getRansomRow(id, "Delivery");
-  isLoading.value = false;
 }
 
 onMounted(async () => {
