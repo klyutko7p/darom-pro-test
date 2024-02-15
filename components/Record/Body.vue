@@ -13,9 +13,8 @@ const props = defineProps({
 
 const emit = defineEmits(["updateDeliveryRow"]);
 
-async function updateDeliveryRow(row: IOurRansom | IClientRansom, flag: string) {
-  await emit("updateDeliveryRow", { row: row, flag: flag });
-  await window.print();
+function updateDeliveryRow(row: IOurRansom | IClientRansom, flag: string) {
+  emit("updateDeliveryRow", { row: row, flag: flag });
 }
 
 const alreadyCalled = ref(false);
