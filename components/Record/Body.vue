@@ -5,15 +5,17 @@ const toast = useToast()
 const router = useRouter();
 const storeUsers = useUsersStore();
 const props = defineProps({
-  row: { type: Object as PropType<IOurRansom | IClientRansom | IDelivery>, required: true },
+  row: { type: Object as PropType<IOurRansom | IClientRansom>, required: true },
   user: { type: Object as PropType<User>, required: true },
-  link: { type: String }
+  link: { type: String },
+  value: { type: String },
 });
 
 const emit = defineEmits(["updateDeliveryRow"]);
 
-function updateDeliveryRow(row: IOurRansom | IClientRansom | IDelivery, flag: string) {
-  emit("updateDeliveryRow", { row: row, flag: flag });
+async function updateDeliveryRow(row: IOurRansom | IClientRansom, flag: string) {
+  await emit("updateDeliveryRow", { row: row, flag: flag });
+  await window.print();
 }
 
 const alreadyCalled = ref(false);
@@ -21,19 +23,18 @@ const alreadyCalled = ref(false);
 onMounted(async () => {
   if (props.user.visiblePVZ === 'ВСЕ' || props.user.username === 'ОПТ') {
     toast.success('Нужный доступ подтвержден')
-
   } else if (props.user.visiblePVZ !== props.row.dispatchPVZ) {
     toast.error("Это товар не Вашего ПВЗ!")
     router.push('/spreadsheets/our-ransom')
-  }
-
-  if (!alreadyCalled.value && props.user.role === 'PVZ') {
-    if (props.row.deliveredPVZ === null) {
-      await updateDeliveryRow(props.row, "PVZ");
-      toast.success('Товар принят на ПВЗ!');
-      alreadyCalled.value = true;
-    } else {
-      toast.warning('Товар принят ранее!');
+  } else {
+    if (!alreadyCalled.value && props.user.role === 'PVZ') {
+      if (props.row.deliveredPVZ === null && props.row.deliveredSC !== null) {
+        await updateDeliveryRow(props.row, "PVZ");
+        toast.success('Товар принят на ПВЗ!');
+        alreadyCalled.value = true;
+      } else {
+        toast.warning('Товар принят ранее или неотсортирован!');
+      }
     }
   }
 
@@ -56,6 +57,10 @@ function formatPhoneNumber(phoneNumber: string) {
     digitsOnly.slice(-4);
 
   return maskedPhoneNumber;
+}
+
+function printPage() {
+  window.print();
 }
 </script>
 
@@ -98,7 +103,7 @@ function formatPhoneNumber(phoneNumber: string) {
 
     <div v-if="link?.includes(2)" class="grid grid-cols-2 border-2 border-black p-3 border-dashed text-center">
       <h1>Доставлено на СЦ:</h1>
-      <Icon @click="updateDeliveryRow(row, 'SC')" v-if="!row.deliveredSC &&
+      <Icon @click="updateDeliveryRow(row, 'SC'), printPage()" v-if="!row.deliveredSC &&
         user.dataClientRansom === 'WRITE' &&
         user.deliveredSC2 === 'WRITE'
         " class="text-green-500 mx-auto cursor-pointer hover:text-green-300 duration-200"
@@ -198,4 +203,38 @@ function formatPhoneNumber(phoneNumber: string) {
       </h1>
     </div>
   </div>
+
+  <div class="flex items-center gap-5 mt-10">
+    <h1 class="text-2xl">Распечатка Штрих кода</h1>
+    <UIMainButton :disabled="row.deliveredSC === null" @click="printPage">РАСПЕЧАТАТЬ ЭТИКЕТКУ</UIMainButton>
+  </div>
+  <div class="flex flex-col print-content">
+    <div class="gap-0 flex flex-col absolute mr-10">
+      <CodeQR :value="value" class="mt-10" />
+      <h1 class="text-base"> {{ row.id }} </h1>
+      <h1 class="text-7xl max-w-[500px] text-center relative mb-3" v-if="row.cell">{{ row.cell }}</h1>
+      <h1 class="text-8xl text-center max-w-[500px] relative">{{ row.dispatchPVZ }}</h1>
+    </div>
+  </div>
 </template>
+
+
+<style>
+/* Стили для печати */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-content,
+  .print-content * {
+    visibility: visible;
+  }
+
+  .print-content {
+    position: absolute;
+    left: 15%;
+    top: 20%;
+  }
+}
+</style>
