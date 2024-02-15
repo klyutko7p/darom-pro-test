@@ -85,6 +85,57 @@ function formatPhoneNumber(phoneNumber: string) {
   return maskedPhoneNumber;
 }
 
+let scanStringItem = ref('')
+let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+function scanItem() {
+  if (timeoutId !== null) {
+    clearTimeout(timeoutId);
+  }
+
+  timeoutId = setTimeout(() => {
+    let scannedLink = scanStringItem.value.trim();
+    scannedLink = convertToURL(scannedLink)
+    if (isValidUrl(scannedLink)) {
+      window.location.href = scannedLink;
+    } else {
+      console.error('Invalid URL:', scannedLink);
+    }
+  }, 2000);
+}
+
+function convertToURL(inputString: string) {
+  if (inputString.includes('/')) {
+    const parts = inputString.split('/');
+
+    const recordID = parts[parts.length - 2];
+    const entryID = parts[parts.length - 1];
+
+    const url = `https://smartsklad-pro-1.netlify.app/spreadsheets/record/${recordID}/${entryID}`;
+
+    return url;
+  } else if (inputString.includes('.')) {
+    const parts = inputString.split('.');
+
+    const recordID = parts[parts.length - 2];
+    const entryID = parts[parts.length - 1];
+
+    const url = `https://smartsklad-pro-1.netlify.app/spreadsheets/record/${recordID}/${entryID}`;
+
+    return url;
+  }
+
+}
+
+function isValidUrl(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 </script>
 <template>
   <div class="flex items-center justify-between max-lg:block mt-10">
@@ -105,8 +156,11 @@ function formatPhoneNumber(phoneNumber: string) {
 
 
   <div class="mt-10">
-    <div class="flex items-center gap-10 mb-5">
-      <h1 class="text-2xl">Режим выдачи товаров ({{ pvzLink }})</h1>
+    <div class="flex flex-col gap-10 mb-5">
+      <h1 class="text-2xl">Режим выдачи товаров ({{ pvzLink }}) </h1>
+      <input
+        class="block w-full bg-transparent mb-5 border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 rounded-2xl focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+        placeholder="Отсканируйте товар" v-model="scanStringItem" @input="scanItem" />
     </div>
     <input type="text" v-model="searchQuery"
       class="block w-full bg-transparent mb-5 border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 rounded-2xl focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
