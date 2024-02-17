@@ -126,12 +126,12 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
     );
   } else if (user.value.visiblePVZ !== "ВСЕ" && user.value.visibleSC === "ВСЕ") {
     filteredRows.value = filteredRowsData.filter(
-      (row) => row.dispatchPVZ === user.value.visiblePVZ && row.deliveredSC !== null
+      (row) => user.value.PVZ.includes(row.dispatchPVZ) && row.deliveredSC !== null
     );
   } else if (user.value.visiblePVZ !== "ВСЕ" && user.value.visibleSC !== "ВСЕ") {
     filteredRows.value = filteredRowsData.filter(
       (row) =>
-        row.dispatchPVZ === user.value.visiblePVZ &&
+        user.value.PVZ.includes(row.dispatchPVZ) &&
         row.orderPVZ === user.value.visibleSC &&
         row.deliveredSC !== null
     );

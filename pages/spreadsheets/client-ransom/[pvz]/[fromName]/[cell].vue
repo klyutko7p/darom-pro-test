@@ -156,12 +156,12 @@ function handleFilteredRows(filteredRowsData: IClientRansom[]) {
         );
     } else if (user.value.visiblePVZ !== "ВСЕ" && user.value.visibleSC === "ВСЕ") {
         filteredRows.value = filteredRowsData.filter(
-            (row) => row.dispatchPVZ === user.value.visiblePVZ && row.deliveredSC !== null
+            (row) => user.value.visiblePVZ.includes(row.dispatchPVZ) && row.deliveredSC !== null
         );
     } else if (user.value.visiblePVZ !== "ВСЕ" && user.value.visibleSC !== "ВСЕ") {
         filteredRows.value = filteredRowsData.filter(
             (row) =>
-                row.dispatchPVZ === user.value.visiblePVZ &&
+                user.value.visiblePVZ.includes(row.dispatchPVZ) &&
                 row.orderPVZ === user.value.visibleSC &&
                 row.deliveredSC !== null
         );
@@ -602,40 +602,41 @@ function getFromNameFromCell() {
                                     <label for="issued1" class="max-sm:text-sm">Выдан клиенту</label>
                                     <input :disabled="user.issued1 === 'READ'"
                                         class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                                    v-model="rowData.issued" type="datetime-local" />
-                            </div>
+                                        v-model="rowData.issued" type="datetime-local" />
+                                </div>
 
-                            <div class="grid grid-cols-2 mb-5"
-                                v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'">
-                                <label for="additionally1" class="max-sm:text-sm">Дополнительно</label>
-                                <select
-                                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                                    v-model="rowData.additionally" :disabled="user.additionally1 === 'READ'">
-                                    <option value="">Отменить</option>
-                                    <option value="Оплачено онлайн">Оплачено онлайн</option>
-                                    <option value="Отказ клиент">Отказ клиент</option>
-                                    <option value="Отказ брак">Отказ брак</option>
-                                </select>
+                                <div class="grid grid-cols-2 mb-5"
+                                    v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'">
+                                    <label for="additionally1" class="max-sm:text-sm">Дополнительно</label>
+                                    <select
+                                        class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
+                                        v-model="rowData.additionally" :disabled="user.additionally1 === 'READ'">
+                                        <option value="">Отменить</option>
+                                        <option value="Оплачено онлайн">Оплачено онлайн</option>
+                                        <option value="Отказ клиент">Отказ клиент</option>
+                                        <option value="Отказ брак">Отказ брак</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
-                        <UIMainButton @click="updateRow">Сохранить
-                        </UIMainButton>
-                        <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-                    </div>
-                    <div class="flex items-center justify-center gap-3 mt-10" v-else>
-                        <UIMainButton :disabled="rowData.fromName === '' || rowData.fromName === null"
-                            @click="createRow">Создать
-                        </UIMainButton>
-                        <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-                    </div>
-                </UIModal>
-            </div>
-            <div v-else>
-                <UISpinner />
-            </div>
-        </NuxtLayout>
+                        <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
+                            <UIMainButton @click="updateRow">Сохранить
+                            </UIMainButton>
+                            <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+                        </div>
+                        <div class="flex items-center justify-center gap-3 mt-10" v-else>
+                            <UIMainButton :disabled="rowData.fromName === '' || rowData.fromName === null"
+                                @click="createRow">Создать
+                            </UIMainButton>
+                            <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+                        </div>
+                    </UIModal>
+                </div>
+                <div v-else>
+                    <UISpinner />
+                </div>
+            </NuxtLayout>
+        </div>
     </div>
-</div></template>
+</template>
