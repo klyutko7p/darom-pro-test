@@ -240,6 +240,7 @@ function getAllSum() {
         ?.filter(
           (row) =>
             row.issued !== null &&
+            row.dispatchPVZ !== 'НаДом' &&
             (!startingDate.value ||
               new Date(row.issued) >= new Date(startingDate.value)) &&
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value)) &&
@@ -251,6 +252,7 @@ function getAllSum() {
         ?.filter(
           (row) =>
             row.issued !== null &&
+            row.dispatchPVZ !== 'НаДом' &&
             (!startingDate.value ||
               new Date(row.issued) >= new Date(startingDate.value)) &&
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value)) &&
@@ -298,6 +300,7 @@ function getAllSum() {
         ?.filter(
           (row) =>
             row.issued !== null &&
+            row.dispatchPVZ !== 'НаДом' &&
             (!startingDate.value ||
               new Date(row.issued) >= new Date(startingDate.value)) &&
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value)) &&
@@ -309,6 +312,7 @@ function getAllSum() {
         ?.filter(
           (row) =>
             row.issued !== null &&
+            row.dispatchPVZ !== 'НаДом' &&
             (!startingDate.value ||
               new Date(row.issued) >= new Date(startingDate.value)) &&
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value)) &&
