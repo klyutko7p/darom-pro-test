@@ -106,22 +106,19 @@ async function deleteIssuedRowsTimer() {
   isLoading.value = false;
 }
 
-function timeUntilSunday2359() {
+function timeUntilNext2359() {
   const now = new Date();
-  const dayOfWeek = now.getDay();
-  const daysUntilSunday = (dayOfWeek === 0) ? 0 : (7 - dayOfWeek);
-
-  const nextSunday1337 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilSunday, 23, 59, 0, 0);
-
-  return nextSunday1337.getTime() - now.getTime();
+  const tomorrow2359 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 0, 0);
+  return tomorrow2359.getTime() - now.getTime();
 }
 
 function scheduleDeleteIssuedRows() {
-  const timeUntilSunday2359Data = timeUntilSunday2359();
+  const timeUntilNext2359Data = timeUntilNext2359();
 
   setTimeout(async () => {
     await deleteIssuedRowsTimer();
-  }, timeUntilSunday2359Data);
+    scheduleDeleteIssuedRows();
+  }, timeUntilNext2359Data);
 }
 
 scheduleDeleteIssuedRows();

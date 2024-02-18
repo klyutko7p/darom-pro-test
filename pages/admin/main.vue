@@ -11,6 +11,7 @@ let isLoading = ref(false);
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
+  await storeRansom.getSumOfRejection();
   isLoading.value = false;
 });
 

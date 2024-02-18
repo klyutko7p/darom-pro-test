@@ -2,6 +2,7 @@
 import { read, utils, writeFile } from "xlsx";
 
 const storeUsers = useUsersStore();
+const storeRansom = useRansomStore()
 
 const emit = defineEmits([
   "openModal",
@@ -137,7 +138,7 @@ const toggleShowDeletedRows = () => {
 
 let isVisiblePages = ref(true)
 
-onMounted(() => {
+onMounted(async () => {
 
   updateCurrentPageData()
 
@@ -145,6 +146,8 @@ onMounted(() => {
     perPage.value = totalRows.value;
     updateCurrentPageData();
   }
+
+  await storeRansom.getSumOfRejection()
 })
 
 const router = useRouter()

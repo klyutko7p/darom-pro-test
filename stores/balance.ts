@@ -7,6 +7,7 @@ const toast = useToast()
 export const useBalanceStore = defineStore("balance", () => {
 
     let cachedBalanceRows: IBalance[] | null = null;
+    let cachesBalanceOnlineRows: IBalanceOnline[] | null = null;
 
     async function createBalanceRow(row: IBalance, username: string) {
         try {
@@ -26,6 +27,32 @@ export const useBalanceStore = defineStore("balance", () => {
 
             if (data.data.value === undefined) {
                 cachedBalanceRows = null;
+                toast.success("Запись успешно создана!");
+            } else {
+                console.log(data.data.value);
+                toast.error("Произошла ошибка при создании записи");
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
+    async function createBalanceOnlineRow(row: IBalanceOnline) {
+        try {
+            if (row.sum === undefined) row.sum = '0';
+
+            let data = await useFetch('/api/balance/create-online-row', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ row: row }),
+            });
+
+            if (data.data.value === undefined) {
+                cachesBalanceOnlineRows = null;
                 toast.success("Запись успешно создана!");
             } else {
                 console.log(data.data.value);
@@ -60,7 +87,29 @@ export const useBalanceStore = defineStore("balance", () => {
         }
     }
 
-    async function updateBalanceRow(row: IBalance, username: string) {
+    async function getBalanceOnlineRows() {
+        try {
+            if (cachesBalanceOnlineRows) {
+                return cachesBalanceOnlineRows;
+            } else {
+                let { data }: any = await useFetch('/api/balance/get-online-rows', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({})
+                });
+                cachesBalanceOnlineRows = data.value;
+                return cachesBalanceOnlineRows;
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
+    async function updateBalanceRow(row: IBalance) {
         try {
             if (row.sum === undefined) row.sum = '0';
             if (row.pvz === undefined) row.pvz = '';
@@ -112,5 +161,5 @@ export const useBalanceStore = defineStore("balance", () => {
         }
     }
 
-    return { updateDeliveryStatus, updateBalanceRow, getBalanceRows, createBalanceRow }
+    return { updateDeliveryStatus, updateBalanceRow, getBalanceRows, createBalanceRow, createBalanceOnlineRow, getBalanceOnlineRows }
 })

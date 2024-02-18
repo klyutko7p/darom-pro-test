@@ -17,6 +17,8 @@ let deliveryRansomRows = ref<Array<IDelivery>>();
 const token = Cookies.get("token");
 let isLoading = ref(false);
 let rows = ref<Array<IBalance>>()
+let rowsOnline = ref<Array<IBalanceOnline>>()
+let sumOfReject = ref<any>()
 
 onBeforeMount(async () => {
   isLoading.value = true;
@@ -27,6 +29,8 @@ onBeforeMount(async () => {
   clientRansomRows.value = await storeRansom.getRansomRows("ClientRansom");
   deliveryRansomRows.value = await storeRansom.getRansomRows("Delivery");
   rows.value = await storeBalance.getBalanceRows();
+  rowsOnline.value = await storeBalance.getBalanceOnlineRows();
+  sumOfReject.value = await storeRansom.getSumOfRejection()
 
   getAllSum();
 
@@ -70,11 +74,11 @@ function calculateValue(curValue: any) {
       ? Math.ceil(curValue.amountFromClient1 / 10) * 10 -
       curValue.priceSite +
       curValue.deliveredKGT
-      : 200;
+      : sumOfReject.value.value;
   } else {
     return curValue.additionally !== "Отказ клиент"
       ? (curValue.priceSite * curValue.percentClient) / 100 + curValue.deliveredKGT
-      : 200;
+      : sumOfReject.value.value;
   }
 }
 
@@ -177,6 +181,7 @@ function getAllSum() {
         )
         .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
+      // let sumOfPVZ = rows.value?.filter((row) => row.received !== null).reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
       allSum.value = sum1.value + sum2.value;
@@ -203,6 +208,7 @@ function getAllSum() {
         )
         .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
+      // let sumOfPVZ = rows.value?.filter((row) => row.received !== null && row.pvz === selectedPVZ.value).reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
       allSum.value = sum1.value + sum2.value;
@@ -212,7 +218,8 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value
         ?.filter(
           (row) =>
-            row.issued !== null &&
+            row.issued === null &&
+            row.deleted === null &&
             (!startingDate.value ||
               new Date(row.issued) >= new Date(startingDate.value)) &&
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value))
@@ -225,7 +232,8 @@ function getAllSum() {
         ?.filter(
           (row) =>
             row.dispatchPVZ === selectedPVZ.value &&
-            row.issued !== null &&
+            row.issued === null &&
+            row.deleted === null &&
             (!startingDate.value ||
               new Date(row.issued) >= new Date(startingDate.value)) &&
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value))
@@ -320,9 +328,10 @@ function getAllSum() {
         )
         .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
+      let sumOfPVZ = rowsOnline.value?.reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value + sum3.value;
+      allSum.value = sum1.value + sum2.value + sum3.value - sumOfPVZ;
     } else {
       copyArrayOurRansom.value = ourRansomRows.value
         ?.filter(
@@ -348,61 +357,10 @@ function getAllSum() {
         )
         .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
+      let sumOfPVZ = rowsOnline.value?.reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value;
-    }
-  } else if (selectedTypeOfTransaction.value === "Сумма с клиента+предоплата всего") {
-    if (selectedPVZ.value === "Все ПВЗ") {
-      copyArrayOurRansom.value = ourRansomRows.value
-        ?.filter(
-          (row) =>
-            row.issued !== null &&
-            (!startingDate.value ||
-              new Date(row.issued) >= new Date(startingDate.value)) &&
-            (!endDate.value || new Date(row.issued) <= new Date(endDate.value))
-        )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
-
-      copyArrayClientRansom.value = clientRansomRows.value
-        ?.filter(
-          (row) =>
-            row.issued !== null &&
-            (!startingDate.value ||
-              new Date(row.issued) >= new Date(startingDate.value)) &&
-            (!endDate.value || new Date(row.issued) <= new Date(endDate.value))
-        )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
-
-      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
-      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value;
-    } else {
-      copyArrayOurRansom.value = ourRansomRows.value
-        ?.filter(
-          (row) =>
-            row.issued !== null &&
-            (!startingDate.value ||
-              new Date(row.issued) >= new Date(startingDate.value)) &&
-            (!endDate.value || new Date(row.issued) <= new Date(endDate.value)) &&
-            row.dispatchPVZ === selectedPVZ.value
-        )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
-
-      copyArrayClientRansom.value = clientRansomRows.value
-        ?.filter(
-          (row) =>
-            row.issued !== null &&
-            (!startingDate.value ||
-              new Date(row.issued) >= new Date(startingDate.value)) &&
-            (!endDate.value || new Date(row.issued) <= new Date(endDate.value)) &&
-            row.dispatchPVZ === selectedPVZ.value
-        )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
-
-      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
-      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value;
+      allSum.value = sum1.value + sum2.value - sumOfPVZ;
     }
   }
 }
@@ -440,6 +398,7 @@ function clearFields() {
 
 let rowData = ref({} as IBalance);
 let isOpen = ref(false);
+let isOpenModalOnline = ref(false);
 
 function openModal(row: IBalance) {
   isOpen.value = true;
@@ -461,6 +420,20 @@ function closeModal() {
   rowData.value = {} as IBalance;
 }
 
+function openModalOnline(row: IBalanceOnline) {
+  isOpenModalOnline.value = true;
+  if (row.id) {
+    rowData.value = JSON.parse(JSON.stringify(row));
+  } else {
+    rowData.value = {} as IBalance;
+  }
+}
+
+function closeModalOnline() {
+  isOpenModalOnline.value = false;
+  rowData.value = {} as IBalance;
+}
+
 async function createRow() {
   isLoading.value = true;
   if (+rowData.value.sum > Math.ceil(allSum.value)) {
@@ -475,6 +448,15 @@ async function createRow() {
       rows.value = rows.value?.filter((row) => row.pvz === user.value.visiblePVZ)
     }
   }
+  isLoading.value = false;
+}
+
+async function createOnlineRow() {
+  isLoading.value = true;
+  await storeBalance.createBalanceOnlineRow(rowData.value);
+  rowsOnline.value = await storeBalance.getBalanceOnlineRows();
+  closeModalOnline();
+  getAllSum();
   isLoading.value = false;
 }
 
@@ -493,7 +475,7 @@ async function updateDeliveryRow(obj: any) {
 
 async function updateRow() {
   isLoading.value = true;
-  await storeBalance.updateBalanceRow(rowData.value, user.value.username);
+  await storeBalance.updateBalanceRow(rowData.value);
   rows.value = await storeBalance.getBalanceRows();
   closeModal();
   getAllSum();
@@ -574,31 +556,25 @@ async function updateRow() {
               </div>
             </div>
 
-            <div class="">
-              <!-- <div class="text-center text-2xl mt-10" v-if="selectedTypeOfTransaction !== 'Заказано'">
-                <h1>Баланс "Наш Выкуп"</h1>
-                <h1 class="font-bold text-secondary-color text-4xl mt-3">
-                  {{ formatNumber(Math.ceil(sum1)) }} ₽
-                </h1>
-              </div> -->
+            <div>
               <div class="text-center text-2xl mt-10">
                 <h1>Баланс</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(allSum)) }} ₽
                 </h1>
               </div>
-              <!-- <div class="text-center text-2xl mt-10" v-if="selectedTypeOfTransaction !== 'Заказано'">
-                <h1>Баланс "Выкуп Клиента"</h1>
-                <h1 class="font-bold text-secondary-color text-4xl mt-3">
-                  {{ formatNumber(Math.ceil(sum2)) }} ₽
-                </h1>
-              </div> -->
             </div>
           </div>
 
           <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" class="mt-24" @click="openModal">
             Заявка на вывод средств</UIMainButton>
           <BalanceTable @update-delivery-row="updateDeliveryRow" :rows="rows" :user="user" @open-modal="openModal" />
+
+          <div v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+            <UIMainButton class="mt-24" @click="openModalOnline">
+              Заявка на обнуление баланса онлайн</UIMainButton>
+            <BalanceTableOnline :rows="rowsOnline" />
+          </div>
 
           <UIModal v-show="isOpen" @close-modal="closeModal">
             <template v-slot:header>
@@ -633,6 +609,25 @@ async function updateRow() {
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
               <UIMainButton @click="createRow">Создать </UIMainButton>
               <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+            </div>
+          </UIModal>
+
+          <UIModal v-show="isOpenModalOnline" @close-modal="closeModalOnline">
+            <template v-slot:header>
+              <div class="custom-header">Создание новой заявки</div>
+            </template>
+            <div class="text-black">
+              <div class="grid grid-cols-2 mb-5">
+                <label for="name">Сумма</label>
+                <input
+                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  v-model="rowData.sum" type="text" />
+              </div>
+            </div>
+
+            <div class="flex items-center justify-center gap-3 mt-10">
+              <UIMainButton @click="createOnlineRow">Создать </UIMainButton>
+              <UIErrorButton @click="closeModalOnline">Отменить </UIErrorButton>
             </div>
           </UIModal>
         </div>
@@ -702,31 +697,25 @@ async function updateRow() {
               </div>
             </div>
 
-            <div class="">
-              <!-- <div class="text-center text-2xl mt-10" v-if="selectedTypeOfTransaction !== 'Заказано'">
-                <h1>Баланс "Наш Выкуп"</h1>
-                <h1 class="font-bold text-secondary-color text-4xl mt-3">
-                  {{ formatNumber(Math.ceil(sum1)) }} ₽
-                </h1>
-              </div> -->
+            <div>
               <div class="text-center text-2xl mt-10">
                 <h1>Баланс</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(allSum)) }} ₽
                 </h1>
               </div>
-              <!-- <div class="text-center text-2xl mt-10" v-if="selectedTypeOfTransaction !== 'Заказано'">
-                <h1>Баланс "Выкуп Клиента"</h1>
-                <h1 class="font-bold text-secondary-color text-4xl mt-3">
-                  {{ formatNumber(Math.ceil(sum2)) }} ₽
-                </h1>
-              </div> -->
             </div>
           </div>
 
           <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" class="mt-24" @click="openModal">
             Заявка на вывод средств</UIMainButton>
           <BalanceTable @update-delivery-row="updateDeliveryRow" :rows="rows" :user="user" @open-modal="openModal" />
+
+          <div v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+            <UIMainButton class="mt-24" @click="openModalOnline">
+              Заявка на обнуление баланса онлайн</UIMainButton>
+            <BalanceTableOnline :rows="rowsOnline" />
+          </div>
 
           <UIModal v-show="isOpen" @close-modal="closeModal">
             <template v-slot:header>
@@ -761,6 +750,25 @@ async function updateRow() {
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
               <UIMainButton @click="createRow">Создать </UIMainButton>
               <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+            </div>
+          </UIModal>
+
+          <UIModal v-show="isOpenModalOnline" @close-modal="closeModalOnline">
+            <template v-slot:header>
+              <div class="custom-header">Создание новой заявки</div>
+            </template>
+            <div class="text-black">
+              <div class="grid grid-cols-2 mb-5">
+                <label for="name">Сумма</label>
+                <input
+                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  v-model="rowData.sum" type="text" />
+              </div>
+            </div>
+
+            <div class="flex items-center justify-center gap-3 mt-10">
+              <UIMainButton @click="createOnlineRow">Создать </UIMainButton>
+              <UIErrorButton @click="closeModalOnline">Отменить </UIErrorButton>
             </div>
           </UIModal>
         </div>

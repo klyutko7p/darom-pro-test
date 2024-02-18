@@ -2,7 +2,7 @@
 import type { PropType } from "vue";
 
 const router = useRouter();
-
+const storeRansom = useRansomStore()
 
 const props = defineProps({
   user: { type: Object as PropType<User>, required: true },
@@ -54,9 +54,11 @@ function updateRowsByFromName() {
 
 let searchQuery = ref('')
 
-onMounted(() => {
+onMounted(async () => {
   updateCurrentPageData();
   updateRowsByFromName();
+
+  await storeRansom.getSumOfRejection()
 })
 
 function formatPhoneNumber(phoneNumber: string) {

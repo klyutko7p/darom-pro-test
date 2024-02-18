@@ -7,6 +7,7 @@ interface IRequestBody {
     flag: string;
     flagRansom: string;
     username: string;
+    sumOfReject: number;
 }
 
 function getAdditionally(status: string) {
@@ -26,14 +27,15 @@ function getPaid(status: string) {
         return 'Оплачено онлайн'
     } else if (status === 'paid2') {
         return 'Оплачено наличными'
-    } 
+    }
 }
 
-function getAmountFromClient(status: string) {
+
+function getAmountFromClient(status: string, sumOfRejectValue: any) {
     if (status === 'additionally') {
         return
     } else if (status === 'additionally1') {
-        return 200
+        return sumOfRejectValue.value
     } else if (status === 'additionally2') {
         return 0
     } else if (status === 'additionally3') {
@@ -41,11 +43,11 @@ function getAmountFromClient(status: string) {
     }
 }
 
-function getProfit(status: string) {
+function getProfit(status: string, sumOfRejectValue: any) {
     if (status === 'additionally') {
         return
     } else if (status === 'additionally1') {
-        return 200
+        return sumOfRejectValue.value
     } else if (status === 'additionally2') {
         return 0
     } else if (status === 'additionally3') {
@@ -55,8 +57,9 @@ function getProfit(status: string) {
 
 
 export default defineEventHandler(async (event) => {
+
     try {
-        const { idArray, flag, flagRansom, username } = await readBody<IRequestBody>(event);
+        const { idArray, flag, flagRansom, username, sumOfReject } = await readBody<IRequestBody>(event);
 
         let updateField;
 
@@ -118,8 +121,8 @@ export default defineEventHandler(async (event) => {
                 data: {
                     additionally: getAdditionally(flag),
                     issued: new Date(),
-                    amountFromClient1: getAmountFromClient(flag),
-                    profit1: getProfit(flag),
+                    amountFromClient1: getAmountFromClient(flag, sumOfReject),
+                    profit1: getProfit(flag, sumOfReject),
                     updatedUser: username,
                 },
             });
@@ -145,8 +148,8 @@ export default defineEventHandler(async (event) => {
                 data: {
                     additionally: getAdditionally(flag),
                     issued: new Date(),
-                    amountFromClient2: getAmountFromClient(flag),
-                    profit2: getProfit(flag),
+                    amountFromClient2: getAmountFromClient(flag, sumOfReject),
+                    profit2: getProfit(flag, sumOfReject),
                     updatedUser: username,
                 },
             });

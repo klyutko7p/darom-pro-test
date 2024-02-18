@@ -2,6 +2,7 @@
 import Cookies from "js-cookie";
 const storeUsers = useUsersStore();
 const storePVZ = usePVZStore();
+const storeRansom = useRansomStore()
 const storeSC = useSortingCentersStore();
 const router = useRouter();
 
@@ -97,6 +98,13 @@ async function updateUser() {
   isLoading.value = false;
 }
 
+async function updateSum(sum: any) {
+  isLoading.value = true;
+  await storeRansom.updateSumOfRejection(sum.value);
+  sumOfRejection.value = await storeRansom.getSumOfRejection();
+  isLoading.value = false;
+}
+
 async function deleteUser(usernameData: string) {
   isLoading.value = true;
   let answer = confirm("Вы точно хотите удалить данного пользователя?");
@@ -109,6 +117,7 @@ let user = ref({} as User);
 let users = ref<Array<User>>();
 let pvz = ref<Array<PVZ>>();
 let sortingCenters = ref<Array<SortingCenter>>();
+let sumOfRejection = ref<any>();
 
 const token = Cookies.get("token");
 let isLoading = ref(false);
@@ -119,6 +128,7 @@ onBeforeMount(async () => {
   users.value = await storeUsers.getUsers();
   pvz.value = await storePVZ.getPVZ();
   sortingCenters.value = await storeSC.getSortingCenters();
+  sumOfRejection.value = await storeRansom.getSumOfRejection();
   isLoading.value = false;
 });
 
@@ -132,7 +142,6 @@ definePageMeta({
   layout: false,
 });
 
-const selectedPVZs = ref<string[]>([]);
 </script>
 
 <template>
@@ -145,7 +154,7 @@ const selectedPVZs = ref<string[]>([]);
       <div v-if="!isLoading">
         <AdminUsersTable :fields="fields" :users="users" @delete-user="deleteUser" @open-modal="openModal" />
 
-        <AdminUsersCreate @create-user="createUser" />
+        <AdminUsersCreate :sum="sumOfRejection" @update-sum="updateSum" @create-user="createUser" />
 
         <UIModal v-show="isOpen" @close-modal="closeModal">
           <template v-slot:header>
