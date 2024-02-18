@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-overlay" @click="$emit('close-modal')">
+  <div class="modal-overlay">
    
     <div class="modal text-black" @click.stop>
       <div class="mb-10 border-b-2 border-black py-3">
