@@ -153,7 +153,6 @@ function handleFilteredRows(filteredRowsData: IClientRansom[]) {
             month: "2-digit",
             year: "2-digit",
           }) === today || row.issued === null)
-          && row.deliveredPVZ !== null
       );
     }
   }

@@ -1,20 +1,19 @@
 <template>
   <div class="modal-overlay">
-   
+
     <div class="modal text-black" @click.stop>
+      <div class="text-secondary-color flex justify-end">
+        <Icon  @click="$emit('close-modal')" name="material-symbols:close-rounded" size="32" class="cursor-pointer hover:opacity-50 duration-200" />
+      </div>
       <div class="mb-10 border-b-2 border-black py-3">
         <slot name="header"></slot>
       </div>
       <slot></slot>
     </div>
-    <div class="close hidden" @click="$emit('close-modal')">
-      <Icon name="material-symbols:close-rounded" />
-    </div>
   </div>
 </template>
 
 <style scoped>
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -35,10 +34,6 @@
   padding: 20px 20px;
   border-radius: 20px;
   border: 4px solid orange;
-}
-.close {
-  margin: 10% 0 0 16px;
-  cursor: pointer;
 }
 
 .close-img {

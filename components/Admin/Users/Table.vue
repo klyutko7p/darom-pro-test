@@ -20,7 +20,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="relative overflow-x-auto mt-5">
+  <div class="relative mt-5">
     <table class="w-full text-sm text-left border-x-2 border-gray-50 rtl:text-right text-gray-500">
       <thead class="text-xs text-gray-700 uppercase text-center bg-gray-50">
         <tr>

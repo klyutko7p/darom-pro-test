@@ -160,8 +160,7 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
             month: "2-digit",
             year: "2-digit",
           }) === today ||
-            row.issued === null) &&
-          row.deliveredPVZ !== null
+            row.issued === null) 
       );
     }
   }

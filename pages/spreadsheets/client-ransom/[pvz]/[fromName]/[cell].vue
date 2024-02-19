@@ -119,18 +119,18 @@ async function deleteIssuedRowsTimer() {
 }
 
 function timeUntilNext2359() {
-  const now = new Date();
-  const tomorrow2359 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 0, 0);
-  return tomorrow2359.getTime() - now.getTime();
+    const now = new Date();
+    const tomorrow2359 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 0, 0);
+    return tomorrow2359.getTime() - now.getTime();
 }
 
 function scheduleDeleteIssuedRows() {
-  const timeUntilNext2359Data = timeUntilNext2359();
+    const timeUntilNext2359Data = timeUntilNext2359();
 
-  setTimeout(async () => {
-    await deleteIssuedRowsTimer();
-    scheduleDeleteIssuedRows();
-  }, timeUntilNext2359Data);
+    setTimeout(async () => {
+        await deleteIssuedRowsTimer();
+        scheduleDeleteIssuedRows();
+    }, timeUntilNext2359Data);
 }
 
 scheduleDeleteIssuedRows();
@@ -173,8 +173,7 @@ function handleFilteredRows(filteredRowsData: IClientRansom[]) {
                         month: "2-digit",
                         year: "2-digit",
                     }) === today ||
-                        row.issued === null) &&
-                    row.deliveredPVZ !== null
+                        row.issued === null)
             );
         }
     }
