@@ -572,7 +572,7 @@ async function updateRow() {
 
           <div v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
             <UIMainButton class="mt-24" @click="openModalOnline">
-              Заявка на обнуление баланса онлайн</UIMainButton>
+              Заявка на обнуление баланса безнал</UIMainButton>
             <BalanceTableOnline :rows="rowsOnline" />
           </div>
 
@@ -713,7 +713,7 @@ async function updateRow() {
 
           <div v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
             <UIMainButton class="mt-24" @click="openModalOnline">
-              Заявка на обнуление баланса онлайн</UIMainButton>
+              Заявка на обнуление баланса безнал</UIMainButton>
             <BalanceTableOnline :rows="rowsOnline" />
           </div>
 

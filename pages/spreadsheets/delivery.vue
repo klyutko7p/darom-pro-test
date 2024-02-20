@@ -106,13 +106,10 @@ async function createCopyRow(id: number) {
   isLoading.value = false;
 }
 
-async function deleteIssuedRows() {
-  isLoading.value = true;
-  let answer = confirm("Вы точно хотите удалить оплаченные товары?");
-  if (answer) await storeRansom.deleteIssuedRows('Delivery');
-  filteredRows.value = await storeRansom.getRansomRows('Delivery');
-  rows.value = await storeRansom.getRansomRows('Delivery');
-  isLoading.value = false;
+const filteredRows = ref<Array<IDelivery>>();
+
+function handleFilteredRows(filteredRowsData: IDelivery[]) {
+  filteredRows.value = filteredRowsData;
 }
 
 async function deleteIssuedRowsTimer() {
@@ -123,42 +120,15 @@ async function deleteIssuedRowsTimer() {
   isLoading.value = false;
 }
 
-function timeUntilNext2359() {
-  const now = new Date();
-  const tomorrow2359 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 0, 0);
-  return tomorrow2359.getTime() - now.getTime();
-}
-
-function scheduleDeleteIssuedRows() {
-  const timeUntilNext2359Data = timeUntilNext2359();
-
-  setTimeout(async () => {
-    await deleteIssuedRowsTimer();
-    scheduleDeleteIssuedRows();
-  }, timeUntilNext2359Data);
-}
-
-scheduleDeleteIssuedRows();
-
-
-
-const filteredRows = ref<Array<IDelivery>>();
-
-function handleFilteredRows(filteredRowsData: IDelivery[]) {
-  filteredRows.value = filteredRowsData;
-}
-
 onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rows.value = await storeRansom.getRansomRows('Delivery');
   pvz.value = await storePVZ.getPVZ();
   sortingCenters.value = await storeSortingCenters.getSortingCenters();
-
   if (rows.value) {
     handleFilteredRows(rows.value)
   }
-
   isLoading.value = false;
 
   if (!token || user.value.dataDelivery === "NONE") {
@@ -294,7 +264,8 @@ function getFromNameFromName() {
                   v-model="rowData.purchaseOfGoods2" type="text" />
               </div>
 
-              <div class="grid grid-cols-2 mb-5" v-if="(user.percentClient3 === 'READ' || user.percentClient3 === 'WRITE') && !rowData.id">
+              <div class="grid grid-cols-2 mb-5"
+                v-if="(user.percentClient3 === 'READ' || user.percentClient3 === 'WRITE') && !rowData.id">
                 <label for="percentClient1">Процент с клиента</label>
                 <input :disabled="user.percentClient3 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
