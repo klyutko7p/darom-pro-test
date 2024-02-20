@@ -78,22 +78,30 @@ const showButtonPVZ: Ref<boolean> = ref(true);
 const showButtonSC: Ref<boolean> = ref(true);
 
 const isChecked = (rowId: number): boolean => {
-  return checkedRows.value.includes(rowId);
+    return checkedRows.value.includes(rowId);
 };
 
+interface RowData {
+    rowId: number;
+    amount: number;
+    issued: Date | null | string | number;
+    deliveredPVZ: Date | null | string | number;
+    deliveredSC: Date | null | string | number;
+    orderPVZ: Date | null | string | number;
+}
 
-const handleCheckboxChange = (row: IClientRansom): void => {
-  if (isChecked(row.id)) {
-    checkedRows.value = checkedRows.value.filter((id) => id !== row.id);
-    allSum.value = allSum.value.filter((obj) => obj.rowId !== row.id);
-  } else {
-    checkedRows.value.push(row.id);
-    allSum.value.push({ rowId: row.id, amount: Math.ceil(row.amountFromClient2 / 10) * 10, issued: row.issued, deliveredPVZ: row.deliveredPVZ, orderPVZ: row.orderPVZ });
-  }
-  getAllSum.value = allSum.value.filter((obj) => obj.issued === null).reduce((sum, obj) => sum + obj.amount, 0);
-  showButton.value = allSum.value.every(obj => obj.issued === null);
-  showButtonPVZ.value = allSum.value.every(obj => obj.deliveredPVZ === null);
-  showButtonSC.value = allSum.value.every(obj => obj.orderPVZ === null);
+const handleCheckboxChange = (row: IOurRansom): void => {
+    if (isChecked(row.id)) {
+        checkedRows.value = checkedRows.value.filter((id) => id !== row.id);
+        allSum.value = allSum.value.filter((obj) => obj.rowId !== row.id);
+    } else {
+        checkedRows.value.push(row.id);
+        allSum.value.push({ rowId: row.id, amount: Math.ceil(row.amountFromClient1 / 10) * 10, issued: row.issued, deliveredPVZ: row.deliveredPVZ, orderPVZ: row.orderPVZ, deliveredSC: row.deliveredSC, });
+    }
+    getAllSum.value = allSum.value.filter((obj) => obj.issued === null).reduce((sum, obj) => sum + obj.amount, 0);
+    showButton.value = allSum.value.every(obj => obj.issued === null);
+    showButtonPVZ.value = allSum.value.every(obj => obj.deliveredPVZ === null);
+    showButtonSC.value = allSum.value.every(obj => obj.deliveredSC === null);
 };
 
 
@@ -228,6 +236,9 @@ let showOthersVariants = ref(false)
 
   <div class="fixed z-40 flex flex-col gap-3 top-44 left-1/2 translate-x-[-50%] translate-y-[-50%]"
     v-if="user.dataClientRansom === 'WRITE' && checkedRows.length > 0 && user.role === 'PVZ'">
+    <UIActionButton v-if="user.deliveredPVZ2 === 'WRITE' && showButtonPVZ" @click="updateDeliveryRows('PVZ')">Доставить
+      на пвз
+  </UIActionButton>
     <UIActionButton v-if="user.issued2 === 'WRITE' && showButton" @click="showOthersVariants = !showOthersVariants">Выдать
       клиенту
     </UIActionButton>

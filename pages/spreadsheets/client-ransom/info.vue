@@ -18,7 +18,7 @@ onBeforeMount(async () => {
     router.push('/spreadsheets/client-ransom')
   }
 
-  
+
   isLoading.value = false;
 });
 
@@ -46,13 +46,13 @@ function getCountOfItemsByPVZClientRansom(PVZ: string) {
           month: "2-digit",
           year: "2-digit",
         }) === today ||
-          row.issued === null) 
+          row.issued === null)
     ).length;
   }
 }
 
 function getCountOfItemsByPVZClientRansomIssued(PVZ: string) {
-  return rowsClientRansom.value?.filter((row) => row.dispatchPVZ === PVZ && row.deliveredSC !== null && row.issued === null && row.deliveredPVZ !== null).length;
+  return rowsClientRansom.value?.filter((row) => row.dispatchPVZ === PVZ && row.deliveredSC !== null && row.issued === null).length;
 }
 
 definePageMeta({
@@ -94,7 +94,7 @@ definePageMeta({
         </div>
       </NuxtLayout>
     </div>
-  
+
     <div v-else>
       <NuxtLayout name="user">
         <div class="py-5" v-if="!isLoading">
@@ -128,9 +128,8 @@ definePageMeta({
       </NuxtLayout>
     </div>
   </div>
-  
+
   <div v-else>
     <UISpinner />
   </div>
-
 </template>

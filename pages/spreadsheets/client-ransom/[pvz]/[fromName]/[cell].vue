@@ -64,10 +64,16 @@ async function updateDeliveryRows(obj: any) {
     let answer = confirm(
         `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
     );
-    if (answer)
-        await storeRansom.updateDeliveryRowsStatus(obj.idArray, obj.flag, "ClientRansom", user.value.username);
-    filteredRows.value = await storeRansom.getRansomRowsByFromName(fromNameString, cellString, "ClientRansom");
-    rows.value = await storeRansom.getRansomRowsByFromName(fromNameString, cellString, "ClientRansom");
+    if (answer) await storeRansom.updateDeliveryRowsStatus(obj.idArray, obj.flag, "ClientRansom", user.value.username);
+    originallyRows.value = await storeRansom.getRansomRows("OurRansom");
+
+    if (user.value.role !== 'PVZ') {
+        rows.value = originallyRows.value?.filter((row) => row.fromName === fromNameString && row.cell === cellString)
+        filteredRows.value = rows.value
+    } else {
+        rows.value = originallyRows.value?.filter((row) => row.fromName === fromNameString && row.cell === cellString && row.deliveredSC !== null && row.issued === null)
+        filteredRows.value = rows.value
+    }
 }
 
 async function deleteRow(id: number) {
