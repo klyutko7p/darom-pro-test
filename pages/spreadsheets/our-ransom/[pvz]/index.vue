@@ -256,16 +256,26 @@ async function getCellFromName() {
   }
 
   if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
-    let row = originallyRows.value?.filter((row) => row.fromName === rowData.value.fromName && row.dispatchPVZ === rowData.value.dispatchPVZ);
-    if (row) {
+    let row = originallyRows.value?.filter((row) => row.fromName === rowData.value.fromName && row.dispatchPVZ === rowData.value.dispatchPVZ && (row.deliveredPVZ === null || row.deliveredSC === null));
+    if (row && row.length > 0) {
       rowData.value.cell = row[0].cell;
+    } else {
+      const unoccupiedCellsAndPVZ = await getUnoccupiedCellsAndPVZ();
+      const freeCell = unoccupiedCellsAndPVZ.find(cell => cell.dispatchPVZ === rowData.value.dispatchPVZ);
+      if (freeCell) {
+        rowData.value.cell = freeCell.cell;
+      } else {
+        toast.warning("Нет свободных ячеек для выбранного ПВЗ");
+      }
     }
   }
 }
 
 async function changePVZ() {
+  await sleep(1500)
+
   if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
-    let row = originallyRows.value?.filter((row) => row.fromName === rowData.value.fromName && row.dispatchPVZ === rowData.value.dispatchPVZ);
+    let row = originallyRows.value?.filter((row) => row.fromName === rowData.value.fromName && row.dispatchPVZ === rowData.value.dispatchPVZ && (row.deliveredPVZ === null || row.deliveredSC === null));
     if (row && row.length > 0) {
       rowData.value.cell = row[0].cell;
     } else {
