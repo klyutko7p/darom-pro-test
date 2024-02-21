@@ -209,8 +209,12 @@ let isAutoCell = ref(true);
 let isAutoFromName = ref(true);
 let isAutoPVZ = ref(true);
 
-function getCellFromName() {
+async function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
+async function getCellFromName() {
+  await sleep(1500);
   if (rowData.value.fromName.trim().length === 4) {
     let phoneNum = rowData.value.fromName.trim().toString().slice(-4);
     let row = rows.value?.filter((row) => row.fromName ? row.fromName.slice(-4) === phoneNum : '');
@@ -243,13 +247,14 @@ function getCellFromName() {
   }
 }
 
-function changePVZ() {
+async function changePVZ() {
+  await sleep(1500);
   if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
     let row = rows.value?.filter((row) => row.fromName === rowData.value.fromName && row.dispatchPVZ === rowData.value.dispatchPVZ);
     if (row && row.length > 0) {
       rowData.value.cell = row[0].cell;
     } else {
-      const unoccupiedCellsAndPVZ = getUnoccupiedCellsAndPVZ();
+      const unoccupiedCellsAndPVZ = await getUnoccupiedCellsAndPVZ();
       const freeCell = unoccupiedCellsAndPVZ.find(cell => cell.dispatchPVZ === rowData.value.dispatchPVZ);
       if (freeCell) {
         rowData.value.cell = freeCell.cell;
@@ -261,7 +266,8 @@ function changePVZ() {
 }
 
 
-function getUnoccupiedCellsAndPVZ() {
+async function getUnoccupiedCellsAndPVZ() {
+  await sleep(1500);
   const unoccupiedCells = new Map();
 
   rows.value?.forEach(row => {
@@ -285,7 +291,8 @@ function getUnoccupiedCellsAndPVZ() {
   return result;
 }
 
-function getFromNameFromCell() {
+async function getFromNameFromCell() {
+  await sleep(1500);
   if (rowData.value.cell.trim() && isAutoCell.value === true) {
     let rowFromName = rows.value?.filter((row) => row.cell === rowData.value.cell);
     if (rowFromName) {
