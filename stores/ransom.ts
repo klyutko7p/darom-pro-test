@@ -259,7 +259,7 @@ export const useRansomStore = defineStore("ransom", () => {
             if (flag === 'OurRansom') {
                 if (row.percentClient === undefined) row.percentClient = 10;
                 if (row.priceSite === undefined || row.priceSite === 0) row.priceSite = 0;
-                if (row.deliveredKGT === undefined || row.deliveredKGT === 0) row.deliveredKGT = 0;
+                if (row.deliveredKGT === undefined || row.deliveredKGT === 0 || row.deliveredKGT === '') row.deliveredKGT = 0;
                 if (row.productName === undefined || row.productName === '') row.productName = '';
                 if (row.prepayment === undefined) row.prepayment = 0;
 
@@ -290,7 +290,7 @@ export const useRansomStore = defineStore("ransom", () => {
             } else if (flag === 'ClientRansom') {
                 if (row.percentClient === undefined) row.percentClient = 10;
                 if (row.priceProgram === undefined || row.priceProgram === 0) row.priceProgram = 0;
-                if (row.deliveredKGT === undefined || row.deliveredKGT === 0) row.deliveredKGT = 0;
+                if (row.deliveredKGT === undefined || row.deliveredKGT === 0 || row.deliveredKGT === '') row.deliveredKGT = 0;
                 if (row.productName === undefined || row.productName === '') row.productName = '';
                 if (row.prepayment === undefined) row.prepayment = 0;
 
@@ -347,6 +347,7 @@ export const useRansomStore = defineStore("ransom", () => {
             if (data.data.value === undefined) {
                 toast.success("Запись успешно обновлена!")
             } else {
+                console.log(data.data.value)
                 toast.error("Произошла ошибка при обновлении записи!")
             }
 
