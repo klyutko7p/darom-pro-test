@@ -112,14 +112,6 @@ async function createCopyRow(id: number) {
   rows.value = await storeRansom.getRansomRowsByPVZ(pvzString, "OurRansom");
 }
 
-async function deleteIssuedRowsTimer() {
-  isLoading.value = true;
-  await storeRansom.deleteIssuedRows("OurRansom");
-  filteredRows.value = await storeRansom.getRansomRowsByPVZ(pvzString, "OurRansom");
-  rows.value = await storeRansom.getRansomRowsByPVZ(pvzString, "OurRansom");
-  isLoading.value = false;
-}
-
 const filteredRows = ref<Array<IOurRansom>>();
 function handleFilteredRows(filteredRowsData: IOurRansom[]) {
   if (user.value.visiblePVZ === "ВСЕ" && user.value.visibleSC === "ВСЕ") {
@@ -164,22 +156,22 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
   }
 }
 
-function timeUntilNext2359() {
-  const now = new Date();
-  const tomorrow2359 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 0, 0);
-  return tomorrow2359.getTime() - now.getTime();
+async function deleteIssuedRows() {
+  isLoading.value = true;
+  await storeRansom.deleteIssuedRows("OurRansom");
+  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  rows.value = await storeRansom.getRansomRows("OurRansom");
+  isLoading.value = false;
 }
 
-function scheduleDeleteIssuedRows() {
-  const timeUntilNext2359Data = timeUntilNext2359();
-
-  setTimeout(async () => {
-    await deleteIssuedRowsTimer();
-    scheduleDeleteIssuedRows();
-  }, timeUntilNext2359Data);
+function deleteIssuedRowsTimer() {
+  const currentTime = new Date();
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
+  if (currentHour === 22 && currentMinute >= 0 || currentHour === 23 && currentMinute <= 59) {
+    deleteIssuedRows();
+  }
 }
-
-scheduleDeleteIssuedRows();
 
 let originallyRows = ref<Array<IOurRansom>>()
 
@@ -192,6 +184,8 @@ onMounted(async () => {
   pvz.value = await storePVZ.getPVZ();
   sortingCenters.value = await storeSortingCenters.getSortingCenters();
   orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
+
+  deleteIssuedRowsTimer()
 
   if (rows.value) {
     handleFilteredRows(rows.value);
@@ -229,8 +223,6 @@ async function sleep(ms: number) {
 
 async function getCellFromName() {
 
-  await sleep(1500)
-
   if (rowData.value.fromName.trim().length === 4) {
     let phoneNum = rowData.value.fromName.trim().toString().slice(-4);
     let row = originallyRows.value?.filter((row) => row.fromName ? row.fromName.slice(-4) === phoneNum : '');
@@ -259,21 +251,11 @@ async function getCellFromName() {
     let row = originallyRows.value?.filter((row) => row.fromName === rowData.value.fromName && row.dispatchPVZ === rowData.value.dispatchPVZ && (row.deliveredPVZ === null || row.deliveredSC === null));
     if (row && row.length > 0) {
       rowData.value.cell = row[0].cell;
-    } else {
-      const unoccupiedCellsAndPVZ = await getUnoccupiedCellsAndPVZ();
-      const freeCell = unoccupiedCellsAndPVZ.find(cell => cell.dispatchPVZ === rowData.value.dispatchPVZ);
-      if (freeCell) {
-        rowData.value.cell = freeCell.cell;
-      } else {
-        toast.warning("Нет свободных ячеек для выбранного ПВЗ");
-      }
     }
   }
 }
 
 async function changePVZ() {
-  await sleep(1500)
-
   if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
     let row = originallyRows.value?.filter((row) => row.fromName === rowData.value.fromName && row.dispatchPVZ === rowData.value.dispatchPVZ && (row.deliveredPVZ === null || row.deliveredSC === null));
     if (row && row.length > 0) {
@@ -291,8 +273,6 @@ async function changePVZ() {
 }
 
 async function getUnoccupiedCellsAndPVZ() {
-  await sleep(1500)
-  
   const unoccupiedCells = new Map();
 
   originallyRows.value?.forEach(row => {
@@ -317,7 +297,7 @@ async function getUnoccupiedCellsAndPVZ() {
 }
 
 async function getFromNameFromCell() {
-  await sleep(1500)
+  await sleep(3000);
   if (rowData.value.cell.trim() && isAutoCell.value === true) {
     let rowFromName = originallyRows.value?.filter((row) => row.cell === rowData.value.cell);
     if (rowFromName) {

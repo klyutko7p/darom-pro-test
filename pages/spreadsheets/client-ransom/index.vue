@@ -98,7 +98,7 @@ async function createCopyRow(id: number) {
   rows.value = await storeRansom.getRansomRows('ClientRansom');
 }
 
-async function deleteIssuedRowsTimer() {
+async function deleteIssuedRows() {
   isLoading.value = true;
   await storeRansom.deleteIssuedRows("ClientRansom");
   filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
@@ -106,22 +106,14 @@ async function deleteIssuedRowsTimer() {
   isLoading.value = false;
 }
 
-function timeUntilNext2359() {
-  const now = new Date();
-  const tomorrow2359 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 0, 0);
-  return tomorrow2359.getTime() - now.getTime();
+function deleteIssuedRowsTimer() {
+  const currentTime = new Date();
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
+  if (currentHour === 22 && currentMinute >= 0 || currentHour === 23 && currentMinute <= 59) {
+    deleteIssuedRows();
+  }
 }
-
-function scheduleDeleteIssuedRows() {
-  const timeUntilNext2359Data = timeUntilNext2359();
-
-  setTimeout(async () => {
-    await deleteIssuedRowsTimer();
-    scheduleDeleteIssuedRows();
-  }, timeUntilNext2359Data);
-}
-
-scheduleDeleteIssuedRows();
 
 
 const filteredRows = ref<Array<IClientRansom>>();
@@ -166,6 +158,8 @@ onMounted(async () => {
   pvz.value = await storePVZ.getPVZ();
   sortingCenters.value = await storeSortingCenters.getSortingCenters();
   marketplaces.value = await storeMarketplaces.getMarketplaces();
+
+  deleteIssuedRowsTimer()
 
   if (rows.value) {
     handleFilteredRows(rows.value)

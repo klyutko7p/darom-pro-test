@@ -112,13 +112,23 @@ function handleFilteredRows(filteredRowsData: IDelivery[]) {
   filteredRows.value = filteredRowsData;
 }
 
-async function deleteIssuedRowsTimer() {
+async function deleteIssuedRows() {
   isLoading.value = true;
   await storeRansom.deleteIssuedRows("Delivery");
   filteredRows.value = await storeRansom.getRansomRows("Delivery");
   rows.value = await storeRansom.getRansomRows("Delivery");
   isLoading.value = false;
 }
+
+function deleteIssuedRowsTimer() {
+  const currentTime = new Date();
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
+  if (currentHour === 22 && currentMinute >= 0 || currentHour === 23 && currentMinute <= 59) {
+    deleteIssuedRows();
+  }
+}
+
 
 onMounted(async () => {
   isLoading.value = true;
@@ -129,11 +139,17 @@ onMounted(async () => {
   if (rows.value) {
     handleFilteredRows(rows.value)
   }
+
+  deleteIssuedRowsTimer();
+
+
   isLoading.value = false;
 
   if (!token || user.value.dataDelivery === "NONE") {
     router.push("/auth/login");
   }
+
+
 });
 
 definePageMeta({

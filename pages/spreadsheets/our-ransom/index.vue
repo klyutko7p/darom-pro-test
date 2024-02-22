@@ -151,7 +151,7 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
   }
 }
 
-async function deleteIssuedRowsTimer() {
+async function deleteIssuedRows() {
   isLoading.value = true;
   await storeRansom.deleteIssuedRows("OurRansom");
   filteredRows.value = await storeRansom.getRansomRows("OurRansom");
@@ -159,22 +159,15 @@ async function deleteIssuedRowsTimer() {
   isLoading.value = false;
 }
 
-function timeUntilNext2359() {
-  const now = new Date();
-  const tomorrow2359 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 0, 0);
-  return tomorrow2359.getTime() - now.getTime();
+function deleteIssuedRowsTimer() {
+  const currentTime = new Date();
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
+  if (currentHour === 22 && currentMinute >= 0 || currentHour === 23 && currentMinute <= 59) {
+    deleteIssuedRows();
+  }
 }
 
-function scheduleDeleteIssuedRows() {
-  const timeUntilNext2359Data = timeUntilNext2359();
-
-  setTimeout(async () => {
-    await deleteIssuedRowsTimer();
-    scheduleDeleteIssuedRows();
-  }, timeUntilNext2359Data);
-}
-
-scheduleDeleteIssuedRows();
 
 onMounted(async () => {
   isLoading.value = true;
@@ -183,7 +176,9 @@ onMounted(async () => {
   pvz.value = await storePVZ.getPVZ();
   sortingCenters.value = await storeSortingCenters.getSortingCenters();
   orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
-
+  
+  deleteIssuedRowsTimer();
+  
   if (rows.value) {
     handleFilteredRows(rows.value);
   }
@@ -243,21 +238,11 @@ async function getCellFromName() {
     let row = rows.value?.filter((row) => row.fromName === rowData.value.fromName && row.dispatchPVZ === rowData.value.dispatchPVZ && (row.deliveredPVZ === null || row.deliveredSC === null));
     if (row && row.length > 0) {
       rowData.value.cell = row[0].cell;
-    } else {
-      const unoccupiedCellsAndPVZ = await getUnoccupiedCellsAndPVZ();
-      const freeCell = unoccupiedCellsAndPVZ.find(cell => cell.dispatchPVZ === rowData.value.dispatchPVZ);
-      if (freeCell) {
-        rowData.value.cell = freeCell.cell;
-      } else {
-        toast.warning("Нет свободных ячеек для выбранного ПВЗ");
-      }
     }
   }
 }
 
 async function changePVZ() {
-  await sleep(1500);
-
   if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
     let row = rows.value?.filter((row) => row.fromName === rowData.value.fromName && row.dispatchPVZ === rowData.value.dispatchPVZ && (row.deliveredPVZ === null || row.deliveredSC === null));
     if (row && row.length > 0) {
@@ -276,7 +261,6 @@ async function changePVZ() {
 
 
 async function getUnoccupiedCellsAndPVZ() {
-  await sleep(1500);
   const unoccupiedCells = new Map();
 
   rows.value?.forEach(row => {
@@ -301,7 +285,7 @@ async function getUnoccupiedCellsAndPVZ() {
 }
 
 async function getFromNameFromCell() {
-  await sleep(1500);
+  await sleep(3000);
   if (rowData.value.cell.trim() && isAutoCell.value === true) {
     let rowFromName = rows.value?.filter((row) => row.cell === rowData.value.cell);
     if (rowFromName) {
