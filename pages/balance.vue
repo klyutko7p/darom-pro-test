@@ -570,8 +570,8 @@ async function updateRow() {
             Заявка на вывод средств</UIMainButton>
           <BalanceTable @update-delivery-row="updateDeliveryRow" :rows="rows" :user="user" @open-modal="openModal" />
 
-          <div v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
-            <UIMainButton class="mt-24" @click="openModalOnline">
+          <div class="mt-24" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+            <UIMainButton @click="openModalOnline">
               Заявка на обнуление баланса безнал</UIMainButton>
             <BalanceTableOnline :rows="rowsOnline" />
           </div>
