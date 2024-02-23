@@ -54,7 +54,6 @@ async function updateDeliveryRow(obj: any) {
   let answer = confirm("Вы точно хотите изменить статус доставки?");
   if (answer) await storeRansom.updateDeliveryStatus(obj.row, obj.flag, "OurRansom", user.value.username);
   filteredRows.value = await storeRansom.getRansomRows("OurRansom");
-  rows.value = await storeRansom.getRansomRows("OurRansom");
 }
 
 async function updateDeliveryRows(obj: any) {
@@ -63,14 +62,12 @@ async function updateDeliveryRows(obj: any) {
   );
   if (answer) await storeRansom.updateDeliveryRowsStatus(obj.idArray, obj.flag, "OurRansom", user.value.username);
   filteredRows.value = await storeRansom.getRansomRows("OurRansom");
-  rows.value = await storeRansom.getRansomRows("OurRansom");
 }
 
 async function deleteRow(id: number) {
   let answer = confirm("Вы точно хотите удалить данную строку?");
   if (answer) await storeRansom.deleteRansomRow(id, "OurRansom");
   filteredRows.value = await storeRansom.getRansomRows("OurRansom");
-  rows.value = await storeRansom.getRansomRows("OurRansom");
 }
 
 async function deleteSelectedRows(idArray: number[]) {
@@ -79,27 +76,23 @@ async function deleteSelectedRows(idArray: number[]) {
   );
   if (answer) await storeRansom.deleteRansomSelectedRows(idArray, "OurRansom");
   filteredRows.value = await storeRansom.getRansomRows("OurRansom");
-  rows.value = await storeRansom.getRansomRows("OurRansom");
 }
 
 async function updateRow() {
   await storeRansom.updateRansomRow(rowData.value, user.value.username, "OurRansom");
+  await closeModal();
   filteredRows.value = await storeRansom.getRansomRows("OurRansom");
-  rows.value = await storeRansom.getRansomRows("OurRansom");
-  closeModal();
 }
 
 async function createRow() {
   await storeRansom.createRansomRow(rowData.value, user.value.username, "OurRansom");
+  await closeModal();
   filteredRows.value = await storeRansom.getRansomRows("OurRansom");
-  rows.value = await storeRansom.getRansomRows("OurRansom");
-  closeModal();
 }
 
 async function createCopyRow(id: number) {
   await storeRansom.createCopyRow(id, "OurRansom");
   filteredRows.value = await storeRansom.getRansomRows("OurRansom");
-  rows.value = await storeRansom.getRansomRows("OurRansom");
 }
 
 const filteredRows = ref<Array<IOurRansom>>();
@@ -149,7 +142,6 @@ async function deleteIssuedRows() {
   isLoading.value = true;
   await storeRansom.deleteIssuedRows("OurRansom");
   filteredRows.value = await storeRansom.getRansomRows("OurRansom");
-  rows.value = await storeRansom.getRansomRows("OurRansom");
   isLoading.value = false;
 }
 
