@@ -75,7 +75,7 @@ onMounted(() => {
           </td>
           <td class="border-2 whitespace-nowrap">
             <Icon @click="updateDeliveryRow(row, 'received')"
-              v-if="!row.received && (user.role === 'ADMIN' || user.role === 'ADMINISTRATOR')"
+              v-if="!row.received && (user.role === 'ADMIN' || user.role === 'ADMINISTRATOR') && row.issued"
               class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
               name="mdi:checkbox-multiple-marked-circle" size="32" />
             <h1 class="font-bold text-green-500">

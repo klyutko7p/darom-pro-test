@@ -168,7 +168,6 @@ function deleteIssuedRowsTimer() {
   }
 }
 
-
 onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();

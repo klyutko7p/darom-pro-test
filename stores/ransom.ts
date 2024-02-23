@@ -254,6 +254,23 @@ export const useRansomStore = defineStore("ransom", () => {
         }
     }
 
+    async function getRansomRowsById(id: number, flag: string) {
+        try {
+            let { data }: any = await useFetch('/api/ransom/get-rows-by-id', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id: id, flag: flag }),
+            });
+            return data.value;
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
     async function updateRansomRow(row: IOurRansom | IClientRansom | IDelivery, username: string, flag: string) {
         try {
             if (flag === 'OurRansom') {
@@ -515,5 +532,5 @@ export const useRansomStore = defineStore("ransom", () => {
         return Array.from(uniqueNonEmptyValues);
     };
 
-    return { createRansomRow, getRansomRows, updateRansomRow, deleteRansomRow, updateDeliveryStatus, getUniqueNonEmptyValues, getRansomRow, deleteRansomSelectedRows, getRansomRowsByLink, updateDeliveryRowsStatus, createCopyRow, deleteIssuedRows, getOldRansomRow, getRansomRowsByPVZ, getRansomRowsByFromName, getSumOfRejection, updateSumOfRejection }
+    return { createRansomRow, getRansomRows, updateRansomRow, deleteRansomRow, updateDeliveryStatus, getUniqueNonEmptyValues, getRansomRow, deleteRansomSelectedRows, getRansomRowsByLink, updateDeliveryRowsStatus, createCopyRow, deleteIssuedRows, getOldRansomRow, getRansomRowsByPVZ, getRansomRowsByFromName, getSumOfRejection, updateSumOfRejection, getRansomRowsById }
 })
