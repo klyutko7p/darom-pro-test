@@ -12,22 +12,25 @@ export default defineEventHandler(async (event) => {
 
         if (flag === 'OurRansom') {
             const rows = await prisma.ourRansom.findMany({
+                where: {
+                    deleted: null,
+                },
                 orderBy: {
-                    created_at: 'desc',   
-                }
+                    created_at: 'desc',
+                },
             });
             return rows;
         } else if (flag === 'ClientRansom') {
             const rows = await prisma.clientRansom.findMany({
                 orderBy: {
-                    created_at: 'desc',   
+                    created_at: 'desc',
                 }
             });
             return rows;
         } else if (flag === 'Delivery') {
             const rows = await prisma.delivery.findMany({
                 orderBy: {
-                    created_at: 'desc',   
+                    created_at: 'desc',
                 }
             });
             return rows;
