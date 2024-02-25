@@ -2,6 +2,7 @@
 import type { PropType } from "vue";
 
 const router = useRouter();
+const route = useRoute();
 const storeRansom = useRansomStore()
 
 const props = defineProps({
@@ -15,7 +16,7 @@ const showDeletedRows = ref(false);
 
 const perPage = ref(100)
 const currentPage = ref(1)
-const totalRows = computed(() => Math.ceil(props.rows?.length || 0));
+const totalRows = computed(() => Math.ceil(props.rows?.filter((row) => row.deleted === null).length || 0));
 let returnRows = ref<Array<IOurRansom>>()
 
 function updateCurrentPageData() {

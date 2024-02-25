@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { read, utils, writeFile } from "xlsx";
 
+const router = useRouter()
+const route = useRoute()
+
 const storeUsers = useUsersStore();
 const storeRansom = useRansomStore()
 
@@ -50,7 +53,7 @@ const props = defineProps({
 
 async function exportToExcel() {
     perPage.value = await totalRows.value;
-    await updateCurrentPageData();
+    await updateCurrentPageDataDeleted();
 
     let table = await document.querySelector("#theTable");
 
@@ -103,7 +106,8 @@ const showDeletedRows = ref(false);
 const perPage = ref(100)
 const currentPage = ref(1)
 const totalPages = computed(() => Math.ceil((props.rows?.length || 0) / perPage.value));
-const totalRows = computed(() => Math.ceil(props.rows?.length || 0));
+const totalRows = computed(() => Math.ceil(props.rows?.filter((row) => row.deleted === null).length || 0));
+
 let returnRows = ref<Array<IOurRansom>>()
 
 function updateCurrentPageData() {
@@ -112,6 +116,17 @@ function updateCurrentPageData() {
 
     if (showDeletedRows.value) {
         returnRows.value = props.rows?.slice(startIndex, endIndex);
+    } else {
+        returnRows.value = props.rows?.filter((row) => !row.deleted).slice(startIndex, endIndex);
+    }
+}
+
+async function updateCurrentPageDataDeleted() {
+    const startIndex = (currentPage.value - 1) * perPage.value
+    const endIndex = startIndex + perPage.value
+
+    if (showDeletedRows.value) {
+        returnRows.value = await storeRansom.getRansomRowsWithDeleted("OurRansom");
     } else {
         returnRows.value = props.rows?.filter((row) => !row.deleted).slice(startIndex, endIndex);
     }
@@ -443,7 +458,8 @@ let showOthersVariants = ref(false)
 
                     <td class="px-1 py-4 border-2" v-if="(user.profit1 === 'READ' || user.profit1 === 'WRITE') &&
                         (row.additionally !== 'Отказ клиент' && row.additionally !== 'Отказ брак') && row.prepayment">
-                        {{ row.percentClient !== 0 ? (row.priceSite * row.percentClient / 100) + row.deliveredKGT :
+                        {{ row.percentClient !== 0 ? Math.ceil((row.priceSite * row.percentClient / 100) + row.deliveredKGT)
+                            :
                             row.deliveredKGT }}
                     </td>
 

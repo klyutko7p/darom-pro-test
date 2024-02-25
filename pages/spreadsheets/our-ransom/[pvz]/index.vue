@@ -41,7 +41,6 @@ function openModal(row: IOurRansom) {
     rowData.value.issued = rowData.value.issued
       ? storeUsers.getISODateTime(rowData.value.issued)
       : null;
-    console.log(rowData.value.deliveredSC);
   } else {
     rowData.value = {} as IOurRansom;
     rowData.value.fromName = "";
@@ -143,36 +142,12 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
   }
 }
 
-async function deleteIssuedRows() {
-  isLoading.value = true;
-  await storeRansom.deleteIssuedRows("OurRansom");
-  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
-  rows.value = await storeRansom.getRansomRows("OurRansom");
-  isLoading.value = false;
-}
-
-function deleteIssuedRowsTimer() {
-  const currentTime = new Date();
-  const currentHour = currentTime.getHours();
-  const currentMinute = currentTime.getMinutes();
-  if (currentHour === 22 && currentMinute >= 0 || currentHour === 23 && currentMinute <= 59) {
-    deleteIssuedRows();
-  }
-}
-
 let originallyRows = ref<Array<IOurRansom>>()
 
 onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  // rows.value = await storeRansom.getRansomRowsByPVZ(pvzString, "OurRansom");
-  originallyRows.value = await storeRansom.getRansomRows("OurRansom");
-  rows.value = originallyRows.value?.filter((row) => row.dispatchPVZ === pvzString)
-  pvz.value = await storePVZ.getPVZ();
-  sortingCenters.value = await storeSortingCenters.getSortingCenters();
-  orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
-
-  deleteIssuedRowsTimer()
+  rows.value = await storeRansom.getRansomRowsByPVZ(pvzString, "OurRansom")
 
   if (rows.value) {
     handleFilteredRows(rows.value);
@@ -181,9 +156,14 @@ onMounted(async () => {
   if (!user.value.PVZ.includes(pvzString)) {
     toast.error("У вас нет прав на просмотр этого ПВЗ!");
     router.push("/spreadsheets/our-ransom");
-  }
+  } 
 
   isLoading.value = false;
+
+  originallyRows.value = await storeRansom.getRansomRowsForModal("OurRansom");
+  pvz.value = await storePVZ.getPVZ();
+  sortingCenters.value = await storeSortingCenters.getSortingCenters();
+  orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
 });
 
 onBeforeMount(() => {
@@ -304,7 +284,7 @@ async function getFromNameFromCell() {
       <NuxtLayout name="admin">
         <div v-if="!isLoading" class="mt-3">
           <div>
-            <SpreadsheetsOurRansomFilters v-if="rows" @filtered-rows="handleFilteredRows" :rows="rows" :user="user" />
+            <!-- <SpreadsheetsOurRansomFilters v-if="rows" @filtered-rows="handleFilteredRows" :rows="rows" :user="user" /> -->
             <div class="mt-5 flex items-center gap-3" v-if="user.dataOurRansom === 'WRITE'">
               <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" @click="openModal">
                 Создать новую запись</UIMainButton>
@@ -503,8 +483,8 @@ async function getFromNameFromCell() {
       <NuxtLayout name="user">
         <div v-if="!isLoading" class="mt-3">
           <div>
-            <SpreadsheetsOurRansomFilters v-if="rows && user.role !== 'PVZ'" @filtered-rows="handleFilteredRows"
-              :rows="rows" :user="user" />
+            <!-- <SpreadsheetsOurRansomFilters v-if="rows && user.role !== 'PVZ'" @filtered-rows="handleFilteredRows"
+              :rows="rows" :user="user" /> -->
             <div class="mt-5 flex items-center gap-3" v-if="user.dataOurRansom === 'WRITE'">
               <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" @click="openModal">
                 Создать новую запись</UIMainButton>

@@ -25,7 +25,7 @@ onBeforeMount(async () => {
   user.value = await storeUsers.getUser();
   pvz.value = await storePVZ.getPVZ();
 
-  ourRansomRows.value = await storeRansom.getRansomRows("OurRansom");
+  ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
   clientRansomRows.value = await storeRansom.getRansomRows("ClientRansom");
   deliveryRansomRows.value = await storeRansom.getRansomRows("Delivery");
   rows.value = await storeBalance.getBalanceRows();
@@ -220,11 +220,9 @@ function getAllSum() {
           (row) =>
             row.issued === null &&
             row.deleted === null &&
-            (!startingDate.value ||
-              new Date(row.issued) >= new Date(startingDate.value)) &&
-            (!endDate.value || new Date(row.issued) <= new Date(endDate.value))
+            (!startingDate.value || new Date(row.created_at) >= new Date(startingDate.value)) &&
+            (!endDate.value || new Date(row.created_at) <= new Date(endDate.value))
         )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       allSum.value = sum1.value;
     } else {
@@ -235,10 +233,9 @@ function getAllSum() {
             row.issued === null &&
             row.deleted === null &&
             (!startingDate.value ||
-              new Date(row.issued) >= new Date(startingDate.value)) &&
-            (!endDate.value || new Date(row.issued) <= new Date(endDate.value))
+              new Date(row.created_at) >= new Date(startingDate.value)) &&
+            (!endDate.value || new Date(row.created_at) <= new Date(endDate.value))
         )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       allSum.value = sum1.value;
     }

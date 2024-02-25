@@ -38,7 +38,6 @@ function openModal(row: IOurRansom) {
     rowData.value.issued = rowData.value.issued
       ? storeUsers.getISODateTime(rowData.value.issued)
       : null;
-    console.log(rowData.value.deliveredSC);
   } else {
     rowData.value = {} as IOurRansom;
     rowData.value.fromName = "";
@@ -79,14 +78,20 @@ async function deleteSelectedRows(idArray: number[]) {
 }
 
 async function updateRow() {
+  isLoading.value = true;
   await storeRansom.updateRansomRow(rowData.value, user.value.username, "OurRansom");
-  await closeModal();
+  closeModal();
+  isLoading.value = false;
+
   filteredRows.value = await storeRansom.getRansomRows("OurRansom");
 }
 
 async function createRow() {
+  isLoading.value = true;
   await storeRansom.createRansomRow(rowData.value, user.value.username, "OurRansom");
-  await closeModal();
+  closeModal();
+  isLoading.value = false;
+
   filteredRows.value = await storeRansom.getRansomRows("OurRansom");
 }
 
@@ -158,9 +163,6 @@ onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rows.value = await storeRansom.getRansomRows("OurRansom");
-  pvz.value = await storePVZ.getPVZ();
-  sortingCenters.value = await storeSortingCenters.getSortingCenters();
-  orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
   
   deleteIssuedRowsTimer();
   
@@ -169,6 +171,10 @@ onMounted(async () => {
   }
 
   isLoading.value = false;
+
+  pvz.value = await storePVZ.getPVZ();
+  sortingCenters.value = await storeSortingCenters.getSortingCenters();
+  orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
 });
 
 onBeforeMount(() => {
@@ -290,7 +296,7 @@ async function getFromNameFromCell() {
       <NuxtLayout name="admin">
         <div v-if="!isLoading" class="mt-3">
           <div>
-            <SpreadsheetsOurRansomFilters v-if="rows" @filtered-rows="handleFilteredRows" :rows="rows" :user="user" />
+            <SpreadsheetsOurRansomFilters v-if="rows" @filtered-rows="handleFilteredRows" :rows="filteredRows" :user="user" />
             <div class="mt-5 flex items-center gap-3" v-if="user.dataOurRansom === 'WRITE'">
               <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" @click="openModal">Создать новую
                 запись</UIMainButton>

@@ -15,7 +15,7 @@ function openModal(row: IBalance) {
   emit("openModal", row);
 }
 
-const props = defineProps({
+defineProps({
   user: { type: Object as PropType<User>, required: true },
   rows: { type: Array as PropType<IBalance[]> },
 });

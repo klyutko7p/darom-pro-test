@@ -71,7 +71,6 @@ onMounted(async () => {
 
   if (rows.value) {
     copyRows.value = [...rows.value];
-    console.log(rows.value);
     phoneNumber.value = copyRows.value[0].fromName
   } 
   disableReceivedItems()

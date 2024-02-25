@@ -5,9 +5,6 @@ defineProps({
   rows: { type: Array as PropType<IBalanceOnline[]> },
 });
 
-onMounted(() => {
-})
-
 
 </script>
 <template>

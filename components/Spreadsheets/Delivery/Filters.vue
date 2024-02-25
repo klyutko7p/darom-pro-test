@@ -69,8 +69,6 @@ const filterRows = () => {
       (!endDate2.value || new Date(row.sorted) <= new Date(endDate2.value))
     );
   });
-  console.log(filteredRows.value);
-  console.log(selectedPurchaseOfGoods.value);
   emit("filtered-rows", filteredRows.value);
 };
 

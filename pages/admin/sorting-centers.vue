@@ -30,7 +30,6 @@ function closeModal() {
 
 async function updateSortingCenters() {
   isLoading.value = true;
-  console.log(sortingCentersData.value);
   await storeSortingCenters.updateSortingCenters(sortingCentersData.value);
   sortingCenters.value = await storeSortingCenters.getSortingCenters();
   closeModal();

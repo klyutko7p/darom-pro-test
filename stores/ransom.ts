@@ -203,6 +203,23 @@ export const useRansomStore = defineStore("ransom", () => {
         }
     }
 
+    async function getRansomRowsWithPVZ(flag: string) {
+        try {
+            let { data }: any = await useFetch('/api/ransom/get-rows-with-pvz', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ flag: flag })
+            });
+            return data.value;
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
     async function getRansomRowsByFromName(fromName: string | string[], cell: string | string[], flag: string) {
         try {
             let { data }: any = await useFetch('/api/ransom/get-rows-by-fromname', {
@@ -228,6 +245,74 @@ export const useRansomStore = defineStore("ransom", () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ PVZ: PVZ, flag: flag })
+            })
+            return data.value;
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
+    async function getRansomRowsForModal(flag: string) {
+        try {
+            let { data }: any = await useFetch('/api/ransom/get-rows-for-modal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ flag: flag })
+            })
+            return data.value;
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
+    async function getRansomRowsForBalance(flag: string) {
+        try {
+            let { data }: any = await useFetch('/api/ransom/get-rows-for-balance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ flag: flag })
+            })
+            return data.value;
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
+    async function getRansomRowsWithDeleted(flag: string) {
+        try {
+            let { data }: any = await useFetch('/api/ransom/get-rows-with-deleted', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ flag: flag })
+            })
+            return data.value;
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
+    async function getRansomRowsFirstHundred(flag: string) {
+        try {
+            let { data }: any = await useFetch('/api/ransom/get-rows-first-hundred', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ flag: flag })
             })
             return data.value;
         } catch (error) {
@@ -532,5 +617,5 @@ export const useRansomStore = defineStore("ransom", () => {
         return Array.from(uniqueNonEmptyValues);
     };
 
-    return { createRansomRow, getRansomRows, updateRansomRow, deleteRansomRow, updateDeliveryStatus, getUniqueNonEmptyValues, getRansomRow, deleteRansomSelectedRows, getRansomRowsByLink, updateDeliveryRowsStatus, createCopyRow, deleteIssuedRows, getOldRansomRow, getRansomRowsByPVZ, getRansomRowsByFromName, getSumOfRejection, updateSumOfRejection, getRansomRowsById }
+    return { createRansomRow, getRansomRows, updateRansomRow, deleteRansomRow, updateDeliveryStatus, getUniqueNonEmptyValues, getRansomRow, deleteRansomSelectedRows, getRansomRowsByLink, updateDeliveryRowsStatus, createCopyRow, deleteIssuedRows, getOldRansomRow, getRansomRowsByPVZ, getRansomRowsByFromName, getSumOfRejection, updateSumOfRejection, getRansomRowsById, getRansomRowsWithPVZ, getRansomRowsForModal, getRansomRowsForBalance, getRansomRowsWithDeleted, getRansomRowsFirstHundred }
 })
