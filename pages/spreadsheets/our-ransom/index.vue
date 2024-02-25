@@ -79,20 +79,24 @@ async function deleteSelectedRows(idArray: number[]) {
 
 async function updateRow() {
   isLoading.value = true;
+  
   await storeRansom.updateRansomRow(rowData.value, user.value.username, "OurRansom");
+  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
   closeModal();
+
   isLoading.value = false;
 
-  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
 }
 
 async function createRow() {
   isLoading.value = true;
+
   await storeRansom.createRansomRow(rowData.value, user.value.username, "OurRansom");
+  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
   closeModal();
+
   isLoading.value = false;
 
-  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
 }
 
 async function createCopyRow(id: number) {

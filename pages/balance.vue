@@ -23,14 +23,11 @@ let sumOfReject = ref<any>()
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  pvz.value = await storePVZ.getPVZ();
-
   ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
-  clientRansomRows.value = await storeRansom.getRansomRows("ClientRansom");
-  deliveryRansomRows.value = await storeRansom.getRansomRows("Delivery");
+  clientRansomRows.value = await storeRansom.getRansomRowsForBalance("ClientRansom");
+  sumOfReject.value = await storeRansom.getSumOfRejection()
   rows.value = await storeBalance.getBalanceRows();
   rowsOnline.value = await storeBalance.getBalanceOnlineRows();
-  sumOfReject.value = await storeRansom.getSumOfRejection()
 
   getAllSum();
 
@@ -40,6 +37,10 @@ onBeforeMount(async () => {
   }
 
   isLoading.value = false;
+
+  pvz.value = await storePVZ.getPVZ();
+
+
 });
 
 onMounted(() => {
