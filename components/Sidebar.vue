@@ -15,16 +15,6 @@ function signOut() {
 
 function editMenu() {
   isOpen.value = !isOpen.value;
-  const screenWidth = window.innerWidth;
-  if (isOpen.value && screenWidth < 1280) {
-    useHead({
-      bodyAttrs: {
-        class: 'overflow-hidden'
-      }
-    });
-  } else {
-    document.body.classList.remove('overflow-hidden');
-  }
 }
 
 onBeforeMount(async () => {
@@ -62,9 +52,9 @@ function formatPhoneNumber(phoneNumber: string) {
         class="hover:text-orange-300 duration-200 cursor-pointer" />
     </div>
     <nav class="flex flex-col gap-1 min-w-[240px] p-2 font-sans text-base font-normal text-gray-700 overflow-y-auto">
-      <div role="button" @click="user.role !== 'SORTIROVKA' ? router.push('/spreadsheets/our-ransom/info') : router.push('/spreadsheets/our-ransom')" tabindex="0"
+      <div role="button" @click="router.push('/spreadsheets/our-ransom/info')" tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-        v-if="user.dataOurRansom === 'READ' || user.dataOurRansom === 'WRITE'">
+        v-if="user.dataOurRansom === 'READ' || user.dataOurRansom === 'WRITE' && user.username !== 'Светлана'">
         <div class="grid place-items-center mr-4">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
             class="h-5 w-5">
@@ -75,9 +65,35 @@ function formatPhoneNumber(phoneNumber: string) {
         </div>
         <h1>Наш Выкуп</h1>
       </div>
-      <div role="button" tabindex="0" @click="user.role !== 'SORTIROVKA' ? router.push('/spreadsheets/client-ransom/info') : router.push('/spreadsheets/client-ransom')"
+      <div role="button" @click="router.push('/spreadsheets/our-ransom')" tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-        v-if="user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE'">
+        v-if="user.dataOurRansom === 'READ' || user.dataOurRansom === 'WRITE' && user.username === 'Светлана'">
+        <div class="grid place-items-center mr-4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+            class="h-5 w-5">
+            <path fill-rule="evenodd"
+              d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z"
+              clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <h1>Наш Выкуп</h1>
+      </div>
+      <div role="button" tabindex="0" @click="router.push('/spreadsheets/client-ransom/info')"
+        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+        v-if="user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE' && user.username !== 'Светлана'">
+        <div class="grid place-items-center mr-4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+            class="h-5 w-5">
+            <path fill-rule="evenodd"
+              d="M6.912 3a3 3 0 00-2.868 2.118l-2.411 7.838a3 3 0 00-.133.882V18a3 3 0 003 3h15a3 3 0 003-3v-4.162c0-.299-.045-.596-.133-.882l-2.412-7.838A3 3 0 0017.088 3H6.912zm13.823 9.75l-2.213-7.191A1.5 1.5 0 0017.088 4.5H6.912a1.5 1.5 0 00-1.434 1.059L3.265 12.75H6.11a3 3 0 012.684 1.658l.256.513a1.5 1.5 0 001.342.829h3.218a1.5 1.5 0 001.342-.83l.256-.512a3 3 0 012.684-1.658h2.844z"
+              clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <h1>Выкуп Клиента</h1>
+      </div>
+      <div role="button" tabindex="0" @click="router.push('/spreadsheets/client-ransom')"
+        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+        v-if="user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE' && user.username === 'Светлана'">
         <div class="grid place-items-center mr-4">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
             class="h-5 w-5">
@@ -97,9 +113,8 @@ function formatPhoneNumber(phoneNumber: string) {
         </div>
         <h1>Доставка и сортировка</h1>
       </div>
-      <div
-        v-if="(user.role === 'ADMIN' || user.role === 'PVZ')"
-        role="button" @click="router.push('/acceptance')" tabindex="0"
+      <div v-if="(user.role === 'ADMIN' || user.role === 'PVZ')" role="button" @click="router.push('/acceptance')"
+        tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
         <div class="grid place-items-center mr-4">
           <Icon name="material-symbols:call-received-rounded" size="20" />
@@ -140,6 +155,14 @@ function formatPhoneNumber(phoneNumber: string) {
           <Icon name="icon-park-outline:market-analysis" size="20" />
         </div>
         <h1>Маркетплейсы</h1>
+      </div>
+      <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
+        @click="router.push('/admin/cells')" tabindex="0"
+        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
+        <div class="grid place-items-center mr-4">
+          <Icon name="material-symbols:cell-merge-rounded" size="20" />
+        </div>
+        <h1>Ячейки</h1>
       </div>
       <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
         @click="router.push('/admin/pvz')" tabindex="0"
@@ -203,7 +226,9 @@ function formatPhoneNumber(phoneNumber: string) {
       size="40" @click="editMenu" />
     <nav class="flex flex-col gap-1 min-w-[240px] p-2 font-sans text-base font-normal text-black">
       <h1 class="text-center font-bold text-3xl text-secondary-color mb-5">DAROM.PRO</h1>
-      <div role="button" @click="user.role !== 'SORTIROVKA' ? router.push('/spreadsheets/our-ransom/info') : router.push('/spreadsheets/our-ransom')" tabindex="0"
+      <div role="button"
+        @click="user.role !== 'SORTIROVKA' ? router.push('/spreadsheets/our-ransom/info') : router.push('/spreadsheets/our-ransom')"
+        tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
         v-if="user.dataOurRansom === 'READ' || user.dataOurRansom === 'WRITE'">
         <div class="grid place-items-center mr-4">
@@ -216,7 +241,8 @@ function formatPhoneNumber(phoneNumber: string) {
         </div>
         <h1>Наш Выкуп</h1>
       </div>
-      <div role="button" tabindex="0" @click="user.role !== 'SORTIROVKA' ? router.push('/spreadsheets/client-ransom/info') : router.push('/spreadsheets/client-ransom')"
+      <div role="button" tabindex="0"
+        @click="user.role !== 'SORTIROVKA' ? router.push('/spreadsheets/client-ransom/info') : router.push('/spreadsheets/client-ransom')"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
         v-if="user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE'">
         <div class="grid place-items-center mr-4">
@@ -237,9 +263,8 @@ function formatPhoneNumber(phoneNumber: string) {
         </div>
         <h1>Доставка и сортировка</h1>
       </div>
-      <div
-        v-if="(user.role === 'ADMIN' || user.role === 'PVZ')"
-        role="button" @click="router.push('/acceptance')" tabindex="0"
+      <div v-if="(user.role === 'ADMIN' || user.role === 'PVZ')" role="button" @click="router.push('/acceptance')"
+        tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
         <div class="grid place-items-center mr-4">
           <Icon name="material-symbols:call-received-rounded" size="20" />
@@ -280,6 +305,14 @@ function formatPhoneNumber(phoneNumber: string) {
           <Icon name="icon-park-outline:market-analysis" size="20" />
         </div>
         <h1>Маркетплейсы</h1>
+      </div>
+      <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
+        @click="router.push('/admin/cells')" tabindex="0"
+        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
+        <div class="grid place-items-center mr-4">
+          <Icon name="material-symbols:cell-merge-rounded" size="20" />
+        </div>
+        <h1>Ячейки</h1>
       </div>
       <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
         @click="router.push('/admin/pvz')" tabindex="0"

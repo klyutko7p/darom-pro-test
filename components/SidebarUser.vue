@@ -15,16 +15,6 @@ function signOut() {
 
 function editMenu() {
   isOpen.value = !isOpen.value;
-  const screenWidth = window.innerWidth;
-  if (isOpen.value && screenWidth < 1280) {
-    useHead({
-      bodyAttrs: {
-        class: 'overflow-hidden'
-      }
-    });
-  } else {
-    document.body.classList.remove('overflow-hidden');
-  }
 }
 
 onBeforeMount(async () => {

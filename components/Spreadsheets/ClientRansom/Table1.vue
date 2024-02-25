@@ -264,7 +264,7 @@ let showOthersVariants = ref(false)
             Выделение
           </th>
           <th scope="col" class="exclude-row border-2 text-[10px]"
-            v-if="user.dataClientRansom === 'WRITE' && user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+            v-if="(user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') || (user.role === 'SORTIROVKA' || user.username === 'ОПТ')">
             изменение
           </th>
           <th scope="col" class="border-2 px-3">id</th>
@@ -339,7 +339,7 @@ let showOthersVariants = ref(false)
           <td v-if="user.dataClientRansom === 'WRITE'" class="border-2 text-secondary-color">
             <input type="checkbox" :value="row.id" :checked="isChecked(row.id)" @change="handleCheckboxChange(row)" />
           </td>
-          <td class="border-2" v-if="user.dataClientRansom === 'WRITE' && user.role === 'ADMIN'">
+          <td class="border-2" v-if="(user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') || user.role === 'SORTIROVKA'">
             <Icon @click="openModal(row)" class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
               name="material-symbols:edit" size="32" />
           </td>

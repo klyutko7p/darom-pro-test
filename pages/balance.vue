@@ -25,6 +25,7 @@ onBeforeMount(async () => {
   user.value = await storeUsers.getUser();
   ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
   clientRansomRows.value = await storeRansom.getRansomRowsForBalance("ClientRansom");
+  deliveryRansomRows.value = await storeRansom.getRansomRowsForBalance("Delivery")
   sumOfReject.value = await storeRansom.getSumOfRejection()
   rows.value = await storeBalance.getBalanceRows();
   rowsOnline.value = await storeBalance.getBalanceOnlineRows();
@@ -39,8 +40,6 @@ onBeforeMount(async () => {
   isLoading.value = false;
 
   pvz.value = await storePVZ.getPVZ();
-
-
 });
 
 onMounted(() => {
@@ -56,6 +55,8 @@ definePageMeta({
 
 let copyArrayOurRansom = ref<Array<IOurRansom>>();
 let copyArrayClientRansom = ref<Array<IClientRansom>>();
+let copyArrayDelivery1 = ref<Array<IDelivery>>();
+let copyArrayDelivery2 = ref<Array<IDelivery>>();
 
 let sum1 = ref(0);
 let sum2 = ref(0);
@@ -137,25 +138,9 @@ function reduceArray(array: any, flag: string) {
       array = array.filter((row: any) => row.additionally !== "Отказ брак");
       return array.reduce((ac: any, curValue: any) => ac + curValue.amountFromClient3, 0);
     }
-  } else if (selectedTypeOfTransaction.value === "Сумма с клиента+предоплата всего") {
-    if (flag === "OurRansom") {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
-      return array.reduce(
-        (ac: any, curValue: any) =>
-          ac + (Math.ceil(curValue.amountFromClient1 / 10) * 10 + curValue.prepayment),
-        0
-      );
-    } else if (flag === "ClientRansom") {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
-      return array.reduce(
-        (ac: any, curValue: any) =>
-          ac + (curValue.amountFromClient2 + curValue.prepayment),
-        0
-      );
-    } else {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
-      return array.reduce((ac: any, curValue: any) => ac + curValue.amountFromClient3, 0);
-    }
+  } else if (selectedTypeOfTransaction.value === "Доставка") {
+    array = array.filter((row: any) => row.additionally !== "Отказ брак");
+    return array.reduce((ac: any, curValue: any) => ac + curValue.amountFromClient3, 0);
   }
 }
 
@@ -170,7 +155,6 @@ function getAllSum() {
               new Date(row.issued) >= new Date(startingDate.value)) &&
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value))
         )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
       copyArrayClientRansom.value = clientRansomRows.value
         ?.filter(
@@ -180,7 +164,6 @@ function getAllSum() {
               new Date(row.issued) >= new Date(startingDate.value)) &&
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value))
         )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
       // let sumOfPVZ = rows.value?.filter((row) => row.received !== null).reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
@@ -196,7 +179,6 @@ function getAllSum() {
               new Date(row.issued) >= new Date(startingDate.value)) &&
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value))
         )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
       copyArrayClientRansom.value = clientRansomRows.value
         ?.filter(
@@ -207,7 +189,6 @@ function getAllSum() {
               new Date(row.issued) >= new Date(startingDate.value)) &&
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value))
         )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
       // let sumOfPVZ = rows.value?.filter((row) => row.received !== null && row.pvz === selectedPVZ.value).reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
@@ -252,7 +233,6 @@ function getAllSum() {
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value)) &&
             (row.additionally === "Оплата наличными" || row.additionally === "Отказ клиент")
         )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
       copyArrayClientRansom.value = clientRansomRows.value
         ?.filter(
@@ -264,7 +244,6 @@ function getAllSum() {
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value)) &&
             row.additionally === "Оплата наличными"
         )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
       let sumOfPVZ = rows.value?.filter((row) => row.received !== null).reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
@@ -281,7 +260,6 @@ function getAllSum() {
             (row.additionally === "Оплата наличными" || row.additionally === "Отказ клиент") &&
             row.dispatchPVZ === selectedPVZ.value
         )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
       copyArrayClientRansom.value = clientRansomRows.value
         ?.filter(
@@ -293,7 +271,6 @@ function getAllSum() {
             (row.additionally === "Оплата наличными" || row.additionally === "Отказ клиент") &&
             row.dispatchPVZ === selectedPVZ.value
         )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
       let sumOfPVZ = rows.value?.filter((row) => row.received !== null && row.pvz === selectedPVZ.value).reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
@@ -312,7 +289,6 @@ function getAllSum() {
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value)) &&
             row.additionally === "Оплачено онлайн"
         )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
       copyArrayClientRansom.value = clientRansomRows.value
         ?.filter(
@@ -324,7 +300,6 @@ function getAllSum() {
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value)) &&
             row.additionally === "Оплачено онлайн"
         )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
       let sumOfPVZ = rowsOnline.value?.reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
@@ -341,7 +316,6 @@ function getAllSum() {
             row.additionally === "Оплачено онлайн" &&
             row.dispatchPVZ === selectedPVZ.value
         )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
       copyArrayClientRansom.value = clientRansomRows.value
         ?.filter(
@@ -353,12 +327,64 @@ function getAllSum() {
             row.additionally === "Оплачено онлайн" &&
             row.dispatchPVZ === selectedPVZ.value
         )
-        .sort((a, b) => new Date(b.issued) - new Date(a.issued));
 
       let sumOfPVZ = rowsOnline.value?.reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
       allSum.value = sum1.value + sum2.value - sumOfPVZ;
+    }
+  } else if (selectedTypeOfTransaction.value === "Доставка") {
+    if (selectedPVZ.value === "Все ПВЗ") {
+      copyArrayDelivery1.value = deliveryRansomRows.value
+        ?.filter(
+          (row) =>
+            row.nameOfAction === 'Доставка' &&
+            row.paid !== null &&
+            row.dispatchPVZ !== 'НаДом' &&
+            (!startingDate.value ||
+              new Date(row.paid) >= new Date(startingDate.value)) &&
+            (!endDate.value || new Date(row.paid) <= new Date(endDate.value))
+        )
+
+      copyArrayDelivery2.value = deliveryRansomRows.value
+        ?.filter(
+          (row) =>
+            row.nameOfAction === 'Сортировка' &&
+            row.paid !== null &&
+            (!startingDate.value ||
+              new Date(row.paid) >= new Date(startingDate.value)) &&
+            (!endDate.value || new Date(row.paid) <= new Date(endDate.value))
+        )
+
+      sum1.value = reduceArray(copyArrayDelivery1.value, "Delivery");
+      sum2.value = reduceArray(copyArrayDelivery2.value, "Delivery");
+      allSum.value = sum1.value + sum2.value + sum3.value;
+    } else {
+      copyArrayDelivery1.value = deliveryRansomRows.value
+        ?.filter(
+          (row) =>
+            row.nameOfAction === 'Доставка' &&
+            row.paid !== null &&
+            (!startingDate.value ||
+              new Date(row.paid) >= new Date(startingDate.value)) &&
+            (!endDate.value || new Date(row.paid) <= new Date(endDate.value))
+        )
+
+      copyArrayDelivery2.value = deliveryRansomRows.value
+        ?.filter(
+          (row) =>
+            row.nameOfAction === 'Сортировка' &&
+            row.paid !== null &&
+            row.dispatchPVZ !== 'НаДом' &&
+            (!startingDate.value ||
+              new Date(row.paid) >= new Date(startingDate.value)) &&
+            (!endDate.value || new Date(row.paid) <= new Date(endDate.value))
+        )
+
+      sum1.value = reduceArray(copyArrayDelivery1.value, "Delivery");
+      sum2.value = reduceArray(copyArrayDelivery2.value, "Delivery");
+      allSum.value = sum1.value + sum2.value + sum3.value;
+
     }
   }
 }
@@ -532,6 +558,9 @@ async function updateRow() {
                     <option v-if="user.role !== 'PVZ'" value="Баланс безнал">
                       Баланс безнал
                     </option>
+                    <option v-if="user.role !== 'ADMINISTRATOR' && user.role !== 'PVZ'" value="Доставка">
+                      Доставка
+                    </option>
                   </select>
                 </div>
                 <div class="grid grid-cols-1">
@@ -554,9 +583,29 @@ async function updateRow() {
               </div>
             </div>
 
-            <div>
+            <div v-if="selectedTypeOfTransaction !== 'Доставка'">
               <div class="text-center text-2xl mt-10">
                 <h1>Баланс</h1>
+                <h1 class="font-bold text-secondary-color text-4xl mt-3">
+                  {{ formatNumber(Math.ceil(allSum)) }} ₽
+                </h1>
+              </div>
+            </div>
+            <div v-else class="flex items-center justify-center gap-24">
+              <div class="text-center text-2xl mt-10">
+                <h1>Баланс 'Доставка'</h1>
+                <h1 class="font-bold text-secondary-color text-4xl mt-3">
+                  {{ formatNumber(Math.ceil(sum1)) }} ₽
+                </h1>
+              </div>
+              <div class="text-center text-2xl mt-10">
+                <h1>Баланс 'Сортировка'</h1>
+                <h1 class="font-bold text-secondary-color text-4xl mt-3">
+                  {{ formatNumber(Math.ceil(sum2)) }} ₽
+                </h1>
+              </div>
+              <div class="text-center text-2xl mt-10">
+                <h1>Баланс общий</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(allSum)) }} ₽
                 </h1>
@@ -695,7 +744,7 @@ async function updateRow() {
               </div>
             </div>
 
-            <div>
+            <div v-if="selectedTypeOfTransaction !== 'Доставка'">
               <div class="text-center text-2xl mt-10">
                 <h1>Баланс</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">

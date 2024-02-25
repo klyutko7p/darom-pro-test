@@ -167,10 +167,9 @@ model Balance {
 }
 
 model BalanceOnline {
-  id           Int       @id @default(autoincrement())
-  sum          String?
+  id  Int     @id @default(autoincrement())
+  sum String?
 }
-
 
 model PVZ {
   id   Int    @id @default(autoincrement())
@@ -207,6 +206,14 @@ model OrderAccount {
 model SumOfRejection {
   id    Int   @id @default(autoincrement())
   value Float
+}
+
+model Cell {
+  id       Int     @id @default(autoincrement())
+  name     String?
+  status   String?
+  fromName String?
+  PVZ      String?
 }
 
 enum Role {
