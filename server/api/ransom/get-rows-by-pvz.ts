@@ -17,6 +17,11 @@ export default defineEventHandler(async (event) => {
                     cell: true,
                     fromName: true,
                     deleted: true,
+                    dispatchPVZ: true,
+                    deliveredSC: true,
+                    issued: true,
+                    deliveredPVZ: true,
+                    orderPVZ: true,
                 },
                 where: {
                     dispatchPVZ: PVZ,
