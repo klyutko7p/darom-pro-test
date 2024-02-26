@@ -376,10 +376,11 @@ let showOthersVariants = ref(false)
                             name="material-symbols:edit" size="32" />
                     </td>
                     <th scope="row" class="border-2 font-medium underline text-secondary-color whitespace-nowrap">
-                        <NuxtLink class="cursor-pointer hover:text-orange-200 duration-200"
+                        <NuxtLink v-if="user.role !== 'PVZ' && user.role !== 'ADMINISTRATOR'"  class="cursor-pointer hover:text-orange-200 duration-200"
                             :to="`/spreadsheets/record/1/${row.id}`">
                             {{ row.id }}
                         </NuxtLink>
+                        <h1 v-else>{{ row.id }}</h1>
                     </th>
                     <td class="px-3 py-4 border-2 underline text-secondary-color whitespace-nowrap uppercase overflow-hidden max-w-[50px]"
                         v-if="user.clientLink1 === 'READ' || user.clientLink1 === 'WRITE'">

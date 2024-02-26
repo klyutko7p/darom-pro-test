@@ -165,7 +165,6 @@ function getAllSum() {
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value))
         )
 
-      // let sumOfPVZ = rows.value?.filter((row) => row.received !== null).reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
       allSum.value = sum1.value + sum2.value;
@@ -190,7 +189,6 @@ function getAllSum() {
             (!endDate.value || new Date(row.issued) <= new Date(endDate.value))
         )
 
-      // let sumOfPVZ = rows.value?.filter((row) => row.received !== null && row.pvz === selectedPVZ.value).reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
       allSum.value = sum1.value + sum2.value;
@@ -248,7 +246,9 @@ function getAllSum() {
       let sumOfPVZ = rows.value?.filter((row) => row.received !== null).reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value - sumOfPVZ;
+      if (sumOfPVZ) {
+        allSum.value = sum1.value + sum2.value - sumOfPVZ;
+      }
     } else {
       copyArrayOurRansom.value = ourRansomRows.value
         ?.filter(
@@ -275,7 +275,9 @@ function getAllSum() {
       let sumOfPVZ = rows.value?.filter((row) => row.received !== null && row.pvz === selectedPVZ.value).reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value - sumOfPVZ;
+      if (sumOfPVZ) {
+        allSum.value = sum1.value + sum2.value - sumOfPVZ;
+      }
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (selectedPVZ.value === "Все ПВЗ") {
@@ -304,7 +306,9 @@ function getAllSum() {
       let sumOfPVZ = rowsOnline.value?.reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value + sum3.value - sumOfPVZ;
+      if (sumOfPVZ) {
+        allSum.value = sum1.value + sum2.value + sum3.value - sumOfPVZ;
+      }
     } else {
       copyArrayOurRansom.value = ourRansomRows.value
         ?.filter(
@@ -331,7 +335,9 @@ function getAllSum() {
       let sumOfPVZ = rowsOnline.value?.reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value - sumOfPVZ;
+      if (sumOfPVZ) {
+        allSum.value = sum1.value + sum2.value - sumOfPVZ;
+      }
     }
   } else if (selectedTypeOfTransaction.value === "Доставка") {
     if (selectedPVZ.value === "Все ПВЗ") {
@@ -568,13 +574,13 @@ async function updateRow() {
                     <h1>От Даты:</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                      type="date" v-model="startingDate" />
+                      type="datetime-local" v-model="startingDate" />
                   </div>
                   <div class="grid grid-cols-2 my-2">
                     <h1>До Даты:</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                      type="date" v-model="endDate" />
+                      type="datetime-local" v-model="endDate" />
                   </div>
                 </div>
               </div>
@@ -729,13 +735,13 @@ async function updateRow() {
                     <h1>От Даты:</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                      type="date" v-model="startingDate" />
+                      type="datetime-local" v-model="startingDate" />
                   </div>
                   <div class="grid grid-cols-2 my-2">
                     <h1>До Даты:</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                      type="date" v-model="endDate" />
+                      type="datetime-local" v-model="endDate" />
                   </div>
                 </div>
               </div>

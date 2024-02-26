@@ -41,6 +41,8 @@ function formatPhoneNumber(phoneNumber: string) {
   return maskedPhoneNumber;
 }
 
+let isShowAddSettings = ref(false)
+
 </script>
 <template>
   <div
@@ -132,77 +134,81 @@ function formatPhoneNumber(phoneNumber: string) {
         <Icon v-if="requests?.filter((row) => row.issued !== null && row.received === null).length > 0"
           name="pepicons-print:exclamation" size="24" class="text-red-700" />
       </div>
-      <div class="px-3 pt-3 font-bold" v-if="user.role !== 'USER'">
+      <div class="px-3 pt-3 font-bold flex items-center gap-3" v-if="user.role !== 'USER'">
         <h1>Настройки доступа</h1>
+        <Icon @click="isShowAddSettings = !isShowAddSettings" class="hover:text-secondary-color cursor-pointer" size="24"
+          name="material-symbols:keyboard-double-arrow-down-rounded" />
       </div>
-      <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
-        @click="router.push('/admin/users')" tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
-        <div class="grid place-items-center mr-4">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-            class="h-5 w-5">
-            <path fill-rule="evenodd"
-              d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-              clip-rule="evenodd"></path>
-          </svg>
+      <div v-if="isShowAddSettings">
+        <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
+          @click="router.push('/admin/users')" tabindex="0"
+          class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
+          <div class="grid place-items-center mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+              class="h-5 w-5">
+              <path fill-rule="evenodd"
+                d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <h1>Пользователи</h1>
         </div>
-        <h1>Пользователи</h1>
-      </div>
-      <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
-        @click="router.push('/admin/marketplaces')" tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
-        <div class="grid place-items-center mr-4">
-          <Icon name="icon-park-outline:market-analysis" size="20" />
+        <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
+          @click="router.push('/admin/marketplaces')" tabindex="0"
+          class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
+          <div class="grid place-items-center mr-4">
+            <Icon name="icon-park-outline:market-analysis" size="20" />
+          </div>
+          <h1>Маркетплейсы</h1>
         </div>
-        <h1>Маркетплейсы</h1>
-      </div>
-      <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
-        @click="router.push('/admin/cells')" tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
-        <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols:cell-merge-rounded" size="20" />
+        <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
+          @click="router.push('/admin/cells')" tabindex="0"
+          class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
+          <div class="grid place-items-center mr-4">
+            <Icon name="material-symbols:cell-merge-rounded" size="20" />
+          </div>
+          <h1>Ячейки</h1>
         </div>
-        <h1>Ячейки</h1>
-      </div>
-      <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
-        @click="router.push('/admin/pvz')" tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
-        <div class="grid place-items-center mr-4">
-          <Icon name="tabler:reorder" size="20" />
+        <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
+          @click="router.push('/admin/pvz')" tabindex="0"
+          class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
+          <div class="grid place-items-center mr-4">
+            <Icon name="tabler:reorder" size="20" />
+          </div>
+          <h1>Пункты выдачи заказов </h1>
         </div>
-        <h1>Пункты выдачи заказов </h1>
-      </div>
-      <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
-        @click="router.push('/admin/sorting-centers')" tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
-        <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols-light:box-sharp" size="20" />
+        <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
+          @click="router.push('/admin/sorting-centers')" tabindex="0"
+          class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
+          <div class="grid place-items-center mr-4">
+            <Icon name="material-symbols-light:box-sharp" size="20" />
+          </div>
+          <h1>Сортировочные центры </h1>
         </div>
-        <h1>Сортировочные центры </h1>
-      </div>
-      <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
-        @click="router.push('/admin/pvz-delivery')" tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
-        <div class="grid place-items-center mr-4">
-          <Icon name="solar:delivery-broken" size="20" />
+        <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
+          @click="router.push('/admin/pvz-delivery')" tabindex="0"
+          class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
+          <div class="grid place-items-center mr-4">
+            <Icon name="solar:delivery-broken" size="20" />
+          </div>
+          <h1>Пункты выдачи заказов (Доставка)</h1>
         </div>
-        <h1>Пункты выдачи заказов (Доставка)</h1>
-      </div>
-      <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
-        @click="router.push('/admin/sorting-centers-delivery')" tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
-        <div class="grid place-items-center mr-4">
-          <Icon name="streamline:shipping-box-2-box-package-label-delivery-shipment-shipping-3d" size="20" />
+        <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
+          @click="router.push('/admin/sorting-centers-delivery')" tabindex="0"
+          class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
+          <div class="grid place-items-center mr-4">
+            <Icon name="streamline:shipping-box-2-box-package-label-delivery-shipment-shipping-3d" size="20" />
+          </div>
+          <h1>Сортировочные центры (Доставка)</h1>
         </div>
-        <h1>Сортировочные центры (Доставка)</h1>
-      </div>
-      <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
-        @click="router.push('/admin/order-accounts')" tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
-        <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols:deployed-code-account-outline-rounded" size="20" />
+        <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
+          @click="router.push('/admin/order-accounts')" tabindex="0"
+          class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
+          <div class="grid place-items-center mr-4">
+            <Icon name="material-symbols:deployed-code-account-outline-rounded" size="20" />
+          </div>
+          <h1>Аккаунты заказа</h1>
         </div>
-        <h1>Аккаунты заказа</h1>
       </div>
       <div role="button" tabindex="0" @click="signOut()"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
