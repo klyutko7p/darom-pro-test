@@ -29,7 +29,7 @@ onMounted(() => {
 
 function getCountOfItemsByPVZOurRansom(PVZ: string) {
   if (user.value.role !== "PVZ") {
-    return rowsOurRansom.value?.filter((row) => row.dispatchPVZ === PVZ).length;
+    return rowsOurRansom.value?.filter((row) => row.dispatchPVZ === PVZ && row.issued === null).length;
   } else if (user.value.role === "PVZ") {
     let today = new Date().toLocaleDateString("ru-RU", {
       day: "2-digit",

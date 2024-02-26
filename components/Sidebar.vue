@@ -170,6 +170,14 @@ let isShowAddSettings = ref(false)
           <h1>Ячейки</h1>
         </div>
         <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
+          @click="router.push('/admin/cells')" tabindex="0"
+          class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
+          <div class="grid place-items-center mr-4">
+            <Icon name="material-symbols:cell-merge-rounded" size="20" />
+          </div>
+          <h1>Ячейки</h1>
+        </div>
+        <div v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'" role="button"
           @click="router.push('/admin/pvz')" tabindex="0"
           class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none">
           <div class="grid place-items-center mr-4">
