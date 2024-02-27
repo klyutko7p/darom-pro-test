@@ -157,13 +157,15 @@ model Delivery {
 }
 
 model Balance {
-  id           Int       @id @default(autoincrement())
-  pvz          String?
-  sum          String?
-  issued       DateTime?
-  received     DateTime?
-  createdUser  String
-  receivedUser String
+  id            Int       @id @default(autoincrement())
+  pvz           String?
+  sum           String?
+  issued        DateTime?
+  received      DateTime?
+  createdUser   String
+  receivedUser  String
+  notation      String?
+  receivedUser2 String?
 }
 
 model BalanceOnline {

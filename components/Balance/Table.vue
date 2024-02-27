@@ -30,7 +30,8 @@ onMounted(() => {
     <table id="theTable" class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500">
       <thead class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center bg-gray-50">
         <tr>
-          <th scope="col" class="exclude-row border-2" v-if="user.dataDelivery === 'WRITE' || user.role === 'ADMIN'">
+          <th scope="col" class="exclude-row border-2"
+            v-if="user.dataDelivery === 'WRITE' || (user.role === 'ADMIN' || user.role === 'ADMINISTRATOR')">
             изменение
           </th>
           <th scope="col" class="border-2">
@@ -46,18 +47,23 @@ onMounted(() => {
             Получено
           </th>
           <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
-            Кем создано
+            Кем получено
           </th>
           <th scope="col" class="border-2">
             Кем выдано
+          </th>
+          <th scope="col" class="border-2">
+            Примечание
           </th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="row in rows" class="text-center">
           <td class="border-2" v-if="user.role !== 'PVZ'">
-            <Icon @click="openModal(row)" class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
-              name="material-symbols:edit" size="32" v-if="(user.role === 'ADMIN' || user.role === 'ADMINISTRATOR') && !row.issued && !row.received" />
+            <h1 @click="openModal(row)" class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
+              v-if="(user.role === 'ADMIN' || user.role === 'ADMINISTRATOR')">
+              ✏️
+            </h1>
           </td>
           <th scope="row" class="border-2">
             {{ row.pvz }}
@@ -83,10 +89,13 @@ onMounted(() => {
             </h1>
           </td>
           <th scope="row" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
-            {{ row.createdUser }}
+            {{ row.receivedUser2 }}
           </th>
           <th scope="row" class="border-2">
             {{ row.receivedUser }}
+          </th>
+          <th scope="row" class="border-2">
+            {{ row.notation }}
           </th>
         </tr>
       </tbody>

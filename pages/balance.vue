@@ -246,9 +246,7 @@ function getAllSum() {
       let sumOfPVZ = rows.value?.filter((row) => row.received !== null).reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      if (sumOfPVZ) {
-        allSum.value = sum1.value + sum2.value - sumOfPVZ;
-      }
+      allSum.value = sum1.value + sum2.value - sumOfPVZ;
     } else {
       copyArrayOurRansom.value = ourRansomRows.value
         ?.filter(
@@ -271,13 +269,10 @@ function getAllSum() {
             (row.additionally === "Оплата наличными" || row.additionally === "Отказ клиент") &&
             row.dispatchPVZ === selectedPVZ.value
         )
-
       let sumOfPVZ = rows.value?.filter((row) => row.received !== null && row.pvz === selectedPVZ.value).reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      if (sumOfPVZ) {
-        allSum.value = sum1.value + sum2.value - sumOfPVZ;
-      }
+      allSum.value = sum1.value + sum2.value - sumOfPVZ;
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (selectedPVZ.value === "Все ПВЗ") {
@@ -306,9 +301,7 @@ function getAllSum() {
       let sumOfPVZ = rowsOnline.value?.reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      if (sumOfPVZ) {
-        allSum.value = sum1.value + sum2.value + sum3.value - sumOfPVZ;
-      }
+      allSum.value = sum1.value + sum2.value + sum3.value - sumOfPVZ;
     } else {
       copyArrayOurRansom.value = ourRansomRows.value
         ?.filter(
@@ -335,9 +328,7 @@ function getAllSum() {
       let sumOfPVZ = rowsOnline.value?.reduce((acc, value) => acc + +value.sum, 0)
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      if (sumOfPVZ) {
-        allSum.value = sum1.value + sum2.value - sumOfPVZ;
-      }
+      allSum.value = sum1.value + sum2.value - sumOfPVZ;
     }
   } else if (selectedTypeOfTransaction.value === "Доставка") {
     if (selectedPVZ.value === "Все ПВЗ") {
@@ -390,7 +381,6 @@ function getAllSum() {
       sum1.value = reduceArray(copyArrayDelivery1.value, "Delivery");
       sum2.value = reduceArray(copyArrayDelivery2.value, "Delivery");
       allSum.value = sum1.value + sum2.value + sum3.value;
-
     }
   }
 }
@@ -639,7 +629,7 @@ async function updateRow() {
             <div class="text-black">
               <div class="grid grid-cols-2 mb-5">
                 <label for="dispatchPVZ1">ПВЗ</label>
-                <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
+                <select :disabled="rowData.id > 0" class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.pvz">
                   <option v-for="pvzData in pvz" :value="pvzData.name">
                     {{ pvzData.name }}
@@ -651,7 +641,14 @@ async function updateRow() {
                 <label for="name">Сумма</label>
                 <input
                   class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.sum" type="text" />
+                  v-model="rowData.sum" :disabled="rowData.id > 0" type="text" />
+              </div>
+
+              <div class="grid grid-cols-2 mb-5">
+                <label for="name">Примечание</label>
+                <input
+                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  v-model="rowData.notation" type="text" />
               </div>
             </div>
 
@@ -780,7 +777,7 @@ async function updateRow() {
             <div class="text-black">
               <div class="grid grid-cols-2 mb-5">
                 <label for="dispatchPVZ1">ПВЗ</label>
-                <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
+                <select :disabled="rowData.id > 0" class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.pvz">
                   <option v-for="pvzData in pvz" :value="pvzData.name">
                     {{ pvzData.name }}
@@ -792,7 +789,14 @@ async function updateRow() {
                 <label for="name">Сумма</label>
                 <input
                   class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.sum" type="text" />
+                  v-model="rowData.sum" :disabled="rowData.id > 0" type="text" />
+              </div>
+
+              <div class="grid grid-cols-2 mb-5">
+                <label for="name">Примечание</label>
+                <input
+                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  v-model="rowData.notation" type="text" />
               </div>
             </div>
 

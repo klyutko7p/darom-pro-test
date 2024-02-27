@@ -6,4 +6,6 @@ interface IBalance {
     received:  Date | number | string | null;
     createdUser: string;
     receivedUser: string;
+    receivedUser2: string;
+    notation: string;
 }

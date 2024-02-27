@@ -13,6 +13,7 @@ export const useBalanceStore = defineStore("balance", () => {
         try {
             if (row.sum === undefined) row.sum = '0';
             if (row.pvz === undefined) row.pvz = '';
+            if (row.notation === undefined) row.notation = '';
 
             row.createdUser = username;
             row.receivedUser = '';
@@ -113,6 +114,7 @@ export const useBalanceStore = defineStore("balance", () => {
         try {
             if (row.sum === undefined) row.sum = '0';
             if (row.pvz === undefined) row.pvz = '';
+            if (row.notation === undefined) row.notation = '';
 
             let data = await useFetch('/api/balance/edit-row', {
                 method: 'POST',
