@@ -30,27 +30,22 @@ function updateCurrentPageData() {
   }
 
   if (searchQuery.value !== '') {
-    returnRows.value = props.rows?.filter((row) => {
-      const fromNameMatch = row.fromName && row.fromName.includes(searchQuery.value);
-      const cellMatch = row.cell && row.cell.includes(searchQuery.value.trim().toUpperCase());
-      return fromNameMatch || cellMatch;
-    });
+    returnRows.value = props.rows?.filter((row) => (row.cell && row.cell.includes(searchQuery.value.trim())));
+    if (returnRows.value?.length === 0) {
+      returnRows.value = props.rows?.filter((row) => (row.fromName && row.fromName.includes(searchQuery.value.trim())));
+    }
   }
 }
 
 watch([currentPage, totalRows, props.rows], updateCurrentPageData)
 
-const toggleShowDeletedRows = () => {
-  showDeletedRows.value = !showDeletedRows.value;
-  updateCurrentPageData();
-  updateRowsByFromName();
-};
 
 function updateRowsByFromName() {
   updateCurrentPageData();
   returnRows.value = returnRows.value?.filter((element, index) => {
     return returnRows.value?.findIndex(i => i.cell === element.cell && i.fromName === element.fromName) === index;
   })
+  returnRows.value = returnRows.value?.sort((a, b) => +b.cell - +a.cell)
 }
 
 let searchQuery = ref('')
@@ -144,9 +139,6 @@ function isValidUrl(url: string): boolean {
           totalRows }}</span> </h1>
       </div>
       <div class="flex items-center gap-5" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
-        <UIActionButton @click="toggleShowDeletedRows">
-          {{ showDeletedRows ? 'Скрыть удаленное' : 'Показать удаленное' }}
-        </UIActionButton>
       </div>
     </div>
   </div>

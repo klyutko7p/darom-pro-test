@@ -40,15 +40,19 @@ async function updateDeliveryRow(row: any, flag: any) {
 }
 async function acceptItem(row: any) {
     if (user.value.role === "PVZ" || user.value.role === "ADMINISTRATOR") {
-        if (user.value.visiblePVZ.includes(row.dispatchPVZ)) {
+        if (user.value.PVZ.includes(row.dispatchPVZ) && user.value.PVZ.includes(selectedPVZ.value) && row.dispatchPVZ === selectedPVZ.value) {
             if (row.deliveredPVZ === null && row.deliveredSC !== null) {
                 await updateDeliveryRow(row, "PVZ");
                 toast.success("Товар принят на ПВЗ!");
+            } else if (row.deliveredPVZ !== null) {
+                toast.warning("Товар принят ранее!");
+            } else if (row.deliveredSC === null) {
+                toast.warning("Товар неотсортирован!")
             } else {
-                toast.warning("Товар принят ранее или неотсортирован!");
+                toast.error("Неизвестная ошибка!")
             }
         } else {
-            toast.error("У вас нет доступа к товарам данного ПВЗ!");
+            toast.error("У вас нет доступа к товарам данного ПВЗ или вы выбрали не то ПВЗ!");
         }
     } else {
         toast.error("Отказано в доступе")
@@ -134,7 +138,7 @@ let selectedPVZ = ref('')
                         <h1 v-if="isScanActive">Сканирование товаров включено</h1>
                         <input ref="myInput" autofocus class="opacity-0" v-model="scanStringItem" @input="scanItem" />
                         <div class="w-full gap-10 flex flex-col">
-                            <div v-for="row in arrayOfRows" class="border-b-2">
+                            <div v-for="row in arrayOfRows" class="border-2 border-dashed p-5">
                                 <div v-if="'clientLink1' in row">
                                     <h1>
                                         Заказ –
@@ -199,7 +203,7 @@ let selectedPVZ = ref('')
                         <h1 v-if="isScanActive">Сканирование товаров включено</h1>
                         <input ref="myInput" autofocus class="opacity-0" v-model="scanStringItem" @input="scanItem" />
                         <div class="w-full gap-10 flex flex-col">
-                            <div v-for="row in arrayOfRows" class="border-b-2">
+                            <div v-for="row in arrayOfRows" class="border-2 border-dashed p-5">
                                 <div v-if="'clientLink1' in row">
                                     <h1>
                                         Заказ –
