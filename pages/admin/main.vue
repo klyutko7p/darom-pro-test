@@ -48,7 +48,7 @@ definePageMeta({
         <div class="py-5">
           <div class="mt-10 mb-10 flex items-center gap-3">
             <h1 class="text-xl">Приветствуем, {{ user.username }}!</h1>
-            <UIActionButton @click="updateCellsStatus">Обновить статус ячеек</UIActionButton>
+            <!-- <UIActionButton @click="updateCellsStatus">Обновить статус ячеек</UIActionButton> -->
           </div>
           <div>
             <h1 class="font-bold text-6xl max-[400px]:text-4xl max-md:text-center text-secondary-color mb-5">DAROM.PRO
