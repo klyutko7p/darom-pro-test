@@ -140,12 +140,6 @@ let selectedPVZ = ref('')
                         <div class="w-full gap-10 flex flex-col">
                             <div v-for="row in arrayOfRows" class="border-2 border-dashed p-5">
                                 <div v-if="'clientLink1' in row">
-                                    <h1>
-                                        Заказ –
-                                        <span @click="router.push(`/spreadsheets/order/${row.clientLink1}`)"
-                                            class="text-secondary-color cursor-pointer duration-200 hover:opacity-50 border-b-2 border-secondary-color font-medium">{{
-                                                row.clientLink1 }}</span>
-                                    </h1>
                                     <div class="mt-5 flex items-center justify-between">
                                         <div>
                                             <h1>{{ formatPhoneNumber(row.fromName) }}</h1>

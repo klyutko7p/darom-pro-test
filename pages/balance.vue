@@ -37,16 +37,16 @@ onBeforeMount(async () => {
     rows.value = rows.value?.filter((row) => row.pvz === user.value.visiblePVZ)
   }
 
-  const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-  const firstDayOfMonth = '01';
-  startingDate.value = `${year}-${month}-${firstDayOfMonth}T00:00`;
+  // const currentDate = new Date();
+  // const year = currentDate.getFullYear();
+  // const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+  // const firstDayOfMonth = '01';
+  // startingDate.value = `${year}-${month}-${firstDayOfMonth}T00:00`;
 
-  const day = String(currentDate.getDate()).padStart(2, '0');
-  const endHour = '23';
-  const endMinute = '59';
-  endDate.value = `${year}-${month}-${day}T${endHour}:${endMinute}`;
+  // const day = String(currentDate.getDate()).padStart(2, '0');
+  // const endHour = '23';
+  // const endMinute = '59';
+  // endDate.value = `${year}-${month}-${day}T${endHour}:${endMinute}`;
 
   isLoading.value = false;
 
