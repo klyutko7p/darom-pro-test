@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
+import { useCellsStore } from '../../../stores/cell';
 const storeUsers = useUsersStore();
 const storeRansom = useRansomStore();
+const storeCells = useCellsStore();
 const router = useRouter();
 
 let user = ref({} as User);
@@ -19,6 +21,9 @@ onBeforeMount(async () => {
   }
   
   isLoading.value = false;
+  
+  let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCells("OurRansom")
+  await storeCells.updateCellsStatus(rowsWithDeleted)
 });
 
 onMounted(() => {

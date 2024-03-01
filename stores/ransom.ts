@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
 import crypto from 'crypto-js';
-import editSum from "~/server/api/sum-of-rejection/edit-sum";
 
 const toast = useToast()
 
@@ -291,6 +290,23 @@ export const useRansomStore = defineStore("ransom", () => {
     async function getRansomRowsWithDeleted(flag: string) {
         try {
             let { data }: any = await useFetch('/api/ransom/get-rows-with-deleted', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ flag: flag })
+            })
+            return data.value;
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
+    async function getRansomRowsWithDeletedForCells(flag: string) {
+        try {
+            let { data }: any = await useFetch('/api/ransom/get-rows-with-deleted-for-cells', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -617,5 +633,5 @@ export const useRansomStore = defineStore("ransom", () => {
         return Array.from(uniqueNonEmptyValues);
     };
 
-    return { createRansomRow, getRansomRows, updateRansomRow, deleteRansomRow, updateDeliveryStatus, getUniqueNonEmptyValues, getRansomRow, deleteRansomSelectedRows, getRansomRowsByLink, updateDeliveryRowsStatus, createCopyRow, deleteIssuedRows, getOldRansomRow, getRansomRowsByPVZ, getRansomRowsByFromName, getSumOfRejection, updateSumOfRejection, getRansomRowsById, getRansomRowsWithPVZ, getRansomRowsForModal, getRansomRowsForBalance, getRansomRowsWithDeleted, getRansomRowsFirstHundred }
+    return { createRansomRow, getRansomRows, updateRansomRow, deleteRansomRow, updateDeliveryStatus, getUniqueNonEmptyValues, getRansomRow, deleteRansomSelectedRows, getRansomRowsByLink, updateDeliveryRowsStatus, createCopyRow, deleteIssuedRows, getOldRansomRow, getRansomRowsByPVZ, getRansomRowsByFromName, getSumOfRejection, updateSumOfRejection, getRansomRowsById, getRansomRowsWithPVZ, getRansomRowsForModal, getRansomRowsForBalance, getRansomRowsWithDeleted, getRansomRowsFirstHundred, getRansomRowsWithDeletedForCells }
 })

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps({
   rows: { type: Array as PropType<IClientRansom[]>, required: true },
-  user: { type: Object as PropType<User>}
+  user: { type: Object as PropType<User> }
 });
 
 const storeRansom = useRansomStore();
@@ -130,6 +130,31 @@ watch(
   filterRows
 );
 
+let variables = ref([
+  selectedCell,
+  selectedFromName,
+  selectedProductName,
+  selectedDispatchPVZ,
+  selectedOrderPVZ,
+  selectedOrderAccount,
+  selectedAdditionally,
+  selectedPriceSite,
+  startingDate,
+  endDate,
+  startingDate2,
+  endDate2,
+  startingDate3,
+  endDate3,
+  startingDate4,
+  endDate4,
+]);
+
+const nonEmptyCount: Ref<number> = computed(() => {
+  return variables.value.filter((variable: any) => {
+    return variable.value !== undefined && variable.value !== null && variable.value !== '';
+  }).length;
+});
+
 function saveToLocalStorage(key: string, value: any) {
   localStorage.setItem(key, JSON.stringify(value));
 }
@@ -250,7 +275,7 @@ onMounted(() => {
     endDate3.value = storedEndDate3;
   }
 
-  
+
   const storedStartingDate4 = loadFromLocalStorage('startingDate4');
   if (storedStartingDate4 !== null) {
     startingDate4.value = storedStartingDate4;
@@ -271,6 +296,7 @@ let dateFilter = ref('issued')
       <h1 class="text-xl font-bold">Фильтры</h1>
       <Icon @click="showFilters = !showFilters" class="cursor-pointer duration-200 hover:text-secondary-color"
         name="solar:filters-line-duotone" size="24" />
+      <h1 class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full"> {{ nonEmptyCount }} </h1>
     </div>
     <div v-if="showFilters" class="border-2 border-gray-300 p-3 mt-3 border-dashed">
       <div class="grid grid-cols-2 max-xl:grid-cols-2 max-md:grid-cols-1">
@@ -350,7 +376,8 @@ let dateFilter = ref('issued')
       <div v-if="user?.role !== 'SORTIROVKA'">
         <div class="mt-10">
           <div>
-            <select v-model="dateFilter" class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3">
+            <select v-model="dateFilter"
+              class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3">
               <option value="issued" selected>Дата выдачи</option>
               <option value="sorted">Дата сортировки</option>
               <option value="delivered">Дата доставки на пвз</option>
@@ -407,7 +434,7 @@ let dateFilter = ref('issued')
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
               type="date" v-model="endDate4" />
           </div>
-      </div>
+        </div>
       </div>
       <div class="flex justify-end gap-3 mt-3">
         <UIMainButton @click="saveFiltersToLocalStorage">Принять</UIMainButton>

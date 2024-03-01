@@ -87,6 +87,36 @@ interface RowData {
     orderPVZ: Date | null | string | number;
 }
 
+let scanStringItem = ref('')
+
+let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+function scanItem() {
+    if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+    }
+
+    timeoutId = setTimeout(async () => {
+        let scannedLink = scanStringItem.value.trim();
+        scannedLink = convertToURL(scannedLink);
+        let rowData = await storeRansom.getRansomRowsById(+scannedLink, "OurRansom");
+        handleCheckboxChange(rowData);
+        scanStringItem.value = "";
+    }, 1500);
+}
+
+function convertToURL(inputString: string) {
+    if (inputString.includes("/")) {
+        const parts = inputString.split("/");
+        const entryID = parts[parts.length - 1];
+        return entryID;
+    } else if (inputString.includes(".")) {
+        const parts = inputString.split(".");
+        const entryID = parts[parts.length - 1];
+        return entryID;
+    }
+}
+
 const handleCheckboxChange = (row: IOurRansom): void => {
     if (isChecked(row.id)) {
         checkedRows.value = checkedRows.value.filter((id) => id !== row.id);
@@ -155,6 +185,7 @@ let isVisiblePages = ref(true)
 
 
 onMounted(async () => {
+    focusInput()
 
     updateCurrentPageData();
 
@@ -169,11 +200,19 @@ onMounted(async () => {
 
 
 let showOthersVariants = ref(false)
+const myInput = ref(null);
+
+function focusInput() {
+    myInput.value.focus();
+}
 
 </script>
 <template>
     <div class="flex items-center justify-between max-lg:block mt-10">
         <div>
+            <input class="block w-full bg-transparent mb-5 border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 rounded-2xl focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+            placeholder="Отсканируйте товар" ref="myInput" autofocus v-model="scanStringItem" @input="scanItem" />
+
             <div class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5">
                 <h1 class="text-xl" v-if="user.role !== 'PVZ'">Товаров в работе: <span
                         class="text-secondary-color font-bold">{{
@@ -188,6 +227,8 @@ let showOthersVariants = ref(false)
                     {{ showDeletedRows ? 'Скрыть удаленное' : 'Показать удаленное' }}
                 </UIActionButton>
             </div>
+
+
 
         </div>
         <div class="flex items-end max-lg:mt-5 max-lg:justify-between gap-20">
@@ -376,7 +417,8 @@ let showOthersVariants = ref(false)
                             name="material-symbols:edit" size="32" />
                     </td>
                     <th scope="row" class="border-2 font-medium underline text-secondary-color whitespace-nowrap">
-                        <NuxtLink v-if="user.role !== 'PVZ' && user.role !== 'ADMINISTRATOR'"  class="cursor-pointer hover:text-orange-200 duration-200"
+                        <NuxtLink v-if="user.role !== 'PVZ' && user.role !== 'ADMINISTRATOR'"
+                            class="cursor-pointer hover:text-orange-200 duration-200"
                             :to="`/spreadsheets/record/1/${row.id}`">
                             {{ row.id }}
                         </NuxtLink>
