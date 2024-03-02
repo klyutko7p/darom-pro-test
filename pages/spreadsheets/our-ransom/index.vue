@@ -284,7 +284,7 @@ async function changePVZ() {
     if (row && row.length > 0) {
       rowData.value.cell = row[0].cell;
     } else {
-      const unoccupiedCellsAndPVZ = cells.value?.filter((cell) => cell.status === 'Свободно');
+      const unoccupiedCellsAndPVZ = cells.value?.filter((cell) => cell.status === 'Свободно').sort((a, b) => a.name - b.name);
       const freeCell = unoccupiedCellsAndPVZ?.find(cell => cell.PVZ === rowData.value.dispatchPVZ);
       if (freeCell) {
         rowData.value.cell = freeCell.name;
