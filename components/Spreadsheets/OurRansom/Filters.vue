@@ -436,7 +436,7 @@ let dateFilter = ref('issued')
       </div>
       </div>
       <div class="flex justify-end gap-3 mt-3">
-        <UIMainButton @click="saveFiltersToLocalStorage">Принять</UIMainButton>
+        <UIMainButton @click="saveFiltersToLocalStorage(), filterRows()">Принять</UIMainButton>
         <UIMainButton @click="clearFields(), clearLocalStorage()">Очистить фильтры</UIMainButton>
       </div>
     </div>

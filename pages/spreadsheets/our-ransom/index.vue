@@ -56,28 +56,44 @@ async function updateDeliveryRow(obj: any) {
   let answer = confirm("Вы точно хотите изменить статус доставки?");
   if (answer) await storeRansom.updateDeliveryStatus(obj.row, obj.flag, "OurRansom", user.value.username);
   filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  rows.value = filteredRows.value;
 }
 
 async function updateDeliveryRows(obj: any) {
   let answer = confirm(
     `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
   );
-  if (answer) await storeRansom.updateDeliveryRowsStatus(obj.idArray, obj.flag, "OurRansom", user.value.username);
-  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  if (answer) {
+    isLoading.value = true;
+    await storeRansom.updateDeliveryRowsStatus(obj.idArray, obj.flag, "OurRansom", user.value.username);
+    filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+    rows.value = filteredRows.value;
+    isLoading.value = false;
+  }
 }
 
 async function deleteRow(id: number) {
   let answer = confirm("Вы точно хотите удалить данную строку?");
-  if (answer) await storeRansom.deleteRansomRow(id, "OurRansom");
-  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  if (answer) {
+    isLoading.value = true;
+    await storeRansom.deleteRansomRow(id, "OurRansom");
+    filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+    rows.value = filteredRows.value;
+    isLoading.value = false;
+  }
 }
 
 async function deleteSelectedRows(idArray: number[]) {
   let answer = confirm(
     `Вы точно хотите удалить данные строки? Количество записей: ${idArray.length}`
   );
-  if (answer) await storeRansom.deleteRansomSelectedRows(idArray, "OurRansom");
-  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  if (answer) {
+    isLoading.value = true;
+    await storeRansom.deleteRansomSelectedRows(idArray, "OurRansom");
+    filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+    rows.value = filteredRows.value;
+    isLoading.value = false;
+  }
 }
 
 async function updateRow() {
@@ -89,9 +105,10 @@ async function updateRow() {
   if (cellData) {
     await storeCells.updateCell(cellData.value, "Занято", rowData.value.fromName)
   }
-  
+
   closeModal();
 
+  rows.value = filteredRows.value;
   isLoading.value = false;
   originallyRows.value = await storeRansom.getRansomRowsForModal("OurRansom");
 
@@ -111,13 +128,17 @@ async function createRow() {
 
   isLoading.value = false;
 
+  rows.value = filteredRows.value;
   originallyRows.value = await storeRansom.getRansomRowsForModal("OurRansom");
   cells.value = await storeCells.getCells()
 }
 
 async function createCopyRow(id: number) {
+  isLoading.value = true;
   await storeRansom.createCopyRow(id, "OurRansom");
   filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  rows.value = filteredRows.value;
+  isLoading.value = false;
 }
 
 const filteredRows = ref<Array<IOurRansom>>();
@@ -167,6 +188,7 @@ async function deleteIssuedRows() {
   isLoading.value = true;
   await storeRansom.deleteIssuedRows("OurRansom");
   filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  rows.value = filteredRows.value;
   isLoading.value = false;
 }
 
@@ -287,6 +309,7 @@ async function getFromNameFromCell() {
 </script>
 
 <template>
+
   <Head>
     <Title>Наш выкуп</Title>
   </Head>
@@ -295,10 +318,10 @@ async function getFromNameFromCell() {
       <NuxtLayout name="admin">
         <div v-if="!isLoading" class="mt-3">
           <div>
-            <SpreadsheetsOurRansomFilters v-if="rows" @filtered-rows="handleFilteredRows" :rows="rows"
-              :user="user" />
+            <SpreadsheetsOurRansomFilters v-if="rows" @filtered-rows="handleFilteredRows" :rows="rows" :user="user" />
             <div class="mt-5 flex items-center gap-3" v-if="user.dataOurRansom === 'WRITE'">
-              <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" @click="openModal">Создать новую
+              <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" @click="openModal">Создать
+                новую
                 запись</UIMainButton>
             </div>
           </div>
@@ -394,7 +417,8 @@ async function getFromNameFromCell() {
                   v-model="rowData.prepayment" type="number" placeholder="По умолчанию: 0" />
               </div>
 
-              <div class="grid grid-cols-2 mb-5" v-if="user.percentClient1 === 'READ' || user.percentClient1 === 'WRITE'">
+              <div class="grid grid-cols-2 mb-5"
+                v-if="user.percentClient1 === 'READ' || user.percentClient1 === 'WRITE'">
                 <label for="percentClient1" class="max-sm:text-sm">Процент с клиента</label>
                 <input :disabled="user.percentClient1 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -448,7 +472,8 @@ async function getFromNameFromCell() {
                     v-model="rowData.deliveredSC" type="datetime-local" />
                 </div>
 
-                <div class="grid grid-cols-2 mb-5" v-if="user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'">
+                <div class="grid grid-cols-2 mb-5"
+                  v-if="user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'">
                   <label for="deliveredPVZ1" class="max-sm:text-sm">Доставлено на ПВЗ</label>
                   <input :disabled="user.deliveredPVZ1 === 'READ'"
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -462,7 +487,8 @@ async function getFromNameFromCell() {
                     v-model="rowData.issued" type="datetime-local" />
                 </div>
 
-                <div class="grid grid-cols-2 mb-5" v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'">
+                <div class="grid grid-cols-2 mb-5"
+                  v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'">
                   <label for="additionally1" class="max-sm:text-sm">Дополнительно</label>
                   <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                     v-model="rowData.additionally" :disabled="user.additionally1 === 'READ'">
@@ -498,7 +524,8 @@ async function getFromNameFromCell() {
             <SpreadsheetsOurRansomFilters v-if="rows && user.role !== 'PVZ'" @filtered-rows="handleFilteredRows"
               :rows="rows" :user="user" />
             <div class="mt-5 flex items-center gap-3" v-if="user.dataOurRansom === 'WRITE'">
-              <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" @click="openModal">Создать новую
+              <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" @click="openModal">Создать
+                новую
                 запись</UIMainButton>
             </div>
           </div>
@@ -508,6 +535,7 @@ async function getFromNameFromCell() {
             @update-delivery-rows="updateDeliveryRows" @create-copy-row="createCopyRow" />
 
           <UIModal v-show="isOpen" @close-modal="closeModal">
+
             <template v-slot:header>
               <div class="custom-header" v-if="rowData.id">
                 Изменение строки с ID - <b> {{ rowData.id }}</b>
@@ -594,7 +622,8 @@ async function getFromNameFromCell() {
                   v-model="rowData.prepayment" type="number" placeholder="По умолчанию: 0" />
               </div>
 
-              <div class="grid grid-cols-2 mb-5" v-if="user.percentClient1 === 'READ' || user.percentClient1 === 'WRITE'">
+              <div class="grid grid-cols-2 mb-5"
+                v-if="user.percentClient1 === 'READ' || user.percentClient1 === 'WRITE'">
                 <label for="percentClient1" class="max-sm:text-sm">Процент с клиента</label>
                 <input :disabled="user.percentClient1 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -648,7 +677,8 @@ async function getFromNameFromCell() {
                     v-model="rowData.deliveredSC" type="datetime-local" />
                 </div>
 
-                <div class="grid grid-cols-2 mb-5" v-if="user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'">
+                <div class="grid grid-cols-2 mb-5"
+                  v-if="user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'">
                   <label for="deliveredPVZ1" class="max-sm:text-sm">Доставлено на ПВЗ</label>
                   <input :disabled="user.deliveredPVZ1 === 'READ'"
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -662,7 +692,8 @@ async function getFromNameFromCell() {
                     v-model="rowData.issued" type="datetime-local" />
                 </div>
 
-                <div class="grid grid-cols-2 mb-5" v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'">
+                <div class="grid grid-cols-2 mb-5"
+                  v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'">
                   <label for="additionally1" class="max-sm:text-sm">Дополнительно</label>
                   <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                     v-model="rowData.additionally" :disabled="user.additionally1 === 'READ'">
