@@ -234,9 +234,6 @@ let showOthersVariants = ref(false)
 
   <div class="fixed z-40 flex flex-col gap-3 top-44 left-1/2 translate-x-[-50%] translate-y-[-50%]"
     v-if="user.dataClientRansom === 'WRITE' && checkedRows.length > 0 && user.role === 'PVZ'">
-    <UIActionButton v-if="user.deliveredPVZ2 === 'WRITE' && showButtonPVZ" @click="updateDeliveryRows('PVZ')">Доставить
-      на пвз
-    </UIActionButton>
     <UIActionButton v-if="user.issued2 === 'WRITE' && showButton" @click="showOthersVariants = !showOthersVariants">
       Выдать
       клиенту
