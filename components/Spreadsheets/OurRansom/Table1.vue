@@ -102,7 +102,7 @@ function scanItem() {
         let rowData = await storeRansom.getRansomRowsById(+scannedLink, "OurRansom");
         handleCheckboxChange(rowData);
         scanStringItem.value = "";
-    }, 1500);
+    }, 1000);
 }
 
 function convertToURL(inputString: string) {
@@ -202,24 +202,29 @@ onMounted(async () => {
 let showOthersVariants = ref(false)
 const myInput = ref(null);
 
+let isScanActive = ref(false)
 function focusInput() {
     myInput.value.focus();
+    isScanActive.value = true;
 }
 
 </script>
+
 <template>
     <div class="flex items-center justify-between max-lg:block mt-10">
         <div>
-            <input class="block w-full bg-transparent mb-5 border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 rounded-2xl focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
-            placeholder="Отсканируйте товар (Выделение товара)" ref="myInput" autofocus v-model="scanStringItem" @input="scanItem" />
-
+            <div class="flex items-center gap-5">
+                <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
+                <Icon v-if="isScanActive" name="eos-icons:bubble-loading" class="text-secondary-color" />
+            </div>
+            <input class="opacity-0" ref="myInput" autofocus v-model="scanStringItem" @input="scanItem" />
             <div class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5">
                 <h1 class="text-xl" v-if="user.role !== 'PVZ'">Товаров в работе: <span
                         class="text-secondary-color font-bold">{{
-                            totalRows }}</span> </h1>
+                totalRows }}</span> </h1>
                 <h1 class="text-xl" v-if="user.role === 'PVZ'">Товаров к выдаче: <span
                         class="text-secondary-color font-bold">{{
-                            totalRows }}</span> </h1>
+                totalRows }}</span> </h1>
             </div>
 
             <div class="flex items-center gap-5" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
@@ -252,23 +257,20 @@ function focusInput() {
     </div>
 
     <div class="fixed top-16 z-40 left-1/2 translate-x-[-50%] translate-y-[-50%]" v-if="getAllSum > 0">
-        <h1 class="text-base backdrop-blur-xl p-2 rounded-xl border-2 text-secondary-color font-bold">К оплате: {{
-            getAllSum }} </h1>
+        <h1 class="text-base text-center backdrop-blur-xl p-2 rounded-xl border-2 text-secondary-color font-bold">
+            К оплате: {{ getAllSum }} <br>
+            Количество товаров: {{ checkedRows.length }}
+        </h1>
     </div>
 
     <div class="fixed z-40 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
         v-if="user.dataOurRansom === 'WRITE' && checkedRows.length > 0 && user.role !== 'PVZ'">
-        <UIActionButton
-            v-if="user.dataOurRansom === 'WRITE' && user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' && checkedRows.length === 1"
-            @click="createCopyRow">Скопировать запись</UIActionButton>
         <UIActionButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' && user.dataOurRansom === 'WRITE'"
             @click="deleteSelectedRows">Удалить
             выделенные записи</UIActionButton>
-        <UIActionButton v-if="user.deliveredSC1 === 'WRITE' && showButtonSC" @click="updateDeliveryRows('SC')">Доставить на
+        <UIActionButton v-if="user.deliveredSC1 === 'WRITE' && showButtonSC" @click="updateDeliveryRows('SC')">Доставить
+            на
             сц
-        </UIActionButton>
-        <UIActionButton v-if="user.deliveredPVZ1 === 'WRITE' && showButtonPVZ" @click="updateDeliveryRows('PVZ')">Доставить
-            на пвз
         </UIActionButton>
         <UIActionButton v-if="user.issued1 === 'WRITE' && showButton" @click="showOthersVariants = !showOthersVariants">
             Выдать клиенту
@@ -280,16 +282,19 @@ function focusInput() {
             <UIActionButton2 v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally')">Оплата
                 онлайн
             </UIActionButton2>
-            <UIActionButton2 v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally1')">Отказ клиент
+            <UIActionButton2 v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally1')">Отказ
+                клиент
             </UIActionButton2>
-            <UIActionButton2 v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally2')">Отказ брак
+            <UIActionButton2 v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally2')">Отказ
+                брак
             </UIActionButton2>
         </div>
     </div>
 
     <div class="fixed z-40 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
         v-if="user.dataOurRansom === 'WRITE' && checkedRows.length > 0 && user.role === 'PVZ'">
-        <UIActionButton v-if="user.deliveredPVZ1 === 'WRITE' && showButtonPVZ" @click="updateDeliveryRows('PVZ')">Доставить
+        <UIActionButton v-if="user.deliveredPVZ1 === 'WRITE' && showButtonPVZ" @click="updateDeliveryRows('PVZ')">
+            Доставить
             на пвз
         </UIActionButton>
         <UIActionButton v-if="user.issued1 === 'WRITE' && showButton" @click="showOthersVariants = !showOthersVariants">
@@ -303,9 +308,11 @@ function focusInput() {
             <UIActionButton2 v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally')">Оплата
                 онлайн
             </UIActionButton2>
-            <UIActionButton2 v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally1')">Отказ клиент
+            <UIActionButton2 v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally1')">Отказ
+                клиент
             </UIActionButton2>
-            <UIActionButton v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally2')">Отказ брак
+            <UIActionButton v-if="user.additionally1 === 'WRITE'" @click="updateDeliveryRows('additionally2')">Отказ
+                брак
             </UIActionButton>
         </div>
     </div>
@@ -333,10 +340,12 @@ function focusInput() {
                     <th scope="col" class="border-2" v-if="user.fromName1 === 'READ' || user.fromName1 === 'WRITE'">
                         телефон
                     </th>
-                    <th scope="col" class="border-2" v-if="user.productLink1 === 'READ' || user.productLink1 === 'WRITE'">
+                    <th scope="col" class="border-2"
+                        v-if="user.productLink1 === 'READ' || user.productLink1 === 'WRITE'">
                         товар (ссылка)
                     </th>
-                    <th scope="col" class="border-2" v-if="user.productName1 === 'READ' || user.productName1 === 'WRITE'">
+                    <th scope="col" class="border-2"
+                        v-if="user.productName1 === 'READ' || user.productName1 === 'WRITE'">
                         название товара
                     </th>
                     <th scope="col" class="border-2" v-if="user.notation1 === 'READ' || user.notation1 === 'WRITE'">
@@ -352,49 +361,60 @@ function focusInput() {
                         v-if="user.percentClient1 === 'READ' || user.percentClient1 === 'WRITE'">
                         процент с клиента (%)
                     </th>
-                    <th scope="col" class="border-2" v-if="user.deliveredKGT1 === 'READ' || user.deliveredKGT1 === 'WRITE'">
+                    <th scope="col" class="border-2"
+                        v-if="user.deliveredKGT1 === 'READ' || user.deliveredKGT1 === 'WRITE'">
                         дополнительный доход
                     </th>
                     <th scope="col" class="border-2"
                         v-if="user.amountFromClient1 === 'READ' || user.amountFromClient1 === 'WRITE'">
                         сумма с клиента
                     </th>
-                    <th scope="col" class="border-2" v-if="user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'">
+                    <th scope="col" class="border-2"
+                        v-if="user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'">
                         отправка в пвз
                     </th>
                     <th scope="col" class="border-2" v-if="user.orderPVZ1 === 'READ' || user.orderPVZ1 === 'WRITE'">
                         заказано на сц
                     </th>
-                    <th scope="col" class="border-2" v-if="user.orderAccount === 'READ' || user.orderAccount === 'WRITE'">
+                    <th scope="col" class="border-2"
+                        v-if="user.orderAccount === 'READ' || user.orderAccount === 'WRITE'">
                         аккаунт заказа
                     </th>
-                    <th scope="col" class="border-2" v-if="user.deliveredSC1 === 'READ' || user.deliveredSC1 === 'WRITE'">
+                    <th scope="col" class="border-2"
+                        v-if="user.deliveredSC1 === 'READ' || user.deliveredSC1 === 'WRITE'">
                         доставлено на сц
                     </th>
-                    <th scope="col" class="border-2" v-if="user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'">
+                    <th scope="col" class="border-2"
+                        v-if="user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'">
                         доставлено на пвз
                     </th>
                     <th scope="col" class="border-2" v-if="user.issued1 === 'READ' || user.issued1 === 'WRITE'">
                         выдан клиенту
                     </th>
-                    <th scope="col" class="border-2" v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'">
+                    <th scope="col" class="border-2"
+                        v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'">
                         дополнительно
                     </th>
                     <th scope="col" class="border-2" v-if="user.profit1 === 'READ' || user.profit1 === 'WRITE'">
                         прибыль (доход)
                     </th>
-                    <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">создан
+                    <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+                        создан
                         (время)
                     </th>
-                    <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">изменен
+                    <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+                        изменен
                         (время)
                     </th>
-                    <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">удален
+                    <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+                        удален
                         (время)
                     </th>
-                    <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">создан
+                    <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+                        создан
                     </th>
-                    <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">изменен
+                    <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+                        изменен
                     </th>
                     <th scope="col" class="exclude-row px-6 py-3 border-2"
                         v-if="user.dataOurRansom === 'WRITE' && user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
@@ -440,8 +460,8 @@ function focusInput() {
                     <td class="underline border-2 text-secondary-color whitespace-nowrap overflow-hidden max-w-[30px]"
                         v-if="user.productLink1 === 'READ' || user.productLink1 === 'WRITE'">
                         <a :href="row.productLink" target="_blank" class="hover:text-orange-200 duration-200">{{
-                            row.productLink
-                        }}</a>
+                row.productLink
+            }}</a>
                     </td>
                     <td class="border-2 overflow-hidden max-h-[40px]"
                         v-if="user.productName1 === 'READ' || user.productName1 === 'WRITE'">
@@ -489,26 +509,28 @@ function focusInput() {
                             {{ row.issued ? storeUsers.getNormalizedDate(row.issued) : "" }}
                         </h1>
                     </td>
-                    <td class="px-6 py-4 border-2" v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'">
+                    <td class="px-6 py-4 border-2"
+                        v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'">
                         {{ row.additionally ? row.additionally : "Пусто" }}
                     </td>
 
                     <td class="px-1 py-4 border-2" v-if="(user.profit1 === 'READ' || user.profit1 === 'WRITE') &&
-                        (row.additionally !== 'Отказ клиент' && row.additionally !== 'Отказ брак') && !row.prepayment">
+                (row.additionally !== 'Отказ клиент' && row.additionally !== 'Отказ брак') && !row.prepayment">
                         {{ row.percentClient !== 0 ? Math.ceil(row.amountFromClient1 / 10) * 10 - row.priceSite +
-                            row.deliveredKGT : row.deliveredKGT }}
+                row.deliveredKGT : row.deliveredKGT }}
                     </td>
 
                     <td class="px-1 py-4 border-2" v-if="(user.profit1 === 'READ' || user.profit1 === 'WRITE') &&
-                        (row.additionally !== 'Отказ клиент' && row.additionally !== 'Отказ брак') && row.prepayment">
-                        {{ row.percentClient !== 0 ? Math.ceil((row.priceSite * row.percentClient / 100) + row.deliveredKGT)
-                            :
-                            row.deliveredKGT }}
+                (row.additionally !== 'Отказ клиент' && row.additionally !== 'Отказ брак') && row.prepayment">
+                        {{ row.percentClient !== 0 ? Math.ceil((row.priceSite * row.percentClient / 100) +
+                row.deliveredKGT)
+                :
+                row.deliveredKGT }}
                     </td>
 
 
                     <td class="px-1 py-4 border-2" v-if="(user.profit1 === 'READ' || user.profit1 === 'WRITE') &&
-                        (row.additionally === 'Отказ клиент' || row.additionally === 'Отказ брак')">
+                (row.additionally === 'Отказ клиент' || row.additionally === 'Отказ брак')">
                         {{ row.profit1 }}
                     </td>
 
@@ -530,7 +552,8 @@ function focusInput() {
 
                     <td class="px-6 py-4 border-2"
                         v-if="user.dataOurRansom === 'WRITE' && user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
-                        <Icon @click="deleteRow(row.id)" class="text-red-600 cursor-pointer hover:text-red-300 duration-200"
+                        <Icon @click="deleteRow(row.id)"
+                            class="text-red-600 cursor-pointer hover:text-red-300 duration-200"
                             name="material-symbols:playlist-remove-rounded" size="32" />
                     </td>
                     <div id="right"></div>

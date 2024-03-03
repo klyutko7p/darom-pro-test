@@ -63,13 +63,15 @@ interface RowData {
   rowId: number;
   amount: number;
   paid: Date | null | string | number;
+  sorted: Date | null | string | number;
 }
 
 const allSum: Ref<RowData[]> = ref([]);
 const checkedRows: Ref<number[]> = ref([]);
 
 const getAllSum: Ref<number> = ref(0);
-const showButton: Ref<boolean> = ref(true);
+const showButtonPaid: Ref<boolean> = ref(true);
+const showButtonSorted: Ref<boolean> = ref(true);
 
 const isChecked = (rowId: number): boolean => {
   return checkedRows.value.includes(rowId);
@@ -81,10 +83,11 @@ const handleCheckboxChange = (row: IDelivery): void => {
     allSum.value = allSum.value.filter((obj) => obj.rowId !== row.id);
   } else {
     checkedRows.value.push(row.id);
-    allSum.value.push({ rowId: row.id, amount: row.amountFromClient3, paid: row.paid });
+    allSum.value.push({ rowId: row.id, amount: row.amountFromClient3, paid: row.paid, sorted: row.sorted });
   }
   getAllSum.value = allSum.value.filter((obj) => obj.paid === null).reduce((sum, obj) => sum + obj.amount, 0);
-  showButton.value = allSum.value.every(obj => obj.paid === null);
+  showButtonPaid.value = allSum.value.every(obj => obj.paid === null);
+  showButtonSorted.value = allSum.value.every(obj => obj.sorted === null);
 };
 
 const showDeletedRows = ref(false);
@@ -169,15 +172,12 @@ let showOtherOptions = ref(false);
 
   <div class="fixed z-40 flex flex-col gap-3 top-64 left-1/2 translate-x-[-50%] translate-y-[-50%]"
     v-if="user.dataDelivery === 'WRITE' && checkedRows.length > 0 && user.role !== 'PVZ'">
-    <UIActionButton
-      v-if="user.dataDelivery === 'WRITE' && (user.role === 'ADMIN' || user.username === 'ОПТ') && checkedRows.length === 1"
-      @click="createCopyRow">Скопировать запись</UIActionButton>
     <UIActionButton v-if="user.role === 'ADMIN' && user.dataDelivery === 'WRITE'"
       @click="deleteSelectedRows">Удалить
       выделенные записи</UIActionButton>
-    <UIActionButton v-if="user.sorted === 'WRITE'" @click="updateDeliveryRows('sorted')">Отсортировано
+    <UIActionButton v-if="user.sorted === 'WRITE' && showButtonSorted" @click="updateDeliveryRows('sorted')">Отсортировано
     </UIActionButton>
-    <UIActionButton v-if="user.paid === 'WRITE'" @click="showOtherOptions = !showOtherOptions">Оплачено
+    <UIActionButton v-if="user.paid === 'WRITE' && showButtonPaid" @click="showOtherOptions = !showOtherOptions">Оплачено
     </UIActionButton>
     <div v-if="showOtherOptions" class="flex flex-col gap-3">
       <UIActionButton2 v-if="user.paid === 'WRITE'" @click="updateDeliveryRows('paid1')">Оплачено онлайн
