@@ -26,7 +26,7 @@ onMounted(() => {
 
 </script>
 <template>
-  <div class="relative max-h-[610px] mt-5 mb-10">
+  <div class="relative max-h-[410px] overflow-y-auto mt-5 mb-10">
     <table id="theTable" class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500">
       <thead class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center bg-gray-50">
         <tr>
