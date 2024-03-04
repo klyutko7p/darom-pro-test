@@ -11,6 +11,13 @@ interface CellDispatchPair {
 export const useCellsStore = defineStore("cells", () => {
 
     let cachesCells: any = null;
+    
+    function isUnique(obj, index, self) {
+        return self.findIndex(o =>
+            o.name === obj.name && 
+            o.PVZ === obj.PVZ && 
+            o.status === obj.status) === index;
+    }
 
     async function getCells() {
         if (cachesCells) {
@@ -24,7 +31,8 @@ export const useCellsStore = defineStore("cells", () => {
                     },
                 });
                 cachesCells = data.value;
-                return cachesCells;
+                let uniqueCells = cachesCells.filter(isUnique);
+                return uniqueCells;
             } catch (error) {
                 if (error instanceof Error) {
                     toast.error(error.message);
