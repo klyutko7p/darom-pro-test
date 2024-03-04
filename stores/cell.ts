@@ -15,8 +15,7 @@ export const useCellsStore = defineStore("cells", () => {
     function isUnique(obj, index, self) {
         return self.findIndex(o =>
             o.name === obj.name && 
-            o.PVZ === obj.PVZ && 
-            o.status === obj.status) === index;
+            o.PVZ === obj.PVZ) === index;
     }
 
     async function getCells() {
