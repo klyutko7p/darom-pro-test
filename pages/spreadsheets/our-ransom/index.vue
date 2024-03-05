@@ -69,6 +69,7 @@ async function updateDeliveryRows(obj: any) {
     filteredRows.value = await storeRansom.getRansomRows("OurRansom");
     rows.value = filteredRows.value;
     isLoading.value = false;
+    await updateCells()
   }
 }
 
@@ -111,7 +112,7 @@ async function updateRow() {
   rows.value = filteredRows.value;
   isLoading.value = false;
   originallyRows.value = await storeRansom.getRansomRowsForModal("OurRansom");
-
+  await updateCells()
 }
 
 async function createRow() {
@@ -130,7 +131,7 @@ async function createRow() {
 
   rows.value = filteredRows.value;
   originallyRows.value = await storeRansom.getRansomRowsForModal("OurRansom");
-  cells.value = await storeCells.getCells()
+  await updateCells()
 }
 
 async function createCopyRow(id: number) {
@@ -217,11 +218,17 @@ onMounted(async () => {
   isLoading.value = false;
 
   originallyRows.value = await storeRansom.getRansomRowsForModal("OurRansom");
-  cells.value = await storeCells.getCells();
+  await updateCells()
   pvz.value = await storePVZ.getPVZ();
   sortingCenters.value = await storeSortingCenters.getSortingCenters();
   orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
 });
+
+async function updateCells() {
+  let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCells("OurRansom")
+  await storeCells.updateCellsStatus(rowsWithDeleted)
+  cells.value = await storeCells.getCells();
+}
 
 onBeforeMount(() => {
   if (!token || user.value.dataOurRansom === "NONE") {
@@ -273,7 +280,24 @@ async function getCellFromName() {
   if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
     let row = originallyRows.value?.filter((row) => row.fromName === rowData.value.fromName && row.dispatchPVZ === rowData.value.dispatchPVZ && (row.deliveredPVZ === null || row.deliveredSC === null) && !row.cell.includes('-'));
     if (row && row.length > 0) {
-      rowData.value.cell = row[0].cell;
+      const unoccupiedCellsAndPVZ = cells.value?.filter((cell) => cell.status === 'Свободно').sort((a, b) => a.name - b.name);
+      const freeCell = unoccupiedCellsAndPVZ?.find(cell => cell.PVZ === rowData.value.dispatchPVZ);
+
+      const targetCell = row[0].cell;
+      const targetPVZ = row[0].dispatchPVZ
+
+      const cellIsOccupied = unoccupiedCellsAndPVZ?.some((cell) => cell.name === targetCell && cell.PVZ === targetPVZ);
+
+      if (cellIsOccupied) {
+        rowData.value.cell = row[0].cell;
+      } else {
+        if (freeCell) {
+          rowData.value.cell = freeCell.name;
+          cellData.value = freeCell;
+        } else {
+          toast.warning("Нет свободных ячеек для выбранного ПВЗ");
+        }
+      }
     }
   }
 }
@@ -282,10 +306,26 @@ async function changePVZ() {
   if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
     let row = originallyRows.value?.filter((row) => row.fromName === rowData.value.fromName && row.dispatchPVZ === rowData.value.dispatchPVZ && (row.deliveredPVZ === null || row.deliveredSC === null) && !row.cell.includes('-'));
     if (row && row.length > 0) {
-      rowData.value.cell = row[0].cell;
+      const unoccupiedCellsAndPVZ = cells.value?.filter((cell) => cell.status === 'Свободно').sort((a, b) => a.name - b.name);
+      const freeCell = unoccupiedCellsAndPVZ?.find(cell => cell.PVZ === rowData.value.dispatchPVZ);
+
+      const targetCell = row[0].cell;
+      const targetPVZ = row[0].dispatchPVZ
+
+      const cellIsOccupied = unoccupiedCellsAndPVZ?.some((cell) => cell.name === targetCell && cell.PVZ === targetPVZ);
+
+      if (cellIsOccupied) {
+        rowData.value.cell = row[0].cell;
+      } else {
+        if (freeCell) {
+          rowData.value.cell = freeCell.name;
+          cellData.value = freeCell;
+        } else {
+          toast.warning("Нет свободных ячеек для выбранного ПВЗ");
+        }
+      }
     } else {
       const unoccupiedCellsAndPVZ = cells.value?.filter((cell) => cell.status === 'Свободно').sort((a, b) => a.name - b.name);
-      console.log(unoccupiedCellsAndPVZ);
       const freeCell = unoccupiedCellsAndPVZ?.find(cell => cell.PVZ === rowData.value.dispatchPVZ);
       if (freeCell) {
         rowData.value.cell = freeCell.name;
