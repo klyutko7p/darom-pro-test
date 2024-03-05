@@ -37,17 +37,6 @@ onBeforeMount(async () => {
     rows.value = rows.value?.filter((row) => row.pvz === user.value.visiblePVZ)
   }
 
-  // const currentDate = new Date();
-  // const year = currentDate.getFullYear();
-  // const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-  // const firstDayOfMonth = '01';
-  // startingDate.value = `${year}-${month}-${firstDayOfMonth}T00:00`;
-
-  // const day = String(currentDate.getDate()).padStart(2, '0');
-  // const endHour = '23';
-  // const endMinute = '59';
-  // endDate.value = `${year}-${month}-${day}T${endHour}:${endMinute}`;
-
   isLoading.value = false;
 
   pvz.value = await storePVZ.getPVZ();
@@ -116,14 +105,14 @@ function reduceArray(array: any, flag: string) {
       array = array.filter((row: any) => row.additionally !== "Отказ брак");
       return array.reduce(
         (ac: any, curValue: any) =>
-          ac + (Math.ceil(curValue.amountFromClient1 / 10) * 10 + curValue.prepayment),
+          ac + (Math.ceil(curValue.amountFromClient1 / 10) * 10),
         0
       );
     } else if (flag === "ClientRansom") {
       array = array.filter((row: any) => row.additionally !== "Отказ брак");
       return array.reduce(
         (ac: any, curValue: any) =>
-          ac + (curValue.amountFromClient2 + curValue.prepayment),
+          ac + (curValue.amountFromClient2),
         0
       );
     } else {
