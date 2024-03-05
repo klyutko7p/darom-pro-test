@@ -209,7 +209,7 @@ onMounted(async () => {
   user.value = await storeUsers.getUser();
   rows.value = await storeRansom.getRansomRows("OurRansom");
 
-  deleteIssuedRowsTimer();
+  // deleteIssuedRowsTimer();
 
   if (rows.value) {
     handleFilteredRows(rows.value);
@@ -280,23 +280,25 @@ async function getCellFromName() {
   if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
     let row = originallyRows.value?.filter((row) => row.fromName === rowData.value.fromName && row.dispatchPVZ === rowData.value.dispatchPVZ && (row.deliveredPVZ === null || row.deliveredSC === null) && !row.cell.includes('-'));
     if (row && row.length > 0) {
-      const unoccupiedCellsAndPVZ = cells.value?.filter((cell) => cell.status === 'Свободно').sort((a, b) => a.name - b.name);
-      const freeCell = unoccupiedCellsAndPVZ?.find(cell => cell.PVZ === rowData.value.dispatchPVZ);
+      const unoccupiedCellsAndPVZ = cells.value?.sort((a, b) => a.name - b.name);
+      const freeCell = unoccupiedCellsAndPVZ?.find(cell => cell.PVZ === rowData.value.dispatchPVZ && cell.status === 'Свободно');
 
       const targetCell = row[0].cell;
       const targetPVZ = row[0].dispatchPVZ
+      const targetFromName = row[0].fromName
 
-      const cellIsOccupied = unoccupiedCellsAndPVZ?.some((cell) => cell.name === targetCell && cell.PVZ === targetPVZ);
+      const cellIsOccupied = unoccupiedCellsAndPVZ?.some((cell) => cell.name === targetCell && cell.PVZ === targetPVZ && cell.fromName !== targetFromName);
+
 
       if (cellIsOccupied) {
-        rowData.value.cell = row[0].cell;
-      } else {
         if (freeCell) {
           rowData.value.cell = freeCell.name;
           cellData.value = freeCell;
         } else {
           toast.warning("Нет свободных ячеек для выбранного ПВЗ");
         }
+      } else {
+        rowData.value.cell = row[0].cell;
       }
     }
   }
@@ -306,23 +308,24 @@ async function changePVZ() {
   if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
     let row = originallyRows.value?.filter((row) => row.fromName === rowData.value.fromName && row.dispatchPVZ === rowData.value.dispatchPVZ && (row.deliveredPVZ === null || row.deliveredSC === null) && !row.cell.includes('-'));
     if (row && row.length > 0) {
-      const unoccupiedCellsAndPVZ = cells.value?.filter((cell) => cell.status === 'Свободно').sort((a, b) => a.name - b.name);
-      const freeCell = unoccupiedCellsAndPVZ?.find(cell => cell.PVZ === rowData.value.dispatchPVZ);
+      const unoccupiedCellsAndPVZ = cells.value?.sort((a, b) => a.name - b.name);
+      const freeCell = unoccupiedCellsAndPVZ?.find(cell => cell.PVZ === rowData.value.dispatchPVZ && cell.status === 'Свободно');
 
       const targetCell = row[0].cell;
       const targetPVZ = row[0].dispatchPVZ
+      const targetFromName = row[0].fromName
 
-      const cellIsOccupied = unoccupiedCellsAndPVZ?.some((cell) => cell.name === targetCell && cell.PVZ === targetPVZ);
+      const cellIsOccupied = unoccupiedCellsAndPVZ?.some((cell) => cell.name === targetCell && cell.PVZ === targetPVZ && cell.fromName !== targetFromName);
 
       if (cellIsOccupied) {
-        rowData.value.cell = row[0].cell;
-      } else {
         if (freeCell) {
           rowData.value.cell = freeCell.name;
           cellData.value = freeCell;
         } else {
           toast.warning("Нет свободных ячеек для выбранного ПВЗ");
         }
+      } else {
+        rowData.value.cell = row[0].cell;
       }
     } else {
       const unoccupiedCellsAndPVZ = cells.value?.filter((cell) => cell.status === 'Свободно').sort((a, b) => a.name - b.name);
