@@ -289,7 +289,7 @@ async function getCellFromName() {
 
       const cellIsOccupied = unoccupiedCellsAndPVZ?.some((cell) => cell.name === targetCell && cell.PVZ === targetPVZ && cell.fromName !== targetFromName);
 
-
+      
       if (cellIsOccupied) {
         if (freeCell) {
           rowData.value.cell = freeCell.name;

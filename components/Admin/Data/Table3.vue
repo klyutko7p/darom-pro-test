@@ -1,9 +1,21 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 
-defineProps({
+const props = defineProps({
   fields: { type: Array as PropType<String[]>, required: true },
   rows: { type: Array as any },
+});
+
+const sortedRows = props.rows.slice().sort((a, b) => {
+  const pvzComparison = a.PVZ.localeCompare(b.PVZ);
+
+  if (pvzComparison !== 0) {
+    return pvzComparison;
+  }
+
+  const numA = parseInt(a.name);
+  const numB = parseInt(b.name);
+  return numA - numB; 
 });
 </script>
 
@@ -16,7 +28,7 @@ defineProps({
         </tr>
       </thead>
       <tbody>
-        <tr class="bg-white border-b text-center" v-for="row in rows">
+        <tr class="bg-white border-b text-center" v-for="row in sortedRows">
           <th scope="row" class="px-6 py-4 border-2 font-medium text-gray-900 whitespace-nowrap">
             {{ row.name }}
           </th>

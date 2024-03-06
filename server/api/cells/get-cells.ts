@@ -5,9 +5,14 @@ const prisma = new PrismaClient();
 export default defineEventHandler(async (event) => {
     try {
         const cells = await prisma.cell.findMany({
-            orderBy: {
-                id: 'asc',
-            }
+            orderBy: [
+                {
+                    PVZ: 'asc',
+                },
+                {
+                    id: 'asc'
+                },
+            ],
         });
         return cells;
     } catch (error) {
