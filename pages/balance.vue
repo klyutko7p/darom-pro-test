@@ -32,7 +32,7 @@ onBeforeMount(async () => {
 
   getAllSum();
 
-  if (user.value.role === "PVZ") {
+  if (user.value.role === "PVZ" || user.value.role === 'COURIER') {
     selectedPVZ.value = user.value.visiblePVZ;
     rows.value = rows.value?.filter((row) => row.pvz === user.value.visiblePVZ)
   }
@@ -472,7 +472,7 @@ async function createRow() {
     rows.value = await storeBalance.getBalanceRows();
     closeModal();
     getAllSum();
-    if (user.value.role === "PVZ") {
+    if (user.value.role === "PVZ" || user.value.role === "COURIER") {
       selectedPVZ.value = user.value.visiblePVZ;
       rows.value = rows.value?.filter((row) => row.pvz === user.value.visiblePVZ)
     }
@@ -495,7 +495,7 @@ async function updateDeliveryRow(obj: any) {
   if (answer) await storeBalance.updateDeliveryStatus(obj.row, obj.flag, user.value.username);
   rows.value = await storeBalance.getBalanceRows();
   getAllSum();
-  if (user.value.role === "PVZ") {
+  if (user.value.role === "PVZ" || user.value.role === "COURIER") {
     selectedPVZ.value = user.value.visiblePVZ;
     rows.value = rows.value?.filter((row) => row.pvz === user.value.visiblePVZ)
   }
@@ -508,7 +508,7 @@ async function updateRow() {
   rows.value = await storeBalance.getBalanceRows();
   closeModal();
   getAllSum();
-  if (user.value.role === "PVZ") {
+  if (user.value.role === "PVZ" || user.value.role === "COURIER") {
     selectedPVZ.value = user.value.visiblePVZ;
     rows.value = rows.value?.filter((row) => row.pvz === user.value.visiblePVZ)
   }
@@ -539,30 +539,39 @@ async function updateRow() {
                 <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
                   <h1>Показать для ПВЗ:</h1>
                   <select
-                    class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="selectedPVZ">
-                    <option value="Все ПВЗ" selected>Все ПВЗ</option>
-                    <option v-for="pvzValue in pvz">
-                      {{ pvzValue.name }}
-                    </option>
-                  </select>
+                  v-if="user.role !== 'PVZ' && user.role !== 'COURIER'"
+                  class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  v-model="selectedPVZ">
+                  <option value="Все ПВЗ" selected>Все ПВЗ</option>
+                  <option v-for="pvzValue in pvz">
+                    {{ pvzValue.name }}
+                  </option>
+                </select>
+                <select
+                  v-else
+                  class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  v-model="selectedPVZ">
+                  <option v-for="pvzValue in user.PVZ">
+                    {{ pvzValue }}
+                  </option>
+                </select>
                 </div>
                 <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
                   <h1>Тип транзакции:</h1>
                   <select
                     class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="selectedTypeOfTransaction">
-                    <option v-if="user.role !== 'ADMINISTRATOR' && user.role !== 'PVZ'" value="Доход">
+                    <option v-if="user.role !== 'ADMINISTRATOR' && user.role !== 'PVZ' && user.role !== 'COURIER'" value="Доход">
                       Доход
                     </option>
-                    <option v-if="user.role !== 'ADMINISTRATOR' && user.role !== 'PVZ'" value="Заказано">
+                    <option v-if="user.role !== 'ADMINISTRATOR' && user.role !== 'PVZ' && user.role !== 'COURIER'" value="Заказано">
                       Заказано
                     </option>
                     <option value="Баланс наличные">Баланс наличные</option>
-                    <option v-if="user.role !== 'PVZ'" value="Баланс безнал">
+                    <option v-if="user.role !== 'PVZ' && user.role !== 'COURIER'" value="Баланс безнал">
                       Баланс безнал
                     </option>
-                    <option v-if="user.role !== 'ADMINISTRATOR' && user.role !== 'PVZ'" value="Доставка">
+                    <option v-if="user.role !== 'ADMINISTRATOR' && user.role !== 'PVZ' && user.role !== 'COURIER'" value="Доставка">
                       Доставка
                     </option>
                   </select>
@@ -708,13 +717,21 @@ async function updateRow() {
                 <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
                   <h1>Показать для ПВЗ:</h1>
                   <select
+                    v-if="user.role !== 'PVZ' && user.role !== 'COURIER'"
                     class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="selectedPVZ">
-                    <option value="Все ПВЗ" selected v-if="user.role !== 'PVZ'">Все ПВЗ</option>
-                    <option v-if="user.role !== 'PVZ'" v-for="pvzValue in pvz">
+                    <option value="Все ПВЗ" selected>Все ПВЗ</option>
+                    <option v-for="pvzValue in pvz">
                       {{ pvzValue.name }}
                     </option>
-                    <option v-if="user.role === 'PVZ'" :value="user.visiblePVZ"> {{ user.visiblePVZ }} </option>
+                  </select>
+                  <select
+                    v-else
+                    class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="selectedPVZ">
+                    <option v-for="pvzValue in user.PVZ">
+                      {{ pvzValue }}
+                    </option>
                   </select>
                 </div>
                 <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
@@ -722,15 +739,18 @@ async function updateRow() {
                   <select
                     class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="selectedTypeOfTransaction">
-                    <option v-if="user.role !== 'ADMINISTRATOR' && user.role !== 'PVZ'" value="Доход">
+                    <option v-if="user.role !== 'ADMINISTRATOR' && user.role !== 'PVZ' && user.role !== 'COURIER'" value="Доход">
                       Доход
                     </option>
-                    <option v-if="user.role !== 'ADMINISTRATOR' && user.role !== 'PVZ'" value="Заказано">
+                    <option v-if="user.role !== 'ADMINISTRATOR' && user.role !== 'PVZ' && user.role !== 'COURIER'" value="Заказано">
                       Заказано
                     </option>
                     <option value="Баланс наличные">Баланс наличные</option>
-                    <option v-if="user.role !== 'PVZ'" value="Баланс безнал">
+                    <option v-if="user.role !== 'PVZ' && user.role !== 'COURIER'" value="Баланс безнал">
                       Баланс безнал
+                    </option>
+                    <option v-if="user.role !== 'ADMINISTRATOR' && user.role !== 'PVZ' && user.role !== 'COURIER'" value="Доставка">
+                      Доставка
                     </option>
                   </select>
                 </div>
@@ -739,13 +759,13 @@ async function updateRow() {
                     <h1>От Даты:</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                      type="datetime-local" v-model="startingDate" />
+                      type="date" v-model="startingDate" />
                   </div>
                   <div class="grid grid-cols-2 my-2">
                     <h1>До Даты:</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                      type="datetime-local" v-model="endDate" />
+                      type="date" v-model="endDate" />
                   </div>
                 </div>
               </div>
@@ -762,14 +782,34 @@ async function updateRow() {
                 </h1>
               </div>
             </div>
+            <div v-else class="flex items-center justify-center gap-24">
+              <div class="text-center text-2xl mt-10">
+                <h1>Баланс 'Доставка'</h1>
+                <h1 class="font-bold text-secondary-color text-4xl mt-3">
+                  {{ formatNumber(Math.ceil(sum1)) }} ₽
+                </h1>
+              </div>
+              <div class="text-center text-2xl mt-10">
+                <h1>Баланс 'Сортировка'</h1>
+                <h1 class="font-bold text-secondary-color text-4xl mt-3">
+                  {{ formatNumber(Math.ceil(sum2)) }} ₽
+                </h1>
+              </div>
+              <div class="text-center text-2xl mt-10">
+                <h1>Баланс общий</h1>
+                <h1 class="font-bold text-secondary-color text-4xl mt-3">
+                  {{ formatNumber(Math.ceil(allSum)) }} ₽
+                </h1>
+              </div>
+            </div>
           </div>
 
           <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" class="mt-24" @click="openModal">
             Заявка на вывод средств</UIMainButton>
           <BalanceTable @update-delivery-row="updateDeliveryRow" :rows="rows" :user="user" @open-modal="openModal" />
 
-          <div v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
-            <UIMainButton class="mt-24" @click="openModalOnline">
+          <div class="mt-24" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+            <UIMainButton @click="openModalOnline">
               Заявка на обнуление баланса безнал</UIMainButton>
             <BalanceTableOnline :rows="rowsOnline" />
           </div>

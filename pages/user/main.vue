@@ -149,7 +149,7 @@ definePageMeta({
           <div
             v-if="
               (user.role === 'ADMIN' && user.username !== 'Светлана') ||
-              user.role === 'COURIER'
+              user.role === 'DRIVER'
             "
             role="button"
             @click="router.push('/advance-report')"
@@ -176,9 +176,7 @@ definePageMeta({
         </div>
         <div
           v-if="
-            (user.role === 'ADMIN' && user.username !== 'Светлана') ||
-            user.role === 'ADMINISTRATOR' ||
-            user.role === 'PVZ'
+          ((user.role === 'ADMIN' && user.username !== 'Светлана') || user.role === 'ADMINISTRATOR' || user.role === 'PVZ' || user.role === 'COURIER')
           "
           role="button"
           @click="router.push('/balance')"

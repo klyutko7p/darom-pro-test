@@ -203,7 +203,10 @@ definePageMeta({
               <h1>Баланс</h1>
             </div>
             <div
-              v-if="user.role === 'ADMIN' && user.username !== 'Светлана'"
+              v-if="
+                (user.role === 'ADMIN' && user.username !== 'Светлана') ||
+                user.role === 'DRIVER'
+              "
               role="button"
               @click="router.push('/advance-report')"
               tabindex="0"

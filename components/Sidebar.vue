@@ -199,9 +199,7 @@ let isShowAddSettings = ref(false);
       </div>
       <div
         v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана') ||
-          user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ'
+        ((user.role === 'ADMIN' && user.username !== 'Светлана') || user.role === 'ADMINISTRATOR' || user.role === 'PVZ' || user.role === 'COURIER')
         "
         role="button"
         @click="router.push('/balance')"
@@ -224,7 +222,10 @@ let isShowAddSettings = ref(false);
         />
       </div>
       <div
-        v-if="user.role === 'ADMIN' && user.username !== 'Светлана'"
+        v-if="
+          (user.role === 'ADMIN' && user.username !== 'Светлана') ||
+          user.role === 'DRIVER'
+        "
         role="button"
         @click="router.push('/advance-report')"
         tabindex="0"
@@ -534,7 +535,10 @@ let isShowAddSettings = ref(false);
         />
       </div>
       <div
-        v-if="user.role === 'ADMIN' && user.username !== 'Светлана'"
+        v-if="
+          (user.role === 'ADMIN' && user.username !== 'Светлана') ||
+          user.role === 'DRIVER'
+        "
         role="button"
         @click="router.push('/advance-report')"
         tabindex="0"

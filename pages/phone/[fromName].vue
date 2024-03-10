@@ -49,7 +49,7 @@ const token = Cookies.get("token");
           </div>
           <div v-else>
             <h1 class="text-4xl text-center mb-3">😞</h1>
-            <h1 class="text-3xl text-center">Извините, адрес не был найден!</h1>А
+            <h1 class="text-3xl text-center">Извините, адрес не был найден!</h1>
           </div>
         </div>
         <div v-else>

@@ -59,7 +59,7 @@ onMounted(() => {
       </thead>
       <tbody>
         <tr v-for="row in rows" class="text-center">
-          <td class="border-2" v-if="user.role !== 'PVZ'">
+          <td class="border-2" v-if="user.role !== 'PVZ' && user.role !== 'COURIER'">
             <h1 @click="openModal(row)" class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
               v-if="(user.role === 'ADMIN' || user.role === 'ADMINISTRATOR')">
               ✏️
@@ -72,7 +72,7 @@ onMounted(() => {
             {{ row.sum }}
           </th>
           <td class="border-2 whitespace-nowrap">
-            <Icon @click="updateDeliveryRow(row, 'issued')" v-if="!row.issued && user.role === 'PVZ'"
+            <Icon @click="updateDeliveryRow(row, 'issued')" v-if="!row.issued && (user.role === 'PVZ' || user.role === 'COURIER')"
               class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
               name="mdi:checkbox-multiple-marked-circle" size="32" />
             <h1 class="font-bold text-green-500">
