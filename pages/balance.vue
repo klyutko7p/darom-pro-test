@@ -557,7 +557,7 @@ async function updateRow() {
                 </select>
                 </div>
                 <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-                  <h1>Тип транзакции:</h1>
+                  <h1>Тип <br/> транзакции:</h1>
                   <select
                     class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="selectedTypeOfTransaction">
@@ -604,7 +604,7 @@ async function updateRow() {
                 </h1>
               </div>
             </div>
-            <div v-else class="flex items-center justify-center gap-24">
+            <div v-else class="flex items-center justify-center max-md:flex-col gap-24 max-md:gap-0">
               <div class="text-center text-2xl mt-10">
                 <h1>Баланс 'Доставка'</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
@@ -735,7 +735,7 @@ async function updateRow() {
                   </select>
                 </div>
                 <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-                  <h1>Тип транзакции:</h1>
+                  <h1>Тип <br/> транзакции:</h1>
                   <select
                     class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="selectedTypeOfTransaction">
@@ -782,7 +782,7 @@ async function updateRow() {
                 </h1>
               </div>
             </div>
-            <div v-else class="flex items-center justify-center gap-24">
+            <div v-else class="flex items-center justify-center max-md:flex-col gap-24 max-md:gap-0">
               <div class="text-center text-2xl mt-10">
                 <h1>Баланс 'Доставка'</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
