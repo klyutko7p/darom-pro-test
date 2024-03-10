@@ -205,7 +205,7 @@ definePageMeta({
             <div
               v-if="
                 (user.role === 'ADMIN' && user.username !== 'Светлана') ||
-                user.role === 'DRIVER'
+                user.role === 'DRIVER' || user.role === 'ADMINISTRATOR'
               "
               role="button"
               @click="router.push('/advance-report')"
