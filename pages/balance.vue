@@ -238,7 +238,6 @@ function getAllSum() {
         ?.filter(
           (row) =>
             row.issued !== null &&
-            row.dispatchPVZ !== 'НаДом' &&
             (!startingDate.value ||
               new Date(row.issued) >= new Date(newStartingDate)) &&
             (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
@@ -249,7 +248,6 @@ function getAllSum() {
         ?.filter(
           (row) =>
             row.issued !== null &&
-            row.dispatchPVZ !== 'НаДом' &&
             (!startingDate.value ||
               new Date(row.issued) >= new Date(newStartingDate)) &&
             (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
@@ -293,7 +291,6 @@ function getAllSum() {
         ?.filter(
           (row) =>
             row.issued !== null &&
-            row.dispatchPVZ !== 'НаДом' &&
             (!startingDate.value ||
               new Date(row.issued) >= new Date(newStartingDate)) &&
             (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
@@ -304,7 +301,6 @@ function getAllSum() {
         ?.filter(
           (row) =>
             row.issued !== null &&
-            row.dispatchPVZ !== 'НаДом' &&
             (!startingDate.value ||
               new Date(row.issued) >= new Date(newStartingDate)) &&
             (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
@@ -350,7 +346,6 @@ function getAllSum() {
           (row) =>
             row.nameOfAction === 'Доставка' &&
             row.paid !== null &&
-            row.dispatchPVZ !== 'НаДом' &&
             (!startingDate.value ||
               new Date(row.paid) >= new Date(newStartingDate)) &&
             (!endDate.value || new Date(row.paid) <= new Date(newEndDate))
@@ -373,6 +368,7 @@ function getAllSum() {
       copyArrayDelivery1.value = deliveryRansomRows.value
         ?.filter(
           (row) =>
+            row.dispatchPVZ === selectedPVZ.value &&
             row.nameOfAction === 'Доставка' &&
             row.paid !== null &&
             (!startingDate.value ||
@@ -383,9 +379,9 @@ function getAllSum() {
       copyArrayDelivery2.value = deliveryRansomRows.value
         ?.filter(
           (row) =>
+            row.dispatchPVZ === selectedPVZ.value &&
             row.nameOfAction === 'Сортировка' &&
             row.paid !== null &&
-            row.dispatchPVZ !== 'НаДом' &&
             (!startingDate.value ||
               new Date(row.paid) >= new Date(newStartingDate)) &&
             (!endDate.value || new Date(row.paid) <= new Date(newEndDate))
@@ -522,6 +518,7 @@ async function updateRow() {
 </script>
 
 <template>
+
   <Head>
     <Title>Баланс</Title>
   </Head>
@@ -545,9 +542,7 @@ async function updateRow() {
                     class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="selectedPVZ">
                     <option value="Все ПВЗ" selected>Все ПВЗ</option>
-                    <option v-for="pvzValue in pvz?.filter(
-                      (pvzData) => pvzData.name !== 'НаДом'
-                    )" :value="pvzValue.name">
+                    <option v-for="pvzValue in pvz">
                       {{ pvzValue.name }}
                     </option>
                   </select>
@@ -716,9 +711,7 @@ async function updateRow() {
                     class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="selectedPVZ">
                     <option value="Все ПВЗ" selected v-if="user.role !== 'PVZ'">Все ПВЗ</option>
-                    <option v-if="user.role !== 'PVZ'" v-for="pvzValue in pvz?.filter(
-                      (pvzData) => pvzData.name !== 'НаДом'
-                    )" :value="pvzValue.name">
+                    <option v-if="user.role !== 'PVZ'" v-for="pvzValue in pvz">
                       {{ pvzValue.name }}
                     </option>
                     <option v-if="user.role === 'PVZ'" :value="user.visiblePVZ"> {{ user.visiblePVZ }} </option>

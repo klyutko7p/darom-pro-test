@@ -299,6 +299,16 @@ async function getCellFromName() {
         }
       } else {
         rowData.value.cell = row[0].cell;
+        
+      }
+    } else {
+      const unoccupiedCellsAndPVZ = cells.value?.filter((cell) => cell.status === 'Свободно').sort((a, b) => a.name - b.name);
+      const freeCell = unoccupiedCellsAndPVZ?.find(cell => cell.PVZ === rowData.value.dispatchPVZ);
+      if (freeCell) {
+        rowData.value.cell = freeCell.name;
+        cellData.value = freeCell;
+      } else {
+        toast.warning("Нет свободных ячеек для выбранного ПВЗ");
       }
     }
   }

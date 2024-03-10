@@ -218,10 +218,20 @@ model Cell {
   PVZ      String?
 }
 
+model AdvanceReport {
+  id   Int       @id @default(autoincrement())
+  PVZ  String?
+  date DateTime?
+  
+}
+
 enum Role {
   USER
   ADMIN
   SORTIROVKA
   PVZ
   ADMINISTRATOR
+  COURIER
+  DRIVER
+  SHVEDOVA
 }

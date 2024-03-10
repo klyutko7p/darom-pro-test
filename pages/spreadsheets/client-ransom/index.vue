@@ -144,9 +144,6 @@ onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rows.value = await storeRansom.getRansomRows('ClientRansom');
-  pvz.value = await storePVZ.getPVZ();
-  sortingCenters.value = await storeSortingCenters.getSortingCenters();
-  marketplaces.value = await storeMarketplaces.getMarketplaces();
 
   deleteIssuedRowsTimer()
 
@@ -155,6 +152,10 @@ onMounted(async () => {
   }
 
   isLoading.value = false;
+
+  pvz.value = await storePVZ.getPVZ();
+  sortingCenters.value = await storeSortingCenters.getSortingCenters();
+  marketplaces.value = await storeMarketplaces.getMarketplaces();
 });
 
 onBeforeMount(() => {
