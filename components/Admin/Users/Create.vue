@@ -56,6 +56,9 @@ function updateSum() {
             <option selected value="SORTIROVKA">SORTIROVKA</option>
             <option selected value="PVZ">PVZ</option>
             <option selected value="ADMINISTRATOR">ADMINISTRATOR</option>
+            <option value="COURIER">COURIER</option>
+            <option value="DRIVER">DRIVER</option>
+            <option value="SHVEDOVA">SHVEDOVA</option>
           </select>
         </div>
       </div>

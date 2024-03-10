@@ -361,9 +361,13 @@ let showOthersVariants = ref(false)
           <td v-if="user.cell2 === 'READ' || user.cell2 === 'WRITE'" class="border-2">
             {{ row.cell }}
           </td>
-          <td v-if="user.fromName2 === 'READ' || user.fromName2 === 'WRITE'" class="py-4 border-2">
-            {{ row.fromName }}
-          </td>
+          <td v-if="user.fromName2 === 'READ' || user.fromName2 === 'WRITE'" class="py-4 border-2 text-secondary-color underline">
+            <NuxtLink v-if="user.role !== 'PVZ' && user.role !== 'ADMINISTRATOR'"
+                class="cursor-pointer hover:text-orange-200 duration-200"
+                :to="`/phone/${row.fromName}`">
+                {{ row.fromName }}
+            </NuxtLink>
+        </td>
           <td class="border-2 whitespace-nowrap overflow-hidden max-w-[30px]"
             v-if="user.productLink2 === 'READ' || user.productLink2 === 'WRITE'">
             {{ row.productLink }}

@@ -165,6 +165,10 @@ function handleFilteredRows(filteredRowsData: IClientRansom[]) {
           }) === today ||
             row.issued === null) 
       );
+    } else if (user.value.role === "COURIER") {
+      filteredRows.value = filteredRows.value.filter(
+        (row) => row.deliveredSC !== null && row.deliveredPVZ !== null && row.issued === null
+      );
     }
   }
 }

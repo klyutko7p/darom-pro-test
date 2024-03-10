@@ -219,10 +219,22 @@ model Cell {
 }
 
 model AdvanceReport {
-  id   Int       @id @default(autoincrement())
-  PVZ  String?
-  date DateTime?
-  
+  id                  Int       @id @default(autoincrement())
+  PVZ                 String?
+  date                DateTime?
+  issuedUser          String?
+  expenditure         String?
+  typeOfExpenditure   String?
+  notation            String?
+  company             String?
+  supportingDocuments String[]  @default([])
+  type                String?
+}
+
+model PhoneNumber {
+  id      Int     @id @default(autoincrement())
+  number  String?
+  address String?
 }
 
 enum Role {
