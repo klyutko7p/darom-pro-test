@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { PropType } from "vue";
 const storeUsers = useUsersStore();
 
 const emit = defineEmits(["openModal", "updateDeliveryRow"]);
@@ -20,7 +19,7 @@ defineProps({
 onMounted(() => {});
 </script>
 <template>
-  <div class="relative max-h-[410px] overflow-y-auto mt-5 mb-10">
+  <div class="relative max-h-[265px] overflow-y-auto mt-5 mb-10">
     <table
       id="theTable"
       class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
@@ -44,6 +43,7 @@ onMounted(() => {});
           <th scope="col" class="border-2">Выдано</th>
           <th scope="col" class="border-2">Получено</th>
           <th scope="col" class="border-2">Кем выдано</th>
+          <th scope="col" class="border-2">Кому выдать</th>
           <th
             scope="col"
             class="border-2"
@@ -51,7 +51,6 @@ onMounted(() => {});
           >
             Кем получено
           </th>
-          <th scope="col" class="border-2">Получатель</th>
           <th scope="col" class="border-2">Примечание</th>
         </tr>
       </thead>
@@ -107,7 +106,7 @@ onMounted(() => {});
               v-if="
                 !row.received &&
                 row.issued &&
-                user.PVZ.includes(row.recipient)
+                (user.PVZ.includes(row.recipient) || user.role === 'ADMINISTRATOR')
               "
               class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
               name="mdi:checkbox-multiple-marked-circle"
@@ -122,15 +121,15 @@ onMounted(() => {});
           <th scope="row" class="border-2">
             {{ row.receivedUser }}
           </th>
+          <th scope="row" class="border-2">
+            {{ row.recipient }}
+          </th>
           <th
             scope="row"
             class="border-2"
             v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
           >
             {{ row.receivedUser2 }}
-          </th>
-          <th scope="row" class="border-2">
-            {{ row.recipient }}
           </th>
           <th scope="row" class="border-2">
             {{ row.notation }}
@@ -140,9 +139,3 @@ onMounted(() => {});
     </table>
   </div>
 </template>
-
-<style scoped>
-.hidden-row {
-  display: none !important;
-}
-</style>

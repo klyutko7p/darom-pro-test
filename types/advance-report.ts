@@ -1,7 +1,7 @@
 interface IAdvanceReport {
     id: number;
     PVZ: string;
-    date: Date | number | string | null; 
+    date: Date | number | string | null;
     issuedUser: string;
     expenditure: string;
     typeOfExpenditure: string;
@@ -9,4 +9,6 @@ interface IAdvanceReport {
     company: string;
     supportingDocuments: string[] | [];
     type: string;
+    createdUser: string;
+    received: Date | number | string | null;
 }

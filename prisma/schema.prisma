@@ -235,6 +235,8 @@ model AdvanceReport {
   company             String?
   supportingDocuments String[]  @default([])
   type                String?
+  createdUser         String?
+  received            DateTime?
 }
 
 model PhoneNumber {

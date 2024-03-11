@@ -275,7 +275,7 @@ function getAllSum() {
       );
 
       let sumOfPVZ = rows.value
-        ?.filter((row) => row.received !== null && row.recipient === "Нет")
+        ?.filter((row) => row.received !== null)
         .reduce((acc, value) => acc + +value.sum, 0);
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
@@ -781,7 +781,7 @@ async function updateRow() {
 
           <div class="mt-24" v-if="user.role === 'ADMIN'">
             <UIMainButton @click="openModalDelivery">
-              заявка на вывод средств DS</UIMainButton
+              заявка на вывод средств D&S</UIMainButton
             >
             <BalanceTableOnline :rows="rowsDelivery" />
           </div>
@@ -818,6 +818,7 @@ async function updateRow() {
                   <option v-for="pvzData in pvz" :value="pvzData.name">
                     {{ pvzData.name }}
                   </option>
+                  <option value="Рейзвих">Рейзвих</option>
                   <option value="Шведова">Шведова</option>
                   <option value="admin">admin</option>
                   <option value="Косой">Косой</option>
@@ -1072,7 +1073,7 @@ async function updateRow() {
 
           <div class="mt-24" v-if="user.role === 'ADMIN'">
             <UIMainButton @click="openModalDelivery">
-              заявка на вывод средств DS</UIMainButton
+              заявка на вывод средств D&S</UIMainButton
             >
             <BalanceTableOnline :rows="rowsDelivery" />
           </div>

@@ -7,7 +7,7 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
 
     let cachedAdvanceReportRows: IAdvanceReport[] | null = null;
 
-    async function createAdvanceReport(row: IAdvanceReport) {
+    async function createAdvanceReport(row: IAdvanceReport, username: string) {
         try {
             if (row.issuedUser === undefined) row.issuedUser = '';
             if (row.PVZ === undefined) row.PVZ = '';
@@ -23,7 +23,7 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ row: row }),
+                body: JSON.stringify({ row: row, username: username, }),
             });
 
             if (data.data.value === undefined) {
@@ -32,7 +32,7 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
             } else {
                 console.log(data.data.value);
                 toast.error("Произошла ошибка при создании записи");
-            }e
+            }
         } catch (error) {
             if (error instanceof Error) {
                 toast.error(error.message);
@@ -62,7 +62,7 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
         }
     }
 
-    async function updateAdvanceReport(row: IAdvanceReport) {
+    async function updateAdvanceReport(row: IAdvanceReport, username: string) {
         try {
             if (row.issuedUser === undefined) row.issuedUser = '';
             if (row.PVZ === undefined) row.PVZ = '';
@@ -78,7 +78,7 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ row: row }),
+                body: JSON.stringify({ row: row, username: username }),
             });
 
             if (data.data.value === undefined) {
@@ -95,30 +95,30 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
         }
     }
 
-    // async function updateDeliveryStatus(row: IBalance, flag: string, username: string) {
-    //     try {
-    //         let data = await useFetch('/api/balance/update-delivery', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({ row: row, flag: flag, username: username }),
-    //         });
+    async function updateDeliveryStatus(row: IAdvanceReport) {
+        try {
+            let data = await useFetch('/api/advance-report/update-delivery', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ row: row }),
+            });
 
-    //         if (data.data.value === undefined) {
-    //             cachedBalanceRows = null;
-    //             toast.success("Статус успешно обновлен!");
-    //         } else {
-    //             console.log(data.data.value);
-    //             toast.error("Произошла ошибка");
-    //         }
-    //     } catch (error) {
-    //         if (error instanceof Error) {
-    //             console.error(error.message)
-    //             toast.error(error.message);
-    //         }
-    //     }
-    // }
+            if (data.data.value === undefined) {
+                cachedAdvanceReportRows = null;
+                toast.success("Статус успешно обновлен!");
+            } else {
+                console.log(data.data.value);
+                toast.error("Произошла ошибка");
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error(error.message)
+                toast.error(error.message);
+            }
+        }
+    }
 
-    return { updateAdvanceReport, getAdvancedReports, createAdvanceReport }
+    return { updateAdvanceReport, getAdvancedReports, createAdvanceReport, updateDeliveryStatus }
 })

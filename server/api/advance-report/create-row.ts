@@ -4,11 +4,12 @@ const prisma = new PrismaClient();
 
 interface IRequestBody {
   row: IAdvanceReport;
+  username: string;
 }
 
 export default defineEventHandler(async (event) => {
   try {
-    let { row } = await readBody<IRequestBody>(event);
+    let { row, username } = await readBody<IRequestBody>(event);
     const rowData = await prisma.advanceReport.create({
       data: {
         id: row.id,
@@ -21,6 +22,7 @@ export default defineEventHandler(async (event) => {
         issuedUser: row.issuedUser,
         date: row.date ? new Date(row.date).toISOString() : null,
         supportingDocuments: row.supportingDocuments,
+        createdUser: username,
       },
     });
   } catch (error) {
