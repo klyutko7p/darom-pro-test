@@ -120,5 +120,16 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
         }
     }
 
-    return { updateAdvanceReport, getAdvancedReports, createAdvanceReport, updateDeliveryStatus }
+    const getUniqueNonEmptyValues = (rows: IAdvanceReport[], fieldName: keyof IAdvanceReport): string[] => {
+        const uniqueNonEmptyValues = new Set<string>();
+        rows.forEach((row) => {
+            const value = row[fieldName];
+            if (value !== "" && value !== null && value !== undefined) {
+                uniqueNonEmptyValues.add(value);
+            }
+        });
+        return Array.from(uniqueNonEmptyValues);
+    };
+
+    return { updateAdvanceReport, getAdvancedReports, createAdvanceReport, updateDeliveryStatus, getUniqueNonEmptyValues }
 })

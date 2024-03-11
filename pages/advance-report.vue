@@ -9,18 +9,32 @@ const router = useRouter();
 
 let user = ref({} as User);
 let rows = ref<Array<IAdvanceReport>>();
+let originallyRows = ref<Array<IAdvanceReport>>();
 let rowsBalance = ref<Array<IBalance>>();
 const token = Cookies.get("token");
 let isLoading = ref(false);
+let rowsDelivery = ref<Array<IBalanceDelivery>>();
 
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rows.value = await storeAdvanceReports.getAdvancedReports();
+  rowsDelivery.value = await storeBalance.getBalanceDeliveryRows();
+  originallyRows.value = rows.value;
 
-  rows.value = rows.value?.filter(
-    (row) => row.createdUser === user.value.username || row.issuedUser === user.value.username
-  );
+  if (user.value.role !== "ADMIN") {
+    rows.value = rows.value?.filter(
+      (row) =>
+        row.createdUser === user.value.username ||
+        row.issuedUser === user.value.username
+    );
+  } else {
+    rows.value = rows.value;
+  }
+
+  if (rows.value) {
+    handleFilteredRows(rows.value);
+  }
 
   ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
   clientRansomRows.value = await storeRansom.getRansomRowsForBalance(
@@ -50,44 +64,6 @@ let sum1 = ref(0);
 let sum2 = ref(0);
 let allSum = ref(0);
 let sumOfReject = ref(200);
-
-function calculateValue(curValue: any) {
-  if (!curValue.prepayment) {
-    return curValue.additionally !== "Отказ клиент"
-      ? Math.ceil(curValue.amountFromClient1 / 10) * 10 -
-          curValue.priceSite +
-          curValue.deliveredKGT
-      : sumOfReject.value;
-  } else {
-    return curValue.additionally !== "Отказ клиент"
-      ? (curValue.priceSite * curValue.percentClient) / 100 +
-          curValue.deliveredKGT
-      : sumOfReject.value;
-  }
-}
-
-function reduceArray(array: any, flag: string) {
-  if (flag === "OurRansom") {
-    array = array.filter((row: any) => row.additionally !== "Отказ брак");
-    return array.reduce(
-      (ac: any, curValue: any) =>
-        ac + Math.ceil(curValue.amountFromClient1 / 10) * 10,
-      0
-    );
-  } else if (flag === "ClientRansom") {
-    array = array.filter((row: any) => row.additionally !== "Отказ брак");
-    return array.reduce(
-      (ac: any, curValue: any) => ac + curValue.amountFromClient2,
-      0
-    );
-  } else {
-    array = array.filter((row: any) => row.additionally !== "Отказ брак");
-    return array.reduce(
-      (ac: any, curValue: any) => ac + curValue.amountFromClient3,
-      0
-    );
-  }
-}
 
 let copyArrayOurRansom = ref<Array<IOurRansom>>();
 let copyArrayClientRansom = ref<Array<IClientRansom>>();
@@ -136,7 +112,23 @@ function getAllSum() {
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
-  allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2;
+  let sumOfPVZ3 = rows.value
+    ?.filter(
+      (row) => row.createdUser === user.value.username && row.issuedUser === ""
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ4 = rowsDelivery.value?.reduce(
+    (acc, value) => acc + +value.sum,
+    0
+  );
+
+  if (user.value.username !== "Шведова") {
+    allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
+  } else {
+    allSum.value =
+      +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
+  }
 }
 
 function closeModal() {
@@ -176,7 +168,7 @@ let pvz = ref([
 ]);
 
 let typesOfExpenditure = ref([
-  "Закупка товара",
+  "Передача денежных средств",
   "Сопутствующие расходы",
   "Автомобили",
   "Ежемесячные платежи",
@@ -186,6 +178,14 @@ let typesOfExpenditure = ref([
 
 let companies = ref(["WB start", "Darom.pro", "Сортировка", "Доставка"]);
 
+let usersOfIssued = ref([
+  "Шведова",
+  "admin",
+  "Косой",
+  "Шарафаненко",
+  "Волошина",
+]);
+
 async function createRow() {
   isLoading.value = true;
   await storeAdvanceReports.createAdvanceReport(
@@ -193,9 +193,19 @@ async function createRow() {
     user.value.username
   );
   rows.value = await storeAdvanceReports.getAdvancedReports();
-  rows.value = rows.value?.filter(
-    (row) => row.createdUser === user.value.username || row.issuedUser === user.value.username
-  );
+  originallyRows.value = rows.value;
+
+  if (user.value.role !== "ADMIN") {
+    rows.value = rows.value?.filter(
+      (row) =>
+        row.createdUser === user.value.username ||
+        row.issuedUser === user.value.username
+    );
+  } else {
+    rows.value = rows.value;
+  }
+  filteredRows.value = rows.value
+
   getAllSum();
   closeModal();
   isLoading.value = false;
@@ -208,9 +218,19 @@ async function updateRow() {
     user.value.username
   );
   rows.value = await storeAdvanceReports.getAdvancedReports();
-  rows.value = rows.value?.filter(
-    (row) => row.createdUser === user.value.username || row.issuedUser === user.value.username
-  );
+  originallyRows.value = rows.value;
+
+  if (user.value.role !== "ADMIN") {
+    rows.value = rows.value?.filter(
+      (row) =>
+        row.createdUser === user.value.username ||
+        row.issuedUser === user.value.username
+    );
+  } else {
+    rows.value = rows.value;
+  }
+  filteredRows.value = rows.value
+
   getAllSum();
   closeModal();
   isLoading.value = false;
@@ -220,9 +240,19 @@ async function updateDeliveryRow(row: any) {
   isLoading.value = true;
   await storeAdvanceReports.updateDeliveryStatus(row.row);
   rows.value = await storeAdvanceReports.getAdvancedReports();
-  rows.value = rows.value?.filter(
-    (row) => row.createdUser === user.value.username || row.issuedUser === user.value.username
-  );
+  originallyRows.value = rows.value;
+
+  if (user.value.role !== "ADMIN") {
+    rows.value = rows.value?.filter(
+      (row) =>
+        row.createdUser === user.value.username ||
+        row.issuedUser === user.value.username
+    );
+  } else {
+    rows.value = rows.value;
+  }
+  filteredRows.value = rows.value
+
   getAllSum();
   isLoading.value = false;
 }
@@ -247,6 +277,57 @@ function formatNumber(number: number) {
 
   return formattedString.slice(0, -1);
 }
+
+function getAllSumFromName(username: string) {
+  copyArrayOurRansom.value = ourRansomRows.value?.filter(
+    (row) =>
+      row.issued !== null &&
+      (row.additionally === "Оплата наличными" ||
+        row.additionally === "Отказ клиент")
+  );
+
+  copyArrayClientRansom.value = clientRansomRows.value?.filter(
+    (row) => row.issued !== null && row.additionally === "Оплата наличными"
+  );
+
+  let sumOfPVZ = rowsBalance.value
+    ?.filter((row) => row.received !== null && row.recipient === username)
+    .reduce((acc, value) => acc + +value.sum, 0);
+
+  let sumOfPVZ1 = originallyRows.value
+    ?.filter((row) => row.received !== null && row.createdUser === username)
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ2 = originallyRows.value
+    ?.filter((row) => row.received !== null && row.issuedUser === username)
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ3 = originallyRows.value
+    ?.filter(
+      (row) =>
+        row.createdUser === username &&
+        (row.issuedUser === "" || row.issuedUser === null)
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ4 = rowsDelivery.value?.reduce(
+    (acc, value) => acc + +value.sum,
+    0
+  );
+
+  if (username !== "Шведова") {
+    let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
+    return allSum;
+  } else {
+    let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
+    return allSum;
+  }
+}
+
+const filteredRows = ref<Array<IAdvanceReport>>();
+function handleFilteredRows(filteredRowsData: IAdvanceReport[]) {
+  filteredRows.value = filteredRowsData;
+}
 </script>
 
 <template>
@@ -258,11 +339,30 @@ function formatNumber(number: number) {
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="mt-10">
+          <AdvanceReportFilters
+            v-if="rows"
+            @filtered-rows="handleFilteredRows"
+            :rows="rows"
+            :user="user"
+          />
+
           <div>
-            <div class="text-center text-2xl">
+            <div class="text-center text-2xl my-5">
               <h1>Баланс {{ user.username }}</h1>
               <h1 class="font-bold text-secondary-color text-4xl mt-3">
                 {{ formatNumber(Math.ceil(allSum)) }} ₽
+              </h1>
+            </div>
+          </div>
+
+          <div v-if="user.role === 'ADMIN'">
+            <div
+              class="text-xl grid grid-cols-2 max-w-[600px] border-b-2 border-black py-1"
+              v-for="user in usersOfIssued"
+            >
+              <h1 class="border-r-2 border-black">Баланс {{ user }}:</h1>
+              <h1 class="font-bold text-secondary-color text-xl text-center">
+                {{ formatNumber(getAllSumFromName(user)) }} ₽
               </h1>
             </div>
           </div>
@@ -273,13 +373,14 @@ function formatNumber(number: number) {
               user.role === 'ADMINISTRATOR' ||
               user.role === 'DRIVER'
             "
-            class="mt-24"
+            class="mt-10"
             @click="openModal"
           >
             Создание авансового документа
           </UIMainButton>
+
           <AdvanceReportTable
-            :rows="rows"
+            :rows="filteredRows"
             :user="user"
             @open-modal="openModal"
             @update-delivery-row="updateDeliveryRow"
@@ -311,27 +412,27 @@ function formatNumber(number: number) {
               <input
                 class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
-                type="datetime-local"
+                type="date"
               />
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Выдано</label>
-              <select :disabled="rowData.id > 0"
+              <select
+                :disabled="user.role !== 'ADMIN'"
                 class="py-1 px-2 border-2 bg-transparent rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.issuedUser"
               >
-                <option value="Шведова">Шведова</option>
-                <option value="admin">admin</option>
-                <option value="Косой">Косой</option>
-                <option value="Шарафаненко">Шарафаненко</option>
-                <option value="Волошина">Волошина</option>
+                <option v-for="user in usersOfIssued" :value="user">
+                  {{ user }}
+                </option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Расход</label>
-              <input :disabled="rowData.id > 0"
+              <input
+                :disabled="user.role !== 'ADMIN'"
                 class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
                 type="text"
@@ -402,11 +503,30 @@ function formatNumber(number: number) {
     <div v-else>
       <NuxtLayout name="user">
         <div class="mt-10">
+          <AdvanceReportFilters
+            v-if="rows"
+            @filtered-rows="handleFilteredRows"
+            :rows="rows"
+            :user="user"
+          />
+
           <div>
-            <div class="text-center text-2xl">
+            <div class="text-center text-2xl my-5">
               <h1>Баланс {{ user.username }}</h1>
               <h1 class="font-bold text-secondary-color text-4xl mt-3">
                 {{ formatNumber(Math.ceil(allSum)) }} ₽
+              </h1>
+            </div>
+          </div>
+
+          <div v-if="user.role === 'ADMIN'">
+            <div
+              class="text-xl grid grid-cols-2 max-w-[600px] border-b-2 border-black py-1"
+              v-for="user in usersOfIssued"
+            >
+              <h1 class="border-r-2 border-black">Баланс {{ user }}:</h1>
+              <h1 class="font-bold text-secondary-color text-xl text-center">
+                {{ formatNumber(getAllSumFromName(user)) }} ₽
               </h1>
             </div>
           </div>
@@ -417,13 +537,14 @@ function formatNumber(number: number) {
               user.role === 'ADMINISTRATOR' ||
               user.role === 'DRIVER'
             "
-            class="mt-24"
+            class="mt-10"
             @click="openModal"
           >
             Создание авансового документа
           </UIMainButton>
+
           <AdvanceReportTable
-            :rows="rows"
+            :rows="filteredRows"
             :user="user"
             @open-modal="openModal"
             @update-delivery-row="updateDeliveryRow"
@@ -455,27 +576,27 @@ function formatNumber(number: number) {
               <input
                 class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
-                type="datetime-local"
+                type="date"
               />
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Выдано</label>
-              <select :disabled="rowData.id > 0"
+              <select
+                :disabled="user.role !== 'ADMIN'"
                 class="py-1 px-2 border-2 bg-transparent rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.issuedUser"
               >
-                <option value="Шведова">Шведова</option>
-                <option value="admin">admin</option>
-                <option value="Косой">Косой</option>
-                <option value="Шарафаненко">Шарафаненко</option>
-                <option value="Волошина">Волошина</option>
+                <option v-for="user in usersOfIssued" :value="user">
+                  {{ user }}
+                </option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Расход</label>
-              <input :disabled="rowData.id > 0"
+              <input
+                :disabled="user.role !== 'ADMIN'"
                 class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
                 type="text"

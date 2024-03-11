@@ -20,12 +20,24 @@ input[type="checkbox"] {
   direction: ltr;
 }
 
+.swiper-button-prev {
+  color: var(--secondary-color) !important;
+}
+.swiper-button-next {
+  color: var(--secondary-color) !important;
+}
+
+.swiper-button-prev:after, .swiper-button-next:after {
+  font-size: 24px !important;
+}
+
 :root {
   --primary-color: #0d0d0d;
   --secondary-color: #ff7d00;
   --muted-color: #4a4a4a;
   --hover-color: #fad1ab;
   --gray-color: #1f1f1f;
+  --swiper-theme-color: #000;
 }
 
 body {

@@ -8,7 +8,11 @@ export default defineNuxtConfig({
     'nuxt-icon',
     '@nuxtjs/supabase',
     '@vite-pwa/nuxt',
+    'nuxt-swiper',
   ],
+  swiper: {
+    styleLang: 'css',
+  },
   supabase: {
     redirect: false,
   },

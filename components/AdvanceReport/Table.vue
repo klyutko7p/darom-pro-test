@@ -12,13 +12,116 @@ function openModal(row: IAdvanceReport) {
   emit("openModal", row);
 }
 
-defineProps({
+const props = defineProps({
   user: { type: Object as PropType<User>, required: true },
   rows: { type: Array as PropType<IAdvanceReport[]> },
 });
+
+function filterRows(monthData: number) {
+  month.value = monthData;
+  updateCurrentPageData();
+}
+
+let month = ref(new Date().getMonth() + 1);
+
+const filteredRows = ref(
+  props.rows?.filter((row: IAdvanceReport) => {
+    let rowDate: Date = new Date(row.date);
+    return rowDate.getMonth() + 1 === month.value;
+  })
+);
+
+let showFilters = ref(false);
+let months = ref([3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2]);
+let monthNames: any = ref({
+  3: "Март",
+  4: "Апрель",
+  5: "Май",
+  6: "Июнь",
+  7: "Июль",
+  8: "Август",
+  9: "Сентябрь",
+  10: "Октябрь",
+  11: "Ноябрь",
+  12: "Декабрь",
+  1: "Январь",
+  2: "Февраль",
+});
+
+function clearFields() {
+  month.value = new Date().getMonth() + 1;
+  filterRows(month.value);
+}
+
+const totalRows = computed(() => Math.ceil(props.rows?.length));
+onBeforeMount(() => {
+  updateCurrentPageData();
+});
+
+let returnRows = ref<Array<IAdvanceReport>>();
+
+function updateCurrentPageData() {
+  returnRows.value = props.rows;
+  filteredRows.value = returnRows.value?.filter((row: IAdvanceReport) => {
+    let rowDate: Date = new Date(row.date);
+    return rowDate.getMonth() + 1 === month.value;
+  });
+}
+
+watch([props.rows, totalRows], updateCurrentPageData); 
+
+let breakpoints = {
+  100: {
+    slidesPerView: 1,
+  },
+  400: {
+    slidesPerView: 2,
+  },
+  640: {
+    slidesPerView: 3,
+  },
+  770: {
+    slidesPerView: 5,
+  },
+  1024: {
+    slidesPerView: 6,
+  },
+};
+
+
 </script>
 <template>
-  <div class="relative max-h-[410px] overflow-y-auto mt-5 mb-10">
+  <div class="my-10">
+    <span
+      class="border-2 py-3 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
+      @click="showFilters = !showFilters"
+      >2024</span
+    >
+  </div>
+  <Swiper
+    class="border-2 border-dashed border-black"
+    v-if="showFilters"
+    :modules="[SwiperAutoplay, SwiperNavigation]"
+    :slides-per-view="6"
+    :loop="true"
+    :space-between="10"
+    :breakpoints="breakpoints"
+    navigation
+  >
+    <SwiperSlide class="p-10 text-center" v-for="month in months" :key="month">
+      <span
+        class="border-2 border-secondary-color py-3 px-7 hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
+        @click="filterRows(month)"
+      >
+        {{ monthNames[month] }}
+      </span>
+    </SwiperSlide>
+  </Swiper>
+
+  <div
+    class="relative max-h-[410px] overflow-y-auto mt-5 mb-10"
+    v-if="filteredRows?.length > 0"
+  >
     <table
       id="theTable"
       class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
@@ -38,20 +141,20 @@ defineProps({
           >
             изменение
           </th>
-          <th scope="col" class="border-2">ПВЗ</th>
           <th scope="col" class="border-2">Дата</th>
-          <th scope="col" class="border-2">Выдано</th>
+          <th scope="col" class="border-2">ПВЗ</th>
           <th scope="col" class="border-2">Расход</th>
           <th scope="col" class="border-2">Статья расхода</th>
           <th scope="col" class="border-2">Комментарий</th>
           <th scope="col" class="border-2">Компания</th>
-          <th scope="col" class="border-2">Получено</th>
+          <th scope="col" class="border-2">Создано</th>
+          <th scope="col" class="border-2">Получил</th>
           <th scope="col" class="border-2">Подтверждающий документ</th>
-          <th scope="col" class="border-2">От кого</th>
+          <th scope="col" class="border-2">Получено</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in rows" class="text-center">
+        <tr v-for="row in filteredRows" class="text-center">
           <td class="border-2">
             <h1
               @click="openModal(row)"
@@ -62,14 +165,11 @@ defineProps({
             </h1>
           </td>
           <th scope="row" class="border-2">
-            {{ row.PVZ }}
-          </th>
-          <th scope="row" class="border-2">
             {{ storeUsers.getNormalizedDate(row.date) }}
           </th>
-          <td class="border-2 whitespace-nowrap">
-            {{ row.issuedUser }}
-          </td>
+          <th scope="row" class="border-2">
+            {{ row.PVZ }}
+          </th>
           <td class="border-2 whitespace-nowrap">{{ row.expenditure }} ₽</td>
           <td class="border-2 whitespace-nowrap">
             {{ row.typeOfExpenditure }}
@@ -79,6 +179,17 @@ defineProps({
           </td>
           <td class="border-2 whitespace-nowrap">
             {{ row.company }}
+          </td>
+          <td class="border-2 whitespace-nowrap">
+            {{ row.createdUser }}
+          </td>
+          <td class="border-2 whitespace-nowrap">
+            {{ row.issuedUser }}
+          </td>
+          <td class="border-2 whitespace-nowrap">
+            {{
+              row.supportingDocuments.length > 0 ? row.supportingDocuments : ""
+            }}
           </td>
           <td class="border-2 whitespace-nowrap">
             <Icon
@@ -94,17 +205,15 @@ defineProps({
               }}
             </h1>
           </td>
-          <td class="border-2 whitespace-nowrap">
-            {{
-              row.supportingDocuments.length > 0 ? row.supportingDocuments : ""
-            }}
-          </td>
-          <td class="border-2 whitespace-nowrap">
-            {{ row.createdUser }}
-          </td>
         </tr>
       </tbody>
     </table>
+  </div>
+  <div v-else class="mt-10 mb-10 flex flex-col justify-center items-center">
+    <h1 class="text-4xl text-center mb-5">😞</h1>
+    <h1 class="text-2xl font-medium text-center">
+      Извините, документы не были найдены по этим фильтрам!
+    </h1>
   </div>
 </template>
 

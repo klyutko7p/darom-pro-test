@@ -32,6 +32,7 @@
     "crypto-js": "^4.2.0",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
+    "nuxt-swiper": "^1.2.2",
     "qrcode.vue": "^3.4.1",
     "vue-toastification": "^2.0.0-rc.5",
     "vue-yandex-maps": "^1.1.0",
