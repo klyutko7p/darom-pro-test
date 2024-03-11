@@ -166,9 +166,15 @@ model Balance {
   receivedUser  String
   notation      String?
   receivedUser2 String?
+  recipient     String?   @default("Нет")
 }
 
 model BalanceOnline {
+  id  Int     @id @default(autoincrement())
+  sum String?
+}
+
+model BalanceDelivery {
   id  Int     @id @default(autoincrement())
   sum String?
 }

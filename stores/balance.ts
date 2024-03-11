@@ -8,12 +8,14 @@ export const useBalanceStore = defineStore("balance", () => {
 
     let cachedBalanceRows: IBalance[] | null = null;
     let cachesBalanceOnlineRows: IBalanceOnline[] | null = null;
+    let cachesBalanceDeliveryRows: IBalanceDelivery[] | null = null;
 
     async function createBalanceRow(row: IBalance, username: string) {
         try {
             if (row.sum === undefined) row.sum = '0';
             if (row.pvz === undefined) row.pvz = '';
             if (row.notation === undefined) row.notation = '';
+            if (row.recipient === undefined) row.recipient = 'Нет';
 
             row.createdUser = username;
             row.receivedUser = '';
@@ -54,6 +56,32 @@ export const useBalanceStore = defineStore("balance", () => {
 
             if (data.data.value === undefined) {
                 cachesBalanceOnlineRows = null;
+                toast.success("Запись успешно создана!");
+            } else {
+                console.log(data.data.value);
+                toast.error("Произошла ошибка при создании записи");
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
+    async function createBalanceDeliveryRow(row: IBalanceDelivery) {
+        try {
+            if (row.sum === undefined) row.sum = '0';
+
+            let data = await useFetch('/api/balance/create-delivery-row', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ row: row }),
+            });
+
+            if (data.data.value === undefined) {
+                cachesBalanceDeliveryRows = null;
                 toast.success("Запись успешно создана!");
             } else {
                 console.log(data.data.value);
@@ -110,11 +138,35 @@ export const useBalanceStore = defineStore("balance", () => {
         }
     }
 
+    async function getBalanceDeliveryRows() {
+        try {
+            if (cachesBalanceDeliveryRows) {
+                return cachesBalanceDeliveryRows;
+            } else {
+                let { data }: any = await useFetch('/api/balance/get-delivery-rows', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({})
+                });
+                cachesBalanceDeliveryRows = data.value;
+                return cachesBalanceDeliveryRows;
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
+
     async function updateBalanceRow(row: IBalance) {
         try {
             if (row.sum === undefined) row.sum = '0';
             if (row.pvz === undefined) row.pvz = '';
             if (row.notation === undefined) row.notation = '';
+            if (row.recipient === undefined) row.recipient = 'Нет';
 
             let data = await useFetch('/api/balance/edit-row', {
                 method: 'POST',
@@ -163,5 +215,5 @@ export const useBalanceStore = defineStore("balance", () => {
         }
     }
 
-    return { updateDeliveryStatus, updateBalanceRow, getBalanceRows, createBalanceRow, createBalanceOnlineRow, getBalanceOnlineRows }
+    return { updateDeliveryStatus, updateBalanceRow, getBalanceRows, createBalanceRow, createBalanceOnlineRow, getBalanceOnlineRows, getBalanceDeliveryRows, createBalanceDeliveryRow }
 })

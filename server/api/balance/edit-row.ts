@@ -24,6 +24,7 @@ export default defineEventHandler(async (event) => {
                 receivedUser: row.receivedUser,
                 receivedUser2: row.receivedUser2,
                 createdUser: row.createdUser,
+                recipient: row.recipient,
             },
         })
     } catch (error) {

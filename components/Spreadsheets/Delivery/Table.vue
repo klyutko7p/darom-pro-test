@@ -281,9 +281,13 @@ let showOtherOptions = ref(false);
           <td v-if="user.name3 === 'READ' || user.name3 === 'WRITE'" class="border-2 whitespace-nowrap">
             {{ row.name }}
           </td>
-          <td v-if="user.fromName3 === 'READ' || user.fromName3 === 'WRITE'" class="border-2">
-            {{ row.fromName }}
-          </td>
+          <td v-if="user.fromName3 === 'READ' || user.fromName3 === 'WRITE'" class="py-4 border-2 text-secondary-color underline">
+            <NuxtLink v-if="user.role !== 'PVZ'"
+                class="cursor-pointer hover:text-orange-200 duration-200"
+                :to="`/phone/${row.fromName}`">
+                {{ row.fromName }}
+            </NuxtLink>
+        </td>
           <td v-if="user.nameOfAction === 'READ' || user.nameOfAction === 'WRITE'" class="border-2">
             {{ row.nameOfAction }}
           </td>

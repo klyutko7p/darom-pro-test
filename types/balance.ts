@@ -8,4 +8,5 @@ interface IBalance {
     receivedUser: string;
     receivedUser2: string;
     notation: string;
+    recipient: string;
 }

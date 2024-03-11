@@ -451,7 +451,7 @@ function focusInput() {
                         {{ row.cell }}
                     </td>
                     <td v-if="user.fromName1 === 'READ' || user.fromName1 === 'WRITE'" class="py-4 border-2 text-secondary-color underline">
-                        <NuxtLink v-if="user.role !== 'PVZ' && user.role !== 'ADMINISTRATOR'"
+                        <NuxtLink v-if="user.role !== 'PVZ'"
                             class="cursor-pointer hover:text-orange-200 duration-200"
                             :to="`/phone/${row.fromName}`">
                             {{ row.fromName }}

@@ -62,6 +62,55 @@ const filteredRows = ref<Array<IClientRansom>>();
 const emit = defineEmits(["filtered-rows"]);
 
 const filterRows = () => {
+
+  let newStartingDate = new Date(startingDate.value);
+  newStartingDate.setHours(0);
+  newStartingDate.setMinutes(0);
+  newStartingDate.setSeconds(0);
+  newStartingDate.setMilliseconds(0);
+
+  let newEndDate = new Date(endDate.value)
+  newEndDate.setHours(23);
+  newEndDate.setMinutes(59);
+  newEndDate.setSeconds(59);
+  newEndDate.setMilliseconds(0);
+
+  let newStartingDate2 = new Date(startingDate2.value);
+  newStartingDate2.setHours(0);
+  newStartingDate2.setMinutes(0);
+  newStartingDate2.setSeconds(0);
+  newStartingDate2.setMilliseconds(0);
+
+  let newEndDate2 = new Date(endDate2.value)
+  newEndDate2.setHours(23);
+  newEndDate2.setMinutes(59);
+  newEndDate2.setSeconds(59);
+  newEndDate2.setMilliseconds(0);
+
+  let newStartingDate3 = new Date(startingDate3.value);
+  newStartingDate3.setHours(0);
+  newStartingDate3.setMinutes(0);
+  newStartingDate3.setSeconds(0);
+  newStartingDate3.setMilliseconds(0);
+
+  let newEndDate3 = new Date(endDate3.value)
+  newEndDate3.setHours(23);
+  newEndDate3.setMinutes(59);
+  newEndDate3.setSeconds(59);
+  newEndDate3.setMilliseconds(0);
+
+  let newStartingDate4 = new Date(startingDate4.value);
+  newStartingDate4.setHours(0);
+  newStartingDate4.setMinutes(0);
+  newStartingDate4.setSeconds(0);
+  newStartingDate4.setMilliseconds(0);
+
+  let newEndDate4 = new Date(endDate4.value)
+  newEndDate4.setHours(23);
+  newEndDate4.setMinutes(59);
+  newEndDate4.setSeconds(59);
+  newEndDate4.setMilliseconds(0);
+
   filteredRows.value = props.rows.slice();
   filteredRows.value = props.rows.filter((row) => {
     return (
@@ -73,14 +122,14 @@ const filterRows = () => {
       (!selectedOrderAccount.value || row.orderAccount === selectedOrderAccount.value) &&
       (!selectedAdditionally.value || row.additionally === selectedAdditionally.value) &&
       (!selectedPriceSite.value || row.priceProgram == selectedPriceSite.value) &&
-      (!startingDate.value || new Date(row.issued) >= new Date(startingDate.value)) &&
-      (!endDate.value || new Date(row.issued) <= new Date(endDate.value)) &&
-      (!startingDate2.value || new Date(row.deliveredSC) >= new Date(startingDate2.value)) &&
-      (!endDate2.value || new Date(row.deliveredSC) <= new Date(endDate2.value)) &&
-      (!startingDate3.value || new Date(row.created_at) >= new Date(startingDate3.value)) &&
-      (!endDate3.value || new Date(row.created_at) <= new Date(endDate3.value)) &&
-      (!startingDate4.value || new Date(row.deliveredPVZ) >= new Date(startingDate4.value)) &&
-      (!endDate4.value || new Date(row.deliveredPVZ) <= new Date(endDate4.value))
+      (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+      (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+      (!startingDate2.value || new Date(row.deliveredSC) >= new Date(newStartingDate2)) &&
+      (!endDate2.value || new Date(row.deliveredSC) <= new Date(newEndDate2)) &&
+      (!startingDate3.value || new Date(row.created_at) >= new Date(newStartingDate3)) &&
+      (!endDate3.value || new Date(row.created_at) <= new Date(newEndDate3)) &&
+      (!startingDate4.value || new Date(row.deliveredPVZ) >= new Date(newStartingDate4)) &&
+      (!endDate4.value || new Date(row.deliveredPVZ) <= new Date(newEndDate4))
     );
   });
   emit("filtered-rows", filteredRows.value);
