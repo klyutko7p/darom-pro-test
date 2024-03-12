@@ -149,11 +149,6 @@ let breakpoints = {
       <div class="flex gap-3 items-center justify-center max-sm:flex-col">
         <span
           class="border-2 text-sm py-1 px-3 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
-          @click="changeSorting('W')"
-          >Неделя</span
-        >
-        <span
-          class="border-2 text-sm py-1 px-3 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
           @click="changeSorting('M')"
           >Месяц</span
         >

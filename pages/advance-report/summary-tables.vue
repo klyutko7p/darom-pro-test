@@ -55,7 +55,7 @@ onMounted(() => {
 
 definePageMeta({
   layout: false,
-  name: "Авансовый отчёт",
+  name: "Суммарные таблицы",
 });
 
 let isOpen = ref(false);
@@ -392,6 +392,10 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             :user="user"
           />
 
+          <NuxtLink v-if="user.role === 'ADMIN'" to="/advance-report" class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold">
+            Перейти к авансовому отчету
+          </NuxtLink>
+          
           <div>
             <div class="text-center text-2xl my-5">
               <h1 v-if="user.username !== 'admin'">
