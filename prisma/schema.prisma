@@ -233,7 +233,7 @@ model AdvanceReport {
   typeOfExpenditure   String?
   notation            String?
   company             String?
-  supportingDocuments String[]  @default([])
+  supportingDocuments String?  
   type                String?
   createdUser         String?
   received            DateTime?

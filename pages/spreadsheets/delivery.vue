@@ -205,7 +205,7 @@ function getFromNameFromName() {
           <div>
             <SpreadsheetsDeliveryFilters v-if="rows" @filtered-rows="handleFilteredRows" :rows="rows" />
             <div class="mt-5 flex items-center gap-3" v-if="user.dataDelivery === 'WRITE'">
-              <UIMainButton v-if="user.role === 'ADMIN' || user.username === 'ОПТ'" @click="openModal">Создать новую
+              <UIMainButton v-if="user.role === 'ADMIN' || user.username === 'Волошина'" @click="openModal">Создать новую
                 запись</UIMainButton>
             </div>
           </div>
@@ -357,7 +357,7 @@ function getFromNameFromName() {
           <div>
             <SpreadsheetsDeliveryFilters v-if="rows" @filtered-rows="handleFilteredRows" :rows="rows" />
             <div class="mt-5 flex items-center gap-3" v-if="user.dataDelivery === 'WRITE'">
-              <UIMainButton v-if="user.role === 'ADMIN' || user.username === 'ОПТ'" @click="openModal">Создать новую
+              <UIMainButton v-if="user.role === 'ADMIN' || user.username === 'Волошина'" @click="openModal">Создать новую
                 запись</UIMainButton>
             </div>
           </div>

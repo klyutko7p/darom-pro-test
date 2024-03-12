@@ -20,7 +20,7 @@ function updateDeliveryRow(row: IOurRansom | IClientRansom, flag: string) {
 const alreadyCalled = ref(false);
 
 onMounted(async () => {
-  if (props.user.visiblePVZ === 'ВСЕ' || props.user.username === 'ОПТ') {
+  if (props.user.visiblePVZ === 'ВСЕ' || props.user.username === 'Волошина') {
     toast.success('Нужный доступ подтвержден')
   } else if (props.user.visiblePVZ !== props.row.dispatchPVZ) {
     toast.error("Это товар не Вашего ПВЗ!")

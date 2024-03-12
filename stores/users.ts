@@ -152,6 +152,18 @@ export const useUsersStore = defineStore("users", () => {
             return new Date(date).toLocaleString('ru-RU', options);
         }
     }
+
+    function getNormalizedDateWithoutTime(date: number | Date | string | null) {
+        if (date) {
+            const options: Intl.DateTimeFormatOptions = {
+                year: 'numeric',
+                day: 'numeric',
+                month: '2-digit',
+                timeZone: 'Europe/Moscow', 
+            };
+            return new Date(date).toLocaleString('ru-RU', options);
+        }
+    }
     
 
     function getISODateTime(dateData: Date | string | number) {
@@ -167,5 +179,5 @@ export const useUsersStore = defineStore("users", () => {
     }
 
 
-    return { userData, signIn, signOut, getUser, createUser, getUsers, getNormalizedDate, getISODateTime, updateUser, deleteUser }
+    return { userData, signIn, signOut, getUser, createUser, getUsers, getNormalizedDate, getISODateTime, updateUser, deleteUser, getNormalizedDateWithoutTime }
 })

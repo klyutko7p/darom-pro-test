@@ -441,7 +441,7 @@ let dateFilter = ref('issued')
               type="date" v-model="startingDate" />
           </div>
           <div class="grid grid-cols-2 my-2" v-if="dateFilter === 'issued'">
-            <h1>До Даты:</h1>
+            <h1>По Дату:</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
               type="date" v-model="endDate" />
@@ -453,7 +453,7 @@ let dateFilter = ref('issued')
               type="date" v-model="startingDate2" />
           </div>
           <div class="grid grid-cols-2 my-2" v-if="dateFilter === 'sorted'">
-            <h1>До Даты:</h1>
+            <h1>По Дату:</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
               type="date" v-model="endDate2" />
@@ -465,7 +465,7 @@ let dateFilter = ref('issued')
               type="date" v-model="startingDate3" />
           </div>
           <div class="grid grid-cols-2 my-2" v-if="dateFilter === 'created'">
-            <h1>До Даты:</h1>
+            <h1>По Дату:</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
               type="date" v-model="endDate3" />
@@ -477,7 +477,7 @@ let dateFilter = ref('issued')
               type="date" v-model="startingDate4" />
           </div>
           <div class="grid grid-cols-2 my-2" v-if="dateFilter === 'delivered'">
-            <h1>До Даты:</h1>
+            <h1>По Дату:</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
               type="date" v-model="endDate4" />

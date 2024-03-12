@@ -239,14 +239,14 @@ let showOtherOptions = ref(false);
           <th scope="col" class="border-2" v-if="user.profit3 === 'READ' || user.profit3 === 'WRITE'">
             прибыль (доход)
           </th>
-          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.username === 'ОПТ'">создан (время)
+          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.username === 'Волошина'">создан (время)
           </th>
-          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.username === 'ОПТ'">изменен (время)
+          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.username === 'Волошина'">изменен (время)
           </th>
-          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.username === 'ОПТ'">удален (время)
+          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.username === 'Волошина'">удален (время)
           </th>
-          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.username === 'ОПТ'">создан</th>
-          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.username === 'ОПТ'">изменен</th>
+          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.username === 'Волошина'">создан</th>
+          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.username === 'Волошина'">изменен</th>
           <th scope="col" class="exclude-row border-2" v-if="user.dataDelivery === 'WRITE' && user.role === 'ADMIN'">
             удаление
           </th>
@@ -325,22 +325,22 @@ let showOtherOptions = ref(false);
           <td class="border-2" v-if="user.additionally3 === 'READ' || user.additionally3 === 'WRITE'">
             {{ row.additionally ? row.additionally : "Пусто" }}
           </td>
-          <td class="border-2" v-if="user.profit3 === 'READ' || user.profit3 === 'WRITE' && user.username !== 'ОПТ'">
+          <td class="border-2" v-if="user.profit3 === 'READ' || user.profit3 === 'WRITE' && user.username !== 'Волошина'">
             {{ row.profit3 }}
           </td>
-          <td class="border-2" v-if="user.role === 'ADMIN' || user.username === 'ОПТ'">
+          <td class="border-2" v-if="user.role === 'ADMIN' || user.username === 'Волошина'">
             {{ storeUsers.getNormalizedDate(row.created_at) }}
           </td>
-          <td class="border-2" v-if="user.role === 'ADMIN' || user.username === 'ОПТ'">
+          <td class="border-2" v-if="user.role === 'ADMIN' || user.username === 'Волошина'">
             {{ storeUsers.getNormalizedDate(row.updated_at) }}
           </td>
-          <td class="border-2" v-if="user.role === 'ADMIN' || user.username === 'ОПТ'">
+          <td class="border-2" v-if="user.role === 'ADMIN' || user.username === 'Волошина'">
             {{ storeUsers.getNormalizedDate(row.deleted) }}
           </td>
-          <td class="border-2" v-if="user.role === 'ADMIN' || user.username === 'ОПТ'">
+          <td class="border-2" v-if="user.role === 'ADMIN' || user.username === 'Волошина'">
             {{ row.createdUser }}
           </td>
-          <td class="border-2" v-if="user.role === 'ADMIN' || user.username === 'ОПТ'">
+          <td class="border-2" v-if="user.role === 'ADMIN' || user.username === 'Волошина'">
             {{ row.updatedUser }}
           </td>
           <td class="border-2"

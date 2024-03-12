@@ -17,6 +17,7 @@ export default defineEventHandler(async (event) => {
                     deliveredSC: true,
                     issued: true,
                     dispatchPVZ: true,
+                    deleted: true,
                 },
                 orderBy: {
                     created_at: 'desc',

@@ -709,7 +709,7 @@ async function updateRow() {
                     />
                   </div>
                   <div class="grid grid-cols-2 my-2">
-                    <h1>До Даты:</h1>
+                    <h1>По Дату:</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                       type="date"
@@ -1001,7 +1001,7 @@ async function updateRow() {
                     />
                   </div>
                   <div class="grid grid-cols-2 my-2">
-                    <h1>До Даты:</h1>
+                    <h1>По Дату:</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                       type="date"

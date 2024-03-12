@@ -48,11 +48,6 @@ let monthNames: any = ref({
   2: "Февраль",
 });
 
-function clearFields() {
-  month.value = new Date().getMonth() + 1;
-  filterRows(month.value);
-}
-
 const totalRows = computed(() => Math.ceil(props.rows?.length));
 onBeforeMount(() => {
   updateCurrentPageData();
@@ -64,11 +59,11 @@ function updateCurrentPageData() {
   returnRows.value = props.rows;
   filteredRows.value = returnRows.value?.filter((row: IAdvanceReport) => {
     let rowDate: Date = new Date(row.date);
-    return rowDate.getMonth() + 1 === month.value;
+    return rowDate.getMonth() + 1 === +month.value;
   });
 }
 
-watch([props.rows, totalRows], updateCurrentPageData); 
+watch([props.rows, totalRows], updateCurrentPageData);
 
 let breakpoints = {
   100: {
@@ -87,36 +82,26 @@ let breakpoints = {
     slidesPerView: 6,
   },
 };
-
-
 </script>
 <template>
-  <div class="my-10">
+  <div class="my-10 flex items-center gap-5">
     <span
       class="border-2 py-3 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
       @click="showFilters = !showFilters"
       >2024</span
     >
+    <div v-if="showFilters">
+      <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="month" @change="filterRows(month)">
+        <option
+          v-for="(monthName, monthNumber) in monthNames"
+          :value="monthNumber"
+        >
+          {{ monthName }}
+        </option>
+      </select>
+    </div>
   </div>
-  <Swiper
-    class="border-2 border-dashed border-black"
-    v-if="showFilters"
-    :modules="[SwiperAutoplay, SwiperNavigation]"
-    :slides-per-view="6"
-    :loop="true"
-    :space-between="10"
-    :breakpoints="breakpoints"
-    navigation
-  >
-    <SwiperSlide class="p-10 text-center" v-for="month in months" :key="month">
-      <span
-        class="border-2 border-secondary-color py-3 px-7 hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
-        @click="filterRows(month)"
-      >
-        {{ monthNames[month] }}
-      </span>
-    </SwiperSlide>
-  </Swiper>
+  
 
   <div
     class="relative max-h-[410px] overflow-y-auto mt-5 mb-10"
@@ -165,7 +150,7 @@ let breakpoints = {
             </h1>
           </td>
           <th scope="row" class="border-2">
-            {{ storeUsers.getNormalizedDate(row.date) }}
+            {{ storeUsers.getNormalizedDateWithoutTime(row.date) }}
           </th>
           <th scope="row" class="border-2">
             {{ row.PVZ }}

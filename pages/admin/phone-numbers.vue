@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { PhoneNumber } from "@prisma/client";
 import Cookies from "js-cookie";
+import { useToast } from "vue-toastification";
+const toast = useToast();
 const storeUsers = useUsersStore();
 const storePhoneNumbers = usePhoneNumbersStore();
 const router = useRouter();
@@ -31,9 +33,13 @@ let rowData = ref({} as PhoneNumber);
 
 async function createRow() {
   isLoading.value = true;
-  await storePhoneNumbers.createPhoneNumber(rowData.value);
-  phoneNumbers.value = await storePhoneNumbers.getPhoneNumbers();
-  closeModal();
+  if (phoneNumbers.value?.some((row) => row.number === rowData.value.number)) {
+    toast.error("Телефон уже создан!");
+  } else {
+    await storePhoneNumbers.createPhoneNumber(rowData.value);
+    phoneNumbers.value = await storePhoneNumbers.getPhoneNumbers();
+    closeModal();
+  }
   isLoading.value = false;
 }
 

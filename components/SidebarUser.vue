@@ -89,7 +89,7 @@ function formatPhoneNumber(phoneNumber: string) {
           (user.dataClientRansom === 'READ' ||
             user.dataClientRansom === 'WRITE') &&
           user.role !== 'SORTIROVKA' &&
-          user.username !== 'ОПТ'
+          user.username !== 'Волошина'
         "
       >
         <div class="grid place-items-center mr-4">
@@ -117,7 +117,7 @@ function formatPhoneNumber(phoneNumber: string) {
         v-if="
           (user.dataClientRansom === 'READ' ||
             user.dataClientRansom === 'WRITE') &&
-          (user.role === 'SORTIROVKA' || user.username === 'ОПТ')
+          (user.role === 'SORTIROVKA' || user.username === 'Волошина')
         "
       >
         <div class="grid place-items-center mr-4">
@@ -278,7 +278,7 @@ function formatPhoneNumber(phoneNumber: string) {
           (user.dataClientRansom === 'READ' ||
             user.dataClientRansom === 'WRITE') &&
           user.role !== 'SORTIROVKA' &&
-          user.username !== 'ОПТ'
+          user.username !== 'Волошина'
         "
       >
         <div class="grid place-items-center mr-4">
@@ -306,7 +306,7 @@ function formatPhoneNumber(phoneNumber: string) {
         v-if="
           (user.dataClientRansom === 'READ' ||
             user.dataClientRansom === 'WRITE') &&
-          (user.role === 'SORTIROVKA' || user.username === 'ОПТ')
+          (user.role === 'SORTIROVKA' || user.username === 'Волошина')
         "
       >
         <div class="grid place-items-center mr-4">

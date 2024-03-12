@@ -83,7 +83,7 @@ definePageMeta({
               (user.dataClientRansom === 'READ' ||
                 user.dataClientRansom === 'WRITE') &&
               user.role !== 'SORTIROVKA' &&
-              user.username !== 'ОПТ'
+              user.username !== 'Волошина'
             "
           >
             <div class="grid place-items-center mr-4">
@@ -111,7 +111,7 @@ definePageMeta({
             v-if="
               (user.dataClientRansom === 'READ' ||
                 user.dataClientRansom === 'WRITE') &&
-              (user.role === 'SORTIROVKA' || user.username === 'ОПТ')
+              (user.role === 'SORTIROVKA' || user.username === 'Волошина')
             "
           >
             <div class="grid place-items-center mr-4">

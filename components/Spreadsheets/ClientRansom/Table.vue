@@ -139,13 +139,42 @@ function isValidUrl(url: string): boolean {
   }
 }
 
+function getCountOfItemsByPVZClientRansom(PVZ: string) {
+  if (props.user.role !== "PVZ") {
+    return props.rows?.filter((row) => row.dispatchPVZ === PVZ && row.deliveredPVZ === null).length;
+  } else if (props.user.role === "PVZ") {
+    let today = new Date().toLocaleDateString("ru-RU", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+    });
+    return props.rows?.filter(
+      (row) =>
+        row.dispatchPVZ === PVZ &&
+        row.deliveredSC !== null &&
+        (new Date(row.issued).toLocaleDateString("ru-RU", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "2-digit",
+        }) === today ||
+          row.issued === null) 
+    ).length;
+  }
+}
+
+function getCountOfItemsByPVZClientRansomIssued(PVZ: string) {
+  return props.rows?.filter((row) => row.dispatchPVZ === PVZ && row.deliveredSC !== null && row.deliveredPVZ !== null && row.issued === null).length;
+}
+
 </script>
 <template>
   <div class="flex items-center justify-between max-lg:block mt-10">
     <div>
       <div class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5">
-        <h1 class="text-xl" v-if="user.role !== 'PVZ'">Товаров в работе: <span class="text-secondary-color font-bold">{{
-          totalRows }}</span> </h1>
+        <h1 class="text-xl" v-if="user.role !== 'PVZ'">
+          Товаров в работе:
+          <span class="text-secondary-color font-bold">{{ getCountOfItemsByPVZClientRansom(pvzLink) + getCountOfItemsByPVZClientRansomIssued(pvzLink) }}</span>
+        </h1>
         <h1 class="text-xl" v-if="user.role === 'PVZ'">Товаров к выдаче: <span class="text-secondary-color font-bold">{{
           totalRows }}</span> </h1>
       </div>
