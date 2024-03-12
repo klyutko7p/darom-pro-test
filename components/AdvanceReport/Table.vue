@@ -172,7 +172,7 @@ let breakpoints = {
             {{ row.issuedUser }}
           </td>
           <td class="border-2 whitespace-nowrap">
-            <a class="text-secondary-color underline font-bold" v-if="row.supportingDocuments && row.supportingDocuments.length > 2" :href="`https://mgbbkkgyorhwryabwabx.supabase.co/storage/v1/object/public/image/img-${row.supportingDocuments}`">
+            <a target="_blank" class="text-secondary-color underline font-bold" v-if="row.supportingDocuments && row.supportingDocuments.length > 2" :href="`https://mgbbkkgyorhwryabwabx.supabase.co/storage/v1/object/public/image/img-${row.supportingDocuments}`">
               Фото
             </a>
           </td>
