@@ -370,6 +370,10 @@ async function handleFileChange(event) {
     console.log(error);
   }
 }
+
+let selectedUser = ref("Шведова");
+let showBalanceEmployees = ref(true);
+let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
 </script>
 
 <template>
@@ -390,7 +394,10 @@ async function handleFileChange(event) {
 
           <div>
             <div class="text-center text-2xl my-5">
-              <h1>Баланс {{ user.username }}</h1>
+              <h1 v-if="user.username !== 'admin'">
+                Баланс {{ user.username }}
+              </h1>
+              <h1 v-if="user.username === 'admin'">Баланс Торговая Империя</h1>
               <h1 class="font-bold text-secondary-color text-4xl mt-3">
                 {{ formatNumber(Math.ceil(allSum)) }} ₽
               </h1>
@@ -398,14 +405,44 @@ async function handleFileChange(event) {
           </div>
 
           <div v-if="user.role === 'ADMIN'">
+            <div class="flex items-center gap-3 mb-5">
+              <h1 class="font-bold text-xl">Проверить баланс сотрудника</h1>
+              <Icon
+                @click="showBalanceEmployees = !showBalanceEmployees"
+                name="clarity:employee-group-line"
+                size="24"
+                class="text-secondary-color hover:opacity-50 cursor-pointer duration-200"
+              />
+            </div>
             <div
-              class="text-xl grid grid-cols-2 max-w-[600px] border-b-2 border-black py-1"
-              v-for="user in usersOfIssued.filter((user) => user !== 'admin')"
+              v-if="showBalanceEmployees"
+              class="text-xl border-2 p-5 border-dashed border-black"
             >
-              <h1 class="border-r-2 border-black">Баланс {{ user }}:</h1>
-              <h1 class="font-bold text-secondary-color text-xl text-center">
-                {{ formatNumber(getAllSumFromName(user)) }} ₽
-              </h1>
+              <select
+                v-model="selectedUser"
+                class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+              >
+                <option
+                  :value="user"
+                  v-for="user in usersOfIssued.filter(
+                    (user) => user !== 'admin'
+                  )"
+                >
+                  {{ user }}
+                </option>
+              </select>
+              <div class="flex items-center gap-3 mt-5">
+                <h1>Баланс {{ selectedUser }}:</h1>
+                <h1 class="font-bold text-secondary-color text-xl text-center">
+                  {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
+                </h1>
+              </div>
+              <AdvanceReportTable
+                :rows="filteredRows?.filter((row) => row.issuedUser === selectedUser || row.createdUser === selectedUser)"
+                :user="user"
+                @open-modal="openModal"
+                @update-delivery-row="updateDeliveryRow"
+              />
             </div>
           </div>
 
@@ -421,10 +458,7 @@ async function handleFileChange(event) {
               Создание авансового документа
             </UIMainButton>
 
-            <UIMainButton
-              v-if="user.role === 'ADMIN'"
-              @click="openModalAdmin"
-            >
+            <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
               Пополнение баланса админа
             </UIMainButton>
           </div>
@@ -457,7 +491,18 @@ async function handleFileChange(event) {
               </select>
             </div>
 
-            <div class="grid grid-cols-2 mb-5">
+            <div class="grid grid-cols-2 mb-5" v-if="user.role !== 'ADMIN'">
+              <label for="name">Дата</label>
+              <input
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.date"
+                :min="`2024-${month}-01`"
+                :max="`2024-${month}-31`"
+                type="date"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 mb-5" v-if="user.role === 'ADMIN'">
               <label for="name">Дата</label>
               <input
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
@@ -587,7 +632,10 @@ async function handleFileChange(event) {
 
           <div>
             <div class="text-center text-2xl my-5">
-              <h1>Баланс {{ user.username }}</h1>
+              <h1 v-if="user.username !== 'admin'">
+                Баланс {{ user.username }}
+              </h1>
+              <h1 v-if="user.username === 'admin'">Баланс Торговая Империя</h1>
               <h1 class="font-bold text-secondary-color text-4xl mt-3">
                 {{ formatNumber(Math.ceil(allSum)) }} ₽
               </h1>
@@ -595,28 +643,57 @@ async function handleFileChange(event) {
           </div>
 
           <div v-if="user.role === 'ADMIN'">
+            <div class="flex items-center gap-3 mb-5">
+              <h1 class="font-bold text-xl">Проверить баланс сотрудника</h1>
+              <Icon
+                @click="showBalanceEmployees = !showBalanceEmployees"
+                name="clarity:employee-group-line"
+                size="24"
+                class="text-secondary-color hover:opacity-50 cursor-pointer duration-200"
+              />
+            </div>
             <div
-              class="text-xl grid grid-cols-2 max-w-[600px] border-b-2 border-black py-1"
-              v-for="user in usersOfIssued"
+              v-if="showBalanceEmployees"
+              class="text-xl border-2 p-5 border-dashed border-black"
             >
-              <h1 class="border-r-2 border-black">Баланс {{ user }}:</h1>
-              <h1 class="font-bold text-secondary-color text-xl text-center">
-                {{ formatNumber(getAllSumFromName(user)) }} ₽
-              </h1>
+              <select
+                v-model="selectedUser"
+                class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+              >
+                <option
+                  :value="user"
+                  v-for="user in usersOfIssued.filter(
+                    (user) => user !== 'admin'
+                  )"
+                >
+                  {{ user }}
+                </option>
+              </select>
+              <div class="flex items-center gap-3 mt-5">
+                <h1>Баланс {{ selectedUser }}:</h1>
+                <h1 class="font-bold text-secondary-color text-xl text-center">
+                  {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
+                </h1>
+              </div>
             </div>
           </div>
 
-          <UIMainButton
-            v-if="
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'DRIVER'
-            "
-            class="mt-10"
-            @click="openModal"
-          >
-            Создание авансового документа
-          </UIMainButton>
+          <div class="flex items-center gap-3 max-sm:flex-col mt-10">
+            <UIMainButton
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'DRIVER'
+              "
+              @click="openModal"
+            >
+              Создание авансового документа
+            </UIMainButton>
+
+            <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
+              Пополнение баланса админа
+            </UIMainButton>
+          </div>
 
           <AdvanceReportTable
             :rows="filteredRows"
@@ -637,7 +714,7 @@ async function handleFileChange(event) {
             <div class="grid grid-cols-2 mb-5">
               <label for="dispatchPVZ1">ПВЗ</label>
               <select
-                class="py-1 px-2 border-2 bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.PVZ"
               >
                 <option v-for="pvzData in pvz" :value="pvzData">
@@ -646,10 +723,21 @@ async function handleFileChange(event) {
               </select>
             </div>
 
-            <div class="grid grid-cols-2 mb-5">
+            <div class="grid grid-cols-2 mb-5" v-if="user.role !== 'ADMIN'">
               <label for="name">Дата</label>
               <input
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.date"
+                :min="`2024-${month}-01`"
+                :max="`2024-${month}-31`"
+                type="date"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 mb-5" v-if="user.role === 'ADMIN'">
+              <label for="name">Дата</label>
+              <input
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
                 type="date"
               />
@@ -659,7 +747,7 @@ async function handleFileChange(event) {
               <label for="name">Выдано</label>
               <select
                 :disabled="user.role !== 'ADMIN'"
-                class="py-1 px-2 border-2 bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.issuedUser"
               >
                 <option v-for="user in usersOfIssued" :value="user">
@@ -672,7 +760,7 @@ async function handleFileChange(event) {
               <label for="name">Расход</label>
               <input
                 :disabled="user.role !== 'ADMIN'"
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
                 type="text"
               />
@@ -693,7 +781,7 @@ async function handleFileChange(event) {
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Комментарий</label>
               <input
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.notation"
                 type="text"
               />
@@ -702,7 +790,7 @@ async function handleFileChange(event) {
             <div class="grid grid-cols-2 mb-5">
               <label for="dispatchPVZ1">Компания</label>
               <select
-                class="py-1 px-2 border-2 bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.company"
               >
                 <option v-for="company in companies" :value="company">
@@ -717,9 +805,9 @@ async function handleFileChange(event) {
                 документ</label
               >
               <input
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.supportingDocuments"
-                type="text"
+                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                @change="handleFileChange"
+                type="file"
               />
             </div>
           </div>
@@ -734,6 +822,31 @@ async function handleFileChange(event) {
           <div class="flex items-center justify-center gap-3 mt-10" v-else>
             <UIMainButton @click="createRow">Создать </UIMainButton>
             <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+          </div>
+        </UIModal>
+
+        <UIModal v-show="isOpenAdmin" @close-modal="closeModalAdmin">
+          <template v-slot:header>
+            <div class="custom-header" v-if="rowData.id">
+              Изменение строки с ID - <b> {{ rowData.id }}</b>
+            </div>
+            <div class="custom-header" v-else>Пополнение баланса</div>
+          </template>
+          <div class="text-black">
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Сумма</label>
+              <input
+                :disabled="user.role !== 'ADMIN'"
+                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.expenditure"
+                type="text"
+              />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-center gap-3 mt-10">
+            <UIMainButton @click="createRow">Создать</UIMainButton>
+            <UIErrorButton @click="closeModalAdmin">Отменить </UIErrorButton>
           </div>
         </UIModal>
       </NuxtLayout>

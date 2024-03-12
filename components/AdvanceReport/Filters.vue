@@ -173,6 +173,20 @@ const nonEmptyCount: Ref<number> = computed(() => {
   >
     <div class="grid grid-cols-2 max-xl:grid-cols-2 max-md:grid-cols-1">
       <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
+        <h1>Компания:</h1>
+        <input
+          type="text"
+          class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+          v-model="selectedCompany"
+          list="uniqueCompany"
+        />
+        <datalist id="uniqueCompany" class="">
+          <option v-for="value in uniqueCompany" :value="value">
+            {{ value }}
+          </option>
+        </datalist>
+      </div>
+      <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
         <h1>Показать для ПВЗ:</h1>
         <input
           type="text"
@@ -182,20 +196,6 @@ const nonEmptyCount: Ref<number> = computed(() => {
         />
         <datalist id="uniquePVZ" class="">
           <option v-for="value in uniquePVZ" :value="value">
-            {{ value }}
-          </option>
-        </datalist>
-      </div>
-      <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-        <h1>Расход:</h1>
-        <input
-          type="text"
-          class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-          v-model="selectedExpenditure"
-          list="uniqueExpenditure"
-        />
-        <datalist id="uniqueExpenditure" class="">
-          <option v-for="value in uniqueExpenditure" :value="value">
             {{ value }}
           </option>
         </datalist>
@@ -215,6 +215,20 @@ const nonEmptyCount: Ref<number> = computed(() => {
         </datalist>
       </div>
       <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
+        <h1>Расход:</h1>
+        <input
+          type="text"
+          class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+          v-model="selectedExpenditure"
+          list="uniqueExpenditure"
+        />
+        <datalist id="uniqueExpenditure" class="">
+          <option v-for="value in uniqueExpenditure" :value="value">
+            {{ value }}
+          </option>
+        </datalist>
+      </div>
+      <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
         <h1>Комментарий:</h1>
         <input
           type="text"
@@ -224,20 +238,6 @@ const nonEmptyCount: Ref<number> = computed(() => {
         />
         <datalist id="uniqueNotation" class="">
           <option v-for="value in uniqueNotation" :value="value">
-            {{ value }}
-          </option>
-        </datalist>
-      </div>
-      <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-        <h1>Компания:</h1>
-        <input
-          type="text"
-          class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-          v-model="selectedCompany"
-          list="uniqueCompany"
-        />
-        <datalist id="uniqueCompany" class="">
-          <option v-for="value in uniqueCompany" :value="value">
             {{ value }}
           </option>
         </datalist>

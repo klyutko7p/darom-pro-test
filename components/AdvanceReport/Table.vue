@@ -61,9 +61,52 @@ function updateCurrentPageData() {
     let rowDate: Date = new Date(row.date);
     return rowDate.getMonth() + 1 === +month.value;
   });
+
+  if (letterOfSorting.value === "W") {
+    const today = new Date();
+    const currentDayOfWeek = today.getDay();
+    const firstDayOfWeek = new Date(today);
+    firstDayOfWeek.setDate(
+      today.getDate() - currentDayOfWeek + (currentDayOfWeek === 0 ? -6 : 1)
+    );
+    const lastDayOfWeek = new Date(firstDayOfWeek);
+    lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
+
+    filteredRows.value = filteredRows.value?.filter((row: IAdvanceReport) => {
+      let rowDate: Date = new Date(row.date);
+      return rowDate >= firstDayOfWeek && rowDate <= lastDayOfWeek;
+    });
+  } else if (letterOfSorting.value === "M") {
+    const today = new Date();
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const lastDayOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0
+    );
+
+    filteredRows.value = filteredRows.value?.filter((row: IAdvanceReport) => {
+      let rowDate: Date = new Date(row.date);
+      return rowDate >= firstDayOfMonth && rowDate <= lastDayOfMonth;
+    });
+  } else if (letterOfSorting.value === "Y") {
+    const today = new Date();
+    const firstDayOfYear = new Date(today.getFullYear(), 0, 1);
+    const lastDayOfYear = new Date(today.getFullYear(), 11, 31);
+
+    filteredRows.value = returnRows.value?.filter((row: IAdvanceReport) => {
+      let rowDate: Date = new Date(row.date);
+      return rowDate >= firstDayOfYear && rowDate <= lastDayOfYear;
+    });
+  }
 }
 
-watch([props.rows, totalRows], updateCurrentPageData);
+let letterOfSorting = ref("M");
+function changeSorting(letter: string) {
+  letterOfSorting.value = letter;
+}
+
+watch([props.rows, totalRows, letterOfSorting], updateCurrentPageData);
 
 let breakpoints = {
   100: {
@@ -84,14 +127,18 @@ let breakpoints = {
 };
 </script>
 <template>
-  <div class="my-10 flex items-center gap-5">
+  <div class="my-10 flex items-center gap-5 max-sm:flex-col">
     <span
       class="border-2 py-3 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
       @click="showFilters = !showFilters"
       >2024</span
     >
-    <div v-if="showFilters">
-      <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="month" @change="filterRows(month)">
+    <div v-if="showFilters" class="flex items-center w-full justify-between max-sm:items-start">
+      <select
+        class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+        v-model="month"
+        @change="filterRows(month)"
+      >
         <option
           v-for="(monthName, monthNumber) in monthNames"
           :value="monthNumber"
@@ -99,9 +146,25 @@ let breakpoints = {
           {{ monthName }}
         </option>
       </select>
+      <div class="flex gap-3 items-center justify-center max-sm:flex-col">
+        <span
+          class="border-2 text-sm py-1 px-3 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
+          @click="changeSorting('W')"
+          >Неделя</span
+        >
+        <span
+          class="border-2 text-sm py-1 px-3 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
+          @click="changeSorting('M')"
+          >Месяц</span
+        >
+        <span
+          class="border-2 text-sm py-1 px-3 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
+          @click="changeSorting('Y')"
+          >Год</span
+        >
+      </div>
     </div>
   </div>
-  
 
   <div
     class="relative max-h-[410px] overflow-y-auto mt-5 mb-10"
@@ -139,7 +202,12 @@ let breakpoints = {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in filteredRows?.filter((row) => row.notation !== 'Пополнение баланса')" class="text-center">
+        <tr
+          v-for="row in filteredRows?.filter(
+            (row) => row.notation !== 'Пополнение баланса'
+          )"
+          class="text-center"
+        >
           <td class="border-2">
             <h1
               @click="openModal(row)"
@@ -172,7 +240,14 @@ let breakpoints = {
             {{ row.issuedUser }}
           </td>
           <td class="border-2 whitespace-nowrap">
-            <a target="_blank" class="text-secondary-color underline font-bold" v-if="row.supportingDocuments && row.supportingDocuments.length > 2" :href="`https://mgbbkkgyorhwryabwabx.supabase.co/storage/v1/object/public/image/img-${row.supportingDocuments}`">
+            <a
+              target="_blank"
+              class="text-secondary-color underline font-bold"
+              v-if="
+                row.supportingDocuments && row.supportingDocuments.length > 2
+              "
+              :href="`https://mgbbkkgyorhwryabwabx.supabase.co/storage/v1/object/public/image/img-${row.supportingDocuments}`"
+            >
               Фото
             </a>
           </td>
@@ -197,7 +272,7 @@ let breakpoints = {
   <div v-else class="mt-10 mb-10 flex flex-col justify-center items-center">
     <h1 class="text-4xl text-center mb-5">😞</h1>
     <h1 class="text-2xl font-medium text-center">
-      Извините, документы не были найдены по этим фильтрам!
+      Извините, документы не были найдены!
     </h1>
   </div>
 </template>
