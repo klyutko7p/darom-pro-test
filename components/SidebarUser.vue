@@ -157,7 +157,7 @@ function formatPhoneNumber(phoneNumber: string) {
         <Icon
           v-if="
             requests2?.filter(
-              (row) => row.received === null && row.issuedUser === user.username
+              (row) => row.received === null && row.issuedUser === user.username && row.notation !== 'Пополнение баланса'
             ).length > 0
           "
           name="pepicons-print:exclamation"
@@ -356,7 +356,7 @@ function formatPhoneNumber(phoneNumber: string) {
         <Icon
           v-if="
             requests2?.filter(
-              (row) => row.received === null && row.issuedUser === user.username
+              (row) => row.received === null && row.issuedUser === user.username && row.notation !== 'Пополнение баланса'
             ).length > 0
           "
           name="pepicons-print:exclamation"
@@ -471,7 +471,7 @@ function formatPhoneNumber(phoneNumber: string) {
       <Icon
           v-if="
             requests2?.filter(
-              (row) => row.received === null && row.issuedUser === user.username
+              (row) => row.received === null && row.issuedUser === user.username && row.notation !== 'Пополнение баланса'
             ).length > 0
           "
           name="pepicons-print:exclamation"
