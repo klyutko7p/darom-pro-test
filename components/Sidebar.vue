@@ -7,7 +7,9 @@ const storeUsers = useUsersStore();
 let user = ref({} as User);
 let isOpen = ref(false);
 const storeBalance = useBalanceStore();
+const storeAdvanceReports = useAdvanceReports();
 let requests = ref<Array<IBalance>>();
+let requests2 = ref<Array<IAdvanceReport>>();
 
 function signOut() {
   storeUsers.signOut();
@@ -20,6 +22,7 @@ function editMenu() {
 onBeforeMount(async () => {
   user.value = storeUsers.getUser();
   requests.value = await storeBalance.getBalanceRows();
+  requests2.value = await storeAdvanceReports.getAdvancedReports();
 });
 
 function formatPhoneNumber(phoneNumber: string) {
@@ -239,6 +242,16 @@ let isShowAddSettings = ref(false);
           <Icon name="oui:ml-create-advanced-job" size="20" />
         </div>
         <h1>Авансовый отчёт</h1>
+        <Icon
+          v-if="
+            requests2?.filter(
+              (row) => row.received === null && row.issuedUser === user.username
+            ).length > 0
+          "
+          name="pepicons-print:exclamation"
+          size="24"
+          class="text-red-700"
+        />
       </div>
       <div
         class="px-3 pt-3 font-bold flex items-center gap-3"
@@ -553,6 +566,16 @@ let isShowAddSettings = ref(false);
           <Icon name="oui:ml-create-advanced-job" size="20" />
         </div>
         <h1>Авансовый отчёт</h1>
+        <Icon
+          v-if="
+            requests2?.filter(
+              (row) => row.received === null && row.issuedUser === user.username
+            ).length > 0
+          "
+          name="pepicons-print:exclamation"
+          size="24"
+          class="text-red-700"
+        />
       </div>
       <div
         class="px-3 pt-3 font-bold flex items-center gap-3"
@@ -747,6 +770,16 @@ let isShowAddSettings = ref(false);
         class="text-red-700"
         size="40"
       />
+      <Icon
+          v-if="
+            requests2?.filter(
+              (row) => row.received === null && row.issuedUser === user.username
+            ).length > 0
+          "
+          name="pepicons-print:exclamation"
+          size="40"
+          class="text-red-700"
+        />
       <h1 class="font-medium">{{ user.username }}</h1>
     </div>
     <h1

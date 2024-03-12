@@ -139,7 +139,7 @@ let breakpoints = {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in filteredRows" class="text-center">
+        <tr v-for="row in filteredRows?.filter((row) => row.notation !== 'Пополнение баланса')" class="text-center">
           <td class="border-2">
             <h1
               @click="openModal(row)"
@@ -172,9 +172,9 @@ let breakpoints = {
             {{ row.issuedUser }}
           </td>
           <td class="border-2 whitespace-nowrap">
-            {{
-              row.supportingDocuments.length > 0 ? row.supportingDocuments : ""
-            }}
+            <a class="text-secondary-color underline font-bold" v-if="row.supportingDocuments && row.supportingDocuments.length > 2" :href="`https://mgbbkkgyorhwryabwabx.supabase.co/storage/v1/object/public/image/img-${row.supportingDocuments}`">
+              Фото
+            </a>
           </td>
           <td class="border-2 whitespace-nowrap">
             <Icon

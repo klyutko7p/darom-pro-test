@@ -23,6 +23,7 @@ export default defineEventHandler(async (event) => {
         date: row.date ? new Date(row.date).toISOString() : null,
         supportingDocuments: row.supportingDocuments,
         createdUser: username,
+        received: row.received ? new Date(row.received).toISOString() : null,
       },
     });
   } catch (error) {

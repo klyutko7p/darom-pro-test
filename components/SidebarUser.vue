@@ -5,9 +5,11 @@ const router = useRouter();
 const route = useRoute();
 const storeUsers = useUsersStore();
 const storeBalance = useBalanceStore();
+const storeAdvanceReports = useAdvanceReports();
 let user = ref({} as User);
 let isOpen = ref(false);
 let requests = ref<Array<IBalance>>();
+  let requests2 = ref<Array<IAdvanceReport>>();
 
 function signOut() {
   storeUsers.signOut();
@@ -20,6 +22,7 @@ function editMenu() {
 onBeforeMount(async () => {
   user.value = storeUsers.getUser();
   requests.value = await storeBalance.getBalanceRows();
+  requests2.value = await storeAdvanceReports.getAdvancedReports();
 });
 
 function formatPhoneNumber(phoneNumber: string) {
@@ -151,6 +154,16 @@ function formatPhoneNumber(phoneNumber: string) {
           <Icon name="oui:ml-create-advanced-job" size="20" />
         </div>
         <h1>Авансовый отчёт</h1>
+        <Icon
+          v-if="
+            requests2?.filter(
+              (row) => row.received === null && row.issuedUser === user.username
+            ).length > 0
+          "
+          name="pepicons-print:exclamation"
+          size="24"
+          class="text-red-700"
+        />
       </div>
       <div
         v-if="
@@ -340,6 +353,16 @@ function formatPhoneNumber(phoneNumber: string) {
           <Icon name="oui:ml-create-advanced-job" size="20" />
         </div>
         <h1>Авансовый отчёт</h1>
+        <Icon
+          v-if="
+            requests2?.filter(
+              (row) => row.received === null && row.issuedUser === user.username
+            ).length > 0
+          "
+          name="pepicons-print:exclamation"
+          size="24"
+          class="text-red-700"
+        />
       </div>
       <div
         v-if="
@@ -445,6 +468,16 @@ function formatPhoneNumber(phoneNumber: string) {
         size="40"
         class="text-red-700"
       />
+      <Icon
+          v-if="
+            requests2?.filter(
+              (row) => row.received === null && row.issuedUser === user.username
+            ).length > 0
+          "
+          name="pepicons-print:exclamation"
+          size="40"
+          class="text-red-700"
+        />
       <h1 class="font-medium">{{ user.username }}</h1>
     </div>
     <h1

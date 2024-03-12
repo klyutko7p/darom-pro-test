@@ -7,7 +7,7 @@ interface IAdvanceReport {
     typeOfExpenditure: string;
     notation: string;
     company: string;
-    supportingDocuments: string[] | [];
+    supportingDocuments: string;
     type: string;
     createdUser: string;
     received: Date | number | string | null;

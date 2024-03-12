@@ -59,6 +59,7 @@ definePageMeta({
 });
 
 let isOpen = ref(false);
+let isOpenAdmin = ref(false);
 let rowData = ref({} as IAdvanceReport);
 let sum1 = ref(0);
 let sum2 = ref(0);
@@ -102,7 +103,10 @@ function getAllSum() {
 
   let sumOfPVZ1 = rows.value
     ?.filter(
-      (row) => row.received !== null && row.createdUser === user.value.username
+      (row) =>
+        row.received !== null &&
+        row.createdUser === user.value.username &&
+        row.notation !== "Пополнение баланса"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
@@ -143,12 +147,29 @@ function openModal(row: IAdvanceReport) {
     rowData.value.date = rowData.value.date
       ? storeUsers.getISODateTime(rowData.value.date)
       : null;
-    rowData.value.date = rowData.value.date
-      ? storeUsers.getISODateTime(rowData.value.date)
-      : null;
   } else {
     rowData.value = {} as IAdvanceReport;
   }
+}
+
+function openModalAdmin(row: IAdvanceReport) {
+  isOpenAdmin.value = true;
+  rowData.value = {} as IAdvanceReport;
+  rowData.value.PVZ = "";
+  rowData.value.company = "";
+  rowData.value.expenditure = row.expenditure;
+  rowData.value.notation = "Пополнение баланса";
+  rowData.value.issuedUser = "admin";
+  rowData.value.received = new Date();
+  rowData.value.supportingDocuments = "";
+  rowData.value.typeOfExpenditure = "";
+  rowData.value.createdUser = "admin";
+  rowData.value.date = new Date();
+}
+
+function closeModalAdmin() {
+  isOpenAdmin.value = false;
+  rowData.value = {} as IAdvanceReport;
 }
 
 let pvz = ref([
@@ -186,6 +207,13 @@ let usersOfIssued = ref([
   "Волошина",
 ]);
 
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  "https://mgbbkkgyorhwryabwabx.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1nYmJra2d5b3Jod3J5YWJ3YWJ4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwMzE0NjQ5OCwiZXhwIjoyMDE4NzIyNDk4fQ.Ogcld2z2P5M3V5N2yEpyfmHPsXor9Mv_5fUya5wgEoY"
+);
+
 async function createRow() {
   isLoading.value = true;
   await storeAdvanceReports.createAdvanceReport(
@@ -204,10 +232,11 @@ async function createRow() {
   } else {
     rows.value = rows.value;
   }
-  filteredRows.value = rows.value
+  filteredRows.value = rows.value;
 
   getAllSum();
   closeModal();
+  closeModalAdmin();
   isLoading.value = false;
 }
 
@@ -229,7 +258,7 @@ async function updateRow() {
   } else {
     rows.value = rows.value;
   }
-  filteredRows.value = rows.value
+  filteredRows.value = rows.value;
 
   getAllSum();
   closeModal();
@@ -251,7 +280,7 @@ async function updateDeliveryRow(row: any) {
   } else {
     rows.value = rows.value;
   }
-  filteredRows.value = rows.value
+  filteredRows.value = rows.value;
 
   getAllSum();
   isLoading.value = false;
@@ -329,10 +358,17 @@ function handleFilteredRows(filteredRowsData: IAdvanceReport[]) {
   filteredRows.value = filteredRowsData;
 }
 
-function handleFileChange(event) {
+async function handleFileChange(event) {
   const selectedFile = event.target.files[0];
-  console.log(selectedFile);
-  rowData.value.supportingDocuments = selectedFile;
+  const { data, error } = await supabase.storage
+    .from("image")
+    .upload(`img-${selectedFile.name}`, selectedFile);
+  rowData.value.supportingDocuments = selectedFile.name;
+  if (data) {
+    console.log(data);
+  } else {
+    console.log(error);
+  }
 }
 </script>
 
@@ -364,7 +400,7 @@ function handleFileChange(event) {
           <div v-if="user.role === 'ADMIN'">
             <div
               class="text-xl grid grid-cols-2 max-w-[600px] border-b-2 border-black py-1"
-              v-for="user in usersOfIssued"
+              v-for="user in usersOfIssued.filter((user) => user !== 'admin')"
             >
               <h1 class="border-r-2 border-black">Баланс {{ user }}:</h1>
               <h1 class="font-bold text-secondary-color text-xl text-center">
@@ -373,17 +409,25 @@ function handleFileChange(event) {
             </div>
           </div>
 
-          <UIMainButton
-            v-if="
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'DRIVER'
-            "
-            class="mt-10"
-            @click="openModal"
-          >
-            Создание авансового документа
-          </UIMainButton>
+          <div class="flex items-center gap-3 max-sm:flex-col mt-10">
+            <UIMainButton
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'DRIVER'
+              "
+              @click="openModal"
+            >
+              Создание авансового документа
+            </UIMainButton>
+
+            <UIMainButton
+              v-if="user.role === 'ADMIN'"
+              @click="openModalAdmin"
+            >
+              Пополнение баланса админа
+            </UIMainButton>
+          </div>
 
           <AdvanceReportTable
             :rows="filteredRows"
@@ -404,7 +448,7 @@ function handleFileChange(event) {
             <div class="grid grid-cols-2 mb-5">
               <label for="dispatchPVZ1">ПВЗ</label>
               <select
-                class="py-1 px-2 border-2 bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.PVZ"
               >
                 <option v-for="pvzData in pvz" :value="pvzData">
@@ -416,7 +460,7 @@ function handleFileChange(event) {
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Дата</label>
               <input
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
                 type="date"
               />
@@ -426,7 +470,7 @@ function handleFileChange(event) {
               <label for="name">Выдано</label>
               <select
                 :disabled="user.role !== 'ADMIN'"
-                class="py-1 px-2 border-2 bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.issuedUser"
               >
                 <option v-for="user in usersOfIssued" :value="user">
@@ -439,7 +483,7 @@ function handleFileChange(event) {
               <label for="name">Расход</label>
               <input
                 :disabled="user.role !== 'ADMIN'"
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
                 type="text"
               />
@@ -460,7 +504,7 @@ function handleFileChange(event) {
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Комментарий</label>
               <input
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.notation"
                 type="text"
               />
@@ -469,7 +513,7 @@ function handleFileChange(event) {
             <div class="grid grid-cols-2 mb-5">
               <label for="dispatchPVZ1">Компания</label>
               <select
-                class="py-1 px-2 border-2 bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.company"
               >
                 <option v-for="company in companies" :value="company">
@@ -501,6 +545,31 @@ function handleFileChange(event) {
           <div class="flex items-center justify-center gap-3 mt-10" v-else>
             <UIMainButton @click="createRow">Создать </UIMainButton>
             <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+          </div>
+        </UIModal>
+
+        <UIModal v-show="isOpenAdmin" @close-modal="closeModalAdmin">
+          <template v-slot:header>
+            <div class="custom-header" v-if="rowData.id">
+              Изменение строки с ID - <b> {{ rowData.id }}</b>
+            </div>
+            <div class="custom-header" v-else>Пополнение баланса</div>
+          </template>
+          <div class="text-black">
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Сумма</label>
+              <input
+                :disabled="user.role !== 'ADMIN'"
+                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.expenditure"
+                type="text"
+              />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-center gap-3 mt-10">
+            <UIMainButton @click="createRow">Создать</UIMainButton>
+            <UIErrorButton @click="closeModalAdmin">Отменить </UIErrorButton>
           </div>
         </UIModal>
       </NuxtLayout>
