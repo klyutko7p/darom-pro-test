@@ -105,94 +105,93 @@ export const useCellsStore = defineStore("cells", () => {
                 });
             });
 
-            // const matchedData = filteredData.filter(filteredItem => {
-            //     return filteredItem.issued === null && filteredItem.deleted === null && disMatches.some(cell =>
-            //         cell.status === 'Занято' &&
-            //         cell.name === filteredItem.cell &&
-            //         cell.PVZ === filteredItem.dispatchPVZ &&
-            //         cell.fromName !== filteredItem.fromName
-            //     );
-            // });
+            const matchedData = filteredData.filter(filteredItem => {
+                return filteredItem.issued === null && filteredItem.deleted === null && disMatches.some(cell =>
+                    cell.status === 'Занято' &&
+                    cell.name === filteredItem.cell &&
+                    cell.PVZ === filteredItem.dispatchPVZ &&
+                    cell.fromName !== filteredItem.fromName
+                );
+            });
 
-            // const resultArray = matchedData.map(item => ({
-            //     name: item.cell,
-            //     PVZ: item.dispatchPVZ,
-            //     fromName: item.fromName,
-            //     status: 'Занято'
-            // }));
+            const resultArray = matchedData.map(item => ({
+                name: item.cell,
+                PVZ: item.dispatchPVZ,
+                fromName: item.fromName,
+                status: 'Занято'
+            }));
 
-            // const uniqueArray = resultArray.filter((item, index, self) => {
-            //     const firstIndex = self.findIndex((t) => (
-            //         t.name === item.name && t.PVZ === item.PVZ
-            //     ));
-            //     return index === firstIndex || index === self.length - 1;
-            // });
+            const uniqueArray = resultArray.filter((item, index, self) => {
+                const firstIndex = self.findIndex((t) => (
+                    t.name === item.name && t.PVZ === item.PVZ
+                ));
+                return index === firstIndex || index === self.length - 1;
+            });
 
-            // try {
-            //     let data = await useFetch('/api/cells/cell-update-not-empty-rows', {
-            //         method: 'POST',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //         body: JSON.stringify({ cells: uniqueArray }),
-            //     })
-            //     if (data.data.value === 'Updated successfully') {
-            //         cachesCells = null;
-            //     } else {
-            //         toast.error("Произошла ошибка при обновлении ячеек!");
-            //     }
-            // } catch (error) {
-            //     if (error instanceof Error) {
-            //         toast.error(error.message);
-            //     }
-            // }
-
-
-
-
+            try {
+                let data = await useFetch('/api/cells/cell-update-not-empty-rows', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ cells: uniqueArray }),
+                })
+                if (data.data.value === 'Updated successfully') {
+                    cachesCells = null;
+                } else {
+                    toast.error("Произошла ошибка при обновлении ячеек!");
+                }
+            } catch (error) {
+                if (error instanceof Error) {
+                    toast.error(error.message);
+                }
+            }
 
             
-            // const matchedData = filteredData.filter(filteredItem => {
-            //     return filteredItem.issued === null && filteredItem.deleted === null && disMatches.some(cell =>
-            //         cell.status === 'Свободно' &&
-            //         cell.name === filteredItem.cell &&
-            //         cell.PVZ === filteredItem.dispatchPVZ
-            //     );
-            // });
+            
+            const matchedData1 = filteredData.filter(filteredItem => {
+                return filteredItem.issued === null && filteredItem.deleted === null && disMatches.some(cell =>
+                    cell.status === 'Свободно' &&
+                    cell.name === filteredItem.cell &&
+                    cell.PVZ === filteredItem.dispatchPVZ
+                );
+            });
 
-            // const resultArray = matchedData.map(item => ({
-            //     name: item.cell,
-            //     PVZ: item.dispatchPVZ,
-            //     fromName: item.fromName,
-            //     status: 'Занято'
-            // }));
+            const resultArray1 = matchedData1.map(item => ({
+                name: item.cell,
+                PVZ: item.dispatchPVZ,
+                fromName: item.fromName,
+                status: 'Занято'
+            }));
 
-            // const uniqueArray = resultArray.filter((item, index, self) => {
-            //     const firstIndex = self.findIndex((t) => (
-            //         t.name === item.name && t.PVZ === item.PVZ
-            //     ));
-            //     return index === firstIndex || index === self.length - 1;
-            // });
+            const uniqueArray1 = resultArray1.filter((item, index, self) => {
+                const firstIndex = self.findIndex((t) => (
+                    t.name === item.name && t.PVZ === item.PVZ
+                ));
+                return index === firstIndex || index === self.length - 1;
+            });
 
 
-            // try {
-            //     let data = await useFetch('/api/cells/cell-update-empty-rows', {
-            //         method: 'POST',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //         body: JSON.stringify({ cells: uniqueArray }),
-            //     })
-            //     if (data.data.value === 'Updated successfully') {
-            //         cachesCells = null;
-            //     } else {
-            //         toast.error("Произошла ошибка при обновлении ячеек!");
-            //     }
-            // } catch (error) {
-            //     if (error instanceof Error) {
-            //         toast.error(error.message);
-            //     }
-            // }
+            try {
+                let data = await useFetch('/api/cells/cell-update-empty-rows', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ cells: uniqueArray1 }),
+                })
+                if (data.data.value === 'Updated successfully') {
+                    cachesCells = null;
+                } else {
+                    toast.error("Произошла ошибка при обновлении ячеек!");
+                }
+            } catch (error) {
+                if (error instanceof Error) {
+                    toast.error(error.message);
+                }
+            }
+
+
 
             try {
                 let data = await useFetch('/api/cells/cell-update-free', {
