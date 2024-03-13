@@ -370,10 +370,76 @@ async function handleFileChange(event) {
     console.log(error);
   }
 }
+let selectedWeek = ref("");
 
-let selectedUser = ref("Шведова");
-let showBalanceEmployees = ref(true);
-let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
+function getWeeks() {
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+
+  const weeks = [];
+  let currentWeekStart = 1;
+  let currentWeekEnd = 0;
+  let weekNumber = 1;
+
+  while (currentWeekStart <= getDaysInMonth(currentYear, currentMonth)) {
+    const weekStart = new Date(currentYear, currentMonth, currentWeekStart);
+    const dayOfWeek = weekStart.getDay();
+
+    currentWeekEnd = currentWeekStart + (7 - dayOfWeek);
+    if (currentWeekEnd > getDaysInMonth(currentYear, currentMonth)) {
+      currentWeekEnd = getDaysInMonth(currentYear, currentMonth);
+    }
+
+    weeks.push(
+      `${weekNumber} неделя (${formatDate(weekStart)}-${formatDate(
+        new Date(currentYear, currentMonth, currentWeekEnd)
+      )})`
+    );
+
+    currentWeekStart = currentWeekEnd + 1;
+    weekNumber++;
+  }
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+  const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+  weeks.push(
+    `${getMonthName(currentMonth)} (${formatDate(
+      firstDayOfMonth
+    )}-${formatDate(lastDayOfMonth)})`
+  );
+  selectedWeek.value = weeks[0];
+  return weeks;
+}
+
+function getDaysInMonth(year, month) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+function formatDate(date) {
+  return String(date.getDate()).padStart(2, "0");
+}
+
+function getMonthName(month) {
+  const monthNames = [
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
+  ];
+  return monthNames[month];
+}
+
+const weeks = getWeeks();
+
+let month = ref(new Date().getMonth() + 1);
 </script>
 
 <template>
@@ -392,10 +458,14 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             :user="user"
           />
 
-          <NuxtLink v-if="user.role === 'ADMIN'" to="/advance-report" class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold">
+          <NuxtLink
+            v-if="user.role === 'ADMIN'"
+            to="/advance-report"
+            class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold"
+          >
             Перейти к авансовому отчету
           </NuxtLink>
-          
+
           <div>
             <div class="text-center text-2xl my-5">
               <h1 v-if="user.username !== 'admin'">
@@ -408,7 +478,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             </div>
           </div>
 
-          <div class="flex items-center gap-3 max-sm:flex-col mt-10">
+          <div class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mt-10">
             <UIMainButton
               v-if="
                 user.role === 'ADMIN' ||
@@ -425,12 +495,35 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             </UIMainButton>
           </div>
 
+          <div class="mt-10">
+            <select
+              v-model="selectedWeek"
+              class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+            >
+              <option v-for="week in weeks">{{ week }}</option>
+            </select>
+          </div>
+
           <div v-for="company in companies" class="mt-10 mb-10">
             <h1 class="font-bold text-2xl mb-3">{{ company }}</h1>
             <div class="border-2 p-3 border-dashed border-black">
-              <AdvanceReportTable
+              <AdvanceReportTableReport
                 :rows="filteredRows?.filter((row) => row.company === company)"
                 :user="user"
+                :week="selectedWeek"
+                @open-modal="openModal"
+                @update-delivery-row="updateDeliveryRow"
+              />
+            </div>
+          </div>
+
+          <div class="mt-10 mb-10" v-if="!selectedWeek.includes('неделя')">
+            <h1 class="font-bold text-2xl mb-3">Итог месяца прибыли по всем проектам</h1>
+            <div class="border-2 p-3 border-dashed border-black">
+              <AdvanceReportTableReport
+                :rows="filteredRows"
+                :user="user"
+                :week="selectedWeek"
                 @open-modal="openModal"
                 @update-delivery-row="updateDeliveryRow"
               />
@@ -439,156 +532,384 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
         </div>
 
         <UIModal v-show="isOpen" @close-modal="closeModal">
-            <template v-slot:header>
-              <div class="custom-header" v-if="rowData.id">
-                Изменение строки с ID - <b> {{ rowData.id }}</b>
-              </div>
-              <div class="custom-header" v-else>Создание нового документа</div>
-            </template>
-            <div class="text-black">
-              <div class="grid grid-cols-2 mb-5">
-                <label for="dispatchPVZ1">ПВЗ</label>
-                <select
-                  class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                  v-model="rowData.PVZ"
-                >
-                  <option v-for="pvzData in pvz" :value="pvzData">
-                    {{ pvzData }}
-                  </option>
-                </select>
-              </div>
-  
-              <div class="grid grid-cols-2 mb-5" v-if="user.role !== 'ADMIN'">
-                <label for="name">Дата</label>
-                <input
-                  class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.date"
-                  :min="`2024-${month}-01`"
-                  :max="`2024-${month}-31`"
-                  type="date"
-                />
-              </div>
-  
-              <div class="grid grid-cols-2 mb-5" v-if="user.role === 'ADMIN'">
-                <label for="name">Дата</label>
-                <input
-                  class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.date"
-                  type="date"
-                />
-              </div>
-  
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Выдано</label>
-                <select
-                  :disabled="user.role !== 'ADMIN'"
-                  class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
-                  v-model="rowData.issuedUser"
-                >
-                  <option v-for="user in usersOfIssued" :value="user">
-                    {{ user }}
-                  </option>
-                </select>
-              </div>
-  
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Расход</label>
-                <input
-                  :disabled="user.role !== 'ADMIN'"
-                  class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.expenditure"
-                  type="text"
-                />
-              </div>
-  
-              <div class="grid grid-cols-2 mb-5">
-                <label for="dispatchPVZ1">Статья расхода</label>
-                <select
-                  class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                  v-model="rowData.typeOfExpenditure"
-                >
-                  <option v-for="type in typesOfExpenditure" :value="type">
-                    {{ type }}
-                  </option>
-                </select>
-              </div>
-  
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Комментарий</label>
-                <input
-                  class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.notation"
-                  type="text"
-                />
-              </div>
-  
-              <div class="grid grid-cols-2 mb-5">
-                <label for="dispatchPVZ1">Компания</label>
-                <select
-                  class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                  v-model="rowData.company"
-                >
-                  <option v-for="company in companies" :value="company">
-                    {{ company }}
-                  </option>
-                </select>
-              </div>
-  
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name"
-                  >Подтверждающий <br />
-                  документ</label
-                >
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  @change="handleFileChange"
-                  type="file"
-                />
-              </div>
+          <template v-slot:header>
+            <div class="custom-header" v-if="rowData.id">
+              Изменение строки с ID - <b> {{ rowData.id }}</b>
             </div>
-  
-            <div
-              class="flex items-center justify-center gap-3 mt-10"
-              v-if="rowData.id"
-            >
-              <UIMainButton @click="updateRow">Сохранить</UIMainButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+            <div class="custom-header" v-else>Создание нового документа</div>
+          </template>
+          <div class="text-black">
+            <div class="grid grid-cols-2 mb-5">
+              <label for="dispatchPVZ1">ПВЗ</label>
+              <select
+                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                v-model="rowData.PVZ"
+              >
+                <option v-for="pvzData in pvz" :value="pvzData">
+                  {{ pvzData }}
+                </option>
+              </select>
             </div>
-            <div class="flex items-center justify-center gap-3 mt-10" v-else>
-              <UIMainButton @click="createRow">Создать </UIMainButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+
+            <div class="grid grid-cols-2 mb-5" v-if="user.role !== 'ADMIN'">
+              <label for="name">Дата</label>
+              <input
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.date"
+                :min="`2024-${month}-01`"
+                :max="`2024-${month}-31`"
+                type="date"
+              />
             </div>
-          </UIModal>
-  
-          <UIModal v-show="isOpenAdmin" @close-modal="closeModalAdmin">
-            <template v-slot:header>
-              <div class="custom-header" v-if="rowData.id">
-                Изменение строки с ID - <b> {{ rowData.id }}</b>
-              </div>
-              <div class="custom-header" v-else>Пополнение баланса</div>
-            </template>
-            <div class="text-black">
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Сумма</label>
-                <input
-                  :disabled="user.role !== 'ADMIN'"
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.expenditure"
-                  type="text"
-                />
-              </div>
+
+            <div class="grid grid-cols-2 mb-5" v-if="user.role === 'ADMIN'">
+              <label for="name">Дата</label>
+              <input
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.date"
+                type="date"
+              />
             </div>
-  
-            <div class="flex items-center justify-center gap-3 mt-10">
-              <UIMainButton @click="createRow">Создать</UIMainButton>
-              <UIErrorButton @click="closeModalAdmin">Отменить </UIErrorButton>
+
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Выдано</label>
+              <select
+                :disabled="user.role !== 'ADMIN'"
+                class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
+                v-model="rowData.issuedUser"
+              >
+                <option v-for="user in usersOfIssued" :value="user">
+                  {{ user }}
+                </option>
+              </select>
             </div>
-          </UIModal>
+
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Расход</label>
+              <input
+                :disabled="user.role !== 'ADMIN'"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.expenditure"
+                type="text"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 mb-5">
+              <label for="dispatchPVZ1">Статья расхода</label>
+              <select
+                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                v-model="rowData.typeOfExpenditure"
+              >
+                <option v-for="type in typesOfExpenditure" :value="type">
+                  {{ type }}
+                </option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Комментарий</label>
+              <input
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.notation"
+                type="text"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 mb-5">
+              <label for="dispatchPVZ1">Компания</label>
+              <select
+                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                v-model="rowData.company"
+              >
+                <option v-for="company in companies" :value="company">
+                  {{ company }}
+                </option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name"
+                >Подтверждающий <br />
+                документ</label
+              >
+              <input
+                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                @change="handleFileChange"
+                type="file"
+              />
+            </div>
+          </div>
+
+          <div
+            class="flex items-center justify-center gap-3 mt-10"
+            v-if="rowData.id"
+          >
+            <UIMainButton @click="updateRow">Сохранить</UIMainButton>
+            <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+          </div>
+          <div class="flex items-center justify-center gap-3 mt-10" v-else>
+            <UIMainButton @click="createRow">Создать </UIMainButton>
+            <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+          </div>
+        </UIModal>
+
+        <UIModal v-show="isOpenAdmin" @close-modal="closeModalAdmin">
+          <template v-slot:header>
+            <div class="custom-header" v-if="rowData.id">
+              Изменение строки с ID - <b> {{ rowData.id }}</b>
+            </div>
+            <div class="custom-header" v-else>Пополнение баланса</div>
+          </template>
+          <div class="text-black">
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Сумма</label>
+              <input
+                :disabled="user.role !== 'ADMIN'"
+                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.expenditure"
+                type="text"
+              />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-center gap-3 mt-10">
+            <UIMainButton @click="createRow">Создать</UIMainButton>
+            <UIErrorButton @click="closeModalAdmin">Отменить </UIErrorButton>
+          </div>
+        </UIModal>
       </NuxtLayout>
     </div>
 
     <div v-else>
-      <NuxtLayout name="user"> </NuxtLayout>
+      <NuxtLayout name="user">
+        <div class="mt-10">
+          <AdvanceReportFilters
+            v-if="rows"
+            @filtered-rows="handleFilteredRows"
+            :rows="rows"
+            :user="user"
+          />
+
+          <NuxtLink
+            v-if="user.role === 'ADMIN'"
+            to="/advance-report"
+            class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold"
+          >
+            Перейти к авансовому отчету
+          </NuxtLink>
+
+          <div>
+            <div class="text-center text-2xl my-5">
+              <h1 v-if="user.username !== 'admin'">
+                Баланс {{ user.username }}
+              </h1>
+              <h1 v-if="user.username === 'admin'">Баланс Торговая Империя</h1>
+              <h1 class="font-bold text-secondary-color text-4xl mt-3">
+                {{ formatNumber(Math.ceil(allSum)) }} ₽
+              </h1>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mt-10">
+            <UIMainButton
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'DRIVER'
+              "
+              @click="openModal"
+            >
+              Создание авансового документа
+            </UIMainButton>
+
+            <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
+              Пополнение баланса админа
+            </UIMainButton>
+          </div>
+
+          <div class="mt-10">
+            <select
+              v-model="selectedWeek"
+              class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+            >
+              <option v-for="week in weeks">{{ week }}</option>
+            </select>
+          </div>
+
+          <div v-for="company in companies" class="mt-10 mb-10">
+            <h1 class="font-bold text-2xl mb-3">{{ company }}</h1>
+            <div class="border-2 p-3 border-dashed border-black">
+              <AdvanceReportTableReport
+                :rows="filteredRows?.filter((row) => row.company === company)"
+                :user="user"
+                :week="selectedWeek"
+                @open-modal="openModal"
+                @update-delivery-row="updateDeliveryRow"
+              />
+            </div>
+          </div>
+
+          <div class="mt-10 mb-10" v-if="!selectedWeek.includes('неделя')">
+            <h1 class="font-bold text-2xl mb-3">Итог месяца прибыли по всем проектам</h1>
+            <div class="border-2 p-3 border-dashed border-black">
+              <AdvanceReportTableReport
+                :rows="filteredRows"
+                :user="user"
+                :week="selectedWeek"
+                @open-modal="openModal"
+                @update-delivery-row="updateDeliveryRow"
+              />
+            </div>
+          </div>
+        </div>
+
+        <UIModal v-show="isOpen" @close-modal="closeModal">
+          <template v-slot:header>
+            <div class="custom-header" v-if="rowData.id">
+              Изменение строки с ID - <b> {{ rowData.id }}</b>
+            </div>
+            <div class="custom-header" v-else>Создание нового документа</div>
+          </template>
+          <div class="text-black">
+            <div class="grid grid-cols-2 mb-5">
+              <label for="dispatchPVZ1">ПВЗ</label>
+              <select
+                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                v-model="rowData.PVZ"
+              >
+                <option v-for="pvzData in pvz" :value="pvzData">
+                  {{ pvzData }}
+                </option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 mb-5" v-if="user.role !== 'ADMIN'">
+              <label for="name">Дата</label>
+              <input
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.date"
+                :min="`2024-${month}-01`"
+                :max="`2024-${month}-31`"
+                type="date"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 mb-5" v-if="user.role === 'ADMIN'">
+              <label for="name">Дата</label>
+              <input
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.date"
+                type="date"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Выдано</label>
+              <select
+                :disabled="user.role !== 'ADMIN'"
+                class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
+                v-model="rowData.issuedUser"
+              >
+                <option v-for="user in usersOfIssued" :value="user">
+                  {{ user }}
+                </option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Расход</label>
+              <input
+                :disabled="user.role !== 'ADMIN'"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.expenditure"
+                type="text"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 mb-5">
+              <label for="dispatchPVZ1">Статья расхода</label>
+              <select
+                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                v-model="rowData.typeOfExpenditure"
+              >
+                <option v-for="type in typesOfExpenditure" :value="type">
+                  {{ type }}
+                </option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Комментарий</label>
+              <input
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.notation"
+                type="text"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 mb-5">
+              <label for="dispatchPVZ1">Компания</label>
+              <select
+                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                v-model="rowData.company"
+              >
+                <option v-for="company in companies" :value="company">
+                  {{ company }}
+                </option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name"
+                >Подтверждающий <br />
+                документ</label
+              >
+              <input
+                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                @change="handleFileChange"
+                type="file"
+              />
+            </div>
+          </div>
+
+          <div
+            class="flex items-center justify-center gap-3 mt-10"
+            v-if="rowData.id"
+          >
+            <UIMainButton @click="updateRow">Сохранить</UIMainButton>
+            <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+          </div>
+          <div class="flex items-center justify-center gap-3 mt-10" v-else>
+            <UIMainButton @click="createRow">Создать </UIMainButton>
+            <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+          </div>
+        </UIModal>
+
+        <UIModal v-show="isOpenAdmin" @close-modal="closeModalAdmin">
+          <template v-slot:header>
+            <div class="custom-header" v-if="rowData.id">
+              Изменение строки с ID - <b> {{ rowData.id }}</b>
+            </div>
+            <div class="custom-header" v-else>Пополнение баланса</div>
+          </template>
+          <div class="text-black">
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Сумма</label>
+              <input
+                :disabled="user.role !== 'ADMIN'"
+                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.expenditure"
+                type="text"
+              />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-center gap-3 mt-10">
+            <UIMainButton @click="createRow">Создать</UIMainButton>
+            <UIErrorButton @click="closeModalAdmin">Отменить </UIErrorButton>
+          </div>
+        </UIModal>
+      </NuxtLayout>
     </div>
   </div>
 

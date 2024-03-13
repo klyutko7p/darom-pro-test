@@ -21,6 +21,7 @@ onBeforeMount(async () => {
   rows.value = await storeAdvanceReports.getAdvancedReports();
   rowsDelivery.value = await storeBalance.getBalanceDeliveryRows();
   originallyRows.value = rows.value;
+  selectedUser.value = user.value.username;
 
   if (user.value.role !== "ADMIN") {
     rows.value = rows.value?.filter(
@@ -371,7 +372,7 @@ async function handleFileChange(event) {
   }
 }
 
-let selectedUser = ref("Шведова");
+let selectedUser = ref("");
 let showBalanceEmployees = ref(true);
 let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
 </script>
@@ -385,27 +386,44 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="mt-10">
-          <AdvanceReportFilters
-            v-if="rows"
-            @filtered-rows="handleFilteredRows"
-            :rows="rows"
-            :user="user"
-          />
-
-          <NuxtLink v-if="user.role === 'ADMIN'" to="/advance-report/summary-tables" class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold">
-            Перейти к суммарным таблицам
-          </NuxtLink>
           
+          <div class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10">
+            <UIMainButton
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'DRIVER'
+              "
+              @click="openModal"
+            >
+              Создание авансового документа
+            </UIMainButton>
+
+            <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
+              Пополнение баланса админа
+            </UIMainButton>
+          </div>
+
+          <NuxtLink
+            v-if="user.role === 'ADMIN'"
+            to="/advance-report/summary-tables"
+          >
+            <h1 class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold">Перейти к сводным таблицам</h1>
+          </NuxtLink>
+
           <div>
-            <div class="text-center text-2xl my-5">
-              <h1 v-if="user.username !== 'admin'">
-                Баланс {{ user.username }}
-              </h1>
-              <h1 v-if="user.username === 'admin'">Баланс Торговая Империя</h1>
-              <h1 class="font-bold text-secondary-color text-4xl mt-3">
+            <div class="text-center text-2xl my-5" v-if="selectedUser !== 'admin'">
+                <h1>Баланс {{ selectedUser }}:</h1>
+                <h1 class="font-bold text-secondary-color text-4xl text-center">
+                  {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
+                </h1>
+            </div>
+            <div class="text-center text-2xl my-5" v-else>
+              <h1>Баланс Торговая Империя:</h1>
+              <h1 class="font-bold text-secondary-color text-4xl text-center">
                 {{ formatNumber(Math.ceil(allSum)) }} ₽
               </h1>
-            </div>
+          </div>
           </div>
 
           <div v-if="user.role === 'ADMIN'">
@@ -428,47 +446,23 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               >
                 <option
                   :value="user"
-                  v-for="user in usersOfIssued.filter(
-                    (user) => user !== 'admin'
-                  )"
+                  v-for="user in usersOfIssued"
                 >
                   {{ user }}
                 </option>
               </select>
-              <div class="flex items-center gap-3 mt-5">
-                <h1>Баланс {{ selectedUser }}:</h1>
-                <h1 class="font-bold text-secondary-color text-xl text-center">
-                  {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
-                </h1>
-              </div>
-              <AdvanceReportTable
-                :rows="filteredRows?.filter((row) => row.issuedUser === selectedUser || row.createdUser === selectedUser)"
-                :user="user"
-                @open-modal="openModal"
-                @update-delivery-row="updateDeliveryRow"
-              />
+              
             </div>
           </div>
 
-          <div class="flex items-center gap-3 max-sm:flex-col mt-10">
-            <UIMainButton
-              v-if="
-                user.role === 'ADMIN' ||
-                user.role === 'ADMINISTRATOR' ||
-                user.role === 'DRIVER'
-              "
-              @click="openModal"
-            >
-              Создание авансового документа
-            </UIMainButton>
-
-            <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
-              Пополнение баланса админа
-            </UIMainButton>
-          </div>
-
           <AdvanceReportTable
-            :rows="filteredRows"
+            :rows="
+              filteredRows?.filter(
+                (row) =>
+                  row.issuedUser === selectedUser ||
+                  row.createdUser === selectedUser
+              )
+            "
             :user="user"
             @open-modal="openModal"
             @update-delivery-row="updateDeliveryRow"
@@ -627,23 +621,45 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
     <div v-else>
       <NuxtLayout name="user">
         <div class="mt-10">
-          <AdvanceReportFilters
-            v-if="rows"
-            @filtered-rows="handleFilteredRows"
-            :rows="rows"
-            :user="user"
-          />
+          
+          <div class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10">
+            <UIMainButton
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'DRIVER'
+              "
+              @click="openModal"
+            >
+              Создание авансового документа
+            </UIMainButton>
+
+            <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
+              Пополнение баланса админа
+            </UIMainButton>
+          </div>
+
+          <NuxtLink
+            v-if="user.role === 'ADMIN'"
+            to="/advance-report/summary-tables"
+            class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold"
+          >
+            Перейти к сводным таблицам
+          </NuxtLink>
 
           <div>
-            <div class="text-center text-2xl my-5">
-              <h1 v-if="user.username !== 'admin'">
-                Баланс {{ user.username }}
-              </h1>
-              <h1 v-if="user.username === 'admin'">Баланс Торговая Империя</h1>
-              <h1 class="font-bold text-secondary-color text-4xl mt-3">
+            <div class="text-center text-2xl my-5" v-if="selectedUser !== 'admin'">
+                <h1>Баланс {{ selectedUser }}:</h1>
+                <h1 class="font-bold text-secondary-color text-4xl text-center">
+                  {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
+                </h1>
+            </div>
+            <div class="text-center text-2xl my-5" v-else>
+              <h1>Баланс Торговая Империя:</h1>
+              <h1 class="font-bold text-secondary-color text-4xl text-center">
                 {{ formatNumber(Math.ceil(allSum)) }} ₽
               </h1>
-            </div>
+          </div>
           </div>
 
           <div v-if="user.role === 'ADMIN'">
@@ -666,41 +682,23 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               >
                 <option
                   :value="user"
-                  v-for="user in usersOfIssued.filter(
-                    (user) => user !== 'admin'
-                  )"
+                  v-for="user in usersOfIssued"
                 >
                   {{ user }}
                 </option>
               </select>
-              <div class="flex items-center gap-3 mt-5">
-                <h1>Баланс {{ selectedUser }}:</h1>
-                <h1 class="font-bold text-secondary-color text-xl text-center">
-                  {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
-                </h1>
-              </div>
+              
             </div>
           </div>
 
-          <div class="flex items-center gap-3 max-sm:flex-col mt-10">
-            <UIMainButton
-              v-if="
-                user.role === 'ADMIN' ||
-                user.role === 'ADMINISTRATOR' ||
-                user.role === 'DRIVER'
-              "
-              @click="openModal"
-            >
-              Создание авансового документа
-            </UIMainButton>
-
-            <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
-              Пополнение баланса админа
-            </UIMainButton>
-          </div>
-
           <AdvanceReportTable
-            :rows="filteredRows"
+            :rows="
+              filteredRows?.filter(
+                (row) =>
+                  row.issuedUser === selectedUser ||
+                  row.createdUser === selectedUser
+              )
+            "
             :user="user"
             @open-modal="openModal"
             @update-delivery-row="updateDeliveryRow"

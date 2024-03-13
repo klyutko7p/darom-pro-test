@@ -61,44 +61,6 @@ function updateCurrentPageData() {
     let rowDate: Date = new Date(row.date);
     return rowDate.getMonth() + 1 === +month.value;
   });
-
-  if (letterOfSorting.value === "W") {
-    const today = new Date();
-    const currentDayOfWeek = today.getDay();
-    const firstDayOfWeek = new Date(today);
-    firstDayOfWeek.setDate(
-      today.getDate() - currentDayOfWeek + (currentDayOfWeek === 0 ? -6 : 1)
-    );
-    const lastDayOfWeek = new Date(firstDayOfWeek);
-    lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
-
-    filteredRows.value = filteredRows.value?.filter((row: IAdvanceReport) => {
-      let rowDate: Date = new Date(row.date);
-      return rowDate >= firstDayOfWeek && rowDate <= lastDayOfWeek;
-    });
-  } else if (letterOfSorting.value === "M") {
-    const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const lastDayOfMonth = new Date(
-      today.getFullYear(),
-      today.getMonth() + 1,
-      0
-    );
-
-    filteredRows.value = filteredRows.value?.filter((row: IAdvanceReport) => {
-      let rowDate: Date = new Date(row.date);
-      return rowDate >= firstDayOfMonth && rowDate <= lastDayOfMonth;
-    });
-  } else if (letterOfSorting.value === "Y") {
-    const today = new Date();
-    const firstDayOfYear = new Date(today.getFullYear(), 0, 1);
-    const lastDayOfYear = new Date(today.getFullYear(), 11, 31);
-
-    filteredRows.value = returnRows.value?.filter((row: IAdvanceReport) => {
-      let rowDate: Date = new Date(row.date);
-      return rowDate >= firstDayOfYear && rowDate <= lastDayOfYear;
-    });
-  }
 }
 
 let letterOfSorting = ref("M");
@@ -127,7 +89,7 @@ let breakpoints = {
 };
 </script>
 <template>
-  <div class="my-10 flex items-center gap-5 max-sm:flex-col">
+  <div class="my-10 flex items-center gap-5">
     <span
       class="border-2 py-3 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
       @click="showFilters = !showFilters"
@@ -146,18 +108,6 @@ let breakpoints = {
           {{ monthName }}
         </option>
       </select>
-      <div class="flex gap-3 items-center justify-center max-sm:flex-col">
-        <span
-          class="border-2 text-sm py-1 px-3 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
-          @click="changeSorting('M')"
-          >Месяц</span
-        >
-        <span
-          class="border-2 text-sm py-1 px-3 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
-          @click="changeSorting('Y')"
-          >Год</span
-        >
-      </div>
     </div>
   </div>
 
