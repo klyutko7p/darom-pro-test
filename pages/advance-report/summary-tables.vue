@@ -444,7 +444,7 @@ let month = ref(new Date().getMonth() + 1);
 
 <template>
   <Head>
-    <Title>Авансовый отчёт</Title>
+    <Title>Сводные таблицы</Title>
   </Head>
 
   <div v-if="!isLoading">
@@ -476,23 +476,6 @@ let month = ref(new Date().getMonth() + 1);
                 {{ formatNumber(Math.ceil(allSum)) }} ₽
               </h1>
             </div>
-          </div>
-
-          <div class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mt-10">
-            <UIMainButton
-              v-if="
-                user.role === 'ADMIN' ||
-                user.role === 'ADMINISTRATOR' ||
-                user.role === 'DRIVER'
-              "
-              @click="openModal"
-            >
-              Создание авансового документа
-            </UIMainButton>
-
-            <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
-              Пополнение баланса админа
-            </UIMainButton>
           </div>
 
           <div class="mt-10">
@@ -708,23 +691,6 @@ let month = ref(new Date().getMonth() + 1);
                 {{ formatNumber(Math.ceil(allSum)) }} ₽
               </h1>
             </div>
-          </div>
-
-          <div class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mt-10">
-            <UIMainButton
-              v-if="
-                user.role === 'ADMIN' ||
-                user.role === 'ADMINISTRATOR' ||
-                user.role === 'DRIVER'
-              "
-              @click="openModal"
-            >
-              Создание авансового документа
-            </UIMainButton>
-
-            <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
-              Пополнение баланса админа
-            </UIMainButton>
           </div>
 
           <div class="mt-10">

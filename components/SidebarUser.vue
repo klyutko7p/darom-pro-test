@@ -9,7 +9,7 @@ const storeAdvanceReports = useAdvanceReports();
 let user = ref({} as User);
 let isOpen = ref(false);
 let requests = ref<Array<IBalance>>();
-  let requests2 = ref<Array<IAdvanceReport>>();
+let requests2 = ref<Array<IAdvanceReport>>();
 
 function signOut() {
   storeUsers.signOut();
@@ -142,8 +142,11 @@ function formatPhoneNumber(phoneNumber: string) {
       </div>
       <div
         v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана') ||
-          user.role === 'DRIVER' || user.role === 'ADMINISTRATOR'
+          (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
+          user.role === 'DRIVER' ||
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'OFFICE' ||
+          user.username === 'Волошина'
         "
         role="button"
         @click="router.push('/advance-report')"
@@ -157,7 +160,10 @@ function formatPhoneNumber(phoneNumber: string) {
         <Icon
           v-if="
             requests2?.filter(
-              (row) => row.received === null && row.issuedUser === user.username && row.notation !== 'Пополнение баланса'
+              (row) =>
+                row.received === null &&
+                row.issuedUser === user.username &&
+                row.notation !== 'Пополнение баланса'
             ).length > 0
           "
           name="pepicons-print:exclamation"
@@ -194,7 +200,10 @@ function formatPhoneNumber(phoneNumber: string) {
       </div>
       <div
         v-if="
-        ((user.role === 'ADMIN' && user.username !== 'Светлана') || user.role === 'ADMINISTRATOR' || user.role === 'PVZ' || user.role === 'COURIER')
+          (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'PVZ' ||
+          user.role === 'COURIER'
         "
         role="button"
         @click="router.push('/balance')"
@@ -341,8 +350,11 @@ function formatPhoneNumber(phoneNumber: string) {
       </div>
       <div
         v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана') ||
-          user.role === 'DRIVER' || user.role === 'ADMINISTRATOR'
+          (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
+          user.role === 'DRIVER' ||
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'OFFICE' ||
+          user.username === 'Волошина'
         "
         role="button"
         @click="router.push('/advance-report')"
@@ -356,7 +368,10 @@ function formatPhoneNumber(phoneNumber: string) {
         <Icon
           v-if="
             requests2?.filter(
-              (row) => row.received === null && row.issuedUser === user.username && row.notation !== 'Пополнение баланса'
+              (row) =>
+                row.received === null &&
+                row.issuedUser === user.username &&
+                row.notation !== 'Пополнение баланса'
             ).length > 0
           "
           name="pepicons-print:exclamation"
@@ -393,7 +408,10 @@ function formatPhoneNumber(phoneNumber: string) {
       </div>
       <div
         v-if="
-        ((user.role === 'ADMIN' && user.username !== 'Светлана') || user.role === 'ADMINISTRATOR' || user.role === 'PVZ' || user.role === 'COURIER')
+          (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'PVZ' ||
+          user.role === 'COURIER'
         "
         role="button"
         @click="router.push('/balance')"
@@ -469,15 +487,18 @@ function formatPhoneNumber(phoneNumber: string) {
         class="text-red-700"
       />
       <Icon
-          v-if="
-            requests2?.filter(
-              (row) => row.received === null && row.issuedUser === user.username && row.notation !== 'Пополнение баланса'
-            ).length > 0
-          "
-          name="pepicons-print:exclamation"
-          size="40"
-          class="text-red-700"
-        />
+        v-if="
+          requests2?.filter(
+            (row) =>
+              row.received === null &&
+              row.issuedUser === user.username &&
+              row.notation !== 'Пополнение баланса'
+          ).length > 0
+        "
+        name="pepicons-print:exclamation"
+        size="40"
+        class="text-red-700"
+      />
       <h1 class="font-medium">{{ user.username }}</h1>
     </div>
     <h1

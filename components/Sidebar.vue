@@ -68,7 +68,8 @@ let isShowAddSettings = ref(false);
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
         v-if="
           user.dataOurRansom === 'READ' ||
-          (user.dataOurRansom === 'WRITE' && user.username !== 'Светлана')
+          (user.dataOurRansom === 'WRITE' &&
+            !user.username.includes('Светлана'))
         "
       >
         <div class="grid place-items-center mr-4">
@@ -95,7 +96,7 @@ let isShowAddSettings = ref(false);
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
         v-if="
           user.dataOurRansom === 'READ' ||
-          (user.dataOurRansom === 'WRITE' && user.username === 'Светлана')
+          (user.dataOurRansom === 'WRITE' && user.username.includes('Светлана'))
         "
       >
         <div class="grid place-items-center mr-4">
@@ -122,7 +123,8 @@ let isShowAddSettings = ref(false);
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
         v-if="
           user.dataClientRansom === 'READ' ||
-          (user.dataClientRansom === 'WRITE' && user.username !== 'Светлана')
+          (user.dataClientRansom === 'WRITE' &&
+            !user.username.includes('Светлана'))
         "
       >
         <div class="grid place-items-center mr-4">
@@ -149,7 +151,8 @@ let isShowAddSettings = ref(false);
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
         v-if="
           user.dataClientRansom === 'READ' ||
-          (user.dataClientRansom === 'WRITE' && user.username === 'Светлана')
+          (user.dataClientRansom === 'WRITE' &&
+            user.username.includes('Светлана'))
         "
       >
         <div class="grid place-items-center mr-4">
@@ -172,7 +175,8 @@ let isShowAddSettings = ref(false);
       <div
         v-if="
           (user.dataDelivery === 'READ' || user.dataDelivery === 'WRITE') &&
-          (user.role === 'ADMIN' || user.role === 'OPT')
+          (user.role === 'ADMIN' || user.role === 'OPT') &&
+          user.username !== 'Светлана1'
         "
         role="button"
         @click="router.push('/spreadsheets/delivery')"
@@ -202,7 +206,7 @@ let isShowAddSettings = ref(false);
       </div>
       <div
         v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана') ||
+          (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
           user.role === 'ADMINISTRATOR' ||
           user.role === 'PVZ' ||
           user.role === 'COURIER'
@@ -229,9 +233,11 @@ let isShowAddSettings = ref(false);
       </div>
       <div
         v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана') ||
+          (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
           user.role === 'DRIVER' ||
-          user.role === 'ADMINISTRATOR'
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'OFFICE' ||
+          user.username === 'Волошина'
         "
         role="button"
         @click="router.push('/advance-report')"
@@ -245,7 +251,10 @@ let isShowAddSettings = ref(false);
         <Icon
           v-if="
             requests2?.filter(
-              (row) => row.received === null && row.issuedUser === user.username && row.notation !== 'Пополнение баланса'
+              (row) =>
+                row.received === null &&
+                row.issuedUser === user.username &&
+                row.notation !== 'Пополнение баланса'
             ).length > 0
           "
           name="pepicons-print:exclamation"
@@ -267,7 +276,9 @@ let isShowAddSettings = ref(false);
       </div>
       <div v-if="isShowAddSettings">
         <div
-          v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/users')"
           tabindex="0"
@@ -291,7 +302,9 @@ let isShowAddSettings = ref(false);
           <h1>Пользователи</h1>
         </div>
         <div
-          v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/marketplaces')"
           tabindex="0"
@@ -303,7 +316,9 @@ let isShowAddSettings = ref(false);
           <h1>Маркетплейсы</h1>
         </div>
         <div
-          v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/phone-numbers')"
           tabindex="0"
@@ -315,7 +330,9 @@ let isShowAddSettings = ref(false);
           <h1>Телефоны и адреса</h1>
         </div>
         <div
-          v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/cells')"
           tabindex="0"
@@ -327,7 +344,9 @@ let isShowAddSettings = ref(false);
           <h1>Ячейки</h1>
         </div>
         <div
-          v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/pvz')"
           tabindex="0"
@@ -339,7 +358,9 @@ let isShowAddSettings = ref(false);
           <h1>Пункты выдачи заказов</h1>
         </div>
         <div
-          v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/sorting-centers')"
           tabindex="0"
@@ -351,7 +372,9 @@ let isShowAddSettings = ref(false);
           <h1>Сортировочные центры</h1>
         </div>
         <div
-          v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/pvz-delivery')"
           tabindex="0"
@@ -363,7 +386,9 @@ let isShowAddSettings = ref(false);
           <h1>Пункты выдачи заказов (Доставка)</h1>
         </div>
         <div
-          v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/sorting-centers-delivery')"
           tabindex="0"
@@ -378,7 +403,9 @@ let isShowAddSettings = ref(false);
           <h1>Сортировочные центры (Доставка)</h1>
         </div>
         <div
-          v-if="user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/order-accounts')"
           tabindex="0"
@@ -495,9 +522,9 @@ let isShowAddSettings = ref(false);
       </div>
       <div
         v-if="
-          user.dataDelivery === 'READ' ||
-          user.dataDelivery === 'WRITE' ||
-          user.role !== 'ADMINISTRATOR'
+          (user.dataDelivery === 'READ' || user.dataDelivery === 'WRITE') &&
+          (user.role === 'ADMIN' || user.role === 'OPT') &&
+          user.username !== 'Светлана1'
         "
         role="button"
         @click="router.push('/spreadsheets/delivery')"
@@ -527,7 +554,7 @@ let isShowAddSettings = ref(false);
       </div>
       <div
         v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана') ||
+          (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
           user.role === 'ADMINISTRATOR' ||
           user.role === 'PVZ'
         "
@@ -553,9 +580,11 @@ let isShowAddSettings = ref(false);
       </div>
       <div
         v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана') ||
+          (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
           user.role === 'DRIVER' ||
-          user.role === 'ADMINISTRATOR'
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'OFFICE' ||
+          user.username === 'Волошина'
         "
         role="button"
         @click="router.push('/advance-report')"
@@ -569,7 +598,10 @@ let isShowAddSettings = ref(false);
         <Icon
           v-if="
             requests2?.filter(
-              (row) => row.received === null && row.issuedUser === user.username && row.notation !== 'Пополнение баланса'
+              (row) =>
+                row.received === null &&
+                row.issuedUser === user.username &&
+                row.notation !== 'Пополнение баланса'
             ).length > 0
           "
           name="pepicons-print:exclamation"
@@ -771,15 +803,18 @@ let isShowAddSettings = ref(false);
         size="40"
       />
       <Icon
-          v-if="
-            requests2?.filter(
-              (row) => row.received === null && row.issuedUser === user.username && row.notation !== 'Пополнение баланса'
-            ).length > 0
-          "
-          name="pepicons-print:exclamation"
-          size="40"
-          class="text-red-700"
-        />
+        v-if="
+          requests2?.filter(
+            (row) =>
+              row.received === null &&
+              row.issuedUser === user.username &&
+              row.notation !== 'Пополнение баланса'
+          ).length > 0
+        "
+        name="pepicons-print:exclamation"
+        size="40"
+        class="text-red-700"
+      />
       <h1 class="font-medium">{{ user.username }}</h1>
     </div>
     <h1

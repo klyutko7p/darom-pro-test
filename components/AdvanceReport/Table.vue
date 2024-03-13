@@ -153,11 +153,10 @@ let breakpoints = {
           )"
           class="text-center"
         >
-          <td class="border-2">
+          <td class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
             <h1
               @click="openModal(row)"
               class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
-              v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
             >
               ✏️
             </h1>

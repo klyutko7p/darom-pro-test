@@ -389,11 +389,6 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           
           <div class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10">
             <UIMainButton
-              v-if="
-                user.role === 'ADMIN' ||
-                user.role === 'ADMINISTRATOR' ||
-                user.role === 'DRIVER'
-              "
               @click="openModal"
             >
               Создание авансового документа
@@ -624,11 +619,6 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           
           <div class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10">
             <UIMainButton
-              v-if="
-                user.role === 'ADMIN' ||
-                user.role === 'ADMINISTRATOR' ||
-                user.role === 'DRIVER'
-              "
               @click="openModal"
             >
               Создание авансового документа
@@ -642,9 +632,8 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           <NuxtLink
             v-if="user.role === 'ADMIN'"
             to="/advance-report/summary-tables"
-            class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold"
           >
-            Перейти к сводным таблицам
+            <h1 class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold">Перейти к сводным таблицам</h1>
           </NuxtLink>
 
           <div>

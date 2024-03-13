@@ -55,7 +55,8 @@ definePageMeta({
               class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
               v-if="
                 user.dataOurRansom === 'READ' ||
-                (user.dataOurRansom === 'WRITE' && user.username !== 'Светлана')
+                (user.dataOurRansom === 'WRITE' &&
+                  !user.username.includes('Светлана'))
               "
             >
               <div class="grid place-items-center mr-4">
@@ -82,7 +83,8 @@ definePageMeta({
               class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
               v-if="
                 user.dataOurRansom === 'READ' ||
-                (user.dataOurRansom === 'WRITE' && user.username === 'Светлана')
+                (user.dataOurRansom === 'WRITE' &&
+                  user.username.includes('Светлана'))
               "
             >
               <div class="grid place-items-center mr-4">
@@ -110,7 +112,7 @@ definePageMeta({
               v-if="
                 user.dataClientRansom === 'READ' ||
                 (user.dataClientRansom === 'WRITE' &&
-                  user.username !== 'Светлана')
+                  !user.username.includes('Светлана'))
               "
             >
               <div class="grid place-items-center mr-4">
@@ -138,7 +140,7 @@ definePageMeta({
               v-if="
                 user.dataClientRansom === 'READ' ||
                 (user.dataClientRansom === 'WRITE' &&
-                  user.username === 'Светлана')
+                  user.username.includes('Светлана'))
               "
             >
               <div class="grid place-items-center mr-4">
@@ -162,7 +164,8 @@ definePageMeta({
               v-if="
                 (user.dataDelivery === 'READ' ||
                   user.dataDelivery === 'WRITE') &&
-                (user.role === 'ADMIN' || user.role === 'OPT')
+                (user.role === 'ADMIN' || user.role === 'OPT') &&
+                user.username !== 'Светлана1'
               "
               role="button"
               @click="router.push('/spreadsheets/delivery')"
@@ -188,7 +191,8 @@ definePageMeta({
             </div>
             <div
               v-if="
-                (user.role === 'ADMIN' && user.username !== 'Светлана') ||
+                (user.role === 'ADMIN' &&
+                  !user.username.includes('Светлана')) ||
                 user.role === 'ADMINISTRATOR' ||
                 user.role === 'PVZ'
               "
@@ -204,8 +208,12 @@ definePageMeta({
             </div>
             <div
               v-if="
-                (user.role === 'ADMIN' && user.username !== 'Светлана') ||
-                user.role === 'DRIVER' || user.role === 'ADMINISTRATOR'
+                (user.role === 'ADMIN' &&
+                  !user.username.includes('Светлана')) ||
+                user.role === 'DRIVER' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'OFFICE' ||
+                user.username === 'Волошина'
               "
               role="button"
               @click="router.push('/advance-report')"
@@ -222,7 +230,8 @@ definePageMeta({
             </div>
             <div
               v-if="
-                user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'
+                !user.username.includes('Светлана') &&
+                user.role !== 'ADMINISTRATOR'
               "
               role="button"
               @click="router.push('/admin/users')"
@@ -248,7 +257,8 @@ definePageMeta({
             </div>
             <div
               v-if="
-                user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'
+                !user.username.includes('Светлана') &&
+                user.role !== 'ADMINISTRATOR'
               "
               role="button"
               @click="router.push('/admin/marketplaces')"
@@ -262,7 +272,8 @@ definePageMeta({
             </div>
             <div
               v-if="
-                user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'
+                !user.username.includes('Светлана') &&
+                user.role !== 'ADMINISTRATOR'
               "
               role="button"
               @click="router.push('/admin/phone-numbers')"
@@ -276,7 +287,8 @@ definePageMeta({
             </div>
             <div
               v-if="
-                user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'
+                !user.username.includes('Светлана') &&
+                user.role !== 'ADMINISTRATOR'
               "
               role="button"
               @click="router.push('/admin/cells')"
@@ -290,7 +302,8 @@ definePageMeta({
             </div>
             <div
               v-if="
-                user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'
+                !user.username.includes('Светлана') &&
+                user.role !== 'ADMINISTRATOR'
               "
               role="button"
               @click="router.push('/admin/pvz')"
@@ -304,7 +317,8 @@ definePageMeta({
             </div>
             <div
               v-if="
-                user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'
+                !user.username.includes('Светлана') &&
+                user.role !== 'ADMINISTRATOR'
               "
               role="button"
               @click="router.push('/admin/sorting-centers')"
@@ -318,7 +332,8 @@ definePageMeta({
             </div>
             <div
               v-if="
-                user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'
+                !user.username.includes('Светлана') &&
+                user.role !== 'ADMINISTRATOR'
               "
               role="button"
               @click="router.push('/admin/pvz-delivery')"
@@ -332,7 +347,8 @@ definePageMeta({
             </div>
             <div
               v-if="
-                user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'
+                !user.username.includes('Светлана') &&
+                user.role !== 'ADMINISTRATOR'
               "
               role="button"
               @click="router.push('/admin/sorting-centers-delivery')"
@@ -349,7 +365,8 @@ definePageMeta({
             </div>
             <div
               v-if="
-                user.username !== 'Светлана' && user.role !== 'ADMINISTRATOR'
+                !user.username.includes('Светлана') &&
+                user.role !== 'ADMINISTRATOR'
               "
               role="button"
               @click="router.push('/admin/order-accounts')"
