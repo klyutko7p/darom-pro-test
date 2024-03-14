@@ -49,7 +49,7 @@ async function updateDeliveryRow(obj: any) {
   let answer = confirm("Вы точно хотите изменить статус доставки?");
   if (answer) await storeRansom.updateDeliveryStatus(obj.row, obj.flag, 'Delivery', user.value.username);
   filteredRows.value = await storeRansom.getRansomRows("Delivery");
-  rows.value = await storeRansom.getRansomRows('Delivery');
+  rows.value = filteredRows.value
   isLoading.value = false;
 }
 
@@ -58,7 +58,7 @@ async function updateDeliveryRows(obj: any) {
   let answer = confirm("Вы точно хотите изменить статус доставки?");
   if (answer) await storeRansom.updateDeliveryRowsStatus(obj.idArray, obj.flag, 'Delivery', user.value.username);
   filteredRows.value = await storeRansom.getRansomRows("Delivery");
-  rows.value = await storeRansom.getRansomRows('Delivery');
+  rows.value = filteredRows.value
   isLoading.value = false;
 }
 
@@ -67,7 +67,7 @@ async function deleteRow(id: number) {
   let answer = confirm("Вы точно хотите удалить данную строку?");
   if (answer) await storeRansom.deleteRansomRow(id, 'Delivery');
   filteredRows.value = await storeRansom.getRansomRows("Delivery");
-  rows.value = await storeRansom.getRansomRows('Delivery');
+  rows.value = filteredRows.value
   isLoading.value = false;
 }
 
@@ -76,7 +76,7 @@ async function deleteSelectedRows(idArray: number[]) {
   let answer = confirm("Вы точно хотите удалить данные строки?");
   if (answer) await storeRansom.deleteRansomSelectedRows(idArray, 'Delivery');
   filteredRows.value = await storeRansom.getRansomRows("Delivery");
-  rows.value = await storeRansom.getRansomRows('Delivery');
+  rows.value = filteredRows.value
   isLoading.value = false;
 }
 
@@ -84,7 +84,7 @@ async function updateRow() {
   isLoading.value = true;
   await storeRansom.updateRansomRow(rowData.value, user.value.username, 'Delivery');
   filteredRows.value = await storeRansom.getRansomRows("Delivery");
-  rows.value = await storeRansom.getRansomRows('Delivery');
+  rows.value = filteredRows.value
   closeModal();
   isLoading.value = false;
 }
@@ -93,7 +93,7 @@ async function createRow() {
   isLoading.value = true;
   await storeRansom.createRansomRow(rowData.value, user.value.username, 'Delivery');
   filteredRows.value = await storeRansom.getRansomRows('Delivery');
-  rows.value = await storeRansom.getRansomRows('Delivery');
+  rows.value = filteredRows.value
   closeModal();
   isLoading.value = false;
 }
@@ -102,7 +102,7 @@ async function createCopyRow(id: number) {
   isLoading.value = true;
   await storeRansom.createCopyRow(id, 'Delivery');
   filteredRows.value = await storeRansom.getRansomRows('Delivery');
-  rows.value = await storeRansom.getRansomRows('Delivery');
+  rows.value = filteredRows.value
   isLoading.value = false;
 }
 
@@ -116,7 +116,7 @@ async function deleteIssuedRows() {
   isLoading.value = true;
   await storeRansom.deleteIssuedRows("Delivery");
   filteredRows.value = await storeRansom.getRansomRows("Delivery");
-  rows.value = await storeRansom.getRansomRows("Delivery");
+  rows.value = filteredRows.value
   isLoading.value = false;
 }
 
@@ -134,8 +134,6 @@ onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rows.value = await storeRansom.getRansomRows('Delivery');
-  pvz.value = await storePVZ.getPVZ();
-  sortingCenters.value = await storeSortingCenters.getSortingCenters();
   if (rows.value) {
     handleFilteredRows(rows.value)
   }
@@ -144,6 +142,10 @@ onMounted(async () => {
 
 
   isLoading.value = false;
+  
+  pvz.value = await storePVZ.getPVZ();
+  sortingCenters.value = await storeSortingCenters.getSortingCenters();
+
 
   if (!token || user.value.dataDelivery === "NONE") {
     router.push("/auth/login");
