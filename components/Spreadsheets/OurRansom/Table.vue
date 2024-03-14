@@ -130,7 +130,9 @@ function getCountOfItemsByPVZOurRansomIssued(PVZ: string) {
       >
         <h1 class="text-xl" v-if="user.role !== 'PVZ'">
           Товаров в работе:
-          <span class="text-secondary-color font-bold">{{ getCountOfItemsByPVZOurRansom(pvzLink) + getCountOfItemsByPVZOurRansomIssued(pvzLink) }}</span>
+          <span class="text-secondary-color font-bold">
+            {{ getCountOfItemsByPVZOurRansom(pvzLink) + getCountOfItemsByPVZOurRansomIssued(pvzLink) }}
+          </span>
         </h1>
         <h1 class="text-xl" v-if="user.role === 'PVZ'">
           Товаров к выдаче:

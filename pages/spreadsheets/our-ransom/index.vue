@@ -197,7 +197,7 @@ function deleteIssuedRowsTimer() {
   const currentTime = new Date();
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
-  if (currentHour === 22 && currentMinute >= 0 || currentHour === 23 && currentMinute <= 59) {
+  if (currentHour === 23 && currentMinute >= 0 || currentHour === 23 && currentMinute <= 59) {
     deleteIssuedRows();
   }
 }
@@ -209,7 +209,7 @@ onMounted(async () => {
   user.value = await storeUsers.getUser();
   rows.value = await storeRansom.getRansomRows("OurRansom");
 
-  // deleteIssuedRowsTimer();
+  deleteIssuedRowsTimer();
 
   if (rows.value) {
     handleFilteredRows(rows.value);

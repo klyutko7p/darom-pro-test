@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     'nuxt-swiper',
   ],
+
   swiper: {
     styleLang: 'css',
   },
