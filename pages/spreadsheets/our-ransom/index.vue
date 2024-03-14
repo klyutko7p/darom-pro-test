@@ -588,7 +588,6 @@ async function updateCellStatusFull() {
                 новую
                 запись
               </UIMainButton>
-              <UIMainButton @click="updateCellStatusFull">Обновить статус ячеек</UIMainButton>
             </div>
           </div>
 
