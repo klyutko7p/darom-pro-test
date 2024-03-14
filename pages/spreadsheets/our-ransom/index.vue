@@ -360,6 +360,11 @@ async function getFromNameFromCell() {
   }
 }
 
+async function updateCellStatusFull() {
+  let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCells("OurRansom")
+  await storeCells.updateCellsStatusWithNoSpeed(rowsWithDeleted)
+}
+
 </script>
 
 <template>
@@ -377,6 +382,7 @@ async function getFromNameFromCell() {
               <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" @click="openModal">Создать
                 новую
                 запись</UIMainButton>
+                <UIMainButton @click="updateCellStatusFull">Обновить статус ячеек</UIMainButton>
             </div>
           </div>
 
@@ -580,7 +586,9 @@ async function getFromNameFromCell() {
             <div class="mt-5 flex items-center gap-3" v-if="user.dataOurRansom === 'WRITE'">
               <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" @click="openModal">Создать
                 новую
-                запись</UIMainButton>
+                запись
+              </UIMainButton>
+              <UIMainButton @click="updateCellStatusFull">Обновить статус ячеек</UIMainButton>
             </div>
           </div>
 
