@@ -364,7 +364,8 @@ async function updateCellStatusFull() {
   isLoading.value = true;
   let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCells("OurRansom")
   await storeCells.updateCellsStatusWithNoSpeed(rowsWithDeleted)
-  isLoading.value = true;
+  toast.success("Обновление ячеек прошло успешно!")
+  isLoading.value = false;
 }
 
 </script>

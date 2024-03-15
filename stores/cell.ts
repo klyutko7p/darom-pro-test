@@ -381,52 +381,6 @@ export const useCellsStore = defineStore("cells", () => {
                     }
                 }
             }
-           
-            if (matches.length > 0) {
-                try {
-                    let data = await useFetch('/api/cells/cell-update-free', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ cells: matches }),
-                    })
-                    if (data.data.value === 'Updated successfully') {
-                        cachesCells = null;
-                    } else {
-                        toast.error("Произошла ошибка при обновлении ячеек!");
-                    }
-                } catch (error) {
-                    if (error instanceof Error) {
-                        toast.error(error.message);
-                    }
-                }
-            }
-
-            const filteredFreeCells = freeCells.filter(cell =>
-                !matches.some(match => match.name === cell.cell && match.PVZ === cell.dispatchPVZ)
-            );
-
-            if (filteredFreeCells.length > 0) {
-                try {
-                    let data = await useFetch('/api/cells/cell-update-create', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ cells: filteredFreeCells }),
-                    })
-                    if (data.data.value === 'Created successfully') {
-                        cachesCells = null;
-                    } else {
-                        toast.error("Произошла ошибка при создании ячеек!");
-                    }
-                } catch (error) {
-                    if (error instanceof Error) {
-                        toast.error(error.message);
-                    }
-                }
-            }
 
             return freeCells;
         } catch (error) {
