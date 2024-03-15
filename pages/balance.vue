@@ -323,6 +323,7 @@ function getAllSum() {
           (row) => row.received !== null && row.recipient === selectedPVZ.value
         )
         .reduce((acc, value) => acc + +value.sum, 0);
+        
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
       allSum.value = sum1.value + sum2.value - sumOfPVZ - sumOfPVZ2 + sumOfPVZ3;

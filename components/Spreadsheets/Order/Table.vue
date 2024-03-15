@@ -19,6 +19,18 @@ function exportToExcel() {
 
   writeFile(wb, "информация_о_заказе.xlsx");
 }
+
+function isExpired(row: any) {
+  const currentDate = new Date();
+
+  const deliveredDate = new Date(row.deliveredPVZ);
+
+  const difference = currentDate - deliveredDate;
+
+  const daysDifference = difference / (1000 * 3600 * 24);
+
+  return daysDifference >= 7;
+}
 </script>
 
 <template>
@@ -88,7 +100,7 @@ function exportToExcel() {
         </tr>
       </thead>
       <tbody>
-        <tr class="bg-white border-b text-center text-sm" v-for="(row, index) in rows" :key="index">
+        <tr :class="{ 'bg-red-300': isExpired(row) }" class="bg-white border-b text-center text-sm" v-for="(row, index) in rows" :key="index">
           <td class="border-2">
             {{ index + 1 }}
           </td>

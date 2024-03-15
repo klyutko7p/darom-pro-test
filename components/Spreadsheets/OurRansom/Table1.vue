@@ -267,7 +267,10 @@ async function updateCurrentPageDataDeleted() {
   }
 }
 
-watch([currentPage, totalRows, props.rows, returnRows.value], updateCurrentPageData);
+watch(
+  [currentPage, totalRows, props.rows, returnRows.value],
+  updateCurrentPageData
+);
 
 const prevPage = () => {
   if (currentPage.value > 1) {
@@ -322,6 +325,18 @@ function downloadIssuedRowsTimer() {
   ) {
     exportToExcelOnServer();
   }
+}
+
+function isExpired(row: any) {
+  const currentDate = new Date();
+
+  const deliveredDate = new Date(row.deliveredPVZ);
+
+  const difference = currentDate - deliveredDate;
+
+  const daysDifference = difference / (1000 * 3600 * 24);
+
+  return daysDifference >= 7;
 }
 </script>
 
@@ -724,7 +739,10 @@ function downloadIssuedRowsTimer() {
       <tbody>
         <div id="left"></div>
         <tr
-          :class="{ 'bg-orange-100': isChecked(row.id) }"
+          :class="{
+            'bg-orange-100': isChecked(row.id),
+            'bg-red-300': isExpired(row),
+          }"
           class="border-b text-center text-sm"
           v-for="row in returnRows"
         >
