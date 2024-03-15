@@ -82,7 +82,7 @@ async function exportToExcelOnServer() {
 
   const { data, error } = await supabase.storage
     .from("data")
-    .upload(`data-1-${day}.${month}.${year}`, blob);
+    .upload(`data-1-${day}.${month}.${year}.xlsx`, blob);
 
   perPage.value = await 100;
 }
@@ -267,7 +267,7 @@ async function updateCurrentPageDataDeleted() {
   }
 }
 
-watch([currentPage, totalRows, props.rows], updateCurrentPageData);
+watch([currentPage, totalRows, props.rows, returnRows.value], updateCurrentPageData);
 
 const prevPage = () => {
   if (currentPage.value > 1) {
@@ -505,7 +505,6 @@ function downloadIssuedRowsTimer() {
   <div class="relative max-h-[610px] mt-5 mb-10 mr-5">
     <div id="up"></div>
     <table
-      v-if="totalRows > 0"
       id="theTable"
       class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
     >
@@ -1014,14 +1013,6 @@ function downloadIssuedRowsTimer() {
         </tr>
       </tbody>
     </table>
-    <div
-      v-else
-      class="flex items-center flex-col justify-center mt-10 text-2xl"
-    >
-      <Icon name="ion:ios-close-empty" size="100" class="text-red-500" />
-      <h1>Извините, записи по данным фильтрам не были найдены!</h1>
-      <h1>Попробуйте поставить другие фильтры или очистить их</h1>
-    </div>
     <div id="down"></div>
   </div>
 </template>
