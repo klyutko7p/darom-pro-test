@@ -328,15 +328,17 @@ function downloadIssuedRowsTimer() {
 }
 
 function isExpired(row: any) {
-  const currentDate = new Date();
+  if (row.deliveredSC !== null && row.deliveredPVZ !== null && row.issued === null) {
+    const currentDate = new Date();
 
-  const deliveredDate = new Date(row.deliveredPVZ);
+    const deliveredDate = new Date(row.deliveredPVZ);
 
-  const difference = currentDate - deliveredDate;
+    const difference = currentDate - deliveredDate;
 
-  const daysDifference = difference / (1000 * 3600 * 24);
+    const daysDifference = difference / (1000 * 3600 * 24);
 
-  return daysDifference >= 7;
+    return daysDifference >= 7;
+  }
 }
 </script>
 
