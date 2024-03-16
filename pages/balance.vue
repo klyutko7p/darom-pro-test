@@ -821,7 +821,7 @@ async function updateRow() {
                   </option>
                   <option value="Рейзвих">Рейзвих</option>
                   <option value="Шведова">Шведова</option>
-                  <option value="admin">admin</option>
+                  <option value="Директор">Директор</option>
                   <option value="Косой">Косой</option>
                 </select>
               </div>

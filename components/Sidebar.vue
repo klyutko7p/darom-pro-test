@@ -815,7 +815,8 @@ let isShowAddSettings = ref(false);
         size="40"
         class="text-red-700"
       />
-      <h1 class="font-medium">{{ user.username }}</h1>
+      <h1 class="font-medium" v-if="user.username !== 'Директор'">{{ user.username }}</h1>
+      <h1 class="font-medium" v-if="user.username === 'Директор'">Император</h1>
     </div>
     <h1
       class="text-lg font-medium max-sm:text-sm"

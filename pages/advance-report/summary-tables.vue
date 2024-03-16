@@ -159,11 +159,11 @@ function openModalAdmin(row: IAdvanceReport) {
   rowData.value.company = "";
   rowData.value.expenditure = row.expenditure;
   rowData.value.notation = "Пополнение баланса";
-  rowData.value.issuedUser = "admin";
+  rowData.value.issuedUser = "Директор";
   rowData.value.received = new Date();
   rowData.value.supportingDocuments = "";
   rowData.value.typeOfExpenditure = "";
-  rowData.value.createdUser = "admin";
+  rowData.value.createdUser = "Директор";
   rowData.value.date = new Date();
 }
 
@@ -201,7 +201,7 @@ let companies = ref(["WB start", "Darom.pro", "Сортировка", "Дост�
 
 let usersOfIssued = ref([
   "Шведова",
-  "admin",
+  "Директор",
   "Косой",
   "Шарафаненко",
   "Волошина",
@@ -468,10 +468,10 @@ let month = ref(new Date().getMonth() + 1);
 
           <div>
             <div class="text-center text-2xl my-5">
-              <h1 v-if="user.username !== 'admin'">
+              <h1 v-if="user.username !== 'Директор'">
                 Баланс {{ user.username }}
               </h1>
-              <h1 v-if="user.username === 'admin'">Баланс Торговая Империя</h1>
+              <h1 v-if="user.username === 'Директор'">Баланс Торговая Империя</h1>
               <h1 class="font-bold text-secondary-color text-4xl mt-3">
                 {{ formatNumber(Math.ceil(allSum)) }} ₽
               </h1>
@@ -683,10 +683,10 @@ let month = ref(new Date().getMonth() + 1);
 
           <div>
             <div class="text-center text-2xl my-5">
-              <h1 v-if="user.username !== 'admin'">
+              <h1 v-if="user.username !== 'Директор'">
                 Баланс {{ user.username }}
               </h1>
-              <h1 v-if="user.username === 'admin'">Баланс Торговая Империя</h1>
+              <h1 v-if="user.username === 'Директор'">Баланс Торговая Империя</h1>
               <h1 class="font-bold text-secondary-color text-4xl mt-3">
                 {{ formatNumber(Math.ceil(allSum)) }} ₽
               </h1>

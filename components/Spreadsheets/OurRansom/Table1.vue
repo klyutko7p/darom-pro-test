@@ -240,6 +240,7 @@ const totalRows = computed(() =>
 );
 
 let returnRows = ref<Array<IOurRansom>>();
+let expiredRows = ref<Array<IOurRansom>>([]);
 
 function updateCurrentPageData() {
   const startIndex = (currentPage.value - 1) * perPage.value;
@@ -252,14 +253,34 @@ function updateCurrentPageData() {
       ?.filter((row) => !row.deleted)
       .slice(startIndex, endIndex);
   }
+
+  let arrayOfExpired = props.rows?.filter(
+    (row) =>
+      row.deliveredSC !== null &&
+      row.deliveredPVZ !== null &&
+      row.issued === null &&
+      !row.deleted
+  );
+  arrayOfExpired?.forEach((row: any) => {
+    const currentDate = new Date();
+
+    const deliveredDate = new Date(row.deliveredPVZ);
+
+    const difference = currentDate - deliveredDate;
+
+    const daysDifference = difference / (1000 * 3600 * 24);
+    if (daysDifference >= 7) {
+      expiredRows.value.push(row);
+    }
+  });
 }
 
-async function updateCurrentPageDataDeleted() {
+function updateCurrentPageDataDeleted() {
   const startIndex = (currentPage.value - 1) * perPage.value;
   const endIndex = startIndex + perPage.value;
 
   if (showDeletedRows.value) {
-    returnRows.value = await storeRansom.getRansomRowsWithDeleted("OurRansom");
+    returnRows.value = props.rows?.slice(startIndex, endIndex);
   } else {
     returnRows.value = props.rows
       ?.filter((row) => !row.deleted)
@@ -326,9 +347,12 @@ function downloadIssuedRowsTimer() {
     exportToExcelOnServer();
   }
 }
-
 function isExpired(row: any) {
-  if (row.deliveredSC !== null && row.deliveredPVZ !== null && row.issued === null) {
+  if (
+    row.deliveredSC !== null &&
+    row.deliveredPVZ !== null &&
+    row.issued === null
+  ) {
     const currentDate = new Date();
 
     const deliveredDate = new Date(row.deliveredPVZ);
@@ -338,6 +362,18 @@ function isExpired(row: any) {
     const daysDifference = difference / (1000 * 3600 * 24);
 
     return daysDifference >= 7;
+  }
+}
+let showExpiredRowsFlag = ref(false);
+function showExpiredRows() {
+  if (showExpiredRowsFlag.value === false) {
+    showExpiredRowsFlag.value = true
+    returnRows.value = expiredRows.value;
+    perPage.value = 2000;
+  } else {
+    showExpiredRowsFlag.value = false
+    perPage.value = 100;
+    updateCurrentPageDataDeleted()
   }
 }
 </script>
@@ -519,6 +555,9 @@ function isExpired(row: any) {
     </div>
   </div>
 
+  <span v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" class="mt-5 text-xl text-red-500 font-bold hover:opacity-50 cursor-pointer duration-200" @click="showExpiredRows">
+    Истекает срок хранения {{ expiredRows?.length }} товаров
+  </span>
   <div class="relative max-h-[610px] mt-5 mb-10 mr-5">
     <div id="up"></div>
     <table

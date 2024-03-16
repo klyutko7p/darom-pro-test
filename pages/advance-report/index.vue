@@ -160,11 +160,11 @@ function openModalAdmin(row: IAdvanceReport) {
   rowData.value.company = "";
   rowData.value.expenditure = row.expenditure;
   rowData.value.notation = "Пополнение баланса";
-  rowData.value.issuedUser = "admin";
+  rowData.value.issuedUser = "Директор";
   rowData.value.received = new Date();
   rowData.value.supportingDocuments = "";
   rowData.value.typeOfExpenditure = "";
-  rowData.value.createdUser = "admin";
+  rowData.value.createdUser = "Директор";
   rowData.value.date = new Date();
 }
 
@@ -202,7 +202,7 @@ let companies = ref(["WB start", "Darom.pro", "Сортировка", "Дост�
 
 let usersOfIssued = ref([
   "Шведова",
-  "admin",
+  "Директор",
   "Косой",
   "Шарафаненко",
   "Волошина",
@@ -407,7 +407,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           </NuxtLink>
 
           <div>
-            <div class="text-center text-2xl my-5" v-if="selectedUser !== 'admin'">
+            <div class="text-center text-2xl my-5" v-if="selectedUser !== 'Директор'">
                 <h1>Баланс {{ selectedUser }}:</h1>
                 <h1 class="font-bold text-secondary-color text-4xl text-center">
                   {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
@@ -637,7 +637,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           </NuxtLink>
 
           <div>
-            <div class="text-center text-2xl my-5" v-if="selectedUser !== 'admin'">
+            <div class="text-center text-2xl my-5" v-if="selectedUser !== 'Директор'">
                 <h1>Баланс {{ selectedUser }}:</h1>
                 <h1 class="font-bold text-secondary-color text-4xl text-center">
                   {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽

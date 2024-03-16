@@ -26,7 +26,7 @@ function exportToExcel() {
   writeFile(wb, "информация_о_заказе.xlsx");
 }
 let isShowWarning = ref(false)
-let isShowWarning2 = ref(false)
+
 function isExpired(row: any) {
   if (row.deliveredSC !== null && row.deliveredPVZ !== null && row.issued === null) {
     const currentDate = new Date();
@@ -37,25 +37,16 @@ function isExpired(row: any) {
 
     const daysDifference = difference / (1000 * 3600 * 24);
 
-    console.log(daysDifference);
-
-    if (daysDifference >= 5 && daysDifference < 6) {
+    if (daysDifference >= 7) {
       isShowWarning.value = true;
-      return daysDifference >= 5;
-    } else if (daysDifference >= 6) {
-      isShowWarning2.value = true;
-      return daysDifference >= 6;
-    } else {
-      return false;
-    }
-
+      return daysDifference >= 7;
+    } 
   }
 }
 </script>
 
 <template>
-  <h1 v-if="isShowWarning" class="mt-3 font-bold text-2xl text-red-500">Некоторые товары будут возвращены через 2 дня!</h1>
-  <h1 v-if="isShowWarning2" class="mt-3 font-bold text-2xl text-red-500">Некоторые товары будут возвращены через 1 день!</h1>
+  <h1 v-if="isShowWarning" class="mt-3 font-bold text-xl max-sm:text-center text-red-500">Некоторые товары скоро будут отправлены в возврат, рекомендуем забрать заказ в ближайшее время!</h1>
   <div class="flex justify-end">
     <Icon
       class="duration-200 hover:text-secondary-color cursor-pointer"
@@ -156,7 +147,7 @@ function isExpired(row: any) {
       </thead>
       <tbody>
         <tr
-          :class="{ 'bg-red-400': isExpired(row) }"
+          :class="{ 'bg-red-500': isExpired(row) }"
           class="bg-white border-b text-center text-sm"
           v-for="(row, index) in rows"
           :key="index"
