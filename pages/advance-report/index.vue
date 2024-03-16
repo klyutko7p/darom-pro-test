@@ -395,7 +395,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             </UIMainButton>
 
             <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
-              Пополнение баланса админа
+              Пополнение баланса торговой империи
             </UIMainButton>
           </div>
 
@@ -625,7 +625,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             </UIMainButton>
 
             <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
-              Пополнение баланса админа
+              Пополнение баланса торговой империи
             </UIMainButton>
           </div>
 
