@@ -269,7 +269,7 @@ function updateCurrentPageData() {
     const difference = currentDate - deliveredDate;
 
     const daysDifference = difference / (1000 * 3600 * 24);
-    if (daysDifference >= 7) {
+    if (daysDifference >= 5) {
       expiredRows.value.push(row);
     }
   });
