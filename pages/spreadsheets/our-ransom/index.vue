@@ -279,6 +279,7 @@ async function getCellFromName() {
 
   if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
     let row = originallyRows.value?.filter((row) => row.fromName === rowData.value.fromName && row.dispatchPVZ === rowData.value.dispatchPVZ && (row.deliveredPVZ === null || row.deliveredSC === null || row.issued === null) && !row.cell.includes('-'));
+    
     if (row && row.length > 0) {
       const unoccupiedCellsAndPVZ = cells.value?.sort((a, b) => a.name - b.name);
       const freeCell = unoccupiedCellsAndPVZ?.find(cell => cell.PVZ === rowData.value.dispatchPVZ && cell.status === 'Свободно');

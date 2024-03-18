@@ -361,7 +361,7 @@ function isExpired(row: any) {
 
     const daysDifference = difference / (1000 * 3600 * 24);
 
-    return daysDifference >= 7;
+    return daysDifference >= 5;
   }
 }
 let showExpiredRowsFlag = ref(false);
