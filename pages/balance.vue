@@ -775,7 +775,7 @@ async function updateRow() {
 
           <div class="mt-24" v-if="user.role === 'ADMIN'">
             <UIMainButton @click="openModalOnline">
-              заявка на вывод средств безнал</UIMainButton
+              заявка на вывод средств онлайн</UIMainButton
             >
             <BalanceTableOnline :rows="rowsOnline" />
           </div>
@@ -1067,7 +1067,7 @@ async function updateRow() {
 
           <div class="mt-24" v-if="user.role === 'ADMIN'">
             <UIMainButton @click="openModalOnline">
-              заявка на вывод средств безнал</UIMainButton
+              заявка на вывод средств онлайн</UIMainButton
             >
             <BalanceTableOnline :rows="rowsOnline" />
           </div>

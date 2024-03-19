@@ -298,6 +298,19 @@ async function getFromNameFromCell() {
   }
 }
 
+async function showDeletedRows(flag: boolean) {
+  if (flag) {
+    let deletedRows = await storeRansom.getRansomRowsWithDeleted("OurRansom");
+    filteredRows.value = deletedRows;
+    rows.value = filteredRows.value;
+  } else {
+    isLoading.value = true;
+    filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+    rows.value = filteredRows.value;
+    isLoading.value = false;
+  }
+}
+
 </script>
 
 <template>
@@ -318,7 +331,7 @@ async function getFromNameFromCell() {
 
           <SpreadsheetsOurRansomTable1 @update-delivery-row="updateDeliveryRow" :rows="filteredRows" :user="user"
             @delete-row="deleteRow" @open-modal="openModal" @delete-selected-rows="deleteSelectedRows"
-            @update-delivery-rows="updateDeliveryRows" @create-copy-row="createCopyRow" :pvz-link="pvzLink" />
+            @update-delivery-rows="updateDeliveryRows" @create-copy-row="createCopyRow" :pvz-link="pvzLink" @show-deleted-rows="showDeletedRows" />
 
           <UIModal v-show="isOpen" @close-modal="closeModal">
             <template v-slot:header>
@@ -518,7 +531,7 @@ async function getFromNameFromCell() {
 
           <SpreadsheetsOurRansomTable1 @update-delivery-row="updateDeliveryRow" :rows="filteredRows" :user="user"
             @delete-row="deleteRow" @open-modal="openModal" @delete-selected-rows="deleteSelectedRows"
-            @update-delivery-rows="updateDeliveryRows" @create-copy-row="createCopyRow" :pvz-link="pvzLink" />
+            @update-delivery-rows="updateDeliveryRows" @create-copy-row="createCopyRow" :pvz-link="pvzLink" @show-deleted-rows="showDeletedRows" />
 
           <UIModal v-show="isOpen" @close-modal="closeModal">
             <template v-slot:header>

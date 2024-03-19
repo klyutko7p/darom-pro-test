@@ -19,6 +19,7 @@ const emit = defineEmits([
   "deleteSelectedRows",
   "updateDeliveryRows",
   "createCopyRow",
+  "showDeletedRows",
 ]);
 
 function updateDeliveryRows(flag: string) {
@@ -31,6 +32,16 @@ function updateDeliveryRows(flag: string) {
 function openModal(row: IOurRansom) {
   emit("openModal", row);
 }
+
+function showDeletedRowsEmit(flag: boolean) {
+  emit("showDeletedRows", flag);
+}
+
+const toggleShowDeletedRows = () => {
+  showDeletedRows.value = !showDeletedRows.value;
+  perPage.value = 4000;
+  showDeletedRowsEmit(showDeletedRows.value)
+};
 
 function createCopyRow() {
   emit("createCopyRow", checkedRows.value[0]);
@@ -271,6 +282,7 @@ function updateCurrentPageData() {
     const daysDifference = difference / (1000 * 3600 * 24);
     if (daysDifference >= 5) {
       expiredRows.value.push(row);
+      expiredRows.value = [...new Set(expiredRows.value)]
     }
   });
 }
@@ -303,11 +315,6 @@ const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
   }
-};
-
-const toggleShowDeletedRows = () => {
-  showDeletedRows.value = !showDeletedRows.value;
-  updateCurrentPageData();
 };
 
 let isVisiblePages = ref(true);
@@ -367,19 +374,19 @@ function isExpired(row: any) {
 let showExpiredRowsFlag = ref(false);
 function showExpiredRows() {
   if (showExpiredRowsFlag.value === false) {
-    showExpiredRowsFlag.value = true
+    showExpiredRowsFlag.value = true;
     returnRows.value = expiredRows.value;
     perPage.value = 2000;
   } else {
-    showExpiredRowsFlag.value = false
+    showExpiredRowsFlag.value = false;
     perPage.value = 100;
-    updateCurrentPageDataDeleted()
+    updateCurrentPageDataDeleted();
   }
 }
 </script>
 
 <template>
-  <div class="flex items-center justify-between max-lg:block mt-10">
+  <div class="flex items-center justify-between max-lg:block mt-10 mb-5">
     <div>
       <div class="flex items-center gap-5">
         <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
@@ -414,7 +421,7 @@ function showExpiredRows() {
         v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
       >
         <UIActionButton @click="toggleShowDeletedRows">
-          {{ showDeletedRows ? "Скрыть удаленное" : "Показать удаленное" }}
+          {{ showDeletedRows ? "Скрыть удаленное" : "Показать удаленное за неделю" }}
         </UIActionButton>
       </div>
     </div>
@@ -555,7 +562,11 @@ function showExpiredRows() {
     </div>
   </div>
 
-  <span v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" class="mt-5 text-xl text-red-500 font-bold hover:opacity-50 cursor-pointer duration-200" @click="showExpiredRows">
+  <span
+    v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+    class="text-xl text-red-500 font-bold hover:opacity-50 cursor-pointer duration-200"
+    @click="showExpiredRows"
+  >
     Истекает срок хранения {{ expiredRows?.length }} товаров
   </span>
   <div class="relative max-h-[610px] mt-5 mb-10 mr-5">

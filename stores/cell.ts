@@ -192,7 +192,6 @@ export const useCellsStore = defineStore("cells", () => {
             //     }
             // }
            
-            if (matches.length > 0) {
                 try {
                     let data = await useFetch('/api/cells/cell-update-free', {
                         method: 'POST',
@@ -211,7 +210,6 @@ export const useCellsStore = defineStore("cells", () => {
                         toast.error(error.message);
                     }
                 }
-            }
 
             const filteredFreeCells = freeCells.filter(cell =>
                 !matches.some(match => match.name === cell.cell && match.PVZ === cell.dispatchPVZ)

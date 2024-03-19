@@ -11,6 +11,7 @@ let user = ref({} as User);
 let rows = ref<Array<IAdvanceReport>>();
 let originallyRows = ref<Array<IAdvanceReport>>();
 let rowsBalance = ref<Array<IBalance>>();
+let rowsBalanceOnline = ref<Array<IBalanceOnline>>();
 const token = Cookies.get("token");
 let isLoading = ref(false);
 let rowsDelivery = ref<Array<IBalanceDelivery>>();
@@ -42,6 +43,7 @@ onBeforeMount(async () => {
     "ClientRansom"
   );
   rowsBalance.value = await storeBalance.getBalanceRows();
+  rowsBalanceOnline.value = await storeBalance.getBalanceOnlineRows();
 
   getAllSum();
 
@@ -73,18 +75,6 @@ let ourRansomRows = ref<Array<IOurRansom>>();
 let clientRansomRows = ref<Array<IClientRansom>>();
 
 function getAllSum() {
-  // let newStartingDate = new Date(startingDate.value);
-  // newStartingDate.setHours(0);
-  // newStartingDate.setMinutes(0);
-  // newStartingDate.setSeconds(0);
-  // newStartingDate.setMilliseconds(0);
-
-  // let newEndDate = new Date(endDate.value);
-  // newEndDate.setHours(23);
-  // newEndDate.setMinutes(59);
-  // newEndDate.setSeconds(59);
-  // newEndDate.setMilliseconds(0);
-
   copyArrayOurRansom.value = ourRansomRows.value?.filter(
     (row) =>
       row.issued !== null &&
@@ -128,11 +118,28 @@ function getAllSum() {
     0
   );
 
-  if (user.value.username !== "Шведова") {
-    allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
-  } else {
+  let sumOfPVZ5 = rowsBalanceOnline.value?.reduce(
+    (acc, value) => acc + +value.sum,
+    0
+  );
+
+  switch (user.value.username) {
+    case "Шведова":
+      allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
+      break;
+    case "Директор":
+      allSum.value =
+        +sumOfPVZ -
+        +sumOfPVZ1 +
+        +sumOfPVZ2 -
+        +sumOfPVZ3 +
+        +sumOfPVZ4 +
+        +sumOfPVZ5;
+      break;
+    default:
     allSum.value =
       +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
+      break;
   }
 }
 
@@ -386,11 +393,10 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="mt-10">
-          
-          <div class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10">
-            <UIMainButton
-              @click="openModal"
-            >
+          <div
+            class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10"
+          >
+            <UIMainButton @click="openModal">
               Создание авансового документа
             </UIMainButton>
 
@@ -403,22 +409,29 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             v-if="user.role === 'ADMIN'"
             to="/advance-report/summary-tables"
           >
-            <h1 class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold">Перейти к сводным таблицам</h1>
+            <h1
+              class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold"
+            >
+              Перейти к сводным таблицам
+            </h1>
           </NuxtLink>
 
           <div>
-            <div class="text-center text-2xl my-5" v-if="selectedUser !== 'Директор'">
-                <h1>Баланс {{ selectedUser }}:</h1>
-                <h1 class="font-bold text-secondary-color text-4xl text-center">
-                  {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
-                </h1>
+            <div
+              class="text-center text-2xl my-5"
+              v-if="selectedUser !== 'Директор'"
+            >
+              <h1>Баланс {{ selectedUser }}:</h1>
+              <h1 class="font-bold text-secondary-color text-4xl text-center">
+                {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
+              </h1>
             </div>
             <div class="text-center text-2xl my-5" v-else>
-              <h1>Баланс Торговая Империя:</h1>
+              <h1>Баланс Торговая Империя онлайн&наличные:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
                 {{ formatNumber(Math.ceil(allSum)) }} ₽
               </h1>
-          </div>
+            </div>
           </div>
 
           <div v-if="user.role === 'ADMIN'">
@@ -439,14 +452,10 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
                 v-model="selectedUser"
                 class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
               >
-                <option
-                  :value="user"
-                  v-for="user in usersOfIssued"
-                >
+                <option :value="user" v-for="user in usersOfIssued">
                   {{ user }}
                 </option>
               </select>
-              
             </div>
           </div>
 
@@ -616,11 +625,10 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
     <div v-else>
       <NuxtLayout name="user">
         <div class="mt-10">
-          
-          <div class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10">
-            <UIMainButton
-              @click="openModal"
-            >
+          <div
+            class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10"
+          >
+            <UIMainButton @click="openModal">
               Создание авансового документа
             </UIMainButton>
 
@@ -633,22 +641,29 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             v-if="user.role === 'ADMIN'"
             to="/advance-report/summary-tables"
           >
-            <h1 class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold">Перейти к сводным таблицам</h1>
+            <h1
+              class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold"
+            >
+              Перейти к сводным таблицам
+            </h1>
           </NuxtLink>
 
           <div>
-            <div class="text-center text-2xl my-5" v-if="selectedUser !== 'Директор'">
-                <h1>Баланс {{ selectedUser }}:</h1>
-                <h1 class="font-bold text-secondary-color text-4xl text-center">
-                  {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
-                </h1>
+            <div
+              class="text-center text-2xl my-5"
+              v-if="selectedUser !== 'Директор'"
+            >
+              <h1>Баланс {{ selectedUser }}:</h1>
+              <h1 class="font-bold text-secondary-color text-4xl text-center">
+                {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
+              </h1>
             </div>
             <div class="text-center text-2xl my-5" v-else>
-              <h1>Баланс Торговая Империя:</h1>
+              <h1>Баланс Торговая Империя онлайн&наличные:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
                 {{ formatNumber(Math.ceil(allSum)) }} ₽
               </h1>
-          </div>
+            </div>
           </div>
 
           <div v-if="user.role === 'ADMIN'">
@@ -669,14 +684,10 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
                 v-model="selectedUser"
                 class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
               >
-                <option
-                  :value="user"
-                  v-for="user in usersOfIssued"
-                >
+                <option :value="user" v-for="user in usersOfIssued">
                   {{ user }}
                 </option>
               </select>
-              
             </div>
           </div>
 

@@ -68,7 +68,7 @@ function changeSorting(letter: string) {
   letterOfSorting.value = letter;
 }
 
-watch([props.rows, totalRows, letterOfSorting], updateCurrentPageData);
+watch([props.rows, totalRows, letterOfSorting, props.user], updateCurrentPageData);
 
 let breakpoints = {
   100: {
