@@ -40,7 +40,12 @@ function showDeletedRowsEmit(flag: boolean) {
 const toggleShowDeletedRows = () => {
   showDeletedRows.value = !showDeletedRows.value;
   perPage.value = 4000;
-  showDeletedRowsEmit(showDeletedRows.value)
+  showDeletedRowsEmit(showDeletedRows.value);
+};
+
+const toggleShowDeletedRows2 = () => {
+  showDeletedRows.value = !showDeletedRows.value;
+  updateCurrentPageDataDeleted();
 };
 
 function createCopyRow() {
@@ -282,7 +287,7 @@ function updateCurrentPageData() {
     const daysDifference = difference / (1000 * 3600 * 24);
     if (daysDifference >= 5) {
       expiredRows.value.push(row);
-      expiredRows.value = [...new Set(expiredRows.value)]
+      expiredRows.value = [...new Set(expiredRows.value)];
     }
   });
 }
@@ -420,8 +425,22 @@ function showExpiredRows() {
         class="flex items-center gap-5"
         v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
       >
-        <UIActionButton @click="toggleShowDeletedRows">
-          {{ showDeletedRows ? "Скрыть удаленное" : "Показать удаленное за неделю" }}
+        <UIActionButton
+          @click="toggleShowDeletedRows"
+          v-if="!route.fullPath.includes('+')"
+        >
+          {{
+            showDeletedRows
+              ? "Скрыть удаленное"
+              : "Показать удаленное за неделю"
+          }}
+        </UIActionButton>
+
+        <UIActionButton
+          @click="toggleShowDeletedRows2"
+          v-if="route.fullPath.includes('+')"
+        >
+          {{ showDeletedRows ? "Скрыть удаленное" : "Показать удаленное" }}
         </UIActionButton>
       </div>
     </div>
