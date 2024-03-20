@@ -202,9 +202,16 @@ function getAllSum() {
           (!endDate.value || new Date(row.issued) <= new Date(newEndDate))
       );
 
-      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
-      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value;
+      if (
+        (startingDate.value !== null && startingDate.value !== "") ||
+        (endDate.value !== null && endDate.value !== "")
+      ) {
+        sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+        sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+        allSum.value = sum1.value + sum2.value;
+      } else {
+        allSum.value = 0;
+      }
     } else {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -224,9 +231,16 @@ function getAllSum() {
           (!endDate.value || new Date(row.issued) <= new Date(newEndDate))
       );
 
-      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
-      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value;
+      if (
+        (startingDate.value !== null && startingDate.value !== "") ||
+        (endDate.value !== null && endDate.value !== "")
+      ) {
+        sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+        sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+        allSum.value = sum1.value + sum2.value;
+      } else {
+        allSum.value = 0;
+      }
     }
   } else if (selectedTypeOfTransaction.value === "Заказано") {
     if (selectedPVZ.value === "Все ПВЗ") {
@@ -277,9 +291,17 @@ function getAllSum() {
       let sumOfPVZ = rows.value
         ?.filter((row) => row.received !== null)
         .reduce((acc, value) => acc + +value.sum, 0);
-      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
-      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value - sumOfPVZ;
+
+      if (
+        (startingDate.value !== null && startingDate.value !== "") ||
+        (endDate.value !== null && endDate.value !== "")
+      ) {
+        sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+        sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+        allSum.value = sum1.value + sum2.value - sumOfPVZ;
+      } else {
+        allSum.value = 0;
+      }
     } else {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -323,10 +345,18 @@ function getAllSum() {
           (row) => row.received !== null && row.recipient === selectedPVZ.value
         )
         .reduce((acc, value) => acc + +value.sum, 0);
-        
-      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
-      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value - sumOfPVZ - sumOfPVZ2 + sumOfPVZ3;
+
+      if (
+        (startingDate.value !== null && startingDate.value !== "") ||
+        (endDate.value !== null && endDate.value !== "")
+      ) {
+        sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+        sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+        allSum.value =
+          sum1.value + sum2.value - sumOfPVZ - sumOfPVZ2 + sumOfPVZ3;
+      } else {
+        allSum.value = 0;
+      }
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (selectedPVZ.value === "Все ПВЗ") {
@@ -352,9 +382,17 @@ function getAllSum() {
         (acc, value) => acc + +value.sum,
         0
       );
-      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
-      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value + sum3.value - sumOfPVZ;
+
+      if (
+        (startingDate.value !== null && startingDate.value !== "") ||
+        (endDate.value !== null && endDate.value !== "")
+      ) {
+        sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+        sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+        allSum.value = sum1.value + sum2.value + sum3.value - sumOfPVZ;
+      } else {
+        allSum.value = 0;
+      }
     } else {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -380,9 +418,17 @@ function getAllSum() {
         (acc, value) => acc + +value.sum,
         0
       );
-      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
-      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value - sumOfPVZ;
+
+      if (
+        (startingDate.value !== null && startingDate.value !== "") ||
+        (endDate.value !== null && endDate.value !== "")
+      ) {
+        sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+        sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+        allSum.value = sum1.value + sum2.value - sumOfPVZ;
+      } else {
+        allSum.value = 0;
+      }
     }
   } else if (selectedTypeOfTransaction.value === "Доставка") {
     if (selectedPVZ.value === "Все ПВЗ") {
@@ -408,10 +454,21 @@ function getAllSum() {
         (acc, value) => acc + +value.sum,
         0
       );
-      console.log(sumOfPVZ);
-      sum1.value = reduceArray(copyArrayDelivery1.value, "Delivery") - (sumOfPVZ / 2);
-      sum2.value = reduceArray(copyArrayDelivery2.value, "Delivery") - (sumOfPVZ / 2);
-      allSum.value = sum1.value + sum2.value + sum3.value;
+
+      if (
+        (startingDate.value !== null && startingDate.value !== "") ||
+        (endDate.value !== null && endDate.value !== "")
+      ) {
+        sum1.value =
+          reduceArray(copyArrayDelivery1.value, "Delivery") - sumOfPVZ / 2;
+        sum2.value =
+          reduceArray(copyArrayDelivery2.value, "Delivery") - sumOfPVZ / 2;
+        allSum.value = sum1.value + sum2.value + sum3.value;
+      } else {
+        sum1.value = 0
+        sum2.value = 0
+        allSum.value = 0;
+      }
     } else {
       copyArrayDelivery1.value = deliveryRansomRows.value?.filter(
         (row) =>
@@ -433,9 +490,18 @@ function getAllSum() {
           (!endDate.value || new Date(row.paid) <= new Date(newEndDate))
       );
 
-      sum1.value = reduceArray(copyArrayDelivery1.value, "Delivery");
-      sum2.value = reduceArray(copyArrayDelivery2.value, "Delivery");
-      allSum.value = sum1.value + sum2.value + sum3.value;
+      if (
+        (startingDate.value !== null && startingDate.value !== "") ||
+        (endDate.value !== null && endDate.value !== "")
+      ) {
+        sum1.value = reduceArray(copyArrayDelivery1.value, "Delivery");
+        sum2.value = reduceArray(copyArrayDelivery2.value, "Delivery");
+        allSum.value = sum1.value + sum2.value + sum3.value;
+      } else {
+        sum1.value = 0
+        sum2.value = 0
+        allSum.value = 0;
+      }
     }
   }
 }
@@ -477,7 +543,7 @@ function clearFields() {
 let rowData = ref({} as IBalance);
 let isOpen = ref(false);
 let isOpenModalOnline = ref(false);
-let isOpenModalDelivery= ref(false);
+let isOpenModalDelivery = ref(false);
 
 function openModal(row: IBalance) {
   isOpen.value = true;
@@ -669,7 +735,7 @@ async function updateRow() {
                       "
                       value="Доход"
                     >
-                      Доход
+                    Доход DP (продажи)
                     </option>
                     <option
                       v-if="
@@ -739,19 +805,19 @@ async function updateRow() {
               class="flex items-center justify-center max-md:flex-col gap-24 max-md:gap-0"
             >
               <div class="text-center text-2xl mt-10">
-                <h1>Баланс 'Доставка'</h1>
+                <h1>Доход 'Доставка'</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(sum1)) }} ₽
                 </h1>
               </div>
               <div class="text-center text-2xl mt-10">
-                <h1>Баланс 'Сортировка'</h1>
+                <h1>Доход 'Сортировка'</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(sum2)) }} ₽
                 </h1>
               </div>
               <div class="text-center text-2xl mt-10">
-                <h1>Баланс общий</h1>
+                <h1>Доход Доставка&Сортировка</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(allSum)) }} ₽
                 </h1>
@@ -778,13 +844,6 @@ async function updateRow() {
               заявка на вывод средств онлайн</UIMainButton
             >
             <BalanceTableOnline :rows="rowsOnline" />
-          </div>
-
-          <div class="mt-24" v-if="user.role === 'ADMIN'">
-            <UIMainButton @click="openModalDelivery">
-              заявка на вывод средств D&S</UIMainButton
-            >
-            <BalanceTableOnline :rows="rowsDelivery" />
           </div>
 
           <UIModal v-show="isOpen" @close-modal="closeModal">
@@ -880,7 +939,10 @@ async function updateRow() {
             </div>
           </UIModal>
 
-          <UIModal v-show="isOpenModalDelivery" @close-modal="closeModalDelivery">
+          <UIModal
+            v-show="isOpenModalDelivery"
+            @close-modal="closeModalDelivery"
+          >
             <template v-slot:header>
               <div class="custom-header">Создание новой заявки</div>
             </template>
@@ -897,7 +959,9 @@ async function updateRow() {
 
             <div class="flex items-center justify-center gap-3 mt-10">
               <UIMainButton @click="createDeliveryRow">Создать</UIMainButton>
-              <UIErrorButton @click="closeModalDelivery">Отменить</UIErrorButton>
+              <UIErrorButton @click="closeModalDelivery"
+                >Отменить</UIErrorButton
+              >
             </div>
           </UIModal>
         </div>
@@ -961,7 +1025,7 @@ async function updateRow() {
                       "
                       value="Доход"
                     >
-                      Доход
+                      Доход DP (продажи)
                     </option>
                     <option
                       v-if="
@@ -1031,19 +1095,19 @@ async function updateRow() {
               class="flex items-center justify-center max-md:flex-col gap-24 max-md:gap-0"
             >
               <div class="text-center text-2xl mt-10">
-                <h1>Баланс 'Доставка'</h1>
+                <h1>Доход 'Доставка'</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(sum1)) }} ₽
                 </h1>
               </div>
               <div class="text-center text-2xl mt-10">
-                <h1>Баланс 'Сортировка'</h1>
+                <h1>Доход 'Сортировка'</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(sum2)) }} ₽
                 </h1>
               </div>
               <div class="text-center text-2xl mt-10">
-                <h1>Баланс общий</h1>
+                <h1>Доход Доставка&Сортировка</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(allSum)) }} ₽
                 </h1>
@@ -1070,13 +1134,6 @@ async function updateRow() {
               заявка на вывод средств онлайн</UIMainButton
             >
             <BalanceTableOnline :rows="rowsOnline" />
-          </div>
-
-          <div class="mt-24" v-if="user.role === 'ADMIN'">
-            <UIMainButton @click="openModalDelivery">
-              заявка на вывод средств D&S</UIMainButton
-            >
-            <BalanceTableOnline :rows="rowsDelivery" />
           </div>
 
           <UIModal v-show="isOpen" @close-modal="closeModal">
@@ -1168,7 +1225,10 @@ async function updateRow() {
             </div>
           </UIModal>
 
-          <UIModal v-show="isOpenModalDelivery" @close-modal="closeModalDelivery">
+          <UIModal
+            v-show="isOpenModalDelivery"
+            @close-modal="closeModalDelivery"
+          >
             <template v-slot:header>
               <div class="custom-header">Создание новой заявки</div>
             </template>
@@ -1185,7 +1245,9 @@ async function updateRow() {
 
             <div class="flex items-center justify-center gap-3 mt-10">
               <UIMainButton @click="createDeliveryRow">Создать</UIMainButton>
-              <UIErrorButton @click="closeModalDelivery">Отменить</UIErrorButton>
+              <UIErrorButton @click="closeModalDelivery"
+                >Отменить</UIErrorButton
+              >
             </div>
           </UIModal>
         </div>

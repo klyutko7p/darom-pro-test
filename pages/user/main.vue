@@ -132,6 +132,20 @@ definePageMeta({
             <h1>Выкуп Клиента</h1>
           </div>
           <div
+        v-if="
+          (user.role === 'ADMIN' && user.username !== 'Светлана1') || user.role === 'ADMINISTRATOR' || user.role === 'PVZ'
+        "
+        role="button"
+        @click="router.push('/spreadsheets/refunds')"
+        tabindex="0"
+        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+      >
+        <div class="grid place-items-center mr-4">
+          <Icon name="mdi:cash-refund" size="20" />
+        </div>
+        <h1>Возвраты</h1>
+      </div>
+          <div
             v-if="
               user.dataDelivery === 'READ' ||
               (user.dataDelivery === 'WRITE' && user.role !== 'ADMINISTRATOR')

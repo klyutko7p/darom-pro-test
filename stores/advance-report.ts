@@ -16,7 +16,7 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
             if (row.typeOfExpenditure === undefined) row.typeOfExpenditure = '';
             if (row.notation === undefined) row.notation = '';
             if (row.company === undefined) row.company = '';
-            if (row.type === undefined) row.type = '';
+            if (row.type === undefined) row.type = 'Нал';
 
             let data = await useFetch('/api/advance-report/create-row', {
                 method: 'POST',
@@ -71,7 +71,7 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
             if (row.typeOfExpenditure === undefined) row.typeOfExpenditure = '';
             if (row.notation === undefined) row.notation = '';
             if (row.company === undefined) row.company = '';
-            if (row.type === undefined) row.type = '';
+            if (row.type === undefined) row.type = 'Нал';
 
             let data = await useFetch('/api/advance-report/edit-row', {
                 method: 'POST',

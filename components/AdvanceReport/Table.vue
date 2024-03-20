@@ -144,6 +144,7 @@ let breakpoints = {
           <th scope="col" class="border-2">Получил</th>
           <th scope="col" class="border-2">Подтверждающий документ</th>
           <th scope="col" class="border-2">Получено</th>
+          <th scope="col" class="border-2" v-if="user.username === 'Директор'">Тип</th>
         </tr>
       </thead>
       <tbody>
@@ -208,6 +209,9 @@ let breakpoints = {
                 row.received ? storeUsers.getNormalizedDate(row.received) : ""
               }}
             </h1>
+          </td>
+          <td class="border-2 whitespace-nowrap" v-if="user.username === 'Директор'">
+            {{ row.type }}
           </td>
         </tr>
       </tbody>

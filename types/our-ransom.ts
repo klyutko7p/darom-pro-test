@@ -27,4 +27,9 @@ interface IOurRansom {
     createdUser: string;
     updatedUser: string;
     quantity: number;
+    shipped: Date | number | string | null;
+    shippedUser: string;
+    verified: Date | number | string | null;
+    verifiedUser: string;
+    priceRefund: number;
 }

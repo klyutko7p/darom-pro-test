@@ -441,6 +441,7 @@ export const useRansomStore = defineStore("ransom", () => {
                 row.amountFromClient3 = Math.ceil(row.purchaseOfGoods * row.percentClient / 100);
                 row.profit3 = row.amountFromClient3;
             }
+
             // if (row.fromName.includes('+7')) {
             //     let data = await useFetch('/api/ransom/edit-row', {
             //         method: 'POST',
@@ -622,6 +623,40 @@ export const useRansomStore = defineStore("ransom", () => {
         }
     }
 
+    async function getRansomRowsRefunds(flag: string) {
+        try {
+            let { data }: any = await useFetch('/api/ransom/get-rows-refunds', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ flag: flag }),
+            })
+            return data.value;
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
+    async function getRansomRowsForAdvanceReport(flag: string) {
+        try {
+            let { data }: any = await useFetch('/api/ransom/get-rows-for-advance-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ flag: flag }),
+            })
+            return data.value;
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
     const getUniqueNonEmptyValues = (rows: IOurRansom[] | IClientRansom[] | IDelivery[], fieldName: keyof IOurRansom | IClientRansom | IDelivery): string[] => {
         const uniqueNonEmptyValues = new Set<string>();
         rows.forEach((row) => {
@@ -633,5 +668,5 @@ export const useRansomStore = defineStore("ransom", () => {
         return Array.from(uniqueNonEmptyValues);
     };
 
-    return { createRansomRow, getRansomRows, updateRansomRow, deleteRansomRow, updateDeliveryStatus, getUniqueNonEmptyValues, getRansomRow, deleteRansomSelectedRows, getRansomRowsByLink, updateDeliveryRowsStatus, createCopyRow, deleteIssuedRows, getOldRansomRow, getRansomRowsByPVZ, getRansomRowsByFromName, getSumOfRejection, updateSumOfRejection, getRansomRowsById, getRansomRowsWithPVZ, getRansomRowsForModal, getRansomRowsForBalance, getRansomRowsWithDeleted, getRansomRowsFirstHundred, getRansomRowsWithDeletedForCells }
+    return { createRansomRow, getRansomRows, updateRansomRow, deleteRansomRow, updateDeliveryStatus, getUniqueNonEmptyValues, getRansomRow, deleteRansomSelectedRows, getRansomRowsByLink, updateDeliveryRowsStatus, createCopyRow, deleteIssuedRows, getOldRansomRow, getRansomRowsByPVZ, getRansomRowsByFromName, getSumOfRejection, updateSumOfRejection, getRansomRowsById, getRansomRowsWithPVZ, getRansomRowsForModal, getRansomRowsForBalance, getRansomRowsWithDeleted, getRansomRowsFirstHundred, getRansomRowsWithDeletedForCells, getRansomRowsRefunds, getRansomRowsForAdvanceReport}
 })

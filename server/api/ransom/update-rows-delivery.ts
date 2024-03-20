@@ -95,11 +95,17 @@ export default defineEventHandler(async (event) => {
             case 'additionally3':
                 updateField = 'additionally'
                 break;
+            case 'shipped':
+                updateField = 'shipped';
+                break;
+            case 'verified':
+                updateField = 'verified';
+                break;
             default:
                 throw new Error(`Unsupported flag: ${flag}`);
         }
 
-        if (flagRansom === 'OurRansom' && updateField !== 'additionally') {
+        if (flagRansom === 'OurRansom' && updateField !== 'additionally' && updateField !== 'verified' && updateField !== 'shipped') {
             const updateRow = await prisma.ourRansom.updateMany({
                 where: {
                     id: {
@@ -124,6 +130,32 @@ export default defineEventHandler(async (event) => {
                     amountFromClient1: getAmountFromClient(flag, sumOfReject),
                     profit1: getProfit(flag, sumOfReject),
                     updatedUser: username,
+                },
+            });
+        } else if ((flagRansom === 'OurRansom' && updateField === 'shipped')) {
+            const updateRow = await prisma.ourRansom.updateMany({
+                where: {
+                    id: {
+                        in: idArray,
+                    },
+                },
+                data: {
+                    shipped: new Date(),
+                    shippedUser: username,
+                },
+            });
+            console.log(updateRow);
+            console.log(username);
+        } else if ((flagRansom === 'OurRansom' && updateField === 'verified')) {
+            const updateRow = await prisma.ourRansom.updateMany({
+                where: {
+                    id: {
+                        in: idArray,
+                    },
+                },
+                data: {
+                    verified: new Date(),
+                    verifiedUser: username,
                 },
             });
         } else if (flagRansom === 'ClientRansom' && updateField !== 'additionally') {

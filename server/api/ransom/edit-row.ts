@@ -44,6 +44,9 @@ export default defineEventHandler(async (event) => {
                     updated_at: row.updated_at,
                     createdUser: row.createdUser,
                     updatedUser: row.updatedUser,
+                    shipped: row.shipped ? new Date(row.shipped).toISOString() : null,
+                    verified: row.verified ? new Date(row.verified).toISOString() : null,
+                    priceRefund: row.priceRefund,
                 },
             })
         } else if ('priceProgram' in row) {

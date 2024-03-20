@@ -105,6 +105,11 @@ model OurRansom {
   updated_at        DateTime  @default(now()) @updatedAt
   createdUser       String
   updatedUser       String
+  shipped           DateTime?
+  shippedUser       String?
+  verified          DateTime?
+  verifiedUser      String?
+  priceRefund       Int?      @default(0)
 }
 
 model ClientRansom {
@@ -233,7 +238,7 @@ model AdvanceReport {
   typeOfExpenditure   String?
   notation            String?
   company             String?
-  supportingDocuments String?  
+  supportingDocuments String?
   type                String?
   createdUser         String?
   received            DateTime?

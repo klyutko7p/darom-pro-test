@@ -1016,11 +1016,9 @@ function showExpiredRows() {
             "
           >
             {{
-              row.percentClient !== 0
-                ? Math.ceil(row.amountFromClient1 / 10) * 10 -
-                  row.priceSite +
-                  row.deliveredKGT
-                : row.deliveredKGT
+              Math.ceil(row.amountFromClient1 / 10) * 10 -
+              row.priceSite +
+              row.deliveredKGT
             }}
           </td>
 

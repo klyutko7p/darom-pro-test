@@ -12,15 +12,19 @@ let rows = ref<Array<IAdvanceReport>>();
 let originallyRows = ref<Array<IAdvanceReport>>();
 let rowsBalance = ref<Array<IBalance>>();
 let rowsBalanceOnline = ref<Array<IBalanceOnline>>();
+let rowsOurRansom = ref<Array<IOurRansom>>();
 const token = Cookies.get("token");
 let isLoading = ref(false);
-let rowsDelivery = ref<Array<IBalanceDelivery>>();
+let rowsDelivery = ref<Array<IDelivery>>();
 
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rows.value = await storeAdvanceReports.getAdvancedReports();
-  rowsDelivery.value = await storeBalance.getBalanceDeliveryRows();
+  rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReport(
+    "OurRansom"
+  );
+  rowsDelivery.value = await storeRansom.getRansomRowsForBalance("Delivery");
   originallyRows.value = rows.value;
   selectedUser.value = user.value.username;
 
@@ -63,10 +67,12 @@ definePageMeta({
 
 let isOpen = ref(false);
 let isOpenAdmin = ref(false);
+let isOpenAdminOOO = ref(false);
 let rowData = ref({} as IAdvanceReport);
 let sum1 = ref(0);
 let sum2 = ref(0);
 let allSum = ref(0);
+let allSum2 = ref(0);
 let sumOfReject = ref(200);
 
 let copyArrayOurRansom = ref<Array<IOurRansom>>();
@@ -97,31 +103,81 @@ function getAllSum() {
       (row) =>
         row.received !== null &&
         row.createdUser === user.value.username &&
-        row.notation !== "Пополнение баланса"
+        row.notation !== "Пополнение баланса" &&
+        row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
   let sumOfPVZ2 = rows.value
     ?.filter(
-      (row) => row.received !== null && row.issuedUser === user.value.username
+      (row) =>
+        row.received !== null &&
+        row.issuedUser === user.value.username &&
+        row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
   let sumOfPVZ3 = rows.value
     ?.filter(
-      (row) => row.createdUser === user.value.username && row.issuedUser === ""
+      (row) =>
+        row.createdUser === user.value.username &&
+        row.issuedUser === "" &&
+        row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
-  let sumOfPVZ4 = rowsDelivery.value?.reduce(
-    (acc, value) => acc + +value.sum,
-    0
-  );
+  let sumOfPVZ4 = rowsDelivery.value
+    ?.filter((row) => row.paid !== null)
+    .reduce((acc, value) => acc + +value.amountFromClient3, 0);
 
   let sumOfPVZ5 = rowsBalanceOnline.value?.reduce(
     (acc, value) => acc + +value.sum,
     0
   );
+
+  let sumOfPVZ6 = rowsOurRansom.value
+    ?.filter((row) => row.verified !== null)
+    .reduce((acc, value) => acc + +value.priceRefund, 0);
+
+  let sumOfPVZ7 = rowsOurRansom.value
+    ?.filter(
+      (row) => row.verified === null && row.additionally === "Отказ брак"
+    )
+    .reduce((acc, value) => acc + +value.priceSite, 0);
+
+  let sumOfPVZ8 = rowsOurRansom.value
+    ?.filter(
+      (row) => row.verified === null && row.additionally === "Отказ клиент"
+    )
+    .reduce((acc, value) => acc + +value.priceSite, 0);
+
+  let sumOfPVZ1Cashless = rows.value
+    ?.filter(
+      (row) =>
+        row.received !== null &&
+        row.createdUser === user.value.username &&
+        row.notation !== "Пополнение баланса" &&
+        row.type === "Безнал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ2Cashless = rows.value
+    ?.filter(
+      (row) =>
+        row.received !== null &&
+        row.issuedUser === user.value.username &&
+        row.type === "Безнал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ3Cashless = rows.value
+    ?.filter(
+      (row) =>
+        row.createdUser === user.value.username &&
+        row.issuedUser === "" &&
+        row.type === "Безнал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
 
   switch (user.value.username) {
     case "Шведова":
@@ -134,11 +190,19 @@ function getAllSum() {
         +sumOfPVZ2 -
         +sumOfPVZ3 +
         +sumOfPVZ4 +
-        +sumOfPVZ5;
+        +sumOfPVZ5 -
+        +sumOfPVZ6 +
+        +sumOfPVZ7 +
+        +sumOfPVZ8;
+      allSum2.value =
+        +sumOfPVZ -
+        +sumOfPVZ1Cashless +
+        +sumOfPVZ2Cashless -
+        +sumOfPVZ3Cashless;
       break;
     default:
-    allSum.value =
-      +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
+      allSum.value =
+        +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
       break;
   }
 }
@@ -175,8 +239,29 @@ function openModalAdmin(row: IAdvanceReport) {
   rowData.value.date = new Date();
 }
 
+function openModalAdminOOO(row: IAdvanceReport) {
+  isOpenAdminOOO.value = true;
+  rowData.value = {} as IAdvanceReport;
+  rowData.value.PVZ = "";
+  rowData.value.company = "";
+  rowData.value.expenditure = row.expenditure;
+  rowData.value.notation = "Пополнение баланса";
+  rowData.value.issuedUser = "Директор";
+  rowData.value.received = new Date();
+  rowData.value.supportingDocuments = "";
+  rowData.value.typeOfExpenditure = "";
+  rowData.value.type = "Безнал";
+  rowData.value.createdUser = "Директор";
+  rowData.value.date = new Date();
+}
+
 function closeModalAdmin() {
   isOpenAdmin.value = false;
+  rowData.value = {} as IAdvanceReport;
+}
+
+function closeModalAdminOOO() {
+  isOpenAdminOOO.value = false;
   rowData.value = {} as IAdvanceReport;
 }
 
@@ -245,6 +330,7 @@ async function createRow() {
   getAllSum();
   closeModal();
   closeModalAdmin();
+  closeModalAdminOOO();
   isLoading.value = false;
 }
 
@@ -347,16 +433,16 @@ function getAllSumFromName(username: string) {
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
-  let sumOfPVZ4 = rowsDelivery.value?.reduce(
-    (acc, value) => acc + +value.sum,
-    0
-  );
+  // let sumOfPVZ4 = rowsDelivery.value
+  // ?.filter((row) => row.paid !== null)
+  // .reduce((acc, value) => acc + +value.amountFromClient3, 0);
+  // СПРОСИТЬ НАСЧЁТ ШВЕДОВЫ И ДОСТАВКА И СОРТИРОВКИ!!!!!
 
   if (username !== "Шведова") {
     let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
     return allSum;
   } else {
-    let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
+    let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
     return allSum;
   }
 }
@@ -396,12 +482,19 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           <div
             class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10"
           >
-            <UIMainButton @click="openModal">
+            <UIMainButton class="max-sm:w-full" @click="openModal">
               Создание авансового документа
             </UIMainButton>
 
-            <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
-              Пополнение баланса торговой империи
+            <UIMainButton class="max-sm:w-full" v-if="user.role === 'ADMIN'" @click="openModalAdmin">
+              Пополнение баланса торговой империи (нал)
+            </UIMainButton>
+
+            <UIMainButton class="max-sm:w-full"
+              v-if="user.username === 'Директор'"
+              @click="openModalAdminOOO"
+            >
+              Пополнение баланса ООО "Фоссан" (безнал)
             </UIMainButton>
           </div>
 
@@ -426,11 +519,19 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
                 {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
               </h1>
             </div>
-            <div class="text-center text-2xl my-5" v-else>
-              <h1>Баланс Торговая Империя онлайн&наличные:</h1>
-              <h1 class="font-bold text-secondary-color text-4xl text-center">
-                {{ formatNumber(Math.ceil(allSum)) }} ₽
-              </h1>
+            <div v-else>
+              <div class="text-center text-2xl my-5">
+                <h1>Баланс Торговая Империя онлайн&наличные:</h1>
+                <h1 class="font-bold text-secondary-color text-4xl text-center">
+                  {{ formatNumber(Math.ceil(allSum)) }} ₽
+                </h1>
+              </div>
+              <div class="text-center text-2xl my-5">
+                <h1>Баланс ООО "Фоссан" <br> безнал:</h1>
+                <h1 class="font-bold text-secondary-color text-4xl text-center">
+                  {{ formatNumber(Math.ceil(allSum2)) }} ₽
+                </h1>
+              </div>
             </div>
           </div>
 
@@ -580,6 +681,20 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
                 type="file"
               />
             </div>
+
+            <div
+              class="grid grid-cols-2 mb-5"
+              v-if="user.username === 'Директор'"
+            >
+              <label for="name">Тип</label>
+              <select
+                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                v-model="rowData.type"
+              >
+                <option value="Нал">Нал</option>
+                <option value="Безнал">Безнал</option>
+              </select>
+            </div>
           </div>
 
           <div
@@ -619,6 +734,31 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             <UIErrorButton @click="closeModalAdmin">Отменить </UIErrorButton>
           </div>
         </UIModal>
+
+        <UIModal v-show="isOpenAdminOOO" @close-modal="closeModalAdminOOO">
+          <template v-slot:header>
+            <div class="custom-header" v-if="rowData.id">
+              Изменение строки с ID - <b> {{ rowData.id }}</b>
+            </div>
+            <div class="custom-header" v-else>Пополнение баланса</div>
+          </template>
+          <div class="text-black">
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Сумма</label>
+              <input
+                :disabled="user.role !== 'ADMIN'"
+                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.expenditure"
+                type="text"
+              />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-center gap-3 mt-10">
+            <UIMainButton @click="createRow">Создать</UIMainButton>
+            <UIErrorButton @click="closeModalAdminOOO">Отменить </UIErrorButton>
+          </div>
+        </UIModal>
       </NuxtLayout>
     </div>
 
@@ -656,12 +796,6 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
                 {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
-              </h1>
-            </div>
-            <div class="text-center text-2xl my-5" v-else>
-              <h1>Баланс Торговая Империя онлайн&наличные:</h1>
-              <h1 class="font-bold text-secondary-color text-4xl text-center">
-                {{ formatNumber(Math.ceil(allSum)) }} ₽
               </h1>
             </div>
           </div>
