@@ -26,6 +26,10 @@ export default defineEventHandler(async (event) => {
                         gte: startOfWeek,
                         lt: endOfWeek,
                     },
+                    issued: {
+                        gte: startOfWeek,
+                        lt: endOfWeek,
+                    },
                 },
                 orderBy: {
                     created_at: 'desc',

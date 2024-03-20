@@ -39,7 +39,7 @@ function showDeletedRowsEmit(flag: boolean) {
 
 const toggleShowDeletedRows = () => {
   showDeletedRows.value = !showDeletedRows.value;
-  perPage.value = 4000;
+  perPage.value = 100;
   showDeletedRowsEmit(showDeletedRows.value);
 };
 
