@@ -18,9 +18,9 @@ export default defineEventHandler(async (event) => {
                         { additionally: 'Отказ клиент' },
                         { additionally: 'Отказ брак' }
                     ],
-                    // created_at: {
-                    //     gt: startDate, 
-                    // },
+                    created_at: {
+                        gt: startDate, 
+                    },
                 },
                 orderBy: {
                     created_at: 'desc',

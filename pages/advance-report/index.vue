@@ -142,16 +142,26 @@ function getAllSum() {
   if (sumOfPVZ6 === undefined) sumOfPVZ6 = 0;
 
   let sumOfPVZ7 = rowsOurRansom.value
-    ?.filter(
-      (row) => row.additionally === "Отказ брак"
-    )
+    ?.filter((row) => row.additionally === "Отказ брак")
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ8 = rowsOurRansom.value
+    ?.filter((row) => row.additionally === "Отказ клиент")
+    .reduce((acc, value) => acc + +value.priceSite, 0);
+
+  let sumOfPVZ9 = rowsOurRansom.value
     ?.filter(
-      (row) => row.additionally === "Отказ клиент"
+      (row) =>
+        row.additionally !== "Отказ клиент" && row.additionally !== "Отказ брак"
     )
     .reduce((acc, value) => acc + +value.priceSite, 0);
+
+  let sumOfPVZ10 = rowsOurRansom.value
+    ?.filter(
+      (row) =>
+        row.additionally !== "Отказ клиент" && row.additionally !== "Отказ брак"
+    )
+    .reduce((acc, value) => acc + +value.deliveredKGT, 0);
 
   let sumOfPVZ1Cashless = rows.value
     ?.filter(
@@ -181,6 +191,21 @@ function getAllSum() {
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
+  sumOfPVZ = sumOfPVZ === undefined ? 0 : sumOfPVZ;
+  sumOfPVZ1 = sumOfPVZ1 === undefined ? 0 : sumOfPVZ1;
+  sumOfPVZ2 = sumOfPVZ2 === undefined ? 0 : sumOfPVZ2;
+  sumOfPVZ3 = sumOfPVZ3 === undefined ? 0 : sumOfPVZ3;
+  sumOfPVZ4 = sumOfPVZ4 === undefined ? 0 : sumOfPVZ4;
+  sumOfPVZ5 = sumOfPVZ5 === undefined ? 0 : sumOfPVZ5;
+  sumOfPVZ6 = sumOfPVZ6 === undefined ? 0 : sumOfPVZ6;
+  sumOfPVZ7 = sumOfPVZ7 === undefined ? 0 : sumOfPVZ7;
+  sumOfPVZ8 = sumOfPVZ8 === undefined ? 0 : sumOfPVZ8;
+  sumOfPVZ9 = sumOfPVZ9 === undefined ? 0 : sumOfPVZ9;
+  sumOfPVZ10 = sumOfPVZ10 === undefined ? 0 : sumOfPVZ9;
+  sumOfPVZ1Cashless = sumOfPVZ1Cashless === undefined ? 0 : sumOfPVZ1Cashless;
+  sumOfPVZ2Cashless = sumOfPVZ2Cashless === undefined ? 0 : sumOfPVZ2Cashless;
+  sumOfPVZ3Cashless = sumOfPVZ3Cashless === undefined ? 0 : sumOfPVZ3Cashless;
+
   switch (user.value.username) {
     case "Шведова":
       allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
@@ -195,7 +220,10 @@ function getAllSum() {
         +sumOfPVZ5 -
         +sumOfPVZ6 +
         +sumOfPVZ7 +
-        +sumOfPVZ8;
+        +sumOfPVZ8 -
+        +sumOfPVZ9 +
+        +sumOfPVZ10;
+
       allSum2.value =
         +sumOfPVZ -
         +sumOfPVZ1Cashless +
@@ -572,7 +600,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             </div>
           </div>
 
-          <UIMainButton class="max-sm:w-full" @click="openModal">
+          <UIMainButton class="max-sm:w-full mt-5" @click="openModal">
             Создание авансового документа
           </UIMainButton>
 
@@ -784,8 +812,6 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           <div
             class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10"
           >
-           
-
             <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
               Пополнение баланса торговой империи
             </UIMainButton>
@@ -838,8 +864,8 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               </select>
             </div>
           </div>
-          
-          <UIMainButton @click="openModal">
+
+          <UIMainButton class="max-sm:w-full mt-5" @click="openModal">
             Создание авансового документа
           </UIMainButton>
 

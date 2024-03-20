@@ -18,12 +18,13 @@ export default defineEventHandler(async (event) => {
                     priceRefund: true,
                     additionally: true,
                     priceSite: true,
+                    deliveredKGT: true,
                 },
-                // where: {
-                //     created_at: {
-                //         gt: startDate, 
-                //     },
-                // },
+                where: {
+                    created_at: {
+                        gt: startDate, 
+                    },
+                },
                 orderBy: {
                     created_at: 'desc',
                 },

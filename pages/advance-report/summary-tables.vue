@@ -141,16 +141,26 @@ function getAllSum() {
   if (sumOfPVZ6 === undefined) sumOfPVZ6 = 0;
 
   let sumOfPVZ7 = rowsOurRansom.value
-    ?.filter(
-      (row) => row.additionally === "Отказ брак"
-    )
+    ?.filter((row) => row.additionally === "Отказ брак")
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ8 = rowsOurRansom.value
+    ?.filter((row) => row.additionally === "Отказ клиент")
+    .reduce((acc, value) => acc + +value.priceSite, 0);
+
+  let sumOfPVZ9 = rowsOurRansom.value
     ?.filter(
-      (row) => row.additionally === "Отказ клиент"
+      (row) =>
+        row.additionally !== "Отказ клиент" && row.additionally !== "Отказ брак"
     )
     .reduce((acc, value) => acc + +value.priceSite, 0);
+
+  let sumOfPVZ10 = rowsOurRansom.value
+    ?.filter(
+      (row) =>
+        row.additionally !== "Отказ клиент" && row.additionally !== "Отказ брак"
+    )
+    .reduce((acc, value) => acc + +value.deliveredKGT, 0);
 
   let sumOfPVZ1Cashless = rows.value
     ?.filter(
@@ -180,14 +190,26 @@ function getAllSum() {
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
+  sumOfPVZ = sumOfPVZ === undefined ? 0 : sumOfPVZ;
+  sumOfPVZ1 = sumOfPVZ1 === undefined ? 0 : sumOfPVZ1;
+  sumOfPVZ2 = sumOfPVZ2 === undefined ? 0 : sumOfPVZ2;
+  sumOfPVZ3 = sumOfPVZ3 === undefined ? 0 : sumOfPVZ3;
+  sumOfPVZ4 = sumOfPVZ4 === undefined ? 0 : sumOfPVZ4;
+  sumOfPVZ5 = sumOfPVZ5 === undefined ? 0 : sumOfPVZ5;
+  sumOfPVZ6 = sumOfPVZ6 === undefined ? 0 : sumOfPVZ6;
+  sumOfPVZ7 = sumOfPVZ7 === undefined ? 0 : sumOfPVZ7;
+  sumOfPVZ8 = sumOfPVZ8 === undefined ? 0 : sumOfPVZ8;
+  sumOfPVZ9 = sumOfPVZ9 === undefined ? 0 : sumOfPVZ9;
+  sumOfPVZ10 = sumOfPVZ10 === undefined ? 0 : sumOfPVZ9;
+  sumOfPVZ1Cashless = sumOfPVZ1Cashless === undefined ? 0 : sumOfPVZ1Cashless;
+  sumOfPVZ2Cashless = sumOfPVZ2Cashless === undefined ? 0 : sumOfPVZ2Cashless;
+  sumOfPVZ3Cashless = sumOfPVZ3Cashless === undefined ? 0 : sumOfPVZ3Cashless;
+
   switch (user.value.username) {
     case "Шведова":
       allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
       break;
     case "Директор":
-      sumOfPVZ6 = sumOfPVZ6 === undefined ? 0 : sumOfPVZ6;
-      sumOfPVZ5 = sumOfPVZ5 === undefined ? 0 : sumOfPVZ5;
-
       allSum.value =
         +sumOfPVZ -
         +sumOfPVZ1 +
@@ -195,9 +217,11 @@ function getAllSum() {
         +sumOfPVZ3 +
         +sumOfPVZ4 +
         +sumOfPVZ5 -
-        sumOfPVZ6 +
+        +sumOfPVZ6 +
         +sumOfPVZ7 +
-        +sumOfPVZ8;
+        +sumOfPVZ8 -
+        +sumOfPVZ9 +
+        +sumOfPVZ10;
 
       allSum2.value =
         +sumOfPVZ -

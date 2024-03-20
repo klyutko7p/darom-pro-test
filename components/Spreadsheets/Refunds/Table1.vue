@@ -262,13 +262,7 @@ onMounted(async () => {
           >
             стоимость сайт
           </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'"
-          >
-            предоплата
-          </th>
+          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">стоимость возврата</th>
           <th
             scope="col"
             class="border-2"
@@ -296,7 +290,6 @@ onMounted(async () => {
           <th scope="col" class="border-2">проверено</th>
           <th scope="col" class="border-2">кем отправлено</th>
           <th scope="col" class="border-2">кем проверено</th>
-          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">стоимость возврата</th>
         </tr>
       </thead>
       <tbody>
@@ -374,11 +367,8 @@ onMounted(async () => {
           >
             {{ row.priceSite }}
           </td>
-          <td
-            class="border-2"
-            v-if="user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'"
-          >
-            {{ row.prepayment }}
+          <td class="px-2 py-4 border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+            {{ row.priceRefund }}
           </td>
           <td
             class="px-2 py-4 border-2"
@@ -411,9 +401,6 @@ onMounted(async () => {
           </td>
           <td class="px-2 py-4 border-2">
             {{ row.verifiedUser }}
-          </td>
-          <td class="px-2 py-4 border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
-            {{ row.priceRefund }}
           </td>
           <div id="right"></div>
         </tr>
