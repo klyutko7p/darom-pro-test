@@ -13,13 +13,20 @@ let originallyRows = ref<Array<IAdvanceReport>>();
 let rowsBalance = ref<Array<IBalance>>();
 const token = Cookies.get("token");
 let isLoading = ref(false);
-let rowsDelivery = ref<Array<IBalanceDelivery>>();
+
+let rowsBalanceOnline = ref<Array<IBalanceOnline>>();
+let rowsOurRansom = ref<Array<IOurRansom>>();
+let rowsDelivery = ref<Array<IDelivery>>();
 
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rows.value = await storeAdvanceReports.getAdvancedReports();
-  rowsDelivery.value = await storeBalance.getBalanceDeliveryRows();
+  originallyRows.value = rows.value;
+  rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReport(
+    "OurRansom"
+  );
+  rowsDelivery.value = await storeRansom.getRansomRowsForBalance("Delivery");
   originallyRows.value = rows.value;
 
   if (user.value.role !== "ADMIN") {
@@ -64,6 +71,7 @@ let rowData = ref({} as IAdvanceReport);
 let sum1 = ref(0);
 let sum2 = ref(0);
 let allSum = ref(0);
+let allSum2 = ref(0);
 let sumOfReject = ref(200);
 
 let copyArrayOurRansom = ref<Array<IOurRansom>>();
@@ -72,18 +80,6 @@ let ourRansomRows = ref<Array<IOurRansom>>();
 let clientRansomRows = ref<Array<IClientRansom>>();
 
 function getAllSum() {
-  // let newStartingDate = new Date(startingDate.value);
-  // newStartingDate.setHours(0);
-  // newStartingDate.setMinutes(0);
-  // newStartingDate.setSeconds(0);
-  // newStartingDate.setMilliseconds(0);
-
-  // let newEndDate = new Date(endDate.value);
-  // newEndDate.setHours(23);
-  // newEndDate.setMinutes(59);
-  // newEndDate.setSeconds(59);
-  // newEndDate.setMilliseconds(0);
-
   copyArrayOurRansom.value = ourRansomRows.value?.filter(
     (row) =>
       row.issued !== null &&
@@ -106,32 +102,113 @@ function getAllSum() {
       (row) =>
         row.received !== null &&
         row.createdUser === user.value.username &&
-        row.notation !== "Пополнение баланса"
+        row.notation !== "Пополнение баланса" &&
+        row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
   let sumOfPVZ2 = rows.value
     ?.filter(
-      (row) => row.received !== null && row.issuedUser === user.value.username
+      (row) =>
+        row.received !== null &&
+        row.issuedUser === user.value.username &&
+        row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
   let sumOfPVZ3 = rows.value
     ?.filter(
-      (row) => row.createdUser === user.value.username && row.issuedUser === ""
+      (row) =>
+        row.createdUser === user.value.username &&
+        row.issuedUser === "" &&
+        row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
-  let sumOfPVZ4 = rowsDelivery.value?.reduce(
+  let sumOfPVZ4 = rowsDelivery.value
+    ?.filter((row) => row.paid !== null)
+    .reduce((acc, value) => acc + +value.amountFromClient3, 0);
+
+  let sumOfPVZ5 = rowsBalanceOnline.value?.reduce(
     (acc, value) => acc + +value.sum,
     0
   );
 
-  if (user.value.username !== "Шведова") {
-    allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
-  } else {
-    allSum.value =
-      +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
+  let sumOfPVZ6 = rowsOurRansom.value
+    ?.filter((row) => row.verified !== null)
+    .reduce((acc, value) => acc + +value.priceRefund, 0);
+
+  if (sumOfPVZ6 === undefined) sumOfPVZ6 = 0;
+
+  let sumOfPVZ7 = rowsOurRansom.value
+    ?.filter(
+      (row) => row.verified === null && row.additionally === "Отказ брак"
+    )
+    .reduce((acc, value) => acc + +value.priceSite, 0);
+
+  let sumOfPVZ8 = rowsOurRansom.value
+    ?.filter(
+      (row) => row.verified === null && row.additionally === "Отказ клиент"
+    )
+    .reduce((acc, value) => acc + +value.priceSite, 0);
+
+  let sumOfPVZ1Cashless = rows.value
+    ?.filter(
+      (row) =>
+        row.received !== null &&
+        row.createdUser === user.value.username &&
+        row.notation !== "Пополнение баланса" &&
+        row.type === "Безнал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ2Cashless = rows.value
+    ?.filter(
+      (row) =>
+        row.received !== null &&
+        row.issuedUser === user.value.username &&
+        row.type === "Безнал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ3Cashless = rows.value
+    ?.filter(
+      (row) =>
+        row.createdUser === user.value.username &&
+        row.issuedUser === "" &&
+        row.type === "Безнал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  switch (user.value.username) {
+    case "Шведова":
+      allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
+      break;
+    case "Директор":
+      sumOfPVZ6 = sumOfPVZ6 === undefined ? 0 : sumOfPVZ6;
+      sumOfPVZ5 = sumOfPVZ5 === undefined ? 0 : sumOfPVZ5;
+
+      allSum.value =
+        +sumOfPVZ -
+        +sumOfPVZ1 +
+        +sumOfPVZ2 -
+        +sumOfPVZ3 +
+        +sumOfPVZ4 +
+        +sumOfPVZ5 -
+        sumOfPVZ6 +
+        +sumOfPVZ7 +
+        +sumOfPVZ8;
+
+      allSum2.value =
+        +sumOfPVZ -
+        +sumOfPVZ1Cashless +
+        +sumOfPVZ2Cashless -
+        +sumOfPVZ3Cashless;
+      break;
+    default:
+      allSum.value =
+        +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
+      break;
   }
 }
 
@@ -403,9 +480,9 @@ function getWeeks() {
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
   const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
   weeks.push(
-    `${getMonthName(currentMonth)} (${formatDate(
-      firstDayOfMonth
-    )}-${formatDate(lastDayOfMonth)})`
+    `${getMonthName(currentMonth)} (${formatDate(firstDayOfMonth)}-${formatDate(
+      lastDayOfMonth
+    )})`
   );
   selectedWeek.value = weeks[0];
   return weeks;
@@ -468,12 +545,18 @@ let month = ref(new Date().getMonth() + 1);
 
           <div>
             <div class="text-center text-2xl my-5">
-              <h1 v-if="user.username !== 'Директор'">
-                Баланс {{ user.username }}
-              </h1>
-              <h1 v-if="user.username === 'Директор'">Баланс Торговая Империя онлайн&наличные</h1>
-              <h1 class="font-bold text-secondary-color text-4xl mt-3">
+              <h1>Баланс Торговая Империя онлайн&наличные:</h1>
+              <h1 class="font-bold text-secondary-color text-4xl text-center">
                 {{ formatNumber(Math.ceil(allSum)) }} ₽
+              </h1>
+            </div>
+            <div class="text-center text-2xl my-5">
+              <h1>
+                Баланс ООО "Фоссан" <br />
+                безнал:
+              </h1>
+              <h1 class="font-bold text-secondary-color text-4xl text-center">
+                {{ formatNumber(Math.ceil(allSum2)) }} ₽
               </h1>
             </div>
           </div>
@@ -501,7 +584,9 @@ let month = ref(new Date().getMonth() + 1);
           </div>
 
           <div class="mt-10 mb-10" v-if="!selectedWeek.includes('неделя')">
-            <h1 class="font-bold text-2xl mb-3">Итог месяца прибыли по всем проектам</h1>
+            <h1 class="font-bold text-2xl mb-3">
+              Итог месяца прибыли по всем проектам
+            </h1>
             <div class="border-2 p-3 border-dashed border-black">
               <AdvanceReportTableReport
                 :rows="filteredRows"
@@ -686,7 +771,9 @@ let month = ref(new Date().getMonth() + 1);
               <h1 v-if="user.username !== 'Директор'">
                 Баланс {{ user.username }}
               </h1>
-              <h1 v-if="user.username === 'Директор'">Баланс Торговая Империя онлайн&наличные</h1>
+              <h1 v-if="user.username === 'Директор'">
+                Баланс Торговая Империя онлайн&наличные
+              </h1>
               <h1 class="font-bold text-secondary-color text-4xl mt-3">
                 {{ formatNumber(Math.ceil(allSum)) }} ₽
               </h1>
@@ -716,7 +803,9 @@ let month = ref(new Date().getMonth() + 1);
           </div>
 
           <div class="mt-10 mb-10" v-if="!selectedWeek.includes('неделя')">
-            <h1 class="font-bold text-2xl mb-3">Итог месяца прибыли по всем проектам</h1>
+            <h1 class="font-bold text-2xl mb-3">
+              Итог месяца прибыли по всем проектам
+            </h1>
             <div class="border-2 p-3 border-dashed border-black">
               <AdvanceReportTableReport
                 :rows="filteredRows"

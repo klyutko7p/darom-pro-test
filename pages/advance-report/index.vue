@@ -139,6 +139,8 @@ function getAllSum() {
     ?.filter((row) => row.verified !== null)
     .reduce((acc, value) => acc + +value.priceRefund, 0);
 
+  if (sumOfPVZ6 === undefined) sumOfPVZ6 = 0;
+
   let sumOfPVZ7 = rowsOurRansom.value
     ?.filter(
       (row) => row.verified === null && row.additionally === "Отказ брак"
@@ -466,7 +468,7 @@ async function handleFileChange(event) {
 }
 
 let selectedUser = ref("");
-let showBalanceEmployees = ref(true);
+let showBalanceEmployees = ref(false);
 let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
 </script>
 
@@ -479,6 +481,12 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="mt-10">
+          <AdvanceReportFilters
+            v-if="rows"
+            @filtered-rows="handleFilteredRows"
+            :rows="rows"
+            :user="user"
+          />
           <div
             class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10"
           >
@@ -486,11 +494,16 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               Создание авансового документа
             </UIMainButton>
 
-            <UIMainButton class="max-sm:w-full" v-if="user.role === 'ADMIN'" @click="openModalAdmin">
+            <UIMainButton
+              class="max-sm:w-full"
+              v-if="user.role === 'ADMIN'"
+              @click="openModalAdmin"
+            >
               Пополнение баланса торговой империи (нал)
             </UIMainButton>
 
-            <UIMainButton class="max-sm:w-full"
+            <UIMainButton
+              class="max-sm:w-full"
               v-if="user.username === 'Директор'"
               @click="openModalAdminOOO"
             >
@@ -527,7 +540,10 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
                 </h1>
               </div>
               <div class="text-center text-2xl my-5">
-                <h1>Баланс ООО "Фоссан" <br> безнал:</h1>
+                <h1>
+                  Баланс ООО "Фоссан" <br />
+                  безнал:
+                </h1>
                 <h1 class="font-bold text-secondary-color text-4xl text-center">
                   {{ formatNumber(Math.ceil(allSum2)) }} ₽
                 </h1>

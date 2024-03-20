@@ -9,6 +9,7 @@ const storeAdvanceReports = useAdvanceReports();
 let showFilters = ref(false);
 
 const selectedPVZ = ref<number | string | null>(null);
+const selectedType = ref<number | string | null>(null);
 const selectedExpenditure = ref<number | string | null>(null);
 const selectedTypeOfExpenditure = ref<number | string | null>(null);
 const selectedNotation = ref<number | string | null>(null);
@@ -81,8 +82,8 @@ const filterRows = () => {
   filteredRows.value = props.rows.filter((row) => {
     return (
       (!selectedPVZ.value || row.PVZ === selectedPVZ.value) &&
-      (!selectedExpenditure.value ||
-        row.expenditure === selectedExpenditure.value) &&
+      (!selectedType.value || row.type === selectedType.value) &&
+      (!selectedExpenditure.value || row.expenditure === selectedExpenditure.value) &&
       (!selectedTypeOfExpenditure.value ||
         row.typeOfExpenditure === selectedTypeOfExpenditure.value) &&
       (!selectedNotation.value || row.notation === selectedNotation.value) &&
@@ -104,6 +105,7 @@ const filterRows = () => {
 
 function clearFields() {
   selectedPVZ.value = "";
+  selectedType.value = "";
   selectedExpenditure.value = "";
   selectedTypeOfExpenditure.value = "";
   selectedCompany.value = "";
@@ -122,6 +124,7 @@ watch(
     selectedPVZ,
     selectedExpenditure,
     selectedTypeOfExpenditure,
+    selectedType,
     selectedCompany,
     selectedCreatedUser,
     selectedIssuedUser,
@@ -137,6 +140,7 @@ watch(
 let variables = ref([
   selectedPVZ,
   selectedExpenditure,
+  selectedType,
   selectedTypeOfExpenditure,
   selectedCompany,
   selectedCreatedUser,
@@ -201,6 +205,13 @@ const nonEmptyCount: Ref<number> = computed(() => {
         </datalist>
       </div>
       <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
+        <h1>Тип:</h1>
+        <select class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400" v-model="selectedType">
+          <option value="Нал">Нал</option>
+          <option value="Безнал">Безнал</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
         <h1>Статья расхода:</h1>
         <input
           type="text"
@@ -256,23 +267,23 @@ const nonEmptyCount: Ref<number> = computed(() => {
           </option>
         </datalist>
       </div>
-      <div class="grid grid-cols-1">
-        <div class="grid grid-cols-2 my-2">
-          <h1>От Даты:</h1>
-          <input
-            class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-            type="date"
-            v-model="startingDate"
-          />
-        </div>
-        <div class="grid grid-cols-2 my-2">
-          <h1>По Дату:</h1>
-          <input
-            class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-            type="date"
-            v-model="endDate"
-          />
-        </div>
+    </div>
+    <div class="grid grid-cols-1 mt-5">
+      <div class="grid grid-cols-2 my-2">
+        <h1>От Даты:</h1>
+        <input
+          class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+          type="date"
+          v-model="startingDate"
+        />
+      </div>
+      <div class="grid grid-cols-2 my-2">
+        <h1>По Дату:</h1>
+        <input
+          class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+          type="date"
+          v-model="endDate"
+        />
       </div>
     </div>
     <div class="flex justify-end gap-3 mt-3">
