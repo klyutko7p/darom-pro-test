@@ -9,6 +9,7 @@ interface IRequestBody {
 export default defineEventHandler(async (event) => {
     try {
         let { flag } = await readBody<IRequestBody>(event);
+        const startDate = new Date('2024-03-21T00:00:00Z');
 
         if (flag === 'OurRansom') {
             const rows = await prisma.ourRansom.findMany({
@@ -18,6 +19,11 @@ export default defineEventHandler(async (event) => {
                     additionally: true,
                     priceSite: true,
                 },
+                // where: {
+                //     created_at: {
+                //         gt: startDate, 
+                //     },
+                // },
                 orderBy: {
                     created_at: 'desc',
                 },

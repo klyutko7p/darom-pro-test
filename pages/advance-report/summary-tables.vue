@@ -142,13 +142,13 @@ function getAllSum() {
 
   let sumOfPVZ7 = rowsOurRansom.value
     ?.filter(
-      (row) => row.verified === null && row.additionally === "Отказ брак"
+      (row) => row.additionally === "Отказ брак"
     )
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ8 = rowsOurRansom.value
     ?.filter(
-      (row) => row.verified === null && row.additionally === "Отказ клиент"
+      (row) => row.additionally === "Отказ клиент"
     )
     .reduce((acc, value) => acc + +value.priceSite, 0);
 

@@ -91,7 +91,7 @@ async function deleteIssuedRows() {
   isLoading.value = true;
   await storeRansom.deleteIssuedRows("ClientRansom");
   filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
-  rows.value = await storeRansom.getRansomRows("ClientRansom");
+  rows.value = filteredRows.value;
   isLoading.value = false;
 }
 
@@ -99,7 +99,7 @@ function deleteIssuedRowsTimer() {
   const currentTime = new Date();
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
-  if (currentHour === 22 && currentMinute >= 0 || currentHour === 23 && currentMinute <= 59) {
+  if (currentHour === 23 && currentMinute >= 0 || currentHour === 23 && currentMinute <= 59) {
     deleteIssuedRows();
   }
 }
@@ -192,6 +192,7 @@ function getFromNameFromCell() {
     }
   }
 }
+
 
 </script>
 

@@ -143,13 +143,13 @@ function getAllSum() {
 
   let sumOfPVZ7 = rowsOurRansom.value
     ?.filter(
-      (row) => row.verified === null && row.additionally === "Отказ брак"
+      (row) => row.additionally === "Отказ брак"
     )
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ8 = rowsOurRansom.value
     ?.filter(
-      (row) => row.verified === null && row.additionally === "Отказ клиент"
+      (row) => row.additionally === "Отказ клиент"
     )
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
@@ -490,10 +490,6 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           <div
             class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10"
           >
-            <UIMainButton class="max-sm:w-full" @click="openModal">
-              Создание авансового документа
-            </UIMainButton>
-
             <UIMainButton
               class="max-sm:w-full"
               v-if="user.role === 'ADMIN'"
@@ -575,6 +571,10 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               </select>
             </div>
           </div>
+
+          <UIMainButton class="max-sm:w-full" @click="openModal">
+            Создание авансового документа
+          </UIMainButton>
 
           <AdvanceReportTable
             :rows="
@@ -784,9 +784,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           <div
             class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10"
           >
-            <UIMainButton @click="openModal">
-              Создание авансового документа
-            </UIMainButton>
+           
 
             <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
               Пополнение баланса торговой империи
@@ -840,6 +838,10 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               </select>
             </div>
           </div>
+          
+          <UIMainButton @click="openModal">
+            Создание авансового документа
+          </UIMainButton>
 
           <AdvanceReportTable
             :rows="

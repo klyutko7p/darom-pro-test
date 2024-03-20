@@ -199,7 +199,7 @@ onMounted(async () => {
       v-if="showButtonVerified"
       @click="updateDeliveryRows('verified')"
     >
-      Проверить
+      Проверено
     </UIActionButton>
   </div>
 

@@ -292,16 +292,9 @@ function getAllSum() {
         ?.filter((row) => row.received !== null)
         .reduce((acc, value) => acc + +value.sum, 0);
 
-      if (
-        (startingDate.value !== null && startingDate.value !== "") ||
-        (endDate.value !== null && endDate.value !== "")
-      ) {
-        sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
-        sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-        allSum.value = sum1.value + sum2.value - sumOfPVZ;
-      } else {
-        allSum.value = 0;
-      }
+      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+      allSum.value = sum1.value + sum2.value - sumOfPVZ;
     } else {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -346,17 +339,9 @@ function getAllSum() {
         )
         .reduce((acc, value) => acc + +value.sum, 0);
 
-      if (
-        (startingDate.value !== null && startingDate.value !== "") ||
-        (endDate.value !== null && endDate.value !== "")
-      ) {
-        sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
-        sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-        allSum.value =
-          sum1.value + sum2.value - sumOfPVZ - sumOfPVZ2 + sumOfPVZ3;
-      } else {
-        allSum.value = 0;
-      }
+      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+      allSum.value = sum1.value + sum2.value - sumOfPVZ - sumOfPVZ2 + sumOfPVZ3;
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (selectedPVZ.value === "Все ПВЗ") {
@@ -383,16 +368,9 @@ function getAllSum() {
         0
       );
 
-      if (
-        (startingDate.value !== null && startingDate.value !== "") ||
-        (endDate.value !== null && endDate.value !== "")
-      ) {
-        sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
-        sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-        allSum.value = sum1.value + sum2.value + sum3.value - sumOfPVZ;
-      } else {
-        allSum.value = 0;
-      }
+      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+      allSum.value = sum1.value + sum2.value + sum3.value - sumOfPVZ;
     } else {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -419,16 +397,9 @@ function getAllSum() {
         0
       );
 
-      if (
-        (startingDate.value !== null && startingDate.value !== "") ||
-        (endDate.value !== null && endDate.value !== "")
-      ) {
-        sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
-        sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-        allSum.value = sum1.value + sum2.value - sumOfPVZ;
-      } else {
-        allSum.value = 0;
-      }
+      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+      allSum.value = sum1.value + sum2.value - sumOfPVZ;
     }
   } else if (selectedTypeOfTransaction.value === "Доставка") {
     if (selectedPVZ.value === "Все ПВЗ") {
@@ -465,8 +436,8 @@ function getAllSum() {
           reduceArray(copyArrayDelivery2.value, "Delivery") - sumOfPVZ / 2;
         allSum.value = sum1.value + sum2.value + sum3.value;
       } else {
-        sum1.value = 0
-        sum2.value = 0
+        sum1.value = 0;
+        sum2.value = 0;
         allSum.value = 0;
       }
     } else {
@@ -498,8 +469,8 @@ function getAllSum() {
         sum2.value = reduceArray(copyArrayDelivery2.value, "Delivery");
         allSum.value = sum1.value + sum2.value + sum3.value;
       } else {
-        sum1.value = 0
-        sum2.value = 0
+        sum1.value = 0;
+        sum2.value = 0;
         allSum.value = 0;
       }
     }
@@ -735,7 +706,7 @@ async function updateRow() {
                       "
                       value="Доход"
                     >
-                    Доход DP (продажи)
+                      Доход DP (продажи)
                     </option>
                     <option
                       v-if="
