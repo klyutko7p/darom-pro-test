@@ -8,7 +8,7 @@ link = link.toString();
 
 let isLoading = ref(false);
 
-let user = ref({} as User);
+let user = ref({} as User); 
 let rows = ref<Array<IOurRansom | IClientRansom | IDelivery>>();
 let copyRows = ref<Array<IOurRansom | IClientRansom | IDelivery>>();
 
@@ -47,7 +47,7 @@ let showReceivedItems = ref(true);
 
 function disableReceivedItems() {
   showReceivedItems.value = false;
-  copyRows.value = rows.value?.filter((value) => !value.issued);
+  copyRows.value = rows.value?.filter((value) => !value.issued && value.deleted === null);
 }
 
 function enableReceivedItems() {
