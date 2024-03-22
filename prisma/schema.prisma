@@ -250,6 +250,32 @@ model PhoneNumber {
   address String?
 }
 
+model Employee {
+  id              Int     @id @default(autoincrement())
+  PVZ             String?
+  company         String?
+  fullname        String?
+  phone           String?
+  bank            String?
+  paymentPerShift Float?
+  hoursPerShift   Float?
+}
+
+model Payroll {
+  id                Int       @id @default(autoincrement())
+  PVZ               String?
+  company           String?
+  fullname          String?
+  phone             String?
+  bank              String?
+  paymentPerShift   Float?
+  advance           Float?
+  hours             Float?
+  deductions        Float?
+  additionalPayment Float?
+  date              DateTime?
+}
+
 enum Role {
   USER
   ADMIN

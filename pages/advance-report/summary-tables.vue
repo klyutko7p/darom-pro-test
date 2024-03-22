@@ -298,7 +298,7 @@ let typesOfExpenditure = ref([
   "Оплата Налоги. ПФР, СОЦ и т.д.",
 ]);
 
-let companies = ref(["WB start", "Darom.pro", "Сортировка", "Доставка"]);
+let companies = ref(["WB/OZ start", "Darom.pro", "Сортировка", "Доставка"]);
 
 let usersOfIssued = ref([
   "Шведова",

@@ -174,7 +174,9 @@ let isShowAddSettings = ref(false);
       </div>
       <div
         v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана1') || user.role === 'ADMINISTRATOR' || user.role === 'PVZ'
+          (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'PVZ'
         "
         role="button"
         @click="router.push('/spreadsheets/refunds')"
@@ -275,6 +277,18 @@ let isShowAddSettings = ref(false);
           size="24"
           class="text-red-700"
         />
+      </div>
+      <div
+        v-if="user.username === 'Директор'"
+        role="button"
+        @click="router.push('/advance-report/payroll')"
+        tabindex="0"
+        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+      >
+        <div class="grid place-items-center mr-4">
+          <Icon name="material-symbols:payments-outline" size="20" />
+        </div>
+        <h1>Расчёт ЗП</h1>
       </div>
       <div
         class="px-3 pt-3 font-bold flex items-center gap-3"
@@ -536,7 +550,9 @@ let isShowAddSettings = ref(false);
       </div>
       <div
         v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана1') || user.role === 'ADMINISTRATOR' || user.role === 'PVZ'
+          (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'PVZ'
         "
         role="button"
         @click="router.push('/spreadsheets/refunds')"
@@ -638,6 +654,18 @@ let isShowAddSettings = ref(false);
         />
       </div>
       <div
+        v-if="user.username === 'Директор'"
+        role="button"
+        @click="router.push('/advance-report/payroll')"
+        tabindex="0"
+        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+      >
+        <div class="grid place-items-center mr-4">
+          <Icon name="material-symbols:payments-outline" size="20" />
+        </div>
+        <h1>Расчёт ЗП</h1>
+      </div>
+      <div
         class="px-3 pt-3 font-bold flex items-center gap-3"
         v-if="user.role !== 'USER'"
       >
@@ -651,7 +679,9 @@ let isShowAddSettings = ref(false);
       </div>
       <div v-if="isShowAddSettings">
         <div
-          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/users')"
           tabindex="0"
@@ -675,7 +705,9 @@ let isShowAddSettings = ref(false);
           <h1>Пользователи</h1>
         </div>
         <div
-          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/marketplaces')"
           tabindex="0"
@@ -687,7 +719,9 @@ let isShowAddSettings = ref(false);
           <h1>Маркетплейсы</h1>
         </div>
         <div
-          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/phone-numbers')"
           tabindex="0"
@@ -699,7 +733,9 @@ let isShowAddSettings = ref(false);
           <h1>Телефоны и адреса</h1>
         </div>
         <div
-          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/cells')"
           tabindex="0"
@@ -711,7 +747,9 @@ let isShowAddSettings = ref(false);
           <h1>Ячейки</h1>
         </div>
         <div
-          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/pvz')"
           tabindex="0"
@@ -723,7 +761,9 @@ let isShowAddSettings = ref(false);
           <h1>Пункты выдачи заказов</h1>
         </div>
         <div
-          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/sorting-centers')"
           tabindex="0"
@@ -735,7 +775,9 @@ let isShowAddSettings = ref(false);
           <h1>Сортировочные центры</h1>
         </div>
         <div
-          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/pvz-delivery')"
           tabindex="0"
@@ -747,7 +789,9 @@ let isShowAddSettings = ref(false);
           <h1>Пункты выдачи заказов (Доставка)</h1>
         </div>
         <div
-          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/sorting-centers-delivery')"
           tabindex="0"
@@ -762,7 +806,9 @@ let isShowAddSettings = ref(false);
           <h1>Сортировочные центры (Доставка)</h1>
         </div>
         <div
-          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+          v-if="
+            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/admin/order-accounts')"
           tabindex="0"
@@ -843,7 +889,9 @@ let isShowAddSettings = ref(false);
         size="40"
         class="text-red-700"
       />
-      <h1 class="font-medium" v-if="user.username !== 'Директор'">{{ user.username }}</h1>
+      <h1 class="font-medium" v-if="user.username !== 'Директор'">
+        {{ user.username }}
+      </h1>
       <h1 class="font-medium" v-if="user.username === 'Директор'">Император</h1>
     </div>
     <h1

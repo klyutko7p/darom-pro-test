@@ -246,6 +246,18 @@ definePageMeta({
               </div>
               <h1>Авансовый отчёт</h1>
             </div>
+            <div
+              v-if="user.username === 'Директор'"
+              role="button"
+              @click="router.push('/advance-report/payroll')"
+              tabindex="0"
+              class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+            >
+              <div class="grid place-items-center mr-4">
+                <Icon name="material-symbols:payments-outline" size="20" />
+              </div>
+              <h1>Расчёт ЗП</h1>
+            </div>
             <div class="px-3 pt-3 mb-2 font-bold" v-if="user.role !== 'USER'">
               <h1>Настройки доступа</h1>
             </div>

@@ -40,6 +40,31 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
         }
     }
 
+    async function createAdvanceReports(rows: IAdvanceReport[]) {
+        try {
+
+            let data = await useFetch('/api/advance-report/create-rows', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ rows: rows, }),
+            });
+
+            if (data.data.value === undefined) {
+                cachedAdvanceReportRows = null;
+                toast.success("Документы успешно созданы!");
+            } else {
+                console.log(data.data.value);
+                toast.error("Произошла ошибка при создании записей");
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
     async function getAdvancedReports() {
         try {
             if (cachedAdvanceReportRows) {
@@ -131,5 +156,5 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
         return Array.from(uniqueNonEmptyValues);
     };
 
-    return { updateAdvanceReport, getAdvancedReports, createAdvanceReport, updateDeliveryStatus, getUniqueNonEmptyValues }
+    return { updateAdvanceReport, getAdvancedReports, createAdvanceReport, updateDeliveryStatus, getUniqueNonEmptyValues, createAdvanceReports }
 })
