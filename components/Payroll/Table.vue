@@ -216,7 +216,20 @@ async function createAdvanceReportZP() {
     </UIActionButton>
   </div>
 
-  <div class="relative max-h-[700px] overflow-y-auto mt-5 mb-10">
+  <div class="mb-10">
+    <h1 class="font-bold text-4xl mb-3">Итого</h1>
+    <div>
+      <h1 class="font-medium text-xl">
+        Выплачен аванс: {{ getAllSumAdvance() }} ₽
+      </h1>
+      <h1 class="font-medium text-xl">ЗП к начислению: {{ getAllSumZP() }} ₽</h1>
+      <h1 class="font-medium text-xl">
+        Итого начислено за месяц: {{ getAllSumZPMonth() }} ₽
+      </h1>
+    </div>
+  </div>
+
+  <div class="relative max-h-[610px] mt-5 mb-10 mr-5">
     <table
       id="theTable"
       class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
@@ -353,18 +366,7 @@ async function createAdvanceReportZP() {
     </table>
   </div>
 
-  <div class="mb-10">
-    <h1 class="font-bold text-4xl mb-3">Итого</h1>
-    <div>
-      <h1 class="font-medium text-xl">
-        Выплачен аванс: {{ getAllSumAdvance() }} ₽
-      </h1>
-      <h1 class="font-medium text-xl">ЗП к начислению: {{ getAllSumZP() }} ₽</h1>
-      <h1 class="font-medium text-xl">
-        Итого начислено за месяц: {{ getAllSumZPMonth() }} ₽
-      </h1>
-    </div>
-  </div>
+  
 </template>
 
 <style scoped>
