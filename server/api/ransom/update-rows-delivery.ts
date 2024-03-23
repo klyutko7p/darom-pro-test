@@ -144,8 +144,6 @@ export default defineEventHandler(async (event) => {
                     shippedUser: username,
                 },
             });
-            console.log(updateRow);
-            console.log(username);
         } else if ((flagRansom === 'OurRansom' && updateField === 'verified')) {
             const updateRow = await prisma.ourRansom.updateMany({
                 where: {

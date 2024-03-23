@@ -19,9 +19,11 @@ export default defineEventHandler(async (event) => {
                     additionally: true,
                     priceSite: true,
                     deliveredKGT: true,
+                    issued: true,
+                    dispatchPVZ: true,
                 },
                 where: {
-                    created_at: {
+                    issued: {
                         gt: startDate, 
                     },
                 },

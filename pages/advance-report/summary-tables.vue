@@ -596,14 +596,15 @@ let month = ref(new Date().getMonth() + 1);
           </div>
 
           <div v-for="company in companies" class="mt-10 mb-10">
-            <h1 class="font-bold text-2xl mb-3">{{ company }}</h1>
-            <div class="border-2 p-3 border-dashed border-black">
+            <h1 class="font-bold text-2xl mb-1 max-2xl:border-b-2 border-black p-2">{{ company }}</h1>
+            <div class="p-3 border-2 border-dashed border-black max-2xl:border-0">
               <AdvanceReportTableReport
                 :rows="filteredRows?.filter((row) => row.company === company)"
                 :user="user"
                 :week="selectedWeek"
                 :rows-delivery="rowsDelivery?.filter((row) => row.nameOfAction === company)"
                 :rows-balance="rowsBalance"
+                :rows-our-ransom="rowsOurRansom"
                 :company="company"
                 @open-modal="openModal"
                 @update-delivery-row="updateDeliveryRow"
@@ -612,16 +613,17 @@ let month = ref(new Date().getMonth() + 1);
           </div>
 
           <div class="mt-10 mb-10" v-if="!selectedWeek.includes('неделя')">
-            <h1 class="font-bold text-2xl mb-3">
+            <h1 class="font-bold text-2xl mb-1 max-2xl:border-b-2 border-black p-2">
               Итог месяца прибыли по всем проектам
             </h1>
-            <div class="border-2 p-3 border-dashed border-black">
+            <div class="font-bold text-2xl mb-1 max-2xl:border-b-2 border-black p-2">
               <AdvanceReportTableReport
                 :rows="filteredRows"
                 :user="user"
                 :week="selectedWeek"
                 :rows-balance="rowsBalance"
                 :rows-delivery="rowsDelivery"
+                :rows-our-ransom="rowsOurRansom"
                 :company="'Все'"
                 @open-modal="openModal"
                 @update-delivery-row="updateDeliveryRow"

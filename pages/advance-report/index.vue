@@ -139,8 +139,6 @@ function getAllSum() {
     ?.filter((row) => row.verified !== null)
     .reduce((acc, value) => acc + +value.priceRefund, 0);
 
-  if (sumOfPVZ6 === undefined) sumOfPVZ6 = 0;
-
   let sumOfPVZ7 = rowsOurRansom.value
     ?.filter((row) => row.additionally === "Отказ брак")
     .reduce((acc, value) => acc + +value.priceSite, 0);
@@ -767,7 +765,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               <label for="name">Сумма</label>
               <input
                 :disabled="user.role !== 'ADMIN'"
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
                 type="text"
               />
@@ -803,7 +801,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               <label for="name">Примечание</label>
               <input
                 :disabled="user.role !== 'ADMIN'"
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.notation"
                 type="text"
               />
@@ -828,7 +826,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               <label for="name">Сумма</label>
               <input
                 :disabled="user.role !== 'ADMIN'"
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
                 type="text"
               />
@@ -864,7 +862,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               <label for="name">Примечание</label>
               <input
                 :disabled="user.role !== 'ADMIN'"
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.notation"
                 type="text"
               />

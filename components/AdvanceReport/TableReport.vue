@@ -8,6 +8,7 @@ const props = defineProps({
   week: { type: String, required: true },
   rowsBalance: { type: Array as PropType<IBalance[]>, required: true },
   rowsDelivery: { type: Array as PropType<IDelivery[]>, required: true },
+  rowsOurRansom: { type: Array as PropType<IOurRansom[]>, required: true },
   company: { type: String, required: true },
 });
 
@@ -32,6 +33,7 @@ let arrayOfExpenditure = ref<Array<IAdvanceReport>>();
 let arrayOfTotal = ref<Array<IAdvanceReport>>();
 let rowsBalanceArr = ref<Array<IBalance>>();
 let rowsDeliveryArr = ref<Array<IDelivery>>();
+let rowsOnlineArr = ref<Array<IOurRansom>>();
 
 let expenditureByPVZ: { [PVZ: string]: number } = {};
 let receiptsByPVZ: { [PVZ: string]: number } = {};
@@ -120,6 +122,48 @@ function updateCurrentPageData() {
     );
   }
 
+  if (props.company === "Darom.pro" || props.company === "Все") {
+    if (props.week.includes("неделя")) {
+      rowsBalanceArr.value = props.rowsBalance
+        .filter((row: IBalance) => {
+          let rowDate: Date = new Date(row.received);
+          let [startDate, endDate] = parseWeekRange(props.week);
+          return (
+            rowDate >= startDate &&
+            rowDate <= endDate &&
+            row.received !== null &&
+            row.recipient === "Шведова"
+          );
+        })
+        .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
+    } else {
+      rowsBalanceArr.value = props.rowsBalance
+        .filter(
+          (row: IBalance) =>
+            row.received !== null && row.recipient === "Шведова"
+        )
+        .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
+    }
+  }
+
+  if (props.company === "Darom.pro" || props.company === "Все") {
+    if (props.week.includes("неделя")) {
+      rowsOnlineArr.value = props.rowsOurRansom.filter((row: IOurRansom) => {
+        let rowDate: Date = new Date(row.issued);
+        let [startDate, endDate] = parseWeekRange(props.week);
+        return (
+          rowDate >= startDate &&
+          rowDate <= endDate &&
+          row.additionally === "Оплачено онлайн"
+        );
+      });
+    } else {
+      rowsOnlineArr.value = props.rowsOurRansom.filter(
+        (row: IOurRansom) => row.additionally === "Оплачено онлайн"
+      );
+    }
+  }
+
   pvz.value.forEach((pvzName: string) => {
     expenditureByPVZ[pvzName] = 0;
   });
@@ -143,6 +187,12 @@ function updateCurrentPageData() {
   rowsBalanceArr.value?.forEach((row) => {
     if (!isNaN(receiptsByPVZ[row.pvz])) {
       receiptsByPVZ[row.pvz] += parseFloat(row.sum);
+    }
+  });
+
+  rowsOnlineArr.value?.forEach((row) => {
+    if (!isNaN(receiptsByPVZ[row.dispatchPVZ])) {
+      receiptsByPVZ[row.dispatchPVZ] += row.priceSite;
     }
   });
 
@@ -213,7 +263,7 @@ let pvz = ref([
 ]);
 </script>
 <template>
-  <div class="relative max-h-[410px] overflow-y-auto mt-5 mb-10">
+  <div class="relative max-h-[410px] mt-5 mb-10">
     <table
       id="theTable"
       class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
@@ -222,37 +272,37 @@ let pvz = ref([
         class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center bg-gray-50"
       >
         <tr>
-          <td class="border-2 font-bold">Статус</td>
-          <th scope="col" class="border-2" v-for="pvzName in pvz">
+          <td class="border-2 p-2 whitespace-nowrap font-bold">Статус</td>
+          <th scope="col" class="border-2 p-2 whitespace-nowrap" v-for="pvzName in pvz">
             {{ pvzName }}
           </th>
-          <td class="border-2 font-bold">Итого</td>
+          <td class="border-2 p-2 whitespace-nowrap font-bold">Итого</td>
         </tr>
       </thead>
       <tbody>
         <tr class="text-center">
-          <td class="border-2 font-bold">Поступления</td>
-          <td class="border-2 font-bold" v-for="sum in receiptsByPVZ">
+          <td class="border-2 p-2 whitespace-nowrap font-bold">Поступления</td>
+          <td class="border-2 p-2 whitespace-nowrap font-bold" v-for="sum in receiptsByPVZ">
             {{ sum }} ₽
           </td>
-          <td class="border-2 font-bold">{{ sumOfArray1 }} ₽</td>
+          <td class="border-2 p-2 whitespace-nowrap font-bold">{{ sumOfArray1 }} ₽</td>
         </tr>
         <tr class="text-center">
-          <td class="border-2 font-bold">Расход</td>
-          <td class="border-2 font-bold" v-for="sum in expenditureByPVZ">
+          <td class="border-2 p-2 whitespace-nowrap font-bold">Расход</td>
+          <td class="border-2 p-2 whitespace-nowrap font-bold" v-for="sum in expenditureByPVZ">
             {{ sum }} ₽
           </td>
-          <td class="border-2 font-bold">{{ sumOfArray2 }} ₽</td>
+          <td class="border-2 p-2 whitespace-nowrap font-bold">{{ sumOfArray2 }} ₽</td>
         </tr>
         <tr class="text-center">
-          <td class="border-2 font-bold">Итого</td>
+          <td class="border-2 p-2 whitespace-nowrap font-bold">Итого</td>
           <td
-            class="border-2 whitespace-nowrap font-bold"
+            class="border-2 p-2 whitespace-nowrap font-bold"
             v-for="sum in differenceByPVZ"
           >
             {{ sum }} ₽
           </td>
-          <td class="border-2 font-bold">{{ sumOfArray3 }} ₽</td>
+          <td class="border-2 font-bold p-2 whitespace-nowrap">{{ sumOfArray3 }} ₽</td>
         </tr>
       </tbody>
     </table>
