@@ -103,7 +103,7 @@ function getAllSum() {
       (row) =>
         row.received !== null &&
         row.createdUser === user.value.username &&
-        row.notation !== "Пополнение баланса" &&
+        row.typeOfExpenditure !== "Пополнение баланса" &&
         row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -168,7 +168,7 @@ function getAllSum() {
       (row) =>
         row.received !== null &&
         row.createdUser === user.value.username &&
-        row.notation !== "Пополнение баланса" &&
+        row.typeOfExpenditure !== "Пополнение баланса" &&
         row.type === "Безнал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -257,14 +257,14 @@ function openModal(row: IAdvanceReport) {
 function openModalAdmin(row: IAdvanceReport) {
   isOpenAdmin.value = true;
   rowData.value = {} as IAdvanceReport;
-  rowData.value.PVZ = "";
-  rowData.value.company = "";
+  rowData.value.PVZ = row.PVZ;
+  rowData.value.company = row.company;
   rowData.value.expenditure = row.expenditure;
-  rowData.value.notation = "Пополнение баланса";
+  rowData.value.notation = row.notation;
   rowData.value.issuedUser = "Директор";
   rowData.value.received = new Date();
   rowData.value.supportingDocuments = "";
-  rowData.value.typeOfExpenditure = "";
+  rowData.value.typeOfExpenditure = "Пополнение баланса";
   rowData.value.createdUser = "Директор";
   rowData.value.date = new Date();
 }
@@ -272,14 +272,14 @@ function openModalAdmin(row: IAdvanceReport) {
 function openModalAdminOOO(row: IAdvanceReport) {
   isOpenAdminOOO.value = true;
   rowData.value = {} as IAdvanceReport;
-  rowData.value.PVZ = "";
-  rowData.value.company = "";
+  rowData.value.PVZ = row.PVZ;
+  rowData.value.company = row.company;
   rowData.value.expenditure = row.expenditure;
-  rowData.value.notation = "Пополнение баланса";
+  rowData.value.notation = row.notation;
   rowData.value.issuedUser = "Директор";
   rowData.value.received = new Date();
   rowData.value.supportingDocuments = "";
-  rowData.value.typeOfExpenditure = "";
+  rowData.value.typeOfExpenditure = "Пополнение баланса";
   rowData.value.type = "Безнал";
   rowData.value.createdUser = "Директор";
   rowData.value.date = new Date();
@@ -304,10 +304,10 @@ let pvz = ref([
   "Новониколаевка",
   "Политотдельское",
   "Мещерино",
-  "ПВЗ1",
-  "ПВЗ2",
-  "ПВЗ3",
-  "ПВЗ4",
+  "ПВЗ_1",
+  "ПВЗ_2",
+  "ПВЗ_3",
+  "ПВЗ_4",
   "Офис",
 ]);
 
@@ -761,6 +761,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             </div>
             <div class="custom-header" v-else>Пополнение баланса</div>
           </template>
+
           <div class="text-black">
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Сумма</label>
@@ -768,6 +769,42 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
                 :disabled="user.role !== 'ADMIN'"
                 class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
+                type="text"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
+            <label for="dispatchPVZ1">ПВЗ</label>
+            <select
+              class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+              v-model="rowData.PVZ"
+            >
+              <option v-for="pvzData in pvz" :value="pvzData">
+                {{ pvzData }}
+              </option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
+            <label for="dispatchPVZ1">Компания</label>
+            <select
+              class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+              v-model="rowData.company"
+            >
+              <option v-for="company in companies" :value="company">
+                {{ company }}
+              </option>
+            </select>
+          </div>
+
+          <div class="text-black">
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Примечание</label>
+              <input
+                :disabled="user.role !== 'ADMIN'"
+                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.notation"
                 type="text"
               />
             </div>
@@ -793,6 +830,42 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
                 :disabled="user.role !== 'ADMIN'"
                 class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
+                type="text"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
+            <label for="dispatchPVZ1">ПВЗ</label>
+            <select
+              class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+              v-model="rowData.PVZ"
+            >
+              <option v-for="pvzData in pvz" :value="pvzData">
+                {{ pvzData }}
+              </option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
+            <label for="dispatchPVZ1">Компания</label>
+            <select
+              class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+              v-model="rowData.company"
+            >
+              <option v-for="company in companies" :value="company">
+                {{ company }}
+              </option>
+            </select>
+          </div>
+
+          <div class="text-black">
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Примечание</label>
+              <input
+                :disabled="user.role !== 'ADMIN'"
+                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.notation"
                 type="text"
               />
             </div>
@@ -1033,7 +1106,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
     </div>
   </div>
 
-  <div v-else class="flex items-center justify-center">
+  <div v-else class="flex items-center justify-center w-screen h-screen">
     <UISpinner />
   </div>
 </template>

@@ -6,6 +6,9 @@ const props = defineProps({
   user: { type: Object as PropType<User>, required: true },
   rows: { type: Array as PropType<IAdvanceReport[]> },
   week: { type: String, required: true },
+  rowsBalance: { type: Array as PropType<IBalance[]>, required: true },
+  rowsDelivery: { type: Array as PropType<IDelivery[]>, required: true },
+  company: { type: String, required: true },
 });
 
 let month = ref(new Date().getMonth() + 1);
@@ -27,6 +30,8 @@ let returnRows = ref<Array<IAdvanceReport>>();
 let arrayOfReceipts = ref<Array<IAdvanceReport>>();
 let arrayOfExpenditure = ref<Array<IAdvanceReport>>();
 let arrayOfTotal = ref<Array<IAdvanceReport>>();
+let rowsBalanceArr = ref<Array<IBalance>>();
+let rowsDeliveryArr = ref<Array<IDelivery>>();
 
 let expenditureByPVZ: { [PVZ: string]: number } = {};
 let receiptsByPVZ: { [PVZ: string]: number } = {};
@@ -40,19 +45,79 @@ function updateCurrentPageData() {
   returnRows.value = props.rows;
   filteredRows.value = returnRows.value?.filter((row: IAdvanceReport) => {
     let rowDate: Date = new Date(row.date);
-    return rowDate.getMonth() + 1 === +month.value && row.PVZ !== '';
+    return rowDate.getMonth() + 1 === +month.value && row.PVZ !== "";
   });
+
+  if (props.company === "Darom.pro" || props.company === "Все") {
+    if (props.week.includes("неделя")) {
+      rowsBalanceArr.value = props.rowsBalance
+        .filter((row: IBalance) => {
+          let rowDate: Date = new Date(row.received);
+          let [startDate, endDate] = parseWeekRange(props.week);
+          return (
+            rowDate >= startDate &&
+            rowDate <= endDate &&
+            row.received !== null &&
+            row.recipient === "Шведова"
+          );
+        })
+        .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
+    } else {
+      rowsBalanceArr.value = props.rowsBalance
+        .filter(
+          (row: IBalance) =>
+            row.received !== null && row.recipient === "Шведова"
+        )
+        .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
+    }
+  }
+
+  if (props.week.includes("неделя")) {
+    rowsDeliveryArr.value = props.rowsDelivery.filter((row: IDelivery) => {
+      let rowDate: Date = new Date(row.paid);
+      let [startDate, endDate] = parseWeekRange(props.week);
+      return rowDate >= startDate && rowDate <= endDate && row.paid !== null;
+    });
+  } else {
+    rowsDeliveryArr.value = props.rowsDelivery.filter(
+      (row: IDelivery) => row.paid !== null
+    );
+  }
 
   if (props.week.includes("неделя")) {
     arrayOfExpenditure.value = filteredRows.value?.filter(
       (row: IAdvanceReport) => {
         let rowDate: Date = new Date(row.date);
         let [startDate, endDate] = parseWeekRange(props.week);
-        return rowDate >= startDate && rowDate <= endDate;
+        return (
+          rowDate >= startDate &&
+          rowDate <= endDate &&
+          row.typeOfExpenditure !== "Пополнение баланса"
+        );
       }
     );
   } else {
-    arrayOfExpenditure.value = filteredRows.value;
+    arrayOfExpenditure.value = filteredRows.value?.filter(
+      (row: IAdvanceReport) => row.typeOfExpenditure !== "Пополнение баланса"
+    );
+  }
+
+  if (props.week.includes("неделя")) {
+    arrayOfReceipts.value = filteredRows.value?.filter(
+      (row: IAdvanceReport) => {
+        let rowDate: Date = new Date(row.date);
+        let [startDate, endDate] = parseWeekRange(props.week);
+        return (
+          rowDate >= startDate &&
+          rowDate <= endDate &&
+          row.typeOfExpenditure === "Пополнение баланса"
+        );
+      }
+    );
+  } else {
+    arrayOfReceipts.value = filteredRows.value?.filter(
+      (row: IAdvanceReport) => row.typeOfExpenditure === "Пополнение баланса"
+    );
   }
 
   pvz.value.forEach((pvzName: string) => {
@@ -64,11 +129,27 @@ function updateCurrentPageData() {
   });
 
   arrayOfExpenditure.value?.forEach((row) => {
-    expenditureByPVZ[row.PVZ] += parseFloat(row.expenditure);
+    if (!isNaN(expenditureByPVZ[row.PVZ])) {
+      receiptsByPVZ[row.PVZ] += parseFloat(row.expenditure);
+    }
   });
 
-  arrayOfExpenditure.value?.forEach((row) => {
-    receiptsByPVZ[row.PVZ] += 0;
+  arrayOfReceipts.value?.forEach((row) => {
+    if (!isNaN(receiptsByPVZ[row.PVZ])) {
+      receiptsByPVZ[row.PVZ] += parseFloat(row.expenditure);
+    }
+  });
+
+  rowsBalanceArr.value?.forEach((row) => {
+    if (!isNaN(receiptsByPVZ[row.pvz])) {
+      receiptsByPVZ[row.pvz] += parseFloat(row.sum);
+    }
+  });
+
+  rowsDeliveryArr.value.forEach((row) => {
+    if (!isNaN(receiptsByPVZ[row.orderPVZ])) {
+      receiptsByPVZ[row.orderPVZ] += row.amountFromClient3;
+    }
   });
 
   pvz.value.forEach((pvzName: string) => {
@@ -123,11 +204,12 @@ let pvz = ref([
   "Новониколаевка",
   "Политотдельское",
   "Мещерино",
-  "ПВЗ1",
-  "ПВЗ2",
-  "ПВЗ3",
-  "ПВЗ4",
+  "ПВЗ_1",
+  "ПВЗ_2",
+  "ПВЗ_3",
+  "ПВЗ_4",
   "Офис",
+  "НаДом",
 ]);
 </script>
 <template>

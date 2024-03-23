@@ -102,7 +102,7 @@ function getAllSum() {
       (row) =>
         row.received !== null &&
         row.createdUser === user.value.username &&
-        row.notation !== "Пополнение баланса" &&
+        row.typeOfExpenditure !== "Пополнение баланса" &&
         row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -167,7 +167,7 @@ function getAllSum() {
       (row) =>
         row.received !== null &&
         row.createdUser === user.value.username &&
-        row.notation !== "Пополнение баланса" &&
+        row.typeOfExpenditure !== "Пополнение баланса" &&
         row.type === "Безнал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -282,11 +282,12 @@ let pvz = ref([
   "Новониколаевка",
   "Политотдельское",
   "Мещерино",
-  "ПВЗ1",
-  "ПВЗ2",
-  "ПВЗ3",
-  "ПВЗ4",
+  "ПВЗ_1",
+  "ПВЗ_2",
+  "ПВЗ_3",
+  "ПВЗ_4",
   "Офис",
+  "НаДом",
 ]);
 
 let typesOfExpenditure = ref([
@@ -601,6 +602,9 @@ let month = ref(new Date().getMonth() + 1);
                 :rows="filteredRows?.filter((row) => row.company === company)"
                 :user="user"
                 :week="selectedWeek"
+                :rows-delivery="rowsDelivery?.filter((row) => row.nameOfAction === company)"
+                :rows-balance="rowsBalance"
+                :company="company"
                 @open-modal="openModal"
                 @update-delivery-row="updateDeliveryRow"
               />
@@ -616,6 +620,9 @@ let month = ref(new Date().getMonth() + 1);
                 :rows="filteredRows"
                 :user="user"
                 :week="selectedWeek"
+                :rows-balance="rowsBalance"
+                :rows-delivery="rowsDelivery"
+                :company="'Все'"
                 @open-modal="openModal"
                 @update-delivery-row="updateDeliveryRow"
               />

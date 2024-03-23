@@ -240,7 +240,9 @@ onMounted(async () => {
             изменение
           </th>
           <th scope="col" class="border-2 px-3">id</th>
-          <th scope="col" class="border-2 px-3" v-if="user.role === 'PVZ'">ячейка</th>
+          <th scope="col" class="border-2 px-3" v-if="user.role === 'PVZ'">
+            ячейка
+          </th>
           <th
             scope="col"
             class="border-2"
@@ -262,7 +264,13 @@ onMounted(async () => {
           >
             стоимость сайт
           </th>
-          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">стоимость возврата</th>
+          <th
+            scope="col"
+            class="border-2"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+          >
+            стоимость возврата
+          </th>
           <th
             scope="col"
             class="border-2"
@@ -314,9 +322,7 @@ onMounted(async () => {
           </td>
           <td
             class="border-2"
-            v-if="
-              user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'
-            "
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
           >
             <Icon
               @click="openModal(row)"
@@ -338,10 +344,7 @@ onMounted(async () => {
             </NuxtLink>
             <h1 v-else>{{ row.id }}</h1>
           </th>
-          <td
-            class="border-2"
-            v-if="user.role === 'PVZ'"
-          >
+          <td class="border-2" v-if="user.role === 'PVZ'">
             {{ row.cell }}
           </td>
           <td
@@ -367,7 +370,10 @@ onMounted(async () => {
           >
             {{ row.priceSite }}
           </td>
-          <td class="px-2 py-4 border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+          <td
+            class="px-2 py-4 border-2"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+          >
             {{ row.priceRefund }}
           </td>
           <td

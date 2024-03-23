@@ -149,9 +149,7 @@ let breakpoints = {
       </thead>
       <tbody>
         <tr
-          v-for="row in filteredRows?.filter(
-            (row) => row.notation !== 'Пополнение баланса'
-          )"
+          v-for="row in filteredRows"
           class="text-center"
         >
           <td class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
