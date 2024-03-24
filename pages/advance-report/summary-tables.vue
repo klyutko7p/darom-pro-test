@@ -62,7 +62,7 @@ onMounted(() => {
 
 definePageMeta({
   layout: false,
-  name: "Суммарные таблицы",
+  name: "Сводные таблицы",
 });
 
 let isOpen = ref(false);
@@ -577,7 +577,7 @@ let month = ref(new Date().getMonth() + 1);
             </div>
             <div class="text-center text-2xl my-5">
               <h1>
-                Баланс ООО "Фоссан" <br />
+                Баланс Торговая Империя <br />
                 безнал:
               </h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">

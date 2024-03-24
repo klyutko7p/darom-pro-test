@@ -307,6 +307,7 @@ let pvz = ref([
   "ПВЗ_3",
   "ПВЗ_4",
   "Офис",
+  "НаДом"
 ]);
 
 let typesOfExpenditure = ref([
@@ -563,7 +564,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               </div>
               <div class="text-center text-2xl my-5">
                 <h1>
-                  Баланс ООО "Фоссан" <br />
+                  Баланс Торговая Империя <br />
                   безнал:
                 </h1>
                 <h1 class="font-bold text-secondary-color text-4xl text-center">

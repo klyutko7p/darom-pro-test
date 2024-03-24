@@ -716,14 +716,14 @@ async function updateRow() {
                       "
                       value="Заказано"
                     >
-                      Заказано
+                      Оборот денежных средств
                     </option>
-                    <option value="Баланс наличные">Баланс наличные</option>
+                    <option value="Баланс наличные">Баланс наличные DP</option>
                     <option
                       v-if="user.role !== 'PVZ' && user.role !== 'COURIER'"
                       value="Баланс безнал"
                     >
-                      Баланс безнал
+                      Баланс безнал DP
                     </option>
                     <option
                       v-if="
@@ -733,7 +733,7 @@ async function updateRow() {
                       "
                       value="Доставка"
                     >
-                      Доставка и сортировка
+                    Доход D&S
                     </option>
                   </select>
                 </div>
@@ -1006,14 +1006,14 @@ async function updateRow() {
                       "
                       value="Заказано"
                     >
-                      Заказано
+                      Оборот денежных средств
                     </option>
-                    <option value="Баланс наличные">Баланс наличные</option>
+                    <option value="Баланс наличные">Баланс наличные DP</option>
                     <option
                       v-if="user.role !== 'PVZ' && user.role !== 'COURIER'"
                       value="Баланс безнал"
                     >
-                      Баланс безнал
+                      Баланс безнал DP
                     </option>
                     <option
                       v-if="
@@ -1023,7 +1023,7 @@ async function updateRow() {
                       "
                       value="Доставка"
                     >
-                      Доставка и сортировка
+                    Доход D&S
                     </option>
                   </select>
                 </div>

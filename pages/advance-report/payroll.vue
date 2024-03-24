@@ -200,6 +200,7 @@ let pvz = ref([
   "ПВЗ_3",
   "ПВЗ_4",
   "Офис",
+  "НаДом"
 ]);
 
 let companies = ref(["WB/OZ start", "Darom.pro", "Сортировка", "Доставка"]);
