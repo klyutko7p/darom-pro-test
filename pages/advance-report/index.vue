@@ -85,6 +85,7 @@ function getAllSum() {
     (row) =>
       row.issued !== null &&
       (row.additionally === "Оплата наличными" ||
+        row.additionally === "Отказ клиент наличные" ||
         row.additionally === "Отказ клиент")
   );
 
@@ -144,20 +145,28 @@ function getAllSum() {
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ8 = rowsOurRansom.value
-    ?.filter((row) => row.additionally === "Отказ клиент")
+    ?.filter(
+      (row) =>
+        row.additionally === "Отказ клиент наличные" ||
+        row.additionally === "Отказ клиент"
+    )
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ9 = rowsOurRansom.value
     ?.filter(
       (row) =>
-        row.additionally !== "Отказ клиент" && row.additionally !== "Отказ брак"
+        row.additionally !== "Отказ клиент наличные" &&
+        row.additionally !== "Отказ клиент" &&
+        row.additionally !== "Отказ брак"
     )
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ10 = rowsOurRansom.value
     ?.filter(
       (row) =>
-        row.additionally !== "Отказ клиент" && row.additionally !== "Отказ брак"
+        row.additionally !== "Отказ клиент наличные" &&
+        row.additionally !== "Отказ клиент" &&
+        row.additionally !== "Отказ брак"
     )
     .reduce((acc, value) => acc + +value.deliveredKGT, 0);
 
@@ -302,12 +311,13 @@ let pvz = ref([
   "Новониколаевка",
   "Политотдельское",
   "Мещерино",
+  "Коломенская",
   "ПВЗ_1",
   "ПВЗ_2",
   "ПВЗ_3",
   "ПВЗ_4",
   "Офис",
-  "НаДом"
+  "НаДом",
 ]);
 
 let typesOfExpenditure = ref([
@@ -327,6 +337,7 @@ let usersOfIssued = ref([
   "Косой",
   "Шарафаненко",
   "Волошина",
+  "Рейзвих",
 ]);
 
 import { createClient } from "@supabase/supabase-js";
@@ -435,6 +446,7 @@ function getAllSumFromName(username: string) {
     (row) =>
       row.issued !== null &&
       (row.additionally === "Оплата наличными" ||
+        row.additionally === "Отказ клиент наличные" ||
         row.additionally === "Отказ клиент")
   );
 
@@ -660,7 +672,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Выдано</label>
               <select
-                :disabled="user.role !== 'ADMIN'"
+                :disabled="user.role !== 'ADMIN' || rowData.id === null"
                 class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.issuedUser"
               >
@@ -673,7 +685,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Расход</label>
               <input
-                :disabled="user.role !== 'ADMIN'"
+                :disabled="user.role !== 'ADMIN' || rowData.id === null"
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
                 type="text"
@@ -996,9 +1008,9 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             </div>
 
             <div class="grid grid-cols-2 mb-5">
-              <label for="name">Выдано</label>
+              <label for="name">Выдано </label>
               <select
-                :disabled="user.role !== 'ADMIN'"
+                :disabled="user.role !== 'ADMIN' && rowData.id === null"
                 class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.issuedUser"
               >
@@ -1011,7 +1023,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Расход</label>
               <input
-                :disabled="user.role !== 'ADMIN'"
+                :disabled="user.role !== 'ADMIN' && rowData.id === null"
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
                 type="text"

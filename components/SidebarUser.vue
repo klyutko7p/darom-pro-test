@@ -142,7 +142,9 @@ function formatPhoneNumber(phoneNumber: string) {
       </div>
       <div
         v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана1') || user.role === 'ADMINISTRATOR' || user.role === 'PVZ'
+          (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'PVZ'
         "
         role="button"
         @click="router.push('/spreadsheets/refunds')"
@@ -160,6 +162,7 @@ function formatPhoneNumber(phoneNumber: string) {
           user.role === 'DRIVER' ||
           user.role === 'ADMINISTRATOR' ||
           user.role === 'OFFICE' ||
+          user.role === 'COURIER' ||
           user.username === 'Волошина'
         "
         role="button"
@@ -364,7 +367,9 @@ function formatPhoneNumber(phoneNumber: string) {
       </div>
       <div
         v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана1') || user.role === 'ADMINISTRATOR' || user.role === 'PVZ'
+          (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'PVZ'
         "
         role="button"
         @click="router.push('/spreadsheets/refunds')"
@@ -382,6 +387,7 @@ function formatPhoneNumber(phoneNumber: string) {
           user.role === 'DRIVER' ||
           user.role === 'ADMINISTRATOR' ||
           user.role === 'OFFICE' ||
+          user.role === 'COURIER' ||
           user.username === 'Волошина'
         "
         role="button"

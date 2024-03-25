@@ -233,7 +233,7 @@ definePageMeta({
                   !user.username.includes('Светлана')) ||
                 user.role === 'DRIVER' ||
                 user.role === 'ADMINISTRATOR' ||
-                user.role === 'OFFICE' ||
+                user.role === 'OFFICE' || user.role === 'COURIER' ||
                 user.username === 'Волошина'
               "
               role="button"

@@ -17,32 +17,33 @@ function getAmountToBePaid(flag: string) {
   if (link.startsWith('1')) {
     if (rows.value && flag === "NONE") {
       amountToPaid = rows.value
-        .filter((value) => !value.issued)
+        .filter((value) => !value.issued && value.deleted === null)
         .reduce((acc, value) => acc + Math.ceil(value.amountFromClient1 / 10) * 10, 0);
     } else if (rows.value && flag === "PVZ") {
       amountToPaid = rows.value
-        .filter((value) => value.deliveredPVZ && !value.issued)
+        .filter((value) => value.deliveredPVZ && !value.issued && value.deleted === null)
         .reduce((acc, value) => acc + Math.ceil(value.amountFromClient1 / 10) * 10, 0);
     }
   } else if (link.startsWith('2')) {
     if (rows.value && flag === "NONE") {
       amountToPaid = rows.value
-        .filter((value) => !value.issued)
+        .filter((value) => !value.issued && value.deleted === null)
         .reduce((acc, value) => acc + Math.ceil(value.amountFromClient2 / 10) * 10, 0);
     } else if (rows.value && flag === "PVZ") {
       amountToPaid = rows.value
-        .filter((value) => value.deliveredPVZ && !value.issued)
+        .filter((value) => value.deliveredPVZ && !value.issued && value.deleted === null)
         .reduce((acc, value) => acc + Math.ceil(value.amountFromClient2 / 10) * 10, 0);
     }
   } else if (link.startsWith('3')) {
     if (rows.value && flag === "NONE") {
       amountToPaid = rows.value
-        .filter((value) => !value.paid)
+        .filter((value) => !value.paid && value.deleted === null)
         .reduce((acc, value) => acc + value.amountFromClient3, 0);
     }
   }
   return amountToPaid;
 }
+
 let showReceivedItems = ref(true);
 
 function disableReceivedItems() {

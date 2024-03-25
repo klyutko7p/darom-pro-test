@@ -390,7 +390,7 @@ export const useRansomStore = defineStore("ransom", () => {
                     row.clientLink1 = ''
                 }
 
-                if (row.additionally === 'Отказ клиент') {
+                if (row.additionally === 'Отказ клиент наличные' || row.additionally === 'Отказ клиент онлайн' || row.additionally === 'Отказ клиент') {
                     row.amountFromClient1 = cachedSumOfRejection.value
                     row.profit1 = cachedSumOfRejection.value
                 } else if (row.additionally === 'Отказ брак') {

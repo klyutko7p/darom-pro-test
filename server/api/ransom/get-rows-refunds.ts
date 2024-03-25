@@ -15,6 +15,8 @@ export default defineEventHandler(async (event) => {
             const rows = await prisma.ourRansom.findMany({
                 where: {
                     OR: [
+                        { additionally: 'Отказ клиент наличные' },
+                        { additionally: 'Отказ клиент онлайн' },
                         { additionally: 'Отказ клиент' },
                         { additionally: 'Отказ брак' }
                     ],

@@ -173,7 +173,11 @@ const router = useRouter();
 let showOthersVariants = ref(false);
 
 function isExpired(row: any) {
-  if (row.deliveredSC !== null && row.deliveredPVZ !== null && row.issued === null) {
+  if (
+    row.deliveredSC !== null &&
+    row.deliveredPVZ !== null &&
+    row.issued === null
+  ) {
     const currentDate = new Date();
 
     const deliveredDate = new Date(row.deliveredPVZ);
@@ -185,6 +189,8 @@ function isExpired(row: any) {
     return daysDifference >= 5;
   }
 }
+
+let showPayRejectClient = ref(false);
 </script>
 
 <template>
@@ -276,34 +282,42 @@ function isExpired(row: any) {
       >Удалить выделенные записи</UIActionButton
     >
     <UIActionButton
-      v-if="user.deliveredSC1 === 'WRITE' && showButtonSC"
+      v-if="user.deliveredSC2 === 'WRITE' && showButtonSC"
       @click="updateDeliveryRows('SC')"
       >Доставить на сц
     </UIActionButton>
     <UIActionButton
-      v-if="user.issued1 === 'WRITE' && showButton"
+      v-if="user.issued2 === 'WRITE' && showButton"
       @click="showOthersVariants = !showOthersVariants"
     >
       Выдать клиенту
     </UIActionButton>
     <div v-if="showOthersVariants" class="flex flex-col gap-3">
       <UIActionButton2
-        v-if="user.additionally1 === 'WRITE'"
+        v-if="user.additionally2 === 'WRITE'"
         @click="updateDeliveryRows('additionally3')"
         >Оплата наличными
       </UIActionButton2>
       <UIActionButton2
-        v-if="user.additionally1 === 'WRITE'"
+        v-if="user.additionally2 === 'WRITE'"
         @click="updateDeliveryRows('additionally')"
         >Оплата онлайн
       </UIActionButton2>
       <UIActionButton2
-        v-if="user.additionally1 === 'WRITE'"
-        @click="updateDeliveryRows('additionally1')"
+        v-if="user.additionally2 === 'WRITE'"
+        @click="showPayRejectClient = !showPayRejectClient"
         >Отказ клиент
       </UIActionButton2>
+      <div>
+        <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"
+          >Отказ клиент онлайн</UIActionButton2
+        >
+        <UIActionButton2 @click="updateDeliveryRows('additionally1-2')"
+          >Отказ клиент наличные</UIActionButton2
+        >
+      </div>
       <UIActionButton2
-        v-if="user.additionally1 === 'WRITE'"
+        v-if="user.additionally2 === 'WRITE'"
         @click="updateDeliveryRows('additionally2')"
         >Отказ брак
       </UIActionButton2>
@@ -337,9 +351,17 @@ function isExpired(row: any) {
       </UIActionButton2>
       <UIActionButton2
         v-if="user.additionally2 === 'WRITE'"
-        @click="updateDeliveryRows('additionally1')"
+        @click="showPayRejectClient = !showPayRejectClient"
         >Отказ клиент
       </UIActionButton2>
+      <div>
+        <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"
+          >Отказ клиент онлайн</UIActionButton2
+        >
+        <UIActionButton2 @click="updateDeliveryRows('additionally1-2')"
+          >Отказ клиент наличные</UIActionButton2
+        >
+      </div>
       <UIActionButton2
         v-if="user.additionally2 === 'WRITE'"
         @click="updateDeliveryRows('additionally2')"
@@ -740,6 +762,8 @@ function isExpired(row: any) {
             v-if="
               (user.profit2 === 'READ' || user.profit2 === 'WRITE') &&
               row.additionally !== 'Отказ клиент' &&
+              row.additionally !== 'Отказ клиент онлайн' &&
+              row.additionally !== 'Отказ клиент наличные' &&
               row.additionally !== 'Отказ брак'
             "
           >
@@ -750,6 +774,8 @@ function isExpired(row: any) {
             v-if="
               (user.profit2 === 'READ' || user.profit2 === 'WRITE') &&
               (row.additionally === 'Отказ клиент' ||
+              row.additionally === 'Отказ клиент онлайн' ||
+              row.additionally === 'Отказ клиент наличные' ||
                 row.additionally === 'Отказ брак')
             "
           >

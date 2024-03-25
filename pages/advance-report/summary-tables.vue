@@ -84,7 +84,7 @@ function getAllSum() {
     (row) =>
       row.issued !== null &&
       (row.additionally === "Оплата наличными" ||
-        row.additionally === "Отказ клиент")
+        row.additionally === "Отказ клиент наличные" || row.additionally === "Отказ клиент")
   );
 
   copyArrayClientRansom.value = clientRansomRows.value?.filter(
@@ -145,20 +145,20 @@ function getAllSum() {
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ8 = rowsOurRansom.value
-    ?.filter((row) => row.additionally === "Отказ клиент")
+    ?.filter((row) => row.additionally === "Отказ клиент наличные" || row.additionally === "Отказ клиент")
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ9 = rowsOurRansom.value
     ?.filter(
       (row) =>
-        row.additionally !== "Отказ клиент" && row.additionally !== "Отказ брак"
+        row.additionally !== "Отказ клиент наличные" && row.additionally !== "Отказ клиент" && row.additionally !== "Отказ брак"
     )
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ10 = rowsOurRansom.value
     ?.filter(
       (row) =>
-        row.additionally !== "Отказ клиент" && row.additionally !== "Отказ брак"
+        row.additionally !== "Отказ клиент наличные" && row.additionally !== "Отказ клиент" && row.additionally !== "Отказ брак"
     )
     .reduce((acc, value) => acc + +value.deliveredKGT, 0);
 
@@ -282,6 +282,7 @@ let pvz = ref([
   "Новониколаевка",
   "Политотдельское",
   "Мещерино",
+  "Коломенская",
   "ПВЗ_1",
   "ПВЗ_2",
   "ПВЗ_3",
@@ -307,6 +308,7 @@ let usersOfIssued = ref([
   "Косой",
   "Шарафаненко",
   "Волошина",
+  "Рейзвих",
 ]);
 
 import { createClient } from "@supabase/supabase-js";
@@ -414,7 +416,7 @@ function getAllSumFromName(username: string) {
     (row) =>
       row.issued !== null &&
       (row.additionally === "Оплата наличными" ||
-        row.additionally === "Отказ клиент")
+        row.additionally === "Отказ клиент наличные" || row.additionally === "Отказ клиент")
   );
 
   copyArrayClientRansom.value = clientRansomRows.value?.filter(

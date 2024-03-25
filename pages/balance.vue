@@ -82,13 +82,13 @@ const endDate = ref<Date | string | null>(null);
 
 function calculateValue(curValue: any) {
   if (!curValue.prepayment) {
-    return curValue.additionally !== "Отказ клиент"
+    return curValue.additionally !== "Отказ клиент наличные" || curValue.additionally !== "Отказ клиент онлайн" || curValue.additionally !== "Отказ клиент"
       ? Math.ceil(curValue.amountFromClient1 / 10) * 10 -
           curValue.priceSite +
           curValue.deliveredKGT
       : sumOfReject.value.value;
   } else {
-    return curValue.additionally !== "Отказ клиент"
+    return curValue.additionally !== "Отказ клиент наличные" || curValue.additionally !== "Отказ клиент онлайн" || curValue.additionally !== "Отказ клиент"
       ? (curValue.priceSite * curValue.percentClient) / 100 +
           curValue.deliveredKGT
       : sumOfReject.value.value;
@@ -119,20 +119,20 @@ function reduceArray(array: any, flag: string) {
     }
   } else if (selectedTypeOfTransaction.value === "Баланс наличные") {
     if (flag === "OurRansom") {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      array = array.filter((row: any) => row.additionally !== "Отказ брак" && row.additionally !== "Отказ клиент онлайн");
       return array.reduce(
         (ac: any, curValue: any) =>
           ac + Math.ceil(curValue.amountFromClient1 / 10) * 10,
         0
       );
     } else if (flag === "ClientRansom") {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      array = array.filter((row: any) => row.additionally !== "Отказ брак" && row.additionally !== "Отказ клиент онлайн");
       return array.reduce(
         (ac: any, curValue: any) => ac + curValue.amountFromClient2,
         0
       );
     } else {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      array = array.filter((row: any) => row.additionally !== "Отказ брак" && row.additionally !== "Отказ клиент онлайн");
       return array.reduce(
         (ac: any, curValue: any) => ac + curValue.amountFromClient3,
         0
@@ -140,7 +140,7 @@ function reduceArray(array: any, flag: string) {
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (flag === "OurRansom") {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      array = array.filter((row: any) => row.additionally !== "Отказ брак" && row.additionally !== "Отказ клиент наличные");
       return array.reduce(
         (ac: any, curValue: any) =>
           ac +
@@ -149,14 +149,14 @@ function reduceArray(array: any, flag: string) {
         0
       );
     } else if (flag === "ClientRansom") {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      array = array.filter((row: any) => row.additionally !== "Отказ брак" && row.additionally !== "Отказ клиент наличные");
       return array.reduce(
         (ac: any, curValue: any) =>
           ac + (curValue.amountFromClient2 + curValue.prepayment),
         0
       );
     } else {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      array = array.filter((row: any) => row.additionally !== "Отказ брак" && row.additionally !== "Отказ клиент наличные");
       return array.reduce(
         (ac: any, curValue: any) => ac + curValue.amountFromClient3,
         0
@@ -276,7 +276,7 @@ function getAllSum() {
             new Date(row.issued) >= new Date(newStartingDate)) &&
           (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплата наличными" ||
-            row.additionally === "Отказ клиент")
+            row.additionally === "Отказ клиент наличные" || row.additionally === "Отказ клиент")
       );
 
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
@@ -285,16 +285,23 @@ function getAllSum() {
           (!startingDate.value ||
             new Date(row.issued) >= new Date(newStartingDate)) &&
           (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
-          row.additionally === "Оплата наличными"
+          (row.additionally === "Оплата наличными" ||
+            row.additionally === "Отказ клиент наличные" || row.additionally === "Отказ клиент")
       );
 
       let sumOfPVZ = rows.value
         ?.filter((row) => row.received !== null)
         .reduce((acc, value) => acc + +value.sum, 0);
 
+      let sumOfPVZ3 = rows.value
+        ?.filter(
+          (row) => row.received !== null && row.recipient !== "Нет" 
+        )
+        .reduce((acc, value) => acc + +value.sum, 0);
+
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value - sumOfPVZ;
+      allSum.value = sum1.value + sum2.value - sumOfPVZ + sumOfPVZ3;
     } else {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -303,7 +310,7 @@ function getAllSum() {
             new Date(row.issued) >= new Date(newStartingDate)) &&
           (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплата наличными" ||
-            row.additionally === "Отказ клиент") &&
+            row.additionally === "Отказ клиент наличные" || row.additionally === "Отказ клиент") &&
           row.dispatchPVZ === selectedPVZ.value
       );
 
@@ -314,7 +321,7 @@ function getAllSum() {
             new Date(row.issued) >= new Date(newStartingDate)) &&
           (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплата наличными" ||
-            row.additionally === "Отказ клиент") &&
+            row.additionally === "Отказ клиент наличные" || row.additionally === "Отказ клиент") &&
           row.dispatchPVZ === selectedPVZ.value
       );
       let sumOfPVZ = rows.value
@@ -351,7 +358,7 @@ function getAllSum() {
           (!startingDate.value ||
             new Date(row.issued) >= new Date(newStartingDate)) &&
           (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
-          row.additionally === "Оплачено онлайн"
+          (row.additionally === "Оплачено онлайн" || row.additionally === 'Отказ клиент онлайн')
       );
 
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
@@ -360,7 +367,7 @@ function getAllSum() {
           (!startingDate.value ||
             new Date(row.issued) >= new Date(newStartingDate)) &&
           (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
-          row.additionally === "Оплачено онлайн"
+          (row.additionally === "Оплачено онлайн" || row.additionally === 'Отказ клиент онлайн')
       );
 
       let sumOfPVZ = rowsOnline.value?.reduce(
@@ -378,7 +385,7 @@ function getAllSum() {
           (!startingDate.value ||
             new Date(row.issued) >= new Date(newStartingDate)) &&
           (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
-          row.additionally === "Оплачено онлайн" &&
+          (row.additionally === "Оплачено онлайн" || row.additionally === 'Отказ клиент онлайн') &&
           row.dispatchPVZ === selectedPVZ.value
       );
 
@@ -388,7 +395,7 @@ function getAllSum() {
           (!startingDate.value ||
             new Date(row.issued) >= new Date(newStartingDate)) &&
           (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
-          row.additionally === "Оплачено онлайн" &&
+          (row.additionally === "Оплачено онлайн" || row.additionally === 'Отказ клиент онлайн') &&
           row.dispatchPVZ === selectedPVZ.value
       );
 
@@ -733,7 +740,7 @@ async function updateRow() {
                       "
                       value="Доставка"
                     >
-                    Доход D&S
+                      Доход D&S
                     </option>
                   </select>
                 </div>
@@ -846,9 +853,6 @@ async function updateRow() {
                   v-model="rowData.recipient"
                 >
                   <option value="Нет">Нет</option>
-                  <option v-for="pvzData in pvz" :value="pvzData.name">
-                    {{ pvzData.name }}
-                  </option>
                   <option value="Рейзвих">Рейзвих</option>
                   <option value="Шведова">Шведова</option>
                   <option value="Директор">Директор</option>
@@ -1023,7 +1027,7 @@ async function updateRow() {
                       "
                       value="Доставка"
                     >
-                    Доход D&S
+                      Доход D&S
                     </option>
                   </select>
                 </div>
@@ -1136,9 +1140,10 @@ async function updateRow() {
                   v-model="rowData.recipient"
                 >
                   <option value="Нет">Нет</option>
-                  <option v-for="pvzData in pvz" :value="pvzData.name">
-                    {{ pvzData.name }}
-                  </option>
+                  <option value="Рейзвих">Рейзвих</option>
+                  <option value="Шведова">Шведова</option>
+                  <option value="Директор">Директор</option>
+                  <option value="Косой">Косой</option>
                 </select>
               </div>
 

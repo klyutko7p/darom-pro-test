@@ -253,6 +253,7 @@ let isShowAddSettings = ref(false);
           user.role === 'DRIVER' ||
           user.role === 'ADMINISTRATOR' ||
           user.role === 'OFFICE' ||
+          user.role === 'COURIER' ||
           user.username === 'Волошина'
         "
         role="button"
@@ -628,6 +629,7 @@ let isShowAddSettings = ref(false);
           user.role === 'DRIVER' ||
           user.role === 'ADMINISTRATOR' ||
           user.role === 'OFFICE' ||
+          user.role === 'COURIER' ||
           user.username === 'Волошина'
         "
         role="button"
@@ -855,7 +857,8 @@ let isShowAddSettings = ref(false);
       absolute:
         route.fullPath.includes('+') ||
         route.fullPath === '/spreadsheets/our-ransom' ||
-        route.fullPath === '/spreadsheets/client-ransom' || route.fullPath === '/advance-report/payroll',
+        route.fullPath === '/spreadsheets/client-ransom' ||
+        route.fullPath === '/advance-report/payroll',
     }"
     class="py-1 px-3 fixed z-40 max-xl:right-0 flex items-center max-sm:gap-3 justify-between duration-200 w-full bg-gradient-to-br from-purple-700 to-orange-400 backdrop-blur-2xl text-white"
   >

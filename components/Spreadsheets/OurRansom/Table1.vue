@@ -388,6 +388,8 @@ function showExpiredRows() {
     updateCurrentPageDataDeleted();
   }
 }
+
+let showPayRejectClient = ref(false);
 </script>
 
 <template>
@@ -532,9 +534,17 @@ function showExpiredRows() {
       </UIActionButton2>
       <UIActionButton2
         v-if="user.additionally1 === 'WRITE'"
-        @click="updateDeliveryRows('additionally1')"
+        @click="showPayRejectClient = !showPayRejectClient"
         >Отказ клиент
       </UIActionButton2>
+      <div v-if="showPayRejectClient" class="flex flex-col gap-3">
+        <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"
+          >Отказ клиент онлайн</UIActionButton2
+        >
+        <UIActionButton2 @click="updateDeliveryRows('additionally1-2')"
+          >Отказ клиент наличные</UIActionButton2
+        >
+      </div>
       <UIActionButton2
         v-if="user.additionally1 === 'WRITE'"
         @click="updateDeliveryRows('additionally2')"
@@ -570,9 +580,17 @@ function showExpiredRows() {
       </UIActionButton2>
       <UIActionButton2
         v-if="user.additionally1 === 'WRITE'"
-        @click="updateDeliveryRows('additionally1')"
+        @click="showPayRejectClient = !showPayRejectClient"
         >Отказ клиент
       </UIActionButton2>
+      <div v-if="showPayRejectClient">
+        <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"
+          >Отказ клиент онлайн</UIActionButton2
+        >
+        <UIActionButton2 @click="updateDeliveryRows('additionally1-2')"
+          >Отказ клиент наличные</UIActionButton2
+        >
+      </div>
       <UIActionButton
         v-if="user.additionally1 === 'WRITE'"
         @click="updateDeliveryRows('additionally2')"
@@ -1011,6 +1029,8 @@ function showExpiredRows() {
             v-if="
               (user.profit1 === 'READ' || user.profit1 === 'WRITE') &&
               row.additionally !== 'Отказ клиент' &&
+              row.additionally !== 'Отказ клиент онлайн' &&
+              row.additionally !== 'Отказ клиент наличные' &&
               row.additionally !== 'Отказ брак' &&
               !row.prepayment
             "
@@ -1027,6 +1047,8 @@ function showExpiredRows() {
             v-if="
               (user.profit1 === 'READ' || user.profit1 === 'WRITE') &&
               row.additionally !== 'Отказ клиент' &&
+              row.additionally !== 'Отказ клиент онлайн' &&
+              row.additionally !== 'Отказ клиент наличные' &&
               row.additionally !== 'Отказ брак' &&
               row.prepayment
             "
@@ -1045,6 +1067,8 @@ function showExpiredRows() {
             v-if="
               (user.profit1 === 'READ' || user.profit1 === 'WRITE') &&
               (row.additionally === 'Отказ клиент' ||
+                row.additionally === 'Отказ клиент онлайн' ||
+                row.additionally === 'Отказ клиент наличные' ||
                 row.additionally === 'Отказ брак')
             "
           >
