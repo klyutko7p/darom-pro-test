@@ -235,13 +235,13 @@ async function createAdvanceReportZP() {
     <h1 class="font-bold text-4xl mb-3">Итого</h1>
     <div>
       <h1 class="font-medium text-xl">
-        Выплачен аванс: {{ getAllSumAdvance().toFixed(0) }} ₽
+        Выплачен аванс: {{ typeof(getAllSumAdvance()) === 'number' ? getAllSumAdvance().toFixed(0) : 0 }} ₽
       </h1>
       <h1 class="font-medium text-xl">
-        ЗП к начислению: {{ getAllSumZP().toFixed(0) }} ₽
+        ЗП к начислению: {{ typeof(getAllSumZP()) === 'number' ? getAllSumZP().toFixed(0) : 0 }} ₽
       </h1>
       <h1 class="font-medium text-xl">
-        Итого начислено за месяц: {{ getAllSumZPMonth().toFixed(0) }} ₽
+        Итого начислено за месяц: {{ typeof(getAllSumZPMonth()) === 'number' ? getAllSumZPMonth().toFixed(0) : 0 }} ₽
       </h1>
     </div>
   </div>
@@ -372,6 +372,9 @@ async function createAdvanceReportZP() {
             }}
             ₽
           </td>
+          <td class="border-2 whitespace-nowrap" v-else>
+            0 ₽
+          </td>
           <td
             class="border-2 whitespace-nowrap"
             v-if="
@@ -392,6 +395,9 @@ async function createAdvanceReportZP() {
               ).toFixed(0)
             }}
             ₽
+          </td>
+          <td class="border-2 whitespace-nowrap" v-else>
+            0 ₽
           </td>
           <td
             class="px-6 py-4 border-2"
