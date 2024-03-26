@@ -207,15 +207,6 @@ async function createAdvanceReportZP() {
     />
   </div>
 
-  <div class="flex">
-    <UIActionButton
-      @click="updateReport()"
-      v-if="arrayWithModifiedRows.length > 0"
-    >
-      Сохранить
-    </UIActionButton>
-  </div>
-
   <div class="mb-10">
     <h1 class="font-bold text-4xl mb-3">Итого</h1>
     <div>
@@ -227,6 +218,15 @@ async function createAdvanceReportZP() {
         Итого начислено за месяц: {{ getAllSumZPMonth() }} ₽
       </h1>
     </div>
+  </div>
+
+  <div class="flex">
+    <UIActionButton
+      @click="updateReport()"
+      v-if="arrayWithModifiedRows.length > 0"
+    >
+      Сохранить
+    </UIActionButton>
   </div>
 
   <div class="relative max-h-[610px] mt-5 mb-10 mr-5">

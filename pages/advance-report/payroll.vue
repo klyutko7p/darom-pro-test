@@ -206,7 +206,7 @@ let pvz = ref([
 
 let companies = ref(["WB/OZ start", "Darom.pro", "Сортировка", "Доставка"]);
 
-let banks = ref(["тинькофф", "сбер", "почтабанк", "озон"]);
+let banks = ref(["тинькофф", "сбер", "почтабанк", "озон", "яндекс банк"]);
 
 function autoInfoByFullname() {
   let row = employees.value.filter(
