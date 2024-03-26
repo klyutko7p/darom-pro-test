@@ -94,13 +94,16 @@ function updateCurrentPageData() {
         return (
           rowDate >= startDate &&
           rowDate <= endDate &&
-          row.typeOfExpenditure !== "Пополнение баланса"
+          row.typeOfExpenditure !== "Пополнение баланса" &&
+          row.typeOfExpenditure !== "Передача денежных средств"
         );
       }
     );
   } else {
     arrayOfExpenditure.value = filteredRows.value?.filter(
-      (row: IAdvanceReport) => row.typeOfExpenditure !== "Пополнение баланса"
+      (row: IAdvanceReport) =>
+        row.typeOfExpenditure !== "Пополнение баланса" &&
+        row.typeOfExpenditure !== "Передача денежных средств"
     );
   }
 
@@ -274,7 +277,11 @@ let pvz = ref([
       >
         <tr>
           <td class="border-2 p-2 whitespace-nowrap font-bold">Статус</td>
-          <th scope="col" class="border-2 p-2 whitespace-nowrap" v-for="pvzName in pvz">
+          <th
+            scope="col"
+            class="border-2 p-2 whitespace-nowrap"
+            v-for="pvzName in pvz"
+          >
             {{ pvzName }}
           </th>
           <td class="border-2 p-2 whitespace-nowrap font-bold">Итого</td>
@@ -283,17 +290,27 @@ let pvz = ref([
       <tbody>
         <tr class="text-center">
           <td class="border-2 p-2 whitespace-nowrap font-bold">Поступления</td>
-          <td class="border-2 p-2 whitespace-nowrap font-bold" v-for="sum in receiptsByPVZ">
+          <td
+            class="border-2 p-2 whitespace-nowrap font-bold"
+            v-for="sum in receiptsByPVZ"
+          >
             {{ sum }} ₽
           </td>
-          <td class="border-2 p-2 whitespace-nowrap font-bold">{{ sumOfArray1 }} ₽</td>
+          <td class="border-2 p-2 whitespace-nowrap font-bold">
+            {{ sumOfArray1 }} ₽
+          </td>
         </tr>
         <tr class="text-center">
           <td class="border-2 p-2 whitespace-nowrap font-bold">Расход</td>
-          <td class="border-2 p-2 whitespace-nowrap font-bold" v-for="sum in expenditureByPVZ">
+          <td
+            class="border-2 p-2 whitespace-nowrap font-bold"
+            v-for="sum in expenditureByPVZ"
+          >
             {{ sum }} ₽
           </td>
-          <td class="border-2 p-2 whitespace-nowrap font-bold">{{ sumOfArray2 }} ₽</td>
+          <td class="border-2 p-2 whitespace-nowrap font-bold">
+            {{ sumOfArray2 }} ₽
+          </td>
         </tr>
         <tr class="text-center">
           <td class="border-2 p-2 whitespace-nowrap font-bold">Итого</td>
@@ -303,7 +320,9 @@ let pvz = ref([
           >
             {{ sum }} ₽
           </td>
-          <td class="border-2 font-bold p-2 whitespace-nowrap">{{ sumOfArray3 }} ₽</td>
+          <td class="border-2 font-bold p-2 whitespace-nowrap">
+            {{ sumOfArray3 }} ₽
+          </td>
         </tr>
       </tbody>
     </table>
