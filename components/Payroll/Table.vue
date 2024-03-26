@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 import { read, utils, writeFile, write } from "xlsx";
-const storeAdvanceReport = useAdvanceReports()
+const storeAdvanceReport = useAdvanceReports();
 const emit = defineEmits([
   "openModal",
   "createReport",
@@ -85,7 +85,9 @@ function getRowByIdFromInput(row: IPayroll) {
 watch([props.rows, totalRows, props.user], updateCurrentPageData);
 
 function getAllSumAdvance() {
-  return filteredRows.value?.reduce((acc, value) => acc + +value.advance, 0);
+  return filteredRows.value?.reduce((acc, value) => acc + +value.advance, 0)
+    ? filteredRows.value?.reduce((acc, value) => acc + +value.advance, 0)
+    : 0;
 }
 
 function getAllSumZP() {
@@ -96,7 +98,16 @@ function getAllSumZP() {
       value.deductions +
       value.additionalPayment;
     return acc + payment;
-  }, 0);
+  }, 0)
+    ? filteredRows.value?.reduce((acc, value) => {
+        const payment =
+          value.hours * value.paymentPerShift -
+          value.advance -
+          value.deductions +
+          value.additionalPayment;
+        return acc + payment;
+      }, 0)
+    : 0;
 }
 
 function getAllSumZPMonth() {
@@ -108,7 +119,17 @@ function getAllSumZPMonth() {
         value.deductions +
         value.additionalPayment);
     return acc + payment;
-  }, 0);
+  }, 0)
+    ? filteredRows.value?.reduce((acc, value) => {
+        const payment =
+          value.advance +
+          (value.hours * value.paymentPerShift -
+            value.advance -
+            value.deductions +
+            value.additionalPayment);
+        return acc + payment;
+      }, 0)
+    : 0;
 }
 
 function exportToExcel() {
@@ -123,10 +144,10 @@ async function createAdvanceReportAdvance() {
   rows = rows?.map((row: IPayroll) => ({
     PVZ: row.PVZ,
     expenditure: row.advance.toString(),
-    typeOfExpenditure: 'Оплата ФОТ',
+    typeOfExpenditure: "Оплата ФОТ",
     company: row.company,
-    createdUser: 'Директор',
-    type: 'Нал',
+    createdUser: "Директор",
+    type: "Нал",
     date: row.date,
     issuedUser: "",
   }));
@@ -146,15 +167,16 @@ async function createAdvanceReportZP() {
 
   rows = rows?.map((row: IPayroll) => ({
     PVZ: row.PVZ,
-    expenditure:
-      (row.hours * row.paymentPerShift -
+    expenditure: (
+      row.hours * row.paymentPerShift -
       row.advance -
       row.deductions +
-      row.additionalPayment).toString(),
-    typeOfExpenditure: 'Оплата ФОТ',
+      row.additionalPayment
+    ).toString(),
+    typeOfExpenditure: "Оплата ФОТ",
     company: row.company,
-    createdUser: 'Директор',
-    type: 'Нал',
+    createdUser: "Директор",
+    type: "Нал",
     date: row.date,
     issuedUser: "",
   }));
@@ -191,7 +213,9 @@ async function createAdvanceReportZP() {
     </div>
   </div>
   <div class="flex justify-between items-center mb-3 gap-3 max-sm:items-end">
-    <div class="flex items-center gap-3 max-sm:flex-col max-sm:w-full max-sm:items-start">
+    <div
+      class="flex items-center gap-3 max-sm:flex-col max-sm:w-full max-sm:items-start"
+    >
       <UIMainButton @click="createAdvanceReportAdvance"
         >создать отчёт по авансу</UIMainButton
       >
@@ -211,11 +235,13 @@ async function createAdvanceReportZP() {
     <h1 class="font-bold text-4xl mb-3">Итого</h1>
     <div>
       <h1 class="font-medium text-xl">
-        Выплачен аванс: {{ getAllSumAdvance() }} ₽
+        Выплачен аванс: {{ getAllSumAdvance().toFixed(0) }} ₽
       </h1>
-      <h1 class="font-medium text-xl">ЗП к начислению: {{ getAllSumZP() }} ₽</h1>
       <h1 class="font-medium text-xl">
-        Итого начислено за месяц: {{ getAllSumZPMonth() }} ₽
+        ЗП к начислению: {{ getAllSumZP().toFixed(0) }} ₽
+      </h1>
+      <h1 class="font-medium text-xl">
+        Итого начислено за месяц: {{ getAllSumZPMonth().toFixed(0) }} ₽
       </h1>
     </div>
   </div>
@@ -286,7 +312,7 @@ async function createAdvanceReportZP() {
           </td>
           <td class="border-2 whitespace-nowrap">
             {{ row.bank }}
-          </td> 
+          </td>
           <td class="border-2 whitespace-nowrap">
             {{ row.paymentPerShift ? row.paymentPerShift : 0 }} ₽
           </td>
@@ -296,8 +322,8 @@ async function createAdvanceReportZP() {
               type="number"
               @input="getRowByIdFromInput(row)"
               v-model="row.advance"
-            /> 
-            <span class="hidden">{{ row.advance }} ₽</span> 
+            />
+            <span class="hidden">{{ row.advance }} ₽</span>
           </td>
           <td class="border-2 whitespace-nowrap">
             <input
@@ -306,7 +332,7 @@ async function createAdvanceReportZP() {
               @input="getRowByIdFromInput(row)"
               v-model="row.hours"
             />
-            <span class="hidden">{{ row.hours }} ₽</span> 
+            <span class="hidden">{{ row.hours }} ₽</span>
           </td>
           <td class="border-2 whitespace-nowrap">
             <input
@@ -315,7 +341,7 @@ async function createAdvanceReportZP() {
               @input="getRowByIdFromInput(row)"
               v-model="row.deductions"
             />
-            <span class="hidden">{{ row.deductions }} ₽</span> 
+            <span class="hidden">{{ row.deductions }} ₽</span>
           </td>
           <td class="border-2 whitespace-nowrap">
             <input
@@ -324,9 +350,18 @@ async function createAdvanceReportZP() {
               @input="getRowByIdFromInput(row)"
               v-model="row.additionalPayment"
             />
-            <span class="hidden">{{ row.additionalPayment }} ₽</span> 
+            <span class="hidden">{{ row.additionalPayment }} ₽</span>
           </td>
-          <td class="border-2 whitespace-nowrap">
+          <td
+            class="border-2 whitespace-nowrap"
+            v-if="
+              row.hours !== '' &&
+              row.paymentPerShift !== '' &&
+              row.advance !== '' &&
+              row.deductions !== '' &&
+              row.additionalPayment !== ''
+            "
+          >
             {{
               (
                 row.hours * row.paymentPerShift -
@@ -334,9 +369,19 @@ async function createAdvanceReportZP() {
                 row.deductions +
                 row.additionalPayment
               ).toFixed(0)
-            }} ₽
+            }}
+            ₽
           </td>
-          <td class="border-2 whitespace-nowrap">
+          <td
+            class="border-2 whitespace-nowrap"
+            v-if="
+              row.hours !== '' &&
+              row.paymentPerShift !== '' &&
+              row.advance !== '' &&
+              row.deductions !== '' &&
+              row.additionalPayment !== ''
+            "
+          >
             {{
               (
                 row.advance +
@@ -345,7 +390,8 @@ async function createAdvanceReportZP() {
                   row.deductions +
                   row.additionalPayment)
               ).toFixed(0)
-            }} ₽
+            }}
+            ₽
           </td>
           <td
             class="px-6 py-4 border-2"
@@ -365,8 +411,6 @@ async function createAdvanceReportZP() {
       </tbody>
     </table>
   </div>
-
-  
 </template>
 
 <style scoped>
