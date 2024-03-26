@@ -50,7 +50,7 @@ function openModal(row: IPayroll) {
   const newDate = new Date(year, month, 5);
 
   rowData.value = JSON.parse(JSON.stringify(row));
-  rowData.value.date = newDate
+  rowData.value.date = newDate;
 }
 
 async function createReport(object: any) {
@@ -104,10 +104,13 @@ async function updateRow() {
 }
 
 async function deleteRow(id: number) {
-  isLoading.value = true;
-  await storePayrolls.deletePayroll(id);
-  rows.value = await storePayrolls.getPayrolls();
-  isLoading.value = false;
+  let answer = confirm("Вы точно хотите удалить строку?");
+  if (answer) {
+    isLoading.value = true;
+    await storePayrolls.deletePayroll(id);
+    rows.value = await storePayrolls.getPayrolls();
+    isLoading.value = false;
+  }
 }
 
 const filteredRows = ref<Array<IAdvanceReport>>();
@@ -201,7 +204,7 @@ let pvz = ref([
   "ПВЗ_3",
   "ПВЗ_4",
   "Офис",
-  "НаДом"
+  "НаДом",
 ]);
 
 let companies = ref(["WB/OZ start", "Darom.pro", "Сортировка", "Доставка"]);
@@ -218,7 +221,9 @@ function autoInfoByFullname() {
   rowData.value.bank = row[0].bank;
   rowData.value.paymentPerShift2 = row[0].paymentPerShift;
   rowData.value.hoursPerShift = row[0].hoursPerShift;
-  rowData.value.paymentPerShift = +(row[0].paymentPerShift / row[0].hoursPerShift).toFixed(2);
+  rowData.value.paymentPerShift = +(
+    row[0].paymentPerShift / row[0].hoursPerShift
+  ).toFixed(2);
 }
 </script>
 
@@ -231,9 +236,15 @@ function autoInfoByFullname() {
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="mt-10">
-          <div class="flex items-center justify-between max-sm:flex-col gap-3 max-sm:items-start">
+          <div
+            class="flex items-center justify-between max-sm:flex-col gap-3 max-sm:items-start"
+          >
             <UIMainButton @click="openModal">Создать запись</UIMainButton>
-            <NuxtLink to="/advance-report/employees" class="underline text-secondary-color font-bold text-xl hover:opacity-50 duration-200">Перейти к сотрудникам</NuxtLink>
+            <NuxtLink
+              to="/advance-report/employees"
+              class="underline text-secondary-color font-bold text-xl hover:opacity-50 duration-200"
+              >Перейти к сотрудникам</NuxtLink
+            >
           </div>
 
           <PayrollTable
