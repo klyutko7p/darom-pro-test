@@ -141,18 +141,31 @@ function exportToExcel() {
 async function createAdvanceReportAdvance() {
   let rows = filteredRows.value?.filter((row) => row.advance);
 
-  rows = rows?.map((row: IPayroll) => ({
-    PVZ: row.PVZ,
-    expenditure: row.advance.toString(),
+  let groupedRows = rows.reduce((acc, row) => {
+    const key = `${row.PVZ}_${row.company}`;
+    if (!acc[key]) {
+      acc[key] = {
+        PVZ: row.PVZ,
+        company: row.company,
+        expenditureSum: 0,
+      };
+    }
+    acc[key].expenditureSum += parseFloat(row.advance); // Предполагается, что row.advance строка, преобразуем ее в число
+    return acc;
+  }, {});
+
+  let resultRows = Object.values(groupedRows).map((groupedRow) => ({
+    PVZ: groupedRow.PVZ,
+    expenditure: groupedRow.expenditureSum.toString(),
     typeOfExpenditure: "Оплата ФОТ",
-    company: row.company,
+    company: groupedRow.company,
     createdUser: "Директор",
     type: "Нал",
-    date: row.date,
+    date: rows.find((row) => row.PVZ === groupedRow.PVZ && row.company === groupedRow.company)?.date,
     issuedUser: "",
   }));
 
-  await storeAdvanceReport.createAdvanceReports(rows);
+  await storeAdvanceReport.createAdvanceReports(resultRows);
 }
 
 async function createAdvanceReportZP() {
@@ -165,23 +178,32 @@ async function createAdvanceReportZP() {
     );
   });
 
-  rows = rows?.map((row: IPayroll) => ({
-    PVZ: row.PVZ,
-    expenditure: (
-      row.hours * row.paymentPerShift -
-      row.advance -
-      row.deductions +
-      row.additionalPayment
-    ).toString(),
+  let groupedRows = rows.reduce((acc, row) => {
+    const key = `${row.PVZ}_${row.company}`;
+    if (!acc[key]) {
+      acc[key] = {
+        PVZ: row.PVZ,
+        company: row.company,
+        expenditureSum: 0,
+      };
+    }
+    const expenditure = row.hours * row.paymentPerShift - row.advance - row.deductions + row.additionalPayment;
+    acc[key].expenditureSum += expenditure;
+    return acc;
+  }, {});
+
+  let resultRows = Object.values(groupedRows).map((groupedRow) => ({
+    PVZ: groupedRow.PVZ,
+    expenditure: groupedRow.expenditureSum.toString(),
     typeOfExpenditure: "Оплата ФОТ",
-    company: row.company,
+    company: groupedRow.company,
     createdUser: "Директор",
     type: "Нал",
-    date: row.date,
+    date: rows.find((row) => row.PVZ === groupedRow.PVZ && row.company === groupedRow.company)?.date,
     issuedUser: "",
   }));
 
-  await storeAdvanceReport.createAdvanceReports(rows);
+  await storeAdvanceReport.createAdvanceReports(resultRows);
 }
 </script>
 <template>
@@ -235,13 +257,26 @@ async function createAdvanceReportZP() {
     <h1 class="font-bold text-4xl mb-3">Итого</h1>
     <div>
       <h1 class="font-medium text-xl">
-        Выплачен аванс: {{ typeof(getAllSumAdvance()) === 'number' ? getAllSumAdvance().toFixed(0) : 0 }} ₽
+        Выплачен аванс:
+        {{
+          typeof getAllSumAdvance() === "number"
+            ? getAllSumAdvance().toFixed(0)
+            : 0
+        }}
+        ₽
       </h1>
       <h1 class="font-medium text-xl">
-        ЗП к начислению: {{ typeof(getAllSumZP()) === 'number' ? getAllSumZP().toFixed(0) : 0 }} ₽
+        ЗП к начислению:
+        {{ typeof getAllSumZP() === "number" ? getAllSumZP().toFixed(0) : 0 }} ₽
       </h1>
       <h1 class="font-medium text-xl">
-        Итого начислено за месяц: {{ typeof(getAllSumZPMonth()) === 'number' ? getAllSumZPMonth().toFixed(0) : 0 }} ₽
+        Итого начислено за месяц:
+        {{
+          typeof getAllSumZPMonth() === "number"
+            ? getAllSumZPMonth().toFixed(0)
+            : 0
+        }}
+        ₽
       </h1>
     </div>
   </div>
@@ -372,9 +407,7 @@ async function createAdvanceReportZP() {
             }}
             ₽
           </td>
-          <td class="border-2 whitespace-nowrap" v-else>
-            0 ₽
-          </td>
+          <td class="border-2 whitespace-nowrap" v-else>0 ₽</td>
           <td
             class="border-2 whitespace-nowrap"
             v-if="
@@ -396,9 +429,7 @@ async function createAdvanceReportZP() {
             }}
             ₽
           </td>
-          <td class="border-2 whitespace-nowrap" v-else>
-            0 ₽
-          </td>
+          <td class="border-2 whitespace-nowrap" v-else>0 ₽</td>
           <td
             class="px-6 py-4 border-2"
             v-if="
