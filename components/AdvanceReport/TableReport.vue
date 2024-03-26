@@ -174,7 +174,7 @@ function updateCurrentPageData() {
 
   arrayOfExpenditure.value?.forEach((row) => {
     if (!isNaN(expenditureByPVZ[row.PVZ])) {
-      receiptsByPVZ[row.PVZ] += parseFloat(row.expenditure);
+      expenditureByPVZ[row.PVZ] += parseFloat(row.expenditure);
     }
   });
 

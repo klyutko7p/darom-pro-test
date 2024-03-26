@@ -618,7 +618,7 @@ let month = ref(new Date().getMonth() + 1);
             <h1 class="font-bold text-2xl mb-1 max-2xl:border-b-2 border-black p-2">
               Итог месяца прибыли по всем проектам
             </h1>
-            <div class="font-bold text-2xl mb-1 max-2xl:border-b-2 border-black p-2">
+            <div class="p-3 border-2 border-dashed border-black max-2xl:border-0">
               <AdvanceReportTableReport
                 :rows="filteredRows"
                 :user="user"
