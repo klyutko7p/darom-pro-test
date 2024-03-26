@@ -542,7 +542,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               v-if="user.username === 'Директор'"
               @click="openModalAdminOOO"
             >
-              Пополнение баланса ООО "Фоссан" (безнал)
+              Пополнение баланса торговой империи (безнал)
             </UIMainButton>
           </div>
 
