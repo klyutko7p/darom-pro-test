@@ -30,7 +30,10 @@ const uniqueExpenditure = computed(() => {
 });
 
 const uniqueTypeOfExpenditure = computed(() => {
-  return storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "typeOfExpenditure");
+  return storeAdvanceReports.getUniqueNonEmptyValues(
+    props.rows,
+    "typeOfExpenditure"
+  );
 });
 
 const uniqueNotation = computed(() => {
@@ -83,7 +86,8 @@ const filterRows = () => {
     return (
       (!selectedPVZ.value || row.PVZ === selectedPVZ.value) &&
       (!selectedType.value || row.type === selectedType.value) &&
-      (!selectedExpenditure.value || row.expenditure === selectedExpenditure.value) &&
+      (!selectedExpenditure.value ||
+        row.expenditure === selectedExpenditure.value) &&
       (!selectedTypeOfExpenditure.value ||
         row.typeOfExpenditure === selectedTypeOfExpenditure.value) &&
       (!selectedNotation.value || row.notation === selectedNotation.value) &&
@@ -160,15 +164,20 @@ const nonEmptyCount: Ref<number> = computed(() => {
     );
   }).length;
 });
-
 </script>
 
 <template>
   <div class="flex items-center gap-3 mt-14 max-xl:mt-0">
     <h1 class="text-xl font-bold">Фильтры</h1>
-    <Icon @click="showFilters = !showFilters" class="cursor-pointer duration-200 hover:text-secondary-color"
-      name="solar:filters-line-duotone" size="24" />
-    <h1 class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full"> {{ nonEmptyCount }} </h1>
+    <Icon
+      @click="showFilters = !showFilters"
+      class="cursor-pointer duration-200 hover:text-secondary-color"
+      name="solar:filters-line-duotone"
+      size="24"
+    />
+    <h1 class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full">
+      {{ nonEmptyCount }}
+    </h1>
   </div>
 
   <div
@@ -206,7 +215,10 @@ const nonEmptyCount: Ref<number> = computed(() => {
       </div>
       <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
         <h1>Тип:</h1>
-        <select class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400" v-model="selectedType">
+        <select
+          class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+          v-model="selectedType"
+        >
           <option value="Нал">Нал</option>
           <option value="Безнал">Безнал</option>
         </select>
@@ -268,12 +280,17 @@ const nonEmptyCount: Ref<number> = computed(() => {
         </datalist>
       </div>
     </div>
-    <div class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5">
+    <div
+      class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5"
+    >
       <div class="flex items-center gap-3 mr-5">
         <h1 class="max-sm:mr-3">С</h1>
         <input
           class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-          type="date"
+          type="text"
+          placeholder="ДД.ММ.ГГГГ"
+          onfocus="(this.type='date')"
+          onblur="(this.type='text')"
           v-model="startingDate"
         />
       </div>
@@ -281,13 +298,18 @@ const nonEmptyCount: Ref<number> = computed(() => {
         <h1>По</h1>
         <input
           class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-          type="date"
+          type="text"
+          placeholder="ДД.ММ.ГГГГ"
+          onfocus="(this.type='date')"
+          onblur="(this.type='text')"
           v-model="endDate"
         />
       </div>
     </div>
     <div class="flex justify-end gap-3 mt-3">
-      <UIMainButton @click="filterRows(), showFilters = !showFilters">Принять</UIMainButton>
+      <UIMainButton @click="filterRows(), (showFilters = !showFilters)"
+        >Принять</UIMainButton
+      >
       <UIActionButton @click="clearFields">Очистить фильтры</UIActionButton>
     </div>
   </div>

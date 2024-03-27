@@ -457,6 +457,51 @@ function getAllSumFromName(username: string) {
   }
 }
 
+function getAllSumFromEmployees() {
+  copyArrayOurRansom.value = ourRansomRows.value?.filter(
+    (row) =>
+      row.issued !== null &&
+      (row.additionally === "Оплата наличными" ||
+        row.additionally === "Отказ клиент наличные" ||
+        row.additionally === "Отказ клиент")
+  );
+
+  copyArrayClientRansom.value = clientRansomRows.value?.filter(
+    (row) => row.issued !== null && row.additionally === "Оплата наличными"
+  );
+
+  let totalSum = 0;
+
+  usersOfIssued.value
+    .filter((username) => username !== "Директор")
+    .forEach((username) => {
+      let sumOfPVZ = rowsBalance.value
+        ?.filter((row) => row.received !== null && row.recipient === username)
+        .reduce((acc, value) => acc + +value.sum, 0);
+
+      let sumOfPVZ1 = originallyRows.value
+        ?.filter((row) => row.received !== null && row.createdUser === username)
+        .reduce((acc, value) => acc + +value.expenditure, 0);
+
+      let sumOfPVZ2 = originallyRows.value
+        ?.filter((row) => row.received !== null && row.issuedUser === username)
+        .reduce((acc, value) => acc + +value.expenditure, 0);
+
+      let sumOfPVZ3 = originallyRows.value
+        ?.filter(
+          (row) =>
+            row.createdUser === username &&
+            (row.issuedUser === "" || row.issuedUser === null)
+        )
+        .reduce((acc, value) => acc + +value.expenditure, 0);
+
+      let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
+      totalSum += allSum;
+    });
+  totalSum += allSum.value;
+  return totalSum;
+}
+
 const filteredRows = ref<Array<IAdvanceReport>>();
 function handleFilteredRows(filteredRowsData: IAdvanceReport[]) {
   filteredRows.value = filteredRowsData;
@@ -571,15 +616,15 @@ let month = ref(new Date().getMonth() + 1);
           </NuxtLink>
 
           <div>
-            <div class="text-center text-2xl my-5">
-              <h1>Баланс Торговая Империя онлайн&наличные:</h1>
+            <div class="text-center text-xl my-3">
+              <h1>Баланс Торговой Империи онлайн&наличные:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
-                {{ formatNumber(Math.ceil(allSum)) }} ₽
+                {{ formatNumber(Math.ceil(getAllSumFromEmployees())) }} ₽
               </h1>
             </div>
-            <div class="text-center text-2xl my-5">
+            <div class="text-center text-xl my-3">
               <h1>
-                Баланс Торговая Империя <br />
+                Баланс Торговой Империи <br />
                 безнал:
               </h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">

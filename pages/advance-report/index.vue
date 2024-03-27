@@ -244,6 +244,166 @@ function getAllSum() {
   }
 }
 
+function getAllSumDirector() {
+  copyArrayOurRansom.value = ourRansomRows.value?.filter(
+    (row) =>
+      row.issued !== null &&
+      (row.additionally === "Оплата наличными" ||
+        row.additionally === "Отказ клиент наличные" ||
+        row.additionally === "Отказ клиент")
+  );
+
+  copyArrayClientRansom.value = clientRansomRows.value?.filter(
+    (row) => row.issued !== null && row.additionally === "Оплата наличными"
+  );
+
+  let sumOfPVZ = rowsBalance.value
+    ?.filter((row) => row.received !== null && row.recipient === "Директор")
+    .reduce((acc, value) => acc + +value.sum, 0);
+
+  let sumOfPVZ1 = rows.value
+    ?.filter(
+      (row) =>
+        row.received !== null &&
+        row.createdUser === "Директор" &&
+        row.typeOfExpenditure !== "Пополнение баланса" &&
+        row.type === "Нал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ2 = rows.value
+    ?.filter(
+      (row) =>
+        row.received !== null &&
+        row.issuedUser === "Директор" &&
+        row.type === "Нал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ3 = rows.value
+    ?.filter(
+      (row) =>
+        row.createdUser === "Директор" &&
+        row.issuedUser === "" &&
+        row.type === "Нал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ4 = rowsDelivery.value
+    ?.filter((row) => row.paid !== null)
+    .reduce((acc, value) => acc + +value.amountFromClient3, 0);
+
+  let sumOfPVZ5 = rowsBalanceOnline.value?.reduce(
+    (acc, value) => acc + +value.sum,
+    0
+  );
+
+  let sumOfPVZ6 = rowsOurRansom.value
+    ?.filter((row) => row.verified !== null)
+    .reduce((acc, value) => acc + +value.priceRefund, 0);
+
+  let sumOfPVZ7 = rowsOurRansom.value
+    ?.filter((row) => row.additionally === "Отказ брак")
+    .reduce((acc, value) => acc + +value.priceSite, 0);
+
+  let sumOfPVZ8 = rowsOurRansom.value
+    ?.filter(
+      (row) =>
+        row.additionally === "Отказ клиент наличные" ||
+        row.additionally === "Отказ клиент"
+    )
+    .reduce((acc, value) => acc + +value.priceSite, 0);
+
+  let sumOfPVZ9 = rowsOurRansom.value
+    ?.filter(
+      (row) =>
+        row.additionally !== "Отказ клиент наличные" &&
+        row.additionally !== "Отказ клиент" &&
+        row.additionally !== "Отказ брак"
+    )
+    .reduce((acc, value) => acc + +value.priceSite, 0);
+
+  let sumOfPVZ10 = rowsOurRansom.value
+    ?.filter(
+      (row) =>
+        row.additionally !== "Отказ клиент наличные" &&
+        row.additionally !== "Отказ клиент" &&
+        row.additionally !== "Отказ брак"
+    )
+    .reduce((acc, value) => acc + +value.deliveredKGT, 0);
+
+  let sumOfPVZ1Cashless = rows.value
+    ?.filter(
+      (row) =>
+        row.received !== null &&
+        row.createdUser === "Директор" &&
+        row.typeOfExpenditure !== "Пополнение баланса" &&
+        row.type === "Безнал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ2Cashless = rows.value
+    ?.filter(
+      (row) =>
+        row.received !== null &&
+        row.issuedUser === "Директор" &&
+        row.type === "Безнал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ3Cashless = rows.value
+    ?.filter(
+      (row) =>
+        row.createdUser === "Директор" &&
+        row.issuedUser === "" &&
+        row.type === "Безнал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  sumOfPVZ = sumOfPVZ === undefined ? 0 : sumOfPVZ;
+  sumOfPVZ1 = sumOfPVZ1 === undefined ? 0 : sumOfPVZ1;
+  sumOfPVZ2 = sumOfPVZ2 === undefined ? 0 : sumOfPVZ2;
+  sumOfPVZ3 = sumOfPVZ3 === undefined ? 0 : sumOfPVZ3;
+  sumOfPVZ4 = sumOfPVZ4 === undefined ? 0 : sumOfPVZ4;
+  sumOfPVZ5 = sumOfPVZ5 === undefined ? 0 : sumOfPVZ5;
+  sumOfPVZ6 = sumOfPVZ6 === undefined ? 0 : sumOfPVZ6;
+  sumOfPVZ7 = sumOfPVZ7 === undefined ? 0 : sumOfPVZ7;
+  sumOfPVZ8 = sumOfPVZ8 === undefined ? 0 : sumOfPVZ8;
+  sumOfPVZ9 = sumOfPVZ9 === undefined ? 0 : sumOfPVZ9;
+  sumOfPVZ10 = sumOfPVZ10 === undefined ? 0 : sumOfPVZ9;
+  sumOfPVZ1Cashless = sumOfPVZ1Cashless === undefined ? 0 : sumOfPVZ1Cashless;
+  sumOfPVZ2Cashless = sumOfPVZ2Cashless === undefined ? 0 : sumOfPVZ2Cashless;
+  sumOfPVZ3Cashless = sumOfPVZ3Cashless === undefined ? 0 : sumOfPVZ3Cashless;
+
+  switch ("Директор") {
+    case "Директор":
+      allSum.value =
+        +sumOfPVZ -
+        +sumOfPVZ1 +
+        +sumOfPVZ2 -
+        +sumOfPVZ3 +
+        +sumOfPVZ4 +
+        +sumOfPVZ5 -
+        +sumOfPVZ6 +
+        +sumOfPVZ7 +
+        +sumOfPVZ8 -
+        +sumOfPVZ9 +
+        +sumOfPVZ10;
+
+      allSum2.value =
+        +sumOfPVZ -
+        +sumOfPVZ1Cashless +
+        +sumOfPVZ2Cashless -
+        +sumOfPVZ3Cashless;
+      break;
+    default:
+      allSum.value =
+        +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
+      break;
+  }
+  return allSum.value + allSum2.value;
+}
+
 function closeModal() {
   isOpen.value = false;
   rowData.value = {} as IAdvanceReport;
@@ -332,8 +492,8 @@ let typesOfExpenditure = ref([
 let companies = ref(["WB/OZ start", "Darom.pro", "Сортировка", "Доставка"]);
 
 let usersOfIssued = ref([
+  "Директор (С)",
   "Шведова",
-  "Директор",
   "Косой",
   "Шарафаненко",
   "Волошина",
@@ -474,11 +634,6 @@ function getAllSumFromName(username: string) {
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
-  // let sumOfPVZ4 = rowsDelivery.value
-  // ?.filter((row) => row.paid !== null)
-  // .reduce((acc, value) => acc + +value.amountFromClient3, 0);
-  // СПРОСИТЬ НАСЧЁТ ШВЕДОВЫ И ДОСТАВКА И СОРТИРОВКИ!!!!!
-
   if (username !== "Шведова") {
     let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
     return allSum;
@@ -486,6 +641,51 @@ function getAllSumFromName(username: string) {
     let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
     return allSum;
   }
+}
+
+function getAllSumFromEmployees() {
+  copyArrayOurRansom.value = ourRansomRows.value?.filter(
+    (row) =>
+      row.issued !== null &&
+      (row.additionally === "Оплата наличными" ||
+        row.additionally === "Отказ клиент наличные" ||
+        row.additionally === "Отказ клиент")
+  );
+
+  copyArrayClientRansom.value = clientRansomRows.value?.filter(
+    (row) => row.issued !== null && row.additionally === "Оплата наличными"
+  );
+
+  let totalSum = 0;
+
+  usersOfIssued.value
+    .filter((username) => username !== "Директор")
+    .forEach((username) => {
+      let sumOfPVZ = rowsBalance.value
+        ?.filter((row) => row.received !== null && row.recipient === username)
+        .reduce((acc, value) => acc + +value.sum, 0);
+
+      let sumOfPVZ1 = originallyRows.value
+        ?.filter((row) => row.received !== null && row.createdUser === username)
+        .reduce((acc, value) => acc + +value.expenditure, 0);
+
+      let sumOfPVZ2 = originallyRows.value
+        ?.filter((row) => row.received !== null && row.issuedUser === username)
+        .reduce((acc, value) => acc + +value.expenditure, 0);
+
+      let sumOfPVZ3 = originallyRows.value
+        ?.filter(
+          (row) =>
+            row.createdUser === username &&
+            (row.issuedUser === "" || row.issuedUser === null)
+        )
+        .reduce((acc, value) => acc + +value.expenditure, 0);
+
+      let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
+      totalSum += allSum;
+    });
+  totalSum += allSum.value;
+  return totalSum;
 }
 
 const filteredRows = ref<Array<IAdvanceReport>>();
@@ -560,23 +760,34 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           <div>
             <div
               class="text-center text-2xl my-5"
-              v-if="selectedUser !== 'Директор'"
+              v-if="
+                selectedUser !== 'Директор' && selectedUser !== 'Директор (С)'
+              "
             >
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
                 {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
               </h1>
             </div>
+            <div
+              class="text-center text-2xl my-5"
+              v-if="selectedUser === 'Директор (С)'"
+            >
+              <h1>Баланс {{ selectedUser }}:</h1>
+              <h1 class="font-bold text-secondary-color text-4xl text-center">
+                {{ formatNumber(getAllSumDirector()) }} ₽
+              </h1>
+            </div>
             <div v-else>
-              <div class="text-center text-2xl my-5">
-                <h1>Баланс Торговая Империя онлайн&наличные:</h1>
+              <div class="text-center text-xl my-3">
+                <h1>Баланс Торговой Империи онлайн&наличные:</h1>
                 <h1 class="font-bold text-secondary-color text-4xl text-center">
-                  {{ formatNumber(Math.ceil(allSum)) }} ₽
+                  {{ formatNumber(Math.ceil(getAllSumFromEmployees())) }} ₽
                 </h1>
               </div>
-              <div class="text-center text-2xl my-5">
+              <div class="text-center text-xl my-3">
                 <h1>
-                  Баланс Торговая Империя <br />
+                  Баланс Торговой Империи <br />
                   безнал:
                 </h1>
                 <h1 class="font-bold text-secondary-color text-4xl text-center">
@@ -604,6 +815,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
                 v-model="selectedUser"
                 class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
               >
+                <option value="Директор">Торговая Империя</option>
                 <option :value="user" v-for="user in usersOfIssued">
                   {{ user }}
                 </option>
@@ -616,11 +828,26 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           </UIMainButton>
 
           <AdvanceReportTable
+            v-if="selectedUser !== 'Директор (С)'"
             :rows="
               filteredRows?.filter(
                 (row) =>
                   row.issuedUser === selectedUser ||
                   row.createdUser === selectedUser
+              )
+            "
+            :user="user"
+            @open-modal="openModal"
+            @update-delivery-row="updateDeliveryRow"
+          />
+
+          <AdvanceReportTable
+            v-if="selectedUser === 'Директор (С)'"
+            :rows="
+              filteredRows?.filter(
+                (row) =>
+                  row.issuedUser === 'Директор' ||
+                  row.createdUser === 'Директор'
               )
             "
             :user="user"

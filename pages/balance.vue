@@ -947,7 +947,7 @@ async function updateRow() {
                       "
                       value="Доход"
                     >
-                      Доход DP (продажи)
+                      Доход DP (продажа)
                     </option>
                     <option
                       v-if="
@@ -984,7 +984,7 @@ async function updateRow() {
                       "
                       value="Заказано1"
                     >
-                      Оборот денежных средств (продажи наличные)
+                      Оборот денежных средств (продажа наличные)
                     </option>
                     <option
                       v-if="
@@ -994,16 +994,21 @@ async function updateRow() {
                       "
                       value="Заказано2"
                     >
-                      Оборот денежных средств (продажи онлайн)
+                      Оборот денежных средств (продажа онлайн)
                     </option>
                   </select>
                 </div>
-                <div class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5">
+                <div
+                  class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5"
+                >
                   <div class="flex items-center gap-3 mr-5">
                     <h1 class="max-sm:mr-3">С</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                      type="date"
+                      type="text"
+                      placeholder="ДД.ММ.ГГГГ"
+                      onfocus="(this.type='date')"
+                      onblur="(this.type='text')"
                       v-model="startingDate"
                     />
                   </div>
@@ -1011,7 +1016,10 @@ async function updateRow() {
                     <h1>По</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                      type="date"
+                      type="text"
+                      placeholder="ДД.ММ.ГГГГ"
+                      onfocus="(this.type='date')"
+                      onblur="(this.type='text')"
                       v-model="endDate"
                     />
                   </div>
@@ -1254,7 +1262,7 @@ async function updateRow() {
                       "
                       value="Доход"
                     >
-                      Доход DP (продажи)
+                      Доход DP (продажа)
                     </option>
                     <option
                       v-if="
@@ -1291,7 +1299,7 @@ async function updateRow() {
                       "
                       value="Заказано1"
                     >
-                      Оборот денежных средств (продажи наличные)
+                      Оборот денежных средств (продажа наличные)
                     </option>
                     <option
                       v-if="
@@ -1301,16 +1309,21 @@ async function updateRow() {
                       "
                       value="Заказано2"
                     >
-                      Оборот денежных средств (продажи онлайн)
+                      Оборот денежных средств (продажа онлайн)
                     </option>
                   </select>
                 </div>
-                <div class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5">
+                <div
+                  class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5"
+                >
                   <div class="flex items-center gap-3 mr-5">
                     <h1 class="max-sm:mr-3">С</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                      type="date"
+                      type="text"
+                      placeholder="ДД.ММ.ГГГГ"
+                      onfocus="(this.type='date')"
+                      onblur="(this.type='text')"
                       v-model="startingDate"
                     />
                   </div>
@@ -1318,7 +1331,10 @@ async function updateRow() {
                     <h1>По</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                      type="date"
+                      type="text"
+                      placeholder="ДД.ММ.ГГГГ"
+                      onfocus="(this.type='date')"
+                      onblur="(this.type='text')"
                       v-model="endDate"
                     />
                   </div>

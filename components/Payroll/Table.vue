@@ -150,7 +150,7 @@ async function createAdvanceReportAdvance() {
         expenditureSum: 0,
       };
     }
-    acc[key].expenditureSum += parseFloat(row.advance); // Предполагается, что row.advance строка, преобразуем ее в число
+    acc[key].expenditureSum += parseFloat(row.advance); 
     return acc;
   }, {});
 

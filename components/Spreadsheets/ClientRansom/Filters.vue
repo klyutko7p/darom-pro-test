@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps({
   rows: { type: Array as PropType<IClientRansom[]>, required: true },
-  user: { type: Object as PropType<User> }
+  user: { type: Object as PropType<User> },
 });
 
 const storeRansom = useRansomStore();
@@ -62,14 +62,13 @@ const filteredRows = ref<Array<IClientRansom>>();
 const emit = defineEmits(["filtered-rows"]);
 
 const filterRows = () => {
-
   let newStartingDate = new Date(startingDate.value);
   newStartingDate.setHours(0);
   newStartingDate.setMinutes(0);
   newStartingDate.setSeconds(0);
   newStartingDate.setMilliseconds(0);
 
-  let newEndDate = new Date(endDate.value)
+  let newEndDate = new Date(endDate.value);
   newEndDate.setHours(23);
   newEndDate.setMinutes(59);
   newEndDate.setSeconds(59);
@@ -81,7 +80,7 @@ const filterRows = () => {
   newStartingDate2.setSeconds(0);
   newStartingDate2.setMilliseconds(0);
 
-  let newEndDate2 = new Date(endDate2.value)
+  let newEndDate2 = new Date(endDate2.value);
   newEndDate2.setHours(23);
   newEndDate2.setMinutes(59);
   newEndDate2.setSeconds(59);
@@ -93,7 +92,7 @@ const filterRows = () => {
   newStartingDate3.setSeconds(0);
   newStartingDate3.setMilliseconds(0);
 
-  let newEndDate3 = new Date(endDate3.value)
+  let newEndDate3 = new Date(endDate3.value);
   newEndDate3.setHours(23);
   newEndDate3.setMinutes(59);
   newEndDate3.setSeconds(59);
@@ -105,7 +104,7 @@ const filterRows = () => {
   newStartingDate4.setSeconds(0);
   newStartingDate4.setMilliseconds(0);
 
-  let newEndDate4 = new Date(endDate4.value)
+  let newEndDate4 = new Date(endDate4.value);
   newEndDate4.setHours(23);
   newEndDate4.setMinutes(59);
   newEndDate4.setSeconds(59);
@@ -116,25 +115,33 @@ const filterRows = () => {
     return (
       (!selectedCell.value || row.cell === selectedCell.value) &&
       (!selectedFromName.value || row.fromName === selectedFromName.value) &&
-      (!selectedProductName.value || row.productName === selectedProductName.value) &&
-      (!selectedDispatchPVZ.value || row.dispatchPVZ === selectedDispatchPVZ.value) &&
+      (!selectedProductName.value ||
+        row.productName === selectedProductName.value) &&
+      (!selectedDispatchPVZ.value ||
+        row.dispatchPVZ === selectedDispatchPVZ.value) &&
       (!selectedOrderPVZ.value || row.orderPVZ === selectedOrderPVZ.value) &&
-      (!selectedOrderAccount.value || row.orderAccount === selectedOrderAccount.value) &&
-      (!selectedAdditionally.value || row.additionally === selectedAdditionally.value) &&
-      (!selectedPriceSite.value || row.priceProgram == selectedPriceSite.value) &&
-      (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+      (!selectedOrderAccount.value ||
+        row.orderAccount === selectedOrderAccount.value) &&
+      (!selectedAdditionally.value ||
+        row.additionally === selectedAdditionally.value) &&
+      (!selectedPriceSite.value ||
+        row.priceProgram == selectedPriceSite.value) &&
+      (!startingDate.value ||
+        new Date(row.issued) >= new Date(newStartingDate)) &&
       (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
-      (!startingDate2.value || new Date(row.deliveredSC) >= new Date(newStartingDate2)) &&
+      (!startingDate2.value ||
+        new Date(row.deliveredSC) >= new Date(newStartingDate2)) &&
       (!endDate2.value || new Date(row.deliveredSC) <= new Date(newEndDate2)) &&
-      (!startingDate3.value || new Date(row.created_at) >= new Date(newStartingDate3)) &&
+      (!startingDate3.value ||
+        new Date(row.created_at) >= new Date(newStartingDate3)) &&
       (!endDate3.value || new Date(row.created_at) <= new Date(newEndDate3)) &&
-      (!startingDate4.value || new Date(row.deliveredPVZ) >= new Date(newStartingDate4)) &&
+      (!startingDate4.value ||
+        new Date(row.deliveredPVZ) >= new Date(newStartingDate4)) &&
       (!endDate4.value || new Date(row.deliveredPVZ) <= new Date(newEndDate4))
     );
   });
   emit("filtered-rows", filteredRows.value);
 };
-
 
 function clearFields() {
   selectedCell.value = "";
@@ -155,7 +162,6 @@ function clearFields() {
   endDate4.value = "";
   filterRows();
 }
-
 
 watch(
   [
@@ -200,7 +206,11 @@ let variables = ref([
 
 const nonEmptyCount: Ref<number> = computed(() => {
   return variables.value.filter((variable: any) => {
-    return variable.value !== undefined && variable.value !== null && variable.value !== '';
+    return (
+      variable.value !== undefined &&
+      variable.value !== null &&
+      variable.value !== ""
+    );
   }).length;
 });
 
@@ -214,22 +224,22 @@ function loadFromLocalStorage(key: string) {
 }
 
 function saveFiltersToLocalStorage() {
-  saveToLocalStorage('selectedCell', selectedCell.value);
-  saveToLocalStorage('selectedFromName', selectedFromName.value);
-  saveToLocalStorage('selectedProductName', selectedProductName.value);
-  saveToLocalStorage('selectedDispatchPVZ', selectedDispatchPVZ.value);
-  saveToLocalStorage('selectedOrderPVZ', selectedOrderPVZ.value);
-  saveToLocalStorage('selectedOrderAccount', selectedOrderAccount.value);
-  saveToLocalStorage('selectedAdditionally', selectedAdditionally.value);
-  saveToLocalStorage('selectedPriceSite', selectedPriceSite.value);
-  saveToLocalStorage('startingDate', startingDate.value);
-  saveToLocalStorage('endDate', endDate.value);
-  saveToLocalStorage('startingDate2', startingDate2.value);
-  saveToLocalStorage('endDate2', endDate2.value);
-  saveToLocalStorage('startingDate3', startingDate3.value);
-  saveToLocalStorage('endDate3', endDate3.value);
-  saveToLocalStorage('startingDate4', startingDate4.value);
-  saveToLocalStorage('endDate4', endDate4.value);
+  saveToLocalStorage("selectedCell", selectedCell.value);
+  saveToLocalStorage("selectedFromName", selectedFromName.value);
+  saveToLocalStorage("selectedProductName", selectedProductName.value);
+  saveToLocalStorage("selectedDispatchPVZ", selectedDispatchPVZ.value);
+  saveToLocalStorage("selectedOrderPVZ", selectedOrderPVZ.value);
+  saveToLocalStorage("selectedOrderAccount", selectedOrderAccount.value);
+  saveToLocalStorage("selectedAdditionally", selectedAdditionally.value);
+  saveToLocalStorage("selectedPriceSite", selectedPriceSite.value);
+  saveToLocalStorage("startingDate", startingDate.value);
+  saveToLocalStorage("endDate", endDate.value);
+  saveToLocalStorage("startingDate2", startingDate2.value);
+  saveToLocalStorage("endDate2", endDate2.value);
+  saveToLocalStorage("startingDate3", startingDate3.value);
+  saveToLocalStorage("endDate3", endDate3.value);
+  saveToLocalStorage("startingDate4", startingDate4.value);
+  saveToLocalStorage("endDate4", endDate4.value);
   showFilters.value = false;
 }
 
@@ -254,179 +264,235 @@ function clearLocalStorage() {
 }
 
 onMounted(() => {
-  const storedSelectedCell = loadFromLocalStorage('selectedCell');
+  const storedSelectedCell = loadFromLocalStorage("selectedCell");
   if (storedSelectedCell !== null) {
     selectedCell.value = storedSelectedCell;
   }
 
-  const storedSelectedFromName = loadFromLocalStorage('selectedFromName');
+  const storedSelectedFromName = loadFromLocalStorage("selectedFromName");
   if (storedSelectedFromName !== null) {
     selectedFromName.value = storedSelectedFromName;
   }
 
-  const storedSelectedProductName = loadFromLocalStorage('selectedProductName');
+  const storedSelectedProductName = loadFromLocalStorage("selectedProductName");
   if (storedSelectedProductName !== null) {
     selectedProductName.value = storedSelectedProductName;
   }
 
-  const storedSelectedDispatchPVZ = loadFromLocalStorage('selectedDispatchPVZ');
+  const storedSelectedDispatchPVZ = loadFromLocalStorage("selectedDispatchPVZ");
   if (storedSelectedDispatchPVZ !== null) {
     selectedDispatchPVZ.value = storedSelectedDispatchPVZ;
   }
 
-  const storedSelectedOrderPVZ = loadFromLocalStorage('selectedOrderPVZ');
+  const storedSelectedOrderPVZ = loadFromLocalStorage("selectedOrderPVZ");
   if (storedSelectedOrderPVZ !== null) {
     selectedOrderPVZ.value = storedSelectedOrderPVZ;
   }
 
-  const storedSelectedOrderAccount = loadFromLocalStorage('selectedOrderAccount');
+  const storedSelectedOrderAccount = loadFromLocalStorage(
+    "selectedOrderAccount"
+  );
   if (storedSelectedOrderAccount !== null) {
     selectedOrderAccount.value = storedSelectedOrderAccount;
   }
 
-  const storedSelectedAdditionally = loadFromLocalStorage('selectedAdditionally');
+  const storedSelectedAdditionally = loadFromLocalStorage(
+    "selectedAdditionally"
+  );
   if (storedSelectedAdditionally !== null) {
     selectedAdditionally.value = storedSelectedAdditionally;
   }
 
-  const storedSelectedPriceSite = loadFromLocalStorage('selectedPriceSite');
+  const storedSelectedPriceSite = loadFromLocalStorage("selectedPriceSite");
   if (storedSelectedPriceSite !== null) {
     selectedPriceSite.value = storedSelectedPriceSite;
   }
 
-  const storedStartingDate = loadFromLocalStorage('startingDate');
+  const storedStartingDate = loadFromLocalStorage("startingDate");
   if (storedStartingDate !== null) {
     startingDate.value = storedStartingDate;
   }
 
-  const storedEndDate = loadFromLocalStorage('endDate');
+  const storedEndDate = loadFromLocalStorage("endDate");
   if (storedEndDate !== null) {
     endDate.value = storedEndDate;
   }
 
-  const storedStartingDate2 = loadFromLocalStorage('startingDate2');
+  const storedStartingDate2 = loadFromLocalStorage("startingDate2");
   if (storedStartingDate2 !== null) {
     startingDate2.value = storedStartingDate2;
   }
 
-  const storedEndDate2 = loadFromLocalStorage('endDate2');
+  const storedEndDate2 = loadFromLocalStorage("endDate2");
   if (storedEndDate2 !== null) {
     endDate2.value = storedEndDate2;
   }
 
-  const storedStartingDate3 = loadFromLocalStorage('startingDate3');
+  const storedStartingDate3 = loadFromLocalStorage("startingDate3");
   if (storedStartingDate3 !== null) {
     startingDate3.value = storedStartingDate3;
   }
 
-  const storedEndDate3 = loadFromLocalStorage('endDate3');
+  const storedEndDate3 = loadFromLocalStorage("endDate3");
   if (storedEndDate3 !== null) {
     endDate3.value = storedEndDate3;
   }
 
-
-  const storedStartingDate4 = loadFromLocalStorage('startingDate4');
+  const storedStartingDate4 = loadFromLocalStorage("startingDate4");
   if (storedStartingDate4 !== null) {
     startingDate4.value = storedStartingDate4;
   }
 
-  const storedEndDate4 = loadFromLocalStorage('endDate4');
+  const storedEndDate4 = loadFromLocalStorage("endDate4");
   if (storedEndDate4 !== null) {
     endDate4.value = storedEndDate4;
   }
-})
+});
 
-let dateFilter = ref('issued')
+let dateFilter = ref("issued");
 </script>
 
 <template>
   <div>
     <div class="flex items-center gap-3 mt-14 max-xl:mt-0">
       <h1 class="text-xl font-bold">Фильтры</h1>
-      <Icon @click="showFilters = !showFilters" class="cursor-pointer duration-200 hover:text-secondary-color"
-        name="solar:filters-line-duotone" size="24" />
-      <h1 class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full"> {{ nonEmptyCount }} </h1>
+      <Icon
+        @click="showFilters = !showFilters"
+        class="cursor-pointer duration-200 hover:text-secondary-color"
+        name="solar:filters-line-duotone"
+        size="24"
+      />
+      <h1
+        class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full"
+      >
+        {{ nonEmptyCount }}
+      </h1>
     </div>
-    <div v-if="showFilters" class="border-2 border-gray-300 p-3 mt-3 border-dashed">
+    <div
+      v-if="showFilters"
+      class="border-2 border-gray-300 p-3 mt-3 border-dashed"
+    >
       <div class="grid grid-cols-2 max-xl:grid-cols-2 max-md:grid-cols-1">
         <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
           <h1>Ячейка:</h1>
-          <input type="text"
+          <input
+            type="text"
             class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-            v-model="selectedCell" list="uniqueCells">
+            v-model="selectedCell"
+            list="uniqueCells"
+          />
           <datalist id="uniqueCells" class="">
-            <option v-for="value in uniqueCells" :value="value">{{ value }}</option>
+            <option v-for="value in uniqueCells" :value="value">
+              {{ value }}
+            </option>
           </datalist>
         </div>
         <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
           <h1>Телефон:</h1>
-          <input type="text"
+          <input
+            type="text"
             class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-            v-model="selectedFromName" list="uniqueFromNames">
+            v-model="selectedFromName"
+            list="uniqueFromNames"
+          />
           <datalist id="uniqueFromNames" class="">
-            <option v-for="value in uniqueFromNames" :value="value">{{ value }}</option>
+            <option v-for="value in uniqueFromNames" :value="value">
+              {{ value }}
+            </option>
           </datalist>
         </div>
         <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
           <h1>Название товара:</h1>
-          <input type="text"
+          <input
+            type="text"
             class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-            v-model="selectedProductName" list="uniqueProductNames">
+            v-model="selectedProductName"
+            list="uniqueProductNames"
+          />
           <datalist id="uniqueProductNames" class="">
-            <option v-for="value in uniqueProductNames" :value="value">{{ value }}</option>
+            <option v-for="value in uniqueProductNames" :value="value">
+              {{ value }}
+            </option>
           </datalist>
         </div>
         <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
           <h1>Стоимость выкупа товара:</h1>
-          <input type="text"
+          <input
+            type="text"
             class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-            v-model="selectedPriceSite" list="uniquePriceSite">
+            v-model="selectedPriceSite"
+            list="uniquePriceSite"
+          />
           <datalist id="uniquePriceSite" class="">
-            <option v-for="value in uniquePriceSite" :value="value">{{ value }}</option>
+            <option v-for="value in uniquePriceSite" :value="value">
+              {{ value }}
+            </option>
           </datalist>
         </div>
         <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
           <h1>ПВЗ:</h1>
-          <input type="text"
+          <input
+            type="text"
             class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-            v-model="selectedDispatchPVZ" list="uniquePVZ">
+            v-model="selectedDispatchPVZ"
+            list="uniquePVZ"
+          />
           <datalist id="uniquePVZ" class="">
-            <option v-for="value in uniquePVZ" :value="value">{{ value }}</option>
+            <option v-for="value in uniquePVZ" :value="value">
+              {{ value }}
+            </option>
           </datalist>
         </div>
         <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
           <h1>СЦ:</h1>
-          <input type="text"
+          <input
+            type="text"
             class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-            v-model="selectedOrderPVZ" list="uniqueOrderPVZ">
+            v-model="selectedOrderPVZ"
+            list="uniqueOrderPVZ"
+          />
           <datalist id="uniqueOrderPVZ" class="">
-            <option v-for="value in uniqueOrderPVZ" :value="value">{{ value }}</option>
+            <option v-for="value in uniqueOrderPVZ" :value="value">
+              {{ value }}
+            </option>
           </datalist>
         </div>
         <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
           <h1>Аккаунт Заказа:</h1>
-          <input type="text"
+          <input
+            type="text"
             class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-            v-model="selectedOrderAccount" list="uniqueOrderAccounts">
+            v-model="selectedOrderAccount"
+            list="uniqueOrderAccounts"
+          />
           <datalist id="uniqueOrderAccounts" class="">
-            <option v-for="value in uniqueOrderAccounts" :value="value">{{ value }}</option>
+            <option v-for="value in uniqueOrderAccounts" :value="value">
+              {{ value }}
+            </option>
           </datalist>
         </div>
         <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
           <h1>Дополнительно:</h1>
-          <input type="text"
+          <input
+            type="text"
             class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-            v-model="selectedAdditionally" list="uniqueAdditionally">
+            v-model="selectedAdditionally"
+            list="uniqueAdditionally"
+          />
           <datalist id="uniqueAdditionally" class="">
-            <option v-for="value in uniqueAdditionally" :value="value">{{ value }}</option>
+            <option v-for="value in uniqueAdditionally" :value="value">
+              {{ value }}
+            </option>
           </datalist>
         </div>
       </div>
       <div v-if="user?.role !== 'SORTIROVKA'">
         <div class="mt-10">
           <div>
-            <select v-model="dateFilter"
-              class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3">
+            <select
+              v-model="dateFilter"
+              class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3"
+            >
               <option value="issued" selected>Дата выдачи</option>
               <option value="sorted">Дата сортировки</option>
               <option value="delivered">Дата доставки на пвз</option>
@@ -434,60 +500,128 @@ let dateFilter = ref('issued')
             </select>
           </div>
         </div>
-        <div class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5">
-          <div class="flex items-center gap-3 mr-5"  v-if="dateFilter === 'issued'">
+        <div
+          class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5"
+        >
+          <div
+            class="flex items-center gap-3 mr-5"
+            v-if="dateFilter === 'issued'"
+          >
             <h1 class="max-sm:mr-3">С</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="date" v-model="startingDate" />
+              type="text"
+              placeholder="ДД.ММ.ГГГГ"
+              onfocus="(this.type='date')"
+              onblur="(this.type='text')"
+              v-model="startingDate"
+            />
           </div>
-          <div class="flex items-center gap-3 max-sm:mb-7" v-if="dateFilter === 'issued'">
+          <div
+            class="flex items-center gap-3 max-sm:mb-7"
+            v-if="dateFilter === 'issued'"
+          >
             <h1>По</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="date" v-model="endDate" />
+              type="text"
+              placeholder="ДД.ММ.ГГГГ"
+              onfocus="(this.type='date')"
+              onblur="(this.type='text')"
+              v-model="endDate"
+            />
           </div>
-          <div class="flex items-center gap-3 mr-5" v-if="dateFilter === 'sorted'">
+          <div
+            class="flex items-center gap-3 mr-5"
+            v-if="dateFilter === 'sorted'"
+          >
             <h1 class="max-sm:mr-3">С</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="date" v-model="startingDate2" />
+              type="text"
+              placeholder="ДД.ММ.ГГГГ"
+              onfocus="(this.type='date')"
+              onblur="(this.type='text')"
+              v-model="startingDate2"
+            />
           </div>
-          <div class="flex items-center gap-3 max-sm:mb-7" v-if="dateFilter === 'sorted'">
+          <div
+            class="flex items-center gap-3 max-sm:mb-7"
+            v-if="dateFilter === 'sorted'"
+          >
             <h1>По</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="date" v-model="endDate2" />
+              type="text"
+              placeholder="ДД.ММ.ГГГГ"
+              onfocus="(this.type='date')"
+              onblur="(this.type='text')"
+              v-model="endDate2"
+            />
           </div>
-          <div class="flex items-center gap-3 mr-5" v-if="dateFilter === 'created'">
+          <div
+            class="flex items-center gap-3 mr-5"
+            v-if="dateFilter === 'created'"
+          >
             <h1 class="max-sm:mr-3">С</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="date" v-model="startingDate3" />
+              type="text"
+              placeholder="ДД.ММ.ГГГГ"
+              onfocus="(this.type='date')"
+              onblur="(this.type='text')"
+              v-model="startingDate3"
+            />
           </div>
-          <div class="flex items-center gap-3 max-sm:mb-7" v-if="dateFilter === 'created'">
+          <div
+            class="flex items-center gap-3 max-sm:mb-7"
+            v-if="dateFilter === 'created'"
+          >
             <h1>По</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="date" v-model="endDate3" />
+              type="text"
+              placeholder="ДД.ММ.ГГГГ"
+              onfocus="(this.type='date')"
+              onblur="(this.type='text')"
+              v-model="endDate3"
+            />
           </div>
-          <div class="flex items-center gap-3 mr-5" v-if="dateFilter === 'delivered'">
+          <div
+            class="flex items-center gap-3 mr-5"
+            v-if="dateFilter === 'delivered'"
+          >
             <h1 class="max-sm:mr-3">С</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="date" v-model="startingDate4" />
+              type="text"
+              placeholder="ДД.ММ.ГГГГ"
+              onfocus="(this.type='date')"
+              onblur="(this.type='text')"
+              v-model="startingDate4"
+            />
           </div>
-          <div class="flex items-center gap-3 max-sm:mb-7" v-if="dateFilter === 'delivered'">
+          <div
+            class="flex items-center gap-3 max-sm:mb-7"
+            v-if="dateFilter === 'delivered'"
+          >
             <h1>По</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="date" v-model="endDate4" />
+              type="text"
+              placeholder="ДД.ММ.ГГГГ"
+              onfocus="(this.type='date')"
+              onblur="(this.type='text')"
+              v-model="endDate4"
+            />
           </div>
         </div>
       </div>
       <div class="flex justify-end gap-3 mt-3">
         <UIMainButton @click="saveFiltersToLocalStorage">Принять</UIMainButton>
-        <UIMainButton @click="clearFields(), clearLocalStorage()">Очистить фильтры</UIMainButton>
+        <UIMainButton @click="clearFields(), clearLocalStorage()"
+          >Очистить фильтры</UIMainButton
+        >
       </div>
     </div>
   </div>
