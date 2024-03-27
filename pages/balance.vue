@@ -998,17 +998,17 @@ async function updateRow() {
                     </option>
                   </select>
                 </div>
-                <div class="grid grid-cols-1">
-                  <div class="grid grid-cols-2 my-2">
-                    <h1>От Даты:</h1>
+                <div class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5">
+                  <div class="flex items-center gap-3 mr-5">
+                    <h1 class="max-sm:mr-3">С</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                       type="date"
                       v-model="startingDate"
                     />
                   </div>
-                  <div class="grid grid-cols-2 my-2">
-                    <h1>По Дату:</h1>
+                  <div class="flex items-center gap-3 max-sm:mb-7">
+                    <h1>По</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                       type="date"
@@ -1305,17 +1305,17 @@ async function updateRow() {
                     </option>
                   </select>
                 </div>
-                <div class="grid grid-cols-1">
-                  <div class="grid grid-cols-2 my-2">
-                    <h1>От Даты:</h1>
+                <div class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5">
+                  <div class="flex items-center gap-3 mr-5">
+                    <h1 class="max-sm:mr-3">С</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                       type="date"
                       v-model="startingDate"
                     />
                   </div>
-                  <div class="grid grid-cols-2 my-2">
-                    <h1>По Дату:</h1>
+                  <div class="flex items-center gap-3 max-sm:mb-7">
+                    <h1>По</h1>
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                       type="date"

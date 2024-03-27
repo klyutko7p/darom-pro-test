@@ -35,7 +35,9 @@ function getPaid(status: string) {
 function getAmountFromClient(status: string, sumOfRejectValue: any) {
   if (status === "additionally") {
     return;
-  } else if (status === "additionally1") {
+  } else if (status === "additionally1-1") {
+    return sumOfRejectValue.value;
+  } else if (status === "additionally1-2") {
     return sumOfRejectValue.value;
   } else if (status === "additionally2") {
     return 0;
@@ -47,7 +49,9 @@ function getAmountFromClient(status: string, sumOfRejectValue: any) {
 function getProfit(status: string, sumOfRejectValue: any) {
   if (status === "additionally") {
     return;
-  } else if (status === "additionally1") {
+  } else if (status === "additionally1-1") {
+    return sumOfRejectValue.value;
+  } else if (status === "additionally1-2") {
     return sumOfRejectValue.value;
   } else if (status === "additionally2") {
     return 0;

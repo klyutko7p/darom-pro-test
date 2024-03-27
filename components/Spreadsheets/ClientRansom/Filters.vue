@@ -434,51 +434,51 @@ let dateFilter = ref('issued')
             </select>
           </div>
         </div>
-        <div class="grid grid-cols-1">
-          <div class="grid grid-cols-2 my-2" v-if="dateFilter === 'issued'">
-            <h1>От Даты:</h1>
+        <div class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5">
+          <div class="flex items-center gap-3 mr-5"  v-if="dateFilter === 'issued'">
+            <h1 class="max-sm:mr-3">С</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
               type="date" v-model="startingDate" />
           </div>
-          <div class="grid grid-cols-2 my-2" v-if="dateFilter === 'issued'">
-            <h1>По Дату:</h1>
+          <div class="flex items-center gap-3 max-sm:mb-7" v-if="dateFilter === 'issued'">
+            <h1>По</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
               type="date" v-model="endDate" />
           </div>
-          <div class="grid grid-cols-2 my-2" v-if="dateFilter === 'sorted'">
-            <h1>От Даты:</h1>
+          <div class="flex items-center gap-3 mr-5" v-if="dateFilter === 'sorted'">
+            <h1 class="max-sm:mr-3">С</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
               type="date" v-model="startingDate2" />
           </div>
-          <div class="grid grid-cols-2 my-2" v-if="dateFilter === 'sorted'">
-            <h1>По Дату:</h1>
+          <div class="flex items-center gap-3 max-sm:mb-7" v-if="dateFilter === 'sorted'">
+            <h1>По</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
               type="date" v-model="endDate2" />
           </div>
-          <div class="grid grid-cols-2 my-2" v-if="dateFilter === 'created'">
-            <h1>От Даты:</h1>
+          <div class="flex items-center gap-3 mr-5" v-if="dateFilter === 'created'">
+            <h1 class="max-sm:mr-3">С</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
               type="date" v-model="startingDate3" />
           </div>
-          <div class="grid grid-cols-2 my-2" v-if="dateFilter === 'created'">
-            <h1>По Дату:</h1>
+          <div class="flex items-center gap-3 max-sm:mb-7" v-if="dateFilter === 'created'">
+            <h1>По</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
               type="date" v-model="endDate3" />
           </div>
-          <div class="grid grid-cols-2 my-2" v-if="dateFilter === 'delivered'">
-            <h1>От Даты:</h1>
+          <div class="flex items-center gap-3 mr-5" v-if="dateFilter === 'delivered'">
+            <h1 class="max-sm:mr-3">С</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
               type="date" v-model="startingDate4" />
           </div>
-          <div class="grid grid-cols-2 my-2" v-if="dateFilter === 'delivered'">
-            <h1>По Дату:</h1>
+          <div class="flex items-center gap-3 max-sm:mb-7" v-if="dateFilter === 'delivered'">
+            <h1>По</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
               type="date" v-model="endDate4" />
