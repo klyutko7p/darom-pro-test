@@ -62,6 +62,46 @@ function getAmountToBePaid(flag: string) {
   return amountToPaid;
 }
 
+function getAmountFromMonthDelivery() {
+  let amountToPaid = 0;
+  const currentDate = new Date(); 
+  const thirtyDaysAgo = new Date(
+    currentDate.getTime() - 30 * 24 * 60 * 60 * 1000
+  ); 
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() + 1);
+  if (link.startsWith("3")) {
+    if (rows.value) {
+      amountToPaid = rows.value
+      .filter((value) => {
+          const paidDate = new Date(value.paid);
+          return paidDate >= thirtyDaysAgo && paidDate <= currentDate && value.nameOfAction === "Доставка";
+        })
+        .reduce((acc, value) => acc + value.purchaseOfGoods, 0);
+    }
+  }
+  return amountToPaid;
+}
+
+function getAmountFromMonthSorting() {
+  let amountToPaid = 0;
+  const currentDate = new Date(); 
+  const thirtyDaysAgo = new Date(
+    currentDate.getTime() - 30 * 24 * 60 * 60 * 1000
+  ); 
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() + 1);
+  if (link.startsWith("3")) {
+    if (rows.value) {
+      amountToPaid = rows.value
+      .filter((value) => {
+          const paidDate = new Date(value.paid);
+          return paidDate >= thirtyDaysAgo && paidDate <= currentDate && value.nameOfAction === "Сортировка";
+        })
+        .reduce((acc, value) => acc + value.purchaseOfGoods, 0);
+    }
+  }
+  return amountToPaid;
+}
+
 let showReceivedItems = ref(true);
 
 function disableReceivedItems() {
@@ -114,7 +154,7 @@ function getNumber(phoneNumberData: string) {
           Информация о заказе:
           <span class="uppercase">{{ route.params.link }}</span>
         </h1>
-        <div class="mb-5 flex items-center gap-3"> 
+        <div class="mb-5 flex items-center gap-3">
           <h1 class="text-xl">
             Телефон: <span class="italic"> {{ getNumber(phoneNumber) }} </span>
           </h1>
@@ -136,6 +176,25 @@ function getNumber(phoneNumberData: string) {
             >{{ Math.ceil(getAmountToBePaid("PVZ") / 10) * 10 }} руб.</span
           >
         </h1>
+        <div
+          class="text-xl max-sm:text-sm flex justify-end items-end flex-col gap-1 mt-7"
+          v-if="link.startsWith('3')"
+        >
+          Сумма выкупов товаров за 30 дней
+          <br />
+          <h1>
+            Доставка =
+            <span class="font-bold"
+              >{{ getAmountFromMonthDelivery() }} руб.</span
+            >
+          </h1>
+          <h1>
+            Сортировка =
+            <span class="font-bold"
+              >{{ getAmountFromMonthSorting() }} руб.</span
+            >
+          </h1>
+        </div>
         <UIMainButton
           v-if="showReceivedItems && !link.startsWith('3')"
           class="mt-5"

@@ -121,6 +121,13 @@ function reduceArray(array: any, flag: string) {
         0
       );
     }
+  } else if (selectedTypeOfTransaction.value === "Заказано3") {
+    if (flag === "OurRansom") {
+      return array.reduce(
+        (ac: any, curValue: any) => ac + curValue.priceSite,
+        0
+      );
+    }
   } else if (selectedTypeOfTransaction.value === "Баланс наличные") {
     if (flag === "OurRansom") {
       array = array.filter(
@@ -360,6 +367,43 @@ function getAllSum() {
       );
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       allSum.value = sum1.value;
+    }
+  } else if (selectedTypeOfTransaction.value === "Заказано3") {
+    if (selectedPVZ.value === "Все ПВЗ") {
+      copyArrayOurRansom.value = ourRansomRows.value?.filter(
+        (row) =>
+          row.deleted === null &&
+          (!startingDate.value ||
+            new Date(row.created_at) >= new Date(newStartingDate)) &&
+          (!endDate.value || new Date(row.created_at) <= new Date(newEndDate))
+      );
+      if (
+        (startingDate.value !== null && startingDate.value !== "") ||
+        (endDate.value !== null && endDate.value !== "")
+      ) {
+        sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+        allSum.value = sum1.value;
+      } else {
+        allSum.value = 0
+      }
+    } else {
+      copyArrayOurRansom.value = ourRansomRows.value?.filter(
+        (row) =>
+          row.dispatchPVZ === selectedPVZ.value &&
+          row.deleted === null &&
+          (!startingDate.value ||
+            new Date(row.created_at) >= new Date(newStartingDate)) &&
+          (!endDate.value || new Date(row.created_at) <= new Date(newEndDate))
+      );
+      if (
+        (startingDate.value !== null && startingDate.value !== "") ||
+        (endDate.value !== null && endDate.value !== "")
+      ) {
+        sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+        allSum.value = sum1.value;
+      } else {
+        allSum.value = 0
+      }
     }
   } else if (selectedTypeOfTransaction.value === "Баланс наличные") {
     if (selectedPVZ.value === "Все ПВЗ") {
@@ -974,7 +1018,7 @@ async function updateRow() {
                       "
                       value="Заказано"
                     >
-                      Оборот денежных средств (в заказе)
+                      Сумма товаров в заказе
                     </option>
                     <option
                       v-if="
@@ -984,7 +1028,7 @@ async function updateRow() {
                       "
                       value="Заказано1"
                     >
-                      Оборот денежных средств (продажа наличные)
+                      Сумма проданных товаров наличные
                     </option>
                     <option
                       v-if="
@@ -994,7 +1038,17 @@ async function updateRow() {
                       "
                       value="Заказано2"
                     >
-                      Оборот денежных средств (продажа онлайн)
+                      Сумма проданных товаров онлайн
+                    </option>
+                    <option
+                      v-if="
+                        user.role !== 'ADMINISTRATOR' &&
+                        user.role !== 'PVZ' &&
+                        user.role !== 'COURIER'
+                      "
+                      value="Заказано3"
+                    >
+                      Фактически заказано
                     </option>
                   </select>
                 </div>
@@ -1032,7 +1086,7 @@ async function updateRow() {
 
             <div v-if="selectedTypeOfTransaction !== 'Доставка'">
               <div class="text-center text-2xl mt-10">
-                <h1>Баланс</h1>
+                <h1>Итого</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(allSum)) }} ₽
                 </h1>
@@ -1287,7 +1341,7 @@ async function updateRow() {
                       "
                       value="Заказано"
                     >
-                      Оборот денежных средств (в заказе)
+                      Сумма товаров в заказе
                     </option>
                     <option
                       v-if="
@@ -1297,7 +1351,7 @@ async function updateRow() {
                       "
                       value="Заказано1"
                     >
-                      Оборот денежных средств (продажа наличные)
+                      Сумма проданных товаров наличные
                     </option>
                     <option
                       v-if="
@@ -1307,7 +1361,17 @@ async function updateRow() {
                       "
                       value="Заказано2"
                     >
-                      Оборот денежных средств (продажа онлайн)
+                      Сумма проданных товаров онлайн
+                    </option>
+                    <option
+                      v-if="
+                        user.role !== 'ADMINISTRATOR' &&
+                        user.role !== 'PVZ' &&
+                        user.role !== 'COURIER'
+                      "
+                      value="Заказано3"
+                    >
+                      Фактически заказано
                     </option>
                   </select>
                 </div>
@@ -1345,7 +1409,7 @@ async function updateRow() {
 
             <div v-if="selectedTypeOfTransaction !== 'Доставка'">
               <div class="text-center text-2xl mt-10">
-                <h1>Баланс</h1>
+                <h1>Итого</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(allSum)) }} ₽
                 </h1>
