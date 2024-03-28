@@ -1006,6 +1006,7 @@ async function updateRow() {
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                       type="date"
+                      placeholder="ДД.ММ.ГГГГ"
                       v-model="startingDate"
                     />
                   </div>
@@ -1014,6 +1015,7 @@ async function updateRow() {
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                       type="date"
+                      placeholder="ДД.ММ.ГГГГ"
                       v-model="endDate"
                     />
                   </div>
@@ -1315,6 +1317,7 @@ async function updateRow() {
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                       type="date"
+                      placeholder="ДД.ММ.ГГГГ"
                       v-model="startingDate"
                     />
                   </div>
@@ -1323,6 +1326,7 @@ async function updateRow() {
                     <input
                       class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                       type="date"
+                      placeholder="ДД.ММ.ГГГГ"
                       v-model="endDate"
                     />
                   </div>
