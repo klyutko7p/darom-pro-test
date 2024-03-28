@@ -69,28 +69,18 @@ input:focus {
 }
 
 input[type="date"] {
+  min-height: 40px;
   min-width: 200px;
 }
 
-input[type="date"]::before {
-	color: #999999;
-	content: attr(placeholder);
-}
-input[type="date"] {
-	color: #ffffff;
-}
-input[type="date"]:focus,
-input[type="date"]:valid {
-	color: #666666;
-}
-input[type="date"]:focus::before,
-input[type="date"]:valid::before {
-	content: "" !important;
+@supports (-webkit-touch-callout: none) {
+  input[type="date"]:not(:focus):not(.has-value):before{
+    color: lightgray;
+    content: attr(placeholder);
+  }
 }
 
-select {
-  color: black;
-}
+
 
 h1 {
   font-family: "Exo 2", sans-serif;

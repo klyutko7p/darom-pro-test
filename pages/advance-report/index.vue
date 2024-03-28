@@ -885,6 +885,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
                 :max="`2024-${month}-31`"
                 type="date"
                 placeholder="ДД.ММ.ГГГГ"
+                onchange="this.className=(this.value!=''?'has-value':'')"
               />
             </div>
 
@@ -895,6 +896,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
                 v-model="rowData.date"
                 type="date"
                 placeholder="ДД.ММ.ГГГГ"
+                onchange="this.className=(this.value!=''?'has-value':'')"
               />
             </div>
 
@@ -1225,6 +1227,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
                 :max="`2024-${month}-31`"
                 type="date"
                 placeholder="ДД.ММ.ГГГГ"
+                onchange="this.className=(this.value!=''?'has-value':'')"
               />
             </div>
 
@@ -1235,6 +1238,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
                 v-model="rowData.date"
                 type="date"
                 placeholder="ДД.ММ.ГГГГ"
+                onchange="this.className=(this.value!=''?'has-value':'')"
               />
             </div>
 
