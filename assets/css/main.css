@@ -68,6 +68,13 @@ input:focus {
   border: var(--secondary-color);
 }
 
+input[type="date"] {
+  display: block;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  min-width: 200px;
+}
+
 select {
   color: black;
 }

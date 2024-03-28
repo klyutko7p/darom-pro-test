@@ -510,10 +510,7 @@ let dateFilter = ref("issued");
             <h1 class="max-sm:mr-3">С</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="text"
-              placeholder="ДД.ММ.ГГГГ"
-              onfocus="(this.type='date')"
-              onblur="(this.type='text')"
+              type="date"
               v-model="startingDate"
             />
           </div>
@@ -524,10 +521,7 @@ let dateFilter = ref("issued");
             <h1>По</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="text"
-              placeholder="ДД.ММ.ГГГГ"
-              onfocus="(this.type='date')"
-              onblur="(this.type='text')"
+              type="date"
               v-model="endDate"
             />
           </div>
@@ -538,10 +532,7 @@ let dateFilter = ref("issued");
             <h1 class="max-sm:mr-3">С</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="text"
-              placeholder="ДД.ММ.ГГГГ"
-              onfocus="(this.type='date')"
-              onblur="(this.type='text')"
+              type="date"
               v-model="startingDate2"
             />
           </div>
@@ -552,10 +543,7 @@ let dateFilter = ref("issued");
             <h1>По</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="text"
-              placeholder="ДД.ММ.ГГГГ"
-              onfocus="(this.type='date')"
-              onblur="(this.type='text')"
+              type="date"
               v-model="endDate2"
             />
           </div>
@@ -566,10 +554,7 @@ let dateFilter = ref("issued");
             <h1 class="max-sm:mr-3">С</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="text"
-              placeholder="ДД.ММ.ГГГГ"
-              onfocus="(this.type='date')"
-              onblur="(this.type='text')"
+              type="date"
               v-model="startingDate3"
             />
           </div>
@@ -580,10 +565,7 @@ let dateFilter = ref("issued");
             <h1>По</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="text"
-              placeholder="ДД.ММ.ГГГГ"
-              onfocus="(this.type='date')"
-              onblur="(this.type='text')"
+              type="date"
               v-model="endDate3"
             />
           </div>
@@ -594,10 +576,7 @@ let dateFilter = ref("issued");
             <h1 class="max-sm:mr-3">С</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="text"
-              placeholder="ДД.ММ.ГГГГ"
-              onfocus="(this.type='date')"
-              onblur="(this.type='text')"
+              type="date"
               v-model="startingDate4"
             />
           </div>
@@ -608,10 +587,7 @@ let dateFilter = ref("issued");
             <h1>По</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="text"
-              placeholder="ДД.ММ.ГГГГ"
-              onfocus="(this.type='date')"
-              onblur="(this.type='text')"
+              type="date"
               v-model="endDate4"
             />
           </div>
