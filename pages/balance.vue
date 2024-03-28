@@ -372,7 +372,6 @@ function getAllSum() {
     if (selectedPVZ.value === "Все ПВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
-          row.deleted === null &&
           (!startingDate.value ||
             new Date(row.created_at) >= new Date(newStartingDate)) &&
           (!endDate.value || new Date(row.created_at) <= new Date(newEndDate))
@@ -390,7 +389,6 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.dispatchPVZ === selectedPVZ.value &&
-          row.deleted === null &&
           (!startingDate.value ||
             new Date(row.created_at) >= new Date(newStartingDate)) &&
           (!endDate.value || new Date(row.created_at) <= new Date(newEndDate))
@@ -1048,7 +1046,7 @@ async function updateRow() {
                       "
                       value="Заказано3"
                     >
-                      Фактически заказано
+                    Сумма заказанных товаров
                     </option>
                   </select>
                 </div>
@@ -1371,7 +1369,7 @@ async function updateRow() {
                       "
                       value="Заказано3"
                     >
-                      Фактически заказано
+                    Сумма заказанных товаров
                     </option>
                   </select>
                 </div>
