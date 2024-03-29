@@ -724,7 +724,7 @@ let month = ref(new Date().getMonth() + 1);
             </div>
 
             <div class="grid grid-cols-2 mb-5">
-              <label for="name">Выдано</label>
+              <label for="name">Получатель</label>
               <select
                 :disabled="user.role !== 'ADMIN'"
                 class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
@@ -947,7 +947,7 @@ let month = ref(new Date().getMonth() + 1);
             </div>
 
             <div class="grid grid-cols-2 mb-5">
-              <label for="name">Выдано</label>
+              <label for="name">Получатель</label>
               <select
                 :disabled="user.role !== 'ADMIN'"
                 class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"

@@ -778,7 +778,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
                 {{ formatNumber(getAllSumDirector()) }} ₽
               </h1>
             </div>
-            <div v-else>
+            <div v-if="selectedUser === 'Директор'">
               <div class="text-center text-xl my-3">
                 <h1>Баланс Торговой Империи онлайн&наличные:</h1>
                 <h1 class="font-bold text-secondary-color text-4xl text-center">
@@ -828,7 +828,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           </UIMainButton>
 
           <AdvanceReportTable
-            v-if="selectedUser !== 'Директор (С)'"
+            v-if="selectedUser !== 'Директор (С)' && selectedUser !== 'Директор'"
             :rows="
               filteredRows?.filter(
                 (row) =>
@@ -846,10 +846,19 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             :rows="
               filteredRows?.filter(
                 (row) =>
-                  row.issuedUser === 'Директор' ||
-                  row.createdUser === 'Директор'
+                  (row.issuedUser === 'Директор' ||
+                  row.createdUser === 'Директор') || (row.issuedUser === 'Директор (С)' ||
+                  row.createdUser === 'Директор (С)')
               )
             "
+            :user="user"
+            @open-modal="openModal"
+            @update-delivery-row="updateDeliveryRow"
+          />
+
+          <AdvanceReportTable
+            v-if="selectedUser === 'Директор'"
+            :rows="filteredRows"
             :user="user"
             @open-modal="openModal"
             @update-delivery-row="updateDeliveryRow"
@@ -901,7 +910,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             </div>
 
             <div class="grid grid-cols-2 mb-5">
-              <label for="name">Выдано</label>
+              <label for="name">Получатель</label>
               <select
                 :disabled="user.role !== 'ADMIN' || rowData.id === null"
                 class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
@@ -1243,7 +1252,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             </div>
 
             <div class="grid grid-cols-2 mb-5">
-              <label for="name">Выдано </label>
+              <label for="name">Получатель </label>
               <select
                 :disabled="user.role !== 'ADMIN' && rowData.id === null"
                 class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"

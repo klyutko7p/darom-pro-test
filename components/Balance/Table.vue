@@ -84,8 +84,8 @@ onMounted(() => {});
               name="mdi:checkbox-multiple-marked-circle"
               size="32"
             />
-            <h1 class="font-bold text-green-500">
-              {{ row.issued ? storeUsers.getNormalizedDate(row.issued) : "" }}
+            <h1 class="font-bold text-green-500" :class="{'text-gray-300': !row.issued}">
+              {{ row.issued ? storeUsers.getNormalizedDate(row.issued) : "Учитывается в балансе" }}
             </h1>
           </td>
           <td class="border-2 whitespace-nowrap">

@@ -197,7 +197,7 @@ let breakpoints = {
           <td class="border-2 whitespace-nowrap">
             <Icon
               @click="updateDeliveryRow(row)"
-              v-if="user.username === row.issuedUser && !row.received"
+              v-if="(user.username === row.issuedUser && !row.received) || (user.username === 'Директор' && row.issuedUser === 'Директор (С)' && !row.received)"
               class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
               name="mdi:checkbox-multiple-marked-circle"
               size="32"
