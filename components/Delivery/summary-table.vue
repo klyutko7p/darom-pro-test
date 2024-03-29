@@ -106,17 +106,85 @@ function getWeekdays() {
     daysMap[dayOfWeek].push(day);
   });
 
+  let nullAdded = false;
   Object.keys(daysMap).forEach((dayOfWeek) => {
     const dayArray = daysMap[dayOfWeek];
     const missingCount = 5 - dayArray.length;
     if (missingCount > 0) {
       for (let i = 0; i < missingCount; i++) {
-        dayArray.push({ date: null, dayOfWeek });
+        if (+month.value === 3) {
+          dayArray.unshift({ date: null, dayOfWeek });
+        } else if (+month.value === 1) {
+          dayArray.push({ date: null, dayOfWeek });
+        } else if (+month.value === 2) {
+          if (dayOfWeek === "понедельник") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "вторник") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "среда") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "пятница") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "суббота") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "воскресенье") dayArray.push({ date: null, dayOfWeek });
+        } else if (+month.value === 4) {
+          if (dayOfWeek === "среда") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "четверг") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "пятница") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "суббота") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "воскресенье") dayArray.push({ date: null, dayOfWeek });
+        } else if (+month.value === 5) {
+          if (dayOfWeek === "понедельник") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "вторник") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "среда") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "четверг") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "пятница") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "суббота") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "воскресенье") dayArray.push({ date: null, dayOfWeek });
+        } else if (+month.value === 6) {
+          if (dayOfWeek === "понедельник") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "вторник") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "среда") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "четверг") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "пятница") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "суббота") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "воскресенье") dayArray.push({ date: null, dayOfWeek });
+        } else if (+month.value === 7) {
+          if (dayOfWeek === "четверг") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "пятница") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "суббота") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "воскресенье") dayArray.push({ date: null, dayOfWeek });
+        } else if (+month.value === 8) {
+          if (dayOfWeek === "понедельник") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "вторник") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "среда") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "воскресенье") dayArray.push({ date: null, dayOfWeek });
+        } else if (+month.value === 9) {
+        } else if (+month.value === 10) {
+          if (dayOfWeek === "понедельник") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "пятница") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "суббота") dayArray.push({ date: null, dayOfWeek });
+          if (dayOfWeek === "воскресенье") dayArray.push({ date: null, dayOfWeek });
+        } else if (+month.value === 11) {
+          if (dayOfWeek === "понедельник") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "вторник") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "среда") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "четверг") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "пятница") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "суббота") dayArray.unshift({ date: null, dayOfWeek });
+          if (dayOfWeek === "воскресенье") dayArray.push({ date: null, dayOfWeek });
+        } else if (+month.value === 12) {
+        }
       }
+    }
+
+    if (+month.value === 12) {
+      if (dayOfWeek === "понедельник") dayArray.unshift({ date: null, dayOfWeek });
+      if (dayOfWeek === "вторник") dayArray.unshift({ date: null, dayOfWeek });
+    }
+
+    if (+month.value === 9) {
+      if (dayOfWeek === "понедельник") dayArray.unshift({ date: null, dayOfWeek });
     }
   });
 
-  const resultArray = Object.values(daysMap).flatMap(dayArray => dayArray);
+  const resultArray = Object.values(daysMap).flatMap((dayArray) => dayArray);
   arrayOfDays.value = resultArray;
 }
 
@@ -201,7 +269,7 @@ watch(
       <select
         class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
         v-model="month"
-        @change="filterRows(month), updateCurrentPageData()"
+        @change="filterRows(month), getWeekdays(), updateCurrentPageData()"
       >
         <option v-for="(monthName, monthNumber) in monthNames" :value="monthNumber">
           {{ monthName }}
@@ -230,7 +298,9 @@ watch(
               class="text-left border-t-2 min-h-[70px]"
               v-for="day in arrayOfDays.filter((row) => row.dayOfWeek === item)"
             >
-              <span class="text-xl text-black">{{ day.date }}</span>
+              <span class="text-xl text-black"
+                >{{ day.date }}
+              </span>
               <br />
               <div v-if="day.date !== null">
                 D =
