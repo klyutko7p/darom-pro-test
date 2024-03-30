@@ -73,7 +73,7 @@ function scanItem() {
         let rowData = await storeRansom.getRansomRowsById(+scannedLink, "OurRansom");
         await acceptItem(rowData);
         arrayOfRows.value.push(rowData);
-    }, 1500);
+    }, 1200);
 }
 
 function convertToURL(inputString: string) {
