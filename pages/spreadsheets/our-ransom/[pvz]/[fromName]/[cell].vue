@@ -320,7 +320,7 @@ async function showDeletedRows(flag: boolean) {
   <div>
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="admin">
-        <div v-if="!isLoading" class="mt-3">
+        <div v-if="!isLoading" class="mt-3 max-[400px]:mt-20">
           <div>
             <SpreadsheetsOurRansomFilters v-if="rows" @filtered-rows="handleFilteredRows" :rows="rows" :user="user" />
             <div class="mt-5 flex items-center gap-3" v-if="user.dataOurRansom === 'WRITE'">
@@ -519,7 +519,7 @@ async function showDeletedRows(flag: boolean) {
     </div>
     <div v-else>
       <NuxtLayout name="user">
-        <div v-if="!isLoading" class="mt-3">
+        <div v-if="!isLoading" class="mt-3 max-[400px]:mt-20">
           <div>
             <SpreadsheetsOurRansomFilters v-if="rows && user.role !== 'PVZ'" @filtered-rows="handleFilteredRows"
               :rows="rows" :user="user" />

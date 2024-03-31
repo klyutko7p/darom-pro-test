@@ -5,19 +5,20 @@ const storeUsers = useUsersStore();
 const props = defineProps({
   user: { type: Object as PropType<User>, required: true },
   rows: { type: Array as PropType<IAdvanceReport[]> },
+  month: { type: Number, required: true },
   week: { type: String, required: true },
+  startingDate: { type: Date },
+  endDate: { type: Date },
   rowsBalance: { type: Array as PropType<IBalance[]>, required: true },
   rowsDelivery: { type: Array as PropType<IDelivery[]>, required: true },
   rowsOurRansom: { type: Array as PropType<IOurRansom[]>, required: true },
   company: { type: String, required: true },
 });
 
-let month = ref(new Date().getMonth() + 1);
-
 const filteredRows = ref(
   props.rows?.filter((row: IAdvanceReport) => {
     let rowDate: Date = new Date(row.date);
-    return rowDate.getMonth() + 1 === month.value;
+    return rowDate.getMonth() + 1 === +props.month;
   })
 );
 
@@ -44,10 +45,27 @@ let sumOfArray2 = ref(0);
 let sumOfArray3 = ref(0);
 
 function updateCurrentPageData() {
+  let newStartingDate = new Date(props.startingDate);
+  newStartingDate.setHours(0);
+  newStartingDate.setMinutes(0);
+  newStartingDate.setSeconds(0);
+  newStartingDate.setMilliseconds(0);
+
+  let newEndDate = new Date(props.endDate);
+  newEndDate.setHours(23);
+  newEndDate.setMinutes(59);
+  newEndDate.setSeconds(59);
+  newEndDate.setMilliseconds(0);
+
   returnRows.value = props.rows;
   filteredRows.value = returnRows.value?.filter((row: IAdvanceReport) => {
     let rowDate: Date = new Date(row.date);
-    return rowDate.getMonth() + 1 === +month.value && row.PVZ !== "";
+    return (
+      rowDate.getMonth() + 1 === +props.month &&
+      row.PVZ !== "" &&
+      (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
+      (!props.endDate || new Date(row.date) <= new Date(newEndDate))
+    );
   });
 
   if (props.company === "Darom.pro" || props.company === "Все") {
@@ -68,7 +86,12 @@ function updateCurrentPageData() {
       rowsBalanceArr.value = props.rowsBalance
         .filter(
           (row: IBalance) =>
-            row.received !== null && row.recipient === "Шведова"
+            row.received !== null &&
+            row.recipient === "Шведова" &&
+            new Date(row.received).getMonth() + 1 === +props.month &&
+            (!props.startingDate ||
+              new Date(row.received) >= new Date(newStartingDate)) &&
+            (!props.endDate || new Date(row.received) <= new Date(newEndDate))
         )
         .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
     }
@@ -82,46 +105,53 @@ function updateCurrentPageData() {
     });
   } else {
     rowsDeliveryArr.value = props.rowsDelivery.filter(
-      (row: IDelivery) => row.paid !== null
+      (row: IDelivery) =>
+        row.paid !== null &&
+        new Date(row.paid).getMonth() + 1 === +props.month &&
+        (!props.startingDate || new Date(row.paid) >= new Date(newStartingDate)) &&
+        (!props.endDate || new Date(row.paid) <= new Date(newEndDate))
     );
   }
 
   if (props.week.includes("неделя")) {
-    arrayOfExpenditure.value = filteredRows.value?.filter(
-      (row: IAdvanceReport) => {
-        let rowDate: Date = new Date(row.date);
-        let [startDate, endDate] = parseWeekRange(props.week);
-        return (
-          rowDate >= startDate &&
-          rowDate <= endDate &&
-          row.typeOfExpenditure !== "Пополнение баланса" &&
-          row.typeOfExpenditure !== "Передача денежных средств"
-        );
-      }
-    );
+    arrayOfExpenditure.value = filteredRows.value?.filter((row: IAdvanceReport) => {
+      let rowDate: Date = new Date(row.date);
+      let [startDate, endDate] = parseWeekRange(props.week);
+      return (
+        rowDate >= startDate &&
+        rowDate <= endDate &&
+        row.typeOfExpenditure !== "Пополнение баланса" &&
+        row.typeOfExpenditure !== "Передача денежных средств"
+      );
+    });
   } else {
     arrayOfExpenditure.value = filteredRows.value?.filter(
       (row: IAdvanceReport) =>
         row.typeOfExpenditure !== "Пополнение баланса" &&
-        row.typeOfExpenditure !== "Передача денежных средств"
+        row.typeOfExpenditure !== "Передача денежных средств" &&
+        new Date(row.date).getMonth() + 1 === +props.month &&
+        (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
+        (!props.endDate || new Date(row.date) <= new Date(newEndDate))
     );
   }
 
   if (props.week.includes("неделя")) {
-    arrayOfReceipts.value = filteredRows.value?.filter(
-      (row: IAdvanceReport) => {
-        let rowDate: Date = new Date(row.date);
-        let [startDate, endDate] = parseWeekRange(props.week);
-        return (
-          rowDate >= startDate &&
-          rowDate <= endDate &&
-          row.typeOfExpenditure === "Пополнение баланса"
-        );
-      }
-    );
+    arrayOfReceipts.value = filteredRows.value?.filter((row: IAdvanceReport) => {
+      let rowDate: Date = new Date(row.date);
+      let [startDate, endDate] = parseWeekRange(props.week);
+      return (
+        rowDate >= startDate &&
+        rowDate <= endDate &&
+        row.typeOfExpenditure === "Пополнение баланса"
+      );
+    });
   } else {
     arrayOfReceipts.value = filteredRows.value?.filter(
-      (row: IAdvanceReport) => row.typeOfExpenditure === "Пополнение баланса"
+      (row: IAdvanceReport) =>
+        row.typeOfExpenditure === "Пополнение баланса" &&
+        new Date(row.date).getMonth() + 1 === +props.month &&
+        (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
+        (!props.endDate || new Date(row.date) <= new Date(newEndDate))
     );
   }
 
@@ -143,7 +173,12 @@ function updateCurrentPageData() {
       rowsBalanceArr.value = props.rowsBalance
         .filter(
           (row: IBalance) =>
-            row.received !== null && row.recipient === "Шведова"
+            row.received !== null &&
+            row.recipient === "Шведова" &&
+            new Date(row.received).getMonth() + 1 === +props.month &&
+            (!props.startingDate ||
+              new Date(row.received) >= new Date(newStartingDate)) &&
+            (!props.endDate || new Date(row.received) <= new Date(newEndDate))
         )
         .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
     }
@@ -157,12 +192,16 @@ function updateCurrentPageData() {
         return (
           rowDate >= startDate &&
           rowDate <= endDate &&
-          row.additionally === "Оплачено онлайн"
+          (row.additionally === "Оплачено онлайн" || row.additionally === 'Оплата наличными')
         );
       });
     } else {
       rowsOnlineArr.value = props.rowsOurRansom.filter(
-        (row: IOurRansom) => row.additionally === "Оплачено онлайн"
+        (row: IOurRansom) =>
+          (row.additionally === "Оплачено онлайн" || row.additionally === 'Оплата наличными') &&
+          new Date(row.issued).getMonth() + 1 === +props.month &&
+          (!props.startingDate || new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!props.endDate || new Date(row.issued) <= new Date(newEndDate))
       );
     }
   }
@@ -244,9 +283,14 @@ function clearTotalSums() {
   sumOfArray2.value = 0;
   sumOfArray3.value = 0;
 }
-
-watch([props.rows, totalRows, filteredRows.value], clearTotalSums);
-watch([props.rows, totalRows, filteredRows.value], updateCurrentPageData);
+watch([props.rows, totalRows, filteredRows.value, props.month], clearTotalSums);
+watch(() => props.month, clearTotalSums);
+watch(() => props.month, updateCurrentPageData);
+watch(() => props.startingDate, clearTotalSums);
+watch(() => props.startingDate, updateCurrentPageData);
+watch(() => props.endDate, clearTotalSums);
+watch(() => props.endDate, updateCurrentPageData);
+watch([props.rows, totalRows, filteredRows.value, props.month], updateCurrentPageData);
 
 let pvz = ref([
   "Ряженое",
@@ -277,11 +321,7 @@ let pvz = ref([
       >
         <tr>
           <td class="border-2 p-2 whitespace-nowrap font-bold">Статус</td>
-          <th
-            scope="col"
-            class="border-2 p-2 whitespace-nowrap"
-            v-for="pvzName in pvz"
-          >
+          <th scope="col" class="border-2 p-2 whitespace-nowrap" v-for="pvzName in pvz">
             {{ pvzName }}
           </th>
           <td class="border-2 p-2 whitespace-nowrap font-bold">Итого</td>
@@ -296,9 +336,7 @@ let pvz = ref([
           >
             {{ sum }} ₽
           </td>
-          <td class="border-2 p-2 whitespace-nowrap font-bold">
-            {{ sumOfArray1 }} ₽
-          </td>
+          <td class="border-2 p-2 whitespace-nowrap font-bold">{{ sumOfArray1 }} ₽</td>
         </tr>
         <tr class="text-center">
           <td class="border-2 p-2 whitespace-nowrap font-bold">Расход</td>
@@ -308,9 +346,7 @@ let pvz = ref([
           >
             {{ sum }} ₽
           </td>
-          <td class="border-2 p-2 whitespace-nowrap font-bold">
-            {{ sumOfArray2 }} ₽
-          </td>
+          <td class="border-2 p-2 whitespace-nowrap font-bold">{{ sumOfArray2 }} ₽</td>
         </tr>
         <tr class="text-center">
           <td class="border-2 p-2 whitespace-nowrap font-bold">Итого</td>
@@ -320,9 +356,7 @@ let pvz = ref([
           >
             {{ sum }} ₽
           </td>
-          <td class="border-2 font-bold p-2 whitespace-nowrap">
-            {{ sumOfArray3 }} ₽
-          </td>
+          <td class="border-2 font-bold p-2 whitespace-nowrap">{{ sumOfArray3 }} ₽</td>
         </tr>
       </tbody>
     </table>

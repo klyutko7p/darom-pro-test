@@ -276,9 +276,19 @@ model Payroll {
   date              DateTime?
 }
 
+model Client {
+  id          Int      @id @default(autoincrement())
+  fio         String?
+  role        Role     @default(CLIENT)
+  password    String
+  phoneNumber String   @unique()
+  created_at  DateTime @default(now())
+}
+
 enum Role {
   USER
   ADMIN
+  CLIENT
   SORTIROVKA
   PVZ
   ADMINISTRATOR

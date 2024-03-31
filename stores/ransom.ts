@@ -202,6 +202,23 @@ export const useRansomStore = defineStore("ransom", () => {
         }
     }
 
+    async function getRansomRowsForUpdateCells(flag: string) {
+        try {
+            let { data }: any = await useFetch('/api/ransom/get-rows-for-update-cells', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ flag: flag })
+            });
+            return data.value;
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
     async function getRansomRowsWithPVZ(flag: string) {
         try {
             let { data }: any = await useFetch('/api/ransom/get-rows-with-pvz', {
@@ -668,5 +685,5 @@ export const useRansomStore = defineStore("ransom", () => {
         return Array.from(uniqueNonEmptyValues);
     };
 
-    return { createRansomRow, getRansomRows, updateRansomRow, deleteRansomRow, updateDeliveryStatus, getUniqueNonEmptyValues, getRansomRow, deleteRansomSelectedRows, getRansomRowsByLink, updateDeliveryRowsStatus, createCopyRow, deleteIssuedRows, getOldRansomRow, getRansomRowsByPVZ, getRansomRowsByFromName, getSumOfRejection, updateSumOfRejection, getRansomRowsById, getRansomRowsWithPVZ, getRansomRowsForModal, getRansomRowsForBalance, getRansomRowsWithDeleted, getRansomRowsFirstHundred, getRansomRowsWithDeletedForCells, getRansomRowsRefunds, getRansomRowsForAdvanceReport}
+    return { createRansomRow, getRansomRows, updateRansomRow, deleteRansomRow, updateDeliveryStatus, getUniqueNonEmptyValues, getRansomRow, deleteRansomSelectedRows, getRansomRowsByLink, updateDeliveryRowsStatus, createCopyRow, deleteIssuedRows, getOldRansomRow, getRansomRowsByPVZ, getRansomRowsByFromName, getSumOfRejection, updateSumOfRejection, getRansomRowsById, getRansomRowsWithPVZ, getRansomRowsForModal, getRansomRowsForBalance, getRansomRowsWithDeleted, getRansomRowsFirstHundred, getRansomRowsWithDeletedForCells, getRansomRowsRefunds, getRansomRowsForAdvanceReport, getRansomRowsForUpdateCells}
 })

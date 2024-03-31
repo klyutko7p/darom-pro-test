@@ -40,6 +40,11 @@
     "resend": "^3.2.0",
     "vue-toastification": "^2.0.0-rc.5",
     "vue-yandex-maps": "^1.1.0",
+    "wide-align": "^1.1.5",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
+  },
+  "resolutions": {
+    "string-width": "4.2.3",
+    "jackspeak": "2.1.1"
   }
 }

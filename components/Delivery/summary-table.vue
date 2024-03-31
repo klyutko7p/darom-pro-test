@@ -298,38 +298,40 @@ watch(
               class="text-left border-t-2 min-h-[70px]"
               v-for="day in arrayOfDays.filter((row) => row.dayOfWeek === item)"
             >
-              <span class="text-xl text-black"
-                >{{ day.date }}
-              </span>
+              <span class="text-xl text-black">{{ day.date }} </span>
               <br />
               <div v-if="day.date !== null">
-                D =
-                {{
-                  getDeliveryAmount(
-                    returnRows.filter((row) => getFilterByDay(row, day.date))
-                  )
-                }}
+                <span
+                  v-if="
+                    getDeliveryAmount(
+                      returnRows.filter((row) => getFilterByDay(row, day.date))
+                    ) > 0
+                  "
+                  >D =
+                  {{
+                    getDeliveryAmount(
+                      returnRows.filter((row) => getFilterByDay(row, day.date))
+                    )
+                  }}</span
+                >
                 <br />
-                S =
-                {{
-                  getSortirovkaAmount(
-                    returnRows.filter((row) => getFilterByDay(row, day.date))
-                  )
-                }}
+                <span
+                  v-if="
+                    getSortirovkaAmount(
+                      returnRows.filter((row) => getFilterByDay(row, day.date))
+                    ) > 0
+                  "
+                  >S =
+                  {{
+                    getSortirovkaAmount(
+                      returnRows.filter((row) => getFilterByDay(row, day.date))
+                    )
+                  }}</span
+                >
               </div>
             </h1>
           </th>
         </tr>
-        <!-- <td scope="row" class="border-2 text-left">
-            <br />
-            Доставка =
-            {{ getDeliveryAmount(returnRows.filter((row) => getFilterByDay(row, day.date))) }}
-            <br />
-            Сортировка =
-            {{
-              getSortirovkaAmount(returnRows.filter((row) => getFilterByDay(row, day.date)))
-            }}
-          </td> -->
       </tbody>
     </table>
   </div>

@@ -241,7 +241,7 @@ function getFromNameFromCell() {
     <div>
         <div v-if="user.role === 'ADMIN'">
             <NuxtLayout name="admin">
-                <div v-if="!isLoading" class="mt-3">
+                <div v-if="!isLoading" class="mt-3 max-[400px]:mt-20">
                     <div>
                         <SpreadsheetsClientRansomFilters v-if="rows" @filtered-rows="handleFilteredRows" :rows="rows" />
                         <div class="mt-5 flex items-center gap-3" v-if="user.dataClientRansom === 'WRITE'">
@@ -432,7 +432,7 @@ function getFromNameFromCell() {
         </div>
         <div v-else>
             <NuxtLayout name="user">
-                <div v-if="!isLoading" class="mt-3">
+                <div v-if="!isLoading" class="mt-3 max-[400px]:mt-20">
                     <div>
                         <SpreadsheetsClientRansomFilters v-if="rows && user.role !== 'PVZ'"
                             @filtered-rows="handleFilteredRows" :rows="rows" :user="user" />

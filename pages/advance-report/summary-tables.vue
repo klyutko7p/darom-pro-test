@@ -23,17 +23,14 @@ onBeforeMount(async () => {
   user.value = await storeUsers.getUser();
   rows.value = await storeAdvanceReports.getAdvancedReports();
   originallyRows.value = rows.value;
-  rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReport(
-    "OurRansom"
-  );
+  rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReport("OurRansom");
   rowsDelivery.value = await storeRansom.getRansomRowsForBalance("Delivery");
   originallyRows.value = rows.value;
 
   if (user.value.role !== "ADMIN") {
     rows.value = rows.value?.filter(
       (row) =>
-        row.createdUser === user.value.username ||
-        row.issuedUser === user.value.username
+        row.createdUser === user.value.username || row.issuedUser === user.value.username
     );
   } else {
     rows.value = rows.value;
@@ -44,9 +41,7 @@ onBeforeMount(async () => {
   }
 
   ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
-  clientRansomRows.value = await storeRansom.getRansomRowsForBalance(
-    "ClientRansom"
-  );
+  clientRansomRows.value = await storeRansom.getRansomRowsForBalance("ClientRansom");
   rowsBalance.value = await storeBalance.getBalanceRows();
 
   getAllSum();
@@ -79,12 +74,13 @@ let copyArrayClientRansom = ref<Array<IClientRansom>>();
 let ourRansomRows = ref<Array<IOurRansom>>();
 let clientRansomRows = ref<Array<IClientRansom>>();
 
-function getAllSum() {
+  function getAllSum() {
   copyArrayOurRansom.value = ourRansomRows.value?.filter(
     (row) =>
       row.issued !== null &&
       (row.additionally === "Оплата наличными" ||
-        row.additionally === "Отказ клиент наличные" || row.additionally === "Отказ клиент")
+        row.additionally === "Отказ клиент наличные" ||
+        row.additionally === "Отказ клиент")
   );
 
   copyArrayClientRansom.value = clientRansomRows.value?.filter(
@@ -92,9 +88,7 @@ function getAllSum() {
   );
 
   let sumOfPVZ = rowsBalance.value
-    ?.filter(
-      (row) => row.received !== null && row.recipient === user.value.username
-    )
+    ?.filter((row) => row.received !== null && row.recipient === user.value.username)
     .reduce((acc, value) => acc + +value.sum, 0);
 
   let sumOfPVZ1 = rows.value
@@ -129,36 +123,39 @@ function getAllSum() {
     ?.filter((row) => row.paid !== null)
     .reduce((acc, value) => acc + +value.amountFromClient3, 0);
 
-  let sumOfPVZ5 = rowsBalanceOnline.value?.reduce(
-    (acc, value) => acc + +value.sum,
-    0
-  );
+  let sumOfPVZ5 = rowsBalanceOnline.value?.reduce((acc, value) => acc + +value.sum, 0);
 
   let sumOfPVZ6 = rowsOurRansom.value
     ?.filter((row) => row.verified !== null)
     .reduce((acc, value) => acc + +value.priceRefund, 0);
-
-  if (sumOfPVZ6 === undefined) sumOfPVZ6 = 0;
 
   let sumOfPVZ7 = rowsOurRansom.value
     ?.filter((row) => row.additionally === "Отказ брак")
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ8 = rowsOurRansom.value
-    ?.filter((row) => row.additionally === "Отказ клиент наличные" || row.additionally === "Отказ клиент")
+    ?.filter(
+      (row) =>
+        row.additionally === "Отказ клиент наличные" ||
+        row.additionally === "Отказ клиент"
+    )
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ9 = rowsOurRansom.value
     ?.filter(
       (row) =>
-        row.additionally !== "Отказ клиент наличные" && row.additionally !== "Отказ клиент" && row.additionally !== "Отказ брак"
+        row.additionally !== "Отказ клиент наличные" &&
+        row.additionally !== "Отказ клиент" &&
+        row.additionally !== "Отказ брак"
     )
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ10 = rowsOurRansom.value
     ?.filter(
       (row) =>
-        row.additionally !== "Отказ клиент наличные" && row.additionally !== "Отказ клиент" && row.additionally !== "Отказ брак"
+        row.additionally !== "Отказ клиент наличные" &&
+        row.additionally !== "Отказ клиент" &&
+        row.additionally !== "Отказ брак"
     )
     .reduce((acc, value) => acc + +value.deliveredKGT, 0);
 
@@ -224,14 +221,10 @@ function getAllSum() {
         +sumOfPVZ10;
 
       allSum2.value =
-        +sumOfPVZ -
-        +sumOfPVZ1Cashless +
-        +sumOfPVZ2Cashless -
-        +sumOfPVZ3Cashless;
+        +sumOfPVZ - +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
       break;
     default:
-      allSum.value =
-        +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
+      allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
       break;
   }
 }
@@ -320,18 +313,14 @@ const supabase = createClient(
 
 async function createRow() {
   isLoading.value = true;
-  await storeAdvanceReports.createAdvanceReport(
-    rowData.value,
-    user.value.username
-  );
+  await storeAdvanceReports.createAdvanceReport(rowData.value, user.value.username);
   rows.value = await storeAdvanceReports.getAdvancedReports();
   originallyRows.value = rows.value;
 
   if (user.value.role !== "ADMIN") {
     rows.value = rows.value?.filter(
       (row) =>
-        row.createdUser === user.value.username ||
-        row.issuedUser === user.value.username
+        row.createdUser === user.value.username || row.issuedUser === user.value.username
     );
   } else {
     rows.value = rows.value;
@@ -346,18 +335,14 @@ async function createRow() {
 
 async function updateRow() {
   isLoading.value = true;
-  await storeAdvanceReports.updateAdvanceReport(
-    rowData.value,
-    user.value.username
-  );
+  await storeAdvanceReports.updateAdvanceReport(rowData.value, user.value.username);
   rows.value = await storeAdvanceReports.getAdvancedReports();
   originallyRows.value = rows.value;
 
   if (user.value.role !== "ADMIN") {
     rows.value = rows.value?.filter(
       (row) =>
-        row.createdUser === user.value.username ||
-        row.issuedUser === user.value.username
+        row.createdUser === user.value.username || row.issuedUser === user.value.username
     );
   } else {
     rows.value = rows.value;
@@ -378,8 +363,7 @@ async function updateDeliveryRow(row: any) {
   if (user.value.role !== "ADMIN") {
     rows.value = rows.value?.filter(
       (row) =>
-        row.createdUser === user.value.username ||
-        row.issuedUser === user.value.username
+        row.createdUser === user.value.username || row.issuedUser === user.value.username
     );
   } else {
     rows.value = rows.value;
@@ -416,7 +400,8 @@ function getAllSumFromName(username: string) {
     (row) =>
       row.issued !== null &&
       (row.additionally === "Оплата наличными" ||
-        row.additionally === "Отказ клиент наличные" || row.additionally === "Отказ клиент")
+        row.additionally === "Отказ клиент наличные" ||
+        row.additionally === "Отказ клиент")
   );
 
   copyArrayClientRansom.value = clientRansomRows.value?.filter(
@@ -438,15 +423,11 @@ function getAllSumFromName(username: string) {
   let sumOfPVZ3 = originallyRows.value
     ?.filter(
       (row) =>
-        row.createdUser === username &&
-        (row.issuedUser === "" || row.issuedUser === null)
+        row.createdUser === username && (row.issuedUser === "" || row.issuedUser === null)
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
-  let sumOfPVZ4 = rowsDelivery.value?.reduce(
-    (acc, value) => acc + +value.sum,
-    0
-  );
+  let sumOfPVZ4 = rowsDelivery.value?.reduce((acc, value) => acc + +value.sum, 0);
 
   if (username !== "Шведова") {
     let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
@@ -494,7 +475,10 @@ function getAllSumFromEmployees() {
             (row.issuedUser === "" || row.issuedUser === null)
         )
         .reduce((acc, value) => acc + +value.expenditure, 0);
-
+      sumOfPVZ = sumOfPVZ === undefined ? 0 : sumOfPVZ;
+      sumOfPVZ1 = sumOfPVZ1 === undefined ? 0 : sumOfPVZ1;
+      sumOfPVZ2 = sumOfPVZ2 === undefined ? 0 : sumOfPVZ2;
+      sumOfPVZ3 = sumOfPVZ3 === undefined ? 0 : sumOfPVZ3;
       let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
       totalSum += allSum;
     });
@@ -519,7 +503,7 @@ async function handleFileChange(event) {
     console.log(error);
   }
 }
-let selectedWeek = ref("");
+let selectedWeek = ref("март");
 
 function getWeeks() {
   const currentDate = new Date();
@@ -556,7 +540,6 @@ function getWeeks() {
       lastDayOfMonth
     )})`
   );
-  selectedWeek.value = weeks[0];
   return weeks;
 }
 
@@ -589,6 +572,29 @@ function getMonthName(month) {
 const weeks = getWeeks();
 
 let month = ref(new Date().getMonth() + 1);
+const startingDate = ref<Date | string | null>(null);
+const endDate = ref<Date | string | null>(null);
+
+let showFilters = ref(false);
+let months = ref([3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2]);
+let monthNames: any = ref({
+  3: "Март",
+  4: "Апрель",
+  5: "Май",
+  6: "Июнь",
+  7: "Июль",
+  8: "Август",
+  9: "Сентябрь",
+  10: "Октябрь",
+  11: "Ноябрь",
+  12: "Декабрь",
+  1: "Январь",
+  2: "Февраль",
+});
+
+function filterRowsData(monthData: number) {
+  month.value = monthData;
+}
 </script>
 
 <template>
@@ -600,13 +606,6 @@ let month = ref(new Date().getMonth() + 1);
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="mt-10">
-          <AdvanceReportFilters
-            v-if="rows"
-            @filtered-rows="handleFilteredRows"
-            :rows="rows"
-            :user="user"
-          />
-
           <NuxtLink
             v-if="user.role === 'ADMIN'"
             to="/advance-report"
@@ -615,44 +614,71 @@ let month = ref(new Date().getMonth() + 1);
             Перейти к авансовому отчету
           </NuxtLink>
 
-          <div>
-            <div class="text-center text-xl my-3">
-              <h1>Баланс Торговой Империи онлайн&наличные:</h1>
-              <h1 class="font-bold text-secondary-color text-4xl text-center">
-                {{ formatNumber(Math.ceil(getAllSumFromEmployees())) }} ₽
-              </h1>
+          <div
+            class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5"
+          >
+            <div class="flex items-center gap-3 mr-5">
+              <h1 class="max-sm:mr-3">С</h1>
+              <input
+                class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                type="date"
+                placeholder="ДД.ММ.ГГГГ"
+                onchange="this.className=(this.value!=''?'has-value':'')"
+                v-model="startingDate"
+              />
             </div>
-            <div class="text-center text-xl my-3">
-              <h1>
-                Баланс Торговой Империи <br />
-                безнал:
-              </h1>
-              <h1 class="font-bold text-secondary-color text-4xl text-center">
-                {{ formatNumber(Math.ceil(allSum2)) }} ₽
-              </h1>
+            <div class="flex items-center gap-3 max-sm:mb-7">
+              <h1>По</h1>
+              <input
+                class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                type="date"
+                placeholder="ДД.ММ.ГГГГ"
+                onchange="this.className=(this.value!=''?'has-value':'')"
+                v-model="endDate"
+              />
             </div>
           </div>
 
-          <div class="mt-10">
-            <select
-              v-model="selectedWeek"
-              class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+          <div class="my-10 flex items-center gap-5">
+            <span
+              class="border-2 py-3 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
+              @click="showFilters = !showFilters"
+              >2024</span
             >
-              <option v-for="week in weeks">{{ week }}</option>
-            </select>
+            <div
+              v-if="showFilters"
+              class="flex items-center w-full justify-between max-sm:items-start"
+            >
+              <select
+                class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+                v-model="month"
+                @change="filterRowsData(month)"
+              >
+                <option v-for="(monthName, monthNumber) in monthNames" :value="monthNumber">
+                  {{ monthName }}
+                </option>
+              </select>
+            </div>
           </div>
 
           <div v-for="company in companies" class="mt-10 mb-10">
-            <h1 class="font-bold text-2xl mb-1 max-2xl:border-b-2 border-black p-2">{{ company }}</h1>
-            <div class="p-3 border-2 border-dashed border-black max-2xl:border-0">
+            <h1 class="font-bold text-2xl mb-1 max-2xl:border-b-2 border-black p-2">
+              {{ company }}
+            </h1>
+            <div>
               <AdvanceReportTableReport
                 :rows="filteredRows?.filter((row) => row.company === company)"
                 :user="user"
                 :week="selectedWeek"
-                :rows-delivery="rowsDelivery?.filter((row) => row.nameOfAction === company)"
+                :month="month"
+                :rows-delivery="
+                  rowsDelivery?.filter((row) => row.nameOfAction === company)
+                "
                 :rows-balance="rowsBalance"
                 :rows-our-ransom="rowsOurRansom"
                 :company="company"
+                :startingDate="startingDate"
+                :endDate="endDate"
                 @open-modal="openModal"
                 @update-delivery-row="updateDeliveryRow"
               />
@@ -663,15 +689,18 @@ let month = ref(new Date().getMonth() + 1);
             <h1 class="font-bold text-2xl mb-1 max-2xl:border-b-2 border-black p-2">
               Итог месяца прибыли по всем проектам
             </h1>
-            <div class="p-3 border-2 border-dashed border-black max-2xl:border-0">
+            <div>
               <AdvanceReportTableReport
                 :rows="filteredRows"
                 :user="user"
                 :week="selectedWeek"
+                :month="month"
                 :rows-balance="rowsBalance"
                 :rows-delivery="rowsDelivery"
                 :rows-our-ransom="rowsOurRansom"
                 :company="'Все'"
+                :startingDate="startingDate"
+                :endDate="endDate"
                 @open-modal="openModal"
                 @update-delivery-row="updateDeliveryRow"
               />
@@ -792,10 +821,7 @@ let month = ref(new Date().getMonth() + 1);
             </div>
           </div>
 
-          <div
-            class="flex items-center justify-center gap-3 mt-10"
-            v-if="rowData.id"
-          >
+          <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
             <UIMainButton @click="updateRow">Сохранить</UIMainButton>
             <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
           </div>
@@ -834,224 +860,6 @@ let month = ref(new Date().getMonth() + 1);
 
     <div v-else>
       <NuxtLayout name="user">
-        <div class="mt-10">
-          <AdvanceReportFilters
-            v-if="rows"
-            @filtered-rows="handleFilteredRows"
-            :rows="rows"
-            :user="user"
-          />
-
-          <NuxtLink
-            v-if="user.role === 'ADMIN'"
-            to="/advance-report"
-            class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold"
-          >
-            Перейти к авансовому отчету
-          </NuxtLink>
-
-          <div>
-            <div class="text-center text-2xl my-5">
-              <h1 v-if="user.username !== 'Директор'">
-                Баланс {{ user.username }}
-              </h1>
-              <h1 v-if="user.username === 'Директор'">
-                Баланс Торговая Империя онлайн&наличные
-              </h1>
-              <h1 class="font-bold text-secondary-color text-4xl mt-3">
-                {{ formatNumber(Math.ceil(allSum)) }} ₽
-              </h1>
-            </div>
-          </div>
-
-          <div class="mt-10">
-            <select
-              v-model="selectedWeek"
-              class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
-            >
-              <option v-for="week in weeks">{{ week }}</option>
-            </select>
-          </div>
-
-          <div v-for="company in companies" class="mt-10 mb-10">
-            <h1 class="font-bold text-2xl mb-3">{{ company }}</h1>
-            <div class="border-2 p-3 border-dashed border-black">
-              <AdvanceReportTableReport
-                :rows="filteredRows?.filter((row) => row.company === company)"
-                :user="user"
-                :week="selectedWeek"
-                @open-modal="openModal"
-                @update-delivery-row="updateDeliveryRow"
-              />
-            </div>
-          </div>
-
-          <div class="mt-10 mb-10" v-if="!selectedWeek.includes('неделя')">
-            <h1 class="font-bold text-2xl mb-3">
-              Итог месяца прибыли по всем проектам
-            </h1>
-            <div class="border-2 p-3 border-dashed border-black">
-              <AdvanceReportTableReport
-                :rows="filteredRows"
-                :user="user"
-                :week="selectedWeek"
-                @open-modal="openModal"
-                @update-delivery-row="updateDeliveryRow"
-              />
-            </div>
-          </div>
-        </div>
-
-        <UIModal v-show="isOpen" @close-modal="closeModal">
-          <template v-slot:header>
-            <div class="custom-header" v-if="rowData.id">
-              Изменение строки с ID - <b> {{ rowData.id }}</b>
-            </div>
-            <div class="custom-header" v-else>Создание нового документа</div>
-          </template>
-          <div class="text-black">
-            <div class="grid grid-cols-2 mb-5">
-              <label for="dispatchPVZ1">ПВЗ</label>
-              <select
-                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.PVZ"
-              >
-                <option v-for="pvzData in pvz" :value="pvzData">
-                  {{ pvzData }}
-                </option>
-              </select>
-            </div>
-
-            <div class="grid grid-cols-2 mb-5" v-if="user.role !== 'ADMIN'">
-              <label for="name">Дата</label>
-              <input
-                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.date"
-                :min="`2024-${month}-01`"
-                :max="`2024-${month}-31`"
-                type="date"
-                placeholder="ДД.ММ.ГГГГ"
-                onchange="this.className=(this.value!=''?'has-value':'')"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 mb-5" v-if="user.role === 'ADMIN'">
-              <label for="name">Дата</label>
-              <input
-                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.date"
-                type="date"
-                placeholder="ДД.ММ.ГГГГ"
-                onchange="this.className=(this.value!=''?'has-value':'')"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 mb-5">
-              <label for="name">Получатель</label>
-              <select
-                :disabled="user.role !== 'ADMIN'"
-                class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.issuedUser"
-              >
-                <option v-for="user in usersOfIssued" :value="user">
-                  {{ user }}
-                </option>
-              </select>
-            </div>
-
-            <div class="grid grid-cols-2 mb-5">
-              <label for="name">Расход</label>
-              <input
-                :disabled="user.role !== 'ADMIN'"
-                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.expenditure"
-                type="text"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 mb-5">
-              <label for="dispatchPVZ1">Статья расхода</label>
-              <select
-                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.typeOfExpenditure"
-              >
-                <option v-for="type in typesOfExpenditure" :value="type">
-                  {{ type }}
-                </option>
-              </select>
-            </div>
-
-            <div class="grid grid-cols-2 mb-5">
-              <label for="name">Комментарий</label>
-              <input
-                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.notation"
-                type="text"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 mb-5">
-              <label for="dispatchPVZ1">Компания</label>
-              <select
-                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.company"
-              >
-                <option v-for="company in companies" :value="company">
-                  {{ company }}
-                </option>
-              </select>
-            </div>
-
-            <div class="grid grid-cols-2 mb-5">
-              <label for="name"
-                >Подтверждающий <br />
-                документ</label
-              >
-              <input
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                @change="handleFileChange"
-                type="file"
-              />
-            </div>
-          </div>
-
-          <div
-            class="flex items-center justify-center gap-3 mt-10"
-            v-if="rowData.id"
-          >
-            <UIMainButton @click="updateRow">Сохранить</UIMainButton>
-            <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-          </div>
-          <div class="flex items-center justify-center gap-3 mt-10" v-else>
-            <UIMainButton @click="createRow">Создать </UIMainButton>
-            <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-          </div>
-        </UIModal>
-
-        <UIModal v-show="isOpenAdmin" @close-modal="closeModalAdmin">
-          <template v-slot:header>
-            <div class="custom-header" v-if="rowData.id">
-              Изменение строки с ID - <b> {{ rowData.id }}</b>
-            </div>
-            <div class="custom-header" v-else>Пополнение баланса</div>
-          </template>
-          <div class="text-black">
-            <div class="grid grid-cols-2 mb-5">
-              <label for="name">Сумма</label>
-              <input
-                :disabled="user.role !== 'ADMIN'"
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.expenditure"
-                type="text"
-              />
-            </div>
-          </div>
-
-          <div class="flex items-center justify-center gap-3 mt-10">
-            <UIMainButton @click="createRow">Создать</UIMainButton>
-            <UIErrorButton @click="closeModalAdmin">Отменить </UIErrorButton>
-          </div>
-        </UIModal>
       </NuxtLayout>
     </div>
   </div>

@@ -21,9 +21,7 @@ onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rows.value = await storeAdvanceReports.getAdvancedReports();
-  rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReport(
-    "OurRansom"
-  );
+  rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReport("OurRansom");
   rowsDelivery.value = await storeRansom.getRansomRowsForBalance("Delivery");
   originallyRows.value = rows.value;
   selectedUser.value = user.value.username;
@@ -31,8 +29,7 @@ onBeforeMount(async () => {
   if (user.value.role !== "ADMIN") {
     rows.value = rows.value?.filter(
       (row) =>
-        row.createdUser === user.value.username ||
-        row.issuedUser === user.value.username
+        row.createdUser === user.value.username || row.issuedUser === user.value.username
     );
   } else {
     rows.value = rows.value;
@@ -43,9 +40,7 @@ onBeforeMount(async () => {
   }
 
   ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
-  clientRansomRows.value = await storeRansom.getRansomRowsForBalance(
-    "ClientRansom"
-  );
+  clientRansomRows.value = await storeRansom.getRansomRowsForBalance("ClientRansom");
   rowsBalance.value = await storeBalance.getBalanceRows();
   rowsBalanceOnline.value = await storeBalance.getBalanceOnlineRows();
 
@@ -94,9 +89,7 @@ function getAllSum() {
   );
 
   let sumOfPVZ = rowsBalance.value
-    ?.filter(
-      (row) => row.received !== null && row.recipient === user.value.username
-    )
+    ?.filter((row) => row.received !== null && row.recipient === user.value.username)
     .reduce((acc, value) => acc + +value.sum, 0);
 
   let sumOfPVZ1 = rows.value
@@ -131,10 +124,7 @@ function getAllSum() {
     ?.filter((row) => row.paid !== null)
     .reduce((acc, value) => acc + +value.amountFromClient3, 0);
 
-  let sumOfPVZ5 = rowsBalanceOnline.value?.reduce(
-    (acc, value) => acc + +value.sum,
-    0
-  );
+  let sumOfPVZ5 = rowsBalanceOnline.value?.reduce((acc, value) => acc + +value.sum, 0);
 
   let sumOfPVZ6 = rowsOurRansom.value
     ?.filter((row) => row.verified !== null)
@@ -232,14 +222,10 @@ function getAllSum() {
         +sumOfPVZ10;
 
       allSum2.value =
-        +sumOfPVZ -
-        +sumOfPVZ1Cashless +
-        +sumOfPVZ2Cashless -
-        +sumOfPVZ3Cashless;
+        +sumOfPVZ - +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
       break;
     default:
-      allSum.value =
-        +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
+      allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
       break;
   }
 }
@@ -274,18 +260,14 @@ function getAllSumDirector() {
   let sumOfPVZ2 = rows.value
     ?.filter(
       (row) =>
-        row.received !== null &&
-        row.issuedUser === "Директор" &&
-        row.type === "Нал"
+        row.received !== null && row.issuedUser === "Директор" && row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
   let sumOfPVZ3 = rows.value
     ?.filter(
       (row) =>
-        row.createdUser === "Директор" &&
-        row.issuedUser === "" &&
-        row.type === "Нал"
+        row.createdUser === "Директор" && row.issuedUser === "" && row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
@@ -293,10 +275,7 @@ function getAllSumDirector() {
     ?.filter((row) => row.paid !== null)
     .reduce((acc, value) => acc + +value.amountFromClient3, 0);
 
-  let sumOfPVZ5 = rowsBalanceOnline.value?.reduce(
-    (acc, value) => acc + +value.sum,
-    0
-  );
+  let sumOfPVZ5 = rowsBalanceOnline.value?.reduce((acc, value) => acc + +value.sum, 0);
 
   let sumOfPVZ6 = rowsOurRansom.value
     ?.filter((row) => row.verified !== null)
@@ -345,18 +324,14 @@ function getAllSumDirector() {
   let sumOfPVZ2Cashless = rows.value
     ?.filter(
       (row) =>
-        row.received !== null &&
-        row.issuedUser === "Директор" &&
-        row.type === "Безнал"
+        row.received !== null && row.issuedUser === "Директор" && row.type === "Безнал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
   let sumOfPVZ3Cashless = rows.value
     ?.filter(
       (row) =>
-        row.createdUser === "Директор" &&
-        row.issuedUser === "" &&
-        row.type === "Безнал"
+        row.createdUser === "Директор" && row.issuedUser === "" && row.type === "Безнал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
@@ -391,14 +366,10 @@ function getAllSumDirector() {
         +sumOfPVZ10;
 
       allSum2.value =
-        +sumOfPVZ -
-        +sumOfPVZ1Cashless +
-        +sumOfPVZ2Cashless -
-        +sumOfPVZ3Cashless;
+        +sumOfPVZ - +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
       break;
     default:
-      allSum.value =
-        +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
+      allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
       break;
   }
   return allSum.value + allSum2.value;
@@ -509,18 +480,14 @@ const supabase = createClient(
 
 async function createRow() {
   isLoading.value = true;
-  await storeAdvanceReports.createAdvanceReport(
-    rowData.value,
-    user.value.username
-  );
+  await storeAdvanceReports.createAdvanceReport(rowData.value, user.value.username);
   rows.value = await storeAdvanceReports.getAdvancedReports();
   originallyRows.value = rows.value;
 
   if (user.value.role !== "ADMIN") {
     rows.value = rows.value?.filter(
       (row) =>
-        row.createdUser === user.value.username ||
-        row.issuedUser === user.value.username
+        row.createdUser === user.value.username || row.issuedUser === user.value.username
     );
   } else {
     rows.value = rows.value;
@@ -536,18 +503,14 @@ async function createRow() {
 
 async function updateRow() {
   isLoading.value = true;
-  await storeAdvanceReports.updateAdvanceReport(
-    rowData.value,
-    user.value.username
-  );
+  await storeAdvanceReports.updateAdvanceReport(rowData.value, user.value.username);
   rows.value = await storeAdvanceReports.getAdvancedReports();
   originallyRows.value = rows.value;
 
   if (user.value.role !== "ADMIN") {
     rows.value = rows.value?.filter(
       (row) =>
-        row.createdUser === user.value.username ||
-        row.issuedUser === user.value.username
+        row.createdUser === user.value.username || row.issuedUser === user.value.username
     );
   } else {
     rows.value = rows.value;
@@ -568,8 +531,7 @@ async function updateDeliveryRow(row: any) {
   if (user.value.role !== "ADMIN") {
     rows.value = rows.value?.filter(
       (row) =>
-        row.createdUser === user.value.username ||
-        row.issuedUser === user.value.username
+        row.createdUser === user.value.username || row.issuedUser === user.value.username
     );
   } else {
     rows.value = rows.value;
@@ -629,8 +591,7 @@ function getAllSumFromName(username: string) {
   let sumOfPVZ3 = originallyRows.value
     ?.filter(
       (row) =>
-        row.createdUser === username &&
-        (row.issuedUser === "" || row.issuedUser === null)
+        row.createdUser === username && (row.issuedUser === "" || row.issuedUser === null)
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
@@ -680,7 +641,10 @@ function getAllSumFromEmployees() {
             (row.issuedUser === "" || row.issuedUser === null)
         )
         .reduce((acc, value) => acc + +value.expenditure, 0);
-
+      sumOfPVZ = sumOfPVZ === undefined ? 0 : sumOfPVZ;
+      sumOfPVZ1 = sumOfPVZ1 === undefined ? 0 : sumOfPVZ1;
+      sumOfPVZ2 = sumOfPVZ2 === undefined ? 0 : sumOfPVZ2;
+      sumOfPVZ3 = sumOfPVZ3 === undefined ? 0 : sumOfPVZ3;
       let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
       totalSum += allSum;
     });
@@ -746,10 +710,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             </UIMainButton>
           </div>
 
-          <NuxtLink
-            v-if="user.role === 'ADMIN'"
-            to="/advance-report/summary-tables"
-          >
+          <NuxtLink v-if="user.role === 'ADMIN'" to="/advance-report/summary-tables">
             <h1
               class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold"
             >
@@ -760,29 +721,24 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           <div>
             <div
               class="text-center text-2xl my-5"
-              v-if="
-                selectedUser !== 'Директор' && selectedUser !== 'Директор (С)'
-              "
+              v-if="selectedUser !== 'Директор' && selectedUser !== 'Директор (С)'"
             >
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
                 {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
               </h1>
             </div>
-            <div
-              class="text-center text-2xl my-5"
-              v-if="selectedUser === 'Директор (С)'"
-            >
+            <div class="text-center text-2xl my-5" v-if="selectedUser === 'Директор (С)'">
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
-                {{ formatNumber(getAllSumDirector()) }} ₽
+                {{ formatNumber(getAllSumDirector() + 1010071) }} ₽
               </h1>
             </div>
             <div v-if="selectedUser === 'Директор'">
               <div class="text-center text-xl my-3">
                 <h1>Баланс Торговой Империи онлайн&наличные:</h1>
                 <h1 class="font-bold text-secondary-color text-4xl text-center">
-                  {{ formatNumber(Math.ceil(getAllSumFromEmployees())) }} ₽
+                  {{ formatNumber(Math.ceil(getAllSumFromEmployees() + 10930)) }} ₽
                 </h1>
               </div>
               <div class="text-center text-xl my-3">
@@ -832,8 +788,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             :rows="
               filteredRows?.filter(
                 (row) =>
-                  row.issuedUser === selectedUser ||
-                  row.createdUser === selectedUser
+                  row.issuedUser === selectedUser || row.createdUser === selectedUser
               )
             "
             :user="user"
@@ -846,9 +801,10 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             :rows="
               filteredRows?.filter(
                 (row) =>
-                  (row.issuedUser === 'Директор' ||
-                  row.createdUser === 'Директор') || (row.issuedUser === 'Директор (С)' ||
-                  row.createdUser === 'Директор (С)')
+                  row.issuedUser === 'Директор' ||
+                  row.createdUser === 'Директор' ||
+                  row.issuedUser === 'Директор (С)' ||
+                  row.createdUser === 'Директор (С)'
               )
             "
             :user="user"
@@ -977,10 +933,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               />
             </div>
 
-            <div
-              class="grid grid-cols-2 mb-5"
-              v-if="user.username === 'Директор'"
-            >
+            <div class="grid grid-cols-2 mb-5" v-if="user.username === 'Директор'">
               <label for="name">Тип</label>
               <select
                 class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
@@ -992,10 +945,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             </div>
           </div>
 
-          <div
-            class="flex items-center justify-center gap-3 mt-10"
-            v-if="rowData.id"
-          >
+          <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
             <UIMainButton @click="updateRow">Сохранить</UIMainButton>
             <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
           </div>
@@ -1141,10 +1091,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             </UIMainButton>
           </div>
 
-          <NuxtLink
-            v-if="user.role === 'ADMIN'"
-            to="/advance-report/summary-tables"
-          >
+          <NuxtLink v-if="user.role === 'ADMIN'" to="/advance-report/summary-tables">
             <h1
               class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold"
             >
@@ -1153,10 +1100,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           </NuxtLink>
 
           <div>
-            <div
-              class="text-center text-2xl my-5"
-              v-if="selectedUser !== 'Директор'"
-            >
+            <div class="text-center text-2xl my-5" v-if="selectedUser !== 'Директор'">
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
                 {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
@@ -1197,8 +1141,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             :rows="
               filteredRows?.filter(
                 (row) =>
-                  row.issuedUser === selectedUser ||
-                  row.createdUser === selectedUser
+                  row.issuedUser === selectedUser || row.createdUser === selectedUser
               )
             "
             :user="user"
@@ -1320,10 +1263,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             </div>
           </div>
 
-          <div
-            class="flex items-center justify-center gap-3 mt-10"
-            v-if="rowData.id"
-          >
+          <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
             <UIMainButton @click="updateRow">Сохранить</UIMainButton>
             <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
           </div>

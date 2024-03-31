@@ -23,7 +23,12 @@ definePageMeta({
   <NuxtLayout name="main-page">
     <div class="bg-main-page">
       <div class="py-5 max-md:px-5" v-cloak>
-        <UIMainButton @click="router.push('/auth/login')">Войти</UIMainButton>
+        <div class="flex items-center gap-5">
+          <UIMainButton @click="router.push('/auth/login')">Войти</UIMainButton>
+          <UIMainButton @click="router.push('/auth/client/login')"
+            >Личный кабинет</UIMainButton
+          >
+        </div>
         <div class="flex items-center justify-center flex-col">
           <h1 class="text-secondary-color font-bold text-8xl max-lg:text-6xl mt-3">
             DAROM.pro
@@ -96,7 +101,11 @@ definePageMeta({
               @change="changeAddress"
               v-model="selectedAddress"
             >
-              <option class="text-black" selected :value="[47.98958366983051, 37.8955255423278]">
+              <option
+                class="text-black"
+                selected
+                :value="[47.98958366983051, 37.8955255423278]"
+              >
                 г. Донецк, Буденовский р-н, Заперевальная, ул. Антропова 16 (вход "ремонт
                 обуви")
               </option>
@@ -122,5 +131,4 @@ definePageMeta({
       </div>
     </div>
   </NuxtLayout>
-  
 </template>
