@@ -22,6 +22,7 @@ export default defineEventHandler(async (event) => {
         hours: +row.hours,
         deductions: +row.deductions,
         additionalPayment: +row.additionalPayment,
+        notation: row.notation,
         date: row.date ? new Date(row.date).toISOString() : null,
       },
     });

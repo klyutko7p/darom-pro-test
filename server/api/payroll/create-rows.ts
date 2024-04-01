@@ -21,6 +21,7 @@ export default defineEventHandler(async (event) => {
                 hours: payroll.hours,
                 deductions: payroll.deductions,
                 additionalPayment: payroll.additionalPayment,
+                notation: payroll.notation,
                 date: payroll.date ? new Date(payroll.date).toISOString() : null,
             }))
         });

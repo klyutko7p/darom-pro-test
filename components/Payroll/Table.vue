@@ -317,16 +317,17 @@ async function createAdvanceReportZP() {
           <th scope="col" class="border-2">Банк</th>
           <th scope="col" class="border-2">оплата в час</th>
           <th scope="col" class="border-2">Аванс</th>
-          <th scope="col" class="border-2">Кол-во часов всего</th>
+          <th scope="col" class="border-2">Кол-во часов</th>
           <th scope="col" class="border-2">Удержания</th>
           <th scope="col" class="border-2">Доплата</th>
           <th scope="col" class="border-2">ЗП к начислению</th>
           <th scope="col" class="border-2">Итого начислено за месяц</th>
+          <th scope="col" class="border-2">Примечание</th>
           <th scope="col" class="border-2">удаление</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in filteredRows" class="text-center">
+        <tr v-for="row in filteredRows" class="text-center" :class="{'bg-red-500 text-black': row.notation === 'Нам должны', 'bg-pink-900 text-white': row.notation === 'Расчёт уволенных сотрудников', 'bg-yellow-400 text-black': row.notation === 'Оплачено'}">
           <td class="border-2" v-if="user.role === 'ADMIN'">
             <h1
               @click="openModal(row)"
@@ -353,7 +354,7 @@ async function createAdvanceReportZP() {
           </td>
           <td class="border-2 whitespace-nowrap">
             <input
-              class="max-w-[100px] text-center"
+              class="max-w-[70px] text-center"
               type="number"
               @input="getRowByIdFromInput(row)"
               v-model="row.advance"
@@ -362,7 +363,7 @@ async function createAdvanceReportZP() {
           </td>
           <td class="border-2 whitespace-nowrap">
             <input
-              class="max-w-[100px] text-center"
+              class="max-w-[70px] text-center"
               type="number"
               @input="getRowByIdFromInput(row)"
               v-model="row.hours"
@@ -430,6 +431,7 @@ async function createAdvanceReportZP() {
             ₽
           </td>
           <td class="border-2 whitespace-nowrap" v-else>0 ₽</td>
+          <td class="border-2 whitespace-nowrap"> {{ row.notation }} </td>
           <td
             class="px-6 py-4 border-2"
             v-if="

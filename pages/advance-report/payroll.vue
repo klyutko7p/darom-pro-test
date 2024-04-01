@@ -65,9 +65,7 @@ async function createReport(object: any) {
     fullname: employee.fullname,
     phone: employee.phone,
     bank: employee.bank,
-    paymentPerShift: +(
-      employee.paymentPerShift / employee.hoursPerShift
-    ).toFixed(2),
+    paymentPerShift: +(employee.paymentPerShift / employee.hoursPerShift).toFixed(2),
     advance: 0,
     hours: 0,
     deductions: 0,
@@ -212,9 +210,7 @@ let companies = ref(["WB/OZ start", "Darom.pro", "Сортировка", "Дос
 let banks = ref(["тинькофф", "сбер", "почтабанк", "озон", "яндекс банк"]);
 
 function autoInfoByFullname() {
-  let row = employees.value.filter(
-    (row) => row.fullname === rowData.value.fullname
-  );
+  let row = employees.value.filter((row) => row.fullname === rowData.value.fullname);
   rowData.value.PVZ = row[0].PVZ;
   rowData.value.company = row[0].company;
   rowData.value.phone = row[0].phone;
@@ -296,10 +292,7 @@ function autoInfoByFullname() {
                   @change="autoInfoByFullname"
                   v-model="rowData.fullname"
                 >
-                  <option
-                    v-for="employee in employees"
-                    :value="employee.fullname"
-                  >
+                  <option v-for="employee in employees" :value="employee.fullname">
                     {{ employee.fullname }}
                   </option>
                 </select>
@@ -361,12 +354,24 @@ function autoInfoByFullname() {
                   type="number"
                 />
               </div>
+
+              <div class="grid grid-cols-2 mb-5">
+                <label for="name">Примечание</label>
+                <select
+                  class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                  v-model="rowData.notation"
+                >
+                  <option value="">Пусто</option>
+                  <option value="Нам должны">Нам должны</option>
+                  <option value="Расчёт уволенных сотрудников">
+                    Расчёт уволенных сотрудников
+                  </option>
+                  <option value="Оплачено">Оплачено</option>
+                </select>
+              </div>
             </div>
 
-            <div
-              class="flex items-center justify-center gap-3 mt-10"
-              v-if="rowData.id"
-            >
+            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
               <UIMainButton @click="updateRow">Сохранить</UIMainButton>
               <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
             </div>

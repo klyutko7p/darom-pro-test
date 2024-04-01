@@ -274,6 +274,7 @@ model Payroll {
   deductions        Float?
   additionalPayment Float?
   date              DateTime?
+  notation          String?
 }
 
 model Client {

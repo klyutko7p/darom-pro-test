@@ -10,5 +10,6 @@ interface IPayroll {
     advance: number;
     deductions: number;
     additionalPayment: number;
+    notation: string | null;
     date: Date | number | string | null;
 }
