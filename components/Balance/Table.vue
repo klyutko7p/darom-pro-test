@@ -94,8 +94,7 @@ onMounted(() => {});
               v-if="
                 !row.received &&
                 (user.role === 'ADMIN' || user.role === 'ADMINISTRATOR') &&
-                row.issued &&
-                row.recipient === 'Нет'
+                row.issued 
               "
               class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
               name="mdi:checkbox-multiple-marked-circle"

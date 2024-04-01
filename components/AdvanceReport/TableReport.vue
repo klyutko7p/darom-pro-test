@@ -121,7 +121,9 @@ function updateCurrentPageData() {
         rowDate >= startDate &&
         rowDate <= endDate &&
         row.typeOfExpenditure !== "Пополнение баланса" &&
-        row.typeOfExpenditure !== "Передача денежных средств"
+        row.typeOfExpenditure !== "Передача денежных средств" &&
+        row.typeOfExpenditure !== "Приход кредит" &&
+        row.typeOfExpenditure !== "Расход кредит"
       );
     });
   } else {
@@ -129,6 +131,8 @@ function updateCurrentPageData() {
       (row: IAdvanceReport) =>
         row.typeOfExpenditure !== "Пополнение баланса" &&
         row.typeOfExpenditure !== "Передача денежных средств" &&
+        row.typeOfExpenditure !== "Приход кредит" &&
+        row.typeOfExpenditure !== "Расход кредит" &&
         new Date(row.date).getMonth() + 1 === +props.month &&
         (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
         (!props.endDate || new Date(row.date) <= new Date(newEndDate))
@@ -155,6 +159,7 @@ function updateCurrentPageData() {
     );
   }
 
+  // В ДАЛЬНЕЙШЕМ МОЖНО И НУЖНО УБРАТЬ!!!!!!!!
   if (props.company === "Darom.pro" || props.company === "Все") {
     if (props.week.includes("неделя")) {
       rowsBalanceArr.value = props.rowsBalance
@@ -192,13 +197,15 @@ function updateCurrentPageData() {
         return (
           rowDate >= startDate &&
           rowDate <= endDate &&
-          (row.additionally === "Оплачено онлайн" || row.additionally === 'Оплата наличными')
+          (row.additionally === "Оплачено онлайн" ||
+            row.additionally === "Оплата наличными")
         );
       });
     } else {
       rowsOnlineArr.value = props.rowsOurRansom.filter(
         (row: IOurRansom) =>
-          (row.additionally === "Оплачено онлайн" || row.additionally === 'Оплата наличными') &&
+          (row.additionally === "Оплачено онлайн" ||
+            row.additionally === "Оплата наличными") &&
           new Date(row.issued).getMonth() + 1 === +props.month &&
           (!props.startingDate || new Date(row.issued) >= new Date(newStartingDate)) &&
           (!props.endDate || new Date(row.issued) <= new Date(newEndDate))

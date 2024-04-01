@@ -45,6 +45,7 @@ onBeforeMount(async () => {
   rowsBalanceOnline.value = await storeBalance.getBalanceOnlineRows();
 
   getAllSum();
+  getAllSumDirector();
 
   isLoading.value = false;
 });
@@ -98,6 +99,7 @@ function getAllSum() {
         row.received !== null &&
         row.createdUser === user.value.username &&
         row.typeOfExpenditure !== "Пополнение баланса" &&
+        row.typeOfExpenditure !== "Приход кредит" &&
         row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -253,6 +255,7 @@ function getAllSumDirector() {
         row.received !== null &&
         row.createdUser === "Директор" &&
         row.typeOfExpenditure !== "Пополнение баланса" &&
+        row.typeOfExpenditure !== "Приход кредит" &&
         row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -267,7 +270,7 @@ function getAllSumDirector() {
   let sumOfPVZ3 = rows.value
     ?.filter(
       (row) =>
-        row.createdUser === "Директор" && row.issuedUser === "" && row.type === "Нал"
+        row.createdUser === "Директор" && row.issuedUser === "" && row.type === "Нал" && row.typeOfExpenditure !== "Приход кредит"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
@@ -345,11 +348,10 @@ function getAllSumDirector() {
   sumOfPVZ7 = sumOfPVZ7 === undefined ? 0 : sumOfPVZ7;
   sumOfPVZ8 = sumOfPVZ8 === undefined ? 0 : sumOfPVZ8;
   sumOfPVZ9 = sumOfPVZ9 === undefined ? 0 : sumOfPVZ9;
-  sumOfPVZ10 = sumOfPVZ10 === undefined ? 0 : sumOfPVZ9;
+  sumOfPVZ10 = sumOfPVZ10 === undefined ? 0 : sumOfPVZ10;
   sumOfPVZ1Cashless = sumOfPVZ1Cashless === undefined ? 0 : sumOfPVZ1Cashless;
   sumOfPVZ2Cashless = sumOfPVZ2Cashless === undefined ? 0 : sumOfPVZ2Cashless;
   sumOfPVZ3Cashless = sumOfPVZ3Cashless === undefined ? 0 : sumOfPVZ3Cashless;
-
   switch ("Директор") {
     case "Директор":
       allSum.value =
@@ -363,7 +365,7 @@ function getAllSumDirector() {
         +sumOfPVZ7 +
         +sumOfPVZ8 -
         +sumOfPVZ9 +
-        +sumOfPVZ10;
+        +sumOfPVZ10 
 
       allSum2.value =
         +sumOfPVZ - +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
@@ -402,7 +404,7 @@ function openModalAdmin(row: IAdvanceReport) {
   rowData.value.issuedUser = "Директор";
   rowData.value.received = new Date();
   rowData.value.supportingDocuments = "";
-  rowData.value.typeOfExpenditure = "Пополнение баланса";
+  rowData.value.typeOfExpenditure = row.typeOfExpenditure;
   rowData.value.createdUser = "Директор";
   rowData.value.date = new Date();
 }
@@ -417,7 +419,7 @@ function openModalAdminOOO(row: IAdvanceReport) {
   rowData.value.issuedUser = "Директор";
   rowData.value.received = new Date();
   rowData.value.supportingDocuments = "";
-  rowData.value.typeOfExpenditure = "Пополнение баланса";
+  rowData.value.typeOfExpenditure = row.typeOfExpenditure;
   rowData.value.type = "Безнал";
   rowData.value.createdUser = "Директор";
   rowData.value.date = new Date();
@@ -458,6 +460,7 @@ let typesOfExpenditure = ref([
   "Ежемесячные платежи",
   "Оплата ФОТ",
   "Оплата Налоги. ПФР, СОЦ и т.д.",
+  "Расход кредит",
 ]);
 
 let companies = ref(["WB/OZ start", "Darom.pro", "Сортировка", "Доставка"]);
@@ -605,6 +608,7 @@ function getAllSumFromName(username: string) {
 }
 
 function getAllSumFromEmployees() {
+  getAllSumDirector();
   copyArrayOurRansom.value = ourRansomRows.value?.filter(
     (row) =>
       row.issued !== null &&
@@ -731,14 +735,14 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             <div class="text-center text-2xl my-5" v-if="selectedUser === 'Директор (С)'">
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
-                {{ formatNumber(getAllSumDirector() + 1010071) }} ₽
+                {{ formatNumber(getAllSumDirector() + 1010071 + 2474341) }} ₽
               </h1>
             </div>
             <div v-if="selectedUser === 'Директор'">
               <div class="text-center text-xl my-3">
                 <h1>Баланс Торговой Империи онлайн&наличные:</h1>
                 <h1 class="font-bold text-secondary-color text-4xl text-center">
-                  {{ formatNumber(Math.ceil(getAllSumFromEmployees() + 10930)) }} ₽
+                  {{ formatNumber(Math.ceil(getAllSumFromEmployees() + 10930 + 2474341)) }} ₽
                 </h1>
               </div>
               <div class="text-center text-xl my-3">
@@ -999,6 +1003,21 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             </select>
           </div>
 
+          <div class="grid grid-cols-2 mb-5">
+            <label for="dispatchPVZ1">Статья дохода</label>
+            <select
+              class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+              v-model="rowData.typeOfExpenditure"
+            >
+              <option value="Приход кредит">
+                Кредит
+              </option>
+              <option value="Пополнение баланса">
+                Личные
+              </option>
+            </select>
+          </div>
+
           <div class="text-black">
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Примечание</label>
@@ -1056,6 +1075,21 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             >
               <option v-for="company in companies" :value="company">
                 {{ company }}
+              </option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
+            <label for="dispatchPVZ1">Статья дохода</label>
+            <select
+              class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+              v-model="rowData.typeOfExpenditure"
+            >
+              <option value="Приход кредит">
+                Кредит
+              </option>
+              <option value="Пополнение баланса">
+                Личные
               </option>
             </select>
           </div>
