@@ -19,6 +19,7 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.8.1",
     "@nuxtjs/supabase": "^1.1.4",
     "@pinia/nuxt": "^0.5.1",
     "@prisma/client": "^5.7.1",
@@ -29,7 +30,10 @@
     "@types/node": "^20.11.5",
     "@types/nodemailer": "^6.4.14",
     "@vite-pwa/nuxt": "^0.3.6",
+    "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
+    "cheerio": "^1.0.0-rc.12",
+    "chromedriver": "^123.0.1",
     "crypto-js": "^4.2.0",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
@@ -38,6 +42,7 @@
     "nuxt-swiper": "^1.2.2",
     "qrcode.vue": "^3.4.1",
     "resend": "^3.2.0",
+    "selenium-webdriver": "^4.19.0",
     "vue-toastification": "^2.0.0-rc.5",
     "vue-yandex-maps": "^1.1.0",
     "wide-align": "^1.1.5",

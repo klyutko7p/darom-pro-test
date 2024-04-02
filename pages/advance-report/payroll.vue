@@ -47,7 +47,12 @@ function openModal(row: IPayroll) {
   const currentDate = new Date();
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-  const newDate = new Date(year, month, 5);
+  let newDate;
+  if (monthValue.value === month) {
+    newDate = new Date(year, month, 5);
+  } else {
+    newDate = new Date(year, monthValue.value - 1, 5);
+  }
 
   rowData.value = JSON.parse(JSON.stringify(row));
   rowData.value.date = newDate;
@@ -221,6 +226,11 @@ function autoInfoByFullname() {
     row[0].paymentPerShift / row[0].hoursPerShift
   ).toFixed(2);
 }
+
+let monthValue = ref(0)
+function getSelectedMonth(monthNumber: number) {
+  monthValue.value = monthNumber
+}
 </script>
 
 <template>
@@ -248,6 +258,7 @@ function autoInfoByFullname() {
             :employees="employees"
             :user="user"
             @open-modal="openModal"
+            @get-month="getSelectedMonth"
             @create-report="createReport"
             @update-report="updateReport"
             @delete-row="deleteRow"

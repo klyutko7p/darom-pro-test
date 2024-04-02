@@ -241,7 +241,13 @@ function updateCurrentPageData() {
 
   rowsOnlineArr.value?.forEach((row) => {
     if (!isNaN(receiptsByPVZ[row.dispatchPVZ])) {
-      receiptsByPVZ[row.dispatchPVZ] += row.priceSite;
+      let profit;
+      if (!row.prepayment && row.profit1 !== 0) {
+        profit = Math.ceil(row.amountFromClient1 / 10) * 10 - row.priceSite + row.deliveredKGT
+      } else {
+        profit = (row.priceSite * row.percentClient) / 100 + row.deliveredKGT
+      }
+      receiptsByPVZ[row.dispatchPVZ] += Math.ceil(profit);
     }
   });
 

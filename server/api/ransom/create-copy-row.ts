@@ -79,6 +79,7 @@ export default defineEventHandler(async (event) => {
             updated_at: new Date(),
             createdUser: row.createdUser,
             updatedUser: row.updatedUser,
+            img: row.img,
           },
         });
       }

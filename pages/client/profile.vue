@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 const storeClients = useClientsStore();
 const router = useRouter();
@@ -65,28 +65,36 @@ async function saveChanges() {
   errorTextValidation.value = "";
 
   isLoading.value = true;
-  if (isShowChangePassword) {
-    await storeClients.updateClient({
-      id: user.value.id,
-      phoneNumber: phoneNumber.value,
-      password: newPassword.value,
-      fio: fio.value,
-      role: "CLIENT",
-      oldPassword: user.value.password,
-      accessPassword: password.value,
-      created_at: new Date(),
-    }, 'PASS');
+  if (isShowChangePassword.value) {
+    await storeClients.updateClient(
+      {
+        id: user.value.id,
+        phoneNumber: phoneNumber.value,
+        password: newPassword.value,
+        fio: fio.value,
+        role: "CLIENT",
+        oldPassword: user.value.password,
+        accessPassword: password.value,
+        created_at: new Date(),
+      },
+      "PASS"
+    );
+    await storeClients.clearCookies(phoneNumber.value, newPassword.value);
   } else {
-    await storeClients.updateClient({
-      id: user.value.id,
-      phoneNumber: phoneNumber.value,
-      password: user.value.password,
-      fio: fio.value,
-      role: "CLIENT",
-      oldPassword: user.value.password,
-      accessPassword: password.value,
-      created_at: new Date(),
-    }, 'NON-PASS');
+    await storeClients.updateClient(
+      {
+        id: user.value.id,
+        phoneNumber: phoneNumber.value,
+        password: user.value.password,
+        fio: fio.value,
+        role: "CLIENT",
+        oldPassword: user.value.password,
+        accessPassword: password.value,
+        created_at: new Date(),
+      },
+      "NON-PASS"
+    );
+    await storeClients.clearCookies(phoneNumber.value, password.value);
   }
   isLoading.value = false;
 }
@@ -137,7 +145,7 @@ async function saveChanges() {
               name="phone"
             />
           </div>
-          <h1 class="text-center font-bold text-red-500"> {{ errorTextValidation }} </h1>
+          <h1 class="text-center font-bold text-red-500">{{ errorTextValidation }}</h1>
           <div class="flex items-center gap-5">
             <UIMainButton @click="showChangePassword">Поменять пароль</UIMainButton>
             <UIMainButton @click="saveChanges">Сохранить</UIMainButton>

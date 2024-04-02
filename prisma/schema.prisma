@@ -137,6 +137,7 @@ model ClientRansom {
   updated_at        DateTime  @default(now()) @updatedAt
   createdUser       String
   updatedUser       String
+  img               String?
 }
 
 model Delivery {

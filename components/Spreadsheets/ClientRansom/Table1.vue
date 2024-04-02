@@ -116,9 +116,7 @@ const showDeletedRows = ref(false);
 
 const perPage = ref(100);
 const currentPage = ref(1);
-const totalPages = computed(() =>
-  Math.ceil((props.rows?.length || 0) / perPage.value)
-);
+const totalPages = computed(() => Math.ceil((props.rows?.length || 0) / perPage.value));
 const totalRows = computed(() => Math.ceil(props.rows?.length || 0));
 
 let returnRows = ref<Array<IClientRansom>>();
@@ -173,11 +171,7 @@ const router = useRouter();
 let showOthersVariants = ref(false);
 
 function isExpired(row: any) {
-  if (
-    row.deliveredSC !== null &&
-    row.deliveredPVZ !== null &&
-    row.issued === null
-  ) {
+  if (row.deliveredSC !== null && row.deliveredPVZ !== null && row.issued === null) {
     const currentDate = new Date();
 
     const deliveredDate = new Date(row.deliveredPVZ);
@@ -196,9 +190,7 @@ let showPayRejectClient = ref(false);
 <template>
   <div class="flex items-center justify-between max-lg:block mt-10">
     <div>
-      <div
-        class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5"
-      >
+      <div class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5">
         <h1 class="text-xl" v-if="user.role !== 'PVZ'">
           Товаров в работе:
           <span class="text-secondary-color font-bold">{{ totalRows }}</span>
@@ -227,20 +219,14 @@ let showPayRejectClient = ref(false);
             :disabled="currentPage === 1"
             class="disabled:opacity-40 disabled:cursor-not-allowed duration-150 bg-secondary-color flex items-center justify-center rounded-sm p-3"
           >
-            <Icon
-              name="material-symbols:arrow-back-ios-new-rounded"
-              class="text-white"
-            />
+            <Icon name="material-symbols:arrow-back-ios-new-rounded" class="text-white" />
           </button>
           <button
             @click="nextPage(), updateCurrentPageData()"
             :disabled="currentPage === totalPages"
             class="disabled:opacity-40 disabled:cursor-not-allowed duration-150 bg-secondary-color flex items-center justify-center rounded-sm p-3"
           >
-            <Icon
-              name="material-symbols:arrow-forward-ios-rounded"
-              class="text-white"
-            />
+            <Icon name="material-symbols:arrow-forward-ios-rounded" class="text-white" />
           </button>
         </div>
       </div>
@@ -268,9 +254,7 @@ let showPayRejectClient = ref(false);
   <div
     class="fixed z-40 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
     v-if="
-      user.dataClientRansom === 'WRITE' &&
-      checkedRows.length > 0 &&
-      user.role !== 'PVZ'
+      user.dataClientRansom === 'WRITE' && checkedRows.length > 0 && user.role !== 'PVZ'
     "
   >
     <UIActionButton
@@ -308,7 +292,7 @@ let showPayRejectClient = ref(false);
         @click="showPayRejectClient = !showPayRejectClient"
         >Отказ клиент
       </UIActionButton2>
-      <div>
+      <div v-if="showPayRejectClient" class="flex flex-col gap-3">
         <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"
           >Отказ клиент онлайн</UIActionButton2
         >
@@ -327,9 +311,7 @@ let showPayRejectClient = ref(false);
   <div
     class="fixed z-40 flex flex-col gap-3 top-44 left-1/2 translate-x-[-50%] translate-y-[-50%]"
     v-if="
-      user.dataClientRansom === 'WRITE' &&
-      checkedRows.length > 0 &&
-      user.role === 'PVZ'
+      user.dataClientRansom === 'WRITE' && checkedRows.length > 0 && user.role === 'PVZ'
     "
   >
     <UIActionButton
@@ -381,11 +363,7 @@ let showPayRejectClient = ref(false);
         class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center bg-gray-50"
       >
         <tr>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.dataClientRansom === 'WRITE'"
-          >
+          <th scope="col" class="border-2" v-if="user.dataClientRansom === 'WRITE'">
             Выделение
           </th>
           <th
@@ -400,6 +378,7 @@ let showPayRejectClient = ref(false);
             изменение
           </th>
           <th scope="col" class="border-2 px-3">id</th>
+          <th scope="col" class="border-2 px-3">Штрих-код</th>
           <th
             scope="col"
             class="border-2"
@@ -452,28 +431,21 @@ let showPayRejectClient = ref(false);
           <th
             scope="col"
             class="border-2"
-            v-if="
-              user.percentClient2 === 'READ' || user.percentClient2 === 'WRITE'
-            "
+            v-if="user.percentClient2 === 'READ' || user.percentClient2 === 'WRITE'"
           >
             процент с клиента (%)
           </th>
           <th
             scope="col"
             class="border-2"
-            v-if="
-              user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'
-            "
+            v-if="user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'"
           >
             дополнительный доход
           </th>
           <th
             scope="col"
             class="border-2"
-            v-if="
-              user.amountFromClient2 === 'READ' ||
-              user.amountFromClient2 === 'WRITE'
-            "
+            v-if="user.amountFromClient2 === 'READ' || user.amountFromClient2 === 'WRITE'"
           >
             сумма с клиента
           </th>
@@ -501,9 +473,7 @@ let showPayRejectClient = ref(false);
           <th
             scope="col"
             class="border-2"
-            v-if="
-              user.deliveredPVZ2 === 'READ' || user.deliveredPVZ2 === 'WRITE'
-            "
+            v-if="user.deliveredPVZ2 === 'READ' || user.deliveredPVZ2 === 'WRITE'"
           >
             доставлено на пвз
           </th>
@@ -517,9 +487,7 @@ let showPayRejectClient = ref(false);
           <th
             scope="col"
             class="border-2"
-            v-if="
-              user.additionally2 === 'READ' || user.additionally2 === 'WRITE'
-            "
+            v-if="user.additionally2 === 'READ' || user.additionally2 === 'WRITE'"
           >
             дополнительно
           </th>
@@ -624,6 +592,19 @@ let showPayRejectClient = ref(false);
             <h1 v-else>{{ row.id }}</h1>
           </th>
           <td
+            scope="row"
+            class="border-2 font-medium underline text-secondary-color whitespace-nowrap"
+          >
+          <a
+              target="_blank"
+              class="text-secondary-color underline font-bold"
+              v-if="row.img && row.img.length > 2"
+              :href="`https://mgbbkkgyorhwryabwabx.supabase.co/storage/v1/object/public/image/img-${row.img}`"
+            >
+              Фото
+            </a>
+          </td>
+          <td
             class="px-3 py-4 border-2 underline text-secondary-color whitespace-nowrap uppercase overflow-hidden max-w-[50px]"
             v-if="user.clientLink2 === 'READ' || user.clientLink2 === 'WRITE'"
           >
@@ -635,10 +616,7 @@ let showPayRejectClient = ref(false);
               {{ row.clientLink2 }}
             </NuxtLink>
           </td>
-          <td
-            v-if="user.cell2 === 'READ' || user.cell2 === 'WRITE'"
-            class="border-2"
-          >
+          <td v-if="user.cell2 === 'READ' || user.cell2 === 'WRITE'" class="border-2">
             {{ row.cell }}
           </td>
           <td
@@ -679,26 +657,19 @@ let showPayRejectClient = ref(false);
           </td>
           <td
             class="border-2"
-            v-if="
-              user.percentClient2 === 'READ' || user.percentClient2 === 'WRITE'
-            "
+            v-if="user.percentClient2 === 'READ' || user.percentClient2 === 'WRITE'"
           >
             {{ row.percentClient }}
           </td>
           <td
             class="border-2"
-            v-if="
-              user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'
-            "
+            v-if="user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'"
           >
             {{ row.deliveredKGT }}
           </td>
           <td
             class="border-2"
-            v-if="
-              user.amountFromClient2 === 'READ' ||
-              user.amountFromClient2 === 'WRITE'
-            "
+            v-if="user.amountFromClient2 === 'READ' || user.amountFromClient2 === 'WRITE'"
           >
             {{ row.amountFromClient2 }}
           </td>
@@ -719,40 +690,25 @@ let showPayRejectClient = ref(false);
             v-if="user.deliveredSC2 === 'READ' || user.deliveredSC2 === 'WRITE'"
           >
             <h1 class="font-bold text-green-500">
-              {{
-                row.deliveredSC
-                  ? storeUsers.getNormalizedDate(row.deliveredSC)
-                  : ""
-              }}
+              {{ row.deliveredSC ? storeUsers.getNormalizedDate(row.deliveredSC) : "" }}
             </h1>
           </td>
           <td
             class="border-2"
-            v-if="
-              user.deliveredPVZ2 === 'READ' || user.deliveredPVZ2 === 'WRITE'
-            "
+            v-if="user.deliveredPVZ2 === 'READ' || user.deliveredPVZ2 === 'WRITE'"
           >
             <h1 class="font-bold text-green-500">
-              {{
-                row.deliveredPVZ
-                  ? storeUsers.getNormalizedDate(row.deliveredPVZ)
-                  : ""
-              }}
+              {{ row.deliveredPVZ ? storeUsers.getNormalizedDate(row.deliveredPVZ) : "" }}
             </h1>
           </td>
-          <td
-            class="border-2"
-            v-if="user.issued2 === 'READ' || user.issued2 === 'WRITE'"
-          >
+          <td class="border-2" v-if="user.issued2 === 'READ' || user.issued2 === 'WRITE'">
             <h1 class="font-bold text-green-500">
               {{ row.issued ? storeUsers.getNormalizedDate(row.issued) : "" }}
             </h1>
           </td>
           <td
             class="border-2"
-            v-if="
-              user.additionally2 === 'READ' || user.additionally2 === 'WRITE'
-            "
+            v-if="user.additionally2 === 'READ' || user.additionally2 === 'WRITE'"
           >
             {{ row.additionally ? row.additionally : "Пусто" }}
           </td>
@@ -774,8 +730,8 @@ let showPayRejectClient = ref(false);
             v-if="
               (user.profit2 === 'READ' || user.profit2 === 'WRITE') &&
               (row.additionally === 'Отказ клиент' ||
-              row.additionally === 'Отказ клиент онлайн' ||
-              row.additionally === 'Отказ клиент наличные' ||
+                row.additionally === 'Отказ клиент онлайн' ||
+                row.additionally === 'Отказ клиент наличные' ||
                 row.additionally === 'Отказ брак')
             "
           >
@@ -831,10 +787,7 @@ let showPayRejectClient = ref(false);
         </tr>
       </tbody>
     </table>
-    <div
-      v-else
-      class="flex items-center flex-col justify-center mt-10 text-2xl"
-    >
+    <div v-else class="flex items-center flex-col justify-center mt-10 text-2xl">
       <Icon name="ion:ios-close-empty" size="100" class="text-red-500" />
       <h1>Извините, записи по данным фильтрам не были найдены!</h1>
       <h1>Попробуйте поставить другие фильтры или очистить их</h1>

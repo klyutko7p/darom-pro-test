@@ -11,10 +11,10 @@ const storeUsers = useUsersStore();
 
 const props = defineProps({
   rows: {
-    type: Array as PropType<IOurRansom[] | IClientRansom[] | IDelivery[]>,
+    type: Array as PropType<IOurRansom[] | IClientRansom[]>,
     required: true,
   },
-  user: { type: Object as PropType<User> },
+  user: { type: Object as PropType<Client> },
   link: { type: String },
 });
 

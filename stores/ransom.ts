@@ -97,7 +97,6 @@ export const useRansomStore = defineStore("ransom", () => {
     }
 
     async function createRansomRow(row: IOurRansom | IClientRansom | IDelivery, username: string, flag: string) {
-
         try {
             if (flag === 'OurRansom') {
                 if (row.percentClient === undefined) row.percentClient = 10;
@@ -244,6 +243,23 @@ export const useRansomStore = defineStore("ransom", () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ fromName: fromName, cell: cell, flag: flag })
+            })
+            return data.value;
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+    }
+
+    async function getRansomRowsByFromNameWithoutCell(fromName: string | string[], flag: string) {
+        try {
+            let { data }: any = await useFetch('/api/ransom/get-rows-by-fromname-without-cell', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ fromName, flag })
             })
             return data.value;
         } catch (error) {
@@ -685,5 +701,5 @@ export const useRansomStore = defineStore("ransom", () => {
         return Array.from(uniqueNonEmptyValues);
     };
 
-    return { createRansomRow, getRansomRows, updateRansomRow, deleteRansomRow, updateDeliveryStatus, getUniqueNonEmptyValues, getRansomRow, deleteRansomSelectedRows, getRansomRowsByLink, updateDeliveryRowsStatus, createCopyRow, deleteIssuedRows, getOldRansomRow, getRansomRowsByPVZ, getRansomRowsByFromName, getSumOfRejection, updateSumOfRejection, getRansomRowsById, getRansomRowsWithPVZ, getRansomRowsForModal, getRansomRowsForBalance, getRansomRowsWithDeleted, getRansomRowsFirstHundred, getRansomRowsWithDeletedForCells, getRansomRowsRefunds, getRansomRowsForAdvanceReport, getRansomRowsForUpdateCells}
+    return { createRansomRow, getRansomRows, updateRansomRow, deleteRansomRow, updateDeliveryStatus, getUniqueNonEmptyValues, getRansomRow, deleteRansomSelectedRows, getRansomRowsByLink, updateDeliveryRowsStatus, createCopyRow, deleteIssuedRows, getOldRansomRow, getRansomRowsByPVZ, getRansomRowsByFromName, getSumOfRejection, updateSumOfRejection, getRansomRowsById, getRansomRowsWithPVZ, getRansomRowsForModal, getRansomRowsForBalance, getRansomRowsWithDeleted, getRansomRowsFirstHundred, getRansomRowsWithDeletedForCells, getRansomRowsRefunds, getRansomRowsForAdvanceReport, getRansomRowsForUpdateCells, getRansomRowsByFromNameWithoutCell}
 })

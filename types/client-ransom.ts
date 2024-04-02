@@ -26,4 +26,5 @@ interface IClientRansom {
     createdUser: string;
     updatedUser: string;
     quantity: number;
+    img: string;
 }

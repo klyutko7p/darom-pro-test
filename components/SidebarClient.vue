@@ -21,6 +21,7 @@ onBeforeMount(async () => {
   user.value = storeClients.getClient();
 });
 
+let isShowInfo = ref(false);
 </script>
 <template>
   <div
@@ -41,7 +42,7 @@ onBeforeMount(async () => {
     >
       <div
         role="button"
-        @click="router.push('/client/order')"
+        @click="router.push('/client/order'), editMenu()"
         tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
       >
@@ -52,7 +53,7 @@ onBeforeMount(async () => {
       </div>
       <div
         role="button"
-        @click="router.push('/client/delivery')"
+        @click="router.push('/client/delivery'), editMenu()"
         tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
       >
@@ -63,7 +64,7 @@ onBeforeMount(async () => {
       </div>
       <div
         role="button"
-        @click="router.push('/client/my-orders')"
+        @click="router.push('/client/my-orders'), editMenu()"
         tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
       >
@@ -74,18 +75,21 @@ onBeforeMount(async () => {
       </div>
       <div
         role="button"
-        @click="router.push('/client/goods')"
+        @click="router.push('/client/goods'), editMenu()"
         tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
       >
         <div class="grid place-items-center mr-4">
-          <Icon name="streamline:shopping-bag-hand-bag-2-shopping-bag-purse-goods-item-products" size="20" />
+          <Icon
+            name="streamline:shopping-bag-hand-bag-2-shopping-bag-purse-goods-item-products"
+            size="20"
+          />
         </div>
         <h1>Купленные товары</h1>
       </div>
       <div
         role="button"
-        @click="router.push('/client/profile')"
+        @click="router.push('/client/profile'), editMenu()"
         tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
       >
@@ -117,7 +121,57 @@ onBeforeMount(async () => {
         </div>
         Выйти
       </div>
+      <UIMainButton @click="isShowInfo = true" class="mt-5"
+        >Важная информация</UIMainButton
+      >
     </nav>
+  </div>
+
+  <div
+    v-if="isShowInfo"
+    class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-70 z-[200]"
+  >
+    <div class="h-screen flex items-center justify-center max-sm:px-2">
+      <div class="bg-white relative py-10 px-5 rounded-2xl max-w-[500px]">
+        <Icon
+          class="absolute top-0 right-0 hover:text-secondary-color duration-200 cursor-pointer"
+          name="material-symbols:close-small"
+          size="40"
+          @click="isShowInfo = false"
+        />
+        <h1 class="font-bold text-2xl text-center mb-5 text-secondary-color">ВАЖНАЯ ИНФОРМАЦИЯ</h1>
+        <div>
+          <h1 class="font-bold text-xl">Стоимость доставки:</h1>
+          <h1 class="italic text-base">
+            ≈10%, если заказать через «доставить мой заказ»
+          </h1>
+          <h1 class="italic text-base">≈10%, если заказать через «оформить заказ»</h1>
+        </div>
+        <div class="mt-3">
+          <h1 class="font-bold text-xl">Невозвратные товары:</h1>
+          <ul class="list-disc px-5 max-sm:px-3">
+            <li class="italic">товары Ozon global</li>
+            <li class="max-h-[150px] italic overflow-auto">
+              товары WB парфюмерия, косметика, предметы личной гигиены, бытовая химия,
+              лекарственные ср-ва, пищевые продукты, ювелирные украшения, нижнее белье,
+              термобелье, постельное белье, купальник, плавки, носки, колготки, технически
+              сложные устройства (смартфоны, планшеты и т.п.)
+            </li>
+          </ul>
+        </div>
+        <div class="mt-3">
+          <h1 class="font-bold text-xl">
+            Проверяйте товары в пункте выдачи на комплектность, размер и брак! <br />
+            Возврат из дома не принимаем!
+          </h1>
+        </div>
+        <div class="mt-3">
+          <h1 class="font-bold text-xl">
+            При заказе Ozon global, с вами свяжется менеджер для внесения предоплаты
+          </h1>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div
@@ -133,12 +187,10 @@ onBeforeMount(async () => {
     <nav
       class="flex flex-col gap-1 min-w-[240px] p-2 font-sans text-base font-normal text-gray-700"
     >
-      <h1 class="text-center font-bold text-3xl text-secondary-color mb-5">
-        DAROM.PRO 
-      </h1>
+      <h1 class="text-center font-bold text-3xl text-secondary-color mb-5">DAROM.PRO</h1>
       <div
         role="button"
-        @click="router.push('/client/order')"
+        @click="router.push('/client/order'), editMenu()"
         tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
       >
@@ -149,7 +201,7 @@ onBeforeMount(async () => {
       </div>
       <div
         role="button"
-        @click="router.push('/client/delivery')"
+        @click="router.push('/client/delivery'), editMenu()"
         tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
       >
@@ -160,7 +212,7 @@ onBeforeMount(async () => {
       </div>
       <div
         role="button"
-        @click="router.push('/client/my-orders')"
+        @click="router.push('/client/my-orders'), editMenu()"
         tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
       >
@@ -171,18 +223,21 @@ onBeforeMount(async () => {
       </div>
       <div
         role="button"
-        @click="router.push('/client/goods')"
+        @click="router.push('/client/goods'), editMenu()"
         tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
       >
         <div class="grid place-items-center mr-4">
-          <Icon name="streamline:shopping-bag-hand-bag-2-shopping-bag-purse-goods-item-products" size="20" />
+          <Icon
+            name="streamline:shopping-bag-hand-bag-2-shopping-bag-purse-goods-item-products"
+            size="20"
+          />
         </div>
         <h1>Купленные товары</h1>
       </div>
       <div
         role="button"
-        @click="router.push('/client/profile')"
+        @click="router.push('/client/profile'), editMenu()"
         tabindex="0"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
       >
@@ -214,6 +269,9 @@ onBeforeMount(async () => {
         </div>
         Выйти
       </div>
+      <UIMainButton @click="isShowInfo = true" class="mt-5"
+        >Важная информация</UIMainButton
+      >
     </nav>
   </div>
 

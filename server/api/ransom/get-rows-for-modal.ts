@@ -27,9 +27,17 @@ export default defineEventHandler(async (event) => {
             return rows;
         } else if (flag === 'ClientRansom') {
             const rows = await prisma.clientRansom.findMany({
+                select: {
+                    fromName: true,
+                    dispatchPVZ: true,
+                    deliveredPVZ: true,
+                    deliveredSC: true,
+                    cell: true,
+                    issued: true,
+                },
                 orderBy: {
                     created_at: 'desc',
-                }
+                },
             });
             return rows;
         } else if (flag === 'Delivery') {

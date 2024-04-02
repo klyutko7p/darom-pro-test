@@ -7,10 +7,15 @@ const emit = defineEmits([
   "createReport",
   "updateReport",
   "deleteRow",
+  "getMonth"
 ]);
 
 function openModal(row: IPayroll) {
   emit("openModal", row);
+}
+
+function getMonth() {
+  emit("getMonth", month.value);
 }
 
 function deleteRow(id: number) {
@@ -220,7 +225,7 @@ async function createAdvanceReportZP() {
       <select
         class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
         v-model="month"
-        @change="filterRows(month)"
+        @change="filterRows(month), getMonth()"
       >
         <option
           v-for="(monthName, monthNumber) in monthNames"
@@ -342,17 +347,17 @@ async function createAdvanceReportZP() {
           <th scope="row" class="border-2">
             {{ row.company }}
           </th>
-          <td class="border-2 whitespace-nowrap">{{ row.fullname }}</td>
-          <td class="border-2 whitespace-nowrap">
+          <td class="border-2">{{ row.fullname }}</td>
+          <td class="border-2">
             {{ row.phone }}
           </td>
-          <td class="border-2 whitespace-nowrap">
+          <td class="border-2">
             {{ row.bank }}
           </td>
-          <td class="border-2 whitespace-nowrap">
+          <td class="border-2">
             {{ row.paymentPerShift ? row.paymentPerShift : 0 }} ₽
           </td>
-          <td class="border-2 whitespace-nowrap">
+          <td class="border-2">
             <input
               class="max-w-[70px] text-center"
               type="number"
@@ -361,7 +366,7 @@ async function createAdvanceReportZP() {
             />
             <span class="hidden">{{ row.advance }} ₽</span>
           </td>
-          <td class="border-2 whitespace-nowrap">
+          <td class="border-2">
             <input
               class="max-w-[70px] text-center"
               type="number"
@@ -370,18 +375,18 @@ async function createAdvanceReportZP() {
             />
             <span class="hidden">{{ row.hours }} ₽</span>
           </td>
-          <td class="border-2 whitespace-nowrap">
+          <td class="border-2">
             <input
-              class="max-w-[100px] text-center"
+              class="max-w-[70px] text-center"
               type="number"
               @input="getRowByIdFromInput(row)"
               v-model="row.deductions"
             />
             <span class="hidden">{{ row.deductions }} ₽</span>
           </td>
-          <td class="border-2 whitespace-nowrap">
+          <td class="border-2">
             <input
-              class="max-w-[100px] text-center"
+              class="max-w-[70px] text-center"
               type="number"
               @input="getRowByIdFromInput(row)"
               v-model="row.additionalPayment"
@@ -389,7 +394,7 @@ async function createAdvanceReportZP() {
             <span class="hidden">{{ row.additionalPayment }} ₽</span>
           </td>
           <td
-            class="border-2 whitespace-nowrap"
+            class="border-2"
             v-if="
               row.hours !== '' &&
               row.paymentPerShift !== '' &&
@@ -408,9 +413,9 @@ async function createAdvanceReportZP() {
             }}
             ₽
           </td>
-          <td class="border-2 whitespace-nowrap" v-else>0 ₽</td>
+          <td class="border-2" v-else>0 ₽</td>
           <td
-            class="border-2 whitespace-nowrap"
+            class="border-2"
             v-if="
               row.hours !== '' &&
               row.paymentPerShift !== '' &&
@@ -430,8 +435,8 @@ async function createAdvanceReportZP() {
             }}
             ₽
           </td>
-          <td class="border-2 whitespace-nowrap" v-else>0 ₽</td>
-          <td class="border-2 whitespace-nowrap"> {{ row.notation }} </td>
+          <td class="border-2" v-else>0 ₽</td>
+          <td class="border-2"> {{ row.notation }} </td>
           <td
             class="px-6 py-4 border-2"
             v-if="

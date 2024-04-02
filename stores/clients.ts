@@ -75,6 +75,16 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  async function clearCookies(phoneNumber: string, password: string) {
+    const cookies = Object.keys(Cookies.get());
+    cookies.forEach((cookie) => Cookies.remove(cookie));
+    await localStorage.clear();
+    userData = {} as Client;
+    setTimeout(async () => {
+      await signIn(phoneNumber, password);
+    }, 2000);
+  }
+
   async function signOut() {
     const cookies = Object.keys(Cookies.get());
     cookies.forEach((cookie) => Cookies.remove(cookie));
@@ -99,6 +109,23 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  async function fetchSite(link: string) {
+    try {
+      let { data }: any = await useFetch("/api/clients/fetch-site", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ link }),
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function updateClient(client: Client, flag: string) {
     try {
       let { data } = await useFetch("/api/clients/edit-client", {
@@ -106,13 +133,17 @@ export const useClientsStore = defineStore("clients", () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ client, flag }),
+        body: JSON.stringify({ client: client, flag: flag }),
       });
 
-      if (data.value === undefined) {
+      if (data.value === "Пароли совпадают") {
+        console.log(data.value);
         toast.success("Вы успешно обновили аккаунт!");
+      } else if (data.value === "Пароли не совпадают") {
+        console.log(data);
+        toast.error("Пароли не совпадают!");
       } else {
-        toast.error("Произошла ошибка при обновилении аккаунта!");
+        toast.error("Произошла ошибка при изменении аккаунта!");
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -121,5 +152,14 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
-  return { updateClient, getClients, signOut, signIn, register, getClient };
+  return {
+    updateClient,
+    getClients,
+    signOut,
+    signIn,
+    register,
+    getClient,
+    clearCookies,
+    fetchSite,
+  };
 });

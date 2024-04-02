@@ -15,6 +15,7 @@ const emit = defineEmits(["updateDeliveryRow"]);
 
 function updateDeliveryRow(row: IOurRansom | IClientRansom, flag: string) {
   emit("updateDeliveryRow", { row: row, flag: flag });
+  printPage()
 }
 
 const alreadyCalled = ref(false);

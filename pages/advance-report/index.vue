@@ -224,7 +224,7 @@ function getAllSum() {
         +sumOfPVZ10;
 
       allSum2.value =
-        +sumOfPVZ - +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
+        +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
       break;
     default:
       allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
@@ -352,6 +352,10 @@ function getAllSumDirector() {
   sumOfPVZ1Cashless = sumOfPVZ1Cashless === undefined ? 0 : sumOfPVZ1Cashless;
   sumOfPVZ2Cashless = sumOfPVZ2Cashless === undefined ? 0 : sumOfPVZ2Cashless;
   sumOfPVZ3Cashless = sumOfPVZ3Cashless === undefined ? 0 : sumOfPVZ3Cashless;
+  console.log(sumOfPVZ);
+  console.log(sumOfPVZ1Cashless);
+  console.log(sumOfPVZ2Cashless);
+  console.log(sumOfPVZ3Cashless);
   switch ("Директор") {
     case "Директор":
       allSum.value =
@@ -368,7 +372,7 @@ function getAllSumDirector() {
         +sumOfPVZ10 
 
       allSum2.value =
-        +sumOfPVZ - +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
+        +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
       break;
     default:
       allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
@@ -395,6 +399,7 @@ function openModal(row: IAdvanceReport) {
 }
 
 function openModalAdmin(row: IAdvanceReport) {
+  row.typeOfExpenditure = 'Пополнение баланса'
   isOpenAdmin.value = true;
   rowData.value = {} as IAdvanceReport;
   rowData.value.PVZ = row.PVZ;
@@ -410,6 +415,7 @@ function openModalAdmin(row: IAdvanceReport) {
 }
 
 function openModalAdminOOO(row: IAdvanceReport) {
+  row.typeOfExpenditure = 'Пополнение баланса'
   isOpenAdminOOO.value = true;
   rowData.value = {} as IAdvanceReport;
   rowData.value.PVZ = row.PVZ;
@@ -463,7 +469,7 @@ let typesOfExpenditure = ref([
   "Расход кредит",
 ]);
 
-let companies = ref(["WB/OZ start", "Darom.pro", "Сортировка", "Доставка"]);
+let companies = ref(["WB/OZ start", "Darom.pro", "Сортировка", "Доставка", "Чаевые"]);
 
 let usersOfIssued = ref([
   "Директор (С)",
@@ -1004,16 +1010,16 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           </div>
 
           <div class="grid grid-cols-2 mb-5">
-            <label for="dispatchPVZ1">Статья дохода</label>
+            <label for="dispatchPVZ1">Кредит/Займ</label>
             <select
               class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
               v-model="rowData.typeOfExpenditure"
             >
               <option value="Приход кредит">
-                Кредит
+                Да
               </option>
               <option value="Пополнение баланса">
-                Личные
+                Нет
               </option>
             </select>
           </div>
@@ -1080,16 +1086,16 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           </div>
 
           <div class="grid grid-cols-2 mb-5">
-            <label for="dispatchPVZ1">Статья дохода</label>
+            <label for="dispatchPVZ1">Кредит/Займ</label>
             <select
               class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
               v-model="rowData.typeOfExpenditure"
             >
               <option value="Приход кредит">
-                Кредит
+                Да
               </option>
               <option value="Пополнение баланса">
-                Личные
+                Нет
               </option>
             </select>
           </div>
