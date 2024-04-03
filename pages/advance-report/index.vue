@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
-
+const toast = useToast();
 const storeUsers = useUsersStore();
 const storeAdvanceReports = useAdvanceReports();
 const storeBalance = useBalanceStore();
@@ -223,8 +223,7 @@ function getAllSum() {
         +sumOfPVZ9 +
         +sumOfPVZ10;
 
-      allSum2.value =
-        +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
+      allSum2.value = +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
       break;
     default:
       allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
@@ -255,7 +254,8 @@ function getAllSumDirector() {
         row.received !== null &&
         row.createdUser === "Директор" &&
         row.typeOfExpenditure !== "Пополнение баланса" &&
-        row.typeOfExpenditure !== "Приход кредит" &&
+        row.typeOfExpenditure !== "Приход кредит нал" &&
+        row.typeOfExpenditure !== "Новый кредит нал" &&
         row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -270,7 +270,10 @@ function getAllSumDirector() {
   let sumOfPVZ3 = rows.value
     ?.filter(
       (row) =>
-        row.createdUser === "Директор" && row.issuedUser === "" && row.type === "Нал" && row.typeOfExpenditure !== "Приход кредит"
+        row.createdUser === "Директор" &&
+        row.issuedUser === "" &&
+        row.type === "Нал" &&
+        row.typeOfExpenditure !== "Кредитовый баланс нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
@@ -320,6 +323,8 @@ function getAllSumDirector() {
         row.received !== null &&
         row.createdUser === "Директор" &&
         row.typeOfExpenditure !== "Пополнение баланса" &&
+        row.typeOfExpenditure !== "Приход кредит безнал" &&
+        row.typeOfExpenditure !== "Новый кредит безнал" &&
         row.type === "Безнал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -352,10 +357,6 @@ function getAllSumDirector() {
   sumOfPVZ1Cashless = sumOfPVZ1Cashless === undefined ? 0 : sumOfPVZ1Cashless;
   sumOfPVZ2Cashless = sumOfPVZ2Cashless === undefined ? 0 : sumOfPVZ2Cashless;
   sumOfPVZ3Cashless = sumOfPVZ3Cashless === undefined ? 0 : sumOfPVZ3Cashless;
-  console.log(sumOfPVZ);
-  console.log(sumOfPVZ1Cashless);
-  console.log(sumOfPVZ2Cashless);
-  console.log(sumOfPVZ3Cashless);
   switch ("Директор") {
     case "Директор":
       allSum.value =
@@ -369,16 +370,89 @@ function getAllSumDirector() {
         +sumOfPVZ7 +
         +sumOfPVZ8 -
         +sumOfPVZ9 +
-        +sumOfPVZ10 
+        +sumOfPVZ10;
 
-      allSum2.value =
-        +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
+      allSum2.value = +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
       break;
     default:
       allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
       break;
   }
+  getSumCreditCash();
+  getSumCreditOnline();
   return allSum.value + allSum2.value;
+}
+
+let sumCreditCash = ref(0);
+let sumCreditOnline = ref(0);
+
+let sumCreditCashDebt = ref(0);
+let sumCreditOnlineDebt = ref(0);
+function getSumCreditCash() {
+  if (rows.value) {
+    let sumOfPVZ = rows.value
+      .filter(
+        (row) =>
+          row.createdUser === "Директор" &&
+          row.typeOfExpenditure === "Списание в кредитный баланс нал" &&
+          row.type === "Нал"
+      )
+      .reduce((acc, value) => acc + +value.expenditure, 0);
+
+    let sumOfPVZ1 = rows.value
+      .filter(
+        (row) =>
+          row.createdUser === "Директор" &&
+          row.typeOfExpenditure === "Приход кредит нал" &&
+          row.type === "Нал"
+      )
+      .reduce((acc, value) => acc + +value.expenditure, 0);
+
+    let sumOfPVZ2 = rows.value
+      .filter(
+        (row) =>
+          row.createdUser === "Директор" &&
+          row.typeOfExpenditure === "Новый кредит нал" &&
+          row.type === "Нал"
+      )
+      .reduce((acc, value) => acc + +value.expenditure, 0);
+
+    sumCreditCash.value = sumOfPVZ - sumOfPVZ1;
+    sumCreditCashDebt.value = sumOfPVZ2 - sumOfPVZ1;
+  }
+}
+
+function getSumCreditOnline() {
+  if (rows.value) {
+    let sumOfPVZ = rows.value
+      .filter(
+        (row) =>
+          row.createdUser === "Директор" &&
+          row.typeOfExpenditure === "Списание в кредитный баланс безнал" &&
+          row.type === "Безнал"
+      )
+      .reduce((acc, value) => acc + +value.expenditure, 0);
+
+    let sumOfPVZ1 = rows.value
+      .filter(
+        (row) =>
+          row.createdUser === "Директор" &&
+          row.typeOfExpenditure === "Приход кредит безнал" &&
+          row.type === "Безнал"
+      )
+      .reduce((acc, value) => acc + +value.expenditure, 0);
+
+    let sumOfPVZ2 = rows.value
+      .filter(
+        (row) =>
+          row.createdUser === "Директор" &&
+          row.typeOfExpenditure === "Новый кредит безнал" &&
+          row.type === "Безнал"
+      )
+      .reduce((acc, value) => acc + +value.expenditure, 0);
+    sumCreditOnline.value = sumOfPVZ - sumOfPVZ1;
+    sumCreditOnlineDebt.value = sumOfPVZ2 - sumOfPVZ1;
+  }
 }
 
 function closeModal() {
@@ -399,7 +473,7 @@ function openModal(row: IAdvanceReport) {
 }
 
 function openModalAdmin(row: IAdvanceReport) {
-  row.typeOfExpenditure = 'Пополнение баланса'
+  row.typeOfExpenditure = "Пополнение баланса";
   isOpenAdmin.value = true;
   rowData.value = {} as IAdvanceReport;
   rowData.value.PVZ = row.PVZ;
@@ -415,7 +489,7 @@ function openModalAdmin(row: IAdvanceReport) {
 }
 
 function openModalAdminOOO(row: IAdvanceReport) {
-  row.typeOfExpenditure = 'Пополнение баланса'
+  row.typeOfExpenditure = "Пополнение баланса";
   isOpenAdminOOO.value = true;
   rowData.value = {} as IAdvanceReport;
   rowData.value.PVZ = row.PVZ;
@@ -466,7 +540,11 @@ let typesOfExpenditure = ref([
   "Ежемесячные платежи",
   "Оплата ФОТ",
   "Оплата Налоги. ПФР, СОЦ и т.д.",
-  "Расход кредит",
+  "Вывод дивидентов",
+  "Списание в кредитный баланс нал",
+  "Списание в кредитный баланс безнал",
+  "Списание средств торговой империи нал",
+  "Списание средств торговой империи безнал",
 ]);
 
 let companies = ref(["WB/OZ start", "Darom.pro", "Сортировка", "Доставка", "Чаевые"]);
@@ -481,6 +559,7 @@ let usersOfIssued = ref([
 ]);
 
 import { createClient } from "@supabase/supabase-js";
+import { useToast } from "vue-toastification";
 
 const supabase = createClient(
   "https://mgbbkkgyorhwryabwabx.supabase.co",
@@ -488,8 +567,23 @@ const supabase = createClient(
 );
 
 async function createRow() {
-  isLoading.value = true;
-  await storeAdvanceReports.createAdvanceReport(rowData.value, user.value.username);
+  if (
+    rowData.value.typeOfExpenditure === "Списание в кредитный баланс нал" &&
+    +rowData.value.expenditure > +sumCreditCashDebt.value
+  ) {
+    toast.error("Задолженность меньше чем сумма расхода!");
+    return;
+  } else if (
+    rowData.value.typeOfExpenditure === "Списание в кредитный баланс безнал" &&
+    +rowData.value.expenditure > +sumCreditOnlineDebt.value
+  ) {
+    toast.error("Задолженность меньше чем сумма расхода!");
+    return;
+  } else {
+    isLoading.value = true;
+    await storeAdvanceReports.createAdvanceReport(rowData.value, user.value.username);
+  }
+
   rows.value = await storeAdvanceReports.getAdvancedReports();
   originallyRows.value = rows.value;
 
@@ -507,12 +601,31 @@ async function createRow() {
   closeModal();
   closeModalAdmin();
   closeModalAdminOOO();
+  getSumCreditCash();
+  getSumCreditOnline();
   isLoading.value = false;
 }
 
 async function updateRow() {
   isLoading.value = true;
-  await storeAdvanceReports.updateAdvanceReport(rowData.value, user.value.username);
+
+  if (
+    rowData.value.typeOfExpenditure === "Списание в кредитный баланс нал" &&
+    +rowData.value.expenditure > +sumCreditCashDebt.value
+  ) {
+    toast.error("Задолженность меньше чем сумма расхода!");
+    return;
+  } else if (
+    rowData.value.typeOfExpenditure === "Списание в кредитный баланс безнал" &&
+    +rowData.value.expenditure > +sumCreditOnlineDebt.value
+  ) {
+    toast.error("Задолженность меньше чем сумма расхода!");
+    return;
+  } else {
+    isLoading.value = true;
+    await storeAdvanceReports.updateAdvanceReport(rowData.value, user.value.username);
+  }
+
   rows.value = await storeAdvanceReports.getAdvancedReports();
   originallyRows.value = rows.value;
 
@@ -527,6 +640,8 @@ async function updateRow() {
   filteredRows.value = rows.value;
 
   getAllSum();
+  getSumCreditCash();
+  getSumCreditOnline();
   closeModal();
   isLoading.value = false;
 }
@@ -548,6 +663,8 @@ async function updateDeliveryRow(row: any) {
   filteredRows.value = rows.value;
 
   getAllSum();
+  getSumCreditCash();
+  getSumCreditOnline();
   isLoading.value = false;
 }
 
@@ -683,6 +800,9 @@ async function handleFileChange(event) {
 let selectedUser = ref("");
 let showBalanceEmployees = ref(false);
 let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
+
+let isShowCreditBalanceCash = ref(false);
+let isShowCreditBalanceOnline = ref(false);
 </script>
 
 <template>
@@ -700,24 +820,53 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
             :rows="rows"
             :user="user"
           />
-          <div
-            class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10"
-          >
-            <UIMainButton
-              class="max-sm:w-full"
-              v-if="user.role === 'ADMIN'"
-              @click="openModalAdmin"
-            >
-              Пополнение баланса торговой империи (нал)
-            </UIMainButton>
 
-            <UIMainButton
-              class="max-sm:w-full"
-              v-if="user.username === 'Директор'"
-              @click="openModalAdminOOO"
-            >
-              Пополнение баланса торговой империи (безнал)
-            </UIMainButton>
+          <div
+            v-if="isShowCreditBalanceCash"
+            class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-70 z-[200]"
+          >
+            <div class="h-screen flex items-center justify-center font-bold">
+              <div class="bg-white max-sm:px-3 max-w-[500px] p-10 rounded-2xl relative">
+                <Icon
+                  name="material-symbols:close-small"
+                  size="40"
+                  class="absolute top-0 right-0 hover:text-secondary-color duration-200 cursor-pointer"
+                  @click="isShowCreditBalanceCash = !isShowCreditBalanceCash"
+                />
+                <h1 class="text-2xl text-center">Кредит баланс нал</h1>
+                <h1 class="text-center text-3xl text-secondary-color mb-5">
+                  {{ formatNumber(sumCreditCash) }} ₽
+                </h1>
+                <h1 class="text-2xl text-center">Задолженность</h1>
+                <h1 class="text-center text-3xl text-secondary-color mb-5">
+                  {{ formatNumber(sumCreditCashDebt) }} ₽
+                </h1>
+              </div>
+            </div>
+          </div>
+
+          <div
+            v-if="isShowCreditBalanceOnline"
+            class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-70 z-[200]"
+          >
+            <div class="h-screen flex items-center justify-center font-bold">
+              <div class="bg-white max-sm:px-3 max-w-[500px] p-10 rounded-2xl relative">
+                <Icon
+                  name="material-symbols:close-small"
+                  size="40"
+                  class="absolute top-0 right-0 hover:text-secondary-color duration-200 cursor-pointer"
+                  @click="isShowCreditBalanceOnline = !isShowCreditBalanceOnline"
+                />
+                <h1 class="text-2xl text-center">Кредит баланс безнал</h1>
+                <h1 class="text-center text-3xl text-secondary-color mb-5">
+                  {{ formatNumber(sumCreditOnline) }} ₽
+                </h1>
+                <h1 class="text-2xl text-center">Задолженность</h1>
+                <h1 class="text-center text-3xl text-secondary-color mb-5">
+                  {{ formatNumber(sumCreditOnlineDebt) }} ₽
+                </h1>
+              </div>
+            </div>
           </div>
 
           <NuxtLink v-if="user.role === 'ADMIN'" to="/advance-report/summary-tables">
@@ -745,20 +894,60 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
               </h1>
             </div>
             <div v-if="selectedUser === 'Директор'">
-              <div class="text-center text-xl my-3">
-                <h1>Баланс Торговой Империи онлайн&наличные:</h1>
-                <h1 class="font-bold text-secondary-color text-4xl text-center">
-                  {{ formatNumber(Math.ceil(getAllSumFromEmployees() + 10930 + 2474341)) }} ₽
-                </h1>
+              <div class="flex items-center flex-col mb-3">
+                <div class="text-center text-xl my-3">
+                  <h1>Баланс Торговой Империи онлайн&наличные:</h1>
+                  <div class="flex items-center justify-center gap-3 mt-1">
+                    <h1 class="font-bold text-secondary-color text-4xl text-center">
+                      {{
+                        formatNumber(
+                          Math.ceil(getAllSumFromEmployees() + 10930 + 2474341)
+                        )
+                      }}
+                      ₽
+                    </h1>
+                    <Icon
+                      name="solar:money-bag-bold"
+                      size="30"
+                      class="text-secondary-color hover:opacity-50 cursor-pointer duration-200"
+                      @click="isShowCreditBalanceCash = !isShowCreditBalanceCash"
+                    />
+                  </div>
+                </div>
+                <UIMainButton
+                  class="max-sm:w-full"
+                  v-if="user.role === 'ADMIN'"
+                  @click="openModalAdmin"
+                >
+                  Пополнение баланса (нал)
+                </UIMainButton>
               </div>
-              <div class="text-center text-xl my-3">
-                <h1>
-                  Баланс Торговой Империи <br />
-                  безнал:
-                </h1>
-                <h1 class="font-bold text-secondary-color text-4xl text-center">
-                  {{ formatNumber(Math.ceil(allSum2)) }} ₽
-                </h1>
+
+              <div class="flex items-center flex-col mb-10">
+                <div class="text-center text-xl my-3">
+                  <h1>
+                    Баланс Торговой Империи <br />
+                    безнал:
+                  </h1>
+                  <div class="flex items-center justify-center gap-3 mt-1">
+                    <h1 class="font-bold text-secondary-color text-4xl text-center">
+                      {{ formatNumber(Math.ceil(allSum2)) }} ₽
+                    </h1>
+                    <Icon
+                      name="solar:money-bag-bold"
+                      size="30"
+                      class="text-secondary-color hover:opacity-50 cursor-pointer duration-200"
+                      @click="isShowCreditBalanceOnline = !isShowCreditBalanceOnline"
+                    />
+                  </div>
+                </div>
+                <UIMainButton
+                  class="max-sm:w-full"
+                  v-if="user.username === 'Директор'"
+                  @click="openModalAdminOOO"
+                >
+                  Пополнение баланса (безнал)
+                </UIMainButton>
               </div>
             </div>
           </div>
@@ -986,6 +1175,17 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           </div>
 
           <div class="grid grid-cols-2 mb-5">
+            <label for="name">Дата</label>
+            <input
+              class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+              v-model="rowData.date"
+              type="date"
+              placeholder="ДД.ММ.ГГГГ"
+              onchange="this.className=(this.value!=''?'has-value':'')"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
             <label for="dispatchPVZ1">ПВЗ</label>
             <select
               class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
@@ -1010,17 +1210,14 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           </div>
 
           <div class="grid grid-cols-2 mb-5">
-            <label for="dispatchPVZ1">Кредит/Займ</label>
+            <label for="dispatchPVZ1">Кредит</label>
             <select
               class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
               v-model="rowData.typeOfExpenditure"
             >
-              <option value="Приход кредит">
-                Да
-              </option>
-              <option value="Пополнение баланса">
-                Нет
-              </option>
+              <option value="Новый кредит нал">Новый</option>
+              <option value="Пополнение баланса">Нет</option>
+              <option value="Приход кредит нал">С кредитного баланса</option>
             </select>
           </div>
 
@@ -1062,6 +1259,17 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           </div>
 
           <div class="grid grid-cols-2 mb-5">
+            <label for="name">Дата</label>
+            <input
+              class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+              v-model="rowData.date"
+              type="date"
+              placeholder="ДД.ММ.ГГГГ"
+              onchange="this.className=(this.value!=''?'has-value':'')"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
             <label for="dispatchPVZ1">ПВЗ</label>
             <select
               class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
@@ -1086,17 +1294,14 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
           </div>
 
           <div class="grid grid-cols-2 mb-5">
-            <label for="dispatchPVZ1">Кредит/Займ</label>
+            <label for="dispatchPVZ1">Кредит</label>
             <select
               class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
               v-model="rowData.typeOfExpenditure"
             >
-              <option value="Приход кредит">
-                Да
-              </option>
-              <option value="Пополнение баланса">
-                Нет
-              </option>
+              <option value="Новый кредит безнал">Новый</option>
+              <option value="Пополнение баланса">Нет</option>
+              <option value="Приход кредит безнал">С кредитного баланса</option>
             </select>
           </div>
 
@@ -1124,7 +1329,7 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
       <NuxtLayout name="user">
         <div class="mt-10">
           <div
-            class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-10"
+            class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-3"
           >
             <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
               Пополнение баланса торговой империи

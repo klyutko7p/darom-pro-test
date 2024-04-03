@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 const storeUsers = useUsersStore();
+import { read, utils, writeFile, write } from "xlsx";
 
 const props = defineProps({
   user: { type: Object as PropType<User>, required: true },
@@ -9,11 +10,18 @@ const props = defineProps({
   week: { type: String, required: true },
   startingDate: { type: Date },
   endDate: { type: Date },
+  type: { type: String, required: true },
   rowsBalance: { type: Array as PropType<IBalance[]>, required: true },
   rowsDelivery: { type: Array as PropType<IDelivery[]>, required: true },
   rowsOurRansom: { type: Array as PropType<IOurRansom[]>, required: true },
   company: { type: String, required: true },
 });
+
+const emit = defineEmits(["returnTotal"]);
+
+function returnTotal() {
+  emit("returnTotal", sumOfArray3.value);
+}
 
 const filteredRows = ref(
   props.rows?.filter((row: IAdvanceReport) => {
@@ -68,34 +76,34 @@ function updateCurrentPageData() {
     );
   });
 
-  if (props.company === "Darom.pro" || props.company === "Все") {
-    if (props.week.includes("неделя")) {
-      rowsBalanceArr.value = props.rowsBalance
-        .filter((row: IBalance) => {
-          let rowDate: Date = new Date(row.received);
-          let [startDate, endDate] = parseWeekRange(props.week);
-          return (
-            rowDate >= startDate &&
-            rowDate <= endDate &&
-            row.received !== null &&
-            row.recipient === "Шведова"
-          );
-        })
-        .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
-    } else {
-      rowsBalanceArr.value = props.rowsBalance
-        .filter(
-          (row: IBalance) =>
-            row.received !== null &&
-            row.recipient === "Шведова" &&
-            new Date(row.received).getMonth() + 1 === +props.month &&
-            (!props.startingDate ||
-              new Date(row.received) >= new Date(newStartingDate)) &&
-            (!props.endDate || new Date(row.received) <= new Date(newEndDate))
-        )
-        .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
-    }
-  }
+  // if (props.company === "Darom.pro" || props.company === "Все") {
+  //   if (props.week.includes("неделя")) {
+  //     rowsBalanceArr.value = props.rowsBalance
+  //       .filter((row: IBalance) => {
+  //         let rowDate: Date = new Date(row.received);
+  //         let [startDate, endDate] = parseWeekRange(props.week);
+  //         return (
+  //           rowDate >= startDate &&
+  //           rowDate <= endDate &&
+  //           row.received !== null &&
+  //           row.recipient === "Шведова"
+  //         );
+  //       })
+  //       .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
+  //   } else {
+  //     rowsBalanceArr.value = props.rowsBalance
+  //       .filter(
+  //         (row: IBalance) =>
+  //           row.received !== null &&
+  //           row.recipient === "Шведова" &&
+  //           new Date(row.received).getMonth() + 1 === +props.month &&
+  //           (!props.startingDate ||
+  //             new Date(row.received) >= new Date(newStartingDate)) &&
+  //           (!props.endDate || new Date(row.received) <= new Date(newEndDate))
+  //       )
+  //       .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
+  //   }
+  // }
 
   if (props.week.includes("неделя")) {
     rowsDeliveryArr.value = props.rowsDelivery.filter((row: IDelivery) => {
@@ -122,8 +130,16 @@ function updateCurrentPageData() {
         rowDate <= endDate &&
         row.typeOfExpenditure !== "Пополнение баланса" &&
         row.typeOfExpenditure !== "Передача денежных средств" &&
-        row.typeOfExpenditure !== "Приход кредит" &&
-        row.typeOfExpenditure !== "Расход кредит"
+        row.typeOfExpenditure !== "Списание в кредитный баланс нал" &&
+        row.typeOfExpenditure !== "Списание в кредитный баланс безнал" &&
+        row.typeOfExpenditure !== "Списание средств торговой империи безнал" &&
+        row.typeOfExpenditure !== "Списание средств торговой империи нал" &&
+        row.typeOfExpenditure !== "Приход кредит нал" &&
+        row.typeOfExpenditure !== "Приход кредит безнал" &&
+        row.typeOfExpenditure !== "Новый кредит нал" &&
+        row.typeOfExpenditure !== "Новый кредит безнал" &&
+        row.typeOfExpenditure !== "Вывод дивидентов" &&
+        (!props.type || row.type === props.type)
       );
     });
   } else {
@@ -131,11 +147,20 @@ function updateCurrentPageData() {
       (row: IAdvanceReport) =>
         row.typeOfExpenditure !== "Пополнение баланса" &&
         row.typeOfExpenditure !== "Передача денежных средств" &&
+        row.typeOfExpenditure !== "Списание в кредитный баланс нал" &&
+        row.typeOfExpenditure !== "Списание в кредитный баланс безнал" &&
+        row.typeOfExpenditure !== "Списание средств торговой империи безнал" &&
+        row.typeOfExpenditure !== "Списание средств торговой империи нал" &&
+        row.typeOfExpenditure !== "Приход кредит нал" &&
+        row.typeOfExpenditure !== "Приход кредит безнал" &&
+        row.typeOfExpenditure !== "Новый кредит нал" &&
+        row.typeOfExpenditure !== "Новый кредит безнал" &&
         row.typeOfExpenditure !== "Приход кредит" &&
-        row.typeOfExpenditure !== "Расход кредит" &&
+        row.typeOfExpenditure !== "Вывод дивидентов" &&
         new Date(row.date).getMonth() + 1 === +props.month &&
         (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
-        (!props.endDate || new Date(row.date) <= new Date(newEndDate))
+        (!props.endDate || new Date(row.date) <= new Date(newEndDate)) &&
+        (!props.type || row.type === props.type)
     );
   }
 
@@ -155,39 +180,40 @@ function updateCurrentPageData() {
         row.typeOfExpenditure === "Пополнение баланса" &&
         new Date(row.date).getMonth() + 1 === +props.month &&
         (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
-        (!props.endDate || new Date(row.date) <= new Date(newEndDate))
+        (!props.endDate || new Date(row.date) <= new Date(newEndDate)) && 
+        (!props.type || row.type === props.type)
     );
   }
 
   // В ДАЛЬНЕЙШЕМ МОЖНО И НУЖНО УБРАТЬ!!!!!!!!
-  if (props.company === "Darom.pro" || props.company === "Все") {
-    if (props.week.includes("неделя")) {
-      rowsBalanceArr.value = props.rowsBalance
-        .filter((row: IBalance) => {
-          let rowDate: Date = new Date(row.received);
-          let [startDate, endDate] = parseWeekRange(props.week);
-          return (
-            rowDate >= startDate &&
-            rowDate <= endDate &&
-            row.received !== null &&
-            row.recipient === "Шведова"
-          );
-        })
-        .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
-    } else {
-      rowsBalanceArr.value = props.rowsBalance
-        .filter(
-          (row: IBalance) =>
-            row.received !== null &&
-            row.recipient === "Шведова" &&
-            new Date(row.received).getMonth() + 1 === +props.month &&
-            (!props.startingDate ||
-              new Date(row.received) >= new Date(newStartingDate)) &&
-            (!props.endDate || new Date(row.received) <= new Date(newEndDate))
-        )
-        .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
-    }
-  }
+  // if (props.company === "Darom.pro" || props.company === "Все") {
+  //   if (props.week.includes("неделя")) {
+  //     rowsBalanceArr.value = props.rowsBalance
+  //       .filter((row: IBalance) => {
+  //         let rowDate: Date = new Date(row.received);
+  //         let [startDate, endDate] = parseWeekRange(props.week);
+  //         return (
+  //           rowDate >= startDate &&
+  //           rowDate <= endDate &&
+  //           row.received !== null &&
+  //           row.recipient === "Шведова"
+  //         );
+  //       })
+  //       .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
+  //   } else {
+  //     rowsBalanceArr.value = props.rowsBalance
+  //       .filter(
+  //         (row: IBalance) =>
+  //           row.received !== null &&
+  //           row.recipient === "Шведова" &&
+  //           new Date(row.received).getMonth() + 1 === +props.month &&
+  //           (!props.startingDate ||
+  //             new Date(row.received) >= new Date(newStartingDate)) &&
+  //           (!props.endDate || new Date(row.received) <= new Date(newEndDate))
+  //       )
+  //       .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
+  //   }
+  // }
 
   if (props.company === "Darom.pro" || props.company === "Все") {
     if (props.week.includes("неделя")) {
@@ -243,9 +269,10 @@ function updateCurrentPageData() {
     if (!isNaN(receiptsByPVZ[row.dispatchPVZ])) {
       let profit;
       if (!row.prepayment && row.profit1 !== 0) {
-        profit = Math.ceil(row.amountFromClient1 / 10) * 10 - row.priceSite + row.deliveredKGT
+        profit =
+          Math.ceil(row.amountFromClient1 / 10) * 10 - row.priceSite + row.deliveredKGT;
       } else {
-        profit = (row.priceSite * row.percentClient) / 100 + row.deliveredKGT
+        profit = (row.priceSite * row.percentClient) / 100 + row.deliveredKGT;
       }
       receiptsByPVZ[row.dispatchPVZ] += Math.ceil(profit);
     }
@@ -273,6 +300,8 @@ function updateCurrentPageData() {
   Object.keys(differenceByPVZ).forEach((pvzName: string) => {
     sumOfArray3.value += differenceByPVZ[pvzName];
   });
+
+  emit('returnTotal', sumOfArray3.value)
 }
 
 function parseWeekRange(weekString: string): Date[] {
@@ -299,6 +328,8 @@ function clearTotalSums() {
 watch([props.rows, totalRows, filteredRows.value, props.month], clearTotalSums);
 watch(() => props.month, clearTotalSums);
 watch(() => props.month, updateCurrentPageData);
+watch(() => props.type, clearTotalSums);
+watch(() => props.type, updateCurrentPageData);
 watch(() => props.startingDate, clearTotalSums);
 watch(() => props.startingDate, updateCurrentPageData);
 watch(() => props.endDate, clearTotalSums);
@@ -322,8 +353,23 @@ let pvz = ref([
   "Офис",
   "НаДом",
 ]);
+
+
+function exportToExcel() {
+  let table = document.querySelector("#theTable");
+  let wb = utils.table_to_book(table);
+  writeFile(wb, "сводные_таблицы.xlsx");
+}
 </script>
 <template>
+  <div class="flex justify-end">
+    <Icon
+      class="duration-200 hover:text-secondary-color cursor-pointer"
+      size="40"
+      name="material-symbols:sheets-add-on"
+      @click="exportToExcel"
+    />
+  </div>
   <div class="relative max-h-[410px] mt-5 mb-10">
     <table
       id="theTable"

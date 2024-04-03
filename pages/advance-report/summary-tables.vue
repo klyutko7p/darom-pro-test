@@ -74,7 +74,7 @@ let copyArrayClientRansom = ref<Array<IClientRansom>>();
 let ourRansomRows = ref<Array<IOurRansom>>();
 let clientRansomRows = ref<Array<IClientRansom>>();
 
-  function getAllSum() {
+function getAllSum() {
   copyArrayOurRansom.value = ourRansomRows.value?.filter(
     (row) =>
       row.issued !== null &&
@@ -291,6 +291,11 @@ let typesOfExpenditure = ref([
   "Ежемесячные платежи",
   "Оплата ФОТ",
   "Оплата Налоги. ПФР, СОЦ и т.д.",
+  "Вывод дивидентов",
+  "Списание в кредитный баланс нал",
+  "Списание в кредитный баланс безнал",
+  "Списание средств торговой империи нал",
+  "Списание средств торговой империи безнал",
 ]);
 
 let companies = ref(["WB/OZ start", "Darom.pro", "Сортировка", "Доставка", "Чаевые"]);
@@ -595,6 +600,53 @@ let monthNames: any = ref({
 function filterRowsData(monthData: number) {
   month.value = monthData;
 }
+let type = ref("");
+
+let arrayOfReceipts = ref<Array<IAdvanceReport>>();
+let arrayOfExpenditure = ref<Array<IAdvanceReport>>();
+let arrayOfTotal = ref<Array<IAdvanceReport>>();
+let rowsBalanceArr = ref<Array<IBalance>>();
+let rowsDeliveryArr = ref<Array<IDelivery>>();
+let rowsOnlineArr = ref<Array<IOurRansom>>();
+
+let expenditureByPVZ: { [PVZ: string]: number } = {};
+let receiptsByPVZ: { [PVZ: string]: number } = {};
+let differenceByPVZ: { [PVZ: string]: number } = {};
+
+let sumOfArray1 = ref(0);
+let sumOfArray2 = ref(0);
+let sumOfArray3 = ref(0);
+
+let returnRows = ref<Array<IAdvanceReport>>();
+
+function returnTotal(sum: number) {
+  let newStartingDate = new Date(startingDate.value);
+  newStartingDate.setHours(0);
+  newStartingDate.setMinutes(0);
+  newStartingDate.setSeconds(0);
+  newStartingDate.setMilliseconds(0);
+
+  let newEndDate = new Date(endDate.value);
+  newEndDate.setHours(23);
+  newEndDate.setMinutes(59);
+  newEndDate.setSeconds(59);
+  newEndDate.setMilliseconds(0);
+
+  sumOfArray3.value = sum;
+
+  arrayOfExpenditure.value = filteredRows.value?.filter(
+    (row: IAdvanceReport) =>
+      row.typeOfExpenditure === "Вывод дивидентов" &&
+      new Date(row.date).getMonth() + 1 === +month.value &&
+      (!startingDate.value || new Date(row.date) >= new Date(newStartingDate)) &&
+      (!endDate.value || new Date(row.date) <= new Date(newEndDate)) &&
+      (!type.value || row.type === type.value)
+  );
+
+  arrayOfExpenditure.value?.forEach((row) => {
+    sumOfArray3.value -= parseFloat(row.expenditure);
+  });
+}
 </script>
 
 <template>
@@ -647,19 +699,33 @@ function filterRowsData(monthData: number) {
             >
             <div
               v-if="showFilters"
-              class="flex items-center w-full justify-between max-sm:items-start"
+              class="flex items-center w-full gap-3 max-sm:items-start"
             >
               <select
                 class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
                 v-model="month"
                 @change="filterRowsData(month)"
               >
-                <option v-for="(monthName, monthNumber) in monthNames" :value="monthNumber">
+                <option
+                  v-for="(monthName, monthNumber) in monthNames"
+                  :value="monthNumber"
+                >
                   {{ monthName }}
                 </option>
               </select>
+              <select
+                class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+                v-model="type"
+              >
+                <option value="Нал">Нал</option>
+                <option value="Безнал">Безнал</option>
+                <option value="">Нал + Безнал</option>
+              </select>
             </div>
           </div>
+          <h1 class="text-xl font-bold">
+            Чистая прибыль торговой империи: {{ formatNumber(sumOfArray3) }} ₽
+          </h1>
 
           <div v-for="company in companies" class="mt-10 mb-10">
             <h1 class="font-bold text-2xl mb-1 max-2xl:border-b-2 border-black p-2">
@@ -671,6 +737,7 @@ function filterRowsData(monthData: number) {
                 :user="user"
                 :week="selectedWeek"
                 :month="month"
+                :type="type"
                 :rows-delivery="
                   rowsDelivery?.filter((row) => row.nameOfAction === company)
                 "
@@ -695,6 +762,7 @@ function filterRowsData(monthData: number) {
                 :user="user"
                 :week="selectedWeek"
                 :month="month"
+                :type="type"
                 :rows-balance="rowsBalance"
                 :rows-delivery="rowsDelivery"
                 :rows-our-ransom="rowsOurRansom"
@@ -703,6 +771,7 @@ function filterRowsData(monthData: number) {
                 :endDate="endDate"
                 @open-modal="openModal"
                 @update-delivery-row="updateDeliveryRow"
+                @return-total="returnTotal"
               />
             </div>
           </div>
@@ -859,8 +928,7 @@ function filterRowsData(monthData: number) {
     </div>
 
     <div v-else>
-      <NuxtLayout name="user">
-      </NuxtLayout>
+      <NuxtLayout name="user"> </NuxtLayout>
     </div>
   </div>
 

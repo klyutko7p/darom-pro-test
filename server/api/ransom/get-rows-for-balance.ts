@@ -14,16 +14,13 @@ export default defineEventHandler(async (event) => {
             const rows = await prisma.ourRansom.findMany({
                 select: {
                     dispatchPVZ: true,
-                    deliveredPVZ: true,
-                    deliveredSC: true,
                     prepayment: true,
                     additionally: true,
                     deliveredKGT: true,
-                    profit1: true,
                     amountFromClient1: true,    
                     issued: true,
                     priceSite: true,
-                    percentClient: true,
+                    percentClient: true, //
                     deleted: true,
                     created_at: true,
                 },

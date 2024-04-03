@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 const storeUsers = useUsersStore();
+import { read, utils, writeFile, write } from "xlsx";
 
 const emit = defineEmits(["openModal", "updateDeliveryRow"]);
 
@@ -87,28 +88,42 @@ let breakpoints = {
     slidesPerView: 6,
   },
 };
+
+function exportToExcel() {
+  let table = document.querySelector("#theTable");
+  let wb = utils.table_to_book(table);
+  writeFile(wb, "авансовый_отчет.xlsx");
+}
 </script>
 <template>
-  <div class="my-10 flex items-center gap-5">
-    <span
-      class="border-2 py-3 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
-      @click="showFilters = !showFilters"
-      >2024</span
-    >
-    <div
-      v-if="showFilters"
-      class="flex items-center w-full justify-between max-sm:items-start"
-    >
-      <select
-        class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
-        v-model="month"
-        @change="filterRows(month)"
+  <div class="flex items-center justify-between mt-10">
+    <div class="flex items-center gap-5">
+      <span
+        class="border-2 py-3 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
+        @click="showFilters = !showFilters"
+        >2024</span
       >
-        <option v-for="(monthName, monthNumber) in monthNames" :value="monthNumber">
-          {{ monthName }}
-        </option>
-      </select>
+      <div
+        v-if="showFilters"
+        class="flex items-center w-full justify-between max-sm:items-start"
+      >
+        <select
+          class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+          v-model="month"
+          @change="filterRows(month)"
+        >
+          <option v-for="(monthName, monthNumber) in monthNames" :value="monthNumber">
+            {{ monthName }}
+          </option>
+        </select>
+      </div>
     </div>
+    <Icon
+      class="duration-200 hover:text-secondary-color cursor-pointer"
+      size="40"
+      name="material-symbols:sheets-add-on"
+      @click="exportToExcel"
+    />
   </div>
 
   <div
