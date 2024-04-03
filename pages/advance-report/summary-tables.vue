@@ -291,11 +291,11 @@ let typesOfExpenditure = ref([
   "Ежемесячные платежи",
   "Оплата ФОТ",
   "Оплата Налоги. ПФР, СОЦ и т.д.",
-  "Вывод дивидентов",
-  "Списание в кредитный баланс нал",
-  "Списание в кредитный баланс безнал",
-  "Списание средств торговой империи нал",
-  "Списание средств торговой империи безнал",
+  "Вывод дивидендов",
+  "Перевод в кредитный баланс нал",
+  "Перевод в кредитный баланс безнал",
+  "Списание кредитной задолженности торговой империи нал",
+  "Списание кредитной задолженности торговой империи безнал",
 ]);
 
 let companies = ref(["WB/OZ start", "Darom.pro", "Сортировка", "Доставка", "Чаевые"]);
@@ -636,7 +636,7 @@ function returnTotal(sum: number) {
 
   arrayOfExpenditure.value = filteredRows.value?.filter(
     (row: IAdvanceReport) =>
-      row.typeOfExpenditure === "Вывод дивидентов" &&
+      row.typeOfExpenditure === "Вывод дивидендов" &&
       new Date(row.date).getMonth() + 1 === +month.value &&
       (!startingDate.value || new Date(row.date) >= new Date(newStartingDate)) &&
       (!endDate.value || new Date(row.date) <= new Date(newEndDate)) &&
@@ -724,7 +724,7 @@ function returnTotal(sum: number) {
             </div>
           </div>
           <h1 class="text-xl font-bold">
-            Чистая прибыль торговой империи: {{ formatNumber(sumOfArray3) }} ₽
+            Баланс чистой прибыли торговой империи: {{ formatNumber(sumOfArray3) }} ₽
           </h1>
 
           <div v-for="company in companies" class="mt-10 mb-10">

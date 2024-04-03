@@ -130,15 +130,15 @@ function updateCurrentPageData() {
         rowDate <= endDate &&
         row.typeOfExpenditure !== "Пополнение баланса" &&
         row.typeOfExpenditure !== "Передача денежных средств" &&
-        row.typeOfExpenditure !== "Списание в кредитный баланс нал" &&
-        row.typeOfExpenditure !== "Списание в кредитный баланс безнал" &&
-        row.typeOfExpenditure !== "Списание средств торговой империи безнал" &&
-        row.typeOfExpenditure !== "Списание средств торговой империи нал" &&
+        row.typeOfExpenditure !== "Перевод в кредитный баланс нал" &&
+        row.typeOfExpenditure !== "Перевод в кредитный баланс безнал" &&
+        row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи безнал" &&
+        row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи нал" &&
         row.typeOfExpenditure !== "Приход кредит нал" &&
         row.typeOfExpenditure !== "Приход кредит безнал" &&
         row.typeOfExpenditure !== "Новый кредит нал" &&
         row.typeOfExpenditure !== "Новый кредит безнал" &&
-        row.typeOfExpenditure !== "Вывод дивидентов" &&
+        row.typeOfExpenditure !== "Вывод дивидендов" &&
         (!props.type || row.type === props.type)
       );
     });
@@ -147,16 +147,16 @@ function updateCurrentPageData() {
       (row: IAdvanceReport) =>
         row.typeOfExpenditure !== "Пополнение баланса" &&
         row.typeOfExpenditure !== "Передача денежных средств" &&
-        row.typeOfExpenditure !== "Списание в кредитный баланс нал" &&
-        row.typeOfExpenditure !== "Списание в кредитный баланс безнал" &&
-        row.typeOfExpenditure !== "Списание средств торговой империи безнал" &&
-        row.typeOfExpenditure !== "Списание средств торговой империи нал" &&
+        row.typeOfExpenditure !== "Перевод в кредитный баланс нал" &&
+        row.typeOfExpenditure !== "Перевод в кредитный баланс безнал" &&
+        row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи безнал" &&
+        row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи нал" &&
         row.typeOfExpenditure !== "Приход кредит нал" &&
         row.typeOfExpenditure !== "Приход кредит безнал" &&
         row.typeOfExpenditure !== "Новый кредит нал" &&
         row.typeOfExpenditure !== "Новый кредит безнал" &&
         row.typeOfExpenditure !== "Приход кредит" &&
-        row.typeOfExpenditure !== "Вывод дивидентов" &&
+        row.typeOfExpenditure !== "Вывод дивидендов" &&
         new Date(row.date).getMonth() + 1 === +props.month &&
         (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
         (!props.endDate || new Date(row.date) <= new Date(newEndDate)) &&
