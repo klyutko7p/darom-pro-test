@@ -80,6 +80,9 @@ async function parsingPage() {
         priceSite.value = price;
         urlToImg.value =
           "https://i.pinimg.com/736x/30/30/e3/3030e3fa40eb4fd810320bbff7f0a1c4.jpg";
+      } else if (marketplace.value === 'YM') {
+        let info = await storeClients.fetchSiteYM(urlToItem.value)
+        console.log(info);
       }
 
       createItem();
@@ -243,6 +246,7 @@ let marketplace = ref("");
         >
           <option class="text-lg" value="WB">Wildberries</option>
           <option class="text-lg" value="OZ">Ozon</option>
+          <option class="text-lg" value="YM">Яндекс Маркет</option>
         </select>
         <div v-if="address && marketplace" class="mt-5">
           <h1 class="text-lg font-bold">

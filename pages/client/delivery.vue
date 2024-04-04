@@ -155,7 +155,7 @@ const isDisabled = hours >= 12 && hours < 24 && minutes >= 1;
             type="file"
           />
           <h1 class="text-base mt-10 mb-1 text-secondary-color font-bold">*штрих-код обновляется каждые 24 часа</h1> 
-          <h1 class="text-base text-secondary-color font-bold">**прикрепить скриншот можно с 00:00 до 12:00 ежедневно</h1>
+          <h1 class="text-base text-secondary-color text-center font-bold">**прикрепить скриншот можно с 00:00 до 12:00 ежедневно</h1>
         </div>
         <!-- :disabled="isDisabled" -->
       </div>

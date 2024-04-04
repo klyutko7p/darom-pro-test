@@ -243,11 +243,16 @@ function isExpired(row: any) {
             class="border-2"
             v-if="link?.startsWith('1') || link?.startsWith('2')"
           >
-            <h1 class="font-medium text-gray-400 text-xs">
+            <h1 class="font-medium text-gray-400 text-xs" v-if="row.orderPVZ !== null">
               {{
                 row.deliveredSC
                   ? storeUsers.getNormalizedDate(row.deliveredSC)
                   : "Товар в пути"
+              }}
+            </h1>
+            <h1 class="font-medium text-gray-400 text-xs" v-else>
+              {{
+                "В обработке"
               }}
             </h1>
           </td>

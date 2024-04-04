@@ -74,7 +74,6 @@ onMounted(async () => {
   if (rows.value) {
     copyRowsOurRansom.value = [...rowsOurRansom.value];
     copyRowsClientRansom.value = [...rowsClientRansom.value];
-    phoneNumber.value = copyRowsOurRansom.value[0].fromName;
   }
   disableReceivedItems();
   isLoading.value = false;
@@ -106,17 +105,17 @@ const token = Cookies.get("token");
       <div class="max-lg:p-3">
         <div class="mb-5 flex items-center gap-3">
           <h1 class="text-xl">
-            Телефон: <span class="italic"> {{ phoneNumber }} </span>
+            Телефон: <span class="italic"> {{ user.phoneNumber }} </span>
           </h1>
           <Icon name="material-symbols:contact-phone-rounded" size="24" />
         </div>
-        <h1 class="text-xl">
+        <h1 class="text-xl max-sm:text-base">
           Оставшаяся сумма к оплате:
           <span class="font-bold">
             {{ Math.ceil(getAmountToBePaid("NONE", 1) / 10) * 10 + Math.ceil(getAmountToBePaid("NONE", 2) / 10) * 10 }} руб.</span
           >
         </h1>
-        <h1 class="text-xl">
+        <h1 class="text-xl max-sm:text-base">
           Сумма к оплате на выдачу:
           <span class="font-bold"
             >{{ Math.ceil(getAmountToBePaid("PVZ", 1) / 10) * 10 + Math.ceil(getAmountToBePaid("PVZ", 2) / 10) * 10 }} руб.</span
