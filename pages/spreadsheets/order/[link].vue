@@ -106,7 +106,6 @@ let dispatchPVZ = ref("");
 let cell = ref("");
 
 onMounted(async () => {
-  focusInput();
   isLoading.value = true;
   user.value = await storeUsers.getUser();
 
@@ -123,45 +122,15 @@ onMounted(async () => {
     let ransomRow = copyRows.value?.filter((row) => row.deleted === null);
     phoneNumber.value = copyRows.value[0].fromName;
     dispatchPVZ.value = ransomRow[0].dispatchPVZ;
-    console.log(dispatchPVZ.value);
     cell.value = ransomRow[0].cell;
     value.value = `${dispatchPVZ.value}/${phoneNumber.value}/${cell.value}`;
-    console.log(value.value);
   }
   disableReceivedItems();
   isLoading.value = false;
 });
 
-const myInput = ref(null);
-let isScanActive = ref(false);
-let scanStringItem = ref("");
-let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-function focusInput() {
-  myInput.value.focus();
-  isScanActive.value = true;
-}
-
 function getNumber(phoneNumberData: string) {
   return phoneNumberData.slice(-4);
-}
-
-function scanItem() {
-  if (timeoutId !== null) {
-    clearTimeout(timeoutId);
-  }
-
-  timeoutId = setTimeout(async () => {
-    let scannedLink = scanStringItem.value.trim();
-    scannedLink = convertUrl(scannedLink)
-    window.location.href = 'https://soft-praline-633324.netlify.app/spreadsheets/our-ransom/ПВЗ' + scannedLink
-    scanStringItem.value = "";
-  }, 300);
-}
-
-function convertUrl(url: string): string {
-    const convertedUrl = url.replace(/\./g, '/');
-    return convertedUrl;
 }
 
 let value = ref("");
@@ -234,14 +203,6 @@ let value = ref("");
         </div>
         <div class="flex flex-col items-center gap-3 max-lg:items-start mt-3">
           <CodeQR :value="value" class="max-w-[110px] max-h-[100px]" />
-          <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
-          <input
-            class="opacity-0"
-            ref="myInput"
-            autofocus
-            v-model="scanStringItem"
-            @input="scanItem"
-          />
         </div>
       </div>
       <SpreadsheetsOrderTable :link="link" :rows="copyRows" :user="user" />

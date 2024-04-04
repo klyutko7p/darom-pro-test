@@ -126,7 +126,7 @@ function getCountOfItemsByPVZOurRansomIssued(PVZ: string) {
   <div class="flex items-center justify-between max-lg:block mt-10">
     <div>
       <div
-        class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5"
+        class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-1"
       >
         <h1 class="text-xl" v-if="user.role !== 'PVZ'">
           Товаров в работе:
@@ -146,7 +146,7 @@ function getCountOfItemsByPVZOurRansomIssued(PVZ: string) {
     </div>
   </div>
 
-  <div class="mt-10">
+  <div class="mt-2">
     <div class="flex flex-col gap-10 mb-5">
       <h1 class="text-2xl">Режим выдачи товаров ({{ pvzLink }})</h1>
     </div>

@@ -55,12 +55,17 @@ async function parsingPage() {
   if (urlToItem.value !== "") {
     if (urlToItem.value.length > 20) {
       if (marketplace.value === "WB") {
+        isLoading.value = true
         let itemInfo = await storeClients.fetchSiteWB(urlToItem.value);
-        let priceInfo = await storeClients.fetchSitePrice(urlToItem.value)
+        let priceInfo = await storeClients.fetchSitePrice(urlToItem.value);
         productName.value = itemInfo[0].imt_name;
         description.value = itemInfo[0].description;
-        priceSite.value = parseFloat(priceInfo.message.split(' ')[0])
+        priceSite.value = parseFloat(
+          priceInfo.message.split(" ")[0] + priceInfo.message.split(" ")[1]
+        );
         urlToImg.value = itemInfo[2];
+        toast.success("Вы успешно добавили товар!")
+        isLoading.value = false
       } else if (marketplace.value === "OZ") {
         let jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
         console.log(jsonString);
@@ -239,7 +244,7 @@ let marketplace = ref("");
           <option class="text-lg" value="WB">Wildberries</option>
           <option class="text-lg" value="OZ">Ozon</option>
         </select>
-        <div v-if="address" class="mt-10">
+        <div v-if="address && marketplace" class="mt-5">
           <h1 class="text-lg font-bold">
             Вставьте ссылку на товар (предварительно выбрав верный размер и цвет):
           </h1>
@@ -268,11 +273,11 @@ let marketplace = ref("");
         </div>
 
         <div v-if="items.length > 0" class="mt-10">
-          <h1 class="text-3xl font-bold mb-5">Мои товары – {{ items.length }}</h1>
+          <h1 class="text-3xl font-bold mb-10">Мои товары – {{ items.length }}</h1>
           <div
             v-auto-animate
-            v-for="item in items"
-            class="border-b-2 max-h-[400px] mb-10 shadow-2xl border-black flex items-start justify-around"
+            v-for="item in items.slice().reverse()"
+            class="border-b-2 mb-10 shadow-2xl border-black flex items-start justify-around"
           >
             <img
               class="max-w-[300px] h-full rounded-t-2xl max-sm:hidden"
@@ -280,23 +285,32 @@ let marketplace = ref("");
               alt=""
             />
             <div class="px-5 py-3">
-              <div class="flex items-center justify-between mb-3">
+              <div class="">
+                <div class="flex items-center justify-center mb-10">
+                  <img
+                    class="w-full h-full max-w-[300px] hidden max-sm:block"
+                    :src="item.img"
+                    alt=""
+                  />
+                </div>
                 <div>
-                  <h1 class="font-bold text-2xl mb-1">{{ item.productName }}</h1>
-                  <h1 class="font-medium text-xl max-[330px]:text-lg">
+                  <a
+                    :href="item.productLink"
+                    target="_blank"
+                    class="font-bold text-2xl cursor-pointer max-sm:text-center text-secondary-color underline"
+                    >{{ item.productName }}</a
+                  >
+                  <h1 class="font-medium text-xl mt-3">
                     Цена на сайте: {{ item.priceSite }} ₽
                   </h1>
-                  <h1 class="font-medium text-lg max-[330px]:text-base">
+                  <h1 class="font-medium text-lg max-[330px]:text-base mb-4">
                     Количество: {{ item.quantity }}
                   </h1>
                 </div>
-                <img
-                  class="w-[100px] max-h-[100px] max-[370px]:w-[70px] max-[370px]:h-[70px] h-full rounded-full hidden max-sm:block"
-                  :src="item.img"
-                  alt=""
-                />
               </div>
-              <h1 class="italic max-h-[260px] overflow-auto">{{ item.description }}</h1>
+              <h1 class="italic max-h-[240px] max-lg:max-h-[200px] overflow-auto">
+                {{ item.description }}
+              </h1>
             </div>
           </div>
         </div>
