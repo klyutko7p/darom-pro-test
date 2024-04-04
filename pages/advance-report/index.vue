@@ -39,14 +39,14 @@ onBeforeMount(async () => {
     handleFilteredRows(rows.value);
   }
 
+  getAllSumDirector();
+
+  isLoading.value = false;
+
   ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
   clientRansomRows.value = await storeRansom.getRansomRowsForBalance("ClientRansom");
   rowsBalance.value = await storeBalance.getBalanceRows();
   rowsBalanceOnline.value = await storeBalance.getBalanceOnlineRows();
-
-  getAllSumDirector();
-
-  isLoading.value = false;
 });
 
 onMounted(() => {

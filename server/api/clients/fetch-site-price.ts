@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
       body: JSON.stringify(requestData),
     };
 
-    const response = await fetch("http://0.0.0.0:5000/post_endpoint", options);
+    const response = await fetch("https://telegram-wb-bot-a2dd20535185.herokuapp.com/post_endpoint", options);
     const data = await response.json();
     
     return data; 

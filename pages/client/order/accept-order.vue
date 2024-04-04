@@ -55,19 +55,17 @@ async function parsingPage() {
   if (urlToItem.value !== "") {
     if (urlToItem.value.length > 20) {
       if (marketplace.value === "WB") {
-        // let info = await storeClients.fetchSiteWB(urlToItem.value);
-        // productName.value = info[0].imt_name;
-        // description.value = info[0].description;
-        // priceSite.value = Math.floor(info[1][info[1].length - 1].price.RUB / 100);
-        // urlToImg.value = info[2];
-
-        let info = await storeClients.fetchSitePrice(urlToItem.value)
-        console.log(info);
-
+        let itemInfo = await storeClients.fetchSiteWB(urlToItem.value);
+        let priceInfo = await storeClients.fetchSitePrice(urlToItem.value)
+        productName.value = itemInfo[0].imt_name;
+        description.value = itemInfo[0].description;
+        priceSite.value = parseFloat(priceInfo.message.split(' ')[0])
+        urlToImg.value = itemInfo[2];
       } else if (marketplace.value === "OZ") {
         let jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
         console.log(jsonString);
         let data = JSON.parse(jsonString);
+        console.log(data);
         let price = data.offers.price;
         let name = data.name;
         let description = data.description;
