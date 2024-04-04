@@ -153,9 +153,15 @@ function scanItem() {
 
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
+    scannedLink = convertUrl(scannedLink)
     window.location.href = 'https://soft-praline-633324.netlify.app/spreadsheets/our-ransom/ПВЗ' + scannedLink
     scanStringItem.value = "";
   }, 300);
+}
+
+function convertUrl(url: string): string {
+    const convertedUrl = url.replace(/\./g, '/');
+    return convertedUrl;
 }
 
 let value = ref("");
