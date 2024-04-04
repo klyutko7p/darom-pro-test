@@ -46,17 +46,38 @@ let productName = ref("");
 let urlToImg = ref("");
 let priceSite = ref(0);
 let description = ref("");
+let botAPI1 = "7151653535:AAH3dAXAz1D_7pjqNDWJmakdVziLrs9GEuI";
+let botAPI2 = "7151653535:AAH3dAXAz1D_7pjqNDWJmakdVziLrs9GEuI";
+let chatId = -1002088613649;
+let stringToBot = "/get_price";
 
 async function parsingPage() {
   if (urlToItem.value !== "") {
     if (urlToItem.value.length > 20) {
-      let info = await storeClients.fetchSite(urlToItem.value);
-      console.log(info[0]);
+      if (marketplace.value === "WB") {
+        // let info = await storeClients.fetchSiteWB(urlToItem.value);
+        // productName.value = info[0].imt_name;
+        // description.value = info[0].description;
+        // priceSite.value = Math.floor(info[1][info[1].length - 1].price.RUB / 100);
+        // urlToImg.value = info[2];
 
-      productName.value = info[0].imt_name;
-      description.value = info[0].description;
-      priceSite.value = Math.floor(info[1][info[1].length - 1].price.RUB / 100);
-      urlToImg.value = info[2];
+        let info = await storeClients.fetchSitePrice(urlToItem.value)
+        console.log(info);
+
+      } else if (marketplace.value === "OZ") {
+        let jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
+        console.log(jsonString);
+        let data = JSON.parse(jsonString);
+        let price = data.offers.price;
+        let name = data.name;
+        let description = data.description;
+
+        productName.value = name;
+        description.value = description;
+        priceSite.value = price;
+        urlToImg.value =
+          "https://i.pinimg.com/736x/30/30/e3/3030e3fa40eb4fd810320bbff7f0a1c4.jpg";
+      }
 
       createItem();
     } else {
@@ -187,6 +208,7 @@ async function getCellFromName() {
 }
 
 let isShowModal = ref(false);
+let marketplace = ref("");
 </script>
 
 <template>
@@ -210,6 +232,14 @@ let isShowModal = ref(false);
           <option class="text-lg" value="ПВЗ_4">
             г. Донецк, ул. Нартова, 1. Возле магазина "Добрый"
           </option>
+        </select>
+        <h1 class="text-xl font-bold mt-3">Выберите маркетплейс:</h1>
+        <select
+          class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 text-lg w-full focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3"
+          v-model="marketplace"
+        >
+          <option class="text-lg" value="WB">Wildberries</option>
+          <option class="text-lg" value="OZ">Ozon</option>
         </select>
         <div v-if="address" class="mt-10">
           <h1 class="text-lg font-bold">
@@ -246,15 +276,27 @@ let isShowModal = ref(false);
             v-for="item in items"
             class="border-b-2 max-h-[400px] mb-10 shadow-2xl border-black flex items-start justify-around"
           >
-            <img class="max-w-[300px] h-full rounded-t-2xl max-sm:hidden" :src="item.img" alt="" />
+            <img
+              class="max-w-[300px] h-full rounded-t-2xl max-sm:hidden"
+              :src="item.img"
+              alt=""
+            />
             <div class="px-5 py-3">
               <div class="flex items-center justify-between mb-3">
                 <div>
                   <h1 class="font-bold text-2xl mb-1">{{ item.productName }}</h1>
-                  <h1 class="font-medium text-xl max-[330px]:text-lg">Цена на сайте: {{ item.priceSite }} ₽</h1>
-                  <h1 class="font-medium text-lg max-[330px]:text-base">Количество: {{ item.quantity }}</h1>
+                  <h1 class="font-medium text-xl max-[330px]:text-lg">
+                    Цена на сайте: {{ item.priceSite }} ₽
+                  </h1>
+                  <h1 class="font-medium text-lg max-[330px]:text-base">
+                    Количество: {{ item.quantity }}
+                  </h1>
                 </div>
-                <img class="w-[100px] max-h-[100px] max-[370px]:w-[70px] max-[370px]:h-[70px] h-full rounded-full hidden max-sm:block" :src="item.img" alt="" />
+                <img
+                  class="w-[100px] max-h-[100px] max-[370px]:w-[70px] max-[370px]:h-[70px] h-full rounded-full hidden max-sm:block"
+                  :src="item.img"
+                  alt=""
+                />
               </div>
               <h1 class="italic max-h-[260px] overflow-auto">{{ item.description }}</h1>
             </div>

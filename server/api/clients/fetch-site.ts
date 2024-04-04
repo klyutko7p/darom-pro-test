@@ -41,8 +41,8 @@ function getBasketNumber(input: string) {
 }
 
 const fetchWithDelay = async (url: any, delay: any) => {
-    await new Promise(resolve => setTimeout(resolve, delay));
-    return fetch(url).then(response => response.json());
+  await new Promise((resolve) => setTimeout(resolve, delay));
+  return fetch(url).then((response) => response.json());
 };
 
 export default defineEventHandler(async (event) => {

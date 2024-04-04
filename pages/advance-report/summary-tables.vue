@@ -602,22 +602,9 @@ function filterRowsData(monthData: number) {
 }
 let type = ref("");
 
-let arrayOfReceipts = ref<Array<IAdvanceReport>>();
 let arrayOfExpenditure = ref<Array<IAdvanceReport>>();
-let arrayOfTotal = ref<Array<IAdvanceReport>>();
-let rowsBalanceArr = ref<Array<IBalance>>();
-let rowsDeliveryArr = ref<Array<IDelivery>>();
-let rowsOnlineArr = ref<Array<IOurRansom>>();
-
-let expenditureByPVZ: { [PVZ: string]: number } = {};
-let receiptsByPVZ: { [PVZ: string]: number } = {};
-let differenceByPVZ: { [PVZ: string]: number } = {};
-
-let sumOfArray1 = ref(0);
-let sumOfArray2 = ref(0);
 let sumOfArray3 = ref(0);
 
-let returnRows = ref<Array<IAdvanceReport>>();
 
 function returnTotal(sum: number) {
   let newStartingDate = new Date(startingDate.value);

@@ -275,7 +275,11 @@ function updateCurrentPageData() {
   );
 
   let arrayOfProcessing = props.rows?.filter(
-    (row) => row.orderPVZ === null && row.deliveredSC === null && !row.deleted && row.dispatchPVZ !== 'НаДом'
+    (row) =>
+      row.orderPVZ === null &&
+      row.deliveredSC === null &&
+      !row.deleted &&
+      row.dispatchPVZ !== "НаДом"
   );
 
   arrayOfExpired?.forEach((row: any) => {
@@ -845,12 +849,12 @@ let showPayRejectClient = ref(false);
               user.role === 'ADMINISTRATOR'
             "
           >
-            <Icon
+            <h1
               @click="openModal(row)"
-              class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
-              name="material-symbols:edit"
-              size="32"
-            />
+              class="cursor-pointer"
+            >
+              ✏️
+            </h1>
           </td>
           <th
             scope="row"
@@ -1078,12 +1082,7 @@ let showPayRejectClient = ref(false);
               user.role === 'ADMINISTRATOR'
             "
           >
-            <Icon
-              @click="deleteRow(row.id)"
-              class="text-red-600 cursor-pointer hover:text-red-300 duration-200"
-              name="material-symbols:playlist-remove-rounded"
-              size="32"
-            />
+            <h1 @click="deleteRow(row.id)" class="cursor-pointer">❌</h1>
           </td>
           <div id="right"></div>
         </tr>

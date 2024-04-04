@@ -109,9 +109,43 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
-  async function fetchSite(link: string) {
+  async function fetchSiteWB(link: string) {
     try {
       let { data }: any = await useFetch("/api/clients/fetch-site", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ link }),
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function fetchSiteOZ(link: string) {
+    try {
+      let { data }: any = await useFetch("/api/clients/fetch-site-oz", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ link }),
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function fetchSitePrice(link: string) {
+    try {
+      let { data }: any = await useFetch("/api/clients/fetch-site-price", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -160,6 +194,8 @@ export const useClientsStore = defineStore("clients", () => {
     register,
     getClient,
     clearCookies,
-    fetchSite,
+    fetchSiteWB,
+    fetchSiteOZ,
+    fetchSitePrice,
   };
 });

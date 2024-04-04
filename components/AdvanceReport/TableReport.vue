@@ -38,19 +38,31 @@ onBeforeMount(() => {
 let returnRows = ref<Array<IAdvanceReport>>();
 
 let arrayOfReceipts = ref<Array<IAdvanceReport>>();
+let arrayOfReceiptsTotal = ref<Array<IAdvanceReport>>();
 let arrayOfExpenditure = ref<Array<IAdvanceReport>>();
-let arrayOfTotal = ref<Array<IAdvanceReport>>();
+let arrayOfExpenditureTotal = ref<Array<IAdvanceReport>>();
 let rowsBalanceArr = ref<Array<IBalance>>();
 let rowsDeliveryArr = ref<Array<IDelivery>>();
 let rowsOnlineArr = ref<Array<IOurRansom>>();
+let rowsBalanceArrTotal = ref<Array<IBalance>>();
+let rowsDeliveryArrTotal = ref<Array<IDelivery>>();
+let rowsOnlineArrTotal = ref<Array<IOurRansom>>();
 
 let expenditureByPVZ: { [PVZ: string]: number } = {};
 let receiptsByPVZ: { [PVZ: string]: number } = {};
 let differenceByPVZ: { [PVZ: string]: number } = {};
 
+let expenditureByPVZTotal: { [PVZ: string]: number } = {};
+let receiptsByPVZTotal: { [PVZ: string]: number } = {};
+let differenceByPVZTotal: { [PVZ: string]: number } = {};
+
 let sumOfArray1 = ref(0);
 let sumOfArray2 = ref(0);
 let sumOfArray3 = ref(0);
+
+let sumOfArray1Total = ref(0);
+let sumOfArray2Total = ref(0);
+let sumOfArray3Total = ref(0);
 
 function updateCurrentPageData() {
   let newStartingDate = new Date(props.startingDate);
@@ -132,8 +144,10 @@ function updateCurrentPageData() {
         row.typeOfExpenditure !== "Передача денежных средств" &&
         row.typeOfExpenditure !== "Перевод в кредитный баланс нал" &&
         row.typeOfExpenditure !== "Перевод в кредитный баланс безнал" &&
-        row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи безнал" &&
-        row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи нал" &&
+        row.typeOfExpenditure !==
+          "Списание кредитной задолженности торговой империи безнал" &&
+        row.typeOfExpenditure !==
+          "Списание кредитной задолженности торговой империи нал" &&
         row.typeOfExpenditure !== "Приход кредит нал" &&
         row.typeOfExpenditure !== "Приход кредит безнал" &&
         row.typeOfExpenditure !== "Новый кредит нал" &&
@@ -149,8 +163,10 @@ function updateCurrentPageData() {
         row.typeOfExpenditure !== "Передача денежных средств" &&
         row.typeOfExpenditure !== "Перевод в кредитный баланс нал" &&
         row.typeOfExpenditure !== "Перевод в кредитный баланс безнал" &&
-        row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи безнал" &&
-        row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи нал" &&
+        row.typeOfExpenditure !==
+          "Списание кредитной задолженности торговой империи безнал" &&
+        row.typeOfExpenditure !==
+          "Списание кредитной задолженности торговой империи нал" &&
         row.typeOfExpenditure !== "Приход кредит нал" &&
         row.typeOfExpenditure !== "Приход кредит безнал" &&
         row.typeOfExpenditure !== "Новый кредит нал" &&
@@ -180,7 +196,7 @@ function updateCurrentPageData() {
         row.typeOfExpenditure === "Пополнение баланса" &&
         new Date(row.date).getMonth() + 1 === +props.month &&
         (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
-        (!props.endDate || new Date(row.date) <= new Date(newEndDate)) && 
+        (!props.endDate || new Date(row.date) <= new Date(newEndDate)) &&
         (!props.type || row.type === props.type)
     );
   }
@@ -301,7 +317,110 @@ function updateCurrentPageData() {
     sumOfArray3.value += differenceByPVZ[pvzName];
   });
 
-  emit('returnTotal', sumOfArray3.value)
+  getTotal();
+}
+
+function getTotal() {
+  let array;
+  array = props.rows;
+  array = array?.filter((row: IAdvanceReport) => {
+    return row.PVZ !== "";
+  });
+
+  rowsDeliveryArrTotal.value = props.rowsDelivery.filter(
+    (row: IDelivery) => row.paid !== null
+  );
+
+  arrayOfExpenditureTotal.value = array?.filter(
+    (row: IAdvanceReport) =>
+      row.typeOfExpenditure !== "Пополнение баланса" &&
+      row.typeOfExpenditure !== "Передача денежных средств" &&
+      row.typeOfExpenditure !== "Перевод в кредитный баланс нал" &&
+      row.typeOfExpenditure !== "Перевод в кредитный баланс безнал" &&
+      row.typeOfExpenditure !==
+        "Списание кредитной задолженности торговой империи безнал" &&
+      row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи нал" &&
+      row.typeOfExpenditure !== "Приход кредит нал" &&
+      row.typeOfExpenditure !== "Приход кредит безнал" &&
+      row.typeOfExpenditure !== "Новый кредит нал" &&
+      row.typeOfExpenditure !== "Новый кредит безнал" &&
+      row.typeOfExpenditure !== "Приход кредит" &&
+      row.typeOfExpenditure !== "Вывод дивидендов"
+  );
+  arrayOfReceiptsTotal.value = array?.filter(
+    (row: IAdvanceReport) =>
+      row.typeOfExpenditure === "Пополнение баланса" &&
+      (!props.type || row.type === props.type)
+  );
+
+  rowsOnlineArrTotal.value = props.rowsOurRansom.filter(
+    (row: IOurRansom) =>
+      row.additionally === "Оплачено онлайн" || row.additionally === "Оплата наличными"
+  );
+
+  pvz.value.forEach((pvzName: string) => {
+    expenditureByPVZTotal[pvzName] = 0;
+  });
+
+  pvz.value.forEach((pvzName: string) => {
+    receiptsByPVZTotal[pvzName] = 0;
+  });
+
+  arrayOfExpenditureTotal.value?.forEach((row) => {
+    if (!isNaN(expenditureByPVZTotal[row.PVZ])) {
+      expenditureByPVZTotal[row.PVZ] += parseFloat(row.expenditure);
+    }
+  });
+
+  arrayOfReceiptsTotal.value?.forEach((row) => {
+    if (!isNaN(receiptsByPVZTotal[row.PVZ])) {
+      receiptsByPVZTotal[row.PVZ] += parseFloat(row.expenditure);
+    }
+  });
+
+  rowsBalanceArrTotal.value?.forEach((row) => {
+    if (!isNaN(receiptsByPVZTotal[row.pvz])) {
+      receiptsByPVZTotal[row.pvz] += parseFloat(row.sum);
+    }
+  });
+
+  rowsOnlineArrTotal.value?.forEach((row) => {
+    if (!isNaN(receiptsByPVZTotal[row.dispatchPVZ])) {
+      let profit;
+      if (!row.prepayment && row.profit1 !== 0) {
+        profit =
+          Math.ceil(row.amountFromClient1 / 10) * 10 - row.priceSite + row.deliveredKGT;
+      } else {
+        profit = (row.priceSite * row.percentClient) / 100 + row.deliveredKGT;
+      }
+      receiptsByPVZTotal[row.dispatchPVZ] += Math.ceil(profit);
+    }
+  });
+
+  rowsDeliveryArrTotal.value?.forEach((row) => {
+    if (!isNaN(receiptsByPVZTotal[row.orderPVZ])) {
+      receiptsByPVZTotal[row.orderPVZ] += row.amountFromClient3;
+    }
+  });
+
+  pvz.value.forEach((pvzName: string) => {
+    const difference = receiptsByPVZTotal[pvzName] - expenditureByPVZTotal[pvzName];
+    differenceByPVZTotal[pvzName] = difference;
+  });
+
+  Object.keys(expenditureByPVZ).forEach((pvzName: string) => {
+    sumOfArray2Total.value += expenditureByPVZTotal[pvzName];
+  });
+
+  Object.keys(receiptsByPVZ).forEach((pvzName: string) => {
+    sumOfArray1Total.value += receiptsByPVZTotal[pvzName];
+  });
+
+  Object.keys(differenceByPVZ).forEach((pvzName: string) => {
+    sumOfArray3Total.value += differenceByPVZTotal[pvzName];
+  });
+
+  emit("returnTotal", sumOfArray3Total.value);
 }
 
 function parseWeekRange(weekString: string): Date[] {
@@ -324,6 +443,9 @@ function clearTotalSums() {
   sumOfArray1.value = 0;
   sumOfArray2.value = 0;
   sumOfArray3.value = 0;
+  sumOfArray1Total.value = 0;
+  sumOfArray2Total.value = 0;
+  sumOfArray3Total.value = 0;
 }
 watch([props.rows, totalRows, filteredRows.value, props.month], clearTotalSums);
 watch(() => props.month, clearTotalSums);
@@ -353,7 +475,6 @@ let pvz = ref([
   "Офис",
   "НаДом",
 ]);
-
 
 function exportToExcel() {
   let table = document.querySelector("#theTable");

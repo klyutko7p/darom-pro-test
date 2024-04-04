@@ -304,7 +304,7 @@ function closeModal() {
   rowData.value = {} as IAdvanceReport;
 }
 
-function openModal(row: IAdvanceReport) {
+function openModal(row: IAdvanceReport, flag: string = 'CASH') {
   isOpen.value = true;
   if (row.id) {
     rowData.value = JSON.parse(JSON.stringify(row));
@@ -316,16 +316,30 @@ function openModal(row: IAdvanceReport) {
     rowData.value = {} as IAdvanceReport;
     rowData.value.date = storeUsers.getISODate(new Date());
   }
+
+  if (flag === 'CASH') {
+    rowData.value.type = 'Нал'
+  } else {
+    rowData.value.type = 'Безнал'
+  }
   
 }
 
 function checkStatus() {
-  if (rowData.value.typeOfExpenditure === 'Списание кредитной задолженности торговой империи нал' || rowData.value.typeOfExpenditure === 'Списание кредитной задолженности торговой империи нал') {
+  if (rowData.value.typeOfExpenditure === 'Списание кредитной задолженности торговой империи нал' || rowData.value.typeOfExpenditure === 'Списание кредитной задолженности торговой империи нал' || rowData.value.typeOfExpenditure === 'Перевод в кредитный баланс нал' || rowData.value.typeOfExpenditure === 'Перевод в кредитный баланс безнал' || rowData.value.typeOfExpenditure === 'Приход кредит нал') {
     rowData.value.PVZ = ''
     rowData.value.issuedUser = '' 
-    rowData.value.date = new Date()
+    rowData.value.date = storeUsers.getISODate(new Date());
     rowData.value.company = ''
     rowData.value.supportingDocuments = ''
+  }
+
+  if (rowData.value.typeOfExpenditure === 'Списание кредитной задолженности торговой империи нал' || rowData.value.typeOfExpenditure === 'Перевод в кредитный баланс нал') {
+    rowData.value.type = 'Нал'
+  }
+
+  if (rowData.value.typeOfExpenditure === 'Списание кредитной задолженности торговой империи безнал' || rowData.value.typeOfExpenditure === 'Перевод в кредитный баланс безнал') {
+    rowData.value.type = 'Безнал'
   }
 }
 
@@ -342,7 +356,7 @@ function openModalAdmin(row: IAdvanceReport) {
   rowData.value.supportingDocuments = "";
   rowData.value.typeOfExpenditure = row.typeOfExpenditure;
   rowData.value.createdUser = "Директор";
-  rowData.value.date = new Date();
+  rowData.value.date = storeUsers.getISODate(new Date());
 }
 
 function openModalAdminOOO(row: IAdvanceReport) {
@@ -359,7 +373,7 @@ function openModalAdminOOO(row: IAdvanceReport) {
   rowData.value.typeOfExpenditure = row.typeOfExpenditure;
   rowData.value.type = "Безнал";
   rowData.value.createdUser = "Директор";
-  rowData.value.date = new Date();
+  rowData.value.date = storeUsers.getISODate(new Date());
 }
 
 function closeModalAdmin() {
@@ -515,7 +529,7 @@ async function updateRow() {
     toast.error("Баланс кредита меньше чем вписанная сумма!");
   } else {
     isLoading.value = true;
-    await storeAdvanceReports.createAdvanceReport(rowData.value, user.value.username);
+    await storeAdvanceReports.updateAdvanceReport(rowData.value, user.value.username);
   }
 
   rows.value = await storeAdvanceReports.getAdvancedReports();
@@ -868,9 +882,15 @@ let isShowCreditBalanceOnline = ref(false);
             </div>
           </div>
 
-          <UIMainButton class="max-sm:w-full mt-5" @click="openModal">
-            Создание авансового документа
-          </UIMainButton>
+          <div class="flex items-center gap-5 max-sm:flex-col">
+            <UIMainButton class="max-sm:w-full mt-5" @click="openModal">
+              Создание авансового документа (нал)
+            </UIMainButton>
+  
+            <UIMainButton class="max-sm:w-full mt-5" @click="openModal(rowData, 'ONLINE')">
+              Создание авансового документа (безнал)
+            </UIMainButton>
+          </div>
 
           <AdvanceReportTable
             v-if="selectedUser !== 'Директор (С)' && selectedUser !== 'Директор'"
@@ -927,7 +947,9 @@ let isShowCreditBalanceOnline = ref(false);
                   rowData.typeOfExpenditure ===
                     'Списание кредитной задолженности торговой империи нал' ||
                   rowData.typeOfExpenditure ===
-                    'Списание кредитной задолженности торговой империи безнал'
+                    'Списание кредитной задолженности торговой империи безнал' || rowData.typeOfExpenditure ===
+                    'Перевод в кредитный баланс нал' || rowData.typeOfExpenditure ===
+                    'Перевод в кредитный баланс безнал'
                 "
               >
                 <option v-for="pvzData in pvz" :value="pvzData">
@@ -939,12 +961,14 @@ let isShowCreditBalanceOnline = ref(false);
             <div class="grid grid-cols-2 mb-5" v-if="user.role !== 'ADMIN'">
               <label for="name">Дата</label>
               <input
-                :disabled="
-                  rowData.typeOfExpenditure ===
-                    'Списание кредитной задолженности торговой империи нал' ||
-                  rowData.typeOfExpenditure ===
-                    'Списание кредитной задолженности торговой империи безнал'
-                "
+              :disabled="
+              rowData.typeOfExpenditure ===
+                'Списание кредитной задолженности торговой империи нал' ||
+              rowData.typeOfExpenditure ===
+                'Списание кредитной задолженности торговой империи безнал' || rowData.typeOfExpenditure ===
+                'Перевод в кредитный баланс нал' || rowData.typeOfExpenditure ===
+                'Перевод в кредитный баланс безнал'
+            "
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
                 :min="`2024-${month}-01`"
@@ -958,12 +982,14 @@ let isShowCreditBalanceOnline = ref(false);
             <div class="grid grid-cols-2 mb-5" v-if="user.role === 'ADMIN'">
               <label for="name">Дата</label>
               <input
-                :disabled="
-                  rowData.typeOfExpenditure ===
-                    'Списание кредитной задолженности торговой империи нал' ||
-                  rowData.typeOfExpenditure ===
-                    'Списание кредитной задолженности торговой империи безнал'
-                "
+              :disabled="
+              rowData.typeOfExpenditure ===
+                'Списание кредитной задолженности торговой империи нал' ||
+              rowData.typeOfExpenditure ===
+                'Списание кредитной задолженности торговой империи безнал' || rowData.typeOfExpenditure ===
+                'Перевод в кредитный баланс нал' || rowData.typeOfExpenditure ===
+                'Перевод в кредитный баланс безнал'
+            "
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
                 type="date"
@@ -975,14 +1001,14 @@ let isShowCreditBalanceOnline = ref(false);
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Получатель</label>
               <select
-                :disabled="
-                  user.role !== 'ADMIN' ||
-                  rowData.id === null ||
-                  rowData.typeOfExpenditure ===
-                    'Списание кредитной задолженности торговой империи нал' ||
-                  rowData.typeOfExpenditure ===
-                    'Списание кредитной задолженности торговой империи безнал'
-                "
+              :disabled="
+              rowData.typeOfExpenditure ===
+                'Списание кредитной задолженности торговой империи нал' ||
+              rowData.typeOfExpenditure ===
+                'Списание кредитной задолженности торговой империи безнал' || rowData.typeOfExpenditure ===
+                'Перевод в кредитный баланс нал' || rowData.typeOfExpenditure ===
+                'Перевод в кредитный баланс безнал'
+            "
                 class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.issuedUser"
               >
@@ -1026,12 +1052,14 @@ let isShowCreditBalanceOnline = ref(false);
             <div class="grid grid-cols-2 mb-5">
               <label for="dispatchPVZ1">Компания</label>
               <select
-                :disabled="
-                  rowData.typeOfExpenditure ===
-                    'Списание кредитной задолженности торговой империи нал' ||
-                  rowData.typeOfExpenditure ===
-                    'Списание кредитной задолженности торговой империи безнал'
-                "
+              :disabled="
+              rowData.typeOfExpenditure ===
+                'Списание кредитной задолженности торговой империи нал' ||
+              rowData.typeOfExpenditure ===
+                'Списание кредитной задолженности торговой империи безнал' || rowData.typeOfExpenditure ===
+                'Перевод в кредитный баланс нал' || rowData.typeOfExpenditure ===
+                'Перевод в кредитный баланс безнал'
+            "
                 class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.company"
               >
@@ -1047,12 +1075,14 @@ let isShowCreditBalanceOnline = ref(false);
                 документ</label
               >
               <input
-                :disabled="
-                  rowData.typeOfExpenditure ===
-                    'Списание кредитной задолженности торговой империи нал' ||
-                  rowData.typeOfExpenditure ===
-                    'Списание кредитной задолженности торговой империи безнал'
-                "
+              :disabled="
+              rowData.typeOfExpenditure ===
+                'Списание кредитной задолженности торговой империи нал' ||
+              rowData.typeOfExpenditure ===
+                'Списание кредитной задолженности торговой империи безнал' || rowData.typeOfExpenditure ===
+                'Перевод в кредитный баланс нал' || rowData.typeOfExpenditure ===
+                'Перевод в кредитный баланс безнал'
+            "
                 class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 @change="handleFileChange"
                 type="file"
@@ -1076,7 +1106,7 @@ let isShowCreditBalanceOnline = ref(false);
             <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
           </div>
           <div class="flex items-center justify-center gap-3 mt-10" v-else>
-            <UIMainButton @click="createRow">Создать </UIMainButton>
+            <UIMainButton @click="createRow">Создать</UIMainButton>
             <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
           </div>
         </UIModal>
@@ -1140,7 +1170,7 @@ let isShowCreditBalanceOnline = ref(false);
             <label for="dispatchPVZ1">Кредит</label>
             <select
               class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
-              v-model="rowData.typeOfExpenditure"
+              v-model="rowData.typeOfExpenditure" @change="checkStatus"
             >
               <option value="Новый кредит нал">Новый</option>
               <option value="Пополнение баланса">Нет</option>
@@ -1224,7 +1254,7 @@ let isShowCreditBalanceOnline = ref(false);
             <label for="dispatchPVZ1">Кредит</label>
             <select
               class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
-              v-model="rowData.typeOfExpenditure"
+              v-model="rowData.typeOfExpenditure" @change="checkStatus"
             >
               <option value="Новый кредит безнал">Новый</option>
               <option value="Пополнение баланса">Нет</option>
@@ -1305,9 +1335,15 @@ let isShowCreditBalanceOnline = ref(false);
             </div>
           </div>
 
-          <UIMainButton class="max-sm:w-full mt-5" @click="openModal">
-            Создание авансового документа
-          </UIMainButton>
+          <div class="flex items-center">
+            <UIMainButton class="max-sm:w-full mt-5" @click="openModal">
+              Создание авансового документа (нал)
+            </UIMainButton>
+  
+            <UIMainButton class="max-sm:w-full mt-5" @click="openModal(rowData, 'ONLINE')">
+              Создание авансового документа (безнал)
+            </UIMainButton>
+          </div>
 
           <AdvanceReportTable
             :rows="
