@@ -356,6 +356,16 @@ function checkStatus() {
   ) {
     rowData.value.type = "Безнал";
   }
+
+  if (rowData.value.typeOfExpenditure !== 'Передача денежных средств') {
+    rowData.value.issuedUser = ''
+  }
+
+  if (rowData.value.typeOfExpenditure === 'Передача денежных средств' || rowData.value.typeOfExpenditure === 'Вывод дивидендов') {
+    rowData.value.PVZ = "";
+    rowData.value.company = "";
+  }
+  
 }
 
 function openModalAdmin(row: IAdvanceReport) {
@@ -544,7 +554,7 @@ async function updateRow() {
     toast.error("Баланс кредита меньше чем вписанная сумма!");
   } else {
     isLoading.value = true;
-    await storeAdvanceReports.updateAdvanceReport(rowData.value, user.value.username);
+    await storeAdvanceReports.updateAdvanceReport(rowData.value);
   }
 
   rows.value = await storeAdvanceReports.getAdvancedReports();
@@ -903,7 +913,7 @@ let isShowCreditBalanceOnline = ref(false);
                 Создание авансового документа (нал)
               </UIMainButton>
               <div class="max-sm:hidden">
-                <Icon class="text-secondary-color" name="akar-icons:coin" size="24" />
+                <Icon class="text-secondary-color" name="mdi:cash" size="24" />
               </div>
             </div>
 
@@ -981,6 +991,8 @@ let isShowCreditBalanceOnline = ref(false);
                   rowData.typeOfExpenditure ===
                     'Списание кредитной задолженности торговой империи безнал' ||
                   rowData.typeOfExpenditure === 'Перевод в кредитный баланс нал' ||
+                  rowData.typeOfExpenditure === 'Передача денежных средств' ||
+                  rowData.typeOfExpenditure === 'Вывод дивидендов' ||
                   rowData.typeOfExpenditure === 'Перевод в кредитный баланс безнал'
                 "
               >
@@ -1034,12 +1046,7 @@ let isShowCreditBalanceOnline = ref(false);
               <label for="name">Получатель</label>
               <select
                 :disabled="
-                  rowData.typeOfExpenditure ===
-                    'Списание кредитной задолженности торговой империи нал' ||
-                  rowData.typeOfExpenditure ===
-                    'Списание кредитной задолженности торговой империи безнал' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс нал' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс безнал'
+                  rowData.typeOfExpenditure !== 'Передача денежных средств' 
                 "
                 class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.issuedUser"
@@ -1091,6 +1098,9 @@ let isShowCreditBalanceOnline = ref(false);
                   rowData.typeOfExpenditure ===
                     'Списание кредитной задолженности торговой империи безнал' ||
                   rowData.typeOfExpenditure === 'Перевод в кредитный баланс нал' ||
+                  rowData.typeOfExpenditure === 'Передача денежных средств' ||
+                  rowData.typeOfExpenditure === 'Передача денежных средств' ||
+                  rowData.typeOfExpenditure === 'Вывод дивидендов' ||
                   rowData.typeOfExpenditure === 'Перевод в кредитный баланс безнал'
                 "
                 class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
@@ -1376,7 +1386,7 @@ let isShowCreditBalanceOnline = ref(false);
                 Создание авансового документа (нал)
               </UIMainButton>
               <div class="max-sm:hidden">
-                <Icon class="text-secondary-color" name="akar-icons:coin" size="24" />
+                <Icon class="text-secondary-color" name="mdi:cash" size="24" />
               </div>
             </div>
 

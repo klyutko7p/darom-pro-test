@@ -48,14 +48,17 @@ watch([currentPage, totalRows, props.rows], updateCurrentPageData);
 
 function updateRowsByFromName() {
   updateCurrentPageData();
-  returnRows.value = returnRows.value?.filter((element, index) => {
-    return (
-      returnRows.value?.findIndex(
+  returnRows.value = (returnRows.value || [])
+    .reduce((acc, element) => {
+      const foundIndex = acc.findIndex(
         (i) => i.cell === element.cell && i.fromName === element.fromName
-      ) === index
-    );
-  });
-  returnRows.value = returnRows.value?.sort((a, b) => +b.cell - +a.cell);
+      );
+      if (foundIndex === -1) {
+        acc.push(element);
+      }
+      return acc;
+    }, [])
+    .sort((a, b) => +b.cell - +a.cell);
 }
 
 let searchQuery = ref("");
@@ -86,9 +89,7 @@ function getCountOfItemsByPVZOurRansom(PVZ: string) {
   if (props.user.role !== "PVZ") {
     return props.rows?.filter(
       (row) =>
-        row.dispatchPVZ === PVZ &&
-        row.deliveredPVZ === null &&
-        row.deleted === null
+        row.dispatchPVZ === PVZ && row.deliveredPVZ === null && row.deleted === null
     ).length;
   } else if (props.user.role === "PVZ") {
     let today = new Date().toLocaleDateString("ru-RU", {
@@ -120,18 +121,18 @@ function getCountOfItemsByPVZOurRansomIssued(PVZ: string) {
       row.deleted === null
   ).length;
 }
-
 </script>
 <template>
   <div class="flex items-center justify-between max-lg:block mt-10">
     <div>
-      <div
-        class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-1"
-      >
+      <div class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-1">
         <h1 class="text-xl" v-if="user.role !== 'PVZ'">
           Товаров в работе:
           <span class="text-secondary-color font-bold">
-            {{ getCountOfItemsByPVZOurRansom(pvzLink) + getCountOfItemsByPVZOurRansomIssued(pvzLink) }}
+            {{
+              getCountOfItemsByPVZOurRansom(pvzLink) +
+              getCountOfItemsByPVZOurRansomIssued(pvzLink)
+            }}
           </span>
         </h1>
         <h1 class="text-xl" v-if="user.role === 'PVZ'">
@@ -160,9 +161,7 @@ function getCountOfItemsByPVZOurRansomIssued(PVZ: string) {
     <div v-for="row in returnRows">
       <div
         @click="
-          router.push(
-            `/spreadsheets/our-ransom/${pvzLink}/${row.fromName}/${row.cell}`
-          )
+          router.push(`/spreadsheets/our-ransom/${pvzLink}/${row.fromName}/${row.cell}`)
         "
         class="cursor-pointer hover:bg-hover-color duration-300 flex items-center justify-between p-10 mb-3 border-2"
       >

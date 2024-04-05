@@ -360,7 +360,7 @@ function downloadIssuedRowsTimer() {
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
   if (
-    (currentHour === 22 && currentMinute >= 0) ||
+    (currentHour === 20 && currentMinute >= 0) ||
     (currentHour === 23 && currentMinute <= 59)
   ) {
     exportToExcelOnServer();

@@ -87,7 +87,7 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
         }
     }
 
-    async function updateAdvanceReport(row: IAdvanceReport, username: string) {
+    async function updateAdvanceReport(row: IAdvanceReport) {
         try {
             if (row.issuedUser === undefined) row.issuedUser = '';
             if (row.PVZ === undefined) row.PVZ = '';
@@ -103,7 +103,7 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ row: row, username: username }),
+                body: JSON.stringify({ row: row }),
             });
 
             if (data.data.value === undefined) {
