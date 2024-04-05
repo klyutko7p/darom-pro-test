@@ -68,8 +68,7 @@ let isShowAddSettings = ref(false);
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
         v-if="
           user.dataOurRansom === 'READ' ||
-          (user.dataOurRansom === 'WRITE' &&
-            !user.username.includes('Светлана'))
+          (user.dataOurRansom === 'WRITE' && !user.username.includes('Светлана'))
         "
       >
         <div class="grid place-items-center mr-4">
@@ -123,8 +122,7 @@ let isShowAddSettings = ref(false);
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
         v-if="
           user.dataClientRansom === 'READ' ||
-          (user.dataClientRansom === 'WRITE' &&
-            !user.username.includes('Светлана'))
+          (user.dataClientRansom === 'WRITE' && !user.username.includes('Светлана'))
         "
       >
         <div class="grid place-items-center mr-4">
@@ -151,8 +149,7 @@ let isShowAddSettings = ref(false);
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
         v-if="
           user.dataClientRansom === 'READ' ||
-          (user.dataClientRansom === 'WRITE' &&
-            user.username.includes('Светлана'))
+          (user.dataClientRansom === 'WRITE' && user.username.includes('Светлана'))
         "
       >
         <div class="grid place-items-center mr-4">
@@ -206,9 +203,7 @@ let isShowAddSettings = ref(false);
       </div>
       <div
         v-if="
-          user.role === 'ADMINISTRATOR' ||
-          user.role === 'ADMIN' ||
-          user.role === 'PVZ'
+          user.role === 'ADMINISTRATOR' || user.role === 'ADMIN' || user.role === 'PVZ'
         "
         role="button"
         @click="router.push('/acceptance')"
@@ -239,7 +234,10 @@ let isShowAddSettings = ref(false);
         <Icon
           v-if="
             requests?.filter(
-              (row) => row.issued !== null && row.received === null
+              (row) =>
+                row.issued !== null &&
+                row.received === null &&
+                (row.receivedUser2 === user.username || row.receivedUser2 === 'Нет')
             ).length > 0
           "
           name="pepicons-print:exclamation"
@@ -305,9 +303,7 @@ let isShowAddSettings = ref(false);
       </div>
       <div v-if="isShowAddSettings">
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/users')"
           tabindex="0"
@@ -331,9 +327,7 @@ let isShowAddSettings = ref(false);
           <h1>Пользователи</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/marketplaces')"
           tabindex="0"
@@ -345,9 +339,7 @@ let isShowAddSettings = ref(false);
           <h1>Маркетплейсы</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/phone-numbers')"
           tabindex="0"
@@ -359,9 +351,7 @@ let isShowAddSettings = ref(false);
           <h1>Телефоны и адреса</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/cells')"
           tabindex="0"
@@ -373,9 +363,7 @@ let isShowAddSettings = ref(false);
           <h1>Ячейки</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/pvz')"
           tabindex="0"
@@ -387,9 +375,7 @@ let isShowAddSettings = ref(false);
           <h1>Пункты выдачи заказов</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/sorting-centers')"
           tabindex="0"
@@ -401,9 +387,7 @@ let isShowAddSettings = ref(false);
           <h1>Сортировочные центры</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/pvz-delivery')"
           tabindex="0"
@@ -415,9 +399,7 @@ let isShowAddSettings = ref(false);
           <h1>Пункты выдачи заказов (Доставка)</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/sorting-centers-delivery')"
           tabindex="0"
@@ -432,9 +414,7 @@ let isShowAddSettings = ref(false);
           <h1>Сортировочные центры (Доставка)</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/order-accounts')"
           tabindex="0"
@@ -488,9 +468,7 @@ let isShowAddSettings = ref(false);
     <nav
       class="flex flex-col gap-1 min-w-[240px] p-2 font-sans text-base font-normal text-black"
     >
-      <h1 class="text-center font-bold text-3xl text-secondary-color mb-5">
-        DAROM.PRO
-      </h1>
+      <h1 class="text-center font-bold text-3xl text-secondary-color mb-5">DAROM.PRO</h1>
       <div
         role="button"
         @click="
@@ -528,9 +506,7 @@ let isShowAddSettings = ref(false);
             : router.push('/spreadsheets/client-ransom')
         "
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-        v-if="
-          user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE'
-        "
+        v-if="user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE'"
       >
         <div class="grid place-items-center mr-4">
           <svg
@@ -583,9 +559,7 @@ let isShowAddSettings = ref(false);
       </div>
       <div
         v-if="
-          user.role === 'ADMINISTRATOR' ||
-          user.role === 'ADMIN' ||
-          user.role === 'PVZ'
+          user.role === 'ADMINISTRATOR' || user.role === 'ADMIN' || user.role === 'PVZ'
         "
         role="button"
         @click="router.push('/acceptance')"
@@ -615,7 +589,10 @@ let isShowAddSettings = ref(false);
         <Icon
           v-if="
             requests?.filter(
-              (row) => row.issued !== null && row.received === null
+              (row) =>
+                row.issued !== null &&
+                row.received === null &&
+                (row.receivedUser2 === user.username || row.receivedUser2 === 'Нет')
             ).length > 0
           "
           name="pepicons-print:exclamation"
@@ -681,9 +658,7 @@ let isShowAddSettings = ref(false);
       </div>
       <div v-if="isShowAddSettings">
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/users')"
           tabindex="0"
@@ -707,9 +682,7 @@ let isShowAddSettings = ref(false);
           <h1>Пользователи</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/marketplaces')"
           tabindex="0"
@@ -721,9 +694,7 @@ let isShowAddSettings = ref(false);
           <h1>Маркетплейсы</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/phone-numbers')"
           tabindex="0"
@@ -735,9 +706,7 @@ let isShowAddSettings = ref(false);
           <h1>Телефоны и адреса</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/cells')"
           tabindex="0"
@@ -749,9 +718,7 @@ let isShowAddSettings = ref(false);
           <h1>Ячейки</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/pvz')"
           tabindex="0"
@@ -763,9 +730,7 @@ let isShowAddSettings = ref(false);
           <h1>Пункты выдачи заказов</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/sorting-centers')"
           tabindex="0"
@@ -777,9 +742,7 @@ let isShowAddSettings = ref(false);
           <h1>Сортировочные центры</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/pvz-delivery')"
           tabindex="0"
@@ -791,9 +754,7 @@ let isShowAddSettings = ref(false);
           <h1>Пункты выдачи заказов (Доставка)</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/sorting-centers-delivery')"
           tabindex="0"
@@ -808,9 +769,7 @@ let isShowAddSettings = ref(false);
           <h1>Сортировочные центры (Доставка)</h1>
         </div>
         <div
-          v-if="
-            !user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'
-          "
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
           @click="router.push('/admin/order-accounts')"
           tabindex="0"
@@ -870,15 +829,18 @@ let isShowAddSettings = ref(false);
         class="hover:opacity-50 duration-200 cursor-pointer"
       />
       <Icon
-        v-if="
-          requests?.filter(
-            (row) => row.issued !== null && row.received === null
-          ).length > 0
-        "
-        name="pepicons-print:exclamation"
-        class="text-red-700"
-        size="40"
-      />
+          v-if="
+            requests?.filter(
+              (row) =>
+                row.issued !== null &&
+                row.received === null &&
+                (row.receivedUser2 === user.username || row.receivedUser2 === 'Нет')
+            ).length > 0
+          "
+          name="pepicons-print:exclamation"
+          size="24"
+          class="text-red-700"
+        />
       <Icon
         v-if="
           requests2?.filter(
@@ -899,10 +861,7 @@ let isShowAddSettings = ref(false);
     </div>
     <h1
       class="text-lg font-medium max-sm:text-sm"
-      v-if="
-        route.meta.name === 'Товары из' &&
-        route.fullPath.includes('/our-ransom')
-      "
+      v-if="route.meta.name === 'Товары из' && route.fullPath.includes('/our-ransom')"
     >
       {{ route.meta.name }} {{ route.params.pvz }} (Наш Выкуп)
     </h1>
@@ -924,8 +883,7 @@ let isShowAddSettings = ref(false);
         route.params.fromName
       "
     >
-      Товары по телефону: {{ formatPhoneNumber(route.params.fromName) }} (Выкуп
-      Клиента)
+      Товары по телефону: {{ formatPhoneNumber(route.params.fromName) }} (Выкуп Клиента)
     </h1>
     <h1
       class="text-lg font-medium max-sm:text-sm"
@@ -935,8 +893,7 @@ let isShowAddSettings = ref(false);
         route.params.fromName
       "
     >
-      Товары по телефону: {{ formatPhoneNumber(route.params.fromName) }} (Наш
-      Выкуп)
+      Товары по телефону: {{ formatPhoneNumber(route.params.fromName) }} (Наш Выкуп)
     </h1>
     <h1 class="text-lg font-medium max-sm:text-sm" v-else>
       {{ route.meta.name }}
