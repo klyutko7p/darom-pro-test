@@ -317,10 +317,14 @@ function openModal(row: IAdvanceReport, flag: string = "CASH") {
     rowData.value.date = storeUsers.getISODate(new Date());
   }
 
-  if (flag === "CASH") {
-    rowData.value.type = "Нал";
+  if (!row.type) {
+    if (flag === "CASH") {
+      rowData.value.type = "Нал";
+    } else {
+      rowData.value.type = "Безнал";
+    }
   } else {
-    rowData.value.type = "Безнал";
+    rowData.value.type = rowData.value.type;
   }
 }
 
@@ -368,7 +372,9 @@ function checkStatus() {
 
   if (
     rowData.value.typeOfExpenditure === "Передача денежных средств" ||
-    rowData.value.typeOfExpenditure === "Вывод дивидендов"
+    rowData.value.typeOfExpenditure === "Вывод дивидендов" ||
+    rowData.value.typeOfExpenditure === "Новый кредит нал" ||
+    rowData.value.typeOfExpenditure === "Новый кредит безнал"
   ) {
     rowData.value.PVZ = "";
     rowData.value.company = "";
