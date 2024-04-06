@@ -335,8 +335,7 @@ function checkStatus() {
     rowData.value.typeOfExpenditure ===
       "Списание кредитной задолженности торговой империи нал" ||
     rowData.value.typeOfExpenditure === "Перевод в кредитный баланс нал" ||
-    rowData.value.typeOfExpenditure === "Перевод в кредитный баланс безнал" ||
-    rowData.value.typeOfExpenditure === "Приход кредит нал"
+    rowData.value.typeOfExpenditure === "Перевод в кредитный баланс безнал"
   ) {
     rowData.value.PVZ = "";
     rowData.value.issuedUser = "";
@@ -365,7 +364,9 @@ function checkStatus() {
     rowData.value.typeOfExpenditure !== "Передача денежных средств" &&
     rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
     rowData.value.typeOfExpenditure !== "Новый кредит нал" &&
-    rowData.value.typeOfExpenditure !== "Новый кредит безнал"
+    rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
+    rowData.value.typeOfExpenditure !== "Приход кредит нал" &&
+    rowData.value.typeOfExpenditure !== "Приход кредит безнал"
   ) {
     rowData.value.issuedUser = "";
   }
@@ -374,11 +375,14 @@ function checkStatus() {
     rowData.value.typeOfExpenditure === "Передача денежных средств" ||
     rowData.value.typeOfExpenditure === "Вывод дивидендов" ||
     rowData.value.typeOfExpenditure === "Новый кредит нал" ||
-    rowData.value.typeOfExpenditure === "Новый кредит безнал"
+    rowData.value.typeOfExpenditure === "Новый кредит безнал" ||
+    rowData.value.typeOfExpenditure === "Приход кредит нал" ||
+    rowData.value.typeOfExpenditure === "Приход кредит безнал"
   ) {
     rowData.value.PVZ = "";
     rowData.value.company = "";
   }
+  console.log(rowData.value);
 }
 
 function openModalAdmin(row: IAdvanceReport) {
