@@ -357,15 +357,22 @@ function checkStatus() {
     rowData.value.type = "Безнал";
   }
 
-  if (rowData.value.typeOfExpenditure !== 'Передача денежных средств') {
-    rowData.value.issuedUser = ''
+  if (
+    rowData.value.typeOfExpenditure !== "Передача денежных средств" &&
+    rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
+    rowData.value.typeOfExpenditure !== "Новый кредит нал" &&
+    rowData.value.typeOfExpenditure !== "Новый кредит безнал"
+  ) {
+    rowData.value.issuedUser = "";
   }
 
-  if (rowData.value.typeOfExpenditure === 'Передача денежных средств' || rowData.value.typeOfExpenditure === 'Вывод дивидендов') {
+  if (
+    rowData.value.typeOfExpenditure === "Передача денежных средств" ||
+    rowData.value.typeOfExpenditure === "Вывод дивидендов"
+  ) {
     rowData.value.PVZ = "";
     rowData.value.company = "";
   }
-  
 }
 
 function openModalAdmin(row: IAdvanceReport) {
@@ -1045,9 +1052,7 @@ let isShowCreditBalanceOnline = ref(false);
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Получатель</label>
               <select
-                :disabled="
-                  rowData.typeOfExpenditure !== 'Передача денежных средств' 
-                "
+                :disabled="rowData.typeOfExpenditure !== 'Передача денежных средств'"
                 class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.issuedUser"
               >
@@ -1137,6 +1142,7 @@ let isShowCreditBalanceOnline = ref(false);
               <select
                 class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.type"
+                :disabled="rowData.type !== null"
               >
                 <option value="Нал">Нал</option>
                 <option value="Безнал">Безнал</option>
