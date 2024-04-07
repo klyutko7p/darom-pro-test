@@ -235,8 +235,6 @@ const nonEmptyCount: Ref<number> = computed(() => {
           <option v-for="value in uniqueTypeOfExpenditure" :value="value">
             {{ value }}
           </option>
-          <option value="Приход кредит">Приход кредит</option>
-          <option value="Расход кредит">Расход кредит</option>
         </datalist>
       </div>
       <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">

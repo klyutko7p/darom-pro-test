@@ -142,14 +142,10 @@ function updateCurrentPageData() {
         rowDate <= endDate &&
         row.typeOfExpenditure !== "Пополнение баланса" &&
         row.typeOfExpenditure !== "Передача денежных средств" &&
-        row.typeOfExpenditure !== "Перевод в кредитный баланс нал" &&
-        row.typeOfExpenditure !== "Перевод в кредитный баланс безнал" &&
-        row.typeOfExpenditure !==
-          "Списание кредитной задолженности торговой империи безнал" &&
-        row.typeOfExpenditure !==
-          "Списание кредитной задолженности торговой империи нал" &&
-        row.typeOfExpenditure !== "Приход кредит нал" &&
-        row.typeOfExpenditure !== "Приход кредит безнал" &&
+        row.typeOfExpenditure !== "Перевод в кредитный баланс" &&
+        row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи" &&
+        row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
+        row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
         row.typeOfExpenditure !== "Новый кредит нал" &&
         row.typeOfExpenditure !== "Новый кредит безнал" &&
         row.typeOfExpenditure !== "Вывод дивидендов" &&
@@ -161,17 +157,13 @@ function updateCurrentPageData() {
       (row: IAdvanceReport) =>
         row.typeOfExpenditure !== "Пополнение баланса" &&
         row.typeOfExpenditure !== "Передача денежных средств" &&
-        row.typeOfExpenditure !== "Перевод в кредитный баланс нал" &&
-        row.typeOfExpenditure !== "Перевод в кредитный баланс безнал" &&
-        row.typeOfExpenditure !==
-          "Списание кредитной задолженности торговой империи безнал" &&
-        row.typeOfExpenditure !==
-          "Списание кредитной задолженности торговой империи нал" &&
-        row.typeOfExpenditure !== "Приход кредит нал" &&
-        row.typeOfExpenditure !== "Приход кредит безнал" &&
+        row.typeOfExpenditure !== "Перевод в кредитный баланс" &&
+        row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи" &&
+        row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
+        row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
         row.typeOfExpenditure !== "Новый кредит нал" &&
         row.typeOfExpenditure !== "Новый кредит безнал" &&
-        row.typeOfExpenditure !== "Приход кредит" &&
+        row.typeOfExpenditure !== "Перевод с кредитного баланса" &&
         row.typeOfExpenditure !== "Вывод дивидендов" &&
         new Date(row.date).getMonth() + 1 === +props.month &&
         (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
@@ -335,16 +327,13 @@ function getTotal() {
     (row: IAdvanceReport) =>
       row.typeOfExpenditure !== "Пополнение баланса" &&
       row.typeOfExpenditure !== "Передача денежных средств" &&
-      row.typeOfExpenditure !== "Перевод в кредитный баланс нал" &&
-      row.typeOfExpenditure !== "Перевод в кредитный баланс безнал" &&
-      row.typeOfExpenditure !==
-        "Списание кредитной задолженности торговой империи безнал" &&
-      row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи нал" &&
-      row.typeOfExpenditure !== "Приход кредит нал" &&
-      row.typeOfExpenditure !== "Приход кредит безнал" &&
+      row.typeOfExpenditure !== "Перевод в кредитный баланс" &&
+      row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи" &&
+      row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
+      row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
       row.typeOfExpenditure !== "Новый кредит нал" &&
       row.typeOfExpenditure !== "Новый кредит безнал" &&
-      row.typeOfExpenditure !== "Приход кредит" &&
+      row.typeOfExpenditure !== "Перевод с кредитного баланса" &&
       row.typeOfExpenditure !== "Вывод дивидендов"
   );
   arrayOfReceiptsTotal.value = array?.filter(
