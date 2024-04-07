@@ -1470,6 +1470,16 @@ const uniqueNotation = computed(() => {
               <select
                 class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.PVZ"
+                :disabled="
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи нал' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи безнал' ||
+                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс нал' ||
+                  rowData.typeOfExpenditure === 'Передача денежных средств' ||
+                  rowData.typeOfExpenditure === 'Вывод дивидендов' ||
+                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс безнал'
+                "
               >
                 <option v-for="pvzData in pvz" :value="pvzData">
                   {{ pvzData }}
@@ -1480,6 +1490,14 @@ const uniqueNotation = computed(() => {
             <div class="grid grid-cols-2 mb-5" v-if="user.role !== 'ADMIN'">
               <label for="name">Дата</label>
               <input
+                :disabled="
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи нал' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи безнал' ||
+                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс нал' ||
+                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс безнал'
+                "
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
                 :min="`2024-${month}-01`"
@@ -1493,6 +1511,14 @@ const uniqueNotation = computed(() => {
             <div class="grid grid-cols-2 mb-5" v-if="user.role === 'ADMIN'">
               <label for="name">Дата</label>
               <input
+                :disabled="
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи нал' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи безнал' ||
+                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс нал' ||
+                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс безнал'
+                "
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
                 type="date"
@@ -1502,9 +1528,9 @@ const uniqueNotation = computed(() => {
             </div>
 
             <div class="grid grid-cols-2 mb-5">
-              <label for="name">Получатель </label>
+              <label for="name">Получатель</label>
               <select
-                :disabled="user.role !== 'ADMIN' && rowData.id === null"
+                :disabled="rowData.typeOfExpenditure !== 'Передача денежных средств'"
                 class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.issuedUser"
               >
@@ -1517,7 +1543,6 @@ const uniqueNotation = computed(() => {
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Расход</label>
               <input
-                :disabled="user.role !== 'ADMIN' && rowData.id === null"
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
                 type="text"
@@ -1549,6 +1574,17 @@ const uniqueNotation = computed(() => {
             <div class="grid grid-cols-2 mb-5">
               <label for="dispatchPVZ1">Компания</label>
               <select
+                :disabled="
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи нал' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи безнал' ||
+                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс нал' ||
+                  rowData.typeOfExpenditure === 'Передача денежных средств' ||
+                  rowData.typeOfExpenditure === 'Передача денежных средств' ||
+                  rowData.typeOfExpenditure === 'Вывод дивидендов' ||
+                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс безнал'
+                "
                 class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.company"
               >
@@ -1564,10 +1600,30 @@ const uniqueNotation = computed(() => {
                 документ</label
               >
               <input
+                :disabled="
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи нал' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи безнал' ||
+                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс нал' ||
+                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс безнал'
+                "
                 class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 @change="handleFileChange"
                 type="file"
               />
+            </div>
+
+            <div class="grid grid-cols-2 mb-5" v-if="user.username === 'Директор'">
+              <label for="name">Тип</label>
+              <select
+                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                v-model="rowData.type"
+                :disabled="rowData.type !== null"
+              >
+                <option value="Нал">Нал</option>
+                <option value="Безнал">Безнал</option>
+              </select>
             </div>
           </div>
 
@@ -1576,7 +1632,7 @@ const uniqueNotation = computed(() => {
             <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
           </div>
           <div class="flex items-center justify-center gap-3 mt-10" v-else>
-            <UIMainButton @click="createRow">Создать </UIMainButton>
+            <UIMainButton @click="createRow">Создать</UIMainButton>
             <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
           </div>
         </UIModal>
@@ -1588,13 +1644,74 @@ const uniqueNotation = computed(() => {
             </div>
             <div class="custom-header" v-else>Пополнение баланса</div>
           </template>
+
           <div class="text-black">
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Сумма</label>
               <input
                 :disabled="user.role !== 'ADMIN'"
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
+                type="text"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
+            <label for="name">Дата</label>
+            <input
+              class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+              v-model="rowData.date"
+              type="date"
+              placeholder="ДД.ММ.ГГГГ"
+              onchange="this.className=(this.value!=''?'has-value':'')"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
+            <label for="dispatchPVZ1">ПВЗ</label>
+            <select
+              class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+              v-model="rowData.PVZ"
+            >
+              <option v-for="pvzData in pvz" :value="pvzData">
+                {{ pvzData }}
+              </option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
+            <label for="dispatchPVZ1">Компания</label>
+            <select
+              class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+              v-model="rowData.company"
+            >
+              <option v-for="company in companies" :value="company">
+                {{ company }}
+              </option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
+            <label for="dispatchPVZ1">Кредит</label>
+            <select
+              class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+              v-model="rowData.typeOfExpenditure"
+              @change="checkStatus"
+            >
+              <option value="Новый кредит нал">Новый</option>
+              <option value="Пополнение баланса">Нет</option>
+              <option value="Приход кредит нал">С кредитного баланса</option>
+            </select>
+          </div>
+
+          <div class="text-black">
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Комментарий</label>
+              <input
+                :disabled="user.role !== 'ADMIN'"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.notation"
                 type="text"
               />
             </div>
@@ -1603,6 +1720,91 @@ const uniqueNotation = computed(() => {
           <div class="flex items-center justify-center gap-3 mt-10">
             <UIMainButton @click="createRow">Создать</UIMainButton>
             <UIErrorButton @click="closeModalAdmin">Отменить </UIErrorButton>
+          </div>
+        </UIModal>
+
+        <UIModal v-show="isOpenAdminOOO" @close-modal="closeModalAdminOOO">
+          <template v-slot:header>
+            <div class="custom-header" v-if="rowData.id">
+              Изменение строки с ID - <b> {{ rowData.id }}</b>
+            </div>
+            <div class="custom-header" v-else>Пополнение баланса</div>
+          </template>
+          <div class="text-black">
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Сумма</label>
+              <input
+                :disabled="user.role !== 'ADMIN'"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.expenditure"
+                type="text"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
+            <label for="name">Дата</label>
+            <input
+              class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+              v-model="rowData.date"
+              type="date"
+              placeholder="ДД.ММ.ГГГГ"
+              onchange="this.className=(this.value!=''?'has-value':'')"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
+            <label for="dispatchPVZ1">ПВЗ</label>
+            <select
+              class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+              v-model="rowData.PVZ"
+            >
+              <option v-for="pvzData in pvz" :value="pvzData">
+                {{ pvzData }}
+              </option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
+            <label for="dispatchPVZ1">Компания</label>
+            <select
+              class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+              v-model="rowData.company"
+            >
+              <option v-for="company in companies" :value="company">
+                {{ company }}
+              </option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
+            <label for="dispatchPVZ1">Кредит</label>
+            <select
+              class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+              v-model="rowData.typeOfExpenditure"
+              @change="checkStatus"
+            >
+              <option value="Новый кредит безнал">Новый</option>
+              <option value="Пополнение баланса">Нет</option>
+              <option value="Приход кредит безнал">С кредитного баланса</option>
+            </select>
+          </div>
+
+          <div class="text-black">
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Комментарий</label>
+              <input
+                :disabled="user.role !== 'ADMIN'"
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.notation"
+                type="text"
+              />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-center gap-3 mt-10">
+            <UIMainButton @click="createRow">Создать</UIMainButton>
+            <UIErrorButton @click="closeModalAdminOOO">Отменить </UIErrorButton>
           </div>
         </UIModal>
       </NuxtLayout>
