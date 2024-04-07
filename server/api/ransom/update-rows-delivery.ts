@@ -35,7 +35,8 @@ function getPaid(status: string) {
 
 function getAmountFromClient(status: string, sumOfRejectValue: any) {
   if (status === "additionally") {
-    return "Онлайн";
+    // return "Онлайн";
+    return
   } else if (status === "additionally1-1") {
     return sumOfRejectValue.value;
   } else if (status === "additionally1-2") {
@@ -153,11 +154,12 @@ export default defineEventHandler(async (event) => {
           data: {
             additionally: getAdditionally(flag),
             issued: new Date(),
-            amountFromClient1: {
-              set: getAmountFromClient(flag, sumOfReject) !== "Онлайн"
-                ? getAmountFromClient(flag, sumOfReject)
-                : element.amountFromClient1 * 1.02,
-            },
+            // amountFromClient1: {
+            //   set: getAmountFromClient(flag, sumOfReject) !== "Онлайн"
+            //     ? getAmountFromClient(flag, sumOfReject)
+            //     : element.amountFromClient1 * 1.02,
+            // },
+            amountFromClient1: getAmountFromClient(flag, sumOfReject),
             profit1: getProfit(flag, sumOfReject),
             updatedUser: username,
           },
