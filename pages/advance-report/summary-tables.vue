@@ -622,7 +622,6 @@ function returnTotal(sum: number) {
   arrayOfExpenditure.value = filteredRows.value?.filter(
     (row: IAdvanceReport) =>
       row.typeOfExpenditure === "Вывод дивидендов" &&
-      new Date(row.date).getMonth() + 1 === +month.value &&
       (!startingDate.value || new Date(row.date) >= new Date(newStartingDate)) &&
       (!endDate.value || new Date(row.date) <= new Date(newEndDate)) &&
       (!type.value || row.type === type.value)

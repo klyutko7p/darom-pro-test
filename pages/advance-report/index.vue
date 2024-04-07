@@ -261,7 +261,7 @@ function getSumCreditCash() {
       )
       .reduce((acc, value) => acc + +value.expenditure, 0);
 
-      let sumOfPVZ3 = rows.value
+    let sumOfPVZ3 = rows.value
       .filter(
         (row) =>
           row.createdUser === "Директор" &&
@@ -304,7 +304,7 @@ function getSumCreditOnline() {
       )
       .reduce((acc, value) => acc + +value.expenditure, 0);
 
-      let sumOfPVZ3 = rows.value
+    let sumOfPVZ3 = rows.value
       .filter(
         (row) =>
           row.createdUser === "Директор" &&
@@ -477,13 +477,15 @@ const supabase = createClient(
 async function createRow() {
   if (
     rowData.value.typeOfExpenditure === "Перевод в кредитный баланс" &&
-    +rowData.value.expenditure > +sumCreditCashDebt.value && rowData.value.type === 'Нал'
+    +rowData.value.expenditure > +sumCreditCashDebt.value &&
+    rowData.value.type === "Нал"
   ) {
     toast.error("Задолженность кредита меньше чем вписанная сумма!");
     return;
   } else if (
     rowData.value.typeOfExpenditure === "Перевод в кредитный баланс" &&
-    +rowData.value.expenditure > +sumCreditOnlineDebt.value && rowData.value.type === 'Безнал'
+    +rowData.value.expenditure > +sumCreditOnlineDebt.value &&
+    rowData.value.type === "Безнал"
   ) {
     toast.error("Задолженность кредита меньше чем вписанная сумма!");
     return;
@@ -528,13 +530,15 @@ async function updateRow() {
 
   if (
     rowData.value.typeOfExpenditure === "Перевод в кредитный баланс" &&
-    +rowData.value.expenditure > +sumCreditCashDebt.value && rowData.value.type === 'Нал'
+    +rowData.value.expenditure > +sumCreditCashDebt.value &&
+    rowData.value.type === "Нал"
   ) {
     toast.error("Задолженность меньше чем сумма расхода!");
     return;
   } else if (
     rowData.value.typeOfExpenditure === "Перевод в кредитный баланс" &&
-    +rowData.value.expenditure > +sumCreditOnlineDebt.value && rowData.value.type === 'Безнал'
+    +rowData.value.expenditure > +sumCreditOnlineDebt.value &&
+    rowData.value.type === "Безнал"
   ) {
     toast.error("Задолженность меньше чем сумма расхода!");
     return;
@@ -1019,9 +1023,9 @@ const uniqueNotation = computed(() => {
               <label for="name">Дата</label>
               <input
                 :disabled="
-                rowData.typeOfExpenditure ===
-                'Списание кредитной задолженности торговой империи' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс' 
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи' ||
+                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс'
                 "
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
@@ -1037,9 +1041,9 @@ const uniqueNotation = computed(() => {
               <label for="name">Дата</label>
               <input
                 :disabled="
-                rowData.typeOfExpenditure ===
-                'Списание кредитной задолженности торговой империи' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс' 
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи' ||
+                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс'
                 "
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
@@ -1104,12 +1108,12 @@ const uniqueNotation = computed(() => {
               <label for="dispatchPVZ1">Компания</label>
               <select
                 :disabled="
-                rowData.typeOfExpenditure ===
-                'Списание кредитной задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи' ||
                   rowData.typeOfExpenditure === 'Перевод в кредитный баланс' ||
                   rowData.typeOfExpenditure === 'Передача денежных средств' ||
                   rowData.typeOfExpenditure === 'Передача денежных средств' ||
-                  rowData.typeOfExpenditure === 'Вывод дивидендов' 
+                  rowData.typeOfExpenditure === 'Вывод дивидендов'
                 "
                 class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.company"
@@ -1127,8 +1131,8 @@ const uniqueNotation = computed(() => {
               >
               <input
                 :disabled="
-                rowData.typeOfExpenditure ===
-                'Списание кредитной задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи' ||
                   rowData.typeOfExpenditure === 'Перевод в кредитный баланс'
                 "
                 class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
@@ -1196,6 +1200,10 @@ const uniqueNotation = computed(() => {
             <select
               class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
               v-model="rowData.PVZ"
+              :disabled="
+                rowData.typeOfExpenditure === 'Новый кредит нал' ||
+                rowData.typeOfExpenditure === 'Перевод с кредитного баланса нал'
+              "
             >
               <option v-for="pvzData in pvz" :value="pvzData">
                 {{ pvzData }}
@@ -1208,6 +1216,10 @@ const uniqueNotation = computed(() => {
             <select
               class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
               v-model="rowData.company"
+              :disabled="
+                rowData.typeOfExpenditure === 'Новый кредит нал' ||
+                rowData.typeOfExpenditure === 'Перевод с кредитного баланса нал'
+              "
             >
               <option v-for="company in companies" :value="company">
                 {{ company }}
@@ -1224,7 +1236,9 @@ const uniqueNotation = computed(() => {
             >
               <option value="Новый кредит нал">Новый</option>
               <option value="Пополнение баланса">Нет</option>
-              <option value="Перевод с кредитного баланса нал">С кредитного баланса</option>
+              <option value="Перевод с кредитного баланса нал">
+                С кредитного баланса
+              </option>
             </select>
           </div>
 
@@ -1287,6 +1301,10 @@ const uniqueNotation = computed(() => {
             <select
               class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
               v-model="rowData.PVZ"
+              :disabled="
+                rowData.typeOfExpenditure === 'Новый кредит безнал' ||
+                rowData.typeOfExpenditure === 'Перевод с кредитного баланса безнал'
+              "
             >
               <option v-for="pvzData in pvz" :value="pvzData">
                 {{ pvzData }}
@@ -1299,6 +1317,10 @@ const uniqueNotation = computed(() => {
             <select
               class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
               v-model="rowData.company"
+              :disabled="
+                rowData.typeOfExpenditure === 'Новый кредит безнал' ||
+                rowData.typeOfExpenditure === 'Перевод с кредитного баланса безнал'
+              "
             >
               <option v-for="company in companies" :value="company">
                 {{ company }}
@@ -1315,7 +1337,9 @@ const uniqueNotation = computed(() => {
             >
               <option value="Новый кредит безнал">Новый</option>
               <option value="Пополнение баланса">Нет</option>
-              <option value="Перевод с кредитного баланса безнал">С кредитного баланса</option>
+              <option value="Перевод с кредитного баланса безнал">
+                С кредитного баланса
+              </option>
             </select>
           </div>
 
@@ -1452,8 +1476,8 @@ const uniqueNotation = computed(() => {
                 class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.PVZ"
                 :disabled="
-                rowData.typeOfExpenditure ===
-                'Списание кредитной задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи' ||
                   rowData.typeOfExpenditure === 'Перевод в кредитный баланс' ||
                   rowData.typeOfExpenditure === 'Передача денежных средств' ||
                   rowData.typeOfExpenditure === 'Вывод дивидендов'
@@ -1469,8 +1493,8 @@ const uniqueNotation = computed(() => {
               <label for="name">Дата</label>
               <input
                 :disabled="
-                rowData.typeOfExpenditure ===
-                'Списание кредитной задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи' ||
                   rowData.typeOfExpenditure === 'Перевод в кредитный баланс'
                 "
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
@@ -1487,9 +1511,9 @@ const uniqueNotation = computed(() => {
               <label for="name">Дата</label>
               <input
                 :disabled="
-                rowData.typeOfExpenditure ===
-                'Списание кредитной задолженности торговой империи' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс' 
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи' ||
+                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс'
                 "
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
@@ -1547,8 +1571,8 @@ const uniqueNotation = computed(() => {
               <label for="dispatchPVZ1">Компания</label>
               <select
                 :disabled="
-                rowData.typeOfExpenditure ===
-                'Списание кредитной задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи' ||
                   rowData.typeOfExpenditure === 'Перевод в кредитный баланс' ||
                   rowData.typeOfExpenditure === 'Передача денежных средств' ||
                   rowData.typeOfExpenditure === 'Передача денежных средств' ||
@@ -1570,8 +1594,8 @@ const uniqueNotation = computed(() => {
               >
               <input
                 :disabled="
-                rowData.typeOfExpenditure ===
-                'Списание кредитной задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи' ||
                   rowData.typeOfExpenditure === 'Перевод в кредитный баланс'
                 "
                 class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
@@ -1667,7 +1691,9 @@ const uniqueNotation = computed(() => {
             >
               <option value="Новый кредит нал">Новый</option>
               <option value="Пополнение баланса">Нет</option>
-              <option value="Перевод с кредитного баланса нал">С кредитного баланса</option>
+              <option value="Перевод с кредитного баланса нал">
+                С кредитного баланса
+              </option>
             </select>
           </div>
 
@@ -1752,7 +1778,9 @@ const uniqueNotation = computed(() => {
             >
               <option value="Новый кредит безнал">Новый</option>
               <option value="Пополнение баланса">Нет</option>
-              <option value="Перевод с кредитного баланса безнал">С кредитного баланса</option>
+              <option value="Перевод с кредитного баланса безнал">
+                С кредитного баланса
+              </option>
             </select>
           </div>
 
