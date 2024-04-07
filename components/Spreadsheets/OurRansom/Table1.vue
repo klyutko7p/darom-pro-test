@@ -22,8 +22,12 @@ const emit = defineEmits([
   "showDeletedRows",
 ]);
 
-function updateDeliveryRows(flag: string) {
-  emit("updateDeliveryRows", { idArray: checkedRows.value, flag: flag });
+function updateDeliveryRows(flag: string, allSumData: string = "0") {
+  emit("updateDeliveryRows", {
+    idArray: checkedRows.value,
+    flag: flag,
+    allSum: allSumData,
+  });
   checkedRows.value = [];
   allSum.value = [];
   getAllSum.value = 0;
@@ -536,7 +540,7 @@ let showPayRejectClient = ref(false);
       </UIActionButton2>
       <UIActionButton2
         v-if="user.additionally1 === 'WRITE'"
-        @click="updateDeliveryRows('additionally')"
+        @click="updateDeliveryRows('additionally', getAllSum)"
         >Оплата онлайн
       </UIActionButton2>
       <UIActionButton2
@@ -849,12 +853,7 @@ let showPayRejectClient = ref(false);
               user.role === 'ADMINISTRATOR'
             "
           >
-            <h1
-              @click="openModal(row)"
-              class="cursor-pointer"
-            >
-              ✏️
-            </h1>
+            <h1 @click="openModal(row)" class="cursor-pointer">✏️</h1>
           </td>
           <th
             scope="row"

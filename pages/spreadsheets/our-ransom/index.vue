@@ -65,25 +65,6 @@ async function updateDeliveryRow(obj: any) {
   rows.value = filteredRows.value;
 }
 
-async function updateDeliveryRows(obj: any) {
-  let answer = confirm(
-    `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
-  );
-  if (answer) {
-    isLoading.value = true;
-    await storeRansom.updateDeliveryRowsStatus(
-      obj.idArray,
-      obj.flag,
-      "OurRansom",
-      user.value.username
-    );
-    filteredRows.value = await storeRansom.getRansomRows("OurRansom");
-    rows.value = filteredRows.value;
-    isLoading.value = false;
-    await updateCells();
-  }
-}
-
 async function deleteRow(id: number) {
   let answer = confirm("Вы точно хотите удалить данную строку?");
   if (answer) {
@@ -224,7 +205,7 @@ onMounted(async () => {
   user.value = await storeUsers.getUser();
   rows.value = await storeRansom.getRansomRows("OurRansom");
 
-  deleteIssuedRowsTimer();
+  // deleteIssuedRowsTimer();
 
   if (rows.value) {
     handleFilteredRows(rows.value);
@@ -415,7 +396,6 @@ async function getFromNameFromCell() {
 }
 
 async function updateCellStatusFull() {
-  
   // let rowsForUpdateCells = await storeRansom.getRansomRowsForUpdateCells("OurRansom");
 
   // const filteredData = rowsForUpdateCells.filter((item) => item.deleted === null && item.issued === null);
@@ -436,7 +416,7 @@ async function updateCellStatusFull() {
   //     uniquePairs[pair].forEach((cell) => {
   //       result.push({
   //         dispatchPVZ: pair.substring(0, 5),
-  //         fromName: pair.substring(5), 
+  //         fromName: pair.substring(5),
   //         cell: cell,
   //         deleted: null,
   //       });
@@ -447,8 +427,8 @@ async function updateCellStatusFull() {
   // console.log(result);
   isLoading.value = true;
   let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCells("OurRansom");
-  await storeCells.updateCellsStatusWithNoSpeed(rowsWithDeleted)
-  toast.success("Обновление ячеек прошло успешно!")
+  await storeCells.updateCellsStatusWithNoSpeed(rowsWithDeleted);
+  toast.success("Обновление ячеек прошло успешно!");
   isLoading.value = false;
 }
 
@@ -464,6 +444,53 @@ async function showDeletedRows(flag: boolean) {
     isLoading.value = false;
   }
 }
+
+async function updateDeliveryRows(obj: any) {
+  if (obj.flag === "additionally") {
+    isOpenOnlineStatus.value = true;
+    itemsId.value = obj.idArray;
+    obj.allSum *= 1 + 2 / 100;
+    updatedPriceTwoPercent.value = obj.allSum;
+  } else {
+    let answer = confirm(
+      `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
+    );
+    if (answer) {
+      isLoading.value = true;
+      await storeRansom.updateDeliveryRowsStatus(
+        obj.idArray,
+        obj.flag,
+        "OurRansom",
+        user.value.username
+      );
+      filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+      rows.value = filteredRows.value;
+      isLoading.value = false;
+      await updateCells();
+    }
+  }
+}
+
+async function updateOnlineMoneyRowsStatus() {
+  isOpenOnlineStatus.value = false;
+  isLoading.value = true;
+  await storeRansom.updateDeliveryRowsStatus(
+    itemsId.value,
+    "additionally",
+    "OurRansom",
+    user.value.username
+  );
+  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  rows.value = filteredRows.value;
+  isLoading.value = false;
+  updatedPriceTwoPercent.value = 0;
+  itemsId.value = [];
+  await updateCells();
+}
+
+let updatedPriceTwoPercent = ref(0);
+let itemsId = ref<Array<number[]>>();
+let isOpenOnlineStatus = ref(false);
 </script>
 
 <template>
@@ -471,6 +498,23 @@ async function showDeletedRows(flag: boolean) {
     <Title>Наш выкуп</Title>
   </Head>
   <div>
+    <div
+      v-if="isOpenOnlineStatus"
+      class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-75 z-[100]"
+    >
+      <div class="flex items-center justify-center h-screen">
+        <div class="bg-white w-[500px] p-10 rounded-xl text-center">
+          <h1 class="text-lg">При оплате онлайн сумма увеличится на 2%!</h1>
+          <h1 class="text-2xl font-bold">
+            ИТОГОВАЯ СУММА: {{ Math.ceil(updatedPriceTwoPercent / 10) * 10 }} руб
+          </h1>
+          <div class="flex gap-5 mt-5 items-center justify-center">
+            <UIActionButton @click="isOpenOnlineStatus = false">Отменить</UIActionButton>
+            <UIErrorButton @click="updateOnlineMoneyRowsStatus">Принять</UIErrorButton>
+          </div>
+        </div>
+      </div>
+    </div>
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div v-if="!isLoading" class="mt-3">

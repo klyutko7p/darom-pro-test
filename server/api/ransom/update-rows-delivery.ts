@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { raw } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 
@@ -34,7 +35,7 @@ function getPaid(status: string) {
 
 function getAmountFromClient(status: string, sumOfRejectValue: any) {
   if (status === "additionally") {
-    return;
+    return "Онлайн";
   } else if (status === "additionally1-1") {
     return sumOfRejectValue.value;
   } else if (status === "additionally1-2") {
@@ -64,6 +65,18 @@ export default defineEventHandler(async (event) => {
   try {
     const { idArray, flag, flagRansom, username, sumOfReject } =
       await readBody<IRequestBody>(event);
+
+    const currentAmountFromClient1Array = await prisma.ourRansom.findMany({
+      where: {
+        id: {
+          in: idArray,
+        },
+      },
+      select: {
+        id: true, 
+        amountFromClient1: true,
+      },
+    });
 
     let updateField;
 
@@ -130,20 +143,26 @@ export default defineEventHandler(async (event) => {
         },
       });
     } else if (flagRansom === "OurRansom" && updateField === "additionally") {
-      const updateRow = await prisma.ourRansom.updateMany({
-        where: {
-          id: {
-            in: idArray,
+      for (const element of currentAmountFromClient1Array) {
+        const updateRow = await prisma.ourRansom.updateMany({
+          where: {
+            id: {
+              equals: element.id, 
+            },
           },
-        },
-        data: {
-          additionally: getAdditionally(flag),
-          issued: new Date(),
-          amountFromClient1: getAmountFromClient(flag, sumOfReject),
-          profit1: getProfit(flag, sumOfReject),
-          updatedUser: username,
-        },
-      });
+          data: {
+            additionally: getAdditionally(flag),
+            issued: new Date(),
+            amountFromClient1: {
+              set: getAmountFromClient(flag, sumOfReject) !== "Онлайн"
+                ? getAmountFromClient(flag, sumOfReject)
+                : element.amountFromClient1 * 1.02,
+            },
+            profit1: getProfit(flag, sumOfReject),
+            updatedUser: username,
+          },
+        });
+      }
     } else if (flagRansom === "OurRansom" && updateField === "shipped") {
       const updateRow = await prisma.ourRansom.updateMany({
         where: {

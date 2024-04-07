@@ -382,7 +382,6 @@ function checkStatus() {
     rowData.value.PVZ = "";
     rowData.value.company = "";
   }
-  console.log(rowData.value);
 }
 
 function openModalAdmin(row: IAdvanceReport) {
@@ -749,6 +748,10 @@ let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
 
 let isShowCreditBalanceCash = ref(false);
 let isShowCreditBalanceOnline = ref(false);
+
+const uniqueNotation = computed(() => {
+  return storeAdvanceReports.getUniqueNonEmptyValues(rows.value, "notation");
+});
 </script>
 
 <template>
@@ -1101,7 +1104,13 @@ let isShowCreditBalanceOnline = ref(false);
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.notation"
                 type="text"
+                list="uniqueNotation"
               />
+              <datalist id="uniqueNotation">
+                <option v-for="value in uniqueNotation" :value="value">
+                  {{ value }}
+                </option>
+              </datalist>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
@@ -1246,7 +1255,13 @@ let isShowCreditBalanceOnline = ref(false);
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.notation"
                 type="text"
+                list="uniqueNotation"
               />
+              <datalist id="uniqueNotation">
+                <option v-for="value in uniqueNotation" :value="value">
+                  {{ value }}
+                </option>
+              </datalist>
             </div>
           </div>
 
@@ -1331,7 +1346,13 @@ let isShowCreditBalanceOnline = ref(false);
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.notation"
                 type="text"
+                list="uniqueNotation"
               />
+              <datalist id="uniqueNotation">
+                <option v-for="value in uniqueNotation" :value="value">
+                  {{ value }}
+                </option>
+              </datalist>
             </div>
           </div>
 
