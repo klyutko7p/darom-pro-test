@@ -949,6 +949,7 @@ async function createRow() {
   } else {
     await storeBalance.createBalanceRow(rowData.value, user.value.username);
     rows.value = await storeBalance.getBalanceRows();
+    rowsWithProfitRows.value = [...rows.value, ...rowsProfit.value];
     closeModal();
     getAllSum();
     if (
@@ -994,7 +995,6 @@ async function createProfitRow() {
   isLoading.value = true;
   await storeBalance.createBalanceProfitRow(rowData.value);
   rowsProfit.value = await storeBalance.getBalanceProfitRows();
-  console.log(rowsProfit.value);
   closeModalProfitRow();
   getAllSum();
   getProfitRowsSum();
@@ -1098,6 +1098,7 @@ async function updateRow() {
   isLoading.value = true;
   await storeBalance.updateBalanceRow(rowData.value);
   rows.value = await storeBalance.getBalanceRows();
+  rowsWithProfitRows.value = [...rows.value, ...rowsProfit.value];
   closeModal();
   getAllSum();
   if (

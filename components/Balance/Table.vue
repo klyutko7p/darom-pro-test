@@ -55,7 +55,15 @@ onMounted(() => {});
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in rows?.sort((a, b) => +a.id - +b.id)" class="text-center">
+        <tr v-for="row in rows?.sort((a, b) => {
+          if (a.issued === null && b.issued !== null) {
+            return -1; 
+          } else if (a.issued !== null && b.issued === null) {
+            return 1; 
+          } else {
+            return new Date(b.issued) - new Date(a.issued);
+          }
+        })" class="text-center">
           <td
             class="border-2"
             v-if="user.role !== 'PVZ' && user.role !== 'COURIER' && user.role !== 'PPVZ'"
