@@ -228,6 +228,7 @@ async function updateCells() {
   let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCells("OurRansom");
   await storeCells.updateCellsStatus(rowsWithDeleted);
   cells.value = await storeCells.getCells();
+  cells.value = cells.value?.filter((cell) => cell.PVZ !== 'НаДом')
 }
 
 onBeforeMount(() => {
