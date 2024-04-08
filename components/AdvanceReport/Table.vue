@@ -147,7 +147,7 @@ function exportToExcel() {
           </th>
           <th scope="col" class="border-2">Дата</th>
           <th scope="col" class="border-2">ПВЗ</th>
-          <th scope="col" class="border-2">Расход</th>
+          <th scope="col" class="border-2">Сумма</th>
           <th scope="col" class="border-2">Статья расхода</th>
           <th scope="col" class="border-2">Комментарий</th>
           <th scope="col" class="border-2">Компания</th>

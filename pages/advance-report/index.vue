@@ -224,6 +224,8 @@ function getAllSumDirector() {
   }
   getSumCreditCash();
   getSumCreditOnline();
+  console.log(allSum.value);
+  console.log(allSum2.value);
   return allSum.value + allSum2.value;
 }
 
@@ -464,6 +466,7 @@ let usersOfIssued = ref([
   "Шарафаненко",
   "Волошина",
   "Рейзвих",
+  "Эля"
 ]);
 
 import { createClient } from "@supabase/supabase-js";
