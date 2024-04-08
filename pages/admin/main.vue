@@ -194,7 +194,7 @@ definePageMeta({
               <h1>Доставка и сортировка</h1>
             </div>
             <div
-              v-if="user.role === 'ADMIN' || user.role === 'PVZ'"
+              v-if="user.role === 'ADMIN' || user.role === 'PVZ' || user.role === 'PPVZ'"
               role="button"
               @click="router.push('/acceptance')"
               tabindex="0"
@@ -209,8 +209,8 @@ definePageMeta({
               v-if="
                 (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
                 user.role === 'ADMINISTRATOR' ||
-                user.role === 'PVZ'
-              "
+                user.role === 'PVZ' || user.role === 'PPVZ' || user.role === 'RMANAGER' 
+              " 
               role="button"
               @click="router.push('/balance')"
               tabindex="0"
@@ -228,7 +228,7 @@ definePageMeta({
                 user.role === 'ADMINISTRATOR' ||
                 user.role === 'OFFICE' ||
                 user.role === 'COURIER' ||
-                user.username === 'Волошина'
+                user.username === 'Волошина' || user.role === 'RMANAGER' 
               "
               role="button"
               @click="router.push('/advance-report')"
@@ -268,7 +268,7 @@ definePageMeta({
               <h1>Настройки доступа</h1>
             </div>
             <div
-              v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+              v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR' && user.role !== 'RMANAGER'"
               role="button"
               @click="router.push('/admin/users')"
               tabindex="0"

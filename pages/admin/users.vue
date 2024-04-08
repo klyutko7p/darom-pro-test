@@ -177,6 +177,8 @@ definePageMeta({
                 <option value="USER">USER</option>
                 <option value="SORTIROVKA">SORTIROVKA</option>
                 <option value="PVZ">PVZ</option>
+                <option value="PPVZ">PPVZ</option>
+                <option value="RMANAGER">RMANAGER</option>
                 <option value="ADMINISTRATOR">ADMINISTRATOR</option>
                 <option value="COURIER">COURIER</option>
                 <option value="DRIVER">DRIVER</option>

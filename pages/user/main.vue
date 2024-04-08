@@ -133,7 +133,7 @@ definePageMeta({
           </div>
           <div
         v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана1') || user.role === 'ADMINISTRATOR' || user.role === 'PVZ'
+          (user.role === 'ADMIN' && user.username !== 'Светлана1') || user.role === 'ADMINISTRATOR' || user.role === 'PVZ' 
         "
         role="button"
         @click="router.push('/spreadsheets/refunds')"
@@ -148,7 +148,7 @@ definePageMeta({
           <div
             v-if="
               user.dataDelivery === 'READ' ||
-              (user.dataDelivery === 'WRITE' && user.role !== 'ADMINISTRATOR')
+              (user.dataDelivery === 'WRITE' && user.role !== 'ADMINISTRATOR' && user.role !== 'RMANAGER')
             "
             role="button"
             @click="router.push('/spreadsheets/delivery')"
@@ -166,7 +166,7 @@ definePageMeta({
               user.role === 'DRIVER' ||
               user.role === 'ADMINISTRATOR' ||
               user.role === 'OFFICE' || user.role === 'COURIER' ||
-              user.username === 'Волошина'
+              user.username === 'Волошина' || user.role === 'RMANAGER' 
             "
             role="button"
             @click="router.push('/advance-report')"
@@ -180,7 +180,7 @@ definePageMeta({
           </div>
         </div>
         <div
-          v-if="user.role === 'ADMINISTRATOR' || user.role === 'PVZ'"
+          v-if="user.role === 'ADMINISTRATOR' || user.role === 'PVZ' || user.role === 'PPVZ' || user.role === 'RMANAGER' "
           role="button"
           @click="router.push('/acceptance')"
           tabindex="0"
@@ -196,7 +196,7 @@ definePageMeta({
             (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
             user.role === 'ADMINISTRATOR' ||
             user.role === 'PVZ' ||
-            user.role === 'COURIER'
+            user.role === 'COURIER' || user.role === 'PPVZ' || user.role === 'RMANAGER' 
           "
           role="button"
           @click="router.push('/balance')"

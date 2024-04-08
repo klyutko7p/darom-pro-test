@@ -127,7 +127,7 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
   if (filteredRows.value) {
     if (user.value.role === "SORTIROVKA") {
       filteredRows.value = filteredRows.value.filter((row) => row.deliveredPVZ === null);
-    } else if (user.value.role === "PVZ") {
+    } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {
       let today = new Date().toLocaleDateString("ru-RU", {
         day: "2-digit",
         month: "2-digit",

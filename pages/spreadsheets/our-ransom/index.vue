@@ -158,7 +158,7 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
   if (filteredRows.value) {
     if (user.value.role === "SORTIROVKA") {
       filteredRows.value = filteredRows.value.filter((row) => row.deliveredPVZ === null);
-    } else if (user.value.role === "PVZ") {
+    } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {
       let today = new Date().toLocaleDateString("ru-RU", {
         day: "2-digit",
         month: "2-digit",
@@ -173,6 +173,10 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
             year: "2-digit",
           }) === today ||
             row.issued === null)
+      );
+    } else if (user.value.role === "RMANAGER") {
+      filteredRows.value = filteredRows.value.filter(
+        (row) => row.dispatchPVZ && row.dispatchPVZ.includes(user.value.PVZ)
       );
     }
   }
@@ -205,7 +209,7 @@ onMounted(async () => {
   user.value = await storeUsers.getUser();
   rows.value = await storeRansom.getRansomRows("OurRansom");
 
-  // deleteIssuedRowsTimer();
+  deleteIssuedRowsTimer();
 
   if (rows.value) {
     handleFilteredRows(rows.value);
@@ -882,7 +886,7 @@ let isOpenOnlineStatus = ref(false);
         <div v-if="!isLoading" class="mt-3">
           <div>
             <SpreadsheetsOurRansomFilters
-              v-if="rows && user.role !== 'PVZ'"
+              v-if="rows && user.role !== 'PVZ' && user.role !== 'PPVZ'"
               @filtered-rows="handleFilteredRows"
               :rows="rows"
               :user="user"

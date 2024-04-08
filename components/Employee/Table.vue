@@ -48,7 +48,7 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
             v-if="
               user.dataDelivery === 'WRITE' ||
               user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR'
+              user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' 
             "
           >
             изменение
@@ -103,7 +103,7 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
             class="px-6 py-4 border-2"
             v-if="
               (user.dataOurRansom === 'WRITE' && user.role === 'ADMIN') ||
-              user.role === 'ADMINISTRATOR'
+              user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' 
             "
           >
             <Icon

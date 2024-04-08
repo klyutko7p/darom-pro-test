@@ -135,11 +135,11 @@ onMounted(async () => {
       <div
         class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5"
       >
-        <h1 class="text-xl" v-if="user.role !== 'PVZ'">
+        <h1 class="text-xl" v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'">
           Товаров в работе:
           <span class="text-secondary-color font-bold">{{ totalRows }}</span>
         </h1>
-        <h1 class="text-xl" v-if="user.role === 'PVZ'">
+        <h1 class="text-xl" v-if="user.role === 'PVZ' || user.role === 'PPVZ'">
           Товаров к выдаче:
           <span class="text-secondary-color font-bold">{{ totalRows }}</span>
         </h1>
@@ -187,7 +187,7 @@ onMounted(async () => {
 
   <div
     class="fixed z-40 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
-    v-if="checkedRows.length > 0 && user.role !== 'PVZ'"
+    v-if="checkedRows.length > 0 && user.role !== 'PVZ' && user.role !== 'PPVZ'"
   >
     <UIActionButton
       v-if="showButtonShipped"
@@ -205,7 +205,7 @@ onMounted(async () => {
 
   <div
     class="fixed z-40 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
-    v-if="checkedRows.length > 0 && user.role === 'PVZ'"
+    v-if="checkedRows.length > 0 && user.role === 'PVZ' || user.role === 'PPVZ'"
   >
     <UIActionButton
       v-if="showButtonShipped"
@@ -235,12 +235,12 @@ onMounted(async () => {
           <th
             scope="col"
             class="exclude-row border-2 text-[10px]"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             изменение
           </th>
           <th scope="col" class="border-2 px-3">id</th>
-          <th scope="col" class="border-2 px-3" v-if="user.role === 'PVZ'">
+          <th scope="col" class="border-2 px-3" v-if="user.role === 'PVZ' || user.role === 'PPVZ'">
             ячейка
           </th>
           <th
@@ -267,7 +267,7 @@ onMounted(async () => {
           <th
             scope="col"
             class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             стоимость возврата
           </th>
@@ -322,7 +322,7 @@ onMounted(async () => {
           </td>
           <td
             class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             <Icon
               @click="openModal(row)"
@@ -336,7 +336,7 @@ onMounted(async () => {
             class="border-2 font-medium underline text-secondary-color whitespace-nowrap"
           >
             <NuxtLink
-              v-if="user.role !== 'PVZ' && user.role !== 'ADMINISTRATOR'"
+              v-if="user.role !== 'PVZ' && user.role !== 'ADMINISTRATOR' && user.role !== 'RMANAGER' && user.role !== 'PPVZ'"
               class="cursor-pointer hover:text-orange-200 duration-200"
               :to="`/spreadsheets/record/1/${row.id}`"
             >
@@ -344,7 +344,7 @@ onMounted(async () => {
             </NuxtLink>
             <h1 v-else>{{ row.id }}</h1>
           </th>
-          <td class="border-2" v-if="user.role === 'PVZ'">
+          <td class="border-2" v-if="user.role === 'PVZ' || user.role === 'PPVZ'">
             {{ row.cell }}
           </td>
           <td
@@ -372,19 +372,19 @@ onMounted(async () => {
           </td>
           <td
             class="px-2 py-4 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             {{ row.priceRefund }}
           </td>
           <td
             class="px-2 py-4 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             {{ row.dispatchPVZ }}
           </td>
           <td
             class="px-2 py-4 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             {{ row.orderPVZ }}
           </td>

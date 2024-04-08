@@ -27,7 +27,7 @@ onMounted(async () => {
     toast.error("Это товар не Вашего ПВЗ!")
     router.push('/spreadsheets/our-ransom')
   } else {
-    if (!alreadyCalled.value && props.user.role === 'PVZ') {
+    if (!alreadyCalled.value && (props.user.role === 'PVZ' || props.user.role === 'PPVZ')) {
       if (props.row.deliveredPVZ === null && props.row.deliveredSC !== null) {
         await updateDeliveryRow(props.row, "PVZ");
         toast.success('Товар принят на ПВЗ!');

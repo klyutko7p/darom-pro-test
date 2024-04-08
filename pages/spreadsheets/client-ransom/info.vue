@@ -29,9 +29,9 @@ onMounted(() => {
 });
 
 function getCountOfItemsByPVZClientRansom(PVZ: string) {
-  if (user.value.role !== "PVZ") {
+  if (user.value.role !== "PVZ" && user.value.role !== "PPVZ") {
     return rowsClientRansom.value?.filter((row) => row.dispatchPVZ === PVZ && row.deliveredPVZ === null).length;
-  } else if (user.value.role === "PVZ") {
+  } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {
     let today = new Date().toLocaleDateString("ru-RU", {
       day: "2-digit",
       month: "2-digit",
@@ -72,7 +72,7 @@ definePageMeta({
           <div class="flex flex-col gap-5 mt-10">
             <div class="flex items-start gap-5 max-sm:flex-col">
               <h1 class="font-bold text-xl max-sm:text-lg">Список доступных ПВЗ</h1>
-              <UIActionButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+              <UIActionButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER'"
                 @click="router.push('/spreadsheets/client-ransom')">Все товары</UIActionButton>
             </div>
             <div @click="router.push(`/spreadsheets/client-ransom/${pvz}`)" v-for="pvz in user.PVZ"
@@ -82,11 +82,11 @@ definePageMeta({
                 Товаров заказано:
                 <span class="font-bold">{{ getCountOfItemsByPVZClientRansom(pvz) }}</span>
               </h1>
-              <h1 v-if="user.role !== 'PVZ'">
+              <h1 v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'">
                 Товаров на выдачу:
                 <span class="font-bold">{{ getCountOfItemsByPVZClientRansomIssued(pvz) }}</span>
               </h1>
-              <h1 v-if="user.role === 'PVZ'">
+              <h1 v-if="user.role === 'PVZ' || user.role === 'PPVZ'">
                 Товаров на выдачу:
                 <span class="font-bold">{{ getCountOfItemsByPVZClientRansom(pvz) }}</span>
               </h1>
@@ -105,7 +105,7 @@ definePageMeta({
           <div class="flex flex-col gap-5 mt-10">
             <div class="flex items-start gap-5 max-sm:flex-col">
               <h1 class="font-bold text-xl max-sm:text-lg">Список доступных ПВЗ</h1>
-              <UIActionButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+              <UIActionButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER'"
                 @click="router.push('/spreadsheets/client-ransom')">Все товары</UIActionButton>
             </div>
             <div @click="router.push(`/spreadsheets/client-ransom/${pvz}`)" v-for="pvz in user.PVZ"
@@ -115,11 +115,11 @@ definePageMeta({
                 Товаров заказано:
                 <span class="font-bold">{{ getCountOfItemsByPVZClientRansom(pvz) }}</span>
               </h1>
-              <h1 v-if="user.role !== 'PVZ'">
+              <h1 v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'">
                 Товаров на выдачу:
                 <span class="font-bold">{{ getCountOfItemsByPVZClientRansomIssued(pvz) }}</span>
               </h1>
-              <h1 v-if="user.role === 'PVZ'">
+              <h1 v-if="user.role === 'PVZ' || user.role === 'PPVZ'">
                 Товаров на выдачу:
                 <span class="font-bold">{{ getCountOfItemsByPVZClientRansom(pvz) }}</span>
               </h1>

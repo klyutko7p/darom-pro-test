@@ -132,6 +132,12 @@ function updateCurrentPageData() {
       ?.filter((row) => !row.deleted)
       .slice(startIndex, endIndex);
   }
+
+  if (props.user.role === "RMANAGER") {
+    returnRows.value = props.rows?.filter(
+      (row) => row.dispatchPVZ && row.dispatchPVZ.includes(props.user.PVZ)
+    );
+  }
 }
 
 watch([currentPage, totalRows, props.rows], updateCurrentPageData);
@@ -191,18 +197,18 @@ let showPayRejectClient = ref(false);
   <div class="flex items-center justify-between max-lg:block mt-10">
     <div>
       <div class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5">
-        <h1 class="text-xl" v-if="user.role !== 'PVZ'">
+        <h1 class="text-xl" v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'">
           Товаров в работе:
           <span class="text-secondary-color font-bold">{{ totalRows }}</span>
         </h1>
-        <h1 class="text-xl" v-if="user.role === 'PVZ'">
+        <h1 class="text-xl" v-if="user.role === 'PVZ' || user.role === 'PPVZ'">
           Товаров к выдаче:
           <span class="text-secondary-color font-bold">{{ totalRows }}</span>
         </h1>
       </div>
       <div
         class="flex items-center gap-5"
-        v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+        v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
       >
         <UIActionButton @click="toggleShowDeletedRows">
           {{ showDeletedRows ? "Скрыть удаленное" : "Показать удаленное" }}
@@ -254,13 +260,13 @@ let showPayRejectClient = ref(false);
   <div
     class="fixed z-40 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
     v-if="
-      user.dataClientRansom === 'WRITE' && checkedRows.length > 0 && user.role !== 'PVZ'
+      user.dataClientRansom === 'WRITE' && checkedRows.length > 0 && user.role !== 'PVZ' && user.role !== 'PPVZ'
     "
   >
     <UIActionButton
       v-if="
         user.role === 'ADMIN' ||
-        (user.role === 'ADMINISTRATOR' && user.dataOurRansom === 'WRITE')
+        (user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER'  && user.dataOurRansom === 'WRITE')
       "
       @click="deleteSelectedRows"
       >Удалить выделенные записи</UIActionButton
@@ -311,7 +317,7 @@ let showPayRejectClient = ref(false);
   <div
     class="fixed z-40 flex flex-col gap-3 top-44 left-1/2 translate-x-[-50%] translate-y-[-50%]"
     v-if="
-      user.dataClientRansom === 'WRITE' && checkedRows.length > 0 && user.role === 'PVZ'
+      user.dataClientRansom === 'WRITE' && checkedRows.length > 0 && (user.role === 'PVZ' || user.role === 'PPVZ')
     "
   >
     <UIActionButton
@@ -501,35 +507,35 @@ let showPayRejectClient = ref(false);
           <th
             scope="col"
             class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             создан (время)
           </th>
           <th
             scope="col"
             class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             изменен (время)
           </th>
           <th
             scope="col"
             class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             удален (время)
           </th>
           <th
             scope="col"
             class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             создан
           </th>
           <th
             scope="col"
             class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             изменен
           </th>
@@ -583,7 +589,7 @@ let showPayRejectClient = ref(false);
             class="border-2 font-medium underline text-secondary-color whitespace-nowrap"
           >
             <NuxtLink
-              v-if="user.role !== 'PVZ' && user.role !== 'ADMINISTRATOR'"
+              v-if="user.role !== 'PVZ' && user.role !== 'ADMINISTRATOR' && user.role !== 'RMANAGER' && user.role !== 'PPVZ'"
               class="cursor-pointer hover:text-orange-200 duration-200"
               :to="`/spreadsheets/record/2/${row.id}`"
             >
@@ -624,7 +630,7 @@ let showPayRejectClient = ref(false);
             class="py-4 border-2 text-secondary-color underline"
           >
             <NuxtLink
-              v-if="user.role !== 'PVZ'"
+              v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
               class="cursor-pointer hover:text-orange-200 duration-200"
               :to="`/phone/${row.fromName}`"
             >
@@ -740,31 +746,31 @@ let showPayRejectClient = ref(false);
 
           <td
             class="px-6 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             {{ storeUsers.getNormalizedDate(row.created_at) }}
           </td>
           <td
             class="px-6 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             {{ storeUsers.getNormalizedDate(row.updated_at) }}
           </td>
           <td
             class="px-6 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             {{ storeUsers.getNormalizedDate(row.deleted) }}
           </td>
           <td
             class="px-6 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             {{ row.createdUser }}
           </td>
           <td
             class="px-6 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             {{ row.updatedUser }}
           </td>
@@ -773,7 +779,7 @@ let showPayRejectClient = ref(false);
             class="px-6 py-4 border-2"
             v-if="
               (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
-              user.role === 'ADMINISTRATOR'
+              user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' 
             "
           >
             <Icon

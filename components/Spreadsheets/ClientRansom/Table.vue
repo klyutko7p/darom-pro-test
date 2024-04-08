@@ -178,11 +178,11 @@ function getCountOfItemsByPVZClientRansomIssued(PVZ: string) {
   <div class="flex items-center justify-between max-lg:block mt-10">
     <div>
       <div class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5">
-        <h1 class="text-xl" v-if="user.role !== 'PVZ'">
+        <h1 class="text-xl" v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'">
           Товаров в работе:
           <span class="text-secondary-color font-bold">{{ getCountOfItemsByPVZClientRansom(pvzLink) + getCountOfItemsByPVZClientRansomIssued(pvzLink) }}</span>
         </h1>
-        <h1 class="text-xl" v-if="user.role === 'PVZ'">Товаров к выдаче: <span class="text-secondary-color font-bold">{{
+        <h1 class="text-xl" v-if="user.role === 'PVZ' || user.role === 'PPVZ'">Товаров к выдаче: <span class="text-secondary-color font-bold">{{
           totalRows }}</span> </h1>
       </div>
     </div>

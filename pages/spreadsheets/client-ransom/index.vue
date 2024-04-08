@@ -120,7 +120,7 @@ function handleFilteredRows(filteredRowsData: IClientRansom[]) {
   if (filteredRows.value) {
     if (user.value.role === "SORTIROVKA") {
       filteredRows.value = filteredRows.value.filter((row) => row.deliveredPVZ === null);
-    } else if (user.value.role === "PVZ") {
+    } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {
       let today = new Date().toLocaleDateString("ru-RU", {
         day: "2-digit",
         month: "2-digit",
@@ -134,6 +134,12 @@ function handleFilteredRows(filteredRowsData: IClientRansom[]) {
             month: "2-digit",
             year: "2-digit",
           }) === today || row.issued === null)
+      );
+    } else if (user.value.role === 'RMANAGER') {
+      filteredRows.value = filteredRows.value.filter(
+        (row) =>
+        row.dispatchPVZ &&
+          row.dispatchPVZ.includes(user.value.PVZ)
       );
     }
   }
@@ -376,7 +382,7 @@ function getFromNameFromCell() {
       <NuxtLayout name="user">
         <div v-if="!isLoading" class="mt-3">
           <div>
-            <SpreadsheetsClientRansomFilters v-if="rows && user.role !== 'PVZ'" @filtered-rows="handleFilteredRows"
+            <SpreadsheetsClientRansomFilters v-if="rows && user.role !== 'PVZ' && user.role !== 'PPVZ'" @filtered-rows="handleFilteredRows"
               :rows="rows" :user="user" />
             <div class="mt-5 flex items-center gap-3" v-if="user.dataOurRansom === 'WRITE'">
               <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" @click="openModal">Создать новую

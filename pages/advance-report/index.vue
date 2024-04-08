@@ -466,7 +466,7 @@ let usersOfIssued = ref([
   "Шарафаненко",
   "Волошина",
   "Рейзвих",
-  "Эля"
+  "Эля",
 ]);
 
 import { createClient } from "@supabase/supabase-js";
@@ -637,6 +637,29 @@ function formatNumber(number: number) {
   return formattedString.slice(0, -1);
 }
 
+function reduceArrayProfit(array: any, flag: string) {
+  if (flag === "OurRansom") {
+    array = array.filter((row: any) => row.additionally !== "Отказ брак");
+    return array.reduce(
+      (ac: any, curValue: any) =>
+        ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.005,
+      0
+    );
+  } else if (flag === "ClientRansom") {
+    array = array.filter((row: any) => row.additionally !== "Отказ брак");
+    return array.reduce(
+      (ac: any, curValue: any) => ac + curValue.amountFromClient2 * 0.005,
+      0
+    );
+  } else {
+    array = array.filter((row: any) => row.additionally !== "Отказ брак");
+    return array.reduce(
+      (ac: any, curValue: any) => ac + curValue.amountFromClient3 * 0.005,
+      0
+    );
+  }
+}
+
 function getAllSumFromName(username: string) {
   copyArrayOurRansom.value = ourRansomRows.value?.filter(
     (row) =>
@@ -669,13 +692,23 @@ function getAllSumFromName(username: string) {
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
-  if (username !== "Шведова") {
-    let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
-    return allSum;
-  } else {
-    let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
-    return allSum;
+  let sumOfPVZ5 = 0;
+  let sumOfPVZ6 = 0;
+  if (user.value.role === "RMANAGER") {
+    let arrayOurRansom = ourRansomRows.value?.filter(
+      (row) => row.issued !== null && row.additionally !== null && user.value.PVZ.includes(row.dispatchPVZ)
+    );
+
+    let arrayClientRansom = clientRansomRows.value?.filter(
+      (row) => row.issued !== null && row.additionally !== null && user.value.PVZ.includes(row.dispatchPVZ)
+    );
+
+    sumOfPVZ5 = Math.ceil(reduceArrayProfit(arrayOurRansom, "OurRansom"));
+    sumOfPVZ6 = Math.ceil(reduceArrayProfit(arrayClientRansom, "ClientRansom"));
   }
+
+  let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ5 + +sumOfPVZ6;
+  return allSum;
 }
 
 function getAllSumFromEmployees() {

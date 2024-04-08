@@ -6,6 +6,7 @@ const storeUsers = useUsersStore();
 const storePVZ = usePVZStore();
 const storeRansom = useRansomStore();
 const storeBalance = useBalanceStore();
+const storeAdvanceReport = useAdvanceReports();
 const router = useRouter();
 
 const toast = useToast();
@@ -18,8 +19,10 @@ const token = Cookies.get("token");
 let isLoading = ref(false);
 let rows = ref<Array<IBalance>>();
 let rowsOnline = ref<Array<IBalanceOnline>>();
+let rowsProfit = ref<Array<IBalance>>();
 let rowsDelivery = ref<Array<IBalanceDelivery>>();
 let sumOfReject = ref<any>();
+let rowsWithProfitRows = ref();
 
 onBeforeMount(async () => {
   isLoading.value = true;
@@ -30,17 +33,29 @@ onBeforeMount(async () => {
   sumOfReject.value = await storeRansom.getSumOfRejection();
   rows.value = await storeBalance.getBalanceRows();
   rowsOnline.value = await storeBalance.getBalanceOnlineRows();
+  rowsProfit.value = await storeBalance.getBalanceProfitRows();
   rowsDelivery.value = await storeBalance.getBalanceDeliveryRows();
+  rowsWithProfitRows.value = [...rows.value, ...rowsProfit.value];
 
   getAllSum();
 
-  if (user.value.role === "PVZ" || user.value.role === "COURIER") {
+  if (
+    user.value.role === "PVZ" ||
+    user.value.role === "COURIER" ||
+    user.value.role === "PPVZ"
+  ) {
     selectedPVZ.value = user.value.visiblePVZ;
     rows.value = rows.value?.filter(
       (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
     );
+  } else if (user.value.role === "RMANAGER") {
+    selectedPVZ.value = user.value.PVZ[0];
+    rows.value = rows.value?.filter(
+      (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
+    );
   }
 
+  getProfitRowsSum();
   isLoading.value = false;
 
   pvz.value = await storePVZ.getPVZ();
@@ -66,6 +81,7 @@ let sum1 = ref(0);
 let sum2 = ref(0);
 let sum3 = ref(0);
 let allSum = ref(0);
+let allSumProfit = ref(0);
 let showFilters = ref(false);
 
 let selectedPVZ = ref("Все ПВЗ");
@@ -215,6 +231,50 @@ function reduceArray(array: any, flag: string) {
       );
       return array.reduce((ac: any, curValue: any) => ac + curValue.amountFromClient3, 0);
     }
+  } else if (selectedTypeOfTransaction.value === "Доход PPVZ") {
+    if (flag === "OurRansom") {
+      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      return array.reduce(
+        (ac: any, curValue: any) =>
+          ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.025,
+        0
+      );
+    } else if (flag === "ClientRansom") {
+      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      return array.reduce(
+        (ac: any, curValue: any) => ac + curValue.amountFromClient2 * 0.025,
+        0
+      );
+    } else {
+      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      return array.reduce(
+        (ac: any, curValue: any) => ac + curValue.amountFromClient3 * 0.025,
+        0
+      );
+    }
+  }
+}
+
+function reduceArrayProfit(array: any, flag: string) {
+  if (flag === "OurRansom") {
+    array = array.filter((row: any) => row.additionally !== "Отказ брак");
+    return array.reduce(
+      (ac: any, curValue: any) =>
+        ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.025,
+      0
+    );
+  } else if (flag === "ClientRansom") {
+    array = array.filter((row: any) => row.additionally !== "Отказ брак");
+    return array.reduce(
+      (ac: any, curValue: any) => ac + curValue.amountFromClient2 * 0.025,
+      0
+    );
+  } else {
+    array = array.filter((row: any) => row.additionally !== "Отказ брак");
+    return array.reduce(
+      (ac: any, curValue: any) => ac + curValue.amountFromClient3 * 0.025,
+      0
+    );
   }
 }
 
@@ -420,9 +480,19 @@ function getAllSum() {
         ?.filter((row) => row.received !== null && row.recipient === selectedPVZ.value)
         .reduce((acc, value) => acc + +value.sum, 0);
 
+      let sumOfPVZ4 = rowsProfit.value
+        ?.filter(
+          (row) =>
+            row.received !== null &&
+            row.recipient === "Нет" &&
+            row.pvz === selectedPVZ.value
+        )
+        .reduce((acc, value) => acc + +value.sum, 0);
+
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value - sumOfPVZ - sumOfPVZ2 + sumOfPVZ3;
+      allSum.value =
+        sum1.value + sum2.value - sumOfPVZ - sumOfPVZ2 + sumOfPVZ3 - sumOfPVZ4;
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (selectedPVZ.value === "Все ПВЗ") {
@@ -666,7 +736,104 @@ function getAllSum() {
         allSum.value = 0;
       }
     }
+  } else if (selectedTypeOfTransaction.value === "Доход PPVZ") {
+    if (selectedPVZ.value === "Все ПВЗ") {
+      copyArrayOurRansom.value = ourRansomRows.value?.filter(
+        (row) =>
+          row.issued !== null &&
+          (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+          row.additionally !== null
+      );
+
+      copyArrayClientRansom.value = clientRansomRows.value?.filter(
+        (row) =>
+          row.issued !== null &&
+          (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+          row.additionally !== null
+      );
+
+      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+      allSum.value = sum1.value + sum2.value;
+    } else {
+      copyArrayOurRansom.value = ourRansomRows.value?.filter(
+        (row) =>
+          row.issued !== null &&
+          (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+          row.additionally !== null &&
+          row.dispatchPVZ === selectedPVZ.value
+      );
+
+      copyArrayClientRansom.value = clientRansomRows.value?.filter(
+        (row) =>
+          row.issued !== null &&
+          (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+          row.additionally !== null &&
+          row.dispatchPVZ === selectedPVZ.value
+      );
+
+      let sumOfPVZ = rows.value
+        ?.filter(
+          (row) =>
+            row.received !== null &&
+            row.recipient === "Нет" &&
+            row.pvz === selectedPVZ.value &&
+            row.notation === "Списание дохода"
+        )
+        .reduce((acc, value) => acc + +value.sum, 0);
+
+      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+      allSum.value = sum1.value + sum2.value - sumOfPVZ;
+    }
   }
+}
+
+function getProfitRowsSum() {
+  let newStartingDate = new Date(startingDate.value);
+  newStartingDate.setHours(0);
+  newStartingDate.setMinutes(0);
+  newStartingDate.setSeconds(0);
+  newStartingDate.setMilliseconds(0);
+
+  let newEndDate = new Date(endDate.value);
+  newEndDate.setHours(23);
+  newEndDate.setMinutes(59);
+  newEndDate.setSeconds(59);
+  newEndDate.setMilliseconds(0);
+
+  copyArrayOurRansom.value = ourRansomRows.value?.filter(
+    (row) =>
+      row.issued !== null &&
+      (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+      (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+      row.additionally !== null &&
+      row.dispatchPVZ === selectedPVZ.value
+  );
+
+  copyArrayClientRansom.value = clientRansomRows.value?.filter(
+    (row) =>
+      row.issued !== null &&
+      (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+      (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+      row.additionally !== null &&
+      row.dispatchPVZ === selectedPVZ.value
+  );
+
+  let sumOfPVZ = rowsProfit.value
+    ?.filter(
+      (row) =>
+        row.received !== null && row.recipient === "Нет" && row.pvz === selectedPVZ.value
+    )
+    .reduce((acc, value) => acc + +value.sum, 0);
+
+  sum1.value = reduceArrayProfit(copyArrayOurRansom.value, "OurRansom");
+  sum2.value = reduceArrayProfit(copyArrayClientRansom.value, "ClientRansom");
+  allSumProfit.value = sum1.value + sum2.value - sumOfPVZ;
 }
 
 function formatNumber(number: number) {
@@ -702,11 +869,28 @@ function clearFields() {
 
 let rowData = ref({} as IBalance);
 let isOpen = ref(false);
+let isOpenModalProfit = ref(false);
 let isOpenModalOnline = ref(false);
 let isOpenModalDelivery = ref(false);
 
 function openModal(row: IBalance) {
   isOpen.value = true;
+  if (row.id) {
+    rowData.value = JSON.parse(JSON.stringify(row));
+    rowData.value.issued = rowData.value.issued
+      ? storeUsers.getISODateTime(rowData.value.issued)
+      : null;
+    rowData.value.received = rowData.value.received
+      ? storeUsers.getISODateTime(rowData.value.received)
+      : null;
+  } else {
+    rowData.value = {} as IBalance;
+  }
+}
+
+function openModalProfitRow(row: IBalance) {
+  isOpenModalProfit.value = true;
+  rowData.value.createdUser = user.value.username;
   if (row.id) {
     rowData.value = JSON.parse(JSON.stringify(row));
     rowData.value.issued = rowData.value.issued
@@ -753,6 +937,11 @@ function closeModalDelivery() {
   rowData.value = {} as IBalance;
 }
 
+function closeModalProfitRow() {
+  isOpenModalProfit.value = false;
+  rowData.value = {} as IBalance;
+}
+
 async function createRow() {
   isLoading.value = true;
   if (+rowData.value.sum > Math.ceil(allSum.value)) {
@@ -762,11 +951,21 @@ async function createRow() {
     rows.value = await storeBalance.getBalanceRows();
     closeModal();
     getAllSum();
-    if (user.value.role === "PVZ" || user.value.role === "COURIER") {
+    if (
+      user.value.role === "PVZ" ||
+      user.value.role === "COURIER" ||
+      user.value.role === "PPVZ"
+    ) {
       selectedPVZ.value = user.value.visiblePVZ;
       rows.value = rows.value?.filter(
         (row) =>
           row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
+      );
+    } else if (user.value.role === "RMANAGER") {
+      selectedPVZ.value = user.value.PVZ[0];
+      rows.value = rows.value?.filter(
+        (row) =>
+          user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
       );
     }
   }
@@ -791,19 +990,107 @@ async function createDeliveryRow() {
   isLoading.value = false;
 }
 
-async function updateDeliveryRow(obj: any) {
+async function createProfitRow() {
+  isLoading.value = true;
+  await storeBalance.createBalanceProfitRow(rowData.value);
+  rowsProfit.value = await storeBalance.getBalanceProfitRows();
+  console.log(rowsProfit.value);
+  closeModalProfitRow();
+  getAllSum();
+  getProfitRowsSum();
+  isLoading.value = false;
+}
+
+async function updateDeliveryProfitRow(obj: any) {
   isLoading.value = true;
   let answer = confirm("Вы точно хотите изменить статус?");
   if (answer)
-    await storeBalance.updateDeliveryStatus(obj.row, obj.flag, user.value.username);
-  rows.value = await storeBalance.getBalanceRows();
+    await storeBalance.updateDeliveryProfitStatus(obj.row, obj.flag, user.value.username);
+  if (obj.flag === "received") {
+    await storeAdvanceReport.createAdvanceReport(
+      {
+        date: new Date(),
+        PVZ: selectedPVZ.value,
+        expenditure: obj.row.sum,
+        typeOfExpenditure: "Оплата ФОТ",
+        company: "Darom.pro",
+        createdUser: user.value.username,
+        type: "Нал",
+      },
+      user.value.username
+    );
+  }
+  rowsProfit.value = await storeBalance.getBalanceProfitRows();
   getAllSum();
-  if (user.value.role === "PVZ" || user.value.role === "COURIER") {
+  getProfitRowsSum();
+  if (
+    user.value.role === "PVZ" ||
+    user.value.role === "COURIER" ||
+    user.value.role === "PPVZ"
+  ) {
     selectedPVZ.value = user.value.visiblePVZ;
     rows.value = rows.value?.filter(
       (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
     );
+  } else if (user.value.role === "RMANAGER") {
+    selectedPVZ.value = user.value.PVZ[0];
+    rows.value = rows.value?.filter(
+      (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
+    );
   }
+  isLoading.value = false;
+}
+
+async function updateDeliveryRow(obj: any) {
+  isLoading.value = true;
+  let answer = confirm("Вы точно хотите изменить статус?");
+  if (answer) {
+    if (rowsProfit.value?.find((row) => obj.row.id === row.id)) {
+      await storeBalance.updateDeliveryProfitStatus(
+        obj.row,
+        obj.flag,
+        user.value.username
+      );
+      if (obj.flag === "received") {
+        await storeAdvanceReport.createAdvanceReport(
+          {
+            date: new Date(),
+            PVZ: obj.row.pvz,
+            expenditure: obj.row.sum,
+            typeOfExpenditure: "Оплата ФОТ",
+            company: "Darom.pro",
+            createdUser: user.value.username,
+            type: "Нал",
+          },
+          user.value.username
+        );
+      }
+      rowsProfit.value = await storeBalance.getBalanceProfitRows();
+      rowsWithProfitRows.value = [...rows.value, ...rowsProfit.value];
+    } else {
+      await storeBalance.updateDeliveryStatus(obj.row, obj.flag, user.value.username);
+      rows.value = await storeBalance.getBalanceRows();
+      getAllSum();
+      getProfitRowsSum();
+    }
+  }
+
+  if (
+    user.value.role === "PVZ" ||
+    user.value.role === "COURIER" ||
+    user.value.role === "PPVZ"
+  ) {
+    selectedPVZ.value = user.value.visiblePVZ;
+    rows.value = rows.value?.filter(
+      (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
+    );
+  } else if (user.value.role === "RMANAGER") {
+    selectedPVZ.value = user.value.PVZ[0];
+    rows.value = rows.value?.filter(
+      (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
+    );
+  }
+
   isLoading.value = false;
 }
 
@@ -813,10 +1100,19 @@ async function updateRow() {
   rows.value = await storeBalance.getBalanceRows();
   closeModal();
   getAllSum();
-  if (user.value.role === "PVZ" || user.value.role === "COURIER") {
+  if (
+    user.value.role === "PVZ" ||
+    user.value.role === "COURIER" ||
+    user.value.role === "PPVZ"
+  ) {
     selectedPVZ.value = user.value.visiblePVZ;
     rows.value = rows.value?.filter(
       (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
+    );
+  } else if (user.value.role === "RMANAGER") {
+    selectedPVZ.value = user.value.PVZ[0];
+    rows.value = rows.value?.filter(
+      (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
     );
   }
   isLoading.value = false;
@@ -851,7 +1147,12 @@ async function updateRow() {
                 <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
                   <h1>Показать для ПВЗ:</h1>
                   <select
-                    v-if="user.role !== 'PVZ' && user.role !== 'COURIER'"
+                    v-if="
+                      user.role !== 'PVZ' &&
+                      user.role !== 'COURIER' &&
+                      user.role !== 'PPVZ' &&
+                      user.role !== 'RMANAGER'
+                    "
                     class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="selectedPVZ"
                   >
@@ -880,7 +1181,9 @@ async function updateRow() {
                       v-if="
                         user.role !== 'ADMINISTRATOR' &&
                         user.role !== 'PVZ' &&
-                        user.role !== 'COURIER'
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
                       "
                       value="Доход"
                     >
@@ -890,7 +1193,9 @@ async function updateRow() {
                       v-if="
                         user.role !== 'ADMINISTRATOR' &&
                         user.role !== 'PVZ' &&
-                        user.role !== 'COURIER'
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
                       "
                       value="Доставка"
                     >
@@ -898,7 +1203,11 @@ async function updateRow() {
                     </option>
                     <option value="Баланс наличные">Баланс наличные DP</option>
                     <option
-                      v-if="user.role !== 'PVZ' && user.role !== 'COURIER'"
+                      v-if="
+                        user.role !== 'PVZ' &&
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ'
+                      "
                       value="Баланс безнал"
                     >
                       Баланс онлайн DP
@@ -907,7 +1216,9 @@ async function updateRow() {
                       v-if="
                         user.role !== 'ADMINISTRATOR' &&
                         user.role !== 'PVZ' &&
-                        user.role !== 'COURIER'
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
                       "
                       value="Заказано"
                     >
@@ -917,7 +1228,9 @@ async function updateRow() {
                       v-if="
                         user.role !== 'ADMINISTRATOR' &&
                         user.role !== 'PVZ' &&
-                        user.role !== 'COURIER'
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
                       "
                       value="Заказано1"
                     >
@@ -927,7 +1240,9 @@ async function updateRow() {
                       v-if="
                         user.role !== 'ADMINISTRATOR' &&
                         user.role !== 'PVZ' &&
-                        user.role !== 'COURIER'
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
                       "
                       value="Заказано2"
                     >
@@ -937,7 +1252,9 @@ async function updateRow() {
                       v-if="
                         user.role !== 'ADMINISTRATOR' &&
                         user.role !== 'PVZ' &&
-                        user.role !== 'COURIER'
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
                       "
                       value="Заказано3"
                     >
@@ -1009,7 +1326,11 @@ async function updateRow() {
           </div>
 
           <UIMainButton
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
             class="mt-24"
             @click="openModal"
           >
@@ -1017,7 +1338,7 @@ async function updateRow() {
           >
           <BalanceTable
             @update-delivery-row="updateDeliveryRow"
-            :rows="rows"
+            :rows="rowsWithProfitRows"
             :user="user"
             @open-modal="openModal"
           />
@@ -1062,6 +1383,7 @@ async function updateRow() {
                   <option value="Шведова">Шведова</option>
                   <option value="Директор">Директор</option>
                   <option value="Косой">Косой</option>
+                  <option value="RMANAGER1">RMANAGER1</option>
                 </select>
               </div>
 
@@ -1162,7 +1484,12 @@ async function updateRow() {
                 <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
                   <h1>Показать для ПВЗ:</h1>
                   <select
-                    v-if="user.role !== 'PVZ' && user.role !== 'COURIER'"
+                    v-if="
+                      user.role !== 'PVZ' &&
+                      user.role !== 'COURIER' &&
+                      user.role !== 'PPVZ' &&
+                      user.role !== 'RMANAGER'
+                    "
                     class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="selectedPVZ"
                   >
@@ -1191,7 +1518,9 @@ async function updateRow() {
                       v-if="
                         user.role !== 'ADMINISTRATOR' &&
                         user.role !== 'PVZ' &&
-                        user.role !== 'COURIER'
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
                       "
                       value="Доход"
                     >
@@ -1201,7 +1530,9 @@ async function updateRow() {
                       v-if="
                         user.role !== 'ADMINISTRATOR' &&
                         user.role !== 'PVZ' &&
-                        user.role !== 'COURIER'
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
                       "
                       value="Доставка"
                     >
@@ -1209,7 +1540,12 @@ async function updateRow() {
                     </option>
                     <option value="Баланс наличные">Баланс наличные DP</option>
                     <option
-                      v-if="user.role !== 'PVZ' && user.role !== 'COURIER'"
+                      v-if="
+                        user.role !== 'PVZ' &&
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
+                      "
                       value="Баланс безнал"
                     >
                       Баланс онлайн DP
@@ -1218,7 +1554,9 @@ async function updateRow() {
                       v-if="
                         user.role !== 'ADMINISTRATOR' &&
                         user.role !== 'PVZ' &&
-                        user.role !== 'COURIER'
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
                       "
                       value="Заказано"
                     >
@@ -1228,7 +1566,9 @@ async function updateRow() {
                       v-if="
                         user.role !== 'ADMINISTRATOR' &&
                         user.role !== 'PVZ' &&
-                        user.role !== 'COURIER'
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
                       "
                       value="Заказано1"
                     >
@@ -1238,7 +1578,9 @@ async function updateRow() {
                       v-if="
                         user.role !== 'ADMINISTRATOR' &&
                         user.role !== 'PVZ' &&
-                        user.role !== 'COURIER'
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
                       "
                       value="Заказано2"
                     >
@@ -1248,7 +1590,9 @@ async function updateRow() {
                       v-if="
                         user.role !== 'ADMINISTRATOR' &&
                         user.role !== 'PVZ' &&
-                        user.role !== 'COURIER'
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
                       "
                       value="Заказано3"
                     >
@@ -1320,7 +1664,11 @@ async function updateRow() {
           </div>
 
           <UIMainButton
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
             class="mt-24"
             @click="openModal"
           >
@@ -1331,6 +1679,31 @@ async function updateRow() {
             :rows="rows"
             :user="user"
             @open-modal="openModal"
+          />
+
+          <div>
+            <div class="text-center text-2xl mt-24">
+              <h1>Итого</h1>
+              <h1 class="font-bold text-secondary-color text-4xl mt-3">
+                {{ formatNumber(Math.ceil(allSumProfit)) }} ₽
+              </h1>
+            </div>
+          </div>
+
+          <UIMainButton
+            v-if="user.role === 'PPVZ'"
+            class="mt-10"
+            @click="openModalProfitRow"
+            :disabled="+Math.ceil(allSumProfit) <= 0"
+          >
+            Заявка на вывод дохода наличные</UIMainButton
+          >
+
+          <BalanceTableProfit
+            @update-delivery-row="updateDeliveryProfitRow"
+            :rows="rowsProfit"
+            :user="user"
+            @open-modal="openModalProfitRow"
           />
 
           <div class="mt-24" v-if="user.role === 'ADMIN'">
@@ -1355,8 +1728,8 @@ async function updateRow() {
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.pvz"
                 >
-                  <option v-for="pvzData in pvz" :value="pvzData.name">
-                    {{ pvzData.name }}
+                  <option v-for="pvzData in user.PVZ" :value="pvzData">
+                    {{ pvzData }}
                   </option>
                 </select>
               </div>
@@ -1373,6 +1746,7 @@ async function updateRow() {
                   <option value="Шведова">Шведова</option>
                   <option value="Директор">Директор</option>
                   <option value="Косой">Косой</option>
+                  <option value="RMANAGER1">RMANAGER1</option>
                 </select>
               </div>
 
@@ -1403,6 +1777,74 @@ async function updateRow() {
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
               <UIMainButton @click="createRow">Создать </UIMainButton>
               <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+            </div>
+          </UIModal>
+
+          <UIModal v-show="isOpenModalProfit" @close-modal="closeModalProfitRow">
+            <template v-slot:header>
+              <div class="custom-header" v-if="rowData.id">
+                Изменение строки с ID - <b> {{ rowData.id }}</b>
+              </div>
+              <div class="custom-header" v-else>Создание новой заявки</div>
+            </template>
+            <div class="text-black">
+              <div class="grid grid-cols-2 mb-5">
+                <label for="dispatchPVZ1">ПВЗ</label>
+                <select
+                  :disabled="rowData.id > 0"
+                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
+                  v-model="rowData.pvz"
+                >
+                  <option v-for="pvzData in user.PVZ" :value="pvzData">
+                    {{ pvzData }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="grid grid-cols-2 mb-5">
+                <label for="dispatchPVZ1">Получатель</label>
+                <select
+                  :disabled="rowData.id > 0"
+                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
+                  v-model="rowData.recipient"
+                >
+                  <option value="Нет">Нет</option>
+                  <option value="Рейзвих">Рейзвих</option>
+                  <option value="Шведова">Шведова</option>
+                  <option value="Директор">Директор</option>
+                  <option value="Косой">Косой</option>
+                  <option value="RMANAGER1">RMANAGER1</option>
+                  <option value="PPVZ1">PPVZ1</option>
+                </select>
+              </div>
+
+              <div class="grid grid-cols-2 mb-5">
+                <label for="name">Сумма</label>
+                <input
+                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  v-model="rowData.sum"
+                  :disabled="rowData.id > 0"
+                  type="text"
+                />
+              </div>
+
+              <div class="grid grid-cols-2 mb-5">
+                <label for="name">Примечание</label>
+                <input
+                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  v-model="rowData.notation"
+                  type="text"
+                />
+              </div>
+            </div>
+
+            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
+              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
+              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+            </div>
+            <div class="flex items-center justify-center gap-3 mt-10" v-else>
+              <UIMainButton @click="createProfitRow">Создать </UIMainButton>
+              <UIErrorButton @click="closeModalProfitRow">Отменить </UIErrorButton>
             </div>
           </UIModal>
 

@@ -171,7 +171,7 @@ let showOtherOptions = ref(false);
   </div>
 
   <div class="fixed z-40 flex flex-col gap-3 top-64 left-1/2 translate-x-[-50%] translate-y-[-50%]"
-    v-if="user.dataDelivery === 'WRITE' && checkedRows.length > 0 && user.role !== 'PVZ'">
+    v-if="user.dataDelivery === 'WRITE' && checkedRows.length > 0 && user.role !== 'PVZ' && user.role !== 'PPVZ'">
     <UIActionButton v-if="user.role === 'ADMIN' && user.dataDelivery === 'WRITE'"
       @click="deleteSelectedRows">Удалить
       выделенные записи</UIActionButton>
@@ -282,7 +282,7 @@ let showOtherOptions = ref(false);
             {{ row.name }}
           </td>
           <td v-if="user.fromName3 === 'READ' || user.fromName3 === 'WRITE'" class="py-4 border-2 text-secondary-color underline">
-            <NuxtLink v-if="user.role !== 'PVZ'"
+            <NuxtLink v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
                 class="cursor-pointer hover:text-orange-200 duration-200"
                 :to="`/phone/${row.fromName}`">
                 {{ row.fromName }}

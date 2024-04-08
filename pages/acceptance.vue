@@ -39,7 +39,7 @@ async function updateDeliveryRow(row: any, flag: any) {
     await storeRansom.updateDeliveryStatus(row, flag, "OurRansom", user.value.username);
 }
 async function acceptItem(row: any) {
-    if (user.value.role === "PVZ" || user.value.role === "ADMINISTRATOR") {
+    if (user.value.role === "PVZ" || user.value.role === "ADMINISTRATOR" || user.value.role === "PPVZ") {
         if (user.value.PVZ.includes(row.dispatchPVZ) && user.value.PVZ.includes(selectedPVZ.value) && row.dispatchPVZ === selectedPVZ.value) {
             if (row.deliveredPVZ === null && row.deliveredSC !== null) {
                 await updateDeliveryRow(row, "PVZ");

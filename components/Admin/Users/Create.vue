@@ -52,10 +52,12 @@ function updateSum() {
           <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="role" name="role">
             <option disabled>Выберите роль</option>
             <option value="ADMIN">ADMIN</option>
-            <option selected value="USER">USER</option>
-            <option selected value="SORTIROVKA">SORTIROVKA</option>
-            <option selected value="PVZ">PVZ</option>
-            <option selected value="ADMINISTRATOR">ADMINISTRATOR</option>
+            <option value="USER">USER</option>
+            <option value="SORTIROVKA">SORTIROVKA</option>
+            <option value="PVZ">PVZ</option>
+            <option value="PPVZ">PPVZ</option>
+            <option value="RMANAGER">RMANAGER</option>
+            <option value="ADMINISTRATOR">ADMINISTRATOR</option>
             <option value="COURIER">COURIER</option>
             <option value="DRIVER">DRIVER</option>
             <option value="SHVEDOVA">SHVEDOVA</option>

@@ -166,7 +166,7 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
   if (filteredRows.value) {
     if (user.value.role === "SORTIROVKA") {
       filteredRows.value = filteredRows.value.filter((row) => row.deliveredPVZ === null);
-    } else if (user.value.role === "PVZ") {
+    } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {
       let today = new Date().toLocaleDateString("ru-RU", {
         day: "2-digit",
         month: "2-digit",
@@ -597,7 +597,7 @@ async function showDeletedRows(flag: boolean) {
       <NuxtLayout name="user">
         <div v-if="!isLoading" class="mt-3">
           <div>
-            <SpreadsheetsOurRansomFilters v-if="rows && user.role !== 'PVZ'" @filtered-rows="handleFilteredRows"
+            <SpreadsheetsOurRansomFilters v-if="rows && user.role !== 'PVZ' && user.role !== 'PPVZ'" @filtered-rows="handleFilteredRows"
               :rows="rows" :user="user" />
             <div class="mt-5 flex items-center gap-3" v-if="user.dataOurRansom === 'WRITE'">
               <UIMainButton v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'" @click="openModal">Создать

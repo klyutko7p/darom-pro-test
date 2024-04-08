@@ -172,8 +172,8 @@ let isShowAddSettings = ref(false);
       <div
         v-if="
           (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
-          user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ'
+          user.role === 'ADMINISTRATOR' || 
+          user.role === 'PVZ' 
         "
         role="button"
         @click="router.push('/spreadsheets/refunds')"
@@ -203,7 +203,7 @@ let isShowAddSettings = ref(false);
       </div>
       <div
         v-if="
-          user.role === 'ADMINISTRATOR' || user.role === 'ADMIN' || user.role === 'PVZ'
+          user.role === 'ADMINISTRATOR' || user.role === 'ADMIN' || user.role === 'PVZ' || user.role === 'PPVZ' || user.role === 'RMANAGER' 
         "
         role="button"
         @click="router.push('/acceptance')"
@@ -219,8 +219,8 @@ let isShowAddSettings = ref(false);
         v-if="
           (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
           user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ' ||
-          user.role === 'COURIER'
+          user.role === 'PVZ' || 
+          user.role === 'COURIER' || user.role === 'PPVZ' || user.role === 'RMANAGER' 
         "
         role="button"
         @click="router.push('/balance')"
@@ -252,7 +252,7 @@ let isShowAddSettings = ref(false);
           user.role === 'ADMINISTRATOR' ||
           user.role === 'OFFICE' ||
           user.role === 'COURIER' ||
-          user.username === 'Волошина'
+          user.username === 'Волошина' || user.role === 'RMANAGER' 
         "
         role="button"
         @click="router.push('/advance-report')"
@@ -315,7 +315,7 @@ let isShowAddSettings = ref(false);
       </div>
       <div v-if="isShowAddSettings">
         <div
-          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR' && user.role !== 'RMANAGER'"
           role="button"
           @click="router.push('/admin/users')"
           tabindex="0"
@@ -571,7 +571,7 @@ let isShowAddSettings = ref(false);
       </div>
       <div
         v-if="
-          user.role === 'ADMINISTRATOR' || user.role === 'ADMIN' || user.role === 'PVZ'
+          user.role === 'ADMINISTRATOR' || user.role === 'ADMIN' || user.role === 'PVZ' || user.role === 'PPVZ' || user.role === 'RMANAGER' 
         "
         role="button"
         @click="router.push('/acceptance')"
@@ -587,7 +587,7 @@ let isShowAddSettings = ref(false);
         v-if="
           (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
           user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ'
+          user.role === 'PVZ' || user.role === 'PPVZ' || user.role === 'RMANAGER' 
         "
         role="button"
         @click="router.push('/balance')"
@@ -619,7 +619,7 @@ let isShowAddSettings = ref(false);
           user.role === 'ADMINISTRATOR' ||
           user.role === 'OFFICE' ||
           user.role === 'COURIER' ||
-          user.username === 'Волошина'
+          user.username === 'Волошина' || user.role === 'RMANAGER' 
         "
         role="button"
         @click="router.push('/advance-report')"
