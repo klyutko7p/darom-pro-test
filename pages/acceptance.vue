@@ -242,6 +242,8 @@ let selectedPVZ = ref('')
     </div>
 
     <div v-else class="flex items-center justify-center">
-        <UISpinner />
-    </div>
+        <NuxtLayout name="default">
+          <UISpinner />
+        </NuxtLayout>
+      </div>
 </template>

@@ -208,7 +208,9 @@ let value = ref("");
       <SpreadsheetsOrderTable :link="link" :rows="copyRows" :user="user" />
     </div>
   </div>
-  <div v-else>
-    <UISpinner />
+  <div v-else class="flex items-center justify-center">
+    <NuxtLayout name="default">
+      <UISpinner />
+    </NuxtLayout>
   </div>
 </template>

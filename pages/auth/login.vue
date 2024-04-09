@@ -103,7 +103,9 @@ onBeforeMount(async () => {
       </form>
     </div>
   </div>
-  <div v-else>
-    <UISpinner />
+  <div v-else class="flex items-center justify-center">
+    <NuxtLayout name="default">
+      <UISpinner />
+    </NuxtLayout>
   </div>
 </template>

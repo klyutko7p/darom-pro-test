@@ -248,6 +248,8 @@ let banks = ref(["тинькофф", "сбер", "почтабанк", "озон
   </div>
 
   <div v-else class="flex items-center justify-center">
-    <UISpinner />
+    <NuxtLayout name="default">
+      <UISpinner />
+    </NuxtLayout>
   </div>
 </template>
