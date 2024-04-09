@@ -502,29 +502,35 @@ async function createRow() {
     +rowData.value.expenditure > +sumCreditOnline.value
   ) {
     toast.error("Баланс кредита меньше чем вписанная сумма!");
+  } else if (
+    rowData.value.typeOfExpenditure === "Передача денежных средств" &&
+    !rowData.value.issuedUser
+  ) {
+    toast.error("Выберите получателя!");
   } else {
     isLoading.value = true;
     await storeAdvanceReports.createAdvanceReport(rowData.value, user.value.username);
+    rows.value = await storeAdvanceReports.getAdvancedReports();
+    originallyRows.value = rows.value;
+
+    if (user.value.role !== "ADMIN") {
+      rows.value = rows.value?.filter(
+        (row) =>
+          row.createdUser === user.value.username ||
+          row.issuedUser === user.value.username
+      );
+    } else {
+      rows.value = rows.value;
+    }
+    filteredRows.value = rows.value;
+
+    closeModal();
+    closeModalAdmin();
+    closeModalAdminOOO();
+    getSumCreditCash();
+    getSumCreditOnline();
   }
 
-  rows.value = await storeAdvanceReports.getAdvancedReports();
-  originallyRows.value = rows.value;
-
-  if (user.value.role !== "ADMIN") {
-    rows.value = rows.value?.filter(
-      (row) =>
-        row.createdUser === user.value.username || row.issuedUser === user.value.username
-    );
-  } else {
-    rows.value = rows.value;
-  }
-  filteredRows.value = rows.value;
-
-  closeModal();
-  closeModalAdmin();
-  closeModalAdminOOO();
-  getSumCreditCash();
-  getSumCreditOnline();
   isLoading.value = false;
 }
 
@@ -696,11 +702,17 @@ function getAllSumFromName(username: string) {
   let sumOfPVZ6 = 0;
   if (user.value.role === "RMANAGER") {
     let arrayOurRansom = ourRansomRows.value?.filter(
-      (row) => row.issued !== null && row.additionally !== null && user.value.PVZ.includes(row.dispatchPVZ)
+      (row) =>
+        row.issued !== null &&
+        row.additionally !== null &&
+        user.value.PVZ.includes(row.dispatchPVZ)
     );
 
     let arrayClientRansom = clientRansomRows.value?.filter(
-      (row) => row.issued !== null && row.additionally !== null && user.value.PVZ.includes(row.dispatchPVZ)
+      (row) =>
+        row.issued !== null &&
+        row.additionally !== null &&
+        user.value.PVZ.includes(row.dispatchPVZ)
     );
 
     sumOfPVZ5 = Math.ceil(reduceArrayProfit(arrayOurRansom, "OurRansom"));

@@ -752,6 +752,16 @@ let isOpenOnlineStatus = ref(false);
     <div v-else>
       <NuxtLayout name="user">
         <div v-if="!isLoading" class="mt-3">
+          <div class="mt-10 flex items-center justify-center">
+            <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
+            <input
+              class="opacity-0 max-w-[1px]"
+              ref="myInput"
+              autofocus
+              v-model="scanStringItem"
+              @input="scanItem"
+            />
+          </div>
           <SpreadsheetsOurRansomTable
             @update-delivery-row="updateDeliveryRow"
             :rows="filteredRows"
