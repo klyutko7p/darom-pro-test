@@ -91,6 +91,30 @@ export const useBalanceStore = defineStore("balance", () => {
     }
   }
 
+  async function createBalanceProfitManagerRow(row: IBalance) {
+    try {
+      let data = await useFetch("/api/balance/create-profit-manager-row", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ row: row }),
+      });
+
+      if (data.data.value === undefined) {
+        cachesBalanceOnlineRows = null;
+        toast.success("Запись успешно создана!");
+      } else {
+        console.log(data.data.value);
+        toast.error("Произошла ошибка при создании записи");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function createBalanceDeliveryRow(row: IBalanceDelivery) {
     try {
       if (row.sum === undefined) row.sum = "0";
@@ -163,6 +187,23 @@ export const useBalanceStore = defineStore("balance", () => {
   async function getBalanceProfitRows() {
     try {
       let { data }: any = await useFetch("/api/balance/get-profit-rows", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getBalanceProfitManagerRows() {
+    try {
+      let { data }: any = await useFetch("/api/balance/get-profit-manager-rows", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -285,6 +326,34 @@ export const useBalanceStore = defineStore("balance", () => {
     }
   }
 
+  async function updateDeliveryProfitManagerStatus(
+    row: IBalance,
+    flag: string,
+    username: string
+  ) {
+    try {
+      let data = await useFetch("/api/balance/update-profit-manager-delivery", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ row: row, flag: flag, username: username }),
+      });
+
+      if (data.data.value === undefined) {
+        toast.success("Статус успешно обновлен!");
+      } else {
+        console.log(data.data.value);
+        toast.error("Произошла ошибка");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+        toast.error(error.message);
+      }
+    }
+  }
+
   return {
     updateDeliveryStatus,
     updateBalanceRow,
@@ -297,5 +366,8 @@ export const useBalanceStore = defineStore("balance", () => {
     getBalanceProfitRows,
     createBalanceProfitRow,
     updateDeliveryProfitStatus,
+    getBalanceProfitManagerRows,
+    updateDeliveryProfitManagerStatus,
+    createBalanceProfitManagerRow
   };
 });

@@ -618,7 +618,7 @@ let showPayRejectClient = ref(false);
         @click="showPayRejectClient = !showPayRejectClient"
         >Отказ клиент
       </UIActionButton2>
-      <div v-if="showPayRejectClient">
+      <div v-if="showPayRejectClient" class="flex flex-col gap-3">
         <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"
           >Отказ клиент онлайн</UIActionButton2
         >

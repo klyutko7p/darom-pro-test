@@ -136,11 +136,11 @@ onMounted(async () => {
         class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5"
       >
         <h1 class="text-xl" v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'">
-          Товаров в работе:
+          Товаров к отправке:
           <span class="text-secondary-color font-bold">{{ totalRows }}</span>
         </h1>
         <h1 class="text-xl" v-if="user.role === 'PVZ' || user.role === 'PPVZ'">
-          Товаров к выдаче:
+          Товаров к отправке:
           <span class="text-secondary-color font-bold">{{ totalRows }}</span>
         </h1>
       </div>
@@ -175,7 +175,7 @@ onMounted(async () => {
     </div>
   </div>
   <div
-    class="fixed top-16 z-40 left-1/2 translate-x-[-50%] translate-y-[-50%]"
+    class="fixed top-32 z-40 left-1/2 translate-x-[-50%] translate-y-[-50%]"
     v-if="checkedRows.length > 0"
   >
     <h1
@@ -186,7 +186,7 @@ onMounted(async () => {
   </div>
 
   <div
-    class="fixed z-40 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
+    class="fixed z-40 top-56 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
     v-if="checkedRows.length > 0 && user.role !== 'PVZ' && user.role !== 'PPVZ'"
   >
     <UIActionButton

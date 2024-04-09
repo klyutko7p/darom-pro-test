@@ -308,6 +308,19 @@ model ProfitPPVZ {
   recipient     String?   @default("Нет")
 }
 
+model ProfitManager {
+  id            Int       @id @default(autoincrement())
+  pvz           String?
+  sum           String?
+  issued        DateTime?
+  received      DateTime?
+  createdUser   String?
+  receivedUser  String?
+  notation      String?
+  receivedUser2 String?
+  recipient     String?   @default("Нет")
+}
+
 enum Role {
   USER
   ADMIN

@@ -20,6 +20,7 @@ let isLoading = ref(false);
 let rows = ref<Array<IBalance>>();
 let rowsOnline = ref<Array<IBalanceOnline>>();
 let rowsProfit = ref<Array<IBalance>>();
+let rowsProfitManager = ref<Array<IBalance>>();
 let rowsDelivery = ref<Array<IBalanceDelivery>>();
 let sumOfReject = ref<any>();
 let rowsWithProfitRows = ref();
@@ -34,8 +35,13 @@ onBeforeMount(async () => {
   rows.value = await storeBalance.getBalanceRows();
   rowsOnline.value = await storeBalance.getBalanceOnlineRows();
   rowsProfit.value = await storeBalance.getBalanceProfitRows();
+  rowsProfitManager.value = await storeBalance.getBalanceProfitManagerRows();
   rowsDelivery.value = await storeBalance.getBalanceDeliveryRows();
-  rowsWithProfitRows.value = [...rows.value, ...rowsProfit.value];
+  rowsWithProfitRows.value = [
+    ...rows.value,
+    ...rowsProfit.value,
+    ...rowsProfitManager.value,
+  ];
 
   getAllSum();
 
@@ -56,6 +62,7 @@ onBeforeMount(async () => {
   }
 
   getProfitRowsSum();
+  getProfitManagerRowsSum();
   isLoading.value = false;
 
   pvz.value = await storePVZ.getPVZ();
@@ -82,6 +89,7 @@ let sum2 = ref(0);
 let sum3 = ref(0);
 let allSum = ref(0);
 let allSumProfit = ref(0);
+let allSumProfitManager = ref(0);
 let showFilters = ref(false);
 
 let selectedPVZ = ref("Все ПВЗ");
@@ -836,6 +844,69 @@ function getProfitRowsSum() {
   allSumProfit.value = sum1.value + sum2.value - sumOfPVZ;
 }
 
+function reduceArrayProfitManager(array: any, flag: string) {
+  if (flag === "OurRansom") {
+    array = array.filter((row: any) => row.additionally !== "Отказ брак");
+    return array.reduce(
+      (ac: any, curValue: any) =>
+        ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.005,
+      0
+    );
+  } else if (flag === "ClientRansom") {
+    array = array.filter((row: any) => row.additionally !== "Отказ брак");
+    return array.reduce(
+      (ac: any, curValue: any) => ac + curValue.amountFromClient2 * 0.005,
+      0
+    );
+  } else {
+    array = array.filter((row: any) => row.additionally !== "Отказ брак");
+    return array.reduce(
+      (ac: any, curValue: any) => ac + curValue.amountFromClient3 * 0.005,
+      0
+    );
+  }
+}
+
+function getProfitManagerRowsSum() {
+  let newStartingDate = new Date(startingDate.value);
+  newStartingDate.setHours(0);
+  newStartingDate.setMinutes(0);
+  newStartingDate.setSeconds(0);
+  newStartingDate.setMilliseconds(0);
+
+  let newEndDate = new Date(endDate.value);
+  newEndDate.setHours(23);
+  newEndDate.setMinutes(59);
+  newEndDate.setSeconds(59);
+  newEndDate.setMilliseconds(0);
+
+  copyArrayOurRansom.value = ourRansomRows.value?.filter(
+    (row) =>
+      row.issued !== null &&
+      (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+      (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+      row.additionally !== null &&
+      row.dispatchPVZ === selectedPVZ.value
+  );
+
+  copyArrayClientRansom.value = clientRansomRows.value?.filter(
+    (row) =>
+      row.issued !== null &&
+      (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+      (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+      row.additionally !== null &&
+      row.dispatchPVZ === selectedPVZ.value
+  );
+
+  let sumOfPVZ = rowsProfitManager.value
+    ?.filter((row) => row.received !== null && row.recipient === "Нет" && row.pvz === selectedPVZ.value)
+    .reduce((acc, value) => acc + +value.sum, 0);
+
+  sum1.value = reduceArrayProfitManager(copyArrayOurRansom.value, "OurRansom");
+  sum2.value = reduceArrayProfitManager(copyArrayClientRansom.value, "ClientRansom");
+  allSumProfitManager.value = sum1.value + sum2.value - sumOfPVZ;
+}
+
 function formatNumber(number: number) {
   let numberString = number.toString();
 
@@ -870,6 +941,7 @@ function clearFields() {
 let rowData = ref({} as IBalance);
 let isOpen = ref(false);
 let isOpenModalProfit = ref(false);
+let isOpenModalProfitManager = ref(false);
 let isOpenModalOnline = ref(false);
 let isOpenModalDelivery = ref(false);
 
@@ -890,6 +962,22 @@ function openModal(row: IBalance) {
 
 function openModalProfitRow(row: IBalance) {
   isOpenModalProfit.value = true;
+  rowData.value.createdUser = user.value.username;
+  if (row.id) {
+    rowData.value = JSON.parse(JSON.stringify(row));
+    rowData.value.issued = rowData.value.issued
+      ? storeUsers.getISODateTime(rowData.value.issued)
+      : null;
+    rowData.value.received = rowData.value.received
+      ? storeUsers.getISODateTime(rowData.value.received)
+      : null;
+  } else {
+    rowData.value = {} as IBalance;
+  }
+}
+
+function openModalProfitRowManager(row: IBalance) {
+  isOpenModalProfitManager.value = true;
   rowData.value.createdUser = user.value.username;
   if (row.id) {
     rowData.value = JSON.parse(JSON.stringify(row));
@@ -942,6 +1030,11 @@ function closeModalProfitRow() {
   rowData.value = {} as IBalance;
 }
 
+function closeModalProfitRowManager() {
+  isOpenModalProfitManager.value = false;
+  rowData.value = {} as IBalance;
+}
+
 async function createRow() {
   isLoading.value = true;
   if (+rowData.value.sum > Math.ceil(allSum.value)) {
@@ -949,7 +1042,11 @@ async function createRow() {
   } else {
     await storeBalance.createBalanceRow(rowData.value, user.value.username);
     rows.value = await storeBalance.getBalanceRows();
-    rowsWithProfitRows.value = [...rows.value, ...rowsProfit.value];
+    rowsWithProfitRows.value = [
+      ...rows.value,
+      ...rowsProfit.value,
+      ...rowsProfitManager.value,
+    ];
     closeModal();
     getAllSum();
     if (
@@ -1001,6 +1098,20 @@ async function createProfitRow() {
   isLoading.value = false;
 }
 
+async function createProfitManagerRow() {
+  if (+rowData.value.sum > Math.ceil(allSumProfitManager.value)) {
+    toast.error("Вы не можете вывести такую сумму!");
+  } else {
+    isLoading.value = true;
+    rowData.value.createdUser = user.value.username;
+    await storeBalance.createBalanceProfitManagerRow(rowData.value);
+    rowsProfitManager.value = await storeBalance.getBalanceProfitManagerRows();
+    closeModalProfitRowManager();
+    getProfitManagerRowsSum();
+    isLoading.value = false;
+  }
+}
+
 async function updateDeliveryProfitRow(obj: any) {
   isLoading.value = true;
   let answer = confirm("Вы точно хотите изменить статус?");
@@ -1023,6 +1134,48 @@ async function updateDeliveryProfitRow(obj: any) {
   rowsProfit.value = await storeBalance.getBalanceProfitRows();
   getAllSum();
   getProfitRowsSum();
+  getProfitManagerRowsSum();
+  if (
+    user.value.role === "PVZ" ||
+    user.value.role === "COURIER" ||
+    user.value.role === "PPVZ"
+  ) {
+    selectedPVZ.value = user.value.visiblePVZ;
+    rows.value = rows.value?.filter(
+      (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
+    );
+  } else if (user.value.role === "RMANAGER") {
+    selectedPVZ.value = user.value.PVZ[0];
+    rows.value = rows.value?.filter(
+      (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
+    );
+  }
+  isLoading.value = false;
+}
+
+async function updateDeliveryProfitManagerStatus(obj: any) {
+  isLoading.value = true;
+  let answer = confirm("Вы точно хотите изменить статус?");
+  if (answer)
+    await storeBalance.updateDeliveryProfitManagerStatus(obj.row, obj.flag, user.value.username);
+  if (obj.flag === "received") {
+    await storeAdvanceReport.createAdvanceReport(
+      {
+        date: new Date(),
+        PVZ: selectedPVZ.value,
+        expenditure: obj.row.sum,
+        typeOfExpenditure: "Оплата ФОТ",
+        company: "Darom.pro",
+        createdUser: user.value.username,
+        type: "Нал",
+      },
+      user.value.username
+    );
+  }
+  rowsProfitManager.value = await storeBalance.getBalanceProfitManagerRows();
+  getAllSum();
+  getProfitRowsSum();
+  getProfitManagerRowsSum();
   if (
     user.value.role === "PVZ" ||
     user.value.role === "COURIER" ||
@@ -1066,12 +1219,35 @@ async function updateDeliveryRow(obj: any) {
         );
       }
       rowsProfit.value = await storeBalance.getBalanceProfitRows();
-      rowsWithProfitRows.value = [...rows.value, ...rowsProfit.value];
+      rowsWithProfitRows.value = [...rows.value, ...rowsProfit.value, ...rowsProfitManager.value];
+    } else if (rowsProfitManager.value?.find((row) => obj.row.id === row.id)) {
+      await storeBalance.updateDeliveryProfitManagerStatus(
+        obj.row,
+        obj.flag,
+        user.value.username
+      );
+      if (obj.flag === "received") {
+        await storeAdvanceReport.createAdvanceReport(
+          {
+            date: new Date(),
+            PVZ: "Офис",
+            expenditure: obj.row.sum,
+            typeOfExpenditure: "Оплата ФОТ",
+            company: "Darom.pro",
+            createdUser: user.value.username,
+            type: "Нал",
+          },
+          user.value.username
+        );
+      }
+      rowsProfitManager.value = await storeBalance.getBalanceProfitManagerRows();
+      rowsWithProfitRows.value = [...rows.value, ...rowsProfit.value, ...rowsProfitManager.value];
     } else {
       await storeBalance.updateDeliveryStatus(obj.row, obj.flag, user.value.username);
       rows.value = await storeBalance.getBalanceRows();
       getAllSum();
       getProfitRowsSum();
+      getProfitManagerRowsSum();
     }
   }
 
@@ -1093,6 +1269,27 @@ async function updateDeliveryRow(obj: any) {
 
   isLoading.value = false;
 }
+
+// let sumOfPVZ5 = 0;
+//   let sumOfPVZ6 = 0;
+//   if (user.value.role === "RMANAGER") {
+//     let arrayOurRansom = ourRansomRows.value?.filter(
+//       (row) =>
+//         row.issued !== null &&
+//         row.additionally !== null &&
+//         user.value.PVZ.includes(row.dispatchPVZ)
+//     );
+
+//     let arrayClientRansom = clientRansomRows.value?.filter(
+//       (row) =>
+//         row.issued !== null &&
+//         row.additionally !== null &&
+//         user.value.PVZ.includes(row.dispatchPVZ)
+//     );
+
+//     sumOfPVZ5 = Math.ceil(reduceArrayProfit(arrayOurRansom, "OurRansom"));
+//     sumOfPVZ6 = Math.ceil(reduceArrayProfit(arrayClientRansom, "ClientRansom"));
+//   }
 
 async function updateRow() {
   isLoading.value = true;
@@ -1631,7 +1828,13 @@ async function updateRow() {
               </div>
             </div>
 
-            <div v-if="selectedTypeOfTransaction !== 'Доставка'">
+            <div
+              v-if="
+                selectedTypeOfTransaction !== 'Доставка' &&
+                user.role !== 'RMANAGER' &&
+                user.role !== 'PPVZ'
+              "
+            >
               <div class="text-center text-2xl mt-10">
                 <h1>Итого</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
@@ -1639,8 +1842,23 @@ async function updateRow() {
                 </h1>
               </div>
             </div>
+
             <div
-              v-else
+              v-else-if="
+                selectedTypeOfTransaction !== 'Доставка' &&
+                (user.role === 'RMANAGER' || user.role === 'PPVZ')
+              "
+            >
+              <div class="text-center text-2xl mt-10">
+                <h1>Баланс ППВЗ</h1>
+                <h1 class="font-bold text-secondary-color text-4xl mt-3">
+                  {{ formatNumber(Math.ceil(allSum)) }} ₽
+                </h1>
+              </div>
+            </div>
+
+            <div
+              v-else-if="selectedTypeOfTransaction === 'Доставка'"
               class="flex items-center justify-center max-md:flex-col gap-24 max-md:gap-0"
             >
               <div class="text-center text-2xl mt-10">
@@ -1682,9 +1900,9 @@ async function updateRow() {
             @open-modal="openModal"
           />
 
-          <div>
+          <div v-if="user.role === 'RMANAGER' || user.role === 'PPVZ'">
             <div class="text-center text-2xl mt-24">
-              <h1>Итого</h1>
+              <h1>Доход ППВЗ</h1>
               <h1 class="font-bold text-secondary-color text-4xl mt-3">
                 {{ formatNumber(Math.ceil(allSumProfit)) }} ₽
               </h1>
@@ -1703,6 +1921,31 @@ async function updateRow() {
           <BalanceTableProfit
             @update-delivery-row="updateDeliveryProfitRow"
             :rows="rowsProfit"
+            :user="user"
+            @open-modal="openModalProfitRow"
+          />
+
+          <div v-if="user.role === 'RMANAGER'">
+            <div class="text-center text-2xl mt-24">
+              <h1>Доход Менеджера</h1>
+              <h1 class="font-bold text-secondary-color text-4xl mt-3">
+                {{ formatNumber(Math.ceil(allSumProfitManager)) }} ₽
+              </h1>
+            </div>
+          </div>
+
+          <UIMainButton
+            v-if="user.role === 'RMANAGER'"
+            class="mt-10"
+            @click="openModalProfitRowManager"
+            :disabled="+Math.ceil(allSumProfitManager) <= 0"
+          >
+            Заявка на вывод дохода наличные</UIMainButton
+          >
+
+          <BalanceTableProfitManager
+            @update-delivery-row="updateDeliveryProfitManagerStatus"
+            :rows="rowsProfitManager?.filter((row) => row.createdUser === user.username)"
             :user="user"
             @open-modal="openModalProfitRow"
           />
@@ -1778,6 +2021,77 @@ async function updateRow() {
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
               <UIMainButton @click="createRow">Создать </UIMainButton>
               <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+            </div>
+          </UIModal>
+
+          <UIModal
+            v-show="isOpenModalProfitManager"
+            @close-modal="closeModalProfitRowManager"
+          >
+            <template v-slot:header>
+              <div class="custom-header" v-if="rowData.id">
+                Изменение строки с ID - <b> {{ rowData.id }}</b>
+              </div>
+              <div class="custom-header" v-else>Создание новой заявки</div>
+            </template>
+            <div class="text-black">
+              <div class="grid grid-cols-2 mb-5">
+                <label for="dispatchPVZ1">ПВЗ</label>
+                <select
+                  :disabled="rowData.id > 0"
+                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
+                  v-model="rowData.pvz"
+                >
+                  <option v-for="pvzData in user.PVZ" :value="pvzData">
+                    {{ pvzData }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="grid grid-cols-2 mb-5">
+                <label for="dispatchPVZ1">Получатель</label>
+                <select
+                  :disabled="rowData.id > 0"
+                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
+                  v-model="rowData.recipient"
+                >
+                  <option value="Нет">Нет</option>
+                  <option value="Рейзвих">Рейзвих</option>
+                  <option value="Шведова">Шведова</option>
+                  <option value="Директор">Директор</option>
+                  <option value="Косой">Косой</option>
+                  <option value="RMANAGER1">RMANAGER1</option>
+                  <option value="PPVZ1">PPVZ1</option>
+                </select>
+              </div>
+
+              <div class="grid grid-cols-2 mb-5">
+                <label for="name">Сумма</label>
+                <input
+                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  v-model="rowData.sum"
+                  :disabled="rowData.id > 0"
+                  type="text"
+                />
+              </div>
+
+              <div class="grid grid-cols-2 mb-5">
+                <label for="name">Примечание</label>
+                <input
+                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  v-model="rowData.notation"
+                  type="text"
+                />
+              </div>
+            </div>
+
+            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
+              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
+              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+            </div>
+            <div class="flex items-center justify-center gap-3 mt-10" v-else>
+              <UIMainButton @click="createProfitManagerRow">Создать </UIMainButton>
+              <UIErrorButton @click="closeModalProfitRowManager">Отменить </UIErrorButton>
             </div>
           </UIModal>
 
