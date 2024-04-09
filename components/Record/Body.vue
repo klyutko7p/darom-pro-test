@@ -80,12 +80,12 @@ function printPage() {
         @click="router.push(`/spreadsheets/order/${row.clientLink1}`)">
         {{ formatPhoneNumber(row.fromName) }}
       </h1>
-      <h1 v-if="link?.includes(2) && row.fromName"
+      <h1 v-if="link?.includes('2') && row.fromName"
         class="cursor-pointer underline text-secondary-color duration-200 hover:opacity-50"
         @click="router.push(`/spreadsheets/order/${row.clientLink2}`)">
         {{ row.fromName }}
       </h1>
-      <h1 v-if="link?.includes(3) && row.fromName"
+      <h1 v-if="link?.includes('3') && row.fromName"
         class="cursor-pointer underline text-secondary-color duration-200 hover:opacity-50"
         @click="router.push(`/spreadsheets/order/${row.clientLink3}`)">
         {{ row.fromName }}
@@ -105,7 +105,7 @@ function printPage() {
       </h1>
     </div>
 
-    <div v-if="link?.includes(2)" class="grid grid-cols-2 border-2 border-black p-3 border-dashed text-center">
+    <div v-if="link?.includes('2')" class="grid grid-cols-2 border-2 border-black p-3 border-dashed text-center">
       <h1>Доставлено на СЦ:</h1>
       <Icon @click="updateDeliveryRow(row, 'SC'), printPage()" v-if="!row.deliveredSC &&
         user.dataClientRansom === 'WRITE' &&
@@ -117,7 +117,7 @@ function printPage() {
       </h1>
     </div>
 
-    <div v-if="link?.includes(3)" class="grid grid-cols-2 border-2 border-black p-3 border-dashed text-center">
+    <div v-if="link?.includes('3')" class="grid grid-cols-2 border-2 border-black p-3 border-dashed text-center">
       <h1>Отсортировано:</h1>
       <Icon @click="updateDeliveryRow(row, 'sorted')" v-if="!row.sorted &&
         user.dataDelivery === 'WRITE' &&
@@ -147,7 +147,7 @@ function printPage() {
       </h1>
     </div>
 
-    <div v-if="link?.includes(2)" class="grid grid-cols-2 border-2 border-black p-3 border-dashed text-center">
+    <div v-if="link?.includes('2')" class="grid grid-cols-2 border-2 border-black p-3 border-dashed text-center">
       <h1>Доставлено на ПВЗ:</h1>
       <Icon @click="updateDeliveryRow(row, 'PVZ')" v-if="!row.deliveredPVZ &&
         user.dataClientRansom === 'WRITE' &&
@@ -164,7 +164,7 @@ function printPage() {
       <h1>{{ row.nameOfAction }}</h1>
     </div>
 
-    <div v-if="link?.includes(3)" class="grid grid-cols-2 border-2 border-black p-3 border-dashed text-center">
+    <div v-if="link?.includes('3')" class="grid grid-cols-2 border-2 border-black p-3 border-dashed text-center">
       <h1>Оплачено:</h1>
       <Icon @click="updateDeliveryRow(row, 'paid')" v-if="!row.paid &&
         user.dataDelivery === 'WRITE' &&
@@ -187,21 +187,13 @@ function printPage() {
     <div v-if="link?.includes('1') || link?.includes('old')"
       class="grid grid-cols-2 border-2 border-black p-3 border-dashed text-center max-lg:order-6">
       <h1>Выдан клиенту:</h1>
-      <Icon @click="updateDeliveryRow(row, 'issued')"
-        v-if="!row.issued && user.dataOurRansom === 'WRITE' && user.issued1 === 'WRITE'"
-        class="text-green-500 mx-auto cursor-pointer hover:text-green-300 duration-200"
-        name="mdi:checkbox-multiple-marked-circle" size="32" />
       <h1 class="font-bold text-green-500">
         {{ row.issued ? storeUsers.getNormalizedDate(row.issued) : "" }}
       </h1>
     </div>
 
-    <div v-if="link?.includes(2)" class="grid grid-cols-2 border-2 border-black p-3 border-dashed text-center">
+    <div v-if="link?.includes('2')" class="grid grid-cols-2 border-2 border-black p-3 border-dashed text-center">
       <h1>Выдан клиенту:</h1>
-      <Icon @click="updateDeliveryRow(row, 'issued')"
-        v-if="!row.issued && user.dataClientRansom === 'WRITE' && user.issued2 === 'WRITE'"
-        class="text-green-500 mx-auto cursor-pointer hover:text-green-300 duration-200"
-        name="mdi:checkbox-multiple-marked-circle" size="32" />
       <h1 class="font-bold text-green-500">
         {{ row.issued ? storeUsers.getNormalizedDate(row.issued) : "" }}
       </h1>
