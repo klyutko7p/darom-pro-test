@@ -1162,7 +1162,7 @@ async function updateDeliveryProfitManagerStatus(obj: any) {
     await storeAdvanceReport.createAdvanceReport(
       {
         date: new Date(),
-        PVZ: selectedPVZ.value,
+        PVZ: 'Офис',
         expenditure: obj.row.sum,
         typeOfExpenditure: "Оплата ФОТ",
         company: "Darom.pro",
