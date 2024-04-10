@@ -65,7 +65,6 @@ function scanItem() {
     if (timeoutId !== null) {
         clearTimeout(timeoutId);
     }
-
     timeoutId = setTimeout(async () => {
         let scannedLink = scanStringItem.value.trim();
         scannedLink = convertToURL(scannedLink);
@@ -74,6 +73,7 @@ function scanItem() {
         await acceptItem(rowData);
         arrayOfRows.value.push(rowData);
     }, 1200);
+    focusInput()
 }
 
 function convertToURL(inputString: string) {
