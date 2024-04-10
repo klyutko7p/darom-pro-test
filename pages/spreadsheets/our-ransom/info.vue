@@ -132,8 +132,6 @@ definePageMeta({
     </div>
   </div>
   <div v-else class="flex items-center justify-center">
-    <NuxtLayout name="default">
       <UISpinner />
-    </NuxtLayout>
   </div>
 </template>
