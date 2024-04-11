@@ -91,7 +91,7 @@ function getCountOfItemsByPVZOurRansom(PVZ: string) {
       (row) =>
         row.dispatchPVZ === PVZ && row.deliveredPVZ === null && row.deleted === null
     ).length;
-  } else if (props.user.role === "PVZ") {
+  } else if (props.user.role === "PVZ" || props.user.role === 'PPVZ') {
     let today = new Date().toLocaleDateString("ru-RU", {
       day: "2-digit",
       month: "2-digit",

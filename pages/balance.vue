@@ -1097,9 +1097,6 @@ function openModal(row: IBalance) {
 
 function openModalProfitRow(row: IBalance) {
   isOpenModalProfit.value = true;
-  rowData.value.createdUser = user.value.username;
-  rowData.value.notation = "Вывод дохода";
-  console.log(rowData.value);
   if (row.id) {
     rowData.value = JSON.parse(JSON.stringify(row));
     rowData.value.issued = rowData.value.issued
@@ -1110,7 +1107,10 @@ function openModalProfitRow(row: IBalance) {
       : null;
   } else {
     rowData.value = {} as IBalance;
+    rowData.value.createdUser = user.value.username;
+    rowData.value.pvz = selectedPVZ.value;
     rowData.value.notation = "Вывод дохода";
+    rowData.value.recipient = "Собственник";
   }
 }
 
@@ -1741,7 +1741,6 @@ async function updateRow() {
                   <option value="Шведова">Шведова</option>
                   <option value="Директор">Директор</option>
                   <option value="Косой">Косой</option>
-                  <option value="RMANAGER1">RMANAGER1</option>
                 </select>
               </div>
 
@@ -2295,13 +2294,7 @@ async function updateRow() {
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.recipient"
                 >
-                  <option value="Нет">Нет</option>
-                  <option value="Рейзвих">Рейзвих</option>
-                  <option value="Шведова">Шведова</option>
-                  <option value="Директор">Директор</option>
-                  <option value="Косой">Косой</option>
-                  <option value="RMANAGER1">RMANAGER1</option>
-                  <option value="PPVZ1">PPVZ1</option>
+                  <option value="Собственник">Собственник</option>
                 </select>
               </div>
 

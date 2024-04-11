@@ -305,7 +305,7 @@ function updateCurrentPageData() {
     processingRows.value = [...new Set(processingRows.value)];
   });
 
-  if (props.user.role === "RMANAGER") {
+  if (props.user.role === "RMANAGER" || props.user.role === 'PPVZ') {
     returnRows.value = props.rows?.filter(
       (row) => row.dispatchPVZ && row.dispatchPVZ.includes(props.user.PVZ)
     );
@@ -326,7 +326,7 @@ function updateCurrentPageDataDeleted() {
       .slice(startIndex, endIndex);
   }
 
-  if (props.user.role === "RMANAGER") {
+  if (props.user.role === "RMANAGER" || props.user.role === 'PPVZ') {
     returnRows.value = props.rows?.filter(
       (row) => row.dispatchPVZ && row.dispatchPVZ.includes(props.user.PVZ)
     );
