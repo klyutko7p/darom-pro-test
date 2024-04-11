@@ -209,8 +209,10 @@ definePageMeta({
               v-if="
                 (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
                 user.role === 'ADMINISTRATOR' ||
-                user.role === 'PVZ' || user.role === 'PPVZ' || user.role === 'RMANAGER' 
-              " 
+                user.role === 'PVZ' ||
+                user.role === 'PPVZ' ||
+                user.role === 'RMANAGER'
+              "
               role="button"
               @click="router.push('/balance')"
               tabindex="0"
@@ -228,7 +230,8 @@ definePageMeta({
                 user.role === 'ADMINISTRATOR' ||
                 user.role === 'OFFICE' ||
                 user.role === 'COURIER' ||
-                user.username === 'Волошина' || user.role === 'RMANAGER' 
+                user.username === 'Волошина' ||
+                user.role === 'RMANAGER'
               "
               role="button"
               @click="router.push('/advance-report')"
@@ -264,11 +267,26 @@ definePageMeta({
               </div>
               <h1>Задачи</h1>
             </div>
+            <div
+              role="button"
+              @click="router.push('/map')"
+              tabindex="0"
+              class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+            >
+              <div class="grid place-items-center mr-4">
+                <Icon name="material-symbols:add-location" size="20" />
+              </div>
+              <h1>Карта</h1>
+            </div>
             <div class="px-3 pt-3 mb-2 font-bold" v-if="user.role !== 'USER'">
               <h1>Настройки доступа</h1>
             </div>
             <div
-              v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR' && user.role !== 'RMANAGER'"
+              v-if="
+                !user.username.includes('Светлана') &&
+                user.role !== 'ADMINISTRATOR' &&
+                user.role !== 'RMANAGER'
+              "
               role="button"
               @click="router.push('/admin/users')"
               tabindex="0"

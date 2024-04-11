@@ -302,6 +302,17 @@ let isShowAddSettings = ref(false);
         <h1>Задачи</h1>
       </div>
       <div
+        role="button"
+        @click="router.push('/map')"
+        tabindex="0"
+        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+      >
+        <div class="grid place-items-center mr-4">
+          <Icon name="material-symbols:add-location" size="20" />
+        </div>
+        <h1>Карта</h1>
+      </div>
+      <div
         class="px-3 pt-3 font-bold flex items-center gap-3"
         v-if="user.role !== 'USER'"
       >
@@ -667,6 +678,17 @@ let isShowAddSettings = ref(false);
           <Icon name="material-symbols:add-task" size="20" />
         </div>
         <h1>Задачи</h1>
+      </div>
+      <div
+        role="button"
+        @click="router.push('/map')"
+        tabindex="0"
+        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+      >
+        <div class="grid place-items-center mr-4">
+          <Icon name="material-symbols:add-location" size="20" />
+        </div>
+        <h1>Карта</h1>
       </div>
       <div
         class="px-3 pt-3 font-bold flex items-center gap-3"

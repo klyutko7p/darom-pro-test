@@ -321,6 +321,15 @@ model ProfitManager {
   recipient     String?   @default("Нет")
 }
 
+model YandexMarker {
+  id          Int      @id @default(autoincrement())
+  coordinates Float[]
+  type        String?
+  createdUser String?
+  notation    String?
+  createdAt   DateTime @default(now())
+}
+
 enum Role {
   USER
   ADMIN

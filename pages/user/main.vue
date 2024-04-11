@@ -53,9 +53,7 @@ definePageMeta({
             "
             tabindex="0"
             class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-orange-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-            v-if="
-              user.dataOurRansom === 'READ' || user.dataOurRansom === 'WRITE'
-            "
+            v-if="user.dataOurRansom === 'READ' || user.dataOurRansom === 'WRITE'"
           >
             <div class="grid place-items-center mr-4">
               <svg
@@ -80,8 +78,7 @@ definePageMeta({
             @click="router.push('/spreadsheets/client-ransom/info')"
             class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
             v-if="
-              (user.dataClientRansom === 'READ' ||
-                user.dataClientRansom === 'WRITE') &&
+              (user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE') &&
               user.role !== 'SORTIROVKA' &&
               user.username !== 'Волошина'
             "
@@ -109,8 +106,7 @@ definePageMeta({
             @click="router.push('/spreadsheets/client-ransom')"
             class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
             v-if="
-              (user.dataClientRansom === 'READ' ||
-                user.dataClientRansom === 'WRITE') &&
+              (user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE') &&
               (user.role === 'SORTIROVKA' || user.username === 'Волошина')
             "
           >
@@ -132,23 +128,27 @@ definePageMeta({
             <h1>Выкуп Клиента</h1>
           </div>
           <div
-        v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана1') || user.role === 'ADMINISTRATOR' || user.role === 'PVZ' 
-        "
-        role="button"
-        @click="router.push('/spreadsheets/refunds')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="mdi:cash-refund" size="20" />
-        </div>
-        <h1>Возвраты</h1>
-      </div>
+            v-if="
+              (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'PVZ' || user.role === 'PPVZ'
+            "
+            role="button"
+            @click="router.push('/spreadsheets/refunds')"
+            tabindex="0"
+            class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+          >
+            <div class="grid place-items-center mr-4">
+              <Icon name="mdi:cash-refund" size="20" />
+            </div>
+            <h1>Возвраты</h1>
+          </div>
           <div
             v-if="
               user.dataDelivery === 'READ' ||
-              (user.dataDelivery === 'WRITE' && user.role !== 'ADMINISTRATOR' && user.role !== 'RMANAGER')
+              (user.dataDelivery === 'WRITE' &&
+                user.role !== 'ADMINISTRATOR' &&
+                user.role !== 'RMANAGER')
             "
             role="button"
             @click="router.push('/spreadsheets/delivery')"
@@ -165,8 +165,10 @@ definePageMeta({
               (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
               user.role === 'DRIVER' ||
               user.role === 'ADMINISTRATOR' ||
-              user.role === 'OFFICE' || user.role === 'COURIER' ||
-              user.username === 'Волошина' || user.role === 'RMANAGER' 
+              user.role === 'OFFICE' ||
+              user.role === 'COURIER' ||
+              user.username === 'Волошина' ||
+              user.role === 'RMANAGER'
             "
             role="button"
             @click="router.push('/advance-report')"
@@ -180,7 +182,12 @@ definePageMeta({
           </div>
         </div>
         <div
-          v-if="user.role === 'ADMINISTRATOR' || user.role === 'PVZ' || user.role === 'PPVZ' || user.role === 'RMANAGER' "
+          v-if="
+            user.role === 'ADMINISTRATOR' ||
+            user.role === 'PVZ' ||
+            user.role === 'PPVZ' ||
+            user.role === 'RMANAGER'
+          "
           role="button"
           @click="router.push('/acceptance')"
           tabindex="0"
@@ -196,7 +203,9 @@ definePageMeta({
             (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
             user.role === 'ADMINISTRATOR' ||
             user.role === 'PVZ' ||
-            user.role === 'COURIER' || user.role === 'PPVZ' || user.role === 'RMANAGER' 
+            user.role === 'COURIER' ||
+            user.role === 'PPVZ' ||
+            user.role === 'RMANAGER'
           "
           role="button"
           @click="router.push('/balance')"
@@ -207,6 +216,17 @@ definePageMeta({
             <Icon name="mdi:wallet-bifold" size="20" />
           </div>
           <h1>Баланс</h1>
+        </div>
+        <div
+          role="button"
+          @click="router.push('/map')"
+          tabindex="0"
+          class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+        >
+          <div class="grid place-items-center mr-4">
+            <Icon name="material-symbols:add-location" size="20" />
+          </div>
+          <h1>Карта</h1>
         </div>
         <div
           role="button"
@@ -235,6 +255,6 @@ definePageMeta({
     </div>
   </div>
   <div v-else class="flex items-center justify-center">
-      <UISpinner />
+    <UISpinner />
   </div>
 </template>

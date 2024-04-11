@@ -20,9 +20,17 @@ let rowsDelivery = ref<Array<IDelivery>>();
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  rows.value = await storeAdvanceReports.getAdvancedReports();
-  rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReport("OurRansom");
-  rowsDelivery.value = await storeRansom.getRansomRowsForBalance("Delivery");
+  const [advanceReports, ourRansomRows, deliveryRows] = await Promise.all([
+    storeAdvanceReports.getAdvancedReports(),
+    storeRansom.getRansomRowsForAdvanceReport("OurRansom"),
+    storeRansom.getRansomRowsForBalance("Delivery"),
+  ]);
+
+  rows.value = advanceReports;
+  rowsOurRansom.value = ourRansomRows;
+  rowsDelivery.value = deliveryRows;
+  originallyRows.value = advanceReports;
+
   originallyRows.value = rows.value;
   selectedUser.value = user.value.username;
 
@@ -39,10 +47,17 @@ onBeforeMount(async () => {
     handleFilteredRows(rows.value);
   }
 
-  ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
-  clientRansomRows.value = await storeRansom.getRansomRowsForBalance("ClientRansom");
-  rowsBalance.value = await storeBalance.getBalanceRows();
-  rowsBalanceOnline.value = await storeBalance.getBalanceOnlineRows();
+  const [ourRansomRowsData, clientRansomRowsData, balanceRowsData, onlineBalanceRowsData] = await Promise.all([
+    storeRansom.getRansomRowsForBalance("OurRansom"),
+    storeRansom.getRansomRowsForBalance("ClientRansom"),
+    storeBalance.getBalanceRows(),
+    storeBalance.getBalanceOnlineRows()
+  ]);
+
+  ourRansomRows.value = ourRansomRowsData;
+  clientRansomRows.value = clientRansomRowsData;
+  rowsBalance.value = balanceRowsData;
+  rowsBalanceOnline.value = onlineBalanceRowsData;
 
   getAllSumDirector();
 
@@ -224,8 +239,6 @@ function getAllSumDirector() {
   }
   getSumCreditCash();
   getSumCreditOnline();
-  console.log(allSum.value);
-  console.log(allSum2.value);
   return allSum.value + allSum2.value;
 }
 
@@ -697,7 +710,6 @@ function getAllSumFromName(username: string) {
         row.createdUser === username && (row.issuedUser === "" || row.issuedUser === null)
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
-  
 
   let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
   return allSum;
@@ -1834,6 +1846,6 @@ const uniqueNotation = computed(() => {
   </div>
 
   <div v-else class="flex items-center justify-center">
-      <UISpinner />
+    <UISpinner />
   </div>
 </template>

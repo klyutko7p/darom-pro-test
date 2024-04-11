@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
     const taskCreate = await prisma.task.create({
       data: {
         description: task.description,
-        notation: task.description,
+        notation: task.notation,
         done: task.done ? new Date(task.done).toISOString() : null,
         checked: task.checked ? new Date(task.checked).toISOString() : null,
       },

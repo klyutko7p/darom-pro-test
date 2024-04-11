@@ -89,8 +89,7 @@ function formatPhoneNumber(phoneNumber: string) {
         @click="router.push('/spreadsheets/client-ransom/info')"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
         v-if="
-          (user.dataClientRansom === 'READ' ||
-            user.dataClientRansom === 'WRITE') &&
+          (user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE') &&
           user.role !== 'SORTIROVKA' &&
           user.username !== 'Волошина'
         "
@@ -118,8 +117,7 @@ function formatPhoneNumber(phoneNumber: string) {
         @click="router.push('/spreadsheets/client-ransom')"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
         v-if="
-          (user.dataClientRansom === 'READ' ||
-            user.dataClientRansom === 'WRITE') &&
+          (user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE') &&
           (user.role === 'SORTIROVKA' || user.username === 'Волошина')
         "
       >
@@ -143,8 +141,8 @@ function formatPhoneNumber(phoneNumber: string) {
       <div
         v-if="
           (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
-          user.role === 'ADMINISTRATOR' || 
-          user.role === 'PVZ' 
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'PVZ' || user.role === 'PPVZ'
         "
         role="button"
         @click="router.push('/spreadsheets/refunds')"
@@ -163,7 +161,8 @@ function formatPhoneNumber(phoneNumber: string) {
           user.role === 'ADMINISTRATOR' ||
           user.role === 'OFFICE' ||
           user.role === 'COURIER' ||
-          user.username === 'Волошина' || user.role === 'RMANAGER' 
+          user.username === 'Волошина' ||
+          user.role === 'RMANAGER'
         "
         role="button"
         @click="router.push('/advance-report')"
@@ -191,7 +190,9 @@ function formatPhoneNumber(phoneNumber: string) {
       <div
         v-if="
           user.dataDelivery === 'READ' ||
-          (user.dataDelivery === 'WRITE' && user.role !== 'ADMINISTRATOR' && user.role !== 'RMANAGER')
+          (user.dataDelivery === 'WRITE' &&
+            user.role !== 'ADMINISTRATOR' &&
+            user.role !== 'RMANAGER')
         "
         role="button"
         @click="router.push('/spreadsheets/delivery')"
@@ -204,7 +205,12 @@ function formatPhoneNumber(phoneNumber: string) {
         <h1>Доставка и сортировка</h1>
       </div>
       <div
-        v-if="user.role === 'ADMINISTRATOR' || user.role === 'PVZ' || user.role === 'PPVZ' || user.role === 'RMANAGER' " 
+        v-if="
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'PVZ' ||
+          user.role === 'PPVZ' ||
+          user.role === 'RMANAGER'
+        "
         role="button"
         @click="router.push('/acceptance')"
         tabindex="0"
@@ -219,8 +225,10 @@ function formatPhoneNumber(phoneNumber: string) {
         v-if="
           (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
           user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ' || 
-          user.role === 'COURIER' || user.role === 'PPVZ' || user.role === 'RMANAGER' 
+          user.role === 'PVZ' ||
+          user.role === 'COURIER' ||
+          user.role === 'PPVZ' ||
+          user.role === 'RMANAGER'
         "
         role="button"
         @click="router.push('/balance')"
@@ -233,14 +241,24 @@ function formatPhoneNumber(phoneNumber: string) {
         <h1>Баланс</h1>
         <Icon
           v-if="
-            requests?.filter(
-              (row) => row.pvz === user.visiblePVZ && row.issued === null
-            ).length > 0
+            requests?.filter((row) => row.pvz === user.visiblePVZ && row.issued === null)
+              .length > 0
           "
           name="pepicons-print:exclamation"
           size="24"
           class="text-red-700"
         />
+      </div>
+      <div
+        role="button"
+        @click="router.push('/map')"
+        tabindex="0"
+        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+      >
+        <div class="grid place-items-center mr-4">
+          <Icon name="material-symbols:add-location" size="20" />
+        </div>
+        <h1>Карта</h1>
       </div>
       <div
         role="button"
@@ -281,9 +299,7 @@ function formatPhoneNumber(phoneNumber: string) {
     <nav
       class="flex flex-col gap-1 min-w-[240px] p-2 font-sans text-base font-normal text-gray-700"
     >
-      <h1 class="text-center font-bold text-3xl text-secondary-color mb-5">
-        DAROM.PRO
-      </h1>
+      <h1 class="text-center font-bold text-3xl text-secondary-color mb-5">DAROM.PRO</h1>
       <div
         role="button"
         @click="router.push('/spreadsheets/our-ransom/info')"
@@ -314,8 +330,7 @@ function formatPhoneNumber(phoneNumber: string) {
         @click="router.push('/spreadsheets/client-ransom/info')"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
         v-if="
-          (user.dataClientRansom === 'READ' ||
-            user.dataClientRansom === 'WRITE') &&
+          (user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE') &&
           user.role !== 'SORTIROVKA' &&
           user.username !== 'Волошина'
         "
@@ -343,8 +358,7 @@ function formatPhoneNumber(phoneNumber: string) {
         @click="router.push('/spreadsheets/client-ransom')"
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
         v-if="
-          (user.dataClientRansom === 'READ' ||
-            user.dataClientRansom === 'WRITE') &&
+          (user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE') &&
           (user.role === 'SORTIROVKA' || user.username === 'Волошина')
         "
       >
@@ -369,7 +383,7 @@ function formatPhoneNumber(phoneNumber: string) {
         v-if="
           (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
           user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ' 
+          user.role === 'PVZ' || user.role === 'PPVZ'
         "
         role="button"
         @click="router.push('/spreadsheets/refunds')"
@@ -388,7 +402,8 @@ function formatPhoneNumber(phoneNumber: string) {
           user.role === 'ADMINISTRATOR' ||
           user.role === 'OFFICE' ||
           user.role === 'COURIER' ||
-          user.username === 'Волошина' || user.role === 'RMANAGER' 
+          user.username === 'Волошина' ||
+          user.role === 'RMANAGER'
         "
         role="button"
         @click="router.push('/advance-report')"
@@ -416,7 +431,9 @@ function formatPhoneNumber(phoneNumber: string) {
       <div
         v-if="
           user.dataDelivery === 'READ' ||
-          (user.dataDelivery === 'WRITE' && user.role !== 'ADMINISTRATOR' && user.role !== 'RMANAGER')
+          (user.dataDelivery === 'WRITE' &&
+            user.role !== 'ADMINISTRATOR' &&
+            user.role !== 'RMANAGER')
         "
         role="button"
         @click="router.push('/spreadsheets/delivery')"
@@ -429,7 +446,12 @@ function formatPhoneNumber(phoneNumber: string) {
         <h1>Доставка и сортировка</h1>
       </div>
       <div
-        v-if="user.role === 'ADMINISTRATOR' || user.role === 'PVZ' || user.role === 'PPVZ' || user.role === 'RMANAGER' "
+        v-if="
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'PVZ' ||
+          user.role === 'PPVZ' ||
+          user.role === 'RMANAGER'
+        "
         role="button"
         @click="router.push('/acceptance')"
         tabindex="0"
@@ -445,7 +467,9 @@ function formatPhoneNumber(phoneNumber: string) {
           (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
           user.role === 'ADMINISTRATOR' ||
           user.role === 'PVZ' ||
-          user.role === 'COURIER' || user.role === 'PPVZ'  || user.role === 'RMANAGER' 
+          user.role === 'COURIER' ||
+          user.role === 'PPVZ' ||
+          user.role === 'RMANAGER'
         "
         role="button"
         @click="router.push('/balance')"
@@ -458,14 +482,24 @@ function formatPhoneNumber(phoneNumber: string) {
         <h1>Баланс</h1>
         <Icon
           v-if="
-            requests?.filter(
-              (row) => row.pvz === user.visiblePVZ && row.issued === null
-            ).length > 0
+            requests?.filter((row) => row.pvz === user.visiblePVZ && row.issued === null)
+              .length > 0
           "
           name="pepicons-print:exclamation"
           size="24"
           class="text-red-700"
         />
+      </div>
+      <div
+        role="button"
+        @click="router.push('/map')"
+        tabindex="0"
+        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+      >
+        <div class="grid place-items-center mr-4">
+          <Icon name="material-symbols:add-location" size="20" />
+        </div>
+        <h1>Карта</h1>
       </div>
       <div
         role="button"
@@ -512,9 +546,8 @@ function formatPhoneNumber(phoneNumber: string) {
       />
       <Icon
         v-if="
-          requests?.filter(
-            (row) => row.pvz === user.visiblePVZ && row.issued === null
-          ).length > 0
+          requests?.filter((row) => row.pvz === user.visiblePVZ && row.issued === null)
+            .length > 0
         "
         name="pepicons-print:exclamation"
         size="40"
@@ -537,10 +570,7 @@ function formatPhoneNumber(phoneNumber: string) {
     </div>
     <h1
       class="text-lg font-medium max-sm:text-sm"
-      v-if="
-        route.meta.name === 'Товары из' &&
-        route.fullPath.includes('/our-ransom')
-      "
+      v-if="route.meta.name === 'Товары из' && route.fullPath.includes('/our-ransom')"
     >
       {{ route.meta.name }} {{ route.params.pvz }} (Наш Выкуп)
     </h1>
@@ -562,8 +592,7 @@ function formatPhoneNumber(phoneNumber: string) {
         route.params.fromName
       "
     >
-      Товары по телефону: {{ formatPhoneNumber(route.params.fromName) }} (Выкуп
-      Клиента)
+      Товары по телефону: {{ formatPhoneNumber(route.params.fromName) }} (Выкуп Клиента)
     </h1>
     <h1
       class="text-lg font-medium max-sm:text-sm"
@@ -573,8 +602,7 @@ function formatPhoneNumber(phoneNumber: string) {
         route.params.fromName
       "
     >
-      Товары по телефону: {{ formatPhoneNumber(route.params.fromName) }} (Наш
-      Выкуп)
+      Товары по телефону: {{ formatPhoneNumber(route.params.fromName) }} (Наш Выкуп)
     </h1>
     <h1 class="text-lg font-medium max-sm:text-sm" v-else>
       {{ route.meta.name }}

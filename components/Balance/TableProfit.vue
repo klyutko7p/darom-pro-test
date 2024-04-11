@@ -52,7 +52,7 @@ onMounted(() => {});
                 !row.issued &&
                 (user.PVZ.includes(row.recipient) ||
                   user.role === 'ADMINISTRATOR' ||
-                  user.role === 'RMANAGER')
+                  user.role === 'RMANAGER' || user.role === 'ADMIN')
               "
               class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
               name="mdi:checkbox-multiple-marked-circle"

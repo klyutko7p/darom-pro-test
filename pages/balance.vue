@@ -28,15 +28,35 @@ let rowsWithProfitRows = ref();
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
-  clientRansomRows.value = await storeRansom.getRansomRowsForBalance("ClientRansom");
-  deliveryRansomRows.value = await storeRansom.getRansomRowsForBalance("Delivery");
-  sumOfReject.value = await storeRansom.getSumOfRejection();
-  rows.value = await storeBalance.getBalanceRows();
-  rowsOnline.value = await storeBalance.getBalanceOnlineRows();
-  rowsProfit.value = await storeBalance.getBalanceProfitRows();
+
+  // deliveryRansomRows.value = await storeRansom.getRansomRowsForBalance("Delivery");
+  // sumOfReject.value = await storeRansom.getSumOfRejection();
+  // rows.value = await storeBalance.getBalanceRows();
+  // rowsOnline.value = await storeBalance.getBalanceOnlineRows();
+  // rowsProfit.value = await storeBalance.getBalanceProfitRows();
+
+  const [
+    sumOfRejectData,
+    balanceRowsData,
+    balanceOnlineRowsData,
+    balanceProfitRowsData,
+  ] = await Promise.all([
+    storeRansom.getSumOfRejection(),
+    storeBalance.getBalanceRows(),
+    storeBalance.getBalanceOnlineRows(),
+    storeBalance.getBalanceProfitRows(),
+  ]);
+
+  sumOfReject.value = sumOfRejectData;
+  rows.value = balanceRowsData;
+  rowsOnline.value = balanceOnlineRowsData;
+  rowsProfit.value = balanceProfitRowsData;
   rowsProfitManager.value = await storeBalance.getBalanceProfitManagerRows();
   rowsDelivery.value = await storeBalance.getBalanceDeliveryRows();
+  ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
+  ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
+  clientRansomRows.value = await storeRansom.getRansomRowsForBalance("ClientRansom");
+
   rowsWithProfitRows.value = [
     ...rows.value,
     ...rowsProfit.value,
@@ -55,7 +75,7 @@ onBeforeMount(async () => {
       (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
     );
   } else if (user.value.role === "RMANAGER") {
-    selectedPVZ.value = user.value.PVZ[0];
+    selectedPVZ.value = "Все ППВЗ";
     rows.value = rows.value?.filter(
       (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
     );
@@ -103,7 +123,14 @@ function calculateValue(curValue: any) {
     return curValue.additionally !== "Отказ клиент наличные" ||
       curValue.additionally !== "Отказ клиент онлайн" ||
       curValue.additionally !== "Отказ клиент"
-      ? Math.ceil(curValue.amountFromClient1 / 10) * 10 -
+      ? Math.ceil(
+          Math.ceil(
+            curValue.priceSite +
+              (curValue.priceSite * curValue.percentClient) / 100 -
+              curValue.prepayment
+          ) / 10
+        ) *
+          10 -
           curValue.priceSite +
           curValue.deliveredKGT
       : sumOfReject.value.value;
@@ -347,6 +374,7 @@ function getAllSum() {
         (endDate.value !== null && endDate.value !== "")
       ) {
         sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+        console.log(sum1.value);
         sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
         allSum.value = sum1.value + sum2.value;
       } else {
@@ -446,6 +474,40 @@ function getAllSum() {
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
       allSum.value = sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ + 319610;
+    } else if (selectedPVZ.value === "Все ППВЗ") {
+      copyArrayOurRansom.value = ourRansomRows.value?.filter(
+        (row) =>
+          row.issued !== null &&
+          (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+          (row.additionally === "Оплата наличными" ||
+            row.additionally === "Отказ клиент наличные" ||
+            row.additionally === "Отказ клиент") &&
+          user.value.PVZ.includes(row.dispatchPVZ)
+      );
+
+      copyArrayClientRansom.value = clientRansomRows.value?.filter(
+        (row) =>
+          row.issued !== null &&
+          (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+          (row.additionally === "Оплата наличными" ||
+            row.additionally === "Отказ клиент наличные" ||
+            row.additionally === "Отказ клиент") &&
+          user.value.PVZ.includes(row.dispatchPVZ)
+      );
+
+      let sumOfPVZ = rows.value
+        ?.filter((row) => row.received !== null && row.recipient === "Нет")
+        .reduce((acc, value) => acc + +value.sum, 0);
+
+      let sumOfPVZ3 = rows.value
+        ?.filter((row) => row.received !== null && row.recipient !== "Нет")
+        .reduce((acc, value) => acc + +value.sum, 0);
+
+      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+      allSum.value = sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ;
     } else {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -745,13 +807,14 @@ function getAllSum() {
       }
     }
   } else if (selectedTypeOfTransaction.value === "Доход PPVZ") {
-    if (selectedPVZ.value === "Все ПВЗ") {
+    if (selectedPVZ.value === "Все ППВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
           (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
           (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
-          row.additionally !== null
+          row.additionally !== null &&
+          user.value.PVZ.includes(row.dispatchPVZ)
       );
 
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
@@ -759,12 +822,22 @@ function getAllSum() {
           row.issued !== null &&
           (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
           (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
-          row.additionally !== null
+          row.additionally !== null &&
+          user.value.PVZ.includes(row.dispatchPVZ)
       );
+
+      let sumOfPVZ = rows.value
+        ?.filter(
+          (row) =>
+            row.received !== null &&
+            row.recipient === "Нет" &&
+            user.value.PVZ.includes(row.pvz)
+        )
+        .reduce((acc, value) => acc + +value.sum, 0);
 
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value;
+      allSum.value = sum1.value + sum2.value - sumOfPVZ;
     } else {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -789,8 +862,7 @@ function getAllSum() {
           (row) =>
             row.received !== null &&
             row.recipient === "Нет" &&
-            row.pvz === selectedPVZ.value &&
-            row.notation === "Списание дохода"
+            row.pvz === selectedPVZ.value
         )
         .reduce((acc, value) => acc + +value.sum, 0);
 
@@ -814,34 +886,64 @@ function getProfitRowsSum() {
   newEndDate.setSeconds(59);
   newEndDate.setMilliseconds(0);
 
-  copyArrayOurRansom.value = ourRansomRows.value?.filter(
-    (row) =>
-      row.issued !== null &&
-      (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
-      (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
-      row.additionally !== null &&
-      row.dispatchPVZ === selectedPVZ.value
-  );
-
-  copyArrayClientRansom.value = clientRansomRows.value?.filter(
-    (row) =>
-      row.issued !== null &&
-      (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
-      (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
-      row.additionally !== null &&
-      row.dispatchPVZ === selectedPVZ.value
-  );
-
-  let sumOfPVZ = rowsProfit.value
-    ?.filter(
+  if (selectedPVZ.value === "Все ППВЗ") {
+    copyArrayOurRansom.value = ourRansomRows.value?.filter(
       (row) =>
-        row.received !== null && row.recipient === "Нет" && row.pvz === selectedPVZ.value
-    )
-    .reduce((acc, value) => acc + +value.sum, 0);
+        row.issued !== null &&
+        (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+        row.additionally !== null &&
+        user.value.PVZ.includes(row.dispatchPVZ)
+    );
 
-  sum1.value = reduceArrayProfit(copyArrayOurRansom.value, "OurRansom");
-  sum2.value = reduceArrayProfit(copyArrayClientRansom.value, "ClientRansom");
-  allSumProfit.value = sum1.value + sum2.value - sumOfPVZ;
+    copyArrayClientRansom.value = clientRansomRows.value?.filter(
+      (row) =>
+        row.issued !== null &&
+        (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+        row.additionally !== null &&
+        user.value.PVZ.includes(row.dispatchPVZ)
+    );
+
+    let sumOfPVZ = rowsProfit.value
+      ?.filter((row) => row.received !== null && row.recipient === "Нет")
+      .reduce((acc, value) => acc + +value.sum, 0);
+
+    sum1.value = reduceArrayProfit(copyArrayOurRansom.value, "OurRansom");
+    sum2.value = reduceArrayProfit(copyArrayClientRansom.value, "ClientRansom");
+    allSumProfit.value = sum1.value + sum2.value - sumOfPVZ;
+  } else {
+    copyArrayOurRansom.value = ourRansomRows.value?.filter(
+      (row) =>
+        row.issued !== null &&
+        (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+        row.additionally !== null &&
+        row.dispatchPVZ === selectedPVZ.value
+    );
+
+    copyArrayClientRansom.value = clientRansomRows.value?.filter(
+      (row) =>
+        row.issued !== null &&
+        (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+        row.additionally !== null &&
+        row.dispatchPVZ === selectedPVZ.value
+    );
+
+    let sumOfPVZ = rowsProfit.value
+      ?.filter(
+        (row) =>
+          row.received !== null &&
+          row.recipient === "Нет" &&
+          row.pvz === selectedPVZ.value
+      )
+      .reduce((acc, value) => acc + +value.sum, 0);
+
+    sum1.value = reduceArrayProfit(copyArrayOurRansom.value, "OurRansom");
+    sum2.value = reduceArrayProfit(copyArrayClientRansom.value, "ClientRansom");
+    allSumProfit.value = sum1.value + sum2.value - sumOfPVZ;
+  }
 }
 
 function reduceArrayProfitManager(array: any, flag: string) {
@@ -880,31 +982,59 @@ function getProfitManagerRowsSum() {
   newEndDate.setSeconds(59);
   newEndDate.setMilliseconds(0);
 
-  copyArrayOurRansom.value = ourRansomRows.value?.filter(
-    (row) =>
-      row.issued !== null &&
-      (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
-      (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
-      row.additionally !== null &&
-      row.dispatchPVZ === selectedPVZ.value
-  );
+  if (selectedPVZ.value === "Все ППВЗ") {
+    copyArrayOurRansom.value = ourRansomRows.value?.filter(
+      (row) =>
+        row.issued !== null &&
+        (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+        row.additionally !== null &&
+        user.value.PVZ.includes(row.dispatchPVZ)
+    );
 
-  copyArrayClientRansom.value = clientRansomRows.value?.filter(
-    (row) =>
-      row.issued !== null &&
-      (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
-      (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
-      row.additionally !== null &&
-      row.dispatchPVZ === selectedPVZ.value
-  );
+    copyArrayClientRansom.value = clientRansomRows.value?.filter(
+      (row) =>
+        row.issued !== null &&
+        (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+        row.additionally !== null &&
+        user.value.PVZ.includes(row.dispatchPVZ)
+    );
 
-  let sumOfPVZ = rowsProfitManager.value
-    ?.filter((row) => row.received !== null && row.recipient === "Нет" && row.pvz === selectedPVZ.value)
-    .reduce((acc, value) => acc + +value.sum, 0);
+    let sumOfPVZ = rowsProfitManager.value
+      ?.filter((row) => row.received !== null && row.recipient === "Нет")
+      .reduce((acc, value) => acc + +value.sum, 0);
 
-  sum1.value = reduceArrayProfitManager(copyArrayOurRansom.value, "OurRansom");
-  sum2.value = reduceArrayProfitManager(copyArrayClientRansom.value, "ClientRansom");
-  allSumProfitManager.value = sum1.value + sum2.value - sumOfPVZ;
+    sum1.value = reduceArrayProfitManager(copyArrayOurRansom.value, "OurRansom");
+    sum2.value = reduceArrayProfitManager(copyArrayClientRansom.value, "ClientRansom");
+    allSumProfitManager.value = sum1.value + sum2.value - sumOfPVZ;
+  } else {
+    copyArrayOurRansom.value = ourRansomRows.value?.filter(
+      (row) =>
+        row.issued !== null &&
+        (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+        row.additionally !== null &&
+        row.dispatchPVZ === selectedPVZ.value
+    );
+
+    copyArrayClientRansom.value = clientRansomRows.value?.filter(
+      (row) =>
+        row.issued !== null &&
+        (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+        row.additionally !== null &&
+        row.dispatchPVZ === selectedPVZ.value
+    );
+
+    let sumOfPVZ = rowsProfitManager.value
+      ?.filter((row) => row.received !== null && row.recipient === "Нет")
+      .reduce((acc, value) => acc + +value.sum, 0);
+
+    sum1.value = reduceArrayProfitManager(copyArrayOurRansom.value, "OurRansom");
+    sum2.value = reduceArrayProfitManager(copyArrayClientRansom.value, "ClientRansom");
+    allSumProfitManager.value = sum1.value + sum2.value - sumOfPVZ;
+  }
 }
 
 function formatNumber(number: number) {
@@ -929,6 +1059,11 @@ function formatNumber(number: number) {
 }
 
 watch([selectedPVZ, selectedTypeOfTransaction, startingDate, endDate], getAllSum);
+watch(
+  [selectedPVZ, selectedTypeOfTransaction, startingDate, endDate],
+  getProfitManagerRowsSum
+);
+watch([selectedPVZ, selectedTypeOfTransaction, startingDate, endDate], getProfitRowsSum);
 
 function clearFields() {
   selectedPVZ.value = "Все ПВЗ";
@@ -963,6 +1098,8 @@ function openModal(row: IBalance) {
 function openModalProfitRow(row: IBalance) {
   isOpenModalProfit.value = true;
   rowData.value.createdUser = user.value.username;
+  rowData.value.notation = "Вывод дохода";
+  console.log(rowData.value);
   if (row.id) {
     rowData.value = JSON.parse(JSON.stringify(row));
     rowData.value.issued = rowData.value.issued
@@ -973,6 +1110,7 @@ function openModalProfitRow(row: IBalance) {
       : null;
   } else {
     rowData.value = {} as IBalance;
+    rowData.value.notation = "Вывод дохода";
   }
 }
 
@@ -1060,7 +1198,7 @@ async function createRow() {
           row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
       );
     } else if (user.value.role === "RMANAGER") {
-      selectedPVZ.value = user.value.PVZ[0];
+      selectedPVZ.value = "Все ППВЗ";
       rows.value = rows.value?.filter(
         (row) =>
           user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
@@ -1145,7 +1283,7 @@ async function updateDeliveryProfitRow(obj: any) {
       (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
     );
   } else if (user.value.role === "RMANAGER") {
-    selectedPVZ.value = user.value.PVZ[0];
+    selectedPVZ.value = "Все ППВЗ";
     rows.value = rows.value?.filter(
       (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
     );
@@ -1157,12 +1295,16 @@ async function updateDeliveryProfitManagerStatus(obj: any) {
   isLoading.value = true;
   let answer = confirm("Вы точно хотите изменить статус?");
   if (answer)
-    await storeBalance.updateDeliveryProfitManagerStatus(obj.row, obj.flag, user.value.username);
+    await storeBalance.updateDeliveryProfitManagerStatus(
+      obj.row,
+      obj.flag,
+      user.value.username
+    );
   if (obj.flag === "received") {
     await storeAdvanceReport.createAdvanceReport(
       {
         date: new Date(),
-        PVZ: 'Офис',
+        PVZ: "Офис",
         expenditure: obj.row.sum,
         typeOfExpenditure: "Оплата ФОТ",
         company: "Darom.pro",
@@ -1186,7 +1328,7 @@ async function updateDeliveryProfitManagerStatus(obj: any) {
       (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
     );
   } else if (user.value.role === "RMANAGER") {
-    selectedPVZ.value = user.value.PVZ[0];
+    selectedPVZ.value = "Все ППВЗ";
     rows.value = rows.value?.filter(
       (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
     );
@@ -1219,7 +1361,11 @@ async function updateDeliveryRow(obj: any) {
         );
       }
       rowsProfit.value = await storeBalance.getBalanceProfitRows();
-      rowsWithProfitRows.value = [...rows.value, ...rowsProfit.value, ...rowsProfitManager.value];
+      rowsWithProfitRows.value = [
+        ...rows.value,
+        ...rowsProfit.value,
+        ...rowsProfitManager.value,
+      ];
     } else if (rowsProfitManager.value?.find((row) => obj.row.id === row.id)) {
       await storeBalance.updateDeliveryProfitManagerStatus(
         obj.row,
@@ -1241,7 +1387,11 @@ async function updateDeliveryRow(obj: any) {
         );
       }
       rowsProfitManager.value = await storeBalance.getBalanceProfitManagerRows();
-      rowsWithProfitRows.value = [...rows.value, ...rowsProfit.value, ...rowsProfitManager.value];
+      rowsWithProfitRows.value = [
+        ...rows.value,
+        ...rowsProfit.value,
+        ...rowsProfitManager.value,
+      ];
     } else {
       await storeBalance.updateDeliveryStatus(obj.row, obj.flag, user.value.username);
       rows.value = await storeBalance.getBalanceRows();
@@ -1261,7 +1411,7 @@ async function updateDeliveryRow(obj: any) {
       (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
     );
   } else if (user.value.role === "RMANAGER") {
-    selectedPVZ.value = user.value.PVZ[0];
+    selectedPVZ.value = "Все ППВЗ";
     rows.value = rows.value?.filter(
       (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
     );
@@ -1308,7 +1458,7 @@ async function updateRow() {
       (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
     );
   } else if (user.value.role === "RMANAGER") {
-    selectedPVZ.value = user.value.PVZ[0];
+    selectedPVZ.value = "Все ППВЗ";
     rows.value = rows.value?.filter(
       (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
     );
@@ -1357,6 +1507,16 @@ async function updateRow() {
                     <option value="Все ПВЗ" selected>Все ПВЗ</option>
                     <option v-for="pvzValue in pvz">
                       {{ pvzValue.name }}
+                    </option>
+                  </select>
+                  <select
+                    v-else-if="user.role === 'RMANAGER'"
+                    class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="selectedPVZ"
+                  >
+                    <option value="Все ППВЗ" selected>Все ППВЗ</option>
+                    <option v-for="pvzValue in user.PVZ">
+                      {{ pvzValue }}
                     </option>
                   </select>
                   <select
@@ -1466,7 +1626,7 @@ async function updateRow() {
                   <div class="flex items-center gap-3 mr-5">
                     <h1 class="max-sm:mr-3">С</h1>
                     <input
-                      class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                      c
                       type="date"
                       placeholder="ДД.ММ.ГГГГ"
                       onchange="this.className=(this.value!=''?'has-value':'')"
@@ -1697,6 +1857,16 @@ async function updateRow() {
                     </option>
                   </select>
                   <select
+                    v-else-if="user.role === 'RMANAGER'"
+                    class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="selectedPVZ"
+                  >
+                    <option value="Все ППВЗ" selected>Все ППВЗ</option>
+                    <option v-for="pvzValue in user.PVZ">
+                      {{ pvzValue }}
+                    </option>
+                  </select>
+                  <select
                     v-else
                     class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="selectedPVZ"
@@ -1919,6 +2089,7 @@ async function updateRow() {
           >
 
           <BalanceTableProfit
+            v-if="user.role === 'PPVZ'"
             @update-delivery-row="updateDeliveryProfitRow"
             :rows="rowsProfit"
             :user="user"
@@ -1944,6 +2115,7 @@ async function updateRow() {
           >
 
           <BalanceTableProfitManager
+            v-if="user.role === 'RMANAGER'"
             @update-delivery-row="updateDeliveryProfitManagerStatus"
             :rows="rowsProfitManager?.filter((row) => row.createdUser === user.username)"
             :user="user"
@@ -2210,6 +2382,6 @@ async function updateRow() {
   </div>
 
   <div v-else class="flex items-center justify-center">
-      <UISpinner />
+    <UISpinner />
   </div>
 </template>

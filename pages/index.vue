@@ -115,6 +115,12 @@ definePageMeta({
               <option class="text-black" :value="[47.955462, 37.964951]">
                 г. Донецк, ул. Палладина, 20. (есть примерочная)
               </option>
+              <option class="text-black" :value="[47.946192, 37.903650]">
+                г. Донецк, ул Дудинская, д. 4, кв7
+              </option>
+              <option class="text-black" :value="[47.960663, 37.883761]">
+                г. Донецк, ул Довженко, д 55, кв5
+              </option>
             </select>
             <ClientOnly>
               <YandexMap
