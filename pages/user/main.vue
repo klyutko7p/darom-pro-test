@@ -131,7 +131,8 @@ definePageMeta({
             v-if="
               (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
               user.role === 'ADMINISTRATOR' ||
-              user.role === 'PVZ' || user.role === 'PPVZ'
+              user.role === 'PVZ' ||
+              user.role === 'PPVZ'
             "
             role="button"
             @click="router.push('/spreadsheets/refunds')"
@@ -218,6 +219,11 @@ definePageMeta({
           <h1>Баланс</h1>
         </div>
         <div
+          v-if="
+            user.role === 'RMANAGER' ||
+            user.role === 'ADMIN' ||
+            user.role === 'ADMINISTRATOR'
+          "
           role="button"
           @click="router.push('/map')"
           tabindex="0"

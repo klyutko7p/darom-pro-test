@@ -278,7 +278,16 @@ function updateCurrentPageData() {
       let profit;
       if (!row.prepayment && row.profit1 !== 0) {
         profit =
-          Math.ceil(row.amountFromClient1 / 10) * 10 - row.priceSite + row.deliveredKGT;
+          Math.ceil(
+            Math.ceil(
+              row.priceSite +
+                (row.priceSite * row.percentClient) / 100 -
+                row.prepayment
+            ) / 10
+          ) *
+            10 -
+            row.priceSite +
+            row.deliveredKGT;
       } else {
         profit = (row.priceSite * row.percentClient) / 100 + row.deliveredKGT;
       }

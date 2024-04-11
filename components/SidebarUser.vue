@@ -250,6 +250,7 @@ function formatPhoneNumber(phoneNumber: string) {
         />
       </div>
       <div
+      v-if="user.role === 'RMANAGER' || user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
         role="button"
         @click="router.push('/map')"
         tabindex="0"
@@ -491,6 +492,7 @@ function formatPhoneNumber(phoneNumber: string) {
         />
       </div>
       <div
+      v-if="user.role === 'RMANAGER' || user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
         role="button"
         @click="router.push('/map')"
         tabindex="0"

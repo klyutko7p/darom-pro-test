@@ -268,6 +268,7 @@ definePageMeta({
               <h1>Задачи</h1>
             </div>
             <div
+            v-if="user.role === 'RMANAGER' || user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
               role="button"
               @click="router.push('/map')"
               tabindex="0"
