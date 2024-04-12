@@ -505,9 +505,17 @@ function getAllSum() {
         ?.filter((row) => row.received !== null && row.recipient !== "Нет")
         .reduce((acc, value) => acc + +value.sum, 0);
 
+      let sumOfPVZ5 = rowsProfit.value
+        ?.filter(
+          (row) =>
+            row.received !== null &&
+            row.recipient === "Собственник"
+        )
+        .reduce((acc, value) => acc + +value.sum, 0);
+
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ;
+      allSum.value = sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ - sumOfPVZ5;
     } else {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -550,19 +558,25 @@ function getAllSum() {
         ?.filter((row) => row.received !== null && row.recipient === selectedPVZ.value)
         .reduce((acc, value) => acc + +value.sum, 0);
 
-      let sumOfPVZ4 = rowsProfit.value
+      let sumOfPVZ5 = rowsProfit.value
         ?.filter(
           (row) =>
             row.received !== null &&
-            row.recipient === "Нет" &&
-            row.pvz === selectedPVZ.value
+            row.pvz === selectedPVZ.value &&
+            row.recipient === "Собственник"
         )
         .reduce((acc, value) => acc + +value.sum, 0);
 
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+
       allSum.value =
-        sum1.value + sum2.value - sumOfPVZ - sumOfPVZ2 + sumOfPVZ3 - sumOfPVZ4;
+        sum1.value +
+        sum2.value -
+        sumOfPVZ -
+        sumOfPVZ2 +
+        sumOfPVZ3 -
+        sumOfPVZ5;
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (selectedPVZ.value === "Все ПВЗ") {
