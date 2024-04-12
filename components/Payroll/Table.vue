@@ -170,7 +170,11 @@ async function createAdvanceReportAdvance() {
     issuedUser: "",
   }));
 
-  await storeAdvanceReport.createAdvanceReports(resultRows);
+  let answer = confirm("Вы точно хотите создать отчет по авансу?");
+  if (answer) {
+    await storeAdvanceReport.createAdvanceReports(resultRows);
+  } 
+
 }
 
 async function createAdvanceReportZP() {
@@ -208,7 +212,10 @@ async function createAdvanceReportZP() {
     issuedUser: "",
   }));
 
-  await storeAdvanceReport.createAdvanceReports(resultRows);
+  let answer = confirm("Вы точно хотите создать отчет по выплате ЗП?");
+  if (answer) {
+    await storeAdvanceReport.createAdvanceReports(resultRows);
+  } 
 }
 </script>
 <template>
@@ -244,10 +251,10 @@ async function createAdvanceReportZP() {
       class="flex items-center gap-3 max-sm:flex-col max-sm:w-full max-sm:items-start"
     >
       <UIMainButton @click="createAdvanceReportAdvance"
-        >создать отчёт по авансу</UIMainButton
+        >создать отчет по авансу</UIMainButton
       >
       <UIMainButton @click="createAdvanceReportZP"
-        >создать отчёт по выплате зп</UIMainButton
+        >создать отчет по выплате зп</UIMainButton
       >
     </div>
     <Icon
@@ -411,9 +418,8 @@ async function createAdvanceReportZP() {
                 row.additionalPayment
               ).toFixed(0)
             }}
-            ₽
           </td>
-          <td class="border-2" v-else>0 ₽</td>
+          <td class="border-2" v-else>0 </td>
           <td
             class="border-2"
             v-if="

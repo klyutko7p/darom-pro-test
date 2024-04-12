@@ -897,6 +897,7 @@ let showPayRejectClient = ref(false);
               :value="row.id"
               :checked="isChecked(row.id)"
               @change="handleCheckboxChange(row)"
+              :disabled="user.username === 'Кожемякина' || user.username === 'Гарник'"
             />
           </td>
           <td

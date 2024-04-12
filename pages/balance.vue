@@ -906,7 +906,7 @@ function getProfitRowsSum() {
     );
 
     let sumOfPVZ = rowsProfit.value
-      ?.filter((row) => row.received !== null && row.recipient === "Нет")
+      ?.filter((row) => row.received !== null && row.recipient === "Собственник")
       .reduce((acc, value) => acc + +value.sum, 0);
 
     sum1.value = reduceArrayProfit(copyArrayOurRansom.value, "OurRansom");
@@ -935,7 +935,7 @@ function getProfitRowsSum() {
       ?.filter(
         (row) =>
           row.received !== null &&
-          row.recipient === "Нет" &&
+          row.recipient === "Собственник" &&
           row.pvz === selectedPVZ.value
       )
       .reduce((acc, value) => acc + +value.sum, 0);
@@ -1227,13 +1227,17 @@ async function createDeliveryRow() {
 }
 
 async function createProfitRow() {
-  isLoading.value = true;
-  await storeBalance.createBalanceProfitRow(rowData.value);
-  rowsProfit.value = await storeBalance.getBalanceProfitRows();
-  closeModalProfitRow();
-  getAllSum();
-  getProfitRowsSum();
-  isLoading.value = false;
+  if (+rowData.value.sum > Math.ceil(allSumProfit.value)) {
+    toast.error("Вы не можете вывести такую сумму!");
+  } else {
+    isLoading.value = true;
+    await storeBalance.createBalanceProfitRow(rowData.value);
+    rowsProfit.value = await storeBalance.getBalanceProfitRows();
+    closeModalProfitRow();
+    getAllSum();
+    getProfitRowsSum();
+    isLoading.value = false;
+  }
 }
 
 async function createProfitManagerRow() {
