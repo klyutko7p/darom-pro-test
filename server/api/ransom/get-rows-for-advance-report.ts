@@ -25,6 +25,7 @@ export default defineEventHandler(async (event) => {
                     prepayment: true,
                     percentClient: true,
                     profit1: true,
+                    deleted: true,
                 },
                 where: {
                     issued: {

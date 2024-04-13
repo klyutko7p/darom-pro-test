@@ -47,11 +47,16 @@ onBeforeMount(async () => {
     handleFilteredRows(rows.value);
   }
 
-  const [ourRansomRowsData, clientRansomRowsData, balanceRowsData, onlineBalanceRowsData] = await Promise.all([
+  const [
+    ourRansomRowsData,
+    clientRansomRowsData,
+    balanceRowsData,
+    onlineBalanceRowsData,
+  ] = await Promise.all([
     storeRansom.getRansomRowsForBalance("OurRansom"),
     storeRansom.getRansomRowsForBalance("ClientRansom"),
     storeBalance.getBalanceRows(),
-    storeBalance.getBalanceOnlineRows()
+    storeBalance.getBalanceOnlineRows(),
   ]);
 
   ourRansomRows.value = ourRansomRowsData;
@@ -162,6 +167,7 @@ function getAllSumDirector() {
     ?.filter(
       (row) =>
         row.additionally !== "Отказ клиент наличные" &&
+        row.additionally !== "Отказ клиент безнал" &&
         row.additionally !== "Отказ клиент" &&
         row.additionally !== "Отказ брак"
     )
@@ -732,7 +738,7 @@ function getAllSumFromEmployees() {
   let totalSum = 0;
 
   usersOfIssued.value
-    .filter((username) => username !== "Директор")
+    .filter((username) => username !== "Директор" && username !== "Директор (С)")
     .forEach((username) => {
       let sumOfPVZ = rowsBalance.value
         ?.filter((row) => row.received !== null && row.recipient === username)
@@ -760,7 +766,7 @@ function getAllSumFromEmployees() {
       let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
       totalSum += allSum;
     });
-  totalSum += allSum.value;
+  totalSum += (getAllSumDirector() + 1010071 + 2474341);
   return totalSum;
 }
 
@@ -890,7 +896,7 @@ const uniqueNotation = computed(() => {
                     <h1 class="font-bold text-secondary-color text-4xl text-center">
                       {{
                         formatNumber(
-                          Math.ceil(getAllSumFromEmployees() + 10930 + 2474341)
+                          Math.ceil(getAllSumFromEmployees())
                         )
                       }}
                       ₽
