@@ -29,7 +29,7 @@ onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
 
-  // deliveryRansomRows.value = await storeRansom.getRansomRowsForBalance("Delivery");
+  deliveryRansomRows.value = await storeRansom.getRansomRowsForBalance("Delivery");
   // sumOfReject.value = await storeRansom.getSumOfRejection();
   // rows.value = await storeBalance.getBalanceRows();
   // rowsOnline.value = await storeBalance.getBalanceOnlineRows();
@@ -1076,12 +1076,13 @@ function formatNumber(number: number) {
   return formattedString.slice(0, -1);
 }
 
-watch([selectedPVZ, selectedTypeOfTransaction, startingDate, endDate], getAllSum);
 watch(
   [selectedPVZ, selectedTypeOfTransaction, startingDate, endDate],
   getProfitManagerRowsSum
 );
 watch([selectedPVZ, selectedTypeOfTransaction, startingDate, endDate], getProfitRowsSum);
+watch([selectedPVZ, selectedTypeOfTransaction, startingDate, endDate], getAllSum);
+
 
 function clearFields() {
   selectedPVZ.value = "Все ПВЗ";

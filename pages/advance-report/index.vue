@@ -650,7 +650,7 @@ async function updateDeliveryRow(row: any) {
 }
 
 function formatNumber(number: number) {
-  let numberString = number.toString();
+  let numberString = Math.ceil(number).toString();
 
   if (numberString.length <= 3) {
     return numberString;
