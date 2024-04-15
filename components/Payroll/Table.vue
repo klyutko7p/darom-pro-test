@@ -201,14 +201,20 @@ async function createAdvanceReportZP() {
     return acc;
   }, {});
 
+  const selectedMonth = month.value; 
+
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const date = new Date(year, selectedMonth - 1, 31)
+
   let resultRows = Object.values(groupedRows).map((groupedRow) => ({
     PVZ: groupedRow.PVZ,
-    expenditure: groupedRow.expenditureSum.toString(),
+    expenditure: Math.ceil(groupedRow.expenditureSum).toString(),
     typeOfExpenditure: "Оплата ФОТ",
     company: groupedRow.company,
     createdUser: "Директор",
     type: "Нал",
-    date: rows.find((row) => row.PVZ === groupedRow.PVZ && row.company === groupedRow.company)?.date,
+    date: date,
     issuedUser: "",
   }));
 
