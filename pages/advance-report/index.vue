@@ -124,22 +124,18 @@ function getAllSumDirector() {
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
+  const march312024 = new Date("2024-03-31");
+
   let sumOfPVZ2 = rows.value
     ?.filter(
       (row) =>
         row.received !== null &&
         (row.issuedUser === "Директор" || row.issuedUser === "Директор (С)") &&
-        row.type === "Нал"
+        row.type === "Нал" &&
+        row.date &&
+        new Date(row.date) >= march312024
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
-  console.log(
-    rows.value?.filter(
-      (row) =>
-        row.received !== null &&
-        (row.issuedUser === "Директор" || row.issuedUser === "Директор (С)") &&
-        row.type === "Нал"
-    )
-  );
 
   let sumOfPVZ3 = rows.value
     ?.filter(
@@ -778,7 +774,7 @@ function getAllSumFromEmployees() {
       let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
       totalSum += allSum;
     });
-  totalSum += getAllSumDirector() + 1010071 + 2474341;
+  totalSum += allSum.value + 1010071 + 2474341;
   return totalSum;
 }
 
