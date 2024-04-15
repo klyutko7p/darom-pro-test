@@ -127,9 +127,19 @@ function getAllSumDirector() {
   let sumOfPVZ2 = rows.value
     ?.filter(
       (row) =>
-        row.received !== null && row.issuedUser === "Директор" && row.type === "Нал"
+        row.received !== null &&
+        (row.issuedUser === "Директор" || row.issuedUser === "Директор (С)") &&
+        row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
+  console.log(
+    rows.value?.filter(
+      (row) =>
+        row.received !== null &&
+        (row.issuedUser === "Директор" || row.issuedUser === "Директор (С)") &&
+        row.type === "Нал"
+    )
+  );
 
   let sumOfPVZ3 = rows.value
     ?.filter(
@@ -197,7 +207,9 @@ function getAllSumDirector() {
   let sumOfPVZ2Cashless = rows.value
     ?.filter(
       (row) =>
-        row.received !== null && row.issuedUser === "Директор" && row.type === "Безнал"
+        row.received !== null &&
+        (row.issuedUser === "Директор" || row.issuedUser === "Директор (С)") &&
+        row.type === "Безнал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
@@ -766,7 +778,7 @@ function getAllSumFromEmployees() {
       let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
       totalSum += allSum;
     });
-  totalSum += (getAllSumDirector() + 1010071 + 2474341);
+  totalSum += getAllSumDirector() + 1010071 + 2474341;
   return totalSum;
 }
 
@@ -894,11 +906,7 @@ const uniqueNotation = computed(() => {
                   <h1>Баланс Торговой Империи онлайн&наличные:</h1>
                   <div class="flex items-center justify-center gap-3 mt-1">
                     <h1 class="font-bold text-secondary-color text-4xl text-center">
-                      {{
-                        formatNumber(
-                          Math.ceil(getAllSumFromEmployees())
-                        )
-                      }}
+                      {{ formatNumber(Math.ceil(getAllSumFromEmployees())) }}
                       ₽
                     </h1>
                     <Icon
