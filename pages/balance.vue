@@ -292,12 +292,25 @@ function reduceArray(array: any, flag: string) {
 
 function reduceArrayProfit(array: any, flag: string) {
   if (flag === "OurRansom") {
-    array = array.filter((row: any) => row.additionally !== "Отказ брак");
-    return array.reduce(
-      (ac: any, curValue: any) =>
-        ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.025,
-      0
-    );
+    if (!user.value.PVZ.includes("ПВЗ_1")) {
+      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      return array.reduce(
+        (ac: any, curValue: any) =>
+          ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.025,
+        0
+      );
+    } else {
+      array = array.filter(
+        (row: any) =>
+          row.additionally !== "Отказ брак" &&
+          new Date(row.issued) >= new Date("2024-04-01")
+      );
+      return array.reduce(
+        (ac: any, curValue: any) =>
+          ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.035,
+        0
+      );
+    }
   } else if (flag === "ClientRansom") {
     array = array.filter((row: any) => row.additionally !== "Отказ брак");
     return array.reduce(
@@ -506,11 +519,7 @@ function getAllSum() {
         .reduce((acc, value) => acc + +value.sum, 0);
 
       let sumOfPVZ5 = rowsProfit.value
-        ?.filter(
-          (row) =>
-            row.received !== null &&
-            row.recipient === "Собственник"
-        )
+        ?.filter((row) => row.received !== null && row.recipient === "Собственник")
         .reduce((acc, value) => acc + +value.sum, 0);
 
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
@@ -571,12 +580,7 @@ function getAllSum() {
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
 
       allSum.value =
-        sum1.value +
-        sum2.value -
-        sumOfPVZ -
-        sumOfPVZ2 +
-        sumOfPVZ3 -
-        sumOfPVZ5;
+        sum1.value + sum2.value - sumOfPVZ - sumOfPVZ2 + sumOfPVZ3 - sumOfPVZ5;
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (selectedPVZ.value === "Все ПВЗ") {
