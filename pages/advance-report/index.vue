@@ -124,7 +124,7 @@ function getAllSumDirector() {
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
-  const march312024 = new Date("2024-03-31");
+  const march312024 = new Date("2024-04-01");
 
   let sumOfPVZ2 = rows.value
     ?.filter(
