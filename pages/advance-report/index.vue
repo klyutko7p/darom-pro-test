@@ -65,7 +65,6 @@ onBeforeMount(async () => {
   rowsBalanceOnline.value = onlineBalanceRowsData;
 
   getAllSumDirector();
-  getAllSumFromEmployees();
 
   isLoading.value = false;
 });
@@ -231,17 +230,6 @@ function getAllSumDirector() {
   sumOfPVZ1Cashless = sumOfPVZ1Cashless === undefined ? 0 : sumOfPVZ1Cashless;
   sumOfPVZ2Cashless = sumOfPVZ2Cashless === undefined ? 0 : sumOfPVZ2Cashless;
   sumOfPVZ3Cashless = sumOfPVZ3Cashless === undefined ? 0 : sumOfPVZ3Cashless;
-  console.log(sumOfPVZ);
-  console.log(sumOfPVZ1);
-  console.log(sumOfPVZ2);
-  console.log(sumOfPVZ3);
-  console.log(sumOfPVZ4);
-  console.log(sumOfPVZ5);
-  console.log(sumOfPVZ6);
-  console.log(sumOfPVZ7);
-  console.log(sumOfPVZ8);
-  console.log(sumOfPVZ9);
-  console.log(sumOfPVZ10);
   switch ("Директор") {
     case "Директор":
       allSum.value =
@@ -255,8 +243,7 @@ function getAllSumDirector() {
         +sumOfPVZ7 +
         +sumOfPVZ8 -
         +sumOfPVZ9 +
-        +sumOfPVZ10 -
-        145000;
+        +sumOfPVZ10 - 145000;
 
       allSum2.value = +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
       break;
@@ -266,7 +253,6 @@ function getAllSumDirector() {
   }
   getSumCreditCash();
   getSumCreditOnline();
-  console.log(`${allSum.value} - allSum.value getAllSumDirector`);
   return allSum.value + allSum2.value;
 }
 
@@ -788,8 +774,6 @@ function getAllSumFromEmployees() {
       let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
       totalSum += allSum;
     });
-  console.log(`${totalSum} - totalSum`);
-  console.log(`${allSum.value} - allSum.value`);
   totalSum += allSum.value;
   return totalSum;
 }
@@ -971,7 +955,7 @@ const uniqueNotation = computed(() => {
             <div class="flex items-center gap-3 mb-5">
               <h1 class="font-bold text-xl">Проверить баланс сотрудника</h1>
               <Icon
-                @click="showBalanceEmployees = !showBalanceEmployees"
+                @click="showBalanceEmployees = !showBalanceEmployees, getAllSumDirector()"
                 name="clarity:employee-group-line"
                 size="24"
                 class="text-secondary-color hover:opacity-50 cursor-pointer duration-200"
