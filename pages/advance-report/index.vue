@@ -20,16 +20,16 @@ let rowsDelivery = ref<Array<IDelivery>>();
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  const [advanceReports, ourRansomRows, deliveryRows] = await Promise.all([
-    storeAdvanceReports.getAdvancedReports(),
-    storeRansom.getRansomRowsForAdvanceReport("OurRansom"),
-    storeRansom.getRansomRowsForBalance("Delivery"),
-  ]);
+  // const [advanceReports, ourRansomRows, deliveryRows] = await Promise.all([
+  //   storeAdvanceReports.getAdvancedReports(),
+  //   storeRansom.getRansomRowsForAdvanceReport("OurRansom"),
+  //   storeRansom.getRansomRowsForBalance("Delivery"),
+  // ]);
 
-  rows.value = advanceReports;
-  rowsOurRansom.value = ourRansomRows;
-  rowsDelivery.value = deliveryRows;
-  originallyRows.value = advanceReports;
+  rows.value = await storeAdvanceReports.getAdvancedReports();
+  rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReport("OurRansom");
+  rowsDelivery.value = await storeRansom.getRansomRowsForBalance("Delivery");
+  originallyRows.value = rows.value;
 
   originallyRows.value = rows.value;
   selectedUser.value = user.value.username;
@@ -47,22 +47,22 @@ onBeforeMount(async () => {
     handleFilteredRows(rows.value);
   }
 
-  const [
-    ourRansomRowsData,
-    clientRansomRowsData,
-    balanceRowsData,
-    onlineBalanceRowsData,
-  ] = await Promise.all([
-    storeRansom.getRansomRowsForBalance("OurRansom"),
-    storeRansom.getRansomRowsForBalance("ClientRansom"),
-    storeBalance.getBalanceRows(),
-    storeBalance.getBalanceOnlineRows(),
-  ]);
+  // const [
+  //   ourRansomRowsData,
+  //   clientRansomRowsData,
+  //   balanceRowsData,
+  //   onlineBalanceRowsData,
+  // ] = await Promise.all([
+  //   storeRansom.getRansomRowsForBalance("OurRansom"),
+  //   storeRansom.getRansomRowsForBalance("ClientRansom"),
+  //   storeBalance.getBalanceRows(),
+  //   storeBalance.getBalanceOnlineRows(),
+  // ]);
 
-  ourRansomRows.value = ourRansomRowsData;
-  clientRansomRows.value = clientRansomRowsData;
-  rowsBalance.value = balanceRowsData;
-  rowsBalanceOnline.value = onlineBalanceRowsData;
+  ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
+  clientRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
+  rowsBalance.value = await storeBalance.getBalanceRows();
+  rowsBalanceOnline.value = await storeBalance.getBalanceOnlineRows();
 
   getAllSumDirector();
 
