@@ -20,16 +20,16 @@ let rowsDelivery = ref<Array<IDelivery>>();
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  // const [advanceReports, ourRansomRows, deliveryRows] = await Promise.all([
-  //   storeAdvanceReports.getAdvancedReports(),
-  //   storeRansom.getRansomRowsForAdvanceReport("OurRansom"),
-  //   storeRansom.getRansomRowsForBalance("Delivery"),
-  // ]);
+  const [advanceReports, ourRansomRows, deliveryRows] = await Promise.all([
+    storeAdvanceReports.getAdvancedReports(),
+    storeRansom.getRansomRowsForAdvanceReport("OurRansom"),
+    storeRansom.getRansomRowsForBalance("Delivery"),
+  ]);
 
-  rows.value = await storeAdvanceReports.getAdvancedReports();
-  rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReport("OurRansom");
-  rowsDelivery.value = await storeRansom.getRansomRowsForBalance("Delivery");
-  originallyRows.value = rows.value;
+  rows.value = advanceReports;
+  rowsOurRansom.value = ourRansomRows;
+  rowsDelivery.value = deliveryRows;
+  originallyRows.value = advanceReports;
 
   originallyRows.value = rows.value;
   selectedUser.value = user.value.username;
@@ -47,22 +47,22 @@ onBeforeMount(async () => {
     handleFilteredRows(rows.value);
   }
 
-  // const [
-  //   ourRansomRowsData,
-  //   clientRansomRowsData,
-  //   balanceRowsData,
-  //   onlineBalanceRowsData,
-  // ] = await Promise.all([
-  //   storeRansom.getRansomRowsForBalance("OurRansom"),
-  //   storeRansom.getRansomRowsForBalance("ClientRansom"),
-  //   storeBalance.getBalanceRows(),
-  //   storeBalance.getBalanceOnlineRows(),
-  // ]);
+  const [
+    ourRansomRowsData,
+    clientRansomRowsData,
+    balanceRowsData,
+    onlineBalanceRowsData,
+  ] = await Promise.all([
+    storeRansom.getRansomRowsForBalance("OurRansom"),
+    storeRansom.getRansomRowsForBalance("ClientRansom"),
+    storeBalance.getBalanceRows(),
+    storeBalance.getBalanceOnlineRows(),
+  ]);
 
-  ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
-  clientRansomRows.value = await storeRansom.getRansomRowsForBalance("ClientRansom");
-  rowsBalance.value = await storeBalance.getBalanceRows();
-  rowsBalanceOnline.value = await storeBalance.getBalanceOnlineRows();
+  ourRansomRows.value = ourRansomRowsData;
+  clientRansomRows.value = clientRansomRowsData;
+  rowsBalance.value = balanceRowsData;
+  rowsBalanceOnline.value = onlineBalanceRowsData;
 
   getAllSumDirector();
 
@@ -725,12 +725,11 @@ function getAllSumFromName(username: string) {
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
-  let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
-  return allSum;
+  let allSum4 = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
+  return allSum4;
 }
 
 function getAllSumFromEmployees() {
-  getAllSumDirector();
   copyArrayOurRansom.value = ourRansomRows.value?.filter(
     (row) =>
       row.issued !== null &&
@@ -771,8 +770,8 @@ function getAllSumFromEmployees() {
       sumOfPVZ1 = sumOfPVZ1 === undefined ? 0 : sumOfPVZ1;
       sumOfPVZ2 = sumOfPVZ2 === undefined ? 0 : sumOfPVZ2;
       sumOfPVZ3 = sumOfPVZ3 === undefined ? 0 : sumOfPVZ3;
-      let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
-      totalSum += allSum;
+      let allSumData = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
+      totalSum += allSumData;
     });
   totalSum += allSum.value;
   return totalSum;
@@ -893,7 +892,7 @@ const uniqueNotation = computed(() => {
             <div class="text-center text-2xl my-5" v-if="selectedUser === 'Директор (С)'">
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
-                {{ formatNumber(allSum) }} ₽
+                {{ getAllSumDirector() - allSum2 }} ₽
               </h1>
             </div>
             <div v-if="selectedUser === 'Директор'">
