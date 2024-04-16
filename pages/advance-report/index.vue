@@ -124,7 +124,7 @@ function getAllSumDirector() {
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
-  const march312024 = new Date("2024-04-1");
+  const march312024 = new Date("2024-04-01");
 
   let sumOfPVZ2 = rows.value
     ?.filter(
@@ -955,7 +955,7 @@ const uniqueNotation = computed(() => {
             <div class="flex items-center gap-3 mb-5">
               <h1 class="font-bold text-xl">Проверить баланс сотрудника</h1>
               <Icon
-                @click="showBalanceEmployees = !showBalanceEmployees, getAllSumDirector()"
+                @click="showBalanceEmployees = !showBalanceEmployees"
                 name="clarity:employee-group-line"
                 size="24"
                 class="text-secondary-color hover:opacity-50 cursor-pointer duration-200"
