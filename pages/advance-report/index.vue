@@ -124,7 +124,7 @@ function getAllSumDirector() {
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
-  const march312024 = new Date("2024-03-31");
+  const march312024 = new Date("2024-04-1");
 
   let sumOfPVZ2 = rows.value
     ?.filter(
@@ -148,7 +148,7 @@ function getAllSumDirector() {
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
   let sumOfPVZ4 = rowsDelivery.value
-    ?.filter((row) => row.paid !== null)
+    ?.filter((row) => row.paid !== null && row.paid && new Date(row.paid) >= march312024)
     .reduce((acc, value) => acc + +value.amountFromClient3, 0);
 
   let sumOfPVZ5 = rowsBalanceOnline.value?.reduce((acc, value) => acc + +value.sum, 0);
@@ -243,7 +243,7 @@ function getAllSumDirector() {
         +sumOfPVZ7 +
         +sumOfPVZ8 -
         +sumOfPVZ9 +
-        +sumOfPVZ10;
+        +sumOfPVZ10 - 145000;
 
       allSum2.value = +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
       break;
@@ -774,7 +774,7 @@ function getAllSumFromEmployees() {
       let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
       totalSum += allSum;
     });
-  totalSum += allSum.value + 1010071 + 2474341;
+  totalSum += allSum.value;
   return totalSum;
 }
 
@@ -893,7 +893,7 @@ const uniqueNotation = computed(() => {
             <div class="text-center text-2xl my-5" v-if="selectedUser === 'Директор (С)'">
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
-                {{ formatNumber(getAllSumDirector() + 1010071 + 2474341) }} ₽
+                {{ formatNumber(getAllSumDirector()) }} ₽
               </h1>
             </div>
             <div v-if="selectedUser === 'Директор'">
