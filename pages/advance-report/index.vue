@@ -20,16 +20,16 @@ let rowsDelivery = ref<Array<IDelivery>>();
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  // const [advanceReports, ourRansomRows, deliveryRows] = await Promise.all([
-  //   storeAdvanceReports.getAdvancedReports(),
-  //   storeRansom.getRansomRowsForAdvanceReport("OurRansom"),
-  //   storeRansom.getRansomRowsForBalance("Delivery"),
-  // ]);
+  const [advanceReports, ourRansomRows, deliveryRows] = await Promise.all([
+    storeAdvanceReports.getAdvancedReports(),
+    storeRansom.getRansomRowsForAdvanceReport("OurRansom"),
+    storeRansom.getRansomRowsForBalance("Delivery"),
+  ]);
 
-  rows.value = await storeAdvanceReports.getAdvancedReports();
-  rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReport("OurRansom");
-  rowsDelivery.value = await storeRansom.getRansomRowsForBalance("Delivery");
-  originallyRows.value = rows.value;
+  rows.value = advanceReports;
+  rowsOurRansom.value = ourRansomRows;
+  rowsDelivery.value = deliveryRows;
+  originallyRows.value = advanceReports;
 
   originallyRows.value = rows.value;
   selectedUser.value = user.value.username;
@@ -47,24 +47,24 @@ onBeforeMount(async () => {
     handleFilteredRows(rows.value);
   }
 
-  // const [
-  //   ourRansomRowsData,
-  //   clientRansomRowsData,
-  //   balanceRowsData,
-  //   onlineBalanceRowsData,
-  // ] = await Promise.all([
-  //   storeRansom.getRansomRowsForBalance("OurRansom"),
-  //   storeRansom.getRansomRowsForBalance("ClientRansom"),
-  //   storeBalance.getBalanceRows(),
-  //   storeBalance.getBalanceOnlineRows(),
-  // ]);
+  const [
+    ourRansomRowsData,
+    clientRansomRowsData,
+    balanceRowsData,
+    onlineBalanceRowsData,
+  ] = await Promise.all([
+    storeRansom.getRansomRowsForBalance("OurRansom"),
+    storeRansom.getRansomRowsForBalance("ClientRansom"),
+    storeBalance.getBalanceRows(),
+    storeBalance.getBalanceOnlineRows(),
+  ]);
 
-  ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
-  clientRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
-  rowsBalance.value = await storeBalance.getBalanceRows();
-  rowsBalanceOnline.value = await storeBalance.getBalanceOnlineRows();
+  ourRansomRows.value = ourRansomRowsData;
+  clientRansomRows.value = clientRansomRowsData;
+  rowsBalance.value = balanceRowsData;
+  rowsBalanceOnline.value = onlineBalanceRowsData;
 
-  getAllSumDirector();
+  await getAllSumDirector();
 
   isLoading.value = false;
 });
@@ -243,7 +243,8 @@ function getAllSumDirector() {
         +sumOfPVZ7 +
         +sumOfPVZ8 -
         +sumOfPVZ9 +
-        +sumOfPVZ10 - 145000;
+        +sumOfPVZ10 -
+        145000;
 
       allSum2.value = +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
       break;
