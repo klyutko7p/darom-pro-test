@@ -212,7 +212,7 @@ let pvz = ref([
 
 let companies = ref(["WB/OZ start", "Darom.pro", "Сортировка", "Доставка"]);
 
-let banks = ref(["тинькофф", "сбер", "почтабанк", "озон", "яндекс банк"]);
+let banks = ref(["тинькофф", "сбер", "почтабанк", "озон", "яндекс банк", "альфа банк"]);
 
 function autoInfoByFullname() {
   let row = employees.value.filter((row) => row.fullname === rowData.value.fullname);
@@ -227,9 +227,9 @@ function autoInfoByFullname() {
   ).toFixed(2);
 }
 
-let monthValue = ref(0)
+let monthValue = ref(0);
 function getSelectedMonth(monthNumber: number) {
-  monthValue.value = monthNumber
+  monthValue.value = monthNumber;
 }
 </script>
 
@@ -401,6 +401,6 @@ function getSelectedMonth(monthNumber: number) {
   </div>
 
   <div v-else class="flex items-center justify-center">
-      <UISpinner />
+    <UISpinner />
   </div>
 </template>
