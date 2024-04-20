@@ -68,23 +68,11 @@ async function parsingPage() {
         isLoading.value = false
       } else if (marketplace.value === "OZ") {
         let jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
-        console.log(jsonString);
-        console.log(jsonString.seo.script[0].innerHTML);
-        console.log(jsonString.seo.script[0].innerHTML);
         console.log(JSON.parse(jsonString.seo.script[0].innerHTML));
-        console.log(JSON.parse(jsonString.seo.script[0].innerHTML).name);
-        console.log(JSON.parse(jsonString.seo.script[0].innerHTML).offers.price);
-        // let data = JSON.parse(jsonString);
-        // console.log(data);
-        // let price = data.offers.price;
-        // let name = data.name;
-        // let description = data.description;
-
-        // productName.value = name;
-        // description.value = description;
-        // priceSite.value = price;
-        urlToImg.value =
-          "https://i.pinimg.com/736x/30/30/e3/3030e3fa40eb4fd810320bbff7f0a1c4.jpg";
+        productName.value = JSON.parse(jsonString.seo.script[0].innerHTML).name;
+        description.value = JSON.parse(jsonString.seo.script[0].innerHTML).description;
+        priceSite.value = JSON.parse(jsonString.seo.script[0].innerHTML).offers.price;
+        urlToImg.value = JSON.parse(jsonString.seo.script[0].innerHTML).image;
       } else if (marketplace.value === 'YM') {
         let info = await storeClients.fetchSiteYM(urlToItem.value)
         console.log(info);
