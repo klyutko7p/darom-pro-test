@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
       productId[4];
 
     let queryJson = await fetch(apiUrl).then((response) => response.json());
-    return queryJson.seo.script.innerHTML;
+    return queryJson.seo.script[0].innerHTML;
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };
