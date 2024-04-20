@@ -70,7 +70,10 @@ async function parsingPage() {
         let jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
         console.log(jsonString);
         console.log(jsonString.seo.script[0].innerHTML);
-        console.log(jsonString.seo.script[0].innerHTML.json());
+        console.log(jsonString.seo.script[0].innerHTML);
+        console.log(JSON.parse(jsonString.seo.script[0].innerHTML));
+        console.log(JSON.parse(jsonString.seo.script[0].innerHTML).name);
+        console.log(JSON.parse(jsonString.seo.script[0].innerHTML).offers.price);
         // let data = JSON.parse(jsonString);
         // console.log(data);
         // let price = data.offers.price;
