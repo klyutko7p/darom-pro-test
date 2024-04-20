@@ -69,15 +69,17 @@ async function parsingPage() {
       } else if (marketplace.value === "OZ") {
         let jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
         console.log(jsonString);
-        let data = JSON.parse(jsonString);
-        console.log(data);
-        let price = data.offers.price;
-        let name = data.name;
-        let description = data.description;
+        console.log(jsonString.seo.script[0].innerHTML);
+        console.log(jsonString.seo.script[0].innerHTML.json());
+        // let data = JSON.parse(jsonString);
+        // console.log(data);
+        // let price = data.offers.price;
+        // let name = data.name;
+        // let description = data.description;
 
-        productName.value = name;
-        description.value = description;
-        priceSite.value = price;
+        // productName.value = name;
+        // description.value = description;
+        // priceSite.value = price;
         urlToImg.value =
           "https://i.pinimg.com/736x/30/30/e3/3030e3fa40eb4fd810320bbff7f0a1c4.jpg";
       } else if (marketplace.value === 'YM') {
