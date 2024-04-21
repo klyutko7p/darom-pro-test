@@ -9,10 +9,11 @@ const password = ref("");
 const message = ref("");
 
 let isLoading = ref(false);
+let isForeignDevice = ref(false)
 
 async function signIn() {
   isLoading.value = true;
-  message.value = await storeClients.signIn(phoneNumber.value, password.value);
+  message.value = await storeClients.signIn(phoneNumber.value, password.value, isForeignDevice.value);
   isLoading.value = false;
 }
 
@@ -93,6 +94,15 @@ onBeforeMount(async () => {
             />
           </div>
         </div>
+        <div class="mt-2 flex gap-3 items-center justify-center">
+          <input
+            v-model="isForeignDevice"
+            id="isForeignDevice"
+            name="isForeignDevice"
+            type="checkbox"
+          />
+          <label for="isForeignDevice">Чужое устройство</label>
+        </div>
         <div v-if="message !== ''">
           <h1 class="text-red-700">{{ message }}</h1>
         </div>
@@ -101,6 +111,9 @@ onBeforeMount(async () => {
         </div>
         <div class="text-center underline text-secondary-color font-bold">
           <NuxtLink to="/auth/register">Или зарегистрируйтесь</NuxtLink>
+        </div>
+        <div class="text-center underline text-secondary-color font-bold">
+          <NuxtLink to="/auth/login">Зайти как сотрудник</NuxtLink>
         </div>
       </form>
     </div>

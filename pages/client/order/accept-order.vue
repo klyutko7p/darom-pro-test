@@ -239,7 +239,6 @@ let marketplace = ref("");
         >
           <option class="text-lg" value="WB">Wildberries</option>
           <option class="text-lg" value="OZ">Ozon</option>
-          <option class="text-lg" value="YM">Яндекс Маркет</option>
         </select>
         <div v-if="address && marketplace" class="mt-5">
           <h1 class="text-lg font-bold">

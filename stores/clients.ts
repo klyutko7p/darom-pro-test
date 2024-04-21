@@ -1,8 +1,10 @@
+import crypto from "crypto-js";
 import Cookies from "js-cookie";
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
-
 const toast = useToast();
+
+const key = "T%t2m&v@9fN!PcK";
 
 export const useClientsStore = defineStore("clients", () => {
   const router = useRouter();
@@ -43,7 +45,11 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
-  async function signIn(phoneNumber: string, password: string) {
+  async function signIn(
+    phoneNumber: string,
+    password: string,
+    isForeignDevice: boolean = false
+  ) {
     try {
       let { data }: any = await useFetch("/api/clients/login", {
         method: "POST",
@@ -58,8 +64,11 @@ export const useClientsStore = defineStore("clients", () => {
 
         userData = user;
 
-        Cookies.set("token", token, { expires: 7 });
-        Cookies.set("user", JSON.stringify(userData), { expires: 7 });
+        const cookieExpires = isForeignDevice ? 1 / 24 : 7;
+        Cookies.set("token", token, { expires: cookieExpires });
+        Cookies.set("user", JSON.stringify(userData), {
+          expires: cookieExpires,
+        });
 
         if (userData.role === "CLIENT") {
           router.push("/client/main");
@@ -70,6 +79,70 @@ export const useClientsStore = defineStore("clients", () => {
     } catch (error) {
       if (error instanceof Error) {
         console.error("Ошибка во время входа в систему:", error.message);
+        return error.message;
+      }
+    }
+  }
+
+  function encryptPhoneNumber(phoneNumber: string) {
+    let encryptedPhoneNumber = crypto.AES.encrypt(phoneNumber, key).toString();
+    return encryptedPhoneNumber.replace(/\+/g, "-");
+  }
+
+  function decryptPhoneNumber(encryptedPhoneNumber: string) {
+    let sanitizedEncryptedPhoneNumber = encryptedPhoneNumber.replace(/-/g, "+");
+    const bytes = crypto.AES.decrypt(sanitizedEncryptedPhoneNumber, key);
+    return bytes.toString(crypto.enc.Utf8);
+  }
+
+  function createReferralLink(phoneNumber: string) {
+    let stringEncryptPhoneNumber = encryptPhoneNumber(phoneNumber);
+    let splitPhoneNumber =
+      +phoneNumber[4] +
+      4 +
+      (+phoneNumber[3] + 3).toString() +
+      (+phoneNumber[9] + 9).toString() +
+      (+phoneNumber[7] + 7).toString() +
+      (+phoneNumber[10] + 10).toString();
+    let hashedPhoneNumber = crypto.SHA256(splitPhoneNumber);
+
+    let referralLink = `https://soft-praline-633324.netlify.app/auth/register?ref=${hashedPhoneNumber}&q=${splitPhoneNumber}&phone=${stringEncryptPhoneNumber}`;
+
+    return referralLink;
+  }
+
+  function compareReferralLinkNumber(phoneNumber: string, refValue: string) {
+    let hashedPhoneNumber = crypto.SHA256(phoneNumber);
+    if (hashedPhoneNumber.toString() === refValue) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async function createReferralClient(
+    referrerPhone: string,
+    referredPhone: string
+  ) {
+    try {
+      let { data }: any = await useFetch(
+        "/api/clients/create-referral-client",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ referrerPhone, referredPhone }),
+        }
+      );
+      if (data.value === undefined) {
+        return;
+      } else {
+        toast.error("Произошла ошибка при привязке аккаунтов!");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Ошибка во время привязки:", error.message);
         return error.message;
       }
     }
@@ -101,6 +174,43 @@ export const useClientsStore = defineStore("clients", () => {
           "Content-Type": "application/json",
         },
       });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getClientById(id: number) {
+    try {
+      let { data }: any = await useFetch("/api/clients/get-client-by-id", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getClientsByReferrer(phoneNumber: string) {
+    try {
+      let { data }: any = await useFetch(
+        "/api/clients/get-clients-by-referrer",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ phoneNumber }),
+        }
+      );
       return data.value;
     } catch (error) {
       if (error instanceof Error) {
@@ -177,6 +287,38 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  async function updateBalanceStatus(phoneNumber: string) {
+    try {
+      let { data } = await useFetch("/api/clients/update-status-balance", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phoneNumber }),
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function updateBalanceSum(id: number, balance: number) {
+    try {
+      let { data } = await useFetch("/api/clients/update-sum-balance", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id, balance }),
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function updateClient(client: Client, flag: string) {
     try {
       let { data } = await useFetch("/api/clients/edit-client", {
@@ -214,6 +356,15 @@ export const useClientsStore = defineStore("clients", () => {
     fetchSiteWB,
     fetchSiteOZ,
     fetchSitePrice,
-    fetchSiteYM
+    fetchSiteYM,
+    createReferralLink,
+    compareReferralLinkNumber,
+    createReferralClient,
+    decryptPhoneNumber,
+    encryptPhoneNumber,
+    getClientsByReferrer,
+    updateBalanceStatus,
+    updateBalanceSum,
+    getClientById,
   };
 });

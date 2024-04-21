@@ -6,5 +6,6 @@ interface Client {
     oldPassword: string | null;
     accessPassword: string | null;
     role: string;
+    balance: number;
     created_at: Date | string;
 }

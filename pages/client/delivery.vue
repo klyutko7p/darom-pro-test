@@ -57,13 +57,13 @@ async function handleFileChange(event) {
   getCellFromName();
   if (data) {
     console.log(data);
-    isLoading.value = true
+    isLoading.value = true;
     await storeRansom.createRansomRow(
       rowData.value,
       user.value.phoneNumber,
       "ClientRansom"
     );
-    isLoading.value = false
+    isLoading.value = false;
   } else {
     console.log(error);
   }
@@ -151,17 +151,21 @@ const isDisabled = hours >= 12 && hours < 24 && minutes >= 1;
           <h1 class="text-2xl mb-5 mt-10 text-center">Прикрепите скриншот Штрих-кода</h1>
           <input
             class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-            @change="handleFileChange"  
+            @change="handleFileChange"
+            :disabled="isDisabled"
             type="file"
           />
-          <h1 class="text-base mt-10 mb-1 text-secondary-color font-bold">*штрих-код обновляется каждые 24 часа</h1> 
-          <h1 class="text-base text-secondary-color text-center font-bold">**прикрепить скриншот можно с 00:00 до 12:00 ежедневно</h1>
+          <h1 class="text-base mt-10 mb-1 text-secondary-color font-bold">
+            *штрих-код обновляется каждые 24 часа
+          </h1>
+          <h1 class="text-base text-secondary-color text-center font-bold">
+            **прикрепить скриншот можно с 00:00 до 12:00 ежедневно
+          </h1>
         </div>
-        <!-- :disabled="isDisabled" -->
       </div>
     </div>
   </div>
   <div v-else class="flex items-center justify-center">
-      <UISpinner />
+    <UISpinner />
   </div>
 </template>

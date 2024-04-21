@@ -338,6 +338,9 @@ function getTotal() {
       row.typeOfExpenditure !== "Передача денежных средств" &&
       row.typeOfExpenditure !== "Перевод в кредитный баланс" &&
       row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи" &&
+      row.typeOfExpenditure !== "Списание балансовой задолженности торговой империи" &&
+      row.typeOfExpenditure !== "Перевод с баланса нал" &&
+      row.typeOfExpenditure !== "Перевод с баланса безнал" &&
       row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
       row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
       row.typeOfExpenditure !== "Новый кредит нал" &&

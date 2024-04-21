@@ -1,16 +1,26 @@
 <script setup lang="ts">
+import type { ClientReferral } from "@prisma/client";
 import Cookies from "js-cookie";
-
+import { useToast } from "vue-toastification";
 const storeClients = useClientsStore();
 const router = useRouter();
 
+const toast = useToast();
 let user = ref({} as Client);
+let clientsReferred = ref<Array<Client[]>>([]);
+let ourRansomRows = ref<Array<IOurRansom[]>>([]);
 const token = Cookies.get("token");
+const storeRansom = useRansomStore();
+let urlReferral = ref("");
 let isLoading = ref(false);
 
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeClients.getClient();
+  let userData = await storeClients.getClientById(user.value.id);
+  user.value = userData;
+  clientsReferred.value = await storeClients.getClientsByReferrer(user.value.phoneNumber);
+  urlReferral.value = storeClients.createReferralLink(user.value.phoneNumber);
   phoneNumber.value = user.value.phoneNumber;
   fio.value = user.value.fio;
   isLoading.value = false;
@@ -98,6 +108,47 @@ async function saveChanges() {
   }
   isLoading.value = false;
 }
+
+function copyToClipboard() {
+  const el = document.createElement("textarea");
+  el.value = urlReferral.value;
+  el.setAttribute("readonly", "");
+  el.style.position = "absolute";
+  el.style.left = "-9999px";
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand("copy");
+  document.body.removeChild(el);
+  toast.success("Вы успешно скопировали ссылку!");
+}
+
+async function updateBalance() {
+  let sum = 0;
+  isLoading.value = true;
+  for (const element of clientsReferred.value) {
+    if (!element.isAccrued) {
+      ourRansomRows.value = await storeRansom.getRansomRowsByFromNameWithoutCell(
+        element.referrer,
+        "OurRansom"
+      );
+
+      if (
+        ourRansomRows.value.reduce((acc, row) => acc + row.amountFromClient1, 0) >= 3000
+      ) {
+        await storeClients.updateBalanceStatus(element.referrer);
+        sum += 500;
+      } else {
+        console.log("Баланс никак не изменится!");
+      }
+    }
+  }
+  if (sum !== 0) {
+    await storeClients.updateBalanceSum(user.value.id, user.value.balance + sum);
+  }
+  let userData = await storeClients.getClientById(user.value.id);
+  user.value = userData;
+  isLoading.value = false;
+}
 </script>
 
 <template>
@@ -151,10 +202,31 @@ async function saveChanges() {
             <UIMainButton @click="saveChanges">Сохранить</UIMainButton>
           </div>
         </div>
+        <div class="mb-5 mt-10">
+          <h1 class="text-xl">
+            Ваша реферальная ссылка:
+            <span
+              @click="copyToClipboard"
+              class="font-bold underline text-secondary-color cursor-pointer"
+            >
+              СКОПИРОВАТЬ</span
+            >
+          </h1>
+          <div class="mt-5">
+            <h1>
+              Количество пользователей, зарегистрированные по Вашей ссылке:
+              {{ clientsReferred.length }}
+            </h1>
+            <h1>Ваш баланс в данный момент: {{ user.balance ? user.balance : 0 }} ₽</h1>
+            <UIMainButton @click="updateBalance" class="mt-5"
+              >Обновить баланс</UIMainButton
+            >
+          </div>
+        </div>
       </div>
     </div>
   </div>
   <div v-else class="flex items-center justify-center">
-      <UISpinner />
+    <UISpinner />
   </div>
 </template>

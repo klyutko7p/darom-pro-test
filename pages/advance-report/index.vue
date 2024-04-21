@@ -20,51 +20,77 @@ let rowsDelivery = ref<Array<IDelivery>>();
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  const [advanceReports, ourRansomRows, deliveryRows] = await Promise.all([
-    storeAdvanceReports.getAdvancedReports(),
-    storeRansom.getRansomRowsForAdvanceReport("OurRansom"),
-    storeRansom.getRansomRowsForBalance("Delivery"),
-  ]);
+  if (user.value.role === "ADMIN") {
+    const [advanceReports, ourRansomRows, deliveryRows] = await Promise.all([
+      storeAdvanceReports.getAdvancedReports(),
+      storeRansom.getRansomRowsForAdvanceReport("OurRansom"),
+      storeRansom.getRansomRowsForBalance("Delivery"),
+    ]);
+    rows.value = advanceReports;
+    rowsOurRansom.value = ourRansomRows;
+    rowsDelivery.value = deliveryRows;
+    originallyRows.value = advanceReports;
 
-  rows.value = advanceReports;
-  rowsOurRansom.value = ourRansomRows;
-  rowsDelivery.value = deliveryRows;
-  originallyRows.value = advanceReports;
+    originallyRows.value = rows.value;
+    selectedUser.value = user.value.username;
 
-  originallyRows.value = rows.value;
-  selectedUser.value = user.value.username;
+    if (user.value.role !== "ADMIN") {
+      rows.value = rows.value?.filter(
+        (row) =>
+          row.createdUser === user.value.username ||
+          row.issuedUser === user.value.username
+      );
+    } else {
+      rows.value = rows.value;
+    }
 
-  if (user.value.role !== "ADMIN") {
-    rows.value = rows.value?.filter(
-      (row) =>
-        row.createdUser === user.value.username || row.issuedUser === user.value.username
-    );
+    if (rows.value) {
+      handleFilteredRows(rows.value);
+    }
+
+    const [
+      ourRansomRowsData,
+      clientRansomRowsData,
+      balanceRowsData,
+      onlineBalanceRowsData,
+    ] = await Promise.all([
+      storeRansom.getRansomRowsForBalance("OurRansom"),
+      storeRansom.getRansomRowsForBalance("ClientRansom"),
+      storeBalance.getBalanceRows(),
+      storeBalance.getBalanceOnlineRows(),
+    ]);
+
+    ourRansomRows.value = ourRansomRowsData;
+    clientRansomRows.value = clientRansomRowsData;
+    rowsBalance.value = balanceRowsData;
+    rowsBalanceOnline.value = onlineBalanceRowsData;
+    getAllSumDirector();
   } else {
-    rows.value = rows.value;
+    const [advanceReports] = await Promise.all([
+      storeAdvanceReports.getAdvancedReports(),
+    ]);
+    rows.value = advanceReports;
+    originallyRows.value = rows.value;
+    selectedUser.value = user.value.username;
+
+    if (user.value.role !== "ADMIN") {
+      rows.value = rows.value?.filter(
+        (row) =>
+          row.createdUser === user.value.username ||
+          row.issuedUser === user.value.username
+      );
+    } else {
+      rows.value = rows.value;
+    }
+
+    if (rows.value) {
+      handleFilteredRows(rows.value);
+    }
+
+    const [balanceRowsData] = await Promise.all([storeBalance.getBalanceRows()]);
+
+    rowsBalance.value = balanceRowsData;
   }
-
-  if (rows.value) {
-    handleFilteredRows(rows.value);
-  }
-
-  const [
-    ourRansomRowsData,
-    clientRansomRowsData,
-    balanceRowsData,
-    onlineBalanceRowsData,
-  ] = await Promise.all([
-    storeRansom.getRansomRowsForBalance("OurRansom"),
-    storeRansom.getRansomRowsForBalance("ClientRansom"),
-    storeBalance.getBalanceRows(),
-    storeBalance.getBalanceOnlineRows(),
-  ]);
-
-  ourRansomRows.value = ourRansomRowsData;
-  clientRansomRows.value = clientRansomRowsData;
-  rowsBalance.value = balanceRowsData;
-  rowsBalanceOnline.value = onlineBalanceRowsData;
-
-  getAllSumDirector();
 
   isLoading.value = false;
 });
@@ -120,6 +146,7 @@ function getAllSumDirector() {
         row.typeOfExpenditure !== "Пополнение баланса" &&
         row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
         row.typeOfExpenditure !== "Новый кредит нал" &&
+        row.typeOfExpenditure !== "Перевод с баланса безнал" &&
         row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -131,6 +158,8 @@ function getAllSumDirector() {
       (row) =>
         row.received !== null &&
         (row.issuedUser === "Директор" || row.issuedUser === "Директор (С)") &&
+        row.typeOfExpenditure !== "Перевод с баланса нал" &&
+        row.typeOfExpenditure !== "Перевод с баланса безнал" &&
         row.type === "Нал" &&
         row.date &&
         new Date(row.date) >= march312024
@@ -143,7 +172,8 @@ function getAllSumDirector() {
         row.createdUser === "Директор" &&
         row.issuedUser === "" &&
         row.type === "Нал" &&
-        row.typeOfExpenditure !== "Кредитовый баланс нал"
+        row.typeOfExpenditure !== "Кредитовый баланс нал" &&
+        row.typeOfExpenditure !== "Перевод с баланса безнал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
@@ -188,6 +218,26 @@ function getAllSumDirector() {
     )
     .reduce((acc, value) => acc + +value.deliveredKGT, 0);
 
+  let sumOfPVZ11 = rows.value
+    ?.filter(
+      (row) =>
+        row.createdUser === "Директор" &&
+        row.issuedUser === "Директор" &&
+        row.type === "Нал" &&
+        row.typeOfExpenditure === "Перевод с баланса безнал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ12 = rows.value
+    ?.filter(
+      (row) =>
+        row.createdUser === "Директор" &&
+        row.issuedUser === "Директор" &&
+        row.type === "Безнал" &&
+        row.typeOfExpenditure === "Перевод с баланса нал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
   let sumOfPVZ1Cashless = rows.value
     ?.filter(
       (row) =>
@@ -196,6 +246,7 @@ function getAllSumDirector() {
         row.typeOfExpenditure !== "Пополнение баланса" &&
         row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
         row.typeOfExpenditure !== "Новый кредит безнал" &&
+        row.typeOfExpenditure !== "Перевод с баланса нал" &&
         row.type === "Безнал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -205,6 +256,8 @@ function getAllSumDirector() {
       (row) =>
         row.received !== null &&
         (row.issuedUser === "Директор" || row.issuedUser === "Директор (С)") &&
+        row.typeOfExpenditure !== "Перевод с баланса нал" &&
+        row.typeOfExpenditure !== "Перевод с баланса безнал" &&
         row.type === "Безнал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -212,7 +265,31 @@ function getAllSumDirector() {
   let sumOfPVZ3Cashless = rows.value
     ?.filter(
       (row) =>
-        row.createdUser === "Директор" && row.issuedUser === "" && row.type === "Безнал"
+        row.createdUser === "Директор" &&
+        row.issuedUser === "" &&
+        row.type === "Безнал" &&
+        row.typeOfExpenditure !== "Перевод с баланса нал" &&
+        row.typeOfExpenditure !== "Кредитовый баланс безнал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ4Cashless = rows.value
+    ?.filter(
+      (row) =>
+        row.createdUser === "Директор" &&
+        row.issuedUser === "Директор" &&
+        row.type === "Нал" &&
+        row.typeOfExpenditure === "Перевод с баланса безнал"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ5Cashless = rows.value
+    ?.filter(
+      (row) =>
+        row.createdUser === "Директор" &&
+        row.issuedUser === "Директор" &&
+        row.type === "Безнал" &&
+        row.typeOfExpenditure === "Перевод с баланса нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
@@ -227,9 +304,13 @@ function getAllSumDirector() {
   sumOfPVZ8 = sumOfPVZ8 === undefined ? 0 : sumOfPVZ8;
   sumOfPVZ9 = sumOfPVZ9 === undefined ? 0 : sumOfPVZ9;
   sumOfPVZ10 = sumOfPVZ10 === undefined ? 0 : sumOfPVZ10;
+  sumOfPVZ11 = sumOfPVZ11 === undefined ? 0 : sumOfPVZ11;
+  sumOfPVZ12 = sumOfPVZ12 === undefined ? 0 : sumOfPVZ12;
   sumOfPVZ1Cashless = sumOfPVZ1Cashless === undefined ? 0 : sumOfPVZ1Cashless;
   sumOfPVZ2Cashless = sumOfPVZ2Cashless === undefined ? 0 : sumOfPVZ2Cashless;
   sumOfPVZ3Cashless = sumOfPVZ3Cashless === undefined ? 0 : sumOfPVZ3Cashless;
+  sumOfPVZ4Cashless = sumOfPVZ4Cashless === undefined ? 0 : sumOfPVZ4Cashless;
+  sumOfPVZ5Cashless = sumOfPVZ5Cashless === undefined ? 0 : sumOfPVZ5Cashless;
   switch ("Директор") {
     case "Директор":
       allSum.value =
@@ -243,9 +324,17 @@ function getAllSumDirector() {
         +sumOfPVZ7 +
         +sumOfPVZ8 -
         +sumOfPVZ9 +
-        +sumOfPVZ10 - 145000;
+        +sumOfPVZ10 -
+        145000 +
+        +sumOfPVZ11 -
+        +sumOfPVZ12;
 
-      allSum2.value = +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
+      allSum2.value =
+        +sumOfPVZ1Cashless +
+        +sumOfPVZ2Cashless -
+        +sumOfPVZ3Cashless -
+        +sumOfPVZ4Cashless +
+        +sumOfPVZ5Cashless;
       break;
     default:
       allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
@@ -253,21 +342,24 @@ function getAllSumDirector() {
   }
   getSumCreditCash();
   getSumCreditOnline();
+  getSumCreditBalance();
   return allSum.value + allSum2.value;
 }
 
 let sumCreditCash = ref(0);
 let sumCreditOnline = ref(0);
+let sumCreditBalance = ref(0);
 
 let sumCreditCashDebt = ref(0);
 let sumCreditOnlineDebt = ref(0);
+let sumCreditBalanceDebt = ref(0);
 function getSumCreditCash() {
   if (rows.value) {
     let sumOfPVZ = rows.value
       .filter(
         (row) =>
           row.createdUser === "Директор" &&
-          row.typeOfExpenditure === "Перевод в кредитный баланс" &&
+          row.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
           row.type === "Нал"
       )
       .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -310,7 +402,7 @@ function getSumCreditOnline() {
       .filter(
         (row) =>
           row.createdUser === "Директор" &&
-          row.typeOfExpenditure === "Перевод в кредитный баланс" &&
+          row.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
           row.type === "Безнал"
       )
       .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -346,6 +438,53 @@ function getSumCreditOnline() {
   }
 }
 
+function getSumCreditBalance() {
+  if (rows.value) {
+    let sumOfPVZ1 = rows.value
+      .filter(
+        (row) =>
+          row.createdUser === "Директор" &&
+          row.typeOfExpenditure === "Перевод с баланса безнал" &&
+          row.type === "Нал"
+      )
+      .reduce((acc, value) => acc + +value.expenditure, 0);
+
+    let sumOfPVZ2 = rows.value
+      .filter(
+        (row) =>
+          row.createdUser === "Директор" &&
+          row.typeOfExpenditure === "Пополнение баланса" &&
+          row.type === "Нал" &&
+          row.date &&
+          new Date(row.date) > new Date("2024-04-21")
+      )
+      .reduce((acc, value) => acc + +value.expenditure, 0);
+
+    let sumOfPVZ1Debt = rows.value
+      .filter(
+        (row) =>
+          row.createdUser === "Директор" &&
+          row.typeOfExpenditure === "Перевод с баланса нал" &&
+          row.type === "Безнал"
+      )
+      .reduce((acc, value) => acc + +value.expenditure, 0);
+
+    let sumOfPVZ2Debt = rows.value
+      .filter(
+        (row) =>
+          row.createdUser === "Директор" &&
+          row.typeOfExpenditure === "Пополнение баланса" &&
+          row.type === "Безнал" &&
+          row.date &&
+          new Date(row.date) > new Date("2024-04-21")
+      )
+      .reduce((acc, value) => acc + +value.expenditure, 0);
+
+    sumCreditBalance.value = sumOfPVZ1 - sumOfPVZ2;
+    sumCreditBalanceDebt.value = sumOfPVZ1Debt - sumOfPVZ2Debt;
+  }
+}
+
 function closeModal() {
   isOpen.value = false;
   rowData.value = {} as IAdvanceReport;
@@ -378,7 +517,9 @@ function checkStatus() {
   if (
     rowData.value.typeOfExpenditure ===
       "Списание кредитной задолженности торговой империи" ||
-    rowData.value.typeOfExpenditure === "Перевод в кредитный баланс"
+    rowData.value.typeOfExpenditure ===
+      "Списание балансовой задолженности торговой империи" ||
+    rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс"
   ) {
     rowData.value.PVZ = "";
     rowData.value.issuedUser = "";
@@ -393,6 +534,8 @@ function checkStatus() {
     rowData.value.typeOfExpenditure !== "Новый кредит нал" &&
     rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
     rowData.value.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
+    rowData.value.typeOfExpenditure !== "Перевод с баланса нал" &&
+    rowData.value.typeOfExpenditure !== "Перевод с баланса безнал" &&
     rowData.value.typeOfExpenditure !== "Перевод с кредитного баланса безнал"
   ) {
     rowData.value.issuedUser = "";
@@ -404,6 +547,8 @@ function checkStatus() {
     rowData.value.typeOfExpenditure === "Новый кредит нал" ||
     rowData.value.typeOfExpenditure === "Новый кредит безнал" ||
     rowData.value.typeOfExpenditure === "Перевод с кредитного баланса нал" ||
+    rowData.value.typeOfExpenditure === "Перевод с баланса нал" ||
+    rowData.value.typeOfExpenditure === "Перевод с баланса безнал" ||
     rowData.value.typeOfExpenditure === "Перевод с кредитного баланса безнал"
   ) {
     rowData.value.PVZ = "";
@@ -480,7 +625,7 @@ let typesOfExpenditure = ref([
   "Оплата ФОТ",
   "Оплата Налоги. ПФР, СОЦ и т.д.",
   "Вывод дивидендов",
-  "Перевод в кредитный баланс",
+  "Перевод в междубалансовый, кредитный баланс",
   "Списание кредитной задолженности торговой империи",
 ]);
 
@@ -506,18 +651,32 @@ const supabase = createClient(
 
 async function createRow() {
   if (
-    rowData.value.typeOfExpenditure === "Перевод в кредитный баланс" &&
+    rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
     +rowData.value.expenditure > +sumCreditCashDebt.value &&
     rowData.value.type === "Нал"
   ) {
     toast.error("Задолженность кредита меньше чем вписанная сумма!");
     return;
   } else if (
-    rowData.value.typeOfExpenditure === "Перевод в кредитный баланс" &&
+    rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
     +rowData.value.expenditure > +sumCreditOnlineDebt.value &&
     rowData.value.type === "Безнал"
   ) {
     toast.error("Задолженность кредита меньше чем вписанная сумма!");
+    return;
+  } else if (
+    rowData.value.typeOfExpenditure === "Перевод с баланса нал" &&
+    +rowData.value.expenditure > +allSum.value &&
+    rowData.value.type === "Безнал"
+  ) {
+    toast.error("На балансе Директора нал не хватает средств!");
+    return;
+  } else if (
+    rowData.value.typeOfExpenditure === "Перевод с баланса безнал" &&
+    +rowData.value.expenditure > +allSum2.value &&
+    rowData.value.type === "Нал"
+  ) {
+    toast.error("На балансе Директора безнал не хватает средств!");
     return;
   } else if (
     rowData.value.typeOfExpenditure === "Перевод с кредитного баланса нал" &&
@@ -556,6 +715,7 @@ async function createRow() {
     closeModalAdminOOO();
     getSumCreditCash();
     getSumCreditOnline();
+    getSumCreditBalance();
   }
 
   isLoading.value = false;
@@ -565,14 +725,14 @@ async function updateRow() {
   isLoading.value = true;
 
   if (
-    rowData.value.typeOfExpenditure === "Перевод в кредитный баланс" &&
+    rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
     +rowData.value.expenditure > +sumCreditCashDebt.value &&
     rowData.value.type === "Нал"
   ) {
     toast.error("Задолженность меньше чем сумма расхода!");
     return;
   } else if (
-    rowData.value.typeOfExpenditure === "Перевод в кредитный баланс" &&
+    rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
     +rowData.value.expenditure > +sumCreditOnlineDebt.value &&
     rowData.value.type === "Безнал"
   ) {
@@ -583,13 +743,13 @@ async function updateRow() {
   }
 
   if (
-    rowData.value.typeOfExpenditure === "Перевод в кредитный баланс" &&
+    rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
     +rowData.value.expenditure > +sumCreditCashDebt.value
   ) {
     toast.error("Задолженность кредита меньше чем вписанная сумма!");
     return;
   } else if (
-    rowData.value.typeOfExpenditure === "Перевод в кредитный баланс" &&
+    rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
     +rowData.value.expenditure > +sumCreditOnlineDebt.value
   ) {
     toast.error("Задолженность кредита меньше чем вписанная сумма!");
@@ -624,6 +784,7 @@ async function updateRow() {
 
   getSumCreditCash();
   getSumCreditOnline();
+  getSumCreditBalance();
   closeModal();
   isLoading.value = false;
 }
@@ -646,7 +807,34 @@ async function updateDeliveryRow(row: any) {
 
   getSumCreditCash();
   getSumCreditOnline();
+  getSumCreditBalance();
   isLoading.value = false;
+}
+
+async function deleteRow(id: any) {
+  let answer = confirm("Вы точно хотите удалить строку?");
+  if (answer) {
+    isLoading.value = true;
+    await storeAdvanceReports.deleteRow(id.id);
+    rows.value = await storeAdvanceReports.getAdvancedReports();
+    originallyRows.value = rows.value;
+
+    if (user.value.role !== "ADMIN") {
+      rows.value = rows.value?.filter(
+        (row) =>
+          row.createdUser === user.value.username ||
+          row.issuedUser === user.value.username
+      );
+    } else {
+      rows.value = rows.value;
+    }
+    filteredRows.value = rows.value;
+
+    getSumCreditCash();
+    getSumCreditOnline();
+    getSumCreditBalance();
+    isLoading.value = false;
+  }
 }
 
 function formatNumber(number: number) {
@@ -694,18 +882,6 @@ function reduceArrayProfit(array: any, flag: string) {
 }
 
 function getAllSumFromName(username: string) {
-  copyArrayOurRansom.value = ourRansomRows.value?.filter(
-    (row) =>
-      row.issued !== null &&
-      (row.additionally === "Оплата наличными" ||
-        row.additionally === "Отказ клиент наличные" ||
-        row.additionally === "Отказ клиент")
-  );
-
-  copyArrayClientRansom.value = clientRansomRows.value?.filter(
-    (row) => row.issued !== null && row.additionally === "Оплата наличными"
-  );
-
   let sumOfPVZ = rowsBalance.value
     ?.filter((row) => row.received !== null && row.recipient === username)
     .reduce((acc, value) => acc + +value.sum, 0);
@@ -836,13 +1012,19 @@ const uniqueNotation = computed(() => {
                   class="absolute top-0 right-0 hover:text-secondary-color duration-200 cursor-pointer"
                   @click="isShowCreditBalanceCash = !isShowCreditBalanceCash"
                 />
-                <h1 class="text-2xl text-center">Кредит баланс нал</h1>
+                <h1 class="text-2xl text-center">
+                  Междубалансовый, кредитный баланс нал
+                </h1>
                 <h1 class="text-center text-3xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditCash) }} ₽
                 </h1>
-                <h1 class="text-2xl text-center">Задолженность</h1>
+                <h1 class="text-2xl text-center">Кредитная задолженность</h1>
                 <h1 class="text-center text-3xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditCashDebt) }} ₽
+                </h1>
+                <h1 class="text-2xl text-center">Балансовая задолженность</h1>
+                <h1 class="text-center text-3xl text-secondary-color mb-5">
+                  {{ formatNumber(sumCreditBalance) }} ₽
                 </h1>
               </div>
             </div>
@@ -860,13 +1042,19 @@ const uniqueNotation = computed(() => {
                   class="absolute top-0 right-0 hover:text-secondary-color duration-200 cursor-pointer"
                   @click="isShowCreditBalanceOnline = !isShowCreditBalanceOnline"
                 />
-                <h1 class="text-2xl text-center">Кредит баланс безнал</h1>
+                <h1 class="text-2xl text-center">
+                  Междубалансовый, кредитный баланс безнал
+                </h1>
                 <h1 class="text-center text-3xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditOnline) }} ₽
                 </h1>
-                <h1 class="text-2xl text-center">Задолженность</h1>
+                <h1 class="text-2xl text-center">Кредитная задолженность</h1>
                 <h1 class="text-center text-3xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditOnlineDebt) }} ₽
+                </h1>
+                <h1 class="text-2xl text-center">Балансовая задолженность</h1>
+                <h1 class="text-center text-3xl text-secondary-color mb-5">
+                  {{ formatNumber(sumCreditBalanceDebt) }} ₽
                 </h1>
               </div>
             </div>
@@ -1015,6 +1203,7 @@ const uniqueNotation = computed(() => {
             :user="user"
             @open-modal="openModal"
             @update-delivery-row="updateDeliveryRow"
+            @delete-row="deleteRow"
           />
 
           <AdvanceReportTable
@@ -1031,6 +1220,7 @@ const uniqueNotation = computed(() => {
             :user="user"
             @open-modal="openModal"
             @update-delivery-row="updateDeliveryRow"
+            @delete-row="deleteRow"
           />
 
           <AdvanceReportTable
@@ -1039,6 +1229,7 @@ const uniqueNotation = computed(() => {
             :user="user"
             @open-modal="openModal"
             @update-delivery-row="updateDeliveryRow"
+            @delete-row="deleteRow"
           />
         </div>
 
@@ -1058,8 +1249,11 @@ const uniqueNotation = computed(() => {
                 :disabled="
                   rowData.typeOfExpenditure ===
                     'Списание кредитной задолженности торговой империи' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод в междубалансовый, кредитный баланс' ||
                   rowData.typeOfExpenditure === 'Передача денежных средств' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание балансовой задолженности торговой империи' ||
                   rowData.typeOfExpenditure === 'Вывод дивидендов'
                 "
               >
@@ -1075,7 +1269,10 @@ const uniqueNotation = computed(() => {
                 :disabled="
                   rowData.typeOfExpenditure ===
                     'Списание кредитной задолженности торговой империи' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс'
+                  rowData.typeOfExpenditure ===
+                    'Списание балансовой задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод в междубалансовый, кредитный баланс'
                 "
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
@@ -1093,7 +1290,10 @@ const uniqueNotation = computed(() => {
                 :disabled="
                   rowData.typeOfExpenditure ===
                     'Списание кредитной задолженности торговой империи' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс'
+                  rowData.typeOfExpenditure ===
+                    'Списание балансовой задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод в междубалансовый, кредитный баланс'
                 "
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
@@ -1160,7 +1360,10 @@ const uniqueNotation = computed(() => {
                 :disabled="
                   rowData.typeOfExpenditure ===
                     'Списание кредитной задолженности торговой империи' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание балансовой задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод в междубалансовый, кредитный баланс' ||
                   rowData.typeOfExpenditure === 'Передача денежных средств' ||
                   rowData.typeOfExpenditure === 'Передача денежных средств' ||
                   rowData.typeOfExpenditure === 'Вывод дивидендов'
@@ -1183,7 +1386,10 @@ const uniqueNotation = computed(() => {
                 :disabled="
                   rowData.typeOfExpenditure ===
                     'Списание кредитной задолженности торговой империи' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс'
+                  rowData.typeOfExpenditure ===
+                    'Списание балансовой задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод в междубалансовый, кредитный баланс'
                 "
                 class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 @change="handleFileChange"
@@ -1252,6 +1458,7 @@ const uniqueNotation = computed(() => {
               v-model="rowData.PVZ"
               :disabled="
                 rowData.typeOfExpenditure === 'Новый кредит нал' ||
+                rowData.typeOfExpenditure === 'Перевод с баланса безнал' ||
                 rowData.typeOfExpenditure === 'Перевод с кредитного баланса нал'
               "
             >
@@ -1268,6 +1475,7 @@ const uniqueNotation = computed(() => {
               v-model="rowData.company"
               :disabled="
                 rowData.typeOfExpenditure === 'Новый кредит нал' ||
+                rowData.typeOfExpenditure === 'Перевод с баланса безнал' ||
                 rowData.typeOfExpenditure === 'Перевод с кредитного баланса нал'
               "
             >
@@ -1289,6 +1497,7 @@ const uniqueNotation = computed(() => {
               <option value="Перевод с кредитного баланса нал">
                 С кредитного баланса
               </option>
+              <option value="Перевод с баланса безнал">С баланса безнал</option>
             </select>
           </div>
 
@@ -1353,6 +1562,7 @@ const uniqueNotation = computed(() => {
               v-model="rowData.PVZ"
               :disabled="
                 rowData.typeOfExpenditure === 'Новый кредит безнал' ||
+                rowData.typeOfExpenditure === 'Перевод с баланса нал' ||
                 rowData.typeOfExpenditure === 'Перевод с кредитного баланса безнал'
               "
             >
@@ -1369,6 +1579,7 @@ const uniqueNotation = computed(() => {
               v-model="rowData.company"
               :disabled="
                 rowData.typeOfExpenditure === 'Новый кредит безнал' ||
+                rowData.typeOfExpenditure === 'Перевод с баланса нал' ||
                 rowData.typeOfExpenditure === 'Перевод с кредитного баланса безнал'
               "
             >
@@ -1390,6 +1601,7 @@ const uniqueNotation = computed(() => {
               <option value="Перевод с кредитного баланса безнал">
                 С кредитного баланса
               </option>
+              <option value="Перевод с баланса нал">С баланса нал</option>
             </select>
           </div>
 
@@ -1528,7 +1740,10 @@ const uniqueNotation = computed(() => {
                 :disabled="
                   rowData.typeOfExpenditure ===
                     'Списание кредитной задолженности торговой империи' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание балансовой задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод в междубалансовый, кредитный баланс' ||
                   rowData.typeOfExpenditure === 'Передача денежных средств' ||
                   rowData.typeOfExpenditure === 'Вывод дивидендов'
                 "
@@ -1545,7 +1760,10 @@ const uniqueNotation = computed(() => {
                 :disabled="
                   rowData.typeOfExpenditure ===
                     'Списание кредитной задолженности торговой империи' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс'
+                  rowData.typeOfExpenditure ===
+                    'Списание балансовой задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод в междубалансовый, кредитный баланс'
                 "
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
@@ -1563,7 +1781,10 @@ const uniqueNotation = computed(() => {
                 :disabled="
                   rowData.typeOfExpenditure ===
                     'Списание кредитной задолженности торговой империи' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс'
+                  rowData.typeOfExpenditure ===
+                    'Списание балансовой задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод в междубалансовый, кредитный баланс'
                 "
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
@@ -1623,7 +1844,10 @@ const uniqueNotation = computed(() => {
                 :disabled="
                   rowData.typeOfExpenditure ===
                     'Списание кредитной задолженности торговой империи' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание балансовой задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод в междубалансовый, кредитный баланс' ||
                   rowData.typeOfExpenditure === 'Передача денежных средств' ||
                   rowData.typeOfExpenditure === 'Передача денежных средств' ||
                   rowData.typeOfExpenditure === 'Вывод дивидендов'
@@ -1646,7 +1870,10 @@ const uniqueNotation = computed(() => {
                 :disabled="
                   rowData.typeOfExpenditure ===
                     'Списание кредитной задолженности торговой империи' ||
-                  rowData.typeOfExpenditure === 'Перевод в кредитный баланс'
+                  rowData.typeOfExpenditure ===
+                    'Списание балансовой задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод в междубалансовый, кредитный баланс'
                 "
                 class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 @change="handleFileChange"
@@ -1744,6 +1971,7 @@ const uniqueNotation = computed(() => {
               <option value="Перевод с кредитного баланса нал">
                 С кредитного баланса
               </option>
+              <option value="Перевод с баланса безнал">С баланса безнал</option>
             </select>
           </div>
 
@@ -1831,6 +2059,7 @@ const uniqueNotation = computed(() => {
               <option value="Перевод с кредитного баланса безнал">
                 С кредитного баланса
               </option>
+              <option value="Перевод с баланса нал">С баланса нал</option>
             </select>
           </div>
 

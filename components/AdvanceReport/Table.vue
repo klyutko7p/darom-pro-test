@@ -3,10 +3,14 @@ import type { PropType } from "vue";
 const storeUsers = useUsersStore();
 import { read, utils, writeFile, write } from "xlsx";
 
-const emit = defineEmits(["openModal", "updateDeliveryRow"]);
+const emit = defineEmits(["openModal", "updateDeliveryRow", "deleteRow"]);
 
 function updateDeliveryRow(row: IAdvanceReport) {
   emit("updateDeliveryRow", { row: row });
+}
+
+function deleteRow(id: number) {
+  emit("deleteRow", { id });
 }
 
 function openModal(row: IAdvanceReport) {
@@ -156,6 +160,9 @@ function exportToExcel() {
           <th scope="col" class="border-2">Подтверждающий документ</th>
           <th scope="col" class="border-2">Получено</th>
           <th scope="col" class="border-2" v-if="user.username === 'Директор'">Тип</th>
+          <th scope="col" class="border-2" v-if="user.username === 'Директор'">
+            Удаление
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -219,6 +226,13 @@ function exportToExcel() {
           </td>
           <td class="border-2 whitespace-nowrap" v-if="user.username === 'Директор'">
             {{ row.type }}
+          </td>
+          <td
+            @click="deleteRow(row.id)"
+            class="border-2 whitespace-nowrap cursor-pointer"
+            v-if="user.username === 'Директор'"
+          >
+            ❌
           </td>
         </tr>
       </tbody>

@@ -136,6 +136,7 @@ export const usePayrollsStore = defineStore("payrolls", () => {
                 body: JSON.stringify({ id: id }),
             });
             if (data.data.value === undefined) {
+                cachedEmployeesRows = null;
                 toast.success("Запись успешно удалена!")
             } else {
                 console.log(data.data.value);

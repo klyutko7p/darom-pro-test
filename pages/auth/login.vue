@@ -24,10 +24,10 @@ onBeforeMount(async () => {
   user.value = await storeUsers.getUser();
   isLoading.value = false;
 
-  if (token && user.value.role === 'ADMIN') {
+  if (token && user.value.role === "ADMIN") {
     router.push("/admin/main");
-  } else if (token && user.value.role === 'USER') {
-    router.push("/user/main")
+  } else if (token && user.value.role === "USER") {
+    router.push("/user/main");
   }
 });
 </script>
@@ -48,7 +48,7 @@ onBeforeMount(async () => {
       <h2
         class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900"
       >
-        Авторизация пользователя
+        Авторизация сотрудника
       </h2>
     </div>
 
@@ -98,12 +98,12 @@ onBeforeMount(async () => {
           <UIMainButton class="w-full">Войти</UIMainButton>
         </div>
         <div class="text-center underline text-secondary-color font-bold">
-          <NuxtLink to="/auth/register">Или зарегистрируйтесь</NuxtLink>
+          <NuxtLink to="/auth/client/login">Или зайдите как клиент</NuxtLink>
         </div>
       </form>
     </div>
   </div>
   <div v-else class="flex items-center justify-center">
-      <UISpinner />
+    <UISpinner />
   </div>
 </template>

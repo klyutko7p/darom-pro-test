@@ -1,20 +1,25 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
-
+import crypto from "crypto-js";
 const storeClients = useClientsStore();
 const router = useRouter();
+const route = useRoute();
 
 const phoneNumber = ref("");
-const fio = ref("")
+const fio = ref("");
 const password = ref("");
-const repeatPassword = ref("")
+const repeatPassword = ref("");
 const message = ref("");
+const refValue = route.query.ref ? route.query.ref : "";
+const queryValue = route.query.q ? route.query.q : "";
+const phoneNumberValue = route.query.phone
+  ? storeClients.decryptPhoneNumber(route.query.phone)
+  : "";
 
 let isLoading = ref(false);
 
 let errorTextValidation = ref("");
 async function register() {
-
   if (phoneNumber.value.length < 11) {
     errorTextValidation.value = "Неправильный ввод номера телефона";
     return;
@@ -58,9 +63,14 @@ async function register() {
     phoneNumber: phoneNumber.value,
     password: password.value,
     fio: fio.value,
-    role: 'CLIENT',
+    role: "CLIENT",
     created_at: new Date(),
   });
+
+  if (storeClients.compareReferralLinkNumber(queryValue, refValue)) {
+    await storeClients.createReferralClient(phoneNumber.value, phoneNumberValue);
+  }
+
   isLoading.value = false;
 }
 
@@ -72,12 +82,12 @@ onBeforeMount(async () => {
   user.value = await storeClients.getClient();
   isLoading.value = false;
 
-  if (token && user.value.role === 'ADMIN') {
+  if (token && user.value.role === "ADMIN") {
     router.push("/admin/main");
-  } else if (token && user.value.role === 'USER') {
-    router.push("/user/main")
-  } else if (token && user.value.role === 'CLIENT') {
-    router.push("/client/main")
+  } else if (token && user.value.role === "USER") {
+    router.push("/user/main");
+  } else if (token && user.value.role === "CLIENT") {
+    router.push("/client/main");
   }
 });
 </script>
@@ -184,7 +194,7 @@ onBeforeMount(async () => {
         <div class="flex items-center justify-center">
           <UIMainButton class="w-full">Зарегистрироваться</UIMainButton>
         </div>
-        <h1 class="text-center font-bold text-red-500"> {{ errorTextValidation }} </h1>
+        <h1 class="text-center font-bold text-red-500">{{ errorTextValidation }}</h1>
       </form>
       <div class="text-center underline text-secondary-color font-bold mt-5">
         <NuxtLink to="/auth/client/login">Или войдите</NuxtLink>
@@ -192,6 +202,6 @@ onBeforeMount(async () => {
     </div>
   </div>
   <div v-else class="flex items-center justify-center">
-      <UISpinner />
+    <UISpinner />
   </div>
 </template>

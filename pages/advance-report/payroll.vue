@@ -91,28 +91,22 @@ async function updateReport(rowsData: IPayroll[]) {
 }
 
 async function createRow() {
-  isLoading.value = true;
   await storePayrolls.createPayroll(rowData.value);
   rows.value = await storePayrolls.getPayrolls();
   closeModal();
-  isLoading.value = false;
 }
 
 async function updateRow() {
-  isLoading.value = true;
   await storePayrolls.updatePayroll(rowData.value);
   rows.value = await storePayrolls.getPayrolls();
   closeModal();
-  isLoading.value = false;
 }
 
 async function deleteRow(id: number) {
   let answer = confirm("Вы точно хотите удалить строку?");
   if (answer) {
-    isLoading.value = true;
     await storePayrolls.deletePayroll(id);
     rows.value = await storePayrolls.getPayrolls();
-    isLoading.value = false;
   }
 }
 
@@ -303,7 +297,12 @@ function getSelectedMonth(monthNumber: number) {
                   @change="autoInfoByFullname"
                   v-model="rowData.fullname"
                 >
-                  <option v-for="employee in employees" :value="employee.fullname">
+                  <option
+                    v-for="employee in employees.sort((a, b) =>
+                      a.fullname.localeCompare(b.fullname)
+                    )"
+                    :value="employee.fullname"
+                  >
                     {{ employee.fullname }}
                   </option>
                 </select>

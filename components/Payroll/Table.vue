@@ -50,6 +50,10 @@ const filteredRows = ref(
   })
 );
 
+onMounted(() => {
+  getMonth()
+})
+
 let showFilters = ref(false);
 let months = ref([3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2]);
 let monthNames: any = ref({

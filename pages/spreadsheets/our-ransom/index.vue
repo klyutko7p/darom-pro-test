@@ -219,16 +219,23 @@ onMounted(async () => {
 
   originallyRows.value = await storeRansom.getRansomRowsForModal("OurRansom");
   await updateCells();
-  pvz.value = await storePVZ.getPVZ();
-  sortingCenters.value = await storeSortingCenters.getSortingCenters();
-  orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
+  
+  const [pvzData, sortingCentersData, orderAccountsData] = await Promise.all([
+    storePVZ.getPVZ(),
+    storeSortingCenters.getSortingCenters(),
+    storeOrderAccounts.getOrderAccounts(),
+  ]);
+
+  pvz.value = pvzData;
+  sortingCenters.value = sortingCentersData;
+  orderAccounts.value = orderAccountsData;
 });
 
 async function updateCells() {
   let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCells("OurRansom");
   await storeCells.updateCellsStatus(rowsWithDeleted);
   cells.value = await storeCells.getCells();
-  cells.value = cells.value?.filter((cell) => cell.PVZ !== 'НаДом')
+  cells.value = cells.value?.filter((cell) => cell.PVZ !== "НаДом");
 }
 
 onBeforeMount(() => {

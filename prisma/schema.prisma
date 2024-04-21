@@ -284,7 +284,15 @@ model Client {
   role        Role     @default(CLIENT)
   password    String
   phoneNumber String   @unique()
+  balance     Int?
   created_at  DateTime @default(now())
+}
+
+model ClientReferral {
+  id        Int      @id @default(autoincrement())
+  referrer  String   @unique
+  referred  String
+  isAccrued Boolean? @default(false)
 }
 
 model Task {
