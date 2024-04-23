@@ -52,12 +52,20 @@ body {
   height: 100vh;
 }
 
+.main-page-client {
+  background-color: blue;
+  color: white;
+  height: 100vh;
+}
+
 .bg-main-page {
   background-image: url('../images/ellipse.png');
   background-position: top;
   background-repeat: no-repeat;
   background-color: #000C1C;
 }
+
+
 
 input {
   color: black;
@@ -79,8 +87,6 @@ input[type="date"] {
     content: attr(placeholder);
   }
 }
-
-
 
 h1 {
   font-family: "Exo 2", sans-serif;

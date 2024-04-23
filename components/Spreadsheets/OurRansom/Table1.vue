@@ -12,6 +12,7 @@ const route = useRoute();
 
 const storeUsers = useUsersStore();
 const storeRansom = useRansomStore();
+const storeBalance = useBalanceStore();
 
 const emit = defineEmits([
   "openModal",
@@ -22,15 +23,32 @@ const emit = defineEmits([
   "showDeletedRows",
 ]);
 
-function updateDeliveryRows(flag: string, allSumData: string = "0") {
+async function updateDeliveryRows(flag: string, allSumData: string = "0") {
   emit("updateDeliveryRows", {
     idArray: checkedRows.value,
     flag: flag,
     allSum: allSumData,
   });
+  await storeBalance.createBalanceRow(
+    {
+      pvz: props.user.visiblePVZ,
+      sum: allSumInput.value,
+      issued: new Date(),
+      received: new Date(),
+      notation: "Оплата бонусами",
+      receivedUser: props.user.username,
+      receivedUser2: props.user.username,
+      createdUser: props.user.username,
+      recipient: "Нет",
+    },
+    props.user.username
+  );
+  await storeClients.updateBalance(phoneNumberClient.value, getAllSumBonuses.value);
   checkedRows.value = [];
   allSum.value = [];
   getAllSum.value = 0;
+  getAllSumBonuses.value = 0;
+  phoneNumberClient.value = "";
 }
 
 function openModal(row: IOurRansom) {
@@ -175,6 +193,7 @@ const allSum: Ref<RowData[]> = ref([]);
 const checkedRows: Ref<number[]> = ref([]);
 
 const getAllSum: Ref<number> = ref(0);
+const getAllSumBonuses: Ref<number> = ref(0);
 const showButton: Ref<boolean> = ref(true);
 const showButtonPVZ: Ref<boolean> = ref(true);
 const showButtonSC: Ref<boolean> = ref(true);
@@ -190,6 +209,7 @@ interface RowData {
   deliveredPVZ: Date | null | string | number;
   deliveredSC: Date | null | string | number;
   orderPVZ: Date | null | string | number;
+  fromName: string;
 }
 
 let scanStringItem = ref("");
@@ -222,7 +242,13 @@ function convertToURL(inputString: string) {
   }
 }
 
+let allSumInput = ref("");
+let phoneNumberClient = ref("");
+let allFromNamesEqual = ref(false);
 const handleCheckboxChange = (row: IOurRansom): void => {
+  phoneNumberClient.value = "";
+  allSumInput.value = "";
+  allFromNamesEqual.value = false;
   if (isChecked(row.id)) {
     checkedRows.value = checkedRows.value.filter((id) => id !== row.id);
     allSum.value = allSum.value.filter((obj) => obj.rowId !== row.id);
@@ -235,15 +261,42 @@ const handleCheckboxChange = (row: IOurRansom): void => {
       deliveredPVZ: row.deliveredPVZ,
       orderPVZ: row.orderPVZ,
       deliveredSC: row.deliveredSC,
+      fromName: row.fromName,
     });
   }
+
+  allFromNamesEqual.value = allSum.value.every((item, index, array) => {
+    if (item.fromName === array[0].fromName) {
+      phoneNumberClient.value = item.fromName;
+      return clients.value.some((client) => client.phoneNumber === item.fromName);
+    }
+    return false;
+  });
+
   getAllSum.value = allSum.value
     .filter((obj) => obj.issued === null)
     .reduce((sum, obj) => sum + obj.amount, 0);
+
+  if (allFromNamesEqual.value) {
+    getAllSumBonuses.value = clients.value
+      .filter((client: Client) => client.phoneNumber === allSum.value[0].fromName)
+      .reduce((sum, obj) => sum + obj.balance, 0);
+  }
   showButton.value = allSum.value.every((obj) => obj.issued === null);
   showButtonPVZ.value = allSum.value.every((obj) => obj.deliveredPVZ === null);
   showButtonSC.value = allSum.value.every((obj) => obj.deliveredSC === null);
+  console.log(phoneNumberClient.value);
 };
+
+let previousAmount = 0;
+
+function changeAmountFromClient() {
+  const currentAmount = +allSumInput.value;
+  const difference = currentAmount - previousAmount;
+  getAllSum.value -= difference;
+  getAllSumBonuses.value -= difference;
+  previousAmount = currentAmount;
+}
 
 const showDeletedRows = ref(false);
 
@@ -305,12 +358,12 @@ function updateCurrentPageData() {
     processingRows.value = [...new Set(processingRows.value)];
   });
 
-  if (props.user.role === "RMANAGER" || props.user.role === 'PPVZ') {
+  if (props.user.role === "RMANAGER" || props.user.role === "PPVZ") {
     returnRows.value = props.rows?.filter(
       (row) => row.dispatchPVZ && row.dispatchPVZ.includes(props.user.PVZ)
     );
-    expiredRows.value = []
-    processingRows.value = []
+    expiredRows.value = [];
+    processingRows.value = [];
   }
 }
 
@@ -326,7 +379,7 @@ function updateCurrentPageDataDeleted() {
       .slice(startIndex, endIndex);
   }
 
-  if (props.user.role === "RMANAGER" || props.user.role === 'PPVZ') {
+  if (props.user.role === "RMANAGER" || props.user.role === "PPVZ") {
     returnRows.value = props.rows?.filter(
       (row) => row.dispatchPVZ && row.dispatchPVZ.includes(props.user.PVZ)
     );
@@ -348,7 +401,8 @@ const nextPage = () => {
 };
 
 let isVisiblePages = ref(true);
-
+let clients = ref<Array<Client>>([]);
+const storeClients = useClientsStore();
 onMounted(async () => {
   focusInput();
 
@@ -358,6 +412,8 @@ onMounted(async () => {
     perPage.value = totalRows.value;
     updateCurrentPageData();
   }
+
+  clients.value = await storeClients.getClients();
 
   await storeRansom.getSumOfRejection();
 
@@ -516,14 +572,24 @@ let showPayRejectClient = ref(false);
   </div>
 
   <div
-    class="fixed top-16 z-40 left-1/2 translate-x-[-50%] translate-y-[-50%]"
+    class="fixed top-40 z-40 left-1/2 translate-x-[-50%] translate-y-[-50%]"
     v-if="getAllSum > 0"
   >
     <h1
       class="text-base text-center backdrop-blur-xl p-2 rounded-xl border-2 text-secondary-color font-bold"
     >
       К оплате: {{ getAllSum }} <br />
-      Количество товаров: {{ checkedRows.length }}
+      Количество товаров: {{ checkedRows.length }} <br />
+      <span v-if="allFromNamesEqual">
+        Бонусы клиента: {{ getAllSumBonuses }} <br />
+        Потратить бонусы: <br />
+        <input
+          @input="changeAmountFromClient"
+          class="mt-2 bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+          type="text"
+          v-model="allSumInput"
+        />
+      </span>
     </h1>
   </div>
 

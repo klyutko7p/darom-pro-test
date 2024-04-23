@@ -303,6 +303,22 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  async function updateBalance(phoneNumber: string, balance: number) {
+    try {
+      let { data } = await useFetch("/api/clients/edit-balance", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phoneNumber, balance }),
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function updateBalanceSum(id: number, balance: number) {
     try {
       let { data } = await useFetch("/api/clients/update-sum-balance", {
@@ -366,5 +382,6 @@ export const useClientsStore = defineStore("clients", () => {
     updateBalanceStatus,
     updateBalanceSum,
     getClientById,
+    updateBalance
   };
 });

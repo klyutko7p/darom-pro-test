@@ -55,8 +55,13 @@ async function parsingPage() {
   if (urlToItem.value !== "") {
     if (urlToItem.value.length > 20) {
       if (marketplace.value === "WB") {
-        isLoading.value = true
+        isLoading.value = true;
         let itemInfo = await storeClients.fetchSiteWB(urlToItem.value);
+        if (itemInfo.error === 'fetch failed') {
+          toast.error("Извините, мы не можем сейчас обработать данные.");
+          isLoading.value = false;
+          return;
+        }
         let priceInfo = await storeClients.fetchSitePrice(urlToItem.value);
         productName.value = itemInfo[0].imt_name;
         description.value = itemInfo[0].description;
@@ -64,17 +69,18 @@ async function parsingPage() {
           priceInfo.message.split(" ")[0] + priceInfo.message.split(" ")[1]
         );
         urlToImg.value = itemInfo[2];
-        toast.success("Вы успешно добавили товар!")
-        isLoading.value = false
+        toast.success("Вы успешно добавили товар!");
+        isLoading.value = false;
       } else if (marketplace.value === "OZ") {
         let jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
+        console.log(jsonString);
         console.log(JSON.parse(jsonString.seo.script[0].innerHTML));
         productName.value = JSON.parse(jsonString.seo.script[0].innerHTML).name;
         description.value = JSON.parse(jsonString.seo.script[0].innerHTML).description;
         priceSite.value = JSON.parse(jsonString.seo.script[0].innerHTML).offers.price;
         urlToImg.value = JSON.parse(jsonString.seo.script[0].innerHTML).image;
-      } else if (marketplace.value === 'YM') {
-        let info = await storeClients.fetchSiteYM(urlToItem.value)
+      } else if (marketplace.value === "YM") {
+        let info = await storeClients.fetchSiteYM(urlToItem.value);
         console.log(info);
       }
 
@@ -276,7 +282,7 @@ let marketplace = ref("");
             class="border-b-2 mb-10 shadow-2xl border-black flex items-start justify-around"
           >
             <img
-              class="max-w-[300px] h-full rounded-t-2xl max-sm:hidden"
+              class="max-w-[400px] h-full rounded-t-2xl max-sm:hidden"
               :src="item.img"
               alt=""
             />
@@ -350,6 +356,6 @@ let marketplace = ref("");
     </div>
   </div>
   <div v-else class="flex items-center justify-center">
-      <UISpinner />
+    <UISpinner />
   </div>
 </template>

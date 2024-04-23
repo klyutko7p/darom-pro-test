@@ -469,7 +469,7 @@ function getSumCreditBalance() {
       )
       .reduce((acc, value) => acc + +value.expenditure, 0);
 
-    let sumOfPVZ2Debt = rows.value
+    let sumOfPVZ2Debt = rows.value 
       .filter(
         (row) =>
           row.createdUser === "Директор" &&

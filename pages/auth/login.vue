@@ -30,77 +30,89 @@ onBeforeMount(async () => {
     router.push("/user/main");
   }
 });
+let showPassword = ref(false)
 </script>
 
 <template>
   <Head>
     <Title>Авторизация</Title>
   </Head>
-  <div
-    v-if="!isLoading"
-    class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8"
-  >
-    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-      <div class="flex items-center gap-4 justify-center">
-        <h1 class="text-center text-secondary-color text-4xl font-bold">DAROM.PRO</h1>
-        <Icon size="40" name="material-symbols:account-circle" />
+  <div v-if="!isLoading" class="h-screen flex items-center justify-center max-sm:block">
+    <div
+      class="px-10 py-40 h-full max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50"
+    >
+      <div class="">
+        <div class="flex items-center justify-center">
+          <h1 class="text-center text-secondary-color text-6xl max-sm:text-5xl font-bold">DAROM.PRO</h1>
+        </div>
+        <h2
+          class="mt-5 text-center text-2xl max-sm:text-xl font-bold leading-9 tracking-tight text-gray-900"
+        >
+          Авторизация сотрудника
+        </h2>
       </div>
-      <h2
-        class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900"
-      >
-        Авторизация сотрудника
-      </h2>
+
+      <div class="mt-10 max-sm:px-3">
+        <form class="space-y-10" @submit.prevent="signIn">
+          <div>
+            <label for="username" class="block text-sm font-medium leading-6 text-gray-900"
+              >Имя пользователя</label
+            >
+            <div class="mt-2">
+              <input
+                v-model="username"
+                id="username"
+                name="username"
+                type="text"
+                autocomplete="username"
+                required
+                placeholder="Введите имя пользователя"
+                class="block w-full ring-1 ring-gray-200 focus:ring-2 focus:ring-yellow-600 bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none"
+              />
+            </div>
+          </div>
+  
+          <div>
+            <div class="flex items-center justify-between">
+              <label
+                for="password"
+                class="block text-sm font-medium leading-6 text-gray-900"
+                >Пароль</label
+              >
+            </div>
+            <div class="mt-2 relative">
+              <input
+                v-model="password"
+                id="password"
+                name="password"
+                :type="showPassword ? 'text' : 'password'"
+                autocomplete="current-password"
+                required
+                placeholder="******"
+                class="block w-full ring-1 ring-gray-200 focus:ring-2 focus:ring-yellow-600 bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none"
+              />
+              <Icon
+                @click="showPassword = !showPassword"
+                name="ic:round-remove-red-eye"
+                class="cursor-pointer hover:text-secondary-color duration-100 absolute top-2 right-2"
+                size="20"
+              />
+            </div>
+          </div>
+          <div v-if="message !== ''">
+            <h1 class="text-red-700">{{ message }}</h1>
+          </div>
+          <div class="flex items-center justify-center">
+            <UIMainButton class="w-full">Войти</UIMainButton>
+          </div>
+        </form>
+      </div>
     </div>
 
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form class="space-y-6" @submit.prevent="signIn">
-        <div>
-          <label for="username" class="block text-sm font-medium leading-6 text-gray-900"
-            >Имя пользователя</label
-          >
-          <div class="mt-2">
-            <input
-              v-model="username"
-              id="username"
-              name="username"
-              type="text"
-              autocomplete="username"
-              required
-              class="block w-full bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
-            />
-          </div>
-        </div>
-
-        <div>
-          <div class="flex items-center justify-between">
-            <label
-              for="password"
-              class="block text-sm font-medium leading-6 text-gray-900"
-              >Пароль</label
-            >
-          </div>
-          <div class="mt-2">
-            <input
-              v-model="password"
-              id="password"
-              name="password"
-              type="password"
-              autocomplete="current-password"
-              required
-              class="block w-full bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
-            />
-          </div>
-        </div>
-        <div v-if="message !== ''">
-          <h1 class="text-red-700">{{ message }}</h1>
-        </div>
-        <div class="flex items-center justify-center">
-          <UIMainButton class="w-full">Войти</UIMainButton>
-        </div>
-        <div class="text-center underline text-secondary-color font-bold">
-          <NuxtLink to="/auth/client/login">Или зайдите как клиент</NuxtLink>
-        </div>
-      </form>
+    <div
+      class="text-center underline absolute top-3 right-2 text-secondary-color font-bold"
+    >
+      <NuxtLink to="/auth/client/login">Зайти как клиент</NuxtLink>
     </div>
   </div>
   <div v-else class="flex items-center justify-center">
