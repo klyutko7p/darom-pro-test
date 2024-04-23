@@ -54,10 +54,10 @@ let stringToBot = "/get_price";
 async function parsingPage() {
   if (urlToItem.value !== "") {
     if (urlToItem.value.length > 20) {
-      if (marketplace.value === "WB") {
+      if (urlToItem.value.includes("wildberries") && marketplace.value === "WB") {
         isLoading.value = true;
         let itemInfo = await storeClients.fetchSiteWB(urlToItem.value);
-        if (itemInfo.error === 'fetch failed') {
+        if (itemInfo.error === "fetch failed") {
           toast.error("Извините, мы не можем сейчас обработать данные.");
           isLoading.value = false;
           return;
@@ -71,14 +71,21 @@ async function parsingPage() {
         urlToImg.value = itemInfo[2];
         toast.success("Вы успешно добавили товар!");
         isLoading.value = false;
-      } else if (marketplace.value === "OZ") {
+      } else if (urlToItem.value.includes("ozon") && marketplace.value === "OZ") {
+        isLoading.value = true;
         let jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
+        if (JSON.parse(jsonString).pageInfo.pageTypeTracking === "error") {
+          toast.error("Извините, произошла ошибка. Проверьте ссылку на товар!");
+          isLoading.value = false;
+          return;
+        }
         console.log(jsonString);
         console.log(JSON.parse(jsonString.seo.script[0].innerHTML));
         productName.value = JSON.parse(jsonString.seo.script[0].innerHTML).name;
         description.value = JSON.parse(jsonString.seo.script[0].innerHTML).description;
         priceSite.value = JSON.parse(jsonString.seo.script[0].innerHTML).offers.price;
         urlToImg.value = JSON.parse(jsonString.seo.script[0].innerHTML).image;
+        isLoading.value = false;
       } else if (marketplace.value === "YM") {
         let info = await storeClients.fetchSiteYM(urlToItem.value);
         console.log(info);
@@ -111,7 +118,7 @@ function createItem() {
     fromName: user.value.phoneNumber,
     productName: productName.value,
     productLink: urlToItem.value,
-    priceSite: priceSite.value,
+    priceSite: +priceSite.value,
     quantity: quantityOfItem.value,
     img: urlToImg.value,
     description: description.value,
@@ -132,6 +139,7 @@ async function createOrder() {
     isLoading.value = true;
 
     for (const item of items.value) {
+      console.log(item);
       await storeRansom.createRansomRow(item, user.value.phoneNumber, "OurRansom");
     }
 
