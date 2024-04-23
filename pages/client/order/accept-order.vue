@@ -74,7 +74,7 @@ async function parsingPage() {
       } else if (urlToItem.value.includes("ozon") && marketplace.value === "OZ") {
         isLoading.value = true;
         let jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
-        if (JSON.parse(jsonString).pageInfo.pageTypeTracking === "error") {
+        if (jsonString.pageInfo.pageTypeTracking === "error") {
           toast.error("Извините, произошла ошибка. Проверьте ссылку на товар!");
           isLoading.value = false;
           return;
