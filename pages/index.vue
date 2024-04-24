@@ -24,7 +24,7 @@ definePageMeta({
     <div class="bg-main-page">
       <div class="py-5 max-md:px-5" v-cloak>
         <div class="flex items-center gap-5">
-          <UIMainButton @click="router.push('/auth/login')">Войти</UIMainButton>
+          <UIMainButton @click="router.push('/auth/login')">Сотрудник</UIMainButton>
           <UIMainButton @click="router.push('/auth/client/login')"
             >Личный кабинет</UIMainButton
           >

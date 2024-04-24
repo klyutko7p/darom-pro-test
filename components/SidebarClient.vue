@@ -143,9 +143,8 @@ let isShowInfo = ref(false);
         <div>
           <h1 class="font-bold text-xl">Стоимость доставки:</h1>
           <h1 class="italic text-base">
-            ≈10%, если заказать через «доставить мой заказ»
+            ≈10% от стоимости товара
           </h1>
-          <h1 class="italic text-base">≈10%, если заказать через «оформить заказ»</h1>
         </div>
         <div class="mt-3">
           <h1 class="font-bold text-xl">Невозвратные товары:</h1>
@@ -167,7 +166,7 @@ let isShowInfo = ref(false);
         </div>
         <div class="mt-3">
           <h1 class="font-bold text-xl">
-            При заказе Ozon global, с вами свяжется менеджер для внесения предоплаты
+            При заказе товаров OZON GLOBAL, с вами свяжется менеджер для внесения предоплаты
           </h1>
         </div>
       </div>

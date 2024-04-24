@@ -369,7 +369,7 @@ async function updateDeliveryRows(obj: any) {
       "OurRansom",
       user.value.username
     );
-    filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+    filteredRows.value = await storeRansom.getRansomRowsByPVZ(pvzString, "OurRansom");
     rows.value = filteredRows.value;
     isLoading.value = false;
   }
@@ -384,7 +384,7 @@ async function updateOnlineMoneyRowsStatus() {
     "OurRansom",
     user.value.username
   );
-  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  filteredRows.value = await storeRansom.getRansomRowsByPVZ(pvzString, "OurRansom");
   rows.value = filteredRows.value;
   isLoading.value = false;
   updatedPriceTwoPercent.value = 0;

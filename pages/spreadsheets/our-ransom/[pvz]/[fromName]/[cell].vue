@@ -289,7 +289,7 @@ async function showDeletedRows(flag: boolean) {
     rows.value = filteredRows.value;
   } else {
     isLoading.value = true;
-    filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+    filteredRows.value = await storeRansom.getRansomRowsByFromName(fromNameString, cellString, "OurRansom");
     rows.value = filteredRows.value;
     isLoading.value = false;
   }
@@ -332,7 +332,7 @@ async function updateDeliveryRows(obj: any) {
       "OurRansom",
       user.value.username
     );
-    filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+    filteredRows.value = await storeRansom.getRansomRowsByFromName(fromNameString, cellString, "OurRansom");
     rows.value = filteredRows.value;
     isLoading.value = false;
   }
@@ -347,7 +347,7 @@ async function updateOnlineMoneyRowsStatus() {
     "OurRansom",
     user.value.username
   );
-  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  filteredRows.value = await storeRansom.getRansomRowsByFromName(fromNameString, cellString, "OurRansom");
   rows.value = filteredRows.value;
   isLoading.value = false;
   updatedPriceTwoPercent.value = 0;

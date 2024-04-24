@@ -29,21 +29,23 @@ async function updateDeliveryRows(flag: string, allSumData: string = "0") {
     flag: flag,
     allSum: allSumData,
   });
-  await storeBalance.createBalanceRow(
-    {
-      pvz: props.user.visiblePVZ,
-      sum: allSumInput.value,
-      issued: new Date(),
-      received: new Date(),
-      notation: "Оплата бонусами",
-      receivedUser: props.user.username,
-      receivedUser2: props.user.username,
-      createdUser: props.user.username,
-      recipient: "Нет",
-    },
-    props.user.username
-  );
-  await storeClients.updateBalance(phoneNumberClient.value, getAllSumBonuses.value);
+  if (+allSumInput.value > 0) {
+    await storeBalance.createBalanceRow(
+      {
+        pvz: props.user.visiblePVZ,
+        sum: allSumInput.value,
+        issued: new Date(),
+        received: new Date(),
+        notation: "Оплата бонусами",
+        receivedUser: props.user.username,
+        receivedUser2: props.user.username,
+        createdUser: props.user.username,
+        recipient: "Нет",
+      },
+      props.user.username
+    );
+    await storeClients.updateBalance(phoneNumberClient.value, getAllSumBonuses.value);
+  }
   checkedRows.value = [];
   allSum.value = [];
   getAllSum.value = 0;
@@ -57,6 +59,7 @@ function openModal(row: IOurRansom) {
 
 function showDeletedRowsEmit(flag: boolean) {
   emit("showDeletedRows", flag);
+  updateCurrentPageData();
 }
 
 const toggleShowDeletedRows = () => {
@@ -93,37 +96,6 @@ const props = defineProps({
   rows: { type: Array as PropType<IOurRansom[]> },
   pvzLink: { type: String },
 });
-
-async function exportToExcelOnServer() {
-  perPage.value = await totalRows.value;
-  await updateCurrentPageDataDeleted();
-
-  let table = await document.querySelector("#theTable");
-
-  let wb = await utils.table_to_book(table);
-  let wbout = write(wb, { type: "binary", bookType: "xlsx" });
-
-  let buf = new ArrayBuffer(wbout.length);
-  let view = new Uint8Array(buf);
-  for (let i = 0; i < wbout.length; i++) {
-    view[i] = wbout.charCodeAt(i) & 0xff;
-  }
-
-  let blob = new Blob([buf], {
-    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  });
-
-  const currentDate = new Date();
-  const day = currentDate.getDate().toString().padStart(2, "0");
-  const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-  const year = currentDate.getFullYear().toString();
-
-  const { data, error } = await supabase.storage
-    .from("data")
-    .upload(`data-1-${day}.${month}.${year}.xlsx`, blob);
-
-  perPage.value = await 100;
-}
 
 async function exportToExcel() {
   perPage.value = await totalRows.value;
@@ -268,7 +240,9 @@ const handleCheckboxChange = (row: IOurRansom): void => {
   allFromNamesEqual.value = allSum.value.every((item, index, array) => {
     if (item.fromName === array[0].fromName) {
       phoneNumberClient.value = item.fromName;
-      return clients.value.some((client) => client.phoneNumber === item.fromName);
+      return clients.value.some(
+        (client) => client.phoneNumber === item.fromName && client.balance > 0
+      );
     }
     return false;
   });
@@ -358,7 +332,10 @@ function updateCurrentPageData() {
     processingRows.value = [...new Set(processingRows.value)];
   });
 
-  if (props.user.role === "RMANAGER" || props.user.role === "PPVZ") {
+  if (
+    props.user.role === "RMANAGER" ||
+    props.user.role === "PPVZ"
+  ) {
     returnRows.value = props.rows?.filter(
       (row) => row.dispatchPVZ && row.dispatchPVZ.includes(props.user.PVZ)
     );
@@ -416,8 +393,6 @@ onMounted(async () => {
   clients.value = await storeClients.getClients();
 
   await storeRansom.getSumOfRejection();
-
-  downloadIssuedRowsTimer();
 });
 
 let showOthersVariants = ref(false);
@@ -427,18 +402,6 @@ let isScanActive = ref(false);
 function focusInput() {
   myInput.value.focus();
   isScanActive.value = true;
-}
-
-function downloadIssuedRowsTimer() {
-  const currentTime = new Date();
-  const currentHour = currentTime.getHours();
-  const currentMinute = currentTime.getMinutes();
-  if (
-    (currentHour === 20 && currentMinute >= 0) ||
-    (currentHour === 23 && currentMinute <= 59)
-  ) {
-    exportToExcelOnServer();
-  }
 }
 
 function isExpired(row: any) {

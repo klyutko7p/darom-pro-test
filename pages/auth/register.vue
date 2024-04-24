@@ -134,7 +134,7 @@ let showPassword = ref(false);
                 type="text"
                 autocomplete="phone"
                 required
-                placeholder="+77XXXXXXXXX"
+                placeholder="+7XXXXXXXXXX"
                 class="block w-full ring-1 ring-gray-200 focus:ring-2 focus:ring-yellow-600 bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none"
               />
             </div>
