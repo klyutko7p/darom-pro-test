@@ -236,7 +236,6 @@ let marketplace = ref("");
           class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 text-lg w-full focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3"
           v-model="address"
         >
-          <option class="text-lg" value="ПВЗ_2">ПВЗ_2</option>
           <option class="text-lg" value="ПВЗ_1">
             г. Донецк, Буденовский р-н, Заперевальная, ул. Антропова 16 (вход "ремонт
             обуви")
@@ -354,7 +353,7 @@ let marketplace = ref("");
                 * цена на момент обработки вашего заказа может быть изменена маркетплейсом
               </h1>
               <h1 class="text-base font-medium">
-                ** при заказе Ozon global, с вами свяжется менеджер для внесения
+                ** при заказе товаров OZON GLOBAL, с вами свяжется менеджер для внесения
                 предоплаты
               </h1>
             </div>

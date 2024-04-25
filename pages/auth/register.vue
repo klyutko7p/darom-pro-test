@@ -63,6 +63,9 @@ async function register() {
   errorTextValidation.value = "";
 
   isLoading.value = true;
+  // let data = await storeClients.sendMessage('+77056281919')
+  // console.log(data);
+  
   await storeClients.register({
     id: 0,
     phoneNumber: phoneNumber.value,

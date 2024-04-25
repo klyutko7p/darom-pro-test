@@ -27,66 +27,79 @@ let rowsWithProfitRows = ref();
 
 onBeforeMount(async () => {
   isLoading.value = true;
-  user.value = await storeUsers.getUser();
 
-  deliveryRansomRows.value = await storeRansom.getRansomRowsForBalance("Delivery");
-  // sumOfReject.value = await storeRansom.getSumOfRejection();
-  // rows.value = await storeBalance.getBalanceRows();
-  // rowsOnline.value = await storeBalance.getBalanceOnlineRows();
-  // rowsProfit.value = await storeBalance.getBalanceProfitRows();
+  try {
+    user.value = await storeUsers.getUser();
 
-  const [
-    sumOfRejectData,
-    balanceRowsData,
-    balanceOnlineRowsData,
-    balanceProfitRowsData,
-  ] = await Promise.all([
-    storeRansom.getSumOfRejection(),
-    storeBalance.getBalanceRows(),
-    storeBalance.getBalanceOnlineRows(),
-    storeBalance.getBalanceProfitRows(),
-  ]);
+    const [
+      deliveryRansomRowsData,
+      sumOfRejectData,
+      balanceRowsData,
+      balanceOnlineRowsData,
+      balanceProfitRowsData,
+      balanceProfitManagerRowsData,
+      balanceDeliveryRowsData,
+      ransomRowsForBalanceOurRansomData,
+      ransomRowsForBalanceClientRansomData,
+      pvzData
+    ] = await Promise.all([
+      storeRansom.getRansomRowsForBalanceDelivery(),
+      storeRansom.getSumOfRejection(),
+      storeBalance.getBalanceRows(),
+      storeBalance.getBalanceOnlineRows(),
+      storeBalance.getBalanceProfitRows(),
+      storeBalance.getBalanceProfitManagerRows(),
+      storeBalance.getBalanceDeliveryRows(),
+      storeRansom.getRansomRowsForBalanceOurRansom(),
+      storeRansom.getRansomRowsForBalanceClientRansom(),
+      storePVZ.getPVZ()
+    ]);
 
-  sumOfReject.value = sumOfRejectData;
-  rows.value = balanceRowsData;
-  rowsOnline.value = balanceOnlineRowsData;
-  rowsProfit.value = balanceProfitRowsData;
-  rowsProfitManager.value = await storeBalance.getBalanceProfitManagerRows();
-  rowsDelivery.value = await storeBalance.getBalanceDeliveryRows();
-  ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
-  ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
-  clientRansomRows.value = await storeRansom.getRansomRowsForBalance("ClientRansom");
+    deliveryRansomRows.value = deliveryRansomRowsData;
+    sumOfReject.value = sumOfRejectData;
+    rows.value = balanceRowsData;
+    rowsOnline.value = balanceOnlineRowsData;
+    rowsProfit.value = balanceProfitRowsData;
+    rowsProfitManager.value = balanceProfitManagerRowsData;
+    rowsDelivery.value = balanceDeliveryRowsData;
+    ourRansomRows.value = ransomRowsForBalanceOurRansomData;
+    clientRansomRows.value = ransomRowsForBalanceClientRansomData;
+    pvz.value = pvzData;
 
-  rowsWithProfitRows.value = [
-    ...rows.value,
-    ...rowsProfit.value,
-    ...rowsProfitManager.value,
-  ];
+    rowsWithProfitRows.value = [
+      ...rows.value,
+      ...rowsProfit.value,
+      ...rowsProfitManager.value,
+    ];
 
-  getAllSum();
+    getAllSum();
 
-  if (
-    user.value.role === "PVZ" ||
-    user.value.role === "COURIER" ||
-    user.value.role === "PPVZ"
-  ) {
-    selectedPVZ.value = user.value.visiblePVZ;
-    rows.value = rows.value?.filter(
-      (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
-    );
-  } else if (user.value.role === "RMANAGER") {
-    selectedPVZ.value = "Все ППВЗ";
-    rows.value = rows.value?.filter(
-      (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
-    );
+    if (
+      user.value.role === "PVZ" ||
+      user.value.role === "COURIER" ||
+      user.value.role === "PPVZ"
+    ) {
+      selectedPVZ.value = user.value.visiblePVZ;
+      rows.value = rows.value?.filter(
+        (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
+      );
+    } else if (user.value.role === "RMANAGER") {
+      selectedPVZ.value = "Все ППВЗ";
+      rows.value = rows.value?.filter(
+        (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
+      );
+    }
+
+    getProfitRowsSum();
+    getProfitManagerRowsSum();
+  } catch (error) {
+    // Handle error
+    console.error("An error occurred:", error);
+  } finally {
+    isLoading.value = false;
   }
-
-  getProfitRowsSum();
-  getProfitManagerRowsSum();
-  isLoading.value = false;
-
-  pvz.value = await storePVZ.getPVZ();
 });
+
 
 onMounted(() => {
   if (!token) {
@@ -125,9 +138,7 @@ function calculateValue(curValue: any) {
       curValue.additionally !== "Отказ клиент"
       ? Math.ceil(
           Math.ceil(
-            curValue.priceSite +
-              (curValue.priceSite * curValue.percentClient) / 100 -
-              curValue.prepayment
+            curValue.priceSite + (curValue.priceSite * 10) / 100 - curValue.prepayment
           ) / 10
         ) *
           10 -
@@ -138,7 +149,7 @@ function calculateValue(curValue: any) {
     return curValue.additionally !== "Отказ клиент наличные" ||
       curValue.additionally !== "Отказ клиент онлайн" ||
       curValue.additionally !== "Отказ клиент"
-      ? (curValue.priceSite * curValue.percentClient) / 100 + curValue.deliveredKGT
+      ? (curValue.priceSite * 10) / 100 + curValue.deliveredKGT
       : sumOfReject.value.value;
   }
 }
@@ -1082,7 +1093,6 @@ watch(
 );
 watch([selectedPVZ, selectedTypeOfTransaction, startingDate, endDate], getProfitRowsSum);
 watch([selectedPVZ, selectedTypeOfTransaction, startingDate, endDate], getAllSum);
-
 
 function clearFields() {
   selectedPVZ.value = "Все ПВЗ";

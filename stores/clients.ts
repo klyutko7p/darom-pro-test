@@ -319,6 +319,23 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  async function sendMessage(phoneNumber: string) {
+    try {
+      let { data } = await useFetch("/api/clients/send-message", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phoneNumber }),
+      });
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function updateBalanceSum(id: number, balance: number) {
     try {
       let { data } = await useFetch("/api/clients/update-sum-balance", {
@@ -382,6 +399,7 @@ export const useClientsStore = defineStore("clients", () => {
     updateBalanceStatus,
     updateBalanceSum,
     getClientById,
-    updateBalance
+    updateBalance,
+    sendMessage
   };
 });

@@ -63,6 +63,7 @@ async function handleFileChange(event) {
       user.value.phoneNumber,
       "ClientRansom"
     );
+    isShowModal.value = true;
     isLoading.value = false;
   } else {
     console.log(error);
@@ -126,6 +127,8 @@ const hours = currentTime.getHours();
 const minutes = currentTime.getMinutes();
 
 const isDisabled = hours >= 12 && hours < 24 && minutes >= 1;
+let pvzData = ref("");
+let isShowModal = ref(false);
 </script>
 
 <template>
@@ -147,7 +150,27 @@ const isDisabled = hours >= 12 && hours < 24 && minutes >= 1;
           <option class="text-lg" value="Почта">Почта</option>
           <option class="text-lg" value="DNS">DNS</option>
         </select>
-        <div v-if="marketplace !== ''" class="flex items-center flex-col">
+        <h1 class="text-2xl mb-5 mt-10">Выберите пункт выдачи заказов</h1>
+        <select
+          class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 text-lg w-full focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3"
+          v-model="pvzData"
+        >
+          <option class="text-lg" value="ПВЗ_1">
+            г. Донецк, Буденовский р-н, Заперевальная, ул. Антропова 16 (вход "ремонт
+            обуви")
+          </option>
+          <option class="text-lg" value="ПВЗ_3">г. Донецк, ул. Палладина 20</option>
+          <option class="text-lg" value="ПВЗ_4">
+            г. Донецк, ул. Нартова, 1. Возле магазина "Добрый"
+          </option>
+          <option class="text-lg" value="ППВЗ_5">
+            г. Донецк, ул Дудинская, д. 4, кв7
+          </option>
+          <option class="text-lg" value="ППВЗ_6">
+            г. Донецк, ул Довженко, д 55, кв5
+          </option>
+        </select>
+        <div v-if="marketplace !== '' && pvzData !== ''" class="flex items-center flex-col">
           <h1 class="text-2xl mb-5 mt-10 text-center">Прикрепите скриншот Штрих-кода</h1>
           <input
             class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
@@ -161,6 +184,42 @@ const isDisabled = hours >= 12 && hours < 24 && minutes >= 1;
           <h1 class="text-base text-secondary-color text-center font-bold">
             **прикрепить скриншот можно с 00:00 до 12:00 ежедневно
           </h1>
+        </div>
+      </div>
+      <div
+        v-auto-animate
+        v-if="isShowModal"
+        class="fixed top-0 bottom-0 left-0 bg-black bg-opacity-70 right-0 z-[100]"
+      >
+        <div class="flex items-center justify-center h-screen text-black font-bold">
+          <div class="bg-white relative p-10 rounded-lg flex items-center flex-col gap-3">
+            <div class="absolute top-0 right-0">
+              <Icon
+                name="material-symbols:close-small"
+                size="40"
+                class="cursor-pointer hover:text-secondary-color duration-200"
+                @click="isShowModal = !isShowModal"
+              />
+            </div>
+            <h1 class="text-2xl text-center border-b-2 border-black w-full mb-5">
+              Ваш заказ успешно оформлен!
+            </h1>
+            <div class="flex items-center gap-3">
+              <h1 class="text-xl">Ожидайте появление информации в</h1>
+              <UIMainButton @click="router.push('/client/my-orders')">
+                Мои заказы
+              </UIMainButton>
+            </div>
+            <div class="mt-5">
+              <h1 class="text-base font-medium">
+                * цена на момент обработки вашего заказа может быть изменена маркетплейсом
+              </h1>
+              <h1 class="text-base font-medium">
+                ** при заказе товаров OZON GLOBAL, с вами свяжется менеджер для внесения
+                предоплаты
+              </h1>
+            </div>
+          </div>
         </div>
       </div>
     </div>

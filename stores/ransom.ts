@@ -317,14 +317,45 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-  async function getRansomRowsForBalance(flag: string) {
+  async function getRansomRowsForBalanceOurRansom() {
     try {
-      let { data }: any = await useFetch("/api/ransom/get-rows-for-balance", {
-        method: "POST",
+      let { data }: any = await useFetch("/api/ransom/get-rows-for-balance-or", {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ flag: flag }),
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsForBalanceClientRansom() {
+    try {
+      let { data }: any = await useFetch("/api/ransom/get-rows-for-balance-cl", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsForBalanceDelivery() {
+    try {
+      let { data }: any = await useFetch("/api/ransom/get-rows-for-balance-dl", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
       return data.value;
     } catch (error) {
@@ -797,7 +828,6 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsById,
     getRansomRowsWithPVZ,
     getRansomRowsForModal,
-    getRansomRowsForBalance,
     getRansomRowsWithDeleted,
     getRansomRowsFirstHundred,
     getRansomRowsWithDeletedForCells,
@@ -805,5 +835,8 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsForAdvanceReport,
     getRansomRowsForUpdateCells,
     getRansomRowsByFromNameWithoutCell,
+    getRansomRowsForBalanceOurRansom,
+    getRansomRowsForBalanceClientRansom,
+    getRansomRowsForBalanceDelivery,
   };
 });

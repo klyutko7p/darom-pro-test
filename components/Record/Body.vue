@@ -14,8 +14,8 @@ const props = defineProps({
 const emit = defineEmits(["updateDeliveryRow"]);
 
 function updateDeliveryRow(row: IOurRansom | IClientRansom, flag: string) {
-  emit("updateDeliveryRow", { row: row, flag: flag });
   printPage()
+  emit("updateDeliveryRow", { row: row, flag: flag });
 }
 
 const alreadyCalled = ref(false);
