@@ -30,7 +30,7 @@ export const useRansomStore = defineStore("ransom", () => {
     } else {
       try {
         const { data }: any = await useFetch("/api/sum-of-rejection/get-sum", {
-          method: "POST",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
@@ -202,6 +202,22 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  async function getRansomRowsOurRansom() {
+    try {
+      let { data }: any = await useFetch("/api/ransom/get-rows-or", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function getRansomRowsForUpdateCells(flag: string) {
     try {
       let { data }: any = await useFetch(
@@ -230,6 +246,22 @@ export const useRansomStore = defineStore("ransom", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ flag: flag }),
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsWithPVZOurRansom() {
+    try {
+      let { data }: any = await useFetch("/api/ransom/get-rows-with-pvz-or", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
       return data.value;
     } catch (error) {
@@ -317,14 +349,33 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-  async function getRansomRowsForBalanceOurRansom() {
+  async function getRansomRowsForModalOurRansom() {
     try {
-      let { data }: any = await useFetch("/api/ransom/get-rows-for-balance-or", {
+      let { data }: any = await useFetch("/api/ransom/get-rows-for-modal-or", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsForBalanceOurRansom() {
+    try {
+      let { data }: any = await useFetch(
+        "/api/ransom/get-rows-for-balance-or",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       return data.value;
     } catch (error) {
       if (error instanceof Error) {
@@ -335,12 +386,15 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getRansomRowsForBalanceClientRansom() {
     try {
-      let { data }: any = await useFetch("/api/ransom/get-rows-for-balance-cl", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      let { data }: any = await useFetch(
+        "/api/ransom/get-rows-for-balance-cl",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       return data.value;
     } catch (error) {
       if (error instanceof Error) {
@@ -351,12 +405,15 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getRansomRowsForBalanceDelivery() {
     try {
-      let { data }: any = await useFetch("/api/ransom/get-rows-for-balance-dl", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      let { data }: any = await useFetch(
+        "/api/ransom/get-rows-for-balance-dl",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       return data.value;
     } catch (error) {
       if (error instanceof Error) {
@@ -392,6 +449,25 @@ export const useRansomStore = defineStore("ransom", () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ flag: flag }),
+        }
+      );
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsWithDeletedForCellsOurRansom() {
+    try {
+      let { data }: any = await useFetch(
+        "/api/ransom/get-rows-with-deleted-for-cells-or",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
       return data.value;
@@ -793,6 +869,25 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  async function getRansomRowsForAdvanceReportOurRansom() {
+    try {
+      let { data }: any = await useFetch(
+        "/api/ransom/get-rows-for-advance-report-or",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   const getUniqueNonEmptyValues = (
     rows: IOurRansom[] | IClientRansom[] | IDelivery[],
     fieldName: keyof IOurRansom | IClientRansom | IDelivery
@@ -838,5 +933,10 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsForBalanceOurRansom,
     getRansomRowsForBalanceClientRansom,
     getRansomRowsForBalanceDelivery,
+    getRansomRowsForModalOurRansom,
+    getRansomRowsWithDeletedForCellsOurRansom,
+    getRansomRowsWithPVZOurRansom,
+    getRansomRowsOurRansom,
+    getRansomRowsForAdvanceReportOurRansom,
   };
 });

@@ -27,7 +27,7 @@ onBeforeMount(async () => {
 
     if (user.value.role === "ADMIN") {
       advanceReportsPromise = storeAdvanceReports.getAdvancedReports();
-      ourRansomRowsPromise = storeRansom.getRansomRowsForAdvanceReport("OurRansom");
+      ourRansomRowsPromise = storeRansom.getRansomRowsForAdvanceReportOurRansom();
       deliveryRowsPromise = storeRansom.getRansomRowsForBalanceDelivery();
     } else {
       advanceReportsPromise = storeAdvanceReports.getAdvancedReports();

@@ -20,9 +20,19 @@ function editMenu() {
 }
 
 onBeforeMount(async () => {
-  user.value = storeUsers.getUser();
-  requests.value = await storeBalance.getBalanceRows();
-  requests2.value = await storeAdvanceReports.getAdvancedReports();
+  try {
+    const [userResult, balanceResult, advanceResult] = await Promise.all([
+      storeUsers.getUser(),
+      storeBalance.getBalanceRows(),
+      storeAdvanceReports.getAdvancedReports(),
+    ]);
+
+    user.value = userResult;
+    requests.value = balanceResult;
+    requests2.value = advanceResult;
+  } catch (error) {
+    console.error("Ошибка:", error);
+  }
 });
 
 function formatPhoneNumber(phoneNumber: string) {
@@ -142,7 +152,8 @@ function formatPhoneNumber(phoneNumber: string) {
         v-if="
           (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
           user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ' || user.role === 'PPVZ'
+          user.role === 'PVZ' ||
+          user.role === 'PPVZ'
         "
         role="button"
         @click="router.push('/spreadsheets/refunds')"
@@ -250,7 +261,11 @@ function formatPhoneNumber(phoneNumber: string) {
         />
       </div>
       <div
-      v-if="user.role === 'RMANAGER' || user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+        v-if="
+          user.role === 'RMANAGER' ||
+          user.role === 'ADMIN' ||
+          user.role === 'ADMINISTRATOR'
+        "
         role="button"
         @click="router.push('/map')"
         tabindex="0"
@@ -384,7 +399,8 @@ function formatPhoneNumber(phoneNumber: string) {
         v-if="
           (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
           user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ' || user.role === 'PPVZ'
+          user.role === 'PVZ' ||
+          user.role === 'PPVZ'
         "
         role="button"
         @click="router.push('/spreadsheets/refunds')"
@@ -492,7 +508,11 @@ function formatPhoneNumber(phoneNumber: string) {
         />
       </div>
       <div
-      v-if="user.role === 'RMANAGER' || user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+        v-if="
+          user.role === 'RMANAGER' ||
+          user.role === 'ADMIN' ||
+          user.role === 'ADMINISTRATOR'
+        "
         role="button"
         @click="router.push('/map')"
         tabindex="0"

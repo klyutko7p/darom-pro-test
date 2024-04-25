@@ -61,7 +61,7 @@ async function updateDeliveryRow(obj: any) {
       "OurRansom",
       user.value.username
     );
-  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  filteredRows.value = await storeRansom.getRansomRowsOurRansom();
   rows.value = filteredRows.value;
 }
 
@@ -70,7 +70,7 @@ async function deleteRow(id: number) {
   if (answer) {
     isLoading.value = true;
     await storeRansom.deleteRansomRow(id, "OurRansom");
-    filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+    filteredRows.value = await storeRansom.getRansomRowsOurRansom();
     rows.value = filteredRows.value;
     isLoading.value = false;
   }
@@ -83,7 +83,7 @@ async function deleteSelectedRows(idArray: number[]) {
   if (answer) {
     isLoading.value = true;
     await storeRansom.deleteRansomSelectedRows(idArray, "OurRansom");
-    filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+    filteredRows.value = await storeRansom.getRansomRowsOurRansom();
     rows.value = filteredRows.value;
     isLoading.value = false;
   }
@@ -93,7 +93,7 @@ async function updateRow() {
   isLoading.value = true;
 
   await storeRansom.updateRansomRow(rowData.value, user.value.username, "OurRansom");
-  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  filteredRows.value = await storeRansom.getRansomRowsOurRansom();
 
   if (cellData) {
     await storeCells.updateCell(cellData.value, "Занято", rowData.value.fromName);
@@ -111,7 +111,7 @@ async function createRow() {
   isLoading.value = true;
 
   await storeRansom.createRansomRow(rowData.value, user.value.username, "OurRansom");
-  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  filteredRows.value = await storeRansom.getRansomRowsOurRansom();
 
   if (cellData) {
     await storeCells.updateCell(cellData.value, "Занято", rowData.value.fromName);
@@ -129,7 +129,7 @@ async function createRow() {
 async function createCopyRow(id: number) {
   isLoading.value = true;
   await storeRansom.createCopyRow(id, "OurRansom");
-  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  filteredRows.value = await storeRansom.getRansomRowsOurRansom();
   rows.value = filteredRows.value;
   isLoading.value = false;
 }
@@ -185,7 +185,7 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
 async function deleteIssuedRows() {
   isLoading.value = true;
   await storeRansom.deleteIssuedRows("OurRansom");
-  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  filteredRows.value = await storeRansom.getRansomRowsOurRansom();
   rows.value = filteredRows.value;
   isLoading.value = false;
 }
@@ -207,7 +207,7 @@ let originallyRows = ref<Array<IOurRansom>>();
 onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  rows.value = await storeRansom.getRansomRows("OurRansom");
+  rows.value = await storeRansom.getRansomRowsOurRansom();
 
   deleteIssuedRowsTimer();
 
@@ -217,7 +217,7 @@ onMounted(async () => {
 
   isLoading.value = false;
 
-  originallyRows.value = await storeRansom.getRansomRowsForModal("OurRansom");
+  originallyRows.value = await storeRansom.getRansomRowsForModalOurRansom();
   await updateCells();
   
   const [pvzData, sortingCentersData, orderAccountsData] = await Promise.all([
@@ -232,7 +232,7 @@ onMounted(async () => {
 });
 
 async function updateCells() {
-  let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCells("OurRansom");
+  let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
   await storeCells.updateCellsStatus(rowsWithDeleted);
   cells.value = await storeCells.getCells();
   cells.value = cells.value?.filter((cell) => cell.PVZ !== "НаДом");
@@ -438,7 +438,7 @@ async function updateCellStatusFull() {
 
   // console.log(result);
   isLoading.value = true;
-  let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCells("OurRansom");
+  let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
   await storeCells.updateCellsStatusWithNoSpeed(rowsWithDeleted);
   toast.success("Обновление ячеек прошло успешно!");
   isLoading.value = false;
@@ -451,7 +451,7 @@ async function showDeletedRows(flag: boolean) {
     rows.value = filteredRows.value;
   } else {
     isLoading.value = true;
-    filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+    filteredRows.value = await storeRansom.getRansomRowsOurRansom();
     rows.value = filteredRows.value;
     isLoading.value = false;
   }
@@ -475,7 +475,7 @@ async function showDeletedRows(flag: boolean) {
 //         "OurRansom",
 //         user.value.username
 //       );
-//       filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+//       filteredRows.value = await storeRansom.getRansomRowsOurRansom();
 //       rows.value = filteredRows.value;
 //       isLoading.value = false;
 //       await updateCells();
@@ -495,7 +495,7 @@ async function updateDeliveryRows(obj: any) {
       "OurRansom",
       user.value.username
     );
-    filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+    filteredRows.value = await storeRansom.getRansomRowsOurRansom();
     rows.value = filteredRows.value;
     isLoading.value = false;
     await updateCells();
@@ -511,7 +511,7 @@ async function updateOnlineMoneyRowsStatus() {
     "OurRansom",
     user.value.username
   );
-  filteredRows.value = await storeRansom.getRansomRows("OurRansom");
+  filteredRows.value = await storeRansom.getRansomRowsOurRansom();
   rows.value = filteredRows.value;
   isLoading.value = false;
   updatedPriceTwoPercent.value = 0;

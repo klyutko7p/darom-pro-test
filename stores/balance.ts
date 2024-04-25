@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
-import crypto from "crypto-js";
 
 const toast = useToast();
 
@@ -146,11 +145,10 @@ export const useBalanceStore = defineStore("balance", () => {
         return cachedBalanceRows;
       } else {
         let { data }: any = await useFetch("/api/balance/get-rows", {
-          method: "POST",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({}),
         });
         cachedBalanceRows = data.value;
         return cachedBalanceRows;
@@ -168,11 +166,10 @@ export const useBalanceStore = defineStore("balance", () => {
         return cachesBalanceOnlineRows;
       } else {
         let { data }: any = await useFetch("/api/balance/get-online-rows", {
-          method: "POST",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({}),
         });
         cachesBalanceOnlineRows = data.value;
         return cachesBalanceOnlineRows;
@@ -187,11 +184,10 @@ export const useBalanceStore = defineStore("balance", () => {
   async function getBalanceProfitRows() {
     try {
       let { data }: any = await useFetch("/api/balance/get-profit-rows", {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({}),
       });
       return data.value;
     } catch (error) {
@@ -204,11 +200,10 @@ export const useBalanceStore = defineStore("balance", () => {
   async function getBalanceProfitManagerRows() {
     try {
       let { data }: any = await useFetch("/api/balance/get-profit-manager-rows", {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({}),
       });
       return data.value;
     } catch (error) {
@@ -224,11 +219,10 @@ export const useBalanceStore = defineStore("balance", () => {
         return cachesBalanceDeliveryRows;
       } else {
         let { data }: any = await useFetch("/api/balance/get-delivery-rows", {
-          method: "POST",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({}),
         });
         cachesBalanceDeliveryRows = data.value;
         return cachesBalanceDeliveryRows;

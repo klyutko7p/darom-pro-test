@@ -391,7 +391,6 @@ onMounted(async () => {
   }
 
   clients.value = await storeClients.getClients();
-
   await storeRansom.getSumOfRejection();
 });
 

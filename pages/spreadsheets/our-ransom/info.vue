@@ -14,7 +14,7 @@ let isLoading = ref(false);
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  rowsOurRansom.value = await storeRansom.getRansomRowsWithPVZ("OurRansom");
+  rowsOurRansom.value = await storeRansom.getRansomRowsWithPVZOurRansom();
 
   if (user.value.role === 'SORTIROVKA') {
     router.push('/spreadsheets/our-ransom')
@@ -22,7 +22,7 @@ onBeforeMount(async () => {
   
   isLoading.value = false;
   
-  let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCells("OurRansom")
+  let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCellsOurRansom()
   await storeCells.updateCellsStatus(rowsWithDeleted)
 });
 

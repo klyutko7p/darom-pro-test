@@ -20,9 +20,19 @@ function editMenu() {
 }
 
 onBeforeMount(async () => {
-  user.value = storeUsers.getUser();
-  requests.value = await storeBalance.getBalanceRows();
-  requests2.value = await storeAdvanceReports.getAdvancedReports();
+  try {
+    const [userResult, balanceResult, advanceResult] = await Promise.all([
+      storeUsers.getUser(),
+      storeBalance.getBalanceRows(),
+      storeAdvanceReports.getAdvancedReports(),
+    ]);
+
+    user.value = userResult;
+    requests.value = balanceResult;
+    requests2.value = advanceResult;
+  } catch (error) {
+    console.error("Ошибка:", error);
+  }
 });
 
 function formatPhoneNumber(phoneNumber: string) {
@@ -172,8 +182,8 @@ let isShowAddSettings = ref(false);
       <div
         v-if="
           (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
-          user.role === 'ADMINISTRATOR' || 
-          user.role === 'PVZ' 
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'PVZ'
         "
         role="button"
         @click="router.push('/spreadsheets/refunds')"
@@ -203,7 +213,11 @@ let isShowAddSettings = ref(false);
       </div>
       <div
         v-if="
-          user.role === 'ADMINISTRATOR' || user.role === 'ADMIN' || user.role === 'PVZ' || user.role === 'PPVZ' || user.role === 'RMANAGER' 
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'ADMIN' ||
+          user.role === 'PVZ' ||
+          user.role === 'PPVZ' ||
+          user.role === 'RMANAGER'
         "
         role="button"
         @click="router.push('/acceptance')"
@@ -219,8 +233,10 @@ let isShowAddSettings = ref(false);
         v-if="
           (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
           user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ' || 
-          user.role === 'COURIER' || user.role === 'PPVZ' || user.role === 'RMANAGER' 
+          user.role === 'PVZ' ||
+          user.role === 'COURIER' ||
+          user.role === 'PPVZ' ||
+          user.role === 'RMANAGER'
         "
         role="button"
         @click="router.push('/balance')"
@@ -252,7 +268,8 @@ let isShowAddSettings = ref(false);
           user.role === 'ADMINISTRATOR' ||
           user.role === 'OFFICE' ||
           user.role === 'COURIER' ||
-          user.username === 'Волошина' || user.role === 'RMANAGER' 
+          user.username === 'Волошина' ||
+          user.role === 'RMANAGER'
         "
         role="button"
         @click="router.push('/advance-report')"
@@ -302,7 +319,11 @@ let isShowAddSettings = ref(false);
         <h1>Задачи</h1>
       </div>
       <div
-        v-if="user.role === 'RMANAGER' || user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+        v-if="
+          user.role === 'RMANAGER' ||
+          user.role === 'ADMIN' ||
+          user.role === 'ADMINISTRATOR'
+        "
         role="button"
         @click="router.push('/map')"
         tabindex="0"
@@ -327,7 +348,11 @@ let isShowAddSettings = ref(false);
       </div>
       <div v-if="isShowAddSettings">
         <div
-          v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR' && user.role !== 'RMANAGER'"
+          v-if="
+            !user.username.includes('Светлана') &&
+            user.role !== 'ADMINISTRATOR' &&
+            user.role !== 'RMANAGER'
+          "
           role="button"
           @click="router.push('/admin/users')"
           tabindex="0"
@@ -583,7 +608,11 @@ let isShowAddSettings = ref(false);
       </div>
       <div
         v-if="
-          user.role === 'ADMINISTRATOR' || user.role === 'ADMIN' || user.role === 'PVZ' || user.role === 'PPVZ' || user.role === 'RMANAGER' 
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'ADMIN' ||
+          user.role === 'PVZ' ||
+          user.role === 'PPVZ' ||
+          user.role === 'RMANAGER'
         "
         role="button"
         @click="router.push('/acceptance')"
@@ -599,7 +628,9 @@ let isShowAddSettings = ref(false);
         v-if="
           (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
           user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ' || user.role === 'PPVZ' || user.role === 'RMANAGER' 
+          user.role === 'PVZ' ||
+          user.role === 'PPVZ' ||
+          user.role === 'RMANAGER'
         "
         role="button"
         @click="router.push('/balance')"
@@ -631,7 +662,8 @@ let isShowAddSettings = ref(false);
           user.role === 'ADMINISTRATOR' ||
           user.role === 'OFFICE' ||
           user.role === 'COURIER' ||
-          user.username === 'Волошина' || user.role === 'RMANAGER' 
+          user.username === 'Волошина' ||
+          user.role === 'RMANAGER'
         "
         role="button"
         @click="router.push('/advance-report')"
@@ -681,7 +713,11 @@ let isShowAddSettings = ref(false);
         <h1>Задачи</h1>
       </div>
       <div
-      v-if="user.role === 'RMANAGER' || user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+        v-if="
+          user.role === 'RMANAGER' ||
+          user.role === 'ADMIN' ||
+          user.role === 'ADMINISTRATOR'
+        "
         role="button"
         @click="router.push('/map')"
         tabindex="0"
@@ -877,18 +913,18 @@ let isShowAddSettings = ref(false);
         class="hover:opacity-50 duration-200 cursor-pointer"
       />
       <Icon
-          v-if="
-            requests?.filter(
-              (row) =>
-                row.issued !== null &&
-                row.received === null &&
-                (row.receivedUser2 === user.username || row.receivedUser2 === 'Нет')
-            ).length > 0
-          "
-          name="pepicons-print:exclamation"
-          size="24"
-          class="text-red-700"
-        />
+        v-if="
+          requests?.filter(
+            (row) =>
+              row.issued !== null &&
+              row.received === null &&
+              (row.receivedUser2 === user.username || row.receivedUser2 === 'Нет')
+          ).length > 0
+        "
+        name="pepicons-print:exclamation"
+        size="24"
+        class="text-red-700"
+      />
       <Icon
         v-if="
           requests2?.filter(

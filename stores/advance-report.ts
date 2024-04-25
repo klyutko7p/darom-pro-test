@@ -69,11 +69,10 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
         return cachedAdvanceReportRows;
       } else {
         let { data }: any = await useFetch("/api/advance-report/get-rows", {
-          method: "POST",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({}),
         });
         cachedAdvanceReportRows = data.value;
         return cachedAdvanceReportRows;
