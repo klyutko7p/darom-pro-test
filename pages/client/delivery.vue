@@ -54,6 +54,7 @@ async function handleFileChange(event) {
   rowData.value.img = `${randomDigits}-${selectedFile.name}`;
   rowData.value.fromName = user.value.phoneNumber;
   rowData.value.productLink = marketplace.value;
+  rowData.value.dispatchPVZ = pvzData.value;
   getCellFromName();
   if (data) {
     console.log(data);
@@ -156,12 +157,11 @@ let isShowModal = ref(false);
           v-model="pvzData"
         >
           <option class="text-lg" value="ПВЗ_1">
-            г. Донецк, Буденовский р-н, Заперевальная, ул. Антропова 16 (вход "ремонт
-            обуви")
+            г. Донецк, ул. Антропова 16
           </option>
           <option class="text-lg" value="ПВЗ_3">г. Донецк, ул. Палладина 20</option>
           <option class="text-lg" value="ПВЗ_4">
-            г. Донецк, ул. Нартова, 1. Возле магазина "Добрый"
+            г. Донецк, ул. Нартова, 1.
           </option>
           <option class="text-lg" value="ППВЗ_5">
             г. Донецк, ул Дудинская, д. 4, кв7

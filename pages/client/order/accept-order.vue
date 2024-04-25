@@ -236,13 +236,14 @@ let marketplace = ref("");
           class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 text-lg w-full focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3"
           v-model="address"
         >
-          <option class="text-lg" value="ПВЗ_1">
-            г. Донецк, Буденовский р-н, Заперевальная, ул. Антропова 16 (вход "ремонт
-            обуви")
-          </option>
+          <option class="text-lg" value="ПВЗ_1">г. Донецк, ул. Антропова 16</option>
           <option class="text-lg" value="ПВЗ_3">г. Донецк, ул. Палладина 20</option>
-          <option class="text-lg" value="ПВЗ_4">
-            г. Донецк, ул. Нартова, 1. Возле магазина "Добрый"
+          <option class="text-lg" value="ПВЗ_4">г. Донецк, ул. Нартова, 1.</option>
+          <option class="text-lg" value="ППВЗ_5">
+            г. Донецк, ул Дудинская, д. 4, кв7
+          </option>
+          <option class="text-lg" value="ППВЗ_6">
+            г. Донецк, ул Довженко, д 55, кв5
           </option>
         </select>
         <h1 class="text-xl font-bold mt-3">Выберите маркетплейс:</h1>
