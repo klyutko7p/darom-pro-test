@@ -10,13 +10,14 @@ interface IRequestBody {
 export default defineEventHandler(async (event) => {
   try {
     let { row, username } = await readBody<IRequestBody>(event);
+    let stringWithoutSpaces = row.expenditure.replace(/\s/g, "");
     const rowData = await prisma.advanceReport.create({
       data: {
         id: row.id,
         PVZ: row.PVZ,
         notation: row.notation,
         company: row.company,
-        expenditure: row.expenditure,
+        expenditure: stringWithoutSpaces,
         typeOfExpenditure: row.typeOfExpenditure,
         type: row.type,
         issuedUser: row.issuedUser,
