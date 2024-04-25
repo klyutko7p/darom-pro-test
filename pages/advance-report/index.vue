@@ -19,80 +19,63 @@ let rowsDelivery = ref<Array<IDelivery>>();
 
 onBeforeMount(async () => {
   isLoading.value = true;
-  user.value = await storeUsers.getUser();
-  if (user.value.role === "ADMIN") {
-    const [advanceReports, ourRansomRows, deliveryRows] = await Promise.all([
-      storeAdvanceReports.getAdvancedReports(),
-      storeRansom.getRansomRowsForAdvanceReport("OurRansom"),
-      storeRansom.getRansomRowsForBalance("Delivery"),
-    ]);
-    rows.value = advanceReports;
-    rowsOurRansom.value = ourRansomRows;
-    rowsDelivery.value = deliveryRows;
-    originallyRows.value = advanceReports;
+  try {
+    user.value = await storeUsers.getUser();
+    let advanceReportsPromise;
+    let ourRansomRowsPromise;
+    let deliveryRowsPromise;
 
-    originallyRows.value = rows.value;
-    selectedUser.value = user.value.username;
-
-    if (user.value.role !== "ADMIN") {
-      rows.value = rows.value?.filter(
-        (row) =>
-          row.createdUser === user.value.username ||
-          row.issuedUser === user.value.username
-      );
+    if (user.value.role === "ADMIN") {
+      advanceReportsPromise = storeAdvanceReports.getAdvancedReports();
+      ourRansomRowsPromise = storeRansom.getRansomRowsForAdvanceReport("OurRansom");
+      deliveryRowsPromise = storeRansom.getRansomRowsForBalanceDelivery();
     } else {
-      rows.value = rows.value;
-    }
-
-    if (rows.value) {
-      handleFilteredRows(rows.value);
+      advanceReportsPromise = storeAdvanceReports.getAdvancedReports();
     }
 
     const [
+      advanceReportsData,
       ourRansomRowsData,
-      clientRansomRowsData,
+      deliveryRowsData,
       balanceRowsData,
       onlineBalanceRowsData,
     ] = await Promise.all([
-      storeRansom.getRansomRowsForBalance("OurRansom"),
-      storeRansom.getRansomRowsForBalance("ClientRansom"),
+      advanceReportsPromise,
+      ourRansomRowsPromise,
+      deliveryRowsPromise,
       storeBalance.getBalanceRows(),
       storeBalance.getBalanceOnlineRows(),
     ]);
 
-    ourRansomRows.value = ourRansomRowsData;
-    clientRansomRows.value = clientRansomRowsData;
-    rowsBalance.value = balanceRowsData;
-    rowsBalanceOnline.value = onlineBalanceRowsData;
-    getAllSumDirector();
-  } else {
-    const [advanceReports] = await Promise.all([
-      storeAdvanceReports.getAdvancedReports(),
-    ]);
-    rows.value = advanceReports;
+    rows.value = advanceReportsData;
     originallyRows.value = rows.value;
     selectedUser.value = user.value.username;
 
     if (user.value.role !== "ADMIN") {
-      rows.value = rows.value?.filter(
+      rows.value = rows.value.filter(
         (row) =>
           row.createdUser === user.value.username ||
           row.issuedUser === user.value.username
       );
-    } else {
-      rows.value = rows.value;
     }
 
     if (rows.value) {
       handleFilteredRows(rows.value);
     }
 
-    const [balanceRowsData] = await Promise.all([storeBalance.getBalanceRows()]);
+    if (user.value.role === "ADMIN") {
+      rowsOurRansom.value = ourRansomRowsData;
+      rowsDelivery.value = deliveryRowsData;
+      getAllSumDirector();
+    }
 
     rowsBalance.value = balanceRowsData;
+    rowsBalanceOnline.value = onlineBalanceRowsData;
+  } catch (error) {
+    console.error("An error occurred:", error);
+  } finally {
+    isLoading.value = false;
   }
-
-  isLoading.value = false;
 });
 
 onMounted(() => {
@@ -469,7 +452,7 @@ function getSumCreditBalance() {
       )
       .reduce((acc, value) => acc + +value.expenditure, 0);
 
-    let sumOfPVZ2Debt = rows.value 
+    let sumOfPVZ2Debt = rows.value
       .filter(
         (row) =>
           row.createdUser === "Директор" &&

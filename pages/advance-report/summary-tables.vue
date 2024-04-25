@@ -24,7 +24,7 @@ onBeforeMount(async () => {
   rows.value = await storeAdvanceReports.getAdvancedReports();
   originallyRows.value = rows.value;
   rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReport("OurRansom");
-  rowsDelivery.value = await storeRansom.getRansomRowsForBalance("Delivery");
+  rowsDelivery.value = await storeRansom.getRansomRowsForBalanceDelivery();
   originallyRows.value = rows.value;
 
   if (user.value.role !== "ADMIN") {
@@ -40,8 +40,8 @@ onBeforeMount(async () => {
     handleFilteredRows(rows.value);
   }
 
-  ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
-  clientRansomRows.value = await storeRansom.getRansomRowsForBalance("ClientRansom");
+  ourRansomRows.value = await storeRansom.getRansomRowsForBalanceOurRansom();
+  clientRansomRows.value = await storeRansom.getRansomRowsForBalanceClientRansom();
   rowsBalance.value = await storeBalance.getBalanceRows();
 
   getAllSum();
