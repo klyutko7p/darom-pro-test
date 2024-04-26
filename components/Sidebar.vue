@@ -505,7 +505,7 @@ let isShowAddSettings = ref(false);
   </div>
 
   <div
-    class="fixed bg-gradient-to-tr from-white via-white to-yellow-100 bg-image top-0 bottom-0 left-0 right-0 z-[200] hidden max-xl:flex items-center justify-center bg-white"
+    class="absolute bg-gradient-to-tr from-white via-white to-yellow-100 bg-image top-0 bottom-0 left-0 right-0 z-[200] hidden max-xl:flex items-center justify-center bg-white"
     v-if="isOpen"
   >
     <Icon
