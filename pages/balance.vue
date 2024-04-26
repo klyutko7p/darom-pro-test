@@ -41,7 +41,7 @@ onBeforeMount(async () => {
       balanceDeliveryRowsData,
       ransomRowsForBalanceOurRansomData,
       ransomRowsForBalanceClientRansomData,
-      pvzData
+      pvzData,
     ] = await Promise.all([
       storeRansom.getRansomRowsForBalanceDelivery(),
       storeRansom.getSumOfRejection(),
@@ -52,7 +52,7 @@ onBeforeMount(async () => {
       storeBalance.getBalanceDeliveryRows(),
       storeRansom.getRansomRowsForBalanceOurRansom(),
       storeRansom.getRansomRowsForBalanceClientRansom(),
-      storePVZ.getPVZ()
+      storePVZ.getPVZ(),
     ]);
 
     deliveryRansomRows.value = deliveryRansomRowsData;
@@ -81,12 +81,14 @@ onBeforeMount(async () => {
     ) {
       selectedPVZ.value = user.value.visiblePVZ;
       rows.value = rows.value?.filter(
-        (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
+        (row) =>
+          row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
       );
     } else if (user.value.role === "RMANAGER") {
       selectedPVZ.value = "Все ППВЗ";
       rows.value = rows.value?.filter(
-        (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
+        (row) =>
+          user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
       );
     }
 
@@ -99,7 +101,6 @@ onBeforeMount(async () => {
     isLoading.value = false;
   }
 });
-
 
 onMounted(() => {
   if (!token) {
@@ -498,6 +499,7 @@ function getAllSum() {
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
       allSum.value = sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ + 319610;
+      allSum.value -= 11110;
     } else if (selectedPVZ.value === "Все ППВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -592,6 +594,9 @@ function getAllSum() {
 
       allSum.value =
         sum1.value + sum2.value - sumOfPVZ - sumOfPVZ2 + sumOfPVZ3 - sumOfPVZ5;
+      if (selectedPVZ.value === "НаДом") {
+        allSum.value -= 11110;
+      }
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (selectedPVZ.value === "Все ПВЗ") {
