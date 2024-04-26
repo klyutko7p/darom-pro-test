@@ -505,7 +505,7 @@ let isShowAddSettings = ref(false);
   </div>
 
   <div
-    class="absolute bg-gradient-to-tr from-white via-white to-yellow-100 bg-image top-0 bottom-0 left-0 right-0 z-50 hidden max-xl:flex items-center justify-center bg-white"
+    class="fixed bg-gradient-to-tr from-white via-white to-yellow-100 bg-image top-0 bottom-0 left-0 right-0 z-[200] hidden max-xl:flex items-center justify-center bg-white"
     v-if="isOpen"
   >
     <Icon
@@ -515,7 +515,7 @@ let isShowAddSettings = ref(false);
       @click="editMenu"
     />
     <nav
-      class="flex flex-col gap-1 min-w-[240px] p-2 font-sans text-base font-normal text-black"
+      class="flex flex-col gap-1 p-2 font-sans text-base font-normal text-black"
     >
       <h1 class="text-center font-bold text-3xl text-secondary-color mb-5">DAROM.PRO</h1>
       <div
@@ -740,7 +740,7 @@ let isShowAddSettings = ref(false);
           name="material-symbols:keyboard-double-arrow-down-rounded"
         />
       </div>
-      <div v-if="isShowAddSettings">
+      <div v-if="isShowAddSettings" class="max-h-[100px] overflow-auto">
         <div
           v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
@@ -835,7 +835,10 @@ let isShowAddSettings = ref(false);
           <div class="grid place-items-center mr-4">
             <Icon name="solar:delivery-broken" size="20" />
           </div>
-          <h1>Пункты выдачи заказов (Доставка)</h1>
+          <h1>
+            Пункты выдачи заказов <br />
+            (Доставка)
+          </h1>
         </div>
         <div
           v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
@@ -850,7 +853,10 @@ let isShowAddSettings = ref(false);
               size="20"
             />
           </div>
-          <h1>Сортировочные центры (Доставка)</h1>
+          <h1>
+            Сортировочные центры <br />
+            (Доставка)
+          </h1>
         </div>
         <div
           v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
