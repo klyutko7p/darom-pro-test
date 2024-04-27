@@ -21,9 +21,9 @@ let cellData = ref({} as Cell);
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeClients.getClient();
+  isLoading.value = false;
   originallyRows.value = await storeRansom.getRansomRowsForModal("OurRansom");
   cells.value = await storeCells.getCells();
-  isLoading.value = false;
 });
 
 onMounted(() => {
@@ -40,7 +40,7 @@ let address = ref("");
 let urlToItem = ref("");
 let quantityOfItem = ref(1);
 
-let items = ref([]);
+let items = ref<Array<any>>([]);
 
 let productName = ref("");
 let urlToImg = ref("");
@@ -222,6 +222,16 @@ async function getCellFromName() {
 
 let isShowModal = ref(false);
 let marketplace = ref("");
+
+function deleteItemFromOrder(productName: number) {
+  let answer = confirm("Вы уверены что хотите удалить данный товар из заказа?");
+  if (answer) {
+    const index = items.value.findIndex((item: any) => item.productName === productName);
+    if (index !== -1) {
+      items.value.splice(index, 1);
+    }
+  }
+}
 </script>
 
 <template>
@@ -304,12 +314,20 @@ let marketplace = ref("");
                   />
                 </div>
                 <div>
-                  <a
-                    :href="item.productLink"
-                    target="_blank"
-                    class="font-bold text-2xl cursor-pointer max-sm:text-center text-secondary-color underline"
-                    >{{ item.productName }}</a
-                  >
+                  <div class="flex items-center gap-3">
+                    <a
+                      :href="item.productLink"
+                      target="_blank"
+                      class="font-bold text-2xl cursor-pointer max-sm:text-center text-secondary-color underline"
+                      >{{ item.productName }}</a
+                    >
+                    <Icon
+                      @click="deleteItemFromOrder(item.productName)"
+                      name="material-symbols:delete-outline"
+                      size="24"
+                      class="text-red-500 hover:opacity-50 duration-200 cursor-pointer"
+                    />
+                  </div>
                   <h1 class="font-medium text-xl mt-3">
                     Цена на сайте: {{ item.priceSite }} ₽
                   </h1>

@@ -78,7 +78,7 @@ model User {
 }
 
 model OurRansom {
-  id                Int       @id @default(autoincrement()) 
+  id                Int       @id @default(autoincrement())
   old_id            Int?      @unique
   clientLink1       String?
   cell              String?   @default("0")
@@ -223,6 +223,14 @@ model SumOfRejection {
 }
 
 model Cell {
+  id       Int     @id @default(autoincrement())
+  name     String?
+  status   String?
+  fromName String?
+  PVZ      String?
+}
+
+model CellClient {
   id       Int     @id @default(autoincrement())
   name     String?
   status   String?

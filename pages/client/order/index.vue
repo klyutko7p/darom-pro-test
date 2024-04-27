@@ -40,6 +40,7 @@ definePageMeta({
             <div class="flex items-center gap-5 flex-col">
               <UIMainButton class="w-full" @click="router.push('order/independently')">Самостоятельно закажу на маркетплейсе</UIMainButton>
               <UIMainButton class="w-full" @click="router.push('order/accept-order')">Примите заказ</UIMainButton>
+              <UIMainButton class="w-full" @click="router.push('/client/main')">Назад</UIMainButton>
             </div>
           </div>
         </div>

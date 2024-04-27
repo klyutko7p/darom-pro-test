@@ -20,9 +20,17 @@ onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeClients.getClient();
   originallyRows.value = await storeRansom.getRansomRowsForModal("ClientRansom");
-  cells.value = await storeCells.getCells();
+  cells.value = await storeCells.getCellsClient();
   isLoading.value = false;
+  await updateCells();
 });
+
+async function updateCells() {
+  let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
+  await storeCells.updateCellsStatusClient(rowsWithDeleted);
+  cells.value = await storeCells.getCellsClient();
+  cells.value = cells.value?.filter((cell) => cell.PVZ !== "НаДом");
+}
 
 onMounted(() => {
   if (!token) {
@@ -76,7 +84,7 @@ async function getCellFromName() {
     let row = originallyRows.value?.filter(
       (row) =>
         row.fromName === rowData.value.fromName &&
-        row.dispatchPVZ === "НаДом" &&
+        row.dispatchPVZ === pvzData.value &&
         (row.deliveredPVZ === null || row.deliveredSC === null || row.issued === null) &&
         !row.cell.includes("-")
     );
@@ -84,7 +92,7 @@ async function getCellFromName() {
     if (row && row.length > 0) {
       const unoccupiedCellsAndPVZ = cells.value?.sort((a, b) => a.name - b.name);
       const freeCell = unoccupiedCellsAndPVZ?.find(
-        (cell) => cell.PVZ === "НаДом" && cell.status === "Свободно"
+        (cell) => cell.PVZ === pvzData.value && cell.status === "Свободно"
       );
 
       const targetCell = row[0].cell;
@@ -112,7 +120,7 @@ async function getCellFromName() {
       const unoccupiedCellsAndPVZ = cells.value
         ?.filter((cell) => cell.status === "Свободно")
         .sort((a, b) => a.name - b.name);
-      const freeCell = unoccupiedCellsAndPVZ?.find((cell) => cell.PVZ === "НаДом");
+      const freeCell = unoccupiedCellsAndPVZ?.find((cell) => cell.PVZ === pvzData.value);
       if (freeCell) {
         rowData.value.cell = freeCell.name;
         cellData.value = freeCell;
@@ -138,8 +146,15 @@ let isShowModal = ref(false);
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">
-      <div class="flex items-center justify-center flex-col pt-40">
-        <h1 class="text-2xl mb-5">Выберите маркетплейс</h1>
+      <div class="flex items-center justify-center flex-col pt-24">
+        <h1 class="mb-10 text-xl text-center">
+          Чтобы мы получили ваш заказ,
+          <span class="italic font-bold">
+            он должен быть оформлен на адрес Ростовская область, Матвеево-Курганский
+            район, с. Ряженое, ул Ленина 6*</span
+          >
+        </h1>
+        <h1 class="text-2xl mb-3">Выберите маркетплейс</h1>
         <select
           class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 text-lg w-full focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3"
           v-model="marketplace"
@@ -151,18 +166,14 @@ let isShowModal = ref(false);
           <option class="text-lg" value="Почта">Почта</option>
           <option class="text-lg" value="DNS">DNS</option>
         </select>
-        <h1 class="text-2xl mb-5 mt-10">Выберите пункт выдачи заказов</h1>
+        <h1 class="text-2xl mb-3 mt-10">Выберите пункт выдачи заказов</h1>
         <select
           class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 text-lg w-full focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3"
           v-model="pvzData"
         >
-          <option class="text-lg" value="ПВЗ_1">
-            г. Донецк, ул. Антропова 16
-          </option>
+          <option class="text-lg" value="ПВЗ_1">г. Донецк, ул. Антропова 16</option>
           <option class="text-lg" value="ПВЗ_3">г. Донецк, ул. Палладина 20</option>
-          <option class="text-lg" value="ПВЗ_4">
-            г. Донецк, ул. Нартова, 1.
-          </option>
+          <option class="text-lg" value="ПВЗ_4">г. Донецк, ул. Нартова, 1.</option>
           <option class="text-lg" value="ППВЗ_5">
             г. Донецк, ул Дудинская, д. 4, кв7
           </option>
@@ -170,14 +181,17 @@ let isShowModal = ref(false);
             г. Донецк, ул Довженко, д 55, кв5
           </option>
         </select>
-        <div v-if="marketplace !== '' && pvzData !== ''" class="flex items-center flex-col">
+        <div
+          v-if="marketplace !== '' && pvzData !== ''"
+          class="flex items-center flex-col"
+        >
           <h1 class="text-2xl mb-5 mt-10 text-center">Прикрепите скриншот Штрих-кода</h1>
           <input
             class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
             @change="handleFileChange"
-            :disabled="isDisabled"
             type="file"
           />
+          <!-- :disabled="isDisabled" -->
           <h1 class="text-base mt-10 mb-1 text-secondary-color font-bold">
             *штрих-код обновляется каждые 24 часа
           </h1>
@@ -192,7 +206,9 @@ let isShowModal = ref(false);
         class="fixed top-0 bottom-0 left-0 bg-black bg-opacity-70 right-0 z-[100]"
       >
         <div class="flex items-center justify-center h-screen text-black font-bold">
-          <div class="bg-white relative p-10 rounded-lg flex items-center flex-col gap-3">
+          <div
+            class="bg-white relative p-10 max-sm:p-3 rounded-lg flex items-center flex-col gap-3"
+          >
             <div class="absolute top-0 right-0">
               <Icon
                 name="material-symbols:close-small"
@@ -201,12 +217,17 @@ let isShowModal = ref(false);
                 @click="isShowModal = !isShowModal"
               />
             </div>
-            <h1 class="text-2xl text-center border-b-2 border-black w-full mb-5">
+            <h1
+              class="text-2xl text-center border-b-2 border-black w-full mb-5 max-sm:text-xl max-sm:py-5 max-sm:mt-5"
+            >
               Ваш заказ успешно оформлен!
             </h1>
-            <div class="flex items-center gap-3">
-              <h1 class="text-xl">Ожидайте появление информации в</h1>
-              <UIMainButton @click="router.push('/client/my-orders')">
+            <div class="flex items-center gap-3 max-sm:flex-col">
+              <h1 class="text-xl max-sm:text-lg">Ожидайте появление информации в</h1>
+              <UIMainButton
+                class="max-sm:w-full"
+                @click="router.push('/client/my-orders')"
+              >
                 Мои заказы
               </UIMainButton>
             </div>
