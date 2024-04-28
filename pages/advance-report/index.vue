@@ -436,10 +436,8 @@ function getSumCreditBalance() {
       .filter(
         (row) =>
           row.createdUser === "Директор" &&
-          row.typeOfExpenditure === "Пополнение баланса" &&
-          row.type === "Нал" &&
-          row.date &&
-          new Date(row.date) > new Date("2024-04-21")
+          row.typeOfExpenditure === "Перевод с баланса нал" &&
+          row.type === "Безнал"
       )
       .reduce((acc, value) => acc + +value.expenditure, 0);
 
@@ -456,15 +454,14 @@ function getSumCreditBalance() {
       .filter(
         (row) =>
           row.createdUser === "Директор" &&
-          row.typeOfExpenditure === "Пополнение баланса" &&
-          row.type === "Безнал" &&
-          row.date &&
-          new Date(row.date) > new Date("2024-04-21")
+          row.typeOfExpenditure === "Перевод с баланса безнал" &&
+          row.type === "Нал"
       )
       .reduce((acc, value) => acc + +value.expenditure, 0);
 
-    sumCreditBalance.value = sumOfPVZ1 - sumOfPVZ2;
-    sumCreditBalanceDebt.value = sumOfPVZ1Debt - sumOfPVZ2Debt;
+    sumCreditBalance.value = sumOfPVZ1 - sumOfPVZ2 < 0 ? 0 : sumOfPVZ1 - sumOfPVZ2;
+    sumCreditBalanceDebt.value =
+      sumOfPVZ1Debt - sumOfPVZ2Debt < 0 ? 0 : sumOfPVZ1Debt - sumOfPVZ2Debt;
   }
 }
 
@@ -478,9 +475,8 @@ function openModal(row: IAdvanceReport, flag: string = "CASH") {
   if (row.id) {
     rowData.value = JSON.parse(JSON.stringify(row));
     rowData.value.date = rowData.value.date
-      ? storeUsers.getISODateTime(rowData.value.date)
+      ? storeUsers.getISODate(rowData.value.date)
       : null;
-    rowData.value.date = storeUsers.getISODate(new Date());
   } else {
     rowData.value = {} as IAdvanceReport;
     rowData.value.date = storeUsers.getISODate(new Date());
@@ -648,6 +644,22 @@ async function createRow() {
     toast.error("Задолженность кредита меньше чем вписанная сумма!");
     return;
   } else if (
+    rowData.value.typeOfExpenditure ===
+      "Списание кредитной задолженности торговой империи" &&
+    +rowData.value.expenditure > +sumCreditOnlineDebt.value &&
+    rowData.value.type === "Безнал"
+  ) {
+    toast.error("Задолженность кредита меньше чем вписанная сумма!");
+    return;
+  } else if (
+    rowData.value.typeOfExpenditure ===
+      "Списание кредитной задолженности торговой империи" &&
+    +rowData.value.expenditure > +sumCreditOnlineDebt.value &&
+    rowData.value.type === "Нал"
+  ) {
+    toast.error("Задолженность кредита меньше чем вписанная сумма!");
+    return;
+  } else if (
     rowData.value.typeOfExpenditure === "Перевод с баланса нал" &&
     +rowData.value.expenditure > +allSum.value &&
     rowData.value.type === "Безнал"
@@ -720,6 +732,22 @@ async function updateRow() {
     rowData.value.type === "Безнал"
   ) {
     toast.error("Задолженность меньше чем сумма расхода!");
+    return;
+  } else if (
+    rowData.value.typeOfExpenditure ===
+      "Списание кредитной задолженности торговой империи" &&
+    +rowData.value.expenditure > +sumCreditOnlineDebt.value &&
+    rowData.value.type === "Безнал"
+  ) {
+    toast.error("Задолженность кредита меньше чем вписанная сумма!");
+    return;
+  } else if (
+    rowData.value.typeOfExpenditure ===
+      "Списание кредитной задолженности торговой империи" &&
+    +rowData.value.expenditure > +sumCreditOnlineDebt.value &&
+    rowData.value.type === "Нал"
+  ) {
+    toast.error("Задолженность кредита меньше чем вписанная сумма!");
     return;
   } else {
     isLoading.value = true;
@@ -943,6 +971,7 @@ function handleFilteredRows(filteredRowsData: IAdvanceReport[]) {
 }
 
 async function handleFileChange(event) {
+  isLoading.value = true;
   const selectedFile = event.target.files[0];
   const { data, error } = await supabase.storage
     .from("image")
@@ -953,6 +982,7 @@ async function handleFileChange(event) {
   } else {
     console.log(error);
   }
+  isLoading.value = false;
 }
 
 let selectedUser = ref("");

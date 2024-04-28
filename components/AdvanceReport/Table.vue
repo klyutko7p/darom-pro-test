@@ -151,7 +151,7 @@ function exportToExcel() {
           </th>
           <th scope="col" class="border-2">Дата</th>
           <th scope="col" class="border-2">ПВЗ</th>
-          <th scope="col" class="border-2">Сумма</th>
+          <th scope="col" class="border-2">Сумма (₽)</th>
           <th scope="col" class="border-2">Статья расхода</th>
           <th scope="col" class="border-2">Комментарий</th>
           <th scope="col" class="border-2">Компания</th>
@@ -181,7 +181,7 @@ function exportToExcel() {
           <th scope="row" class="border-2">
             {{ row.PVZ }}
           </th>
-          <td class="border-2 whitespace-nowrap">{{ row.expenditure }} ₽</td>
+          <td class="border-2 whitespace-nowrap">{{ row.expenditure }}</td>
           <td class="border-2 whitespace-nowrap">
             {{ row.typeOfExpenditure }}
           </td>

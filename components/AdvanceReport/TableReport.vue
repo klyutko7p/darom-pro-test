@@ -515,9 +515,9 @@ function exportToExcel() {
             class="border-2 p-2 whitespace-nowrap font-bold"
             v-for="sum in receiptsByPVZ"
           >
-            {{ sum }} ₽
+            {{ Math.ceil(sum) }} ₽
           </td>
-          <td class="border-2 p-2 whitespace-nowrap font-bold">{{ sumOfArray1 }} ₽</td>
+          <td class="border-2 p-2 whitespace-nowrap font-bold">{{ Math.ceil(sumOfArray1) }} ₽</td>
         </tr>
         <tr class="text-center">
           <td class="border-2 p-2 whitespace-nowrap font-bold">Расход</td>
@@ -525,9 +525,9 @@ function exportToExcel() {
             class="border-2 p-2 whitespace-nowrap font-bold"
             v-for="sum in expenditureByPVZ"
           >
-            {{ sum }} ₽
+            {{ Math.ceil(sum) }} ₽
           </td>
-          <td class="border-2 p-2 whitespace-nowrap font-bold">{{ sumOfArray2 }} ₽</td>
+          <td class="border-2 p-2 whitespace-nowrap font-bold">{{ Math.ceil(sumOfArray2) }} ₽</td>
         </tr>
         <tr class="text-center">
           <td class="border-2 p-2 whitespace-nowrap font-bold">Итого</td>
@@ -535,9 +535,9 @@ function exportToExcel() {
             class="border-2 p-2 whitespace-nowrap font-bold"
             v-for="sum in differenceByPVZ"
           >
-            {{ sum }} ₽
+            {{ Math.ceil(sum) }} ₽
           </td>
-          <td class="border-2 font-bold p-2 whitespace-nowrap">{{ sumOfArray3 }} ₽</td>
+          <td class="border-2 font-bold p-2 whitespace-nowrap">{{ Math.ceil(sumOfArray3) }} ₽</td>
         </tr>
       </tbody>
     </table>

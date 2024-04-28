@@ -23,7 +23,7 @@ onBeforeMount(async () => {
   user.value = await storeUsers.getUser();
   rows.value = await storeAdvanceReports.getAdvancedReports();
   originallyRows.value = rows.value;
-  rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReport("OurRansom");
+  rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReportOurRansom();
   rowsDelivery.value = await storeRansom.getRansomRowsForBalanceDelivery();
   originallyRows.value = rows.value;
 
@@ -603,7 +603,6 @@ let type = ref("");
 let arrayOfExpenditure = ref<Array<IAdvanceReport>>();
 let sumOfArray3 = ref(0);
 
-
 function returnTotal(sum: number) {
   let newStartingDate = new Date(startingDate.value);
   newStartingDate.setHours(0);
@@ -917,6 +916,6 @@ function returnTotal(sum: number) {
   </div>
 
   <div v-else class="flex items-center justify-center">
-      <UISpinner />
+    <UISpinner />
   </div>
 </template>
