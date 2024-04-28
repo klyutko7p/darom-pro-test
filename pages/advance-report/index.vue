@@ -292,25 +292,14 @@ function getAllSumDirector() {
   sumOfPVZ1Cashless = sumOfPVZ1Cashless === undefined ? 0 : sumOfPVZ1Cashless;
   sumOfPVZ2Cashless = sumOfPVZ2Cashless === undefined ? 0 : sumOfPVZ2Cashless;
   sumOfPVZ3Cashless = sumOfPVZ3Cashless === undefined ? 0 : sumOfPVZ3Cashless;
-  sumOfPVZ4Cashless = sumOfPVZ4Cashless === undefined ? 0 : sumOfPVZ4Cashless;
+  sumOfPVZ4Cashless = sumOfPVZ4Cashless === undefined ? 0 : sumOfPVZ4Cashless; 
   sumOfPVZ5Cashless = sumOfPVZ5Cashless === undefined ? 0 : sumOfPVZ5Cashless;
   switch ("Директор") {
     case "Директор":
       allSum.value =
-        +sumOfPVZ -
-        +sumOfPVZ1 +
-        +sumOfPVZ2 -
-        +sumOfPVZ3 +
-        +sumOfPVZ4 +
-        +sumOfPVZ5 -
-        +sumOfPVZ6 +
-        +sumOfPVZ7 +
-        +sumOfPVZ8 -
-        +sumOfPVZ9 +
-        +sumOfPVZ10 -
-        145000 +
-        +sumOfPVZ11 -
-        +sumOfPVZ12;
+        sumOfPVZ - sumOfPVZ1 + sumOfPVZ2 - sumOfPVZ3 + sumOfPVZ4 + sumOfPVZ5 - sumOfPVZ6 + sumOfPVZ7 + sumOfPVZ8 - sumOfPVZ9 + sumOfPVZ10 +
+        sumOfPVZ11 -
+        sumOfPVZ12 - 149000 + sumOfPVZ1;
 
       allSum2.value =
         +sumOfPVZ1Cashless +
