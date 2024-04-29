@@ -292,14 +292,26 @@ function getAllSumDirector() {
   sumOfPVZ1Cashless = sumOfPVZ1Cashless === undefined ? 0 : sumOfPVZ1Cashless;
   sumOfPVZ2Cashless = sumOfPVZ2Cashless === undefined ? 0 : sumOfPVZ2Cashless;
   sumOfPVZ3Cashless = sumOfPVZ3Cashless === undefined ? 0 : sumOfPVZ3Cashless;
-  sumOfPVZ4Cashless = sumOfPVZ4Cashless === undefined ? 0 : sumOfPVZ4Cashless; 
+  sumOfPVZ4Cashless = sumOfPVZ4Cashless === undefined ? 0 : sumOfPVZ4Cashless;
   sumOfPVZ5Cashless = sumOfPVZ5Cashless === undefined ? 0 : sumOfPVZ5Cashless;
   switch ("Директор") {
     case "Директор":
       allSum.value =
-        sumOfPVZ - sumOfPVZ1 + sumOfPVZ2 - sumOfPVZ3 + sumOfPVZ4 + sumOfPVZ5 - sumOfPVZ6 + sumOfPVZ7 + sumOfPVZ8 - sumOfPVZ9 + sumOfPVZ10 +
+        sumOfPVZ -
+        sumOfPVZ1 +
+        sumOfPVZ2 -
+        sumOfPVZ3 +
+        sumOfPVZ4 +
+        sumOfPVZ5 -
+        sumOfPVZ6 +
+        sumOfPVZ7 +
+        sumOfPVZ8 -
+        sumOfPVZ9 +
+        sumOfPVZ10 +
         sumOfPVZ11 -
-        sumOfPVZ12 - 149000 + sumOfPVZ1;
+        sumOfPVZ12 -
+        149000 +
+        sumOfPVZ1;
 
       allSum2.value =
         +sumOfPVZ1Cashless +
@@ -984,6 +996,12 @@ let isShowCreditBalanceOnline = ref(false);
 const uniqueNotation = computed(() => {
   return storeAdvanceReports.getUniqueNonEmptyValues(rows.value, "notation");
 });
+
+function checkExpenditure() {
+  if (rowData.value.expenditure) {
+    rowData.value.expenditure = rowData.value.expenditure.replace(",", ".");
+  }
+}
 </script>
 
 <template>
@@ -1024,7 +1042,7 @@ const uniqueNotation = computed(() => {
                 <h1 class="text-center text-3xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditCashDebt) }} ₽
                 </h1>
-                <h1 class="text-2xl text-center">Балансовая задолженность</h1>
+                <h1 class="text-2xl text-center">Междубалансовая задолженность</h1>
                 <h1 class="text-center text-3xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditBalance) }} ₽
                 </h1>
@@ -1054,7 +1072,7 @@ const uniqueNotation = computed(() => {
                 <h1 class="text-center text-3xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditOnlineDebt) }} ₽
                 </h1>
-                <h1 class="text-2xl text-center">Балансовая задолженность</h1>
+                <h1 class="text-2xl text-center">Междубалансовая задолженность</h1>
                 <h1 class="text-center text-3xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditBalanceDebt) }} ₽
                 </h1>
@@ -1325,6 +1343,7 @@ const uniqueNotation = computed(() => {
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
                 type="text"
+                @input="checkExpenditure"
               />
             </div>
 
@@ -1437,6 +1456,7 @@ const uniqueNotation = computed(() => {
                 :disabled="user.role !== 'ADMIN'"
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
+                @input="checkExpenditure"
                 type="text"
               />
             </div>
@@ -1541,6 +1561,7 @@ const uniqueNotation = computed(() => {
                 :disabled="user.role !== 'ADMIN'"
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
+                @input="checkExpenditure"
                 type="text"
               />
             </div>
@@ -1814,6 +1835,7 @@ const uniqueNotation = computed(() => {
               <input
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
+                @input="checkExpenditure"
                 type="text"
               />
             </div>
@@ -1921,6 +1943,7 @@ const uniqueNotation = computed(() => {
                 :disabled="user.role !== 'ADMIN'"
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
+                @input="checkExpenditure"
                 type="text"
               />
             </div>
@@ -2009,6 +2032,7 @@ const uniqueNotation = computed(() => {
                 :disabled="user.role !== 'ADMIN'"
                 class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
+                @input="checkExpenditure"
                 type="text"
               />
             </div>
