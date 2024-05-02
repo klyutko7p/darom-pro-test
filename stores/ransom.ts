@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
 import crypto from "crypto-js";
-
+import jsonpack from "jsonpack"
 const toast = useToast();
 
 function generateLink(phoneNumber: string, flag: string) {
@@ -376,7 +376,7 @@ export const useRansomStore = defineStore("ransom", () => {
           },
         }
       );
-      return data.value;
+      return jsonpack.unpack(data.value);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

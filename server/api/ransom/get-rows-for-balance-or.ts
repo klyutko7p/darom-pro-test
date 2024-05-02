@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import jsonpack from "jsonpack"
+
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
@@ -19,7 +21,8 @@ export default defineEventHandler(async (event) => {
         created_at: "desc",
       },
     });
-    return rows;
+    const packedData = jsonpack.pack(rows);
+    return packedData;
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);

@@ -153,7 +153,7 @@ function getAllSumDirector() {
     ?.filter(
       (row) =>
         row.createdUser === "Директор" &&
-        row.issuedUser === "" &&
+        (row.issuedUser === "" || row.issuedUser === null) &&
         row.type === "Нал" &&
         row.typeOfExpenditure !== "Кредитовый баланс нал" &&
         row.typeOfExpenditure !== "Перевод с баланса безнал"
@@ -311,7 +311,8 @@ function getAllSumDirector() {
         sumOfPVZ11 -
         sumOfPVZ12 -
         149000 +
-        sumOfPVZ1;
+        sumOfPVZ1 +
+        332531;
 
       allSum2.value =
         +sumOfPVZ1Cashless +
