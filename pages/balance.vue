@@ -63,6 +63,7 @@ onBeforeMount(async () => {
     rowsProfitManager.value = balanceProfitManagerRowsData;
     rowsDelivery.value = balanceDeliveryRowsData;
     ourRansomRows.value = ransomRowsForBalanceOurRansomData;
+    console.log(ourRansomRows.value);
     clientRansomRows.value = ransomRowsForBalanceClientRansomData;
     pvz.value = pvzData;
 

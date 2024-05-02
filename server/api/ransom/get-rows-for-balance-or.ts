@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import jsonpack from "jsonpack"
 
 const prisma = new PrismaClient();
 
@@ -21,12 +20,32 @@ export default defineEventHandler(async (event) => {
         created_at: "desc",
       },
     });
-    const packedData = jsonpack.pack(rows);
-    return packedData;
+
+    rows.forEach((row) => {
+      if (row.prepayment === 0) {
+        delete row.prepayment;
+      }
+
+      if (row.deliveredKGT === 0) {
+        delete row.deliveredKGT;
+      }
+
+      if (row.additionally === null) {
+        delete row.additionally;
+      }
+
+      if (row.issued === null) {
+        delete row.issued;
+      }
+
+      if (row.deleted === null) {
+        delete row.deleted;
+      }
+    });
+
+    return JSON.stringify(rows);
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-      return { error: error.message };
-    }
+    console.error(error.message);
+    return { error: error.message };
   }
 });
