@@ -671,18 +671,9 @@ function getAllSum() {
 
       let sumOfPVZ = rowsDelivery.value?.reduce((acc, value) => acc + +value.sum, 0);
 
-      if (
-        (startingDate.value !== null && startingDate.value !== "") ||
-        (endDate.value !== null && endDate.value !== "")
-      ) {
-        sum1.value = reduceArray(copyArrayDelivery1.value, "Delivery") - sumOfPVZ / 2;
-        sum2.value = reduceArray(copyArrayDelivery2.value, "Delivery") - sumOfPVZ / 2;
-        allSum.value = sum1.value + sum2.value + sum3.value;
-      } else {
-        sum1.value = 0;
-        sum2.value = 0;
-        allSum.value = 0;
-      }
+      sum1.value = reduceArray(copyArrayDelivery1.value, "Delivery") - sumOfPVZ / 2;
+      sum2.value = reduceArray(copyArrayDelivery2.value, "Delivery") - sumOfPVZ / 2;
+      allSum.value = sum1.value + sum2.value + sum3.value;
     } else {
       copyArrayDelivery1.value = deliveryRansomRows.value?.filter(
         (row) =>

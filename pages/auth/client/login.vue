@@ -108,8 +108,11 @@ let showPassword = ref(false);
               />
             </div>
           </div>
+          <h1 class="text-sm text-center italic font-bold text-secondary-color">Чтобы получить пароль напишите 
+            <a class="underline" href="https://t.me/SmartSklad980">поддержке</a>
+          </h1>
           <div
-            class="mt-2 flex gap-3 items-center justify-start"
+            class="mt-2 flex gap-2 items-center justify-start"
           >
             <input
               v-model="isForeignDevice"
