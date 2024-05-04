@@ -45,12 +45,12 @@ let isShowChangePassword = ref(false);
 function showChangePassword() {
   isShowChangePassword.value = !isShowChangePassword.value;
   if (!isShowChangePassword.value) {
-    isShowPasswordInput.value = !isShowPasswordInput.value
+    isShowPasswordInput.value = !isShowPasswordInput.value;
   } else {
     isShowPasswordInput.value = false;
   }
 }
-let isShowPasswordInput = ref(false)
+let isShowPasswordInput = ref(false);
 let errorTextValidation = ref("");
 async function saveChanges() {
   if (phoneNumber.value.length < 11) {
@@ -73,24 +73,29 @@ async function saveChanges() {
     return;
   }
 
-  if (newPassword.value.trim() === "") {
-    errorTextValidation.value = "Пожалуйста, введите новый пароль";
-    return;
-  }
+  if (isShowChangePassword.value) {
+    if (newPassword.value.trim() === "") {
+      errorTextValidation.value = "Пожалуйста, введите новый пароль";
+      return;
+    }
 
-  if (newPassword.value.trim().length < 6) {
-    errorTextValidation.value = "Новый пароль должен состоять хотя бы из 6 знаков!";
-    return;
-  }
+    if (newPassword.value.trim().length < 6) {
+      errorTextValidation.value = "Новый пароль должен состоять хотя бы из 6 знаков!";
+      return;
+    }
 
-  if (newPassword.value.trim() !== newPasswordRepeat.value.trim()) {
-    errorTextValidation.value = "Пароль и повтор пароля не совпадают";
-    return;
+    if (newPassword.value.trim() !== newPasswordRepeat.value.trim()) {
+      errorTextValidation.value = "Пароль и повтор пароля не совпадают";
+      return;
+    }
+  } else {
+    isShowPasswordInput.value = true
   }
 
   if (password.value.trim() === "") {
-    isShowPasswordInput.value = true; 
-    errorTextValidation.value = "Пожалуйста, введите подтверждающий пароль, чтобы сохранить изменения.";
+    isShowPasswordInput.value = true;
+    errorTextValidation.value =
+      "Пожалуйста, введите подтверждающий пароль, чтобы сохранить изменения.";
     return;
   }
 
@@ -172,8 +177,8 @@ async function updateBalance() {
   isLoading.value = false;
 }
 
-let showPassword = ref(false)
-let newPasswordRepeat = ref('')
+let showPassword = ref(false);
+let newPasswordRepeat = ref("");
 </script>
 
 <template>
@@ -186,7 +191,9 @@ let newPasswordRepeat = ref('')
         <h1 class="text-2xl mt-5 text-center">Изменить личные данные пользователя</h1>
         <div class="mt-10">
           <div class="mb-5">
-            <label for="phone" class="block text-sm font-medium leading-6 text-gray-900">Телефон</label>
+            <label for="phone" class="block text-sm font-medium leading-6 text-gray-900"
+              >Телефон</label
+            >
             <input
               type="text"
               v-model="phoneNumber"
@@ -195,7 +202,9 @@ let newPasswordRepeat = ref('')
             />
           </div>
           <div class="mb-5">
-            <label for="phone" class="block text-sm font-medium leading-6 text-gray-900">ФИО</label>
+            <label for="phone" class="block text-sm font-medium leading-6 text-gray-900"
+              >ФИО</label
+            >
             <input
               type="text"
               v-model="fio"
