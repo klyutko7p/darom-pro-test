@@ -141,7 +141,7 @@ let item = ref({
   cell: "",
 });
 
-function createItem() {
+async function createItem() {
   item.value = {
     dispatchPVZ: address.value,
     fromName: user.value.phoneNumber,
