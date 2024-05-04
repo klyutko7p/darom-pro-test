@@ -311,14 +311,14 @@ function deleteItemFromOrder(productName: number) {
             class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 focus:ring-2 w-full focus:ring-yellow-600 sm:text-sm sm:leading-6"
           />
 
-          <div class="flex items-center gap-5 mt-5">
-            <UIMainButton v-if="items.length === 0" @click="parsingPage"
+          <div class="flex items-center gap-5 mt-5 max-sm:flex-col">
+            <UIMainButton class="max-sm:w-full" v-if="items.length === 0" @click="parsingPage"
               >Добавить товар</UIMainButton
             >
-            <UIMainButton v-if="items.length > 0" @click="parsingPage"
+            <UIMainButton class="max-sm:w-full" v-if="items.length > 0" @click="parsingPage"
               >Добавить ещё товар</UIMainButton
             >
-            <UIMainButton @click="createOrder">Отправить заказ</UIMainButton>
+            <UIMainButton class="max-sm:w-full" @click="createOrder">Отправить заказ</UIMainButton>
           </div>
         </div>
 
@@ -333,14 +333,14 @@ function deleteItemFromOrder(productName: number) {
           <div
             v-auto-animate
             v-for="item in items.slice().reverse()"
-            class="border-b-2 mb-10 shadow-2xl border-black flex items-start justify-around max-md:max-w-[400px] max-md:items-center max-md:justify-center max-md:mx-auto"
+            class="border-b-2 mb-10 shadow-2xl border-black flex items-start justify-between max-md:max-w-[400px] max-md:items-center max-md:justify-center max-md:mx-auto"
           >
             <img
               class="max-w-[410px] h-full rounded-l-2xl px-3 max-md:hidden border-r-2 border-black"
               :src="item.img"
               alt=""
             />
-            <div class="px-5 py-3 max-md:p-0">
+            <div class="px-5 py-3 max-md:p-0 w-full">
               <div class="">
                 <div class="flex items-center justify-center mb-5">
                   <img
@@ -384,11 +384,6 @@ function deleteItemFromOrder(productName: number) {
                   </h1>
                 </div>
               </div>
-              <h1
-                class="italic max-h-[385px] max-[1460px]:max-h-[385px] max-xl:max-h-[350px] max-lg:max-h-[320px] overflow-auto max-md:px-3 max-md:py-1 bg-gray-100 px-5 py-3"
-              >
-                {{ item.description }}
-              </h1>
             </div>
           </div>
         </div>
