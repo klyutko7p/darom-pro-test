@@ -42,11 +42,11 @@ let showPassword = ref(false);
 
 <template>
   <Head>
-    <Title>Авторизация</Title>
+    <Title>Авторизация клиента</Title>
   </Head>
   <div v-if="!isLoading" class="h-screen flex items-center justify-center max-sm:block">
     <div
-      class="px-10 py-40 h-full max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50"
+      class="px-10 py-20 h-full max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50 max-w-[430px] max-sm:max-w-[2000px]"
     >
       <div class="">
         <div class="flex items-center justify-center">
@@ -108,8 +108,8 @@ let showPassword = ref(false);
               />
             </div>
           </div>
-          <h1 class="text-sm text-center italic font-bold text-secondary-color">Чтобы получить пароль напишите 
-            <a class="underline" href="https://t.me/SmartSklad980">поддержке</a>
+          <h1 class="text-sm text-center italic font-bold text-secondary-color">Если Вы раньше оформляли заказ, то пароль можно получить у 
+            <a class="underline" href="https://t.me/Svetlana_Darompro">менеджера</a>
           </h1>
           <div
             class="mt-2 flex gap-2 items-center justify-start"
