@@ -1,4 +1,5 @@
 <template>
+  <NuxtPwaManifest />
   <div class="flex">
     <SidebarUser />
     <div class="mx-auto container px-3 mt-10">

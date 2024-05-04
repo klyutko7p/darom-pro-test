@@ -132,7 +132,7 @@ let isShowInfo = ref(false);
     class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-70 z-[200]"
   >
     <div class="h-screen flex items-center justify-center max-sm:px-2">
-      <div class="bg-white relative py-10 px-5 rounded-2xl max-w-[500px]">
+      <div class="bg-white relative py-10 px-5 max-sm:px-3 rounded-2xl max-w-[500px]">
         <Icon
           class="absolute top-0 right-0 hover:text-secondary-color duration-200 cursor-pointer"
           name="material-symbols:close-small"
@@ -159,13 +159,13 @@ let isShowInfo = ref(false);
           </ul>
         </div>
         <div class="mt-3">
-          <h1 class="font-bold text-xl">
+          <h1 class="font-bold text-xl text-center max-sm:text-left max-sm:text-lg">
             Проверяйте товары в пункте выдачи на комплектность, размер и брак! <br />
             Возврат из дома не принимаем!
           </h1>
         </div>
         <div class="mt-3">
-          <h1 class="font-bold text-xl">
+          <h1 class="font-bold text-xl text-center max-sm:text-left max-sm:text-lg">
             При заказе товаров OZON GLOBAL, с вами свяжется менеджер для внесения предоплаты
           </h1>
         </div>

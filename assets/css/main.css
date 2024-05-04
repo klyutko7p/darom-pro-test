@@ -52,6 +52,12 @@ body {
   height: 100vh;
 }
 
+@media (max-width: 1240px) {
+  .main-page {
+    height: 100%;
+  }
+}
+
 .main-page-client {
   background-color: blue;
   color: white;

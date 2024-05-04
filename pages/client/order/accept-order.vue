@@ -62,6 +62,11 @@ async function parsingPage() {
           isLoading.value = false;
           return;
         }
+        if (!itemInfo[0]) {
+          toast.error("Извините, мы не можем обработать название товара.");
+          isLoading.value = false;
+          return;
+        }
         let priceInfo = await storeClients.fetchSitePrice(urlToItem.value);
         productName.value = itemInfo[0].imt_name;
         description.value = itemInfo[0].description;
@@ -123,6 +128,7 @@ function createItem() {
     img: urlToImg.value,
     description: description.value,
     cell: "",
+    marketplace: marketplace.value,
   };
   items.value.push(item.value);
   getCellFromName();
@@ -293,40 +299,58 @@ function deleteItemFromOrder(productName: number) {
         </div>
 
         <div v-if="items.length > 0" class="mt-10">
-          <h1 class="text-3xl font-bold mb-10">Мои товары – {{ items.length }}</h1>
+          <h1 class="text-2xl font-bold mb-1 max-sm:text-xl">
+            Количество товаров – {{ items.length }}
+          </h1>
+          <h1 class="text-2xl font-bold mb-10 max-sm:text-xl">
+            Стоимость товаров –
+            {{ items.reduce((ac, item) => ac + item.priceSite, 0) }} ₽
+          </h1>
           <div
             v-auto-animate
             v-for="item in items.slice().reverse()"
-            class="border-b-2 mb-10 shadow-2xl border-black flex items-start justify-around"
+            class="border-b-2 mb-10 shadow-2xl border-black flex items-start justify-around max-md:max-w-[400px] max-md:items-center max-md:justify-center max-md:mx-auto"
           >
             <img
-              class="max-w-[400px] h-full rounded-t-2xl max-sm:hidden"
+              class="max-w-[410px] h-full rounded-l-2xl px-3 max-md:hidden border-r-2 border-black"
               :src="item.img"
               alt=""
             />
-            <div class="px-5 py-3">
+            <div class="px-5 py-3 max-md:p-0">
               <div class="">
-                <div class="flex items-center justify-center mb-10">
+                <div class="flex items-center justify-center mb-5">
                   <img
-                    class="w-full h-full max-w-[300px] hidden max-sm:block"
+                    class="w-full h-full max-w-[400px] rounded-t-2xl hidden max-md:block border-b-2 border-black"
                     :src="item.img"
                     alt=""
                   />
                 </div>
-                <div>
-                  <div class="flex items-center gap-3">
+                <div class="max-md:px-5 max-md:py-1">
+                  <Icon
+                    @click="deleteItemFromOrder(item.productName)"
+                    name="material-symbols:delete-outline"
+                    size="40"
+                    class="text-red-500 absolute top-2 right-2 hover:opacity-50 duration-200 bg-white rounded-full px-1 cursor-pointer"
+                  />
+                  <img
+                    src="https://grampus-studio.ru/wp-content/uploads/2023/04/free-png.ru-419.png"
+                    alt=""
+                    class="absolute max-w-[300px] top-0 right-0 left-0 bottom-0 m-auto opacity-5"
+                    v-if="item.marketplace === 'WB'"
+                  />
+                  <img
+                    src="https://brandlab.ozon.ru/images/tild3631-3032-4235-b439-396661643432__icon_circle.png"
+                    alt=""
+                    class="absolute max-w-[300px] top-0 right-0 left-0 bottom-0 m-auto opacity-5"
+                    v-if="item.marketplace === 'OZ'"
+                  />
+                  <div class="max-md:text-center">
                     <a
                       :href="item.productLink"
                       target="_blank"
-                      class="font-bold text-2xl cursor-pointer max-sm:text-center text-secondary-color underline"
+                      class="font-bold text-2xl max-sm:text-xl cursor-pointer text-secondary-color underline"
                       >{{ item.productName }}</a
                     >
-                    <Icon
-                      @click="deleteItemFromOrder(item.productName)"
-                      name="material-symbols:delete-outline"
-                      size="24"
-                      class="text-red-500 hover:opacity-50 duration-200 cursor-pointer"
-                    />
                   </div>
                   <h1 class="font-medium text-xl mt-3">
                     Цена на сайте: {{ item.priceSite }} ₽
@@ -336,7 +360,9 @@ function deleteItemFromOrder(productName: number) {
                   </h1>
                 </div>
               </div>
-              <h1 class="italic max-h-[240px] max-lg:max-h-[200px] overflow-auto">
+              <h1
+                class="italic max-h-[385px] max-[1460px]:max-h-[385px] max-xl:max-h-[350px] max-lg:max-h-[320px] overflow-auto max-md:px-3 max-md:py-1 bg-gray-100 px-5 py-3"
+              >
                 {{ item.description }}
               </h1>
             </div>

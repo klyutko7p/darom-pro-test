@@ -69,7 +69,7 @@ onMounted(async () => {
 
   if (rows.value) {
     copyRows.value = [...rows.value];
-    phoneNumber.value = copyRows.value[0].fromName;
+    phoneNumber.value = user.value.phoneNumber;
   }
   disableReceivedItems();
   isLoading.value = false;
@@ -108,7 +108,8 @@ onMounted(() => {
           <Icon name="material-symbols:contact-phone-rounded" size="24" />
         </div>
       </div>
-      <h1 class="font-bold text-3xl">Список товаров</h1>
+      <h1 class="font-bold text-3xl max-sm:text-2xl" v-if="rows.length > 0">Список товаров</h1>
+      <h1 class="font-bold text-3xl max-sm:text-2xl text-center" v-else>Список товаров пуст. <br> Оформите сначала первый заказ! </h1>
       <SpreadsheetsOrderGoods :rows="rows" :user="user" />
     </div>
   </div>

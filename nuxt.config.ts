@@ -22,4 +22,31 @@ export default defineNuxtConfig({
   build: {
     transpile: ["vue-toastification"],
   },
+  pwa: {
+    manifest: {
+      name: "DAROM.pro",
+      short_name: "DAROM.pro",
+      description: "Лучший сервис для оформления заказа с Wildberries, Ozon и Яндекс Маркета",
+      theme_color: '#ff7d00',
+      icons: [
+        {
+          src: "pwa-192x192.png",
+          sizes: "192x192",
+          type: "image/png",
+        },
+        {
+          src: "pwa-512x512.png",
+          sizes: "512x512",
+          type: "image/png",
+        },
+      ],
+    },
+    workbox: {
+      navigateFallback: "/",
+    },
+    devOptions: {
+      enabled: true,
+      type: "module",
+    },
+  },
 });
