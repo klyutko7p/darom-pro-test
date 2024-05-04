@@ -202,7 +202,7 @@ async function updateBalance() {
             <UIMainButton @click="saveChanges">Сохранить</UIMainButton>
           </div>
         </div>
-        <div class="mb-5 mt-10">
+        <!-- <div class="mb-5 mt-10">
           <h1 class="text-xl">
             Ваша реферальная ссылка:
             <span
@@ -222,7 +222,7 @@ async function updateBalance() {
               >Обновить баланс</UIMainButton
             >
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
