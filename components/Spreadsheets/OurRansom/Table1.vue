@@ -332,10 +332,7 @@ function updateCurrentPageData() {
     processingRows.value = [...new Set(processingRows.value)];
   });
 
-  if (
-    props.user.role === "RMANAGER" ||
-    props.user.role === "PPVZ"
-  ) {
+  if (props.user.role === "RMANAGER" || props.user.role === "PPVZ") {
     returnRows.value = props.rows?.filter(
       (row) => row.dispatchPVZ && row.dispatchPVZ.includes(props.user.PVZ)
     );
@@ -573,6 +570,11 @@ let showPayRejectClient = ref(false);
       @click="deleteSelectedRows"
       >Удалить выделенные записи</UIActionButton
     >
+    <UIActionButton
+      v-if="user.deliveredPVZ1 === 'WRITE' && showButtonPVZ && user.role === 'ADMIN'"
+      @click="updateDeliveryRows('PVZ')"
+      >Доставить на пвз
+    </UIActionButton>
     <UIActionButton
       v-if="user.deliveredSC1 === 'WRITE' && showButtonSC"
       @click="updateDeliveryRows('SC')"
