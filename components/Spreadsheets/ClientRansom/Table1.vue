@@ -272,6 +272,11 @@ let showPayRejectClient = ref(false);
       >Удалить выделенные записи</UIActionButton
     >
     <UIActionButton
+      v-if="user.deliveredPVZ2 === 'WRITE' && showButtonPVZ"
+      @click="updateDeliveryRows('PVZ')"
+      >Доставить на пвз
+    </UIActionButton>
+    <UIActionButton
       v-if="user.deliveredSC2 === 'WRITE' && showButtonSC"
       @click="updateDeliveryRows('SC')"
       >Доставить на сц

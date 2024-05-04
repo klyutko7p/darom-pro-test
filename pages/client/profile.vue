@@ -320,10 +320,10 @@ let newPasswordRepeat = ref("");
               />
             </div>
           </div>
-          <h1 class="text-center font-bold text-red-500">{{ errorTextValidation }}</h1>
-          <div class="flex items-center gap-5">
-            <UIMainButton @click="showChangePassword">Поменять пароль</UIMainButton>
-            <UIMainButton @click="saveChanges">Сохранить</UIMainButton>
+          <h1 class="text-center font-bold text-red-500 mb-5">{{ errorTextValidation }}</h1>
+          <div class="flex items-center gap-5 max-sm:flex-col">
+            <UIMainButton class="max-sm:w-full" @click="showChangePassword">Поменять пароль</UIMainButton>
+            <UIMainButton class="max-sm:w-full" @click="saveChanges">Сохранить</UIMainButton>
           </div>
         </div>
         <!-- <div class="mb-5 mt-10">
