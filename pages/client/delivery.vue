@@ -65,7 +65,6 @@ async function handleFileChange(event) {
   rowData.value.dispatchPVZ = pvzData.value;
   getCellFromName();
   if (data) {
-    console.log(data);
     isLoading.value = true;
     await storeRansom.createRansomRow(
       rowData.value,
@@ -74,6 +73,9 @@ async function handleFileChange(event) {
     );
     isShowModal.value = true;
     isLoading.value = false;
+    if (cellData.value) {
+      await storeCells.updateCellClient(cellData.value, "Занято", rowData.value.fromName);
+    }
   } else {
     console.log(error);
   }
@@ -189,9 +191,9 @@ let isShowModal = ref(false);
           <input
             class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
             @change="handleFileChange"
+            :disabled="isDisabled"
             type="file"
           />
-          <!-- :disabled="isDisabled" -->
           <h1 class="text-base mt-10 mb-1 text-secondary-color font-bold">
             *штрих-код обновляется каждые 24 часа
           </h1>
@@ -218,7 +220,7 @@ let isShowModal = ref(false);
               />
             </div>
             <h1
-              class="text-2xl text-center border-b-2 border-black w-full mb-5 max-sm:text-xl max-sm:py-5 max-sm:mt-5"
+              class="text-2xl text-center border-b-2 border-black w-full mb-3 max-sm:text-xl max-sm:py-3 max-sm:mt-5"
             >
               Ваш заказ успешно оформлен!
             </h1>
@@ -230,15 +232,6 @@ let isShowModal = ref(false);
               >
                 Мои заказы
               </UIMainButton>
-            </div>
-            <div class="mt-5">
-              <h1 class="text-base font-medium">
-                * цена на момент обработки вашего заказа может быть изменена маркетплейсом
-              </h1>
-              <h1 class="text-base font-medium">
-                ** при заказе товаров OZON GLOBAL, с вами свяжется менеджер для внесения
-                предоплаты
-              </h1>
             </div>
           </div>
         </div>

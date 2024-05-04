@@ -95,7 +95,7 @@ async function updateRow() {
   await storeRansom.updateRansomRow(rowData.value, user.value.username, "OurRansom");
   filteredRows.value = await storeRansom.getRansomRowsOurRansom();
 
-  if (cellData) {
+  if (cellData.value) {
     await storeCells.updateCell(cellData.value, "Занято", rowData.value.fromName);
   }
 
@@ -113,7 +113,7 @@ async function createRow() {
   await storeRansom.createRansomRow(rowData.value, user.value.username, "OurRansom");
   filteredRows.value = await storeRansom.getRansomRowsOurRansom();
 
-  if (cellData) {
+  if (cellData.value) {
     await storeCells.updateCell(cellData.value, "Занято", rowData.value.fromName);
   }
 

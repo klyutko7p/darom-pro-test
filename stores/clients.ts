@@ -365,9 +365,9 @@ export const useClientsStore = defineStore("clients", () => {
       if (data.value === "Пароли совпадают") {
         console.log(data.value);
         toast.success("Вы успешно обновили аккаунт!");
-      } else if (data.value === "Пароли не совпадают") {
+      } else if (data.value === "Введённый прошлый пароль не совпадает!") {
         console.log(data);
-        toast.error("Пароли не совпадают!");
+        toast.error("Введённый прошлый пароль не совпадает!");
       } else {
         toast.error("Произошла ошибка при изменении аккаунта!");
       }

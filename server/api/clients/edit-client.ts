@@ -52,8 +52,8 @@ export default defineEventHandler(async (event) => {
                 });
               }
             } else {
-              console.error("Пароли не совпадают");
-              resolve("Пароли не совпадают");
+              console.error("Введённый прошлый пароль не совпадает!");
+              resolve("Введённый прошлый пароль не совпадает!");
             }
           }
         );

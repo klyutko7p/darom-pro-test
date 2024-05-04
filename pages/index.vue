@@ -11,6 +11,12 @@ function changeAddress() {
   coordinates.value = selectedAddress.value;
 }
 
+onBeforeMount(() => {
+  if (window.matchMedia("(display-mode: standalone)").matches) {
+    router.push('/auth/client/login')
+  }
+});
+
 definePageMeta({
   layout: false,
 });
@@ -115,7 +121,7 @@ definePageMeta({
               <option class="text-black" :value="[47.955462, 37.964951]">
                 г. Донецк, ул. Палладина, 20. (есть примерочная)
               </option>
-              <option class="text-black" :value="[47.946192, 37.903650]">
+              <option class="text-black" :value="[47.946192, 37.90365]">
                 г. Донецк, ул Дудинская, д. 4, кв7
               </option>
               <option class="text-black" :value="[47.960663, 37.883761]">

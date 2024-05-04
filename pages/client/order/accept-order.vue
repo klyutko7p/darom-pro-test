@@ -74,7 +74,7 @@ async function parsingPage() {
         let timeoutPromise = new Promise((resolve, reject) => {
           setTimeout(() => {
             reject(new Error("Request timeout"));
-          }, 4000); 
+          }, 4000);
         });
 
         try {
@@ -156,6 +156,9 @@ function createItem() {
   };
   items.value.push(item.value);
   getCellFromName();
+  if (cellData.value) {
+    await storeCells.updateCell(cellData.value, "Занято", user.value.phoneNumber);
+  }
   console.log(item.value);
   urlToItem.value = "";
   quantityOfItem.value = 1;
@@ -312,13 +315,12 @@ function deleteItemFromOrder(productName: number) {
           />
 
           <div class="flex items-center gap-5 mt-5 max-sm:flex-col">
-            <UIMainButton class="max-sm:w-full" v-if="items.length === 0" @click="parsingPage"
+            <UIMainButton class="max-sm:w-full" @click="parsingPage"
               >Добавить товар</UIMainButton
             >
-            <UIMainButton class="max-sm:w-full" v-if="items.length > 0" @click="parsingPage"
-              >Добавить ещё товар</UIMainButton
+            <UIMainButton class="max-sm:w-full" @click="createOrder"
+              >Отправить заказ</UIMainButton
             >
-            <UIMainButton class="max-sm:w-full" @click="createOrder">Отправить заказ</UIMainButton>
           </div>
         </div>
 
