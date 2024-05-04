@@ -67,12 +67,36 @@ async function parsingPage() {
           isLoading.value = false;
           return;
         }
-        let priceInfo = await storeClients.fetchSitePrice(urlToItem.value);
         productName.value = itemInfo[0].imt_name;
         description.value = itemInfo[0].description;
-        priceSite.value = parseFloat(
-          priceInfo.message.split(" ")[0] + priceInfo.message.split(" ")[1]
-        );
+
+        let priceInfoPromise = storeClients.fetchSitePrice(urlToItem.value);
+        let timeoutPromise = new Promise((resolve, reject) => {
+          setTimeout(() => {
+            reject(new Error("Request timeout"));
+          }, 4000); 
+        });
+
+        try {
+          let priceInfo = await Promise.race([priceInfoPromise, timeoutPromise]);
+          productName.value = itemInfo[0].imt_name;
+          description.value = itemInfo[0].description;
+
+          if (priceInfo.message) {
+            priceSite.value = parseFloat(
+              priceInfo.message.split(" ")[0] + priceInfo.message.split(" ")[1]
+            );
+          } else {
+            toast.warning("Цена на данный товар появится при обработке заказа");
+            priceSite.value = 0;
+            isLoading.value = false;
+          }
+        } catch (error) {
+          toast.warning("Цена на данный товар появится при обработке заказа");
+          priceSite.value = 0;
+          isLoading.value = false;
+        }
+
         urlToImg.value = itemInfo[2];
         toast.success("Вы успешно добавили товар!");
         isLoading.value = false;
