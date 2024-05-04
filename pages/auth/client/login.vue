@@ -108,7 +108,7 @@ let showPassword = ref(false);
               />
             </div>
           </div>
-          <h1 class="text-sm text-center italic font-bold text-secondary-color">Если Вы раньше оформляли заказ, то пароль можно получить у 
+          <h1 class="text-sm text-center italic font-bold text-secondary-color">Если Вы ранее оформляли заказ, то пароль можно получить у 
             <a class="underline" href="https://t.me/Svetlana_Darompro">менеджера</a>
           </h1>
           <div
