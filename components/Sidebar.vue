@@ -505,7 +505,7 @@ let isShowAddSettings = ref(false);
   </div>
 
   <div
-    class="absolute bg-gradient-to-tr from-white via-white to-yellow-100 bg-image top-0 bottom-0 left-0 right-0 z-[200] hidden max-xl:flex items-center justify-center bg-white"
+    class="fixed bg-gradient-to-tr from-white via-white to-yellow-100 bg-image m-auto top-0 bottom-0 left-0 right-0 z-[200] hidden max-xl:block max-xl:px-24 max-sm:px-9 max-sm:py-10 bg-white max-xl:right-auto overflow-auto"
     v-if="isOpen"
   >
     <Icon
@@ -740,7 +740,7 @@ let isShowAddSettings = ref(false);
           name="material-symbols:keyboard-double-arrow-down-rounded"
         />
       </div>
-      <div v-if="isShowAddSettings" class="max-h-[100px] overflow-auto">
+      <div v-if="isShowAddSettings">
         <div
           v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
           role="button"
