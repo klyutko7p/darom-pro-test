@@ -38,6 +38,12 @@ onBeforeMount(async () => {
   }
 });
 let showPassword = ref(false);
+
+watch(() => phoneNumber.value, validationPhoneNumber);
+
+function validationPhoneNumber() {
+  phoneNumber.value = phoneNumber.value.replace(/[^0-9+]/g, "");
+}
 </script>
 
 <template>
@@ -50,7 +56,9 @@ let showPassword = ref(false);
     >
       <div class="">
         <div class="flex items-center justify-center">
-          <h1 class="text-center text-secondary-color text-6xl max-sm:text-5xl font-bold">DAROM.PRO</h1>
+          <h1 class="text-center text-secondary-color text-6xl max-sm:text-5xl font-bold">
+            DAROM.PRO
+          </h1>
         </div>
         <h2
           class="mt-5 text-center text-2xl max-sm:text-xl font-bold leading-9 tracking-tight text-gray-900"
@@ -108,12 +116,11 @@ let showPassword = ref(false);
               />
             </div>
           </div>
-          <h1 class="text-sm text-center italic font-bold text-secondary-color">Если Вы ранее оформляли заказ, то пароль можно получить у 
-            <a class="underline" href="https://t.me/Svetlana_Darompro">менеджера</a>
+          <h1 class="text-sm text-center italic font-bold text-secondary-color">
+            Если не можете вспомнить пароль, то обратитесь к
+            <a class="underline" href="https://t.me/Svetlana_Darompro">менеджеру</a>
           </h1>
-          <div
-            class="mt-2 flex gap-2 items-center justify-start"
-          >
+          <div class="mt-2 flex gap-2 items-center justify-start">
             <input
               v-model="isForeignDevice"
               id="isForeignDevice"

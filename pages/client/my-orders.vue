@@ -83,8 +83,8 @@ onMounted(async () => {
     if (copyRowsOurRansom.value.length > 0) {
       let ransomRow = copyRowsOurRansom.value?.filter((row) => row.deleted === null);
       phoneNumber.value = copyRowsOurRansom.value[0].fromName;
-      dispatchPVZ.value = ransomRow[0].dispatchPVZ;
-      cell.value = ransomRow[0].cell;
+      dispatchPVZ.value = ransomRow[ransomRow.length - 1].dispatchPVZ;
+      cell.value = ransomRow[ransomRow.length - 1].cell;
       value.value = `${dispatchPVZ.value}/${phoneNumber.value}/${cell.value}`;
     }
   }

@@ -99,6 +99,11 @@ onBeforeMount(async () => {
   }
 });
 
+watch(() => phoneNumber.value, validationPhoneNumber);
+
+function validationPhoneNumber() {
+  phoneNumber.value = phoneNumber.value.replace(/[^0-9+]/g, '');
+}
 let showPassword = ref(false);
 </script>
 
