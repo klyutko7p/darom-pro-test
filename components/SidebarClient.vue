@@ -160,7 +160,7 @@ let isShowInfo = ref(false);
         </div>
         <div class="mt-3">
           <h1 class="font-bold text-xl text-center max-sm:text-left max-sm:text-lg">
-            Проверяйте товары в пункте выдачи на комплектность, размер и брак! <br />
+            Проверяйте товары в пункте выдачи на комплектность, размер и брак. <br />
             Возврат из дома не принимаем!
           </h1>
         </div>
