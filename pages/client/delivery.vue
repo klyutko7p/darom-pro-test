@@ -53,6 +53,18 @@ const supabase = createClient(
 let rowData = ref({} as IClientRansom);
 let marketplace = ref("");
 
+let phoneNumbersWithoutPercent = ref<Array<string>>([
+  "+79494530129",
+  "+79494527899",
+  "+79494140214",
+  "+79494140215",
+  "+79493263518",
+  "+79493485709",
+  "+79494140217",
+  "+79493479188",
+  "+79494189093",
+]);
+
 async function handleFileChange(event) {
   const selectedFile = event.target.files[0];
   const randomDigits = Math.floor(10000 + Math.random() * 90000);
@@ -63,6 +75,9 @@ async function handleFileChange(event) {
   rowData.value.fromName = user.value.phoneNumber;
   rowData.value.productLink = marketplace.value;
   rowData.value.dispatchPVZ = pvzData.value;
+  if (phoneNumbersWithoutPercent.value.includes(user.value.phoneNumber)) {
+    rowData.value.percentClient = 0;
+  }
   getCellFromName();
   if (data) {
     isLoading.value = true;

@@ -74,7 +74,7 @@ async function parsingPage() {
         let timeoutPromise = new Promise((resolve, reject) => {
           setTimeout(() => {
             reject(new Error("Request timeout"));
-          }, 4000);
+          }, 10000);
         });
 
         try {
@@ -139,7 +139,21 @@ let item = ref({
   img: "",
   description: "",
   cell: "",
+  percentClient: 10,
+  marketplace: "",
 });
+
+let phoneNumbersWithoutPercent = ref<Array<string>>([
+  "+79494530129",
+  "+79494527899",
+  "+79494140214",
+  "+79494140215",
+  "+79493263518",
+  "+79493485709",
+  "+79494140217",
+  "+79493479188",
+  "+79494189093",
+]);
 
 async function createItem() {
   item.value = {
@@ -150,10 +164,14 @@ async function createItem() {
     priceSite: +priceSite.value,
     quantity: quantityOfItem.value,
     img: urlToImg.value,
+    percentClient: 10,
     description: description.value,
     cell: "",
     marketplace: marketplace.value,
   };
+  if (phoneNumbersWithoutPercent.value.includes(user.value.phoneNumber)) {
+    item.value.percentClient = 0;
+  }
   items.value.push(item.value);
   getCellFromName();
   if (cellData.value) {
