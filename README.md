@@ -1,3 +1,5 @@
+![изображение](https://github.com/klyutko7p/darom.pro/assets/95645570/3282dad1-c07e-4941-aae3-d3aeb36250bb)
+
 # Nuxt 3 Minimal Starter
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
