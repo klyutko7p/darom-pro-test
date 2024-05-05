@@ -2,7 +2,7 @@
 import Cookies from "js-cookie";
 const storeClients = useClientsStore();
 const storeRansom = useRansomStore();
-const router = useRouter()
+const router = useRouter();
 const route = useRoute();
 
 let isLoading = ref(false);
@@ -44,8 +44,12 @@ let showReceivedItems = ref(true);
 
 function disableReceivedItems() {
   showReceivedItems.value = false;
-  copyRowsOurRansom.value = rowsOurRansom.value?.filter((value) => !value.issued && value.deleted === null);
-  copyRowsClientRansom.value = rowsClientRansom.value?.filter((value) => !value.issued && value.deleted === null);
+  copyRowsOurRansom.value = rowsOurRansom.value?.filter(
+    (value) => !value.issued && value.deleted === null
+  );
+  copyRowsClientRansom.value = rowsClientRansom.value?.filter(
+    (value) => !value.issued && value.deleted === null
+  );
 }
 
 function enableReceivedItems() {
@@ -55,6 +59,8 @@ function enableReceivedItems() {
 }
 
 let phoneNumber = ref("");
+let dispatchPVZ = ref("");
+let cell = ref("");
 
 onMounted(async () => {
   isLoading.value = true;
@@ -69,11 +75,18 @@ onMounted(async () => {
     "ClientRansom"
   );
 
-  rows.value = [...rowsOurRansom.value, ...rowsClientRansom.value] 
+  rows.value = [...rowsOurRansom.value, ...rowsClientRansom.value];
 
   if (rows.value) {
     copyRowsOurRansom.value = [...rowsOurRansom.value];
     copyRowsClientRansom.value = [...rowsClientRansom.value];
+    if (copyRowsOurRansom.value.length > 0) {
+      let ransomRow = copyRowsOurRansom.value?.filter((row) => row.deleted === null);
+      phoneNumber.value = copyRowsOurRansom.value[0].fromName;
+      dispatchPVZ.value = ransomRow[0].dispatchPVZ;
+      cell.value = ransomRow[0].cell;
+      value.value = `${dispatchPVZ.value}/${phoneNumber.value}/${cell.value}`;
+    }
   }
   disableReceivedItems();
   isLoading.value = false;
@@ -94,6 +107,7 @@ onMounted(() => {
 });
 
 const token = Cookies.get("token");
+let value = ref("");
 </script>
 
 <template>
@@ -102,39 +116,53 @@ const token = Cookies.get("token");
   </Head>
   <div v-if="!isLoading">
     <div v-if="token" class="mt-10">
-      <div class="max-lg:p-3">
-        <div class="mb-5 flex items-center gap-3">
-          <h1 class="text-xl">
-            Телефон: <span class="italic"> {{ user.phoneNumber }} </span>
+      <div class="flex items-center justify-between max-sm:flex-col-reverse max-sm:items-start">
+        <div class="max-lg:p-3">
+          <div class="mb-5 flex items-center gap-3">
+            <h1 class="text-xl">
+              Телефон: <span class="italic"> {{ user.phoneNumber }} </span>
+            </h1>
+            <Icon name="material-symbols:contact-phone-rounded" size="24" />
+          </div>
+          <h1 class="text-xl max-sm:text-base">
+            Оставшаяся сумма к оплате:
+            <span class="font-bold">
+              {{
+                Math.ceil(getAmountToBePaid("NONE", 1) / 10) * 10 +
+                Math.ceil(getAmountToBePaid("NONE", 2) / 10) * 10
+              }}
+              руб.</span
+            >
           </h1>
-          <Icon name="material-symbols:contact-phone-rounded" size="24" />
+          <h1 class="text-xl max-sm:text-base">
+            Сумма к оплате на выдачу:
+            <span class="font-bold"
+              >{{
+                Math.ceil(getAmountToBePaid("PVZ", 1) / 10) * 10 +
+                Math.ceil(getAmountToBePaid("PVZ", 2) / 10) * 10
+              }}
+              руб.</span
+            >
+          </h1>
+          <UIMainButton
+            v-if="showReceivedItems"
+            class="mt-5"
+            @click="disableReceivedItems"
+            >Скрыть полученные товары</UIMainButton
+          >
+          <UIMainButton
+            v-if="!showReceivedItems"
+            class="mt-5"
+            @click="enableReceivedItems"
+          >
+            Показать полученные товары</UIMainButton
+          >
         </div>
-        <h1 class="text-xl max-sm:text-base">
-          Оставшаяся сумма к оплате:
-          <span class="font-bold">
-            {{ Math.ceil(getAmountToBePaid("NONE", 1) / 10) * 10 + Math.ceil(getAmountToBePaid("NONE", 2) / 10) * 10 }} руб.</span
-          >
-        </h1>
-        <h1 class="text-xl max-sm:text-base">
-          Сумма к оплате на выдачу:
-          <span class="font-bold"
-            >{{ Math.ceil(getAmountToBePaid("PVZ", 1) / 10) * 10 + Math.ceil(getAmountToBePaid("PVZ", 2) / 10) * 10 }} руб.</span
-          >
-        </h1>
-        <UIMainButton
-          v-if="showReceivedItems"
-          class="mt-5"
-          @click="disableReceivedItems"
-          >Скрыть полученные товары</UIMainButton
-        >
-        <UIMainButton
-          v-if="!showReceivedItems"
-          class="mt-5"
-          @click="enableReceivedItems"
-        >
-          Показать полученные товары</UIMainButton
-        >
+        <div class="flex flex-col items-center gap-3 max-lg:items-start mt-3">
+          <CodeQR :value="value" class="max-w-[110px] max-h-[100px]" />
+        </div>
       </div>
+
       <SpreadsheetsOrderTable :link="'1'" :rows="copyRowsOurRansom" :user="user" />
       <div class="mt-16 mb-10">
         <SpreadsheetsOrderTable :link="'2'" :rows="copyRowsClientRansom" :user="user" />
@@ -142,6 +170,6 @@ const token = Cookies.get("token");
     </div>
   </div>
   <div v-else class="flex items-center justify-center">
-      <UISpinner />
+    <UISpinner />
   </div>
 </template>

@@ -95,7 +95,7 @@ async function saveChanges() {
   if (password.value.trim() === "") {
     isShowPasswordInput.value = true;
     errorTextValidation.value =
-      "Пожалуйста, введите подтверждающий пароль, чтобы сохранить изменения.";
+      "Пожалуйста, введите пароль, чтобы сохранить изменения.";
     return;
   }
 
