@@ -53,6 +53,9 @@ function enableReceivedItems() {
 let phoneNumber = ref("");
 
 onMounted(async () => {
+  if (!token) {
+    router.push('/auth/client/login')
+  }
   isLoading.value = true;
   user.value = await storeClients.getClient();
 

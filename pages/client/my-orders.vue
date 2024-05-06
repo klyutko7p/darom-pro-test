@@ -62,7 +62,11 @@ let phoneNumber = ref("");
 let dispatchPVZ = ref("");
 let cell = ref("");
 
-onMounted(async () => {
+onBeforeMount(async () => {
+  if (!token) {
+    router.push('/auth/client/login')
+  }
+
   isLoading.value = true;
   user.value = await storeClients.getClient();
 
@@ -81,7 +85,7 @@ onMounted(async () => {
     copyRowsOurRansom.value = [...rowsOurRansom.value];
     copyRowsClientRansom.value = [...rowsClientRansom.value];
     if (copyRowsOurRansom.value.length > 0) {
-      let ransomRow = copyRowsOurRansom.value?.filter((row) => row.deleted === null);
+      let ransomRow = copyRowsOurRansom.value;
       phoneNumber.value = copyRowsOurRansom.value[0].fromName;
       dispatchPVZ.value = ransomRow[ransomRow.length - 1].dispatchPVZ;
       cell.value = ransomRow[ransomRow.length - 1].cell;
@@ -98,12 +102,6 @@ function getNumber(phoneNumberData: string) {
 
 definePageMeta({
   layout: "client",
-});
-
-onMounted(() => {
-  if (!token) {
-    router.push("/auth/client/login");
-  }
 });
 
 const token = Cookies.get("token");

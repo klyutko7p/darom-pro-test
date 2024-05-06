@@ -104,6 +104,7 @@ function enableReceivedItems() {
 let phoneNumber = ref("");
 let dispatchPVZ = ref("");
 let cell = ref("");
+const token = Cookies.get("token");
 
 onMounted(async () => {
   isLoading.value = true;
@@ -119,7 +120,7 @@ onMounted(async () => {
 
   if (rows.value) {
     copyRows.value = [...rows.value];
-    let ransomRow = copyRows.value?.filter((row) => row.deleted === null);
+    let ransomRow = copyRows.value;
     phoneNumber.value = copyRows.value[0].fromName;
     dispatchPVZ.value = ransomRow[ransomRow.length - 1].dispatchPVZ;
     cell.value = ransomRow[ransomRow.length - 1].cell;
