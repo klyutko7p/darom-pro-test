@@ -117,7 +117,7 @@ function validationPhoneNumber() {
             </div>
           </div>
           <h1 class="text-sm text-center italic font-bold text-secondary-color">
-            Если не можете вспомнить пароль, то обратитесь к
+            Если не можете вспомнить пароль, обратитесь к
             <a class="underline" href="https://t.me/Svetlana_Darompro">менеджеру</a>
           </h1>
           <div class="mt-2 flex gap-2 items-center justify-start">
