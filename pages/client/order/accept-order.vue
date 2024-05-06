@@ -418,7 +418,7 @@ function deleteItemFromOrder(productName: number) {
         class="fixed top-0 bottom-0 left-0 bg-black bg-opacity-70 right-0 z-[100]"
       >
         <div class="flex items-center justify-center h-screen text-black font-bold">
-          <div class="bg-white relative p-10 rounded-lg flex items-center flex-col gap-3">
+          <div class="bg-white relative p-10 max-sm:p-5 rounded-lg flex items-center flex-col gap-3">
             <div class="absolute top-0 right-0">
               <Icon
                 name="material-symbols:close-small"
@@ -427,12 +427,12 @@ function deleteItemFromOrder(productName: number) {
                 @click="isShowModal = !isShowModal"
               />
             </div>
-            <h1 class="text-2xl text-center border-b-2 border-black w-full mb-5">
+            <h1 class="text-2xl text-center border-b-2 border-black w-full py-3 mb-5">
               Ваш заказ успешно оформлен!
             </h1>
-            <div class="flex items-center gap-3">
-              <h1 class="text-xl">Ожидайте появление информации в</h1>
-              <UIMainButton @click="router.push('/client/my-orders')">
+            <div class="flex items-center flex-col gap-3">
+              <h1 class="text-xl max-sm:text-center">Ожидайте появление информации в</h1>
+              <UIMainButton class="w-full" @click="router.push('/client/my-orders')">
                 Мои заказы
               </UIMainButton>
             </div>

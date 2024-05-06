@@ -235,12 +235,12 @@ let isShowModal = ref(false);
               />
             </div>
             <h1
-              class="text-2xl text-center border-b-2 border-black w-full mb-3 max-sm:text-xl max-sm:py-3 max-sm:mt-5"
+              class="text-2xl text-center border-b-2 border-black w-full mb-3 max-sm:text-xl py-3 max-sm:mt-5"
             >
               Ваш заказ успешно оформлен!
             </h1>
             <div class="flex items-center gap-3 max-sm:flex-col">
-              <h1 class="text-xl max-sm:text-lg">Ожидайте появление информации в</h1>
+              <h1 class="text-xl max-sm:text-lg max-sm:text-center">Ожидайте появление информации в</h1>
               <UIMainButton
                 class="max-sm:w-full"
                 @click="router.push('/client/my-orders')"
