@@ -61,11 +61,16 @@ onBeforeMount(() => {
 let returnRows = ref<Array<IAdvanceReport>>();
 
 function updateCurrentPageData() {
-  returnRows.value = props.rows;
-  filteredRows.value = returnRows.value?.filter((row: IAdvanceReport) => {
-    let rowDate: Date = new Date(row.date);
-    return rowDate.getMonth() + 1 === +month.value;
-  });
+  if (isDateFilter.value) {
+    returnRows.value = props.rows;
+    filteredRows.value = returnRows.value?.filter((row: IAdvanceReport) => {
+      let rowDate: Date = new Date(row.date);
+      return rowDate.getMonth() + 1 === +month.value;
+    });
+  } else {
+    returnRows.value = props.rows;
+    filteredRows.value = returnRows.value;
+  }
 }
 
 let letterOfSorting = ref("M");
@@ -73,7 +78,10 @@ function changeSorting(letter: string) {
   letterOfSorting.value = letter;
 }
 
+let isDateFilter = ref(true);
+
 watch([props.rows, totalRows, letterOfSorting, props.user], updateCurrentPageData);
+watch([isDateFilter], updateCurrentPageData);
 
 let breakpoints = {
   100: {
@@ -100,8 +108,10 @@ function exportToExcel() {
 }
 </script>
 <template>
-  <div class="flex items-center justify-between mt-10">
-    <div class="flex items-center gap-5">
+  <div
+    class="flex items-center justify-between mt-10 max-sm:flex-col max-sm:items-start max-sm:gap-3"
+  >
+    <div class="flex items-center max-sm:flex-col max-sm:items-start gap-5">
       <span
         class="border-2 py-3 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
         @click="showFilters = !showFilters"
@@ -120,6 +130,10 @@ function exportToExcel() {
             {{ monthName }}
           </option>
         </select>
+        <div class="ml-2 space-x-2">
+          <input type="checkbox" v-model="isDateFilter" />
+          <label for="">Данные за 1 месяц?</label>
+        </div>
       </div>
     </div>
     <Icon
