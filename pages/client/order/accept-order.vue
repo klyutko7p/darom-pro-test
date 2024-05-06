@@ -87,14 +87,18 @@ async function parsingPage() {
               priceInfo.message.split(" ")[0] + priceInfo.message.split(" ")[1]
             );
           } else {
-            toast.warning("Цена на данный товар появится при обработке заказа");
-            priceSite.value = 0;
+            toast.error(
+              "Извините, мы не можем обработать товар. Возможно, Вы не выбрали размер или товара нет в наличии!"
+            );
             isLoading.value = false;
+            return;
           }
         } catch (error) {
-          toast.warning("Цена на данный товар появится при обработке заказа");
-          priceSite.value = 0;
+          toast.error(
+            "Извините, мы не можем обработать товар. Возможно, Вы не выбрали размер или товара нет в наличии!"
+          );
           isLoading.value = false;
+          return;
         }
 
         urlToImg.value = itemInfo[2];

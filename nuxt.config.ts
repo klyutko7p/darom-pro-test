@@ -1,5 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  runtimeConfig: {
+    public: {
+      tokenTelegramBot: "7000545613:AAF8Wn8o1nhLalZ82SnyqFdVWIg_ud2aGNI",
+    },
+  },
   ssr: true,
   devtools: { enabled: true },
   modules: [
@@ -26,8 +31,9 @@ export default defineNuxtConfig({
     manifest: {
       name: "DAROM.pro",
       short_name: "DAROM.pro",
-      description: "Лучший сервис для оформления заказа с Wildberries, Ozon и Яндекс Маркета",
-      theme_color: '#ff7d00',
+      description:
+        "Лучший сервис для оформления заказа с Wildberries, Ozon и Яндекс Маркета",
+      theme_color: "#ff7d00",
       icons: [
         {
           src: "pwa-192x192.png",
