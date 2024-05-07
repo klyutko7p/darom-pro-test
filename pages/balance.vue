@@ -462,8 +462,8 @@ function getAllSum() {
     if (selectedPVZ.value === "Все ПВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
-          row.issued === null &&
-          row.deleted === null &&
+          !row.issued &&
+          !row.deleted &&
           (!startingDate.value ||
             new Date(row.created_at) >= new Date(newStartingDate)) &&
           (!endDate.value || new Date(row.created_at) <= new Date(newEndDate))
