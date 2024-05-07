@@ -60,46 +60,33 @@ onBeforeMount(() => {
 
 let returnRows = ref<Array<IAdvanceReport>>();
 
+  import Cookies from "js-cookie";
+
+const isDateFilterCookie = Cookies.get("isDateFilter");
+
+let isDateFilter = ref(isDateFilterCookie !== undefined ? JSON.parse(isDateFilterCookie) : true);
+
 function updateCurrentPageData() {
   if (isDateFilter.value) {
+    saveIsDateFilterToCookie(true)
     returnRows.value = props.rows;
     filteredRows.value = returnRows.value?.filter((row: IAdvanceReport) => {
       let rowDate: Date = new Date(row.date);
       return rowDate.getMonth() + 1 === +month.value;
     });
   } else {
+    saveIsDateFilterToCookie(false)
     returnRows.value = props.rows;
     filteredRows.value = returnRows.value;
   }
 }
 
-let letterOfSorting = ref("M");
-function changeSorting(letter: string) {
-  letterOfSorting.value = letter;
-}
-
-let isDateFilter = ref(true);
-
-watch([props.rows, totalRows, letterOfSorting, props.user], updateCurrentPageData);
+watch([props.rows, totalRows, props.user], updateCurrentPageData);
 watch([isDateFilter], updateCurrentPageData);
 
-let breakpoints = {
-  100: {
-    slidesPerView: 1,
-  },
-  400: {
-    slidesPerView: 2,
-  },
-  640: {
-    slidesPerView: 3,
-  },
-  770: {
-    slidesPerView: 5,
-  },
-  1024: {
-    slidesPerView: 6,
-  },
-};
+function saveIsDateFilterToCookie(value: boolean) {
+  Cookies.set("isDateFilter", JSON.stringify(value));
+}
 
 function exportToExcel() {
   let table = document.querySelector("#theTable");

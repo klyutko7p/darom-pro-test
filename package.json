@@ -19,6 +19,7 @@
     "pako": "^2.1.0",
     "prisma": "^5.7.1",
     "vue": "^3.3.12",
+    "vue-multiselect": "^3.0.0",
     "vue-router": "^4.2.5"
   },
   "dependencies": {
@@ -49,6 +50,7 @@
     "nodemailer": "^6.9.12",
     "nuxt-mail": "^4.0.3",
     "nuxt-swiper": "^1.2.2",
+    "nuxt-vue-multiselect": "^1.0.4",
     "qrcode.vue": "^3.4.1",
     "resend": "^3.2.0",
     "selenium-webdriver": "^4.19.0",

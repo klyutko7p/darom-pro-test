@@ -3,18 +3,19 @@ const props = defineProps({
   rows: { type: Array as PropType<IAdvanceReport[]>, required: true },
   user: { type: Object as PropType<User>, required: true },
 });
+import VueMultiselect from "vue-multiselect";
 
 const storeAdvanceReports = useAdvanceReports();
 
 let showFilters = ref(false);
 
-const selectedPVZ = ref<number | string | null>(null);
-const selectedType = ref<number | string | null>(null);
-const selectedExpenditure = ref<number | string | null>(null);
-const selectedTypeOfExpenditure = ref<number | string | null>(null);
-const selectedNotation = ref<number | string | null>(null);
-const selectedCompany = ref<number | string | null>(null);
-const selectedCreatedUser = ref<number | string | null>(null);
+const selectedPVZ = ref<Array<string>>([]);
+const selectedType = ref<Array<string>>([]);
+const selectedExpenditure = ref<Array<string>>([]);
+const selectedTypeOfExpenditure = ref<Array<string>>([]);
+const selectedNotation = ref<Array<string>>([]);
+const selectedCompany = ref<Array<string>>([]);
+const selectedCreatedUser = ref<Array<string>>([]);
 const selectedIssuedUser = ref<number | string | null>(null);
 const startingDate = ref<Date | string | null>(null);
 const endDate = ref<Date | string | null>(null);
@@ -30,10 +31,7 @@ const uniqueExpenditure = computed(() => {
 });
 
 const uniqueTypeOfExpenditure = computed(() => {
-  return storeAdvanceReports.getUniqueNonEmptyValues(
-    props.rows,
-    "typeOfExpenditure"
-  );
+  return storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "typeOfExpenditure");
 });
 
 const uniqueNotation = computed(() => {
@@ -84,23 +82,20 @@ const filterRows = () => {
   filteredRows.value = props.rows.slice();
   filteredRows.value = props.rows.filter((row) => {
     return (
-      (!selectedPVZ.value || row.PVZ === selectedPVZ.value) &&
-      (!selectedType.value || row.type === selectedType.value) &&
-      (!selectedExpenditure.value ||
-        row.expenditure === selectedExpenditure.value) &&
-      (!selectedTypeOfExpenditure.value ||
-        row.typeOfExpenditure === selectedTypeOfExpenditure.value) &&
-      (!selectedNotation.value || row.notation === selectedNotation.value) &&
-      (!selectedCompany.value || row.company === selectedCompany.value) &&
-      (!selectedCreatedUser.value ||
-        row.createdUser === selectedCreatedUser.value) &&
-      (!selectedIssuedUser.value ||
-        row.issuedUser === selectedIssuedUser.value) &&
-      (!startingDate.value ||
-        new Date(row.date) >= new Date(newStartingDate)) &&
+      (!selectedPVZ.value.length || selectedPVZ.value.includes(row.PVZ)) &&
+      (!selectedType.value.length || selectedType.value.includes(row.type)) &&
+      (!selectedExpenditure.value.length ||
+        selectedExpenditure.value.includes(row.expenditure)) &&
+      (!selectedTypeOfExpenditure.value.length ||
+        selectedTypeOfExpenditure.value.includes(row.typeOfExpenditure)) &&
+      (!selectedNotation.value.length || selectedNotation.value.includes(row.notation)) &&
+      (!selectedCompany.value.length || selectedCompany.value.includes(row.company)) &&
+      (!selectedCreatedUser.value.length ||
+        selectedCreatedUser.value.includes(row.createdUser)) &&
+      (!selectedIssuedUser.value || row.issuedUser === selectedIssuedUser.value) &&
+      (!startingDate.value || new Date(row.date) >= new Date(newStartingDate)) &&
       (!endDate.value || new Date(row.date) <= new Date(newEndDate)) &&
-      (!startingDate2.value ||
-        new Date(row.received) >= new Date(newStartingDate2)) &&
+      (!startingDate2.value || new Date(row.received) >= new Date(newStartingDate2)) &&
       (!endDate2.value || new Date(row.received) <= new Date(newEndDate2))
     );
   });
@@ -108,13 +103,13 @@ const filterRows = () => {
 };
 
 function clearFields() {
-  selectedPVZ.value = "";
-  selectedType.value = "";
-  selectedExpenditure.value = "";
-  selectedTypeOfExpenditure.value = "";
-  selectedCompany.value = "";
-  selectedNotation.value = "";
-  selectedCreatedUser.value = "";
+  selectedPVZ.value = [];
+  selectedType.value = [];
+  selectedExpenditure.value = [];
+  selectedTypeOfExpenditure.value = [];
+  selectedCompany.value = [];
+  selectedNotation.value = [];
+  selectedCreatedUser.value = [];
   selectedIssuedUser.value = "";
   startingDate.value = "";
   endDate.value = "";
@@ -141,29 +136,29 @@ watch(
   filterRows
 );
 
-let variables = ref([
+const selectedArrays = [
   selectedPVZ,
   selectedExpenditure,
   selectedType,
   selectedTypeOfExpenditure,
   selectedCompany,
-  selectedCreatedUser,
-  selectedIssuedUser,
-  startingDate,
-  endDate,
-  startingDate2,
-  endDate2,
-]);
+  selectedCreatedUser
+];
 
-const nonEmptyCount: Ref<number> = computed(() => {
-  return variables.value.filter((variable: any) => {
-    return (
-      variable.value !== undefined &&
-      variable.value !== null &&
-      variable.value !== ""
-    );
-  }).length;
+const nonEmptyCount = computed(() => {
+  let count = 0;
+  selectedArrays.forEach(selectedArray => {
+    selectedArray.value.forEach(element => {
+      if (element !== undefined && element !== null && element !== "") {
+        count++;
+      }
+    });
+  });
+  
+  return count;
 });
+
+const uniqueType = ref(["Нал", "Безнал"]);
 </script>
 
 <template>
@@ -180,109 +175,80 @@ const nonEmptyCount: Ref<number> = computed(() => {
     </h1>
   </div>
 
-  <div
-    v-if="showFilters"
-    class="border-2 border-gray-300 p-3 mt-3 border-dashed"
-  >
+  <div v-if="showFilters" class="border-2 border-gray-300 p-3 mt-3 border-dashed">
     <div class="grid grid-cols-2 max-xl:grid-cols-2 max-md:grid-cols-1">
       <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
         <h1>Компания:</h1>
-        <input
-          type="text"
-          class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <VueMultiselect
           v-model="selectedCompany"
-          list="uniqueCompany"
+          :options="uniqueCompany"
+          :multiple="true"
+          :close-on-select="true"
+          placeholder="Выберите компанию"
         />
-        <datalist id="uniqueCompany" class="">
-          <option v-for="value in uniqueCompany" :value="value">
-            {{ value }}
-          </option>
-        </datalist>
       </div>
       <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
         <h1>Показать для ПВЗ:</h1>
-        <input
-          type="text"
-          class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <VueMultiselect
           v-model="selectedPVZ"
-          list="uniquePVZ"
+          :options="uniquePVZ"
+          :multiple="true"
+          :close-on-select="true"
+          placeholder="Выберите ПВЗ"
         />
-        <datalist id="uniquePVZ" class="">
-          <option v-for="value in uniquePVZ" :value="value">
-            {{ value }}
-          </option>
-        </datalist>
       </div>
       <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
         <h1>Тип:</h1>
-        <select
-          class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <VueMultiselect
           v-model="selectedType"
-        >
-          <option value="Нал">Нал</option>
-          <option value="Безнал">Безнал</option>
-        </select>
+          :options="uniqueType"
+          :multiple="true"
+          :close-on-select="true"
+          placeholder="Выберите тип"
+        />
       </div>
       <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
         <h1>Статья расхода:</h1>
-        <input
-          type="text"
-          class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <VueMultiselect
           v-model="selectedTypeOfExpenditure"
-          list="uniqueTypeOfExpenditure"
+          :options="uniqueTypeOfExpenditure"
+          :multiple="true"
+          :close-on-select="true"
+          placeholder="Выберите статью"
         />
-        <datalist id="uniqueTypeOfExpenditure" class="">
-          <option v-for="value in uniqueTypeOfExpenditure" :value="value">
-            {{ value }}
-          </option>
-        </datalist>
       </div>
       <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
         <h1>Расход:</h1>
-        <input
-          type="text"
-          class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <VueMultiselect
           v-model="selectedExpenditure"
-          list="uniqueExpenditure"
+          :options="uniqueExpenditure"
+          :multiple="true"
+          :close-on-select="true"
+          placeholder="Выберите расход"
         />
-        <datalist id="uniqueExpenditure" class="">
-          <option v-for="value in uniqueExpenditure" :value="value">
-            {{ value }}
-          </option>
-        </datalist>
       </div>
       <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
         <h1>Комментарий:</h1>
-        <input
-          type="text"
-          class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <VueMultiselect
           v-model="selectedNotation"
-          list="uniqueNotation"
+          :options="uniqueNotation"
+          :multiple="true"
+          :close-on-select="true"
+          placeholder="Выберите комментарий"
         />
-        <datalist id="uniqueNotation" class="">
-          <option v-for="value in uniqueNotation" :value="value">
-            {{ value }}
-          </option>
-        </datalist>
       </div>
       <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
         <h1>Создано:</h1>
-        <input
-          type="text"
-          class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <VueMultiselect
           v-model="selectedCreatedUser"
-          list="uniqueCreatedUser"
+          :options="uniqueCreatedUser"
+          :multiple="true"
+          :close-on-select="true"
+          placeholder="Выберите кем"
         />
-        <datalist id="uniqueCreatedUser" class="">
-          <option v-for="value in uniqueCreatedUser" :value="value">
-            {{ value }}
-          </option>
-        </datalist>
       </div>
     </div>
-    <div
-      class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5"
-    >
+    <div class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5">
       <div class="flex items-center gap-3 mr-5">
         <h1 class="max-sm:mr-3">С</h1>
         <input
@@ -312,3 +278,5 @@ const nonEmptyCount: Ref<number> = computed(() => {
     </div>
   </div>
 </template>
+
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>

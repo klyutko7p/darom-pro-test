@@ -84,10 +84,8 @@ async function createReport(object: any) {
 }
 
 async function updateReport(rowsData: IPayroll[]) {
-  isLoading.value = true;
   await storePayrolls.updatePayrolls(rowsData);
   rows.value = await storePayrolls.getPayrolls();
-  isLoading.value = false;
 }
 
 async function createRow() {

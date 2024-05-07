@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { read, utils, writeFile, write } from "xlsx";
 import { createClient } from "@supabase/supabase-js";
+import Cookies from "js-cookie";
 
 const supabase = createClient(
   "https://mgbbkkgyorhwryabwabx.supabase.co",
@@ -381,6 +382,7 @@ onMounted(async () => {
   focusInput();
 
   updateCurrentPageData();
+  showProcessingRows();
 
   if (props.user.role === "SORTIROVKA") {
     perPage.value = totalRows.value;
@@ -419,14 +421,17 @@ function isProcessing(row: IOurRansom) {
     return true;
   }
 }
-let showProcessingRowsFlag = ref(false);
+let showProcessingRowsFlag = ref(Cookies.get("showProcessingRowsFlag") === "true");
+
 function showProcessingRows() {
   if (showProcessingRowsFlag.value === false) {
     showProcessingRowsFlag.value = true;
+    Cookies.set("showProcessingRowsFlag", "true");
     returnRows.value = processingRows.value;
     perPage.value = 2000;
   } else {
     showProcessingRowsFlag.value = false;
+    Cookies.set("showProcessingRowsFlag", "false");
     perPage.value = 100;
     updateCurrentPageDataDeleted();
   }
