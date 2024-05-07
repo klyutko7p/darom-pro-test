@@ -424,17 +424,18 @@ function isProcessing(row: IOurRansom) {
 let showProcessingRowsFlag = ref(Cookies.get("showProcessingRowsFlag") === "true");
 
 function showProcessingRows() {
-  if (showProcessingRowsFlag.value === false) {
-    showProcessingRowsFlag.value = true;
-    Cookies.set("showProcessingRowsFlag", "true");
+  if (showProcessingRowsFlag.value === true) {
     returnRows.value = processingRows.value;
     perPage.value = 2000;
   } else {
-    showProcessingRowsFlag.value = false;
-    Cookies.set("showProcessingRowsFlag", "false");
     perPage.value = 100;
     updateCurrentPageDataDeleted();
   }
+}
+
+function changeProcessingRows() {
+  showProcessingRowsFlag.value = !showProcessingRowsFlag.value
+  Cookies.set("showProcessingRowsFlag", JSON.stringify(showProcessingRowsFlag.value));
 }
 
 let showExpiredRowsFlag = ref(false);
@@ -684,7 +685,7 @@ let showPayRejectClient = ref(false);
         user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER'
       "
       class="text-xl text-yellow-400 font-bold hover:opacity-50 cursor-pointer duration-200"
-      @click="showProcessingRows"
+      @click="changeProcessingRows(), showProcessingRows()"
     >
       Ждут обработку {{ processingRows?.length }} товаров
     </span>
