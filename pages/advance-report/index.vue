@@ -681,6 +681,26 @@ async function createRow() {
     +rowData.value.expenditure > +sumCreditCash.value
   ) {
     toast.error("Баланс кредита меньше чем вписанная сумма!");
+    return;
+  } else if (!rowData.value.typeOfExpenditure) {
+    toast.error("Выберите статью расхода!");
+    return;
+  } else if (
+    !rowData.value.company &&
+    rowData.value.typeOfExpenditure !== "Передача денежных средств" &&
+    rowData.value.typeOfExpenditure !==
+      "Списание кредитной задолженности торговой империи" &&
+    rowData.value.typeOfExpenditure !== "Перевод в междубалансовый, кредитный баланс" &&
+    rowData.value.typeOfExpenditure !== "Новый кредит нал" &&
+    rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
+    rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
+    rowData.value.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
+    rowData.value.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
+    rowData.value.typeOfExpenditure !== "Перевод с баланса безнал" &&
+    rowData.value.typeOfExpenditure !== "Перевод с баланса нал"
+  ) {
+    toast.error("Выберите компанию!");
+    return;
   } else if (
     rowData.value.typeOfExpenditure === "Перевод с кредитного баланса безнал" &&
     +rowData.value.expenditure > +sumCreditOnline.value
@@ -721,7 +741,6 @@ async function createRow() {
 
 async function updateRow() {
   isLoading.value = true;
-
   if (
     rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
     +rowData.value.expenditure > +sumCreditCashDebt.value &&
