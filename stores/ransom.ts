@@ -4,7 +4,6 @@ import crypto from "crypto-js";
 import pako from "pako";
 import { json } from "stream/consumers";
 const toast = useToast();
-const storeClients = useClientsStore()
 
 function generateLink(phoneNumber: string, flag: string) {
   const formattedPhoneNumber = phoneNumber.replace("+", "").replace(" ", "");
