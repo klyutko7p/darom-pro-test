@@ -34,8 +34,8 @@ export const useUsersStore = defineStore("users", () => {
 
                 userData = user;
 
-                Cookies.set('token', token, {expires: 7});
-                Cookies.set('user', JSON.stringify(userData), {expires: 7});
+                Cookies.set('token', token, {expires: 1});
+                Cookies.set('user', JSON.stringify(userData), {expires: 1});
 
                 if (userData.role === 'ADMIN') {
                     router.push('/admin/main');

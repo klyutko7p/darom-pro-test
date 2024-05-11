@@ -30,23 +30,23 @@ async function updateDeliveryRows(flag: string, allSumData: string = "0") {
     flag: flag,
     allSum: allSumData,
   });
-  if (+allSumInput.value > 0) {
-    await storeBalance.createBalanceRow(
-      {
-        pvz: props.user.visiblePVZ,
-        sum: allSumInput.value,
-        issued: new Date(),
-        received: new Date(),
-        notation: "Оплата бонусами",
-        receivedUser: props.user.username,
-        receivedUser2: props.user.username,
-        createdUser: props.user.username,
-        recipient: "Нет",
-      },
-      props.user.username
-    );
-    await storeClients.updateBalance(phoneNumberClient.value, getAllSumBonuses.value);
-  }
+  // if (+allSumInput.value > 0) {
+  //   await storeBalance.createBalanceRow(
+  //     {
+  //       pvz: props.user.visiblePVZ,
+  //       sum: allSumInput.value,
+  //       issued: new Date(),
+  //       received: new Date(),
+  //       notation: "Оплата бонусами",
+  //       receivedUser: props.user.username,
+  //       receivedUser2: props.user.username,
+  //       createdUser: props.user.username,
+  //       recipient: "Нет",
+  //     },
+  //     props.user.username
+  //   );
+  //   await storeClients.updateBalance(phoneNumberClient.value, getAllSumBonuses.value);
+  // }
   checkedRows.value = [];
   allSum.value = [];
   getAllSum.value = 0;

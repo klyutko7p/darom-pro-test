@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@bg-dev/nuxt-fcm": "^0.2.9",
     "@nuxt/devtools": "latest",
     "@nuxtjs/tailwindcss": "^6.10.1",
     "@shelacek/ubjson": "^1.1.1",
@@ -23,7 +24,9 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
+    "@firebase/app-types": "^0.9.1",
     "@formkit/auto-animate": "^0.8.1",
+    "@nuxtjs/firebase": "^8.2.2",
     "@nuxtjs/supabase": "^1.1.4",
     "@pinia/nuxt": "^0.5.1",
     "@prisma/client": "^5.7.1",
@@ -43,6 +46,10 @@
     "cheerio": "^1.0.0-rc.12",
     "chromedriver": "^123.0.1",
     "crypto-js": "^4.2.0",
+    "firebase": "^10.11.1",
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.1",
+    "hook.notifier": "^1.0.12",
     "js-cookie": "^3.0.5",
     "jsonpack": "^1.1.5",
     "jsonwebtoken": "^9.0.2",
@@ -51,11 +58,13 @@
     "nuxt-mail": "^4.0.3",
     "nuxt-swiper": "^1.2.2",
     "nuxt-vue-multiselect": "^1.0.4",
+    "nuxt-vuefire": "^1.0.2",
     "qrcode.vue": "^3.4.1",
     "resend": "^3.2.0",
     "selenium-webdriver": "^4.19.0",
     "vue-toastification": "^2.0.0-rc.5",
     "vue-yandex-maps": "^1.1.0",
+    "vuefire": "^3.1.23",
     "wide-align": "^1.1.5",
     "workbox-core": "^7.1.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"

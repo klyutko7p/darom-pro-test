@@ -6,6 +6,7 @@ const toast = useToast();
 
 const storeUsers = useUsersStore();
 const storeRansom = useRansomStore();
+const storeClients = useClientsStore();
 const router = useRouter();
 
 let user = ref({} as User);
@@ -13,21 +14,21 @@ const token = Cookies.get("token");
 let isLoading = ref(false);
 
 onBeforeMount(async () => {
-    isLoading.value = true;
-    user.value = await storeUsers.getUser();
+  isLoading.value = true;
+  user.value = await storeUsers.getUser();
 
-    isLoading.value = false;
+  isLoading.value = false;
 });
 
 onMounted(() => {
-    if (!token) {
-        router.push("/auth/login");
-    }
+  if (!token) {
+    router.push("/auth/login");
+  }
 });
 
 definePageMeta({
-    layout: false,
-    name: "Приёмка",
+  layout: false,
+  name: "Приёмка",
 });
 
 let isScanActive = ref(false);
@@ -36,212 +37,267 @@ let scanStringItem = ref("");
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
 async function updateDeliveryRow(row: any, flag: any) {
-    await storeRansom.updateDeliveryStatus(row, flag, "OurRansom", user.value.username);
+  await storeRansom.updateDeliveryStatus(row, flag, "OurRansom", user.value.username);
 }
 async function acceptItem(row: any) {
-    if (user.value.role === "PVZ" || user.value.role === "ADMINISTRATOR" || user.value.role === "PPVZ") {
-        if (user.value.PVZ.includes(row.dispatchPVZ) && user.value.PVZ.includes(selectedPVZ.value) && row.dispatchPVZ === selectedPVZ.value) {
-            if (row.deliveredPVZ === null && row.deliveredSC !== null) {
-                await updateDeliveryRow(row, "PVZ");
-                toast.success("Товар принят на ПВЗ!");
-            } else if (row.deliveredPVZ !== null) {
-                toast.warning("Товар принят ранее!");
-            } else if (row.deliveredSC === null) {
-                toast.warning("Товар неотсортирован!")
-            } else {
-                toast.error("Неизвестная ошибка!")
-            }
-        } else {
-            toast.error("У вас нет доступа к товарам данного ПВЗ или вы выбрали не то ПВЗ!");
-        }
+  if (
+    user.value.role === "PVZ" ||
+    user.value.role === "ADMINISTRATOR" ||
+    user.value.role === "PPVZ" ||
+    user.value.role === "ADMIN"
+  ) {
+    if (
+      user.value.PVZ.includes(row.dispatchPVZ) &&
+      user.value.PVZ.includes(selectedPVZ.value) &&
+      row.dispatchPVZ === selectedPVZ.value
+    ) {
+      if (row.deliveredPVZ === null && row.deliveredSC !== null) {
+        await updateDeliveryRow(row, "PVZ");
+        await storeClients.sendMessageToClient(
+          "Статус заказа: Darom.pro",
+          "Уважаемый клиент, Ваш заказ готов к получению.",
+          row.fromName
+        );
+        toast.success("Товар принят на ПВЗ!");
+      } else if (row.deliveredPVZ !== null) {
+        toast.warning("Товар принят ранее!");
+      } else if (row.deliveredSC === null) {
+        toast.warning("Товар неотсортирован!");
+      } else {
+        toast.error("Неизвестная ошибка!");
+      }
     } else {
-        toast.error("Отказано в доступе")
+      toast.error("У вас нет доступа к товарам данного ПВЗ или вы выбрали не то ПВЗ!");
     }
+  } else {
+    toast.error("Отказано в доступе");
+  }
 }
 
 let arrayOfRows = ref<Array<IOurRansom | IClientRansom | IDelivery>>([]);
 
 function scanItem() {
-    if (timeoutId !== null) {
-        clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(async () => {
-        let scannedLink = scanStringItem.value.trim();
-        scannedLink = convertToURL(scannedLink);
-        scanStringItem.value = "";
-        let rowData = await storeRansom.getRansomRowsById(+scannedLink, "OurRansom");
-        await acceptItem(rowData);
-        arrayOfRows.value.push(rowData);
-    }, 1200);
-    focusInput()
+  if (timeoutId !== null) {
+    clearTimeout(timeoutId);
+  }
+  timeoutId = setTimeout(async () => {
+    let scannedLink = scanStringItem.value.trim();
+    scannedLink = convertToURL(scannedLink);
+    scanStringItem.value = "";
+    let rowData = await storeRansom.getRansomRowsById(+scannedLink, "OurRansom");
+    await acceptItem(rowData);
+    arrayOfRows.value.push(rowData);
+  }, 1200);
+  focusInput();
 }
 
 function convertToURL(inputString: string) {
-    if (inputString.includes("/")) {
-        const parts = inputString.split("/");
-        const entryID = parts[parts.length - 1];
-        return entryID;
-    } else if (inputString.includes(".")) {
-        const parts = inputString.split(".");
-        const entryID = parts[parts.length - 1];
-        return entryID;
-    }
+  if (inputString.includes("/")) {
+    const parts = inputString.split("/");
+    const entryID = parts[parts.length - 1];
+    return entryID;
+  } else if (inputString.includes(".")) {
+    const parts = inputString.split(".");
+    const entryID = parts[parts.length - 1];
+    return entryID;
+  }
 }
 
 const myInput = ref(null);
 
 function focusInput() {
-    isScanActive.value = true;
-    myInput.value.focus();
+  isScanActive.value = true;
+  myInput.value.focus();
 }
 
 function formatPhoneNumber(phoneNumber: string) {
-    if (!phoneNumber) {
-        return "Номер телефона не указан";
-    }
+  if (!phoneNumber) {
+    return "Номер телефона не указан";
+  }
 
-    const digitsOnly = phoneNumber.replace(/\D/g, "");
+  const digitsOnly = phoneNumber.replace(/\D/g, "");
 
-    if (digitsOnly.length < 11) {
-        return "Неправильный формат номера телефона";
-    }
+  if (digitsOnly.length < 11) {
+    return "Неправильный формат номера телефона";
+  }
 
-    const maskedPhoneNumber =
-        "+7" + "*".repeat(digitsOnly.length - 5) + digitsOnly.slice(-4);
+  const maskedPhoneNumber =
+    "+7" + "*".repeat(digitsOnly.length - 5) + digitsOnly.slice(-4);
 
-    return maskedPhoneNumber;
+  return maskedPhoneNumber;
 }
 
-let selectedPVZ = ref('')
-
-
+let selectedPVZ = ref("");
 </script>
 
 <template>
+  <Head>
+    <Title>Приёмка</Title>
+  </Head>
 
-    <Head>
-        <Title>Приёмка</Title>
-    </Head>
-
-    <div v-if="!isLoading">
-        <div v-if="token && user.role === 'ADMIN'">
-            <NuxtLayout name="admin">
-                <div class="mt-10">
+  <div v-if="!isLoading">
+    <div v-if="token && user.role === 'ADMIN'">
+      <NuxtLayout name="admin">
+        <div class="mt-10">
+          <div>
+            <h1 class="mb-3 font-bold text-xl">
+              Выберите нужное ПВЗ, чтобы начать приёмку!
+            </h1>
+            <select
+              class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+              v-model="selectedPVZ"
+              name="pvz"
+            >
+              <option disabled value="">Выберите ПВЗ</option>
+              <option v-for="pvz in user.PVZ">{{ pvz }}</option>
+            </select>
+          </div>
+          <div
+            class="flex items-center flex-col justify-center gap-5 mt-10"
+            v-if="selectedPVZ"
+          >
+            <div class="flex items-center gap-5">
+              <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
+              <Icon
+                v-if="isScanActive"
+                name="eos-icons:bubble-loading"
+                class="text-secondary-color"
+              />
+            </div>
+            <input
+              ref="myInput"
+              class="opacity-0"
+              autofocus
+              v-model="scanStringItem"
+              @input="scanItem"
+            />
+            <div class="w-full gap-10 flex flex-col">
+              <div v-for="row in arrayOfRows" class="border-2 border-dashed p-5">
+                <div v-if="'clientLink1' in row">
+                  <div class="mt-5 flex items-center justify-between">
                     <div>
-                        <h1 class="mb-3 font-bold text-xl">Выберите нужное ПВЗ, чтобы начать приёмку!</h1>
-                        <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="selectedPVZ"
-                            name="pvz">
-                            <option disabled value=''>Выберите ПВЗ</option>
-                            <option v-for="pvz in user.PVZ"> {{ pvz }} </option>
-                        </select>
+                      <h1>ID: {{ row.id }}</h1>
+                      <h1>{{ formatPhoneNumber(row.fromName) }}</h1>
+                      <h1 class="text-4xl font-bold">{{ row.cell }}</h1>
                     </div>
-                    <div class="flex items-center flex-col justify-center gap-5 mt-10" v-if="selectedPVZ">
-                        <div class="flex items-center gap-5">
-                            <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
-                            <Icon v-if="isScanActive" name="eos-icons:bubble-loading" class="text-secondary-color" />
-                        </div>
-                        <input ref="myInput" class="opacity-0" autofocus v-model="scanStringItem" @input="scanItem" />
-                        <div class="w-full gap-10 flex flex-col">
-                            <div v-for="row in arrayOfRows" class="border-2 border-dashed p-5">
-                                <div v-if="'clientLink1' in row">
-                                    <div class="mt-5 flex items-center justify-between">
-                                        <div>
-                                            <h1> ID: {{ row.id }} </h1>
-                                            <h1>{{ formatPhoneNumber(row.fromName) }}</h1>
-                                            <h1 class="text-4xl font-bold">{{ row.cell }}</h1>
-                                        </div>
-                                        <div class="text-right">
-                                            <h1>{{ row.productName }}</h1>
-                                            <a class="text-secondary-color cursor-pointer duration-200 hover:opacity-50 border-b-2 border-secondary-color font-medium"
-                                                :href="row.productLink">
-                                                Ссылка на товар
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div v-if="'clientLink2' in row">
-                                    <div class="mt-5 flex items-center justify-between">
-                                        <div>
-                                            <h1> {{ row.id }} </h1>
-                                            <h1>{{ formatPhoneNumber(row.fromName) }}</h1>
-                                            <h1 class="text-4xl font-bold">{{ row.cell }}</h1>
-                                        </div>
-                                        <div class="text-right">
-                                            <h1>{{ row.productName }}</h1>
-                                            <a class="text-secondary-color cursor-pointer duration-200 hover:opacity-50 border-b-2 border-secondary-color font-medium"
-                                                :href="row.productLink">
-                                                Ссылка на товар
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="text-right">
+                      <h1>{{ row.productName }}</h1>
+                      <a
+                        class="text-secondary-color cursor-pointer duration-200 hover:opacity-50 border-b-2 border-secondary-color font-medium"
+                        :href="row.productLink"
+                      >
+                        Ссылка на товар
+                      </a>
                     </div>
+                  </div>
                 </div>
-            </NuxtLayout>
-        </div>
-
-        <div v-else>
-            <NuxtLayout name="user">
-                <div class="mt-10">
+                <div v-if="'clientLink2' in row">
+                  <div class="mt-5 flex items-center justify-between">
                     <div>
-                        <h1 class="mb-3 font-bold text-xl">Выберите нужное ПВЗ, чтобы начать приёмку!</h1>
-                        <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="selectedPVZ"
-                            name="pvz">
-                            <option disabled value=''>Выберите ПВЗ</option>
-                            <option v-for="pvz in user.PVZ"> {{ pvz }} </option>
-                        </select>
+                      <h1>{{ row.id }}</h1>
+                      <h1>{{ formatPhoneNumber(row.fromName) }}</h1>
+                      <h1 class="text-4xl font-bold">{{ row.cell }}</h1>
                     </div>
-                    <div class="flex items-center flex-col justify-center gap-5 mt-10" v-if="selectedPVZ">
-                        <div class="flex items-center gap-5">
-                            <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
-                            <Icon v-if="isScanActive" name="eos-icons:bubble-loading" class="text-secondary-color" />
-                        </div>
-                        <input ref="myInput" class="opacity-0" autofocus v-model="scanStringItem" @input="scanItem" />
-                        <div class="w-full gap-10 flex flex-col-reverse">
-                            <div v-for="row in arrayOfRows" class="border-2 border-dashed p-5">
-                                <div v-if="'clientLink1' in row" class="flex flex-col-reverse">
-                                    <div class="flex items-end justify-between">
-                                        <div>
-                                            <h1> ID: {{ row.id }} </h1>
-                                            <h1>{{ formatPhoneNumber(row.fromName) }}</h1>
-                                            <h1 class="text-4xl font-bold">{{ row.cell }}</h1>
-                                        </div>
-                                        <div class="text-right">
-                                            <h1>{{ row.productName }}</h1>
-                                            <a class="text-secondary-color cursor-pointer duration-200 hover:opacity-50 border-b-2 border-secondary-color font-medium"
-                                                :href="row.productLink">
-                                                Ссылка на товар
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div v-if="'clientLink2' in row">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <h1> {{ row.id }} </h1>
-                                            <h1>{{ formatPhoneNumber(row.fromName) }}</h1>
-                                            <h1 class="text-4xl font-bold">{{ row.cell }}</h1>
-                                        </div>
-                                        <div class="text-right">
-                                            <h1>{{ row.productName }}</h1>
-                                            <a class="text-secondary-color cursor-pointer duration-200 hover:opacity-50 border-b-2 border-secondary-color font-medium"
-                                                :href="row.productLink">
-                                                Ссылка на товар
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="text-right">
+                      <h1>{{ row.productName }}</h1>
+                      <a
+                        class="text-secondary-color cursor-pointer duration-200 hover:opacity-50 border-b-2 border-secondary-color font-medium"
+                        :href="row.productLink"
+                      >
+                        Ссылка на товар
+                      </a>
                     </div>
+                  </div>
                 </div>
-            </NuxtLayout>
+              </div>
+            </div>
+          </div>
         </div>
+      </NuxtLayout>
     </div>
 
-    <div v-else class="flex items-center justify-center">
-          <UISpinner />
-      </div>
+    <div v-else>
+      <NuxtLayout name="user">
+        <div class="mt-10">
+          <div>
+            <h1 class="mb-3 font-bold text-xl">
+              Выберите нужное ПВЗ, чтобы начать приёмку!
+            </h1>
+            <select
+              class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+              v-model="selectedPVZ"
+              name="pvz"
+            >
+              <option disabled value="">Выберите ПВЗ</option>
+              <option v-for="pvz in user.PVZ">{{ pvz }}</option>
+            </select>
+          </div>
+          <div
+            class="flex items-center flex-col justify-center gap-5 mt-10"
+            v-if="selectedPVZ"
+          >
+            <div class="flex items-center gap-5">
+              <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
+              <Icon
+                v-if="isScanActive"
+                name="eos-icons:bubble-loading"
+                class="text-secondary-color"
+              />
+            </div>
+            <input
+              ref="myInput"
+              class="opacity-0"
+              autofocus
+              v-model="scanStringItem"
+              @input="scanItem"
+            />
+            <div class="w-full gap-10 flex flex-col-reverse">
+              <div v-for="row in arrayOfRows" class="border-2 border-dashed p-5">
+                <div v-if="'clientLink1' in row" class="flex flex-col-reverse">
+                  <div class="flex items-end justify-between">
+                    <div>
+                      <h1>ID: {{ row.id }}</h1>
+                      <h1>{{ formatPhoneNumber(row.fromName) }}</h1>
+                      <h1 class="text-4xl font-bold">{{ row.cell }}</h1>
+                    </div>
+                    <div class="text-right">
+                      <h1>{{ row.productName }}</h1>
+                      <a
+                        class="text-secondary-color cursor-pointer duration-200 hover:opacity-50 border-b-2 border-secondary-color font-medium"
+                        :href="row.productLink"
+                      >
+                        Ссылка на товар
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div v-if="'clientLink2' in row">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h1>{{ row.id }}</h1>
+                      <h1>{{ formatPhoneNumber(row.fromName) }}</h1>
+                      <h1 class="text-4xl font-bold">{{ row.cell }}</h1>
+                    </div>
+                    <div class="text-right">
+                      <h1>{{ row.productName }}</h1>
+                      <a
+                        class="text-secondary-color cursor-pointer duration-200 hover:opacity-50 border-b-2 border-secondary-color font-medium"
+                        :href="row.productLink"
+                      >
+                        Ссылка на товар
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </NuxtLayout>
+    </div>
+  </div>
+
+  <div v-else class="flex items-center justify-center">
+    <UISpinner />
+  </div>
 </template>

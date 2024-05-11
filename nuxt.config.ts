@@ -7,6 +7,16 @@ export default defineNuxtConfig({
   },
   ssr: true,
   devtools: { enabled: true },
+  // app: {
+  //   head: {
+  //     link: [
+  //       {
+  //         rel: "manifest",
+  //         href: "/manifest.webmanifest"
+  //       }
+  //     ]
+  //   }
+  // },
   modules: [
     "@nuxtjs/tailwindcss",
     "@pinia/nuxt",
@@ -15,6 +25,20 @@ export default defineNuxtConfig({
     "@vite-pwa/nuxt",
     "nuxt-swiper",
     "@formkit/auto-animate/nuxt",
+    [
+      "nuxt-vuefire",
+      {
+        config: {
+          apiKey: "AIzaSyDXooTcaUHHUHe8Pwlmg8Ua3zwA0nWxuqw",
+          authDomain: "darom-pro-messages.firebaseapp.com",
+          projectId: "darom-pro-messages",
+          storageBucket: "darom-pro-messages.appspot.com",
+          messagingSenderId: "633883773284",
+          appId: "1:633883773284:web:5df79ceef6d300e236d271",
+          measurementId: "G-GC3VTLSR3S",
+        },
+      },
+    ],
   ],
 
   swiper: {
@@ -27,6 +51,7 @@ export default defineNuxtConfig({
   build: {
     transpile: ["vue-toastification"],
   },
+
   pwa: {
     manifest: {
       name: "DAROM.pro",

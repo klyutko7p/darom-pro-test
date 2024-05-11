@@ -702,6 +702,22 @@ async function createRow() {
     toast.error("Выберите компанию!");
     return;
   } else if (
+    !rowData.value.PVZ &&
+    rowData.value.typeOfExpenditure !== "Передача денежных средств" &&
+    rowData.value.typeOfExpenditure !==
+      "Списание кредитной задолженности торговой империи" &&
+    rowData.value.typeOfExpenditure !== "Перевод в междубалансовый, кредитный баланс" &&
+    rowData.value.typeOfExpenditure !== "Новый кредит нал" &&
+    rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
+    rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
+    rowData.value.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
+    rowData.value.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
+    rowData.value.typeOfExpenditure !== "Перевод с баланса безнал" &&
+    rowData.value.typeOfExpenditure !== "Перевод с баланса нал"
+  ) {
+    toast.error("Выберите ПВЗ!");
+    return;
+  } else if (
     rowData.value.typeOfExpenditure === "Перевод с кредитного баланса безнал" &&
     +rowData.value.expenditure > +sumCreditOnline.value
   ) {
@@ -711,6 +727,69 @@ async function createRow() {
     !rowData.value.issuedUser
   ) {
     toast.error("Выберите получателя!");
+  } else if (
+    rowData.value.PVZ &&
+    rowData.value.expenditure &&
+    rowData.value.typeOfExpenditure &&
+    rowData.value.company
+  ) {
+    filteredRows.value
+      ?.filter((row: IAdvanceReport) => {
+        let rowDate: Date = new Date(row.date);
+        return rowDate.getMonth() + 1 === +month.value;
+      })
+      .forEach(async (row: IAdvanceReport) => {
+        if (
+          row.createdUser === user.value.username &&
+          row.PVZ === rowData.value.PVZ &&
+          row.expenditure === rowData.value.expenditure &&
+          row.typeOfExpenditure === rowData.value.typeOfExpenditure &&
+          row.company === rowData.value.company &&
+          rowData.value.typeOfExpenditure !== "Передача денежных средств" &&
+          rowData.value.typeOfExpenditure !==
+            "Списание кредитной задолженности торговой империи" &&
+          rowData.value.typeOfExpenditure !==
+            "Перевод в междубалансовый, кредитный баланс" &&
+          rowData.value.typeOfExpenditure !== "Новый кредит нал" &&
+          rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
+          rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
+          rowData.value.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
+          rowData.value.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
+          rowData.value.typeOfExpenditure !== "Перевод с баланса безнал" &&
+          rowData.value.typeOfExpenditure !== "Перевод с баланса нал"
+        ) {
+          let answer = confirm(
+            "Отчёт с такими данными уже создан. Вы точно хотите создать этот отчёт?"
+          );
+          if (answer) {
+            isLoading.value = true;
+            await storeAdvanceReports.createAdvanceReport(
+              rowData.value,
+              user.value.username
+            );
+            rows.value = await storeAdvanceReports.getAdvancedReports();
+            originallyRows.value = rows.value;
+            if (user.value.role !== "ADMIN") {
+              rows.value = rows.value?.filter(
+                (row) =>
+                  row.createdUser === user.value.username ||
+                  row.issuedUser === user.value.username
+              );
+            } else {
+              rows.value = rows.value;
+            }
+            filteredRows.value = rows.value;
+            closeModal();
+            closeModalAdmin();
+            closeModalAdminOOO();
+            getSumCreditCash();
+            getSumCreditOnline();
+            getSumCreditBalance();
+            isLoading.value = false;
+            return;
+          }
+        }
+      });
   } else {
     isLoading.value = true;
     await storeAdvanceReports.createAdvanceReport(rowData.value, user.value.username);
@@ -889,29 +968,6 @@ function formatNumber(number: number) {
   }
 
   return formattedString.slice(0, -1);
-}
-
-function reduceArrayProfit(array: any, flag: string) {
-  if (flag === "OurRansom") {
-    array = array.filter((row: any) => row.additionally !== "Отказ брак");
-    return array.reduce(
-      (ac: any, curValue: any) =>
-        ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.005,
-      0
-    );
-  } else if (flag === "ClientRansom") {
-    array = array.filter((row: any) => row.additionally !== "Отказ брак");
-    return array.reduce(
-      (ac: any, curValue: any) => ac + curValue.amountFromClient2 * 0.005,
-      0
-    );
-  } else {
-    array = array.filter((row: any) => row.additionally !== "Отказ брак");
-    return array.reduce(
-      (ac: any, curValue: any) => ac + curValue.amountFromClient3 * 0.005,
-      0
-    );
-  }
 }
 
 function getAllSumFromName(username: string) {

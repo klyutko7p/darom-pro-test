@@ -346,6 +346,12 @@ model YandexMarker {
   createdAt   DateTime @default(now())
 }
 
+model ClientDevicesToken {
+  id          Int    @id @default(autoincrement())
+  phoneNumber String
+  token       String
+}
+
 enum Role {
   USER
   ADMIN

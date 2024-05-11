@@ -186,7 +186,7 @@ function exportToExcel() {
           <td class="border-2 whitespace-nowrap">
             {{ row.typeOfExpenditure }}
           </td>
-          <td class="border-2 whitespace-nowrap">
+          <td class="border-2 whitespace-normal">
             {{ row.notation }}
           </td>
           <td class="border-2 whitespace-nowrap">

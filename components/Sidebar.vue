@@ -56,7 +56,7 @@ let isShowAddSettings = ref(false);
 </script>
 <template>
   <div
-    class="fixed z-50 backdrop-blur-2xl w-full h-screen flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 max-w-[16rem] p-4 shadow-xl shadow-blue-gray-900/5 max-xl:hidden overflow-y-auto"
+    class="fixed z-50 backdrop-blur-2xl w-full h-screen flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 max-w-[16rem] p-4 shadow-xl shadow-blue-gray-900/5 max-md:hidden overflow-y-auto"
     v-if="isOpen"
   >
     <div class="p-4 flex justify-between items-center">
@@ -505,19 +505,19 @@ let isShowAddSettings = ref(false);
   </div>
 
   <div
-    class="fixed bg-gradient-to-tr from-white via-white to-yellow-100 bg-image m-auto top-0 bottom-0 left-0 right-0 z-[200] hidden max-xl:block max-xl:px-24 max-sm:px-9 max-sm:py-10 bg-white max-xl:right-auto overflow-auto"
+    class="fixed bg-gradient-to-tr from-white via-white to-yellow-100 bg-image m-auto top-0 bottom-0 left-0 right-0 z-[200] hidden max-md:block overflow-auto"
     v-if="isOpen"
   >
-    <Icon
-      name="material-symbols:close"
-      class="absolute duration-200 cursor-pointer hover:text-orange-400 top-2 right-4"
-      size="40"
-      @click="editMenu"
-    />
-    <nav
-      class="flex flex-col gap-1 p-2 font-sans text-base font-normal text-black"
-    >
-      <h1 class="text-center font-bold text-3xl text-secondary-color mb-5">DAROM.PRO</h1>
+    <nav class="flex flex-col gap-1 p-2 font-sans text-base font-normal text-black">
+      <div class="flex items-center mb-5 gap-24">
+        <h1 class="font-bold text-3xl text-secondary-color">DAROM.PRO</h1>
+        <Icon
+          name="material-symbols:close"
+          class="duration-200 cursor-pointer hover:text-orange-400"
+          size="40"
+          @click="editMenu"
+        />
+      </div>
       <div
         role="button"
         @click="

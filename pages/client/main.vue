@@ -18,15 +18,74 @@ onMounted(() => {
   if (!token) {
     router.push("/auth/client/login");
   }
+  requestPermission();
 });
 
 function signOut() {
   storeClients.signOut();
 }
 
+// import { useFirebaseApp } from "vuefire";
+// import { getMessaging, getToken, onMessage } from "firebase/messaging";
+
+// const firebaseApp = useFirebaseApp();
+// const messaging = getMessaging(firebaseApp);
+// onMessage(messaging, (payload) => {
+//   console.log(payload);
+// });
+
+// async function requestPermission() {
+//   const permission = await Notification.requestPermission();
+//   if (permission === "granted") {
+//     const currentToken = await getToken(messaging, {
+//       vapidKey:
+//         "BLA8pMjiR3G7gYFd09kR1ZSHyIypsNJlQV5ZP-uXtW0_eslYlfZjpVHmE9XwMu_91v8BhEarXKFJiXKJFMk3QTk",
+//     });
+//     if (currentToken) {
+//       console.log(currentToken);
+//     }
+//   } else if (permission === "denied") {
+//     console.log("Denied for the notification");
+//   }
+// }
+
+import { getToken } from "firebase/messaging";
+
+const messagingToken = ref("");
+
+async function setToken() {
+  const { $messaging } = useNuxtApp();
+  const token = await getToken($messaging, {
+    vapidKey:
+      "BLA8pMjiR3G7gYFd09kR1ZSHyIypsNJlQV5ZP-uXtW0_eslYlfZjpVHmE9XwMu_91v8BhEarXKFJiXKJFMk3QTk",
+  });
+  messagingToken.value = token;
+  await storeClients.createTokenDevice(user.value.phoneNumber, token);
+}
+
+// async function sendMessage() {
+//   await storeClients.sendMessageToClient("Статус заказа", "Заказ готов к выдаче!", user.value.phoneNumber);
+// }
+
+function requestPermission() {
+  if (!window.Notification) return;
+
+  if (window.Notification.permission === "granted") {
+    setToken();
+  } else {
+    window.Notification.requestPermission((value) => {
+      if (value === "granted") {
+        setToken();
+      }
+    });
+  }
+}
+
 definePageMeta({
   layout: "client",
 });
+
+let isShowInfo = ref(false);
 </script>
 
 <template>
@@ -48,6 +107,7 @@ definePageMeta({
         >
           DAROM.PRO
         </h1>
+
         <div
           role="button"
           @click="router.push('/client/order')"
@@ -128,6 +188,58 @@ definePageMeta({
             </svg>
           </div>
           Выйти
+        </div>
+        <div class="flex gap-3 mt-5">
+          <UIMainButton @click="requestPermission"
+            >Подписаться на обновления</UIMainButton
+          >
+          <UIMainButton @click="isShowInfo = true">Важная информация</UIMainButton>
+        </div>
+      </div>
+      <div
+        v-if="isShowInfo"
+        class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-70 z-[200]"
+      >
+        <div class="h-screen flex items-center justify-center max-sm:px-2">
+          <div class="bg-white relative py-10 px-5 max-sm:px-3 rounded-2xl max-w-[500px]">
+            <Icon
+              class="absolute top-0 right-0 hover:text-secondary-color duration-200 cursor-pointer"
+              name="material-symbols:close-small"
+              size="40"
+              @click="isShowInfo = false"
+            />
+            <h1 class="font-bold text-2xl text-center mb-5 text-secondary-color">
+              ВАЖНАЯ ИНФОРМАЦИЯ
+            </h1>
+            <div>
+              <h1 class="font-bold text-xl">Стоимость доставки:</h1>
+              <h1 class="italic text-base">≈10% от стоимости товара</h1>
+            </div>
+            <div class="mt-3">
+              <h1 class="font-bold text-xl">Невозвратные товары:</h1>
+              <ul class="list-disc px-5 max-sm:px-3">
+                <li class="italic">товары Ozon global</li>
+                <li class="max-h-[150px] italic overflow-auto">
+                  товары WB парфюмерия, косметика, предметы личной гигиены, бытовая химия,
+                  лекарственные ср-ва, пищевые продукты, ювелирные украшения, нижнее
+                  белье, термобелье, постельное белье, купальник, плавки, носки, колготки,
+                  технически сложные устройства (смартфоны, планшеты и т.п.)
+                </li>
+              </ul>
+            </div>
+            <div class="mt-3">
+              <h1 class="font-bold text-xl text-center max-sm:text-left max-sm:text-lg">
+                Проверяйте товары в пункте выдачи на комплектность, размер и брак. <br />
+                Возврат из дома не принимаем!
+              </h1>
+            </div>
+            <div class="mt-3">
+              <h1 class="font-bold text-xl text-center max-sm:text-left max-sm:text-lg">
+                При заказе товаров OZON GLOBAL, с вами свяжется менеджер для внесения
+                предоплаты
+              </h1>
+            </div>
+          </div>
         </div>
       </div>
     </div>

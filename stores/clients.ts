@@ -30,8 +30,10 @@ export const useClientsStore = defineStore("clients", () => {
         body: JSON.stringify({ client }),
       });
       if (data.value === undefined) {
-        toast.success("Вы успешно создали аккаунт!");
         router.push("/auth/client/login");
+        toast.success(
+          "Вы успешно зарегистрированы! Введите данные, чтобы войти."
+        );
       } else {
         toast.error(
           "Произошла ошибка при создании аккаунта! Номер уже зарегистрирован!"
@@ -378,7 +380,63 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  async function sendMessageToClient(
+    title: string,
+    message: string,
+    phoneNumber: string
+  ) {
+    try {
+      await $fetch("/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, message, phoneNumber }),
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+    }
+  }
+
+  async function getTokenByPhone(phoneNumber: string) {
+    try {
+      let { data } = await useFetch("/api/client-devices/get-token-by-phone", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phoneNumber }),
+      });
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function createTokenDevice(phoneNumber: string, token: string) {
+    try {
+      let { data } = await useFetch("/api/client-devices/create-token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phoneNumber, token }),
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   return {
+    createTokenDevice,
+    getTokenByPhone,
+    sendMessageToClient,
     updateClient,
     getClients,
     signOut,
@@ -400,6 +458,6 @@ export const useClientsStore = defineStore("clients", () => {
     updateBalanceSum,
     getClientById,
     updateBalance,
-    sendMessage
+    sendMessage,
   };
 });
