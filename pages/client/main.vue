@@ -189,7 +189,7 @@ let isShowInfo = ref(false);
           </div>
           Выйти
         </div>
-        <div class="flex gap-3 mt-5">
+        <div class="flex gap-3 mt-5 max-sm:flex-col">
           <UIMainButton @click="requestPermission"
             >Подписаться на обновления</UIMainButton
           >
