@@ -788,6 +788,8 @@ async function createRow() {
             isLoading.value = false;
             return;
           }
+        } else {
+          return;
         }
       });
   } else {
