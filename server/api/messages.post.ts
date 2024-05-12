@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 interface IRequestBody {
   title: string;
   message: string;
-  phoneNumber: string;
+  phoneNumber: string
 }
 
 export default defineEventHandler(async (event) => {
