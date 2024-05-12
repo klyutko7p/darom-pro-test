@@ -1,4 +1,3 @@
-import { credential } from "firebase-admin";
 import { initializeApp, deleteApp } from "firebase-admin/app";
 import { getMessaging } from "firebase-admin/messaging";
 
