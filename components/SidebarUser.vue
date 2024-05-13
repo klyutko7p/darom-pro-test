@@ -173,7 +173,7 @@ function formatPhoneNumber(phoneNumber: string) {
           user.role === 'OFFICE' ||
           user.role === 'COURIER' ||
           user.username === 'Волошина' ||
-          user.role === 'RMANAGER'
+          user.role === 'RMANAGER' || user.username === 'КассаЯМ'
         "
         role="button"
         @click="router.push('/advance-report')"
@@ -239,7 +239,7 @@ function formatPhoneNumber(phoneNumber: string) {
           user.role === 'PVZ' ||
           user.role === 'COURIER' ||
           user.role === 'PPVZ' ||
-          user.role === 'RMANAGER'
+          user.role === 'RMANAGER' || user.username === 'КассаЯМ'
         "
         role="button"
         @click="router.push('/balance')"
@@ -420,7 +420,7 @@ function formatPhoneNumber(phoneNumber: string) {
           user.role === 'OFFICE' ||
           user.role === 'COURIER' ||
           user.username === 'Волошина' ||
-          user.role === 'RMANAGER'
+          user.role === 'RMANAGER' || user.username === 'КассаЯМ'
         "
         role="button"
         @click="router.push('/advance-report')"
@@ -486,7 +486,7 @@ function formatPhoneNumber(phoneNumber: string) {
           user.role === 'PVZ' ||
           user.role === 'COURIER' ||
           user.role === 'PPVZ' ||
-          user.role === 'RMANAGER'
+          user.role === 'RMANAGER' || user.username === 'КассаЯМ'
         "
         role="button"
         @click="router.push('/balance')"

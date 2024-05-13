@@ -359,35 +359,57 @@ function reduceArrayProfit(array: any, flag: string) {
   if (flag === "OurRansom") {
     if (!user.value.PVZ.includes("ПВЗ_1")) {
       array = array.filter((row: any) => row.additionally !== "Отказ брак");
-      return array.reduce(
+      let amount = array.reduce(
         (ac: any, curValue: any) =>
           ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.025,
         0
       );
+
+      let prepayment = array.reduce((ac: any, curValue: any) => {
+        if (!curValue.prepayment) {
+          curValue.prepayment = 0;
+        }
+        return ac + curValue.prepayment * 0.035;
+      }, 0);
+
+      return +amount + +prepayment;
     } else {
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           new Date(row.issued) >= new Date("2024-04-01")
       );
-      return array.reduce(
+      let amount = array.reduce(
         (ac: any, curValue: any) =>
           ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.035,
         0
       );
+
+      let prepayment = array.reduce((ac: any, curValue: any) => {
+        if (!curValue.prepayment) {
+          curValue.prepayment = 0;
+        }
+        return ac + curValue.prepayment * 0.035;
+      }, 0);
+      console.log(amount);
+      console.log(prepayment);
+      return +amount + +prepayment;
     }
   } else if (flag === "ClientRansom") {
     array = array.filter((row: any) => row.additionally !== "Отказ брак");
-    return array.reduce(
-      (ac: any, curValue: any) => ac + curValue.amountFromClient2 * 0.025,
+    let amount = array.reduce(
+      (ac: any, curValue: any) =>
+        ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.025,
       0
     );
+    return amount;
   } else {
-    array = array.filter((row: any) => row.additionally !== "Отказ брак");
-    return array.reduce(
-      (ac: any, curValue: any) => ac + curValue.amountFromClient3 * 0.025,
+    let amount = array.reduce(
+      (ac: any, curValue: any) =>
+        ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.025,
       0
     );
+    return amount;
   }
 }
 
@@ -584,7 +606,7 @@ function getAllSum() {
         .reduce((acc, value) => acc + +value.sum, 0);
 
       let sumOfPVZ5 = rowsProfit.value
-        ?.filter((row) => row.received !== null && row.recipient === "Собственник")
+        ?.filter((row) => row.received !== null && (row.recipient === "Владимирова Инна" || row.recipient === "Динис Ольга" || row.recipient === "Киризлеева Марина"))
         .reduce((acc, value) => acc + +value.sum, 0);
 
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
@@ -637,7 +659,7 @@ function getAllSum() {
           (row) =>
             row.received !== null &&
             row.pvz === selectedPVZ.value &&
-            row.recipient === "Собственник"
+            (row.recipient === "Владимирова Инна" || row.recipient === "Динис Ольга" || row.recipient === "Киризлеева Марина")
         )
         .reduce((acc, value) => acc + +value.sum, 0);
 
@@ -983,7 +1005,7 @@ function getProfitRowsSum() {
     );
 
     let sumOfPVZ = rowsProfit.value
-      ?.filter((row) => row.received !== null && row.recipient === "Собственник")
+      ?.filter((row) => row.received !== null && (row.recipient === "Владимирова Инна" || row.recipient === "Динис Ольга" || row.recipient === "Киризлеева Марина"))
       .reduce((acc, value) => acc + +value.sum, 0);
 
     sum1.value = reduceArrayProfit(copyArrayOurRansom.value, "OurRansom");
@@ -1012,7 +1034,7 @@ function getProfitRowsSum() {
       ?.filter(
         (row) =>
           row.received !== null &&
-          row.recipient === "Собственник" &&
+          (row.recipient === "Владимирова Инна" || row.recipient === "Динис Ольга" || row.recipient === "Киризлеева Марина") &&
           row.pvz === selectedPVZ.value
       )
       .reduce((acc, value) => acc + +value.sum, 0);
@@ -1187,7 +1209,13 @@ function openModalProfitRow(row: IBalance) {
     rowData.value.createdUser = user.value.username;
     rowData.value.pvz = selectedPVZ.value;
     rowData.value.notation = "Вывод дохода";
-    rowData.value.recipient = "Собственник";
+    if (user.value.username === 'ППВЗ_5') {
+      rowData.value.recipient = "Владимирова Инна";
+    } else if (user.value.username === 'ППВЗ_6') {
+      rowData.value.recipient = "Динис Ольга";
+    } else if (user.value.username === 'ПВЗ_1') {
+      rowData.value.recipient = "Киризлеева Марина";
+    }
   }
 }
 
@@ -2171,7 +2199,7 @@ async function updateRow() {
           <BalanceTableProfit
             v-if="user.role === 'PPVZ'"
             @update-delivery-row="updateDeliveryProfitRow"
-            :rows="rowsProfit"
+            :rows="rowsProfit?.filter((row) => row.pvz === user.visiblePVZ)"
             :user="user"
             @open-modal="openModalProfitRow"
           />
@@ -2375,7 +2403,9 @@ async function updateRow() {
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.recipient"
                 >
-                  <option value="Собственник">Собственник</option>
+                  <option v-if="user.username === 'ППВЗ_5'" value="Владимирова Инна">Владимирова Инна</option>
+                  <option v-if="user.username === 'ППВЗ_6'" value="Динис Ольга">Динис Ольга</option>
+                  <option v-if="user.username === 'ПВЗ_1'" value="Киризлеева Марина">Киризлеева Марина</option>
                 </select>
               </div>
 
