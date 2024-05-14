@@ -391,22 +391,20 @@ function reduceArrayProfit(array: any, flag: string) {
         }
         return ac + curValue.prepayment * 0.035;
       }, 0);
-      console.log(amount);
-      console.log(prepayment);
       return +amount + +prepayment;
     }
   } else if (flag === "ClientRansom") {
     array = array.filter((row: any) => row.additionally !== "Отказ брак");
     let amount = array.reduce(
       (ac: any, curValue: any) =>
-        ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.025,
+        ac + Math.ceil(curValue.amountFromClient2 / 10) * 10 * 0.025,
       0
     );
     return amount;
   } else {
     let amount = array.reduce(
       (ac: any, curValue: any) =>
-        ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.025,
+        ac + Math.ceil(curValue.amountFromClient2 / 10) * 10 * 0.025,
       0
     );
     return amount;
