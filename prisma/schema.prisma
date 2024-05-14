@@ -349,7 +349,7 @@ model YandexMarker {
 model ClientDevicesToken {
   id          Int    @id @default(autoincrement())
   phoneNumber String
-  token       String
+  token       String @unique
 }
 
 enum Role {

@@ -239,7 +239,7 @@ function formatPhoneNumber(phoneNumber: string) {
           user.role === 'PVZ' ||
           user.role === 'COURIER' ||
           user.role === 'PPVZ' ||
-          user.role === 'RMANAGER' || user.username === 'КассаЯМ'
+          user.role === 'RMANAGER'
         "
         role="button"
         @click="router.push('/balance')"
@@ -486,7 +486,7 @@ function formatPhoneNumber(phoneNumber: string) {
           user.role === 'PVZ' ||
           user.role === 'COURIER' ||
           user.role === 'PPVZ' ||
-          user.role === 'RMANAGER' || user.username === 'КассаЯМ'
+          user.role === 'RMANAGER'
         "
         role="button"
         @click="router.push('/balance')"

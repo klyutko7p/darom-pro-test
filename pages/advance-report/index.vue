@@ -621,6 +621,7 @@ let usersOfIssued = ref([
   "Волошина",
   "Рейзвих",
   "Эля",
+  "КассаЯМ"
 ]);
 
 import { createClient } from "@supabase/supabase-js";
