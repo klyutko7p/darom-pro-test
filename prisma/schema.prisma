@@ -173,6 +173,7 @@ model Balance {
   notation      String?
   receivedUser2 String?
   recipient     String?   @default("Нет")
+  created_at    DateTime? @default(now())
 }
 
 model BalanceOnline {
@@ -251,6 +252,7 @@ model AdvanceReport {
   type                String?
   createdUser         String?
   received            DateTime?
+  created_at          DateTime? @default(now())
 }
 
 model PhoneNumber {

@@ -142,7 +142,8 @@ const selectedArrays = [
   selectedType,
   selectedTypeOfExpenditure,
   selectedCompany,
-  selectedCreatedUser
+  selectedCreatedUser,
+  selectedNotation
 ];
 
 const nonEmptyCount = computed(() => {

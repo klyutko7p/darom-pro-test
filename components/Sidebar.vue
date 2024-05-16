@@ -19,6 +19,10 @@ function editMenu() {
   isOpen.value = !isOpen.value;
 }
 
+function reloadPage() {
+  location.reload();
+}
+
 onBeforeMount(async () => {
   try {
     const [userResult, balanceResult, advanceResult] = await Promise.all([
@@ -61,12 +65,14 @@ let isShowAddSettings = ref(false);
   >
     <div class="p-4 flex justify-between items-center">
       <h1 class="font-bold text-xl text-secondary-color">DAROM.PRO</h1>
-      <Icon
-        @click="editMenu"
-        name="ooui:arrow-previous-ltr"
-        size="20"
-        class="hover:text-orange-300 duration-200 cursor-pointer"
-      />
+      <div>
+        <Icon
+          @click="editMenu"
+          name="ooui:arrow-previous-ltr"
+          size="20"
+          class="hover:text-orange-300 duration-200 cursor-pointer"
+        />
+      </div>
     </div>
     <nav
       class="flex flex-col gap-1 min-w-[240px] p-2 font-sans text-base font-normal text-gray-700 overflow-y-auto"
@@ -988,11 +994,19 @@ let isShowAddSettings = ref(false);
     <h1 class="text-lg font-medium max-sm:text-sm" v-else>
       {{ route.meta.name }}
     </h1>
-    <Icon
-      @click="router.go(-1)"
-      name="material-symbols:arrow-back-rounded"
-      size="32"
-      class="cursor-pointer hover:opacity-50 duration-200"
-    />
+    <div class="flex gap-1">
+      <Icon
+        @click="reloadPage"
+        name="material-symbols:sync-outline"
+        size="32"
+        class="cursor-pointer hover:opacity-50 duration-200"
+      />
+      <Icon
+        @click="router.go(-1)"
+        name="material-symbols:arrow-back-rounded"
+        size="32"
+        class="cursor-pointer hover:opacity-50 duration-200"
+      />
+    </div>
   </div>
 </template>

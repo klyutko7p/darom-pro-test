@@ -52,6 +52,7 @@ onMounted(() => {});
             Кем получено
           </th>
           <th scope="col" class="border-2">Примечание</th>
+          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">Дата создания</th>
         </tr>
       </thead>
       <tbody>
@@ -129,6 +130,9 @@ onMounted(() => {});
           </th>
           <th scope="row" class="border-2">
             {{ row.notation }}
+          </th>
+          <th scope="row" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+            {{ storeUsers.getNormalizedDate(row.created_at) }}
           </th>
         </tr>
       </tbody>

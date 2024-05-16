@@ -667,10 +667,10 @@ async function createRow() {
     return;
   } else if (
     rowData.value.typeOfExpenditure === "Перевод с баланса нал" &&
-    +rowData.value.expenditure > +allSum.value &&
+    +rowData.value.expenditure > +Math.ceil(getAllSumFromEmployees()) &&
     rowData.value.type === "Безнал"
   ) {
-    toast.error("На балансе Директора нал не хватает средств!");
+    toast.error("На балансе нал не хватает средств!");
     return;
   } else if (
     rowData.value.typeOfExpenditure === "Перевод с баланса безнал" &&

@@ -161,6 +161,7 @@ function exportToExcel() {
           <th scope="col" class="border-2">Подтверждающий документ</th>
           <th scope="col" class="border-2">Получено</th>
           <th scope="col" class="border-2" v-if="user.username === 'Директор'">Тип</th>
+          <th scope="col" class="border-2" v-if="user.username === 'Директор'">Дата создания</th>
           <th scope="col" class="border-2" v-if="user.username === 'Директор'">
             Удаление
           </th>
@@ -227,6 +228,9 @@ function exportToExcel() {
           </td>
           <td class="border-2 whitespace-nowrap" v-if="user.username === 'Директор'">
             {{ row.type }}
+          </td>
+          <td class="border-2 whitespace-nowrap" v-if="user.username === 'Директор'">
+            {{ storeUsers.getNormalizedDate(row.created_at) }}
           </td>
           <td
             @click="deleteRow(row.id)"
