@@ -128,7 +128,6 @@ watch(
     selectedCreatedUser,
     selectedIssuedUser,
     startingDate,
-    startingDate,
     endDate,
     startingDate2,
     endDate2,
@@ -143,8 +142,9 @@ const selectedArrays = [
   selectedTypeOfExpenditure,
   selectedCompany,
   selectedCreatedUser,
-  selectedNotation
+  selectedNotation,
 ];
+
 
 const nonEmptyCount = computed(() => {
   let count = 0;
@@ -155,6 +155,16 @@ const nonEmptyCount = computed(() => {
       }
     });
   });
+
+  if (startingDate.value) {
+    count++;
+  } else if (endDate.value) {
+    count++;
+  } else if (startingDate2.value) {
+    count++;
+  } else if (endDate2.value) {
+    count++;
+  }
   
   return count;
 });

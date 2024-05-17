@@ -623,7 +623,7 @@ let usersOfIssued = ref([
   "Волошина",
   "Рейзвих",
   "Эля",
-  "КассаЯМ"
+  "КассаЯМ",
 ]);
 
 import { createClient } from "@supabase/supabase-js";
@@ -1097,13 +1097,14 @@ function checkExpenditure() {
             </div>
           </div>
 
-          <NuxtLink v-if="user.role === 'ADMIN'" to="/advance-report/summary-tables">
+          <div class="flex justify-end my-3" v-if="user.role === 'ADMIN'">
             <h1
-              class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold"
+              @click="router.push('/advance-report/summary-tables')"
+              class="underline text-secondary-color font-bold cursor-pointer hover:opacity-50 duration-200"
             >
               Перейти к сводным таблицам
             </h1>
-          </NuxtLink>
+          </div>
 
           <div>
             <div
@@ -1682,13 +1683,14 @@ function checkExpenditure() {
             </UIMainButton>
           </div>
 
-          <NuxtLink v-if="user.role === 'ADMIN'" to="/advance-report/summary-tables">
+          <div class="flex justify-end my-3" v-if="user.role === 'ADMIN'">
             <h1
-              class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold"
+              @click="router.push('/advance-report/summary-tables')"
+              class="underline text-secondary-color font-bold cursor-pointer hover:opacity-50 duration-200"
             >
               Перейти к сводным таблицам
             </h1>
-          </NuxtLink>
+          </div>
 
           <div>
             <div class="text-center text-2xl my-5" v-if="selectedUser !== 'Директор'">

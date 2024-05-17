@@ -553,13 +553,14 @@ function returnTotal(sum: number) {
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="mt-10">
-          <NuxtLink
-            v-if="user.role === 'ADMIN'"
-            to="/advance-report"
-            class="flex duration-200 hover:opacity-50 items-end justify-end text-secondary-color underline font-bold"
-          >
-            Перейти к авансовому отчету
-          </NuxtLink>
+          <div class="flex justify-end my-3" v-if="user.role === 'ADMIN'">
+            <h1
+              @click="router.push('/advance-report')"
+              class="underline text-secondary-color font-bold cursor-pointer hover:opacity-50 duration-200"
+            >
+              Перейти к авансовому отчету
+            </h1>
+          </div>
 
           <div
             class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5"
