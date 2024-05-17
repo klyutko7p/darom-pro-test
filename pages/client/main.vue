@@ -235,8 +235,7 @@ let isShowInfo = ref(false);
             </div>
             <div class="mt-3">
               <h1 class="font-bold text-xl text-center max-sm:text-left max-sm:text-lg">
-                При заказе товаров OZON GLOBAL, с вами свяжется менеджер для внесения
-                предоплаты
+                При заказе товаров OZON GLOBAL и WB доставка из-за рубежа, с Вами свяжется менеджер для внесения предоплаты
               </h1>
             </div>
           </div>
