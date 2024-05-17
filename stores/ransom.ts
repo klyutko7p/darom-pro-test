@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
 import crypto from "crypto-js";
-import pako from "pako";
-import { json } from "stream/consumers";
+import * as msgpack from '@msgpack/msgpack';
 const toast = useToast();
 
 function generateLink(phoneNumber: string, flag: string) {
@@ -368,22 +367,23 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getRansomRowsForBalanceOurRansom() {
     try {
-      let { data }: any = await useFetch(
-        "/api/ransom/get-rows-for-balance-or",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      return JSON.parse(data.value);
+      let response = await fetch("/api/ransom/get-rows-for-balance-or", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      });
+  
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      return unpacked;
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
       }
     }
   }
+  
 
   async function getRansomRowsForBalanceClientRansom() {
     try {

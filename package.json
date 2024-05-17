@@ -26,6 +26,7 @@
   "dependencies": {
     "@firebase/app-types": "^0.9.1",
     "@formkit/auto-animate": "^0.8.1",
+    "@msgpack/msgpack": "^3.0.0-beta2",
     "@nuxtjs/firebase": "^8.2.2",
     "@nuxtjs/supabase": "^1.1.4",
     "@pinia/nuxt": "^0.5.1",

@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import * as msgpack from '@msgpack/msgpack';
 
 const prisma = new PrismaClient();
 
@@ -41,9 +42,10 @@ export default defineEventHandler(async (event) => {
       if (row.deleted === null) {
         delete row.deleted;
       }
-    });
 
-    return JSON.stringify(rows);
+    });
+    const packed = msgpack.encode(rows);
+    return packed;
   } catch (error) {
     console.error(error.message);
     return { error: error.message };
