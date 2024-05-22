@@ -604,7 +604,13 @@ function getAllSum() {
         .reduce((acc, value) => acc + +value.sum, 0);
 
       let sumOfPVZ5 = rowsProfit.value
-        ?.filter((row) => row.received !== null && (row.recipient === "Владимирова Инна" || row.recipient === "Динис Ольга" || row.recipient === "Киризлеева Марина"))
+        ?.filter(
+          (row) =>
+            row.received !== null &&
+            (row.recipient === "Владимирова Инна" ||
+              row.recipient === "Динис Ольга" ||
+              row.recipient === "Киризлеева Марина")
+        )
         .reduce((acc, value) => acc + +value.sum, 0);
 
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
@@ -657,7 +663,9 @@ function getAllSum() {
           (row) =>
             row.received !== null &&
             row.pvz === selectedPVZ.value &&
-            (row.recipient === "Владимирова Инна" || row.recipient === "Динис Ольга" || row.recipient === "Киризлеева Марина")
+            (row.recipient === "Владимирова Инна" ||
+              row.recipient === "Динис Ольга" ||
+              row.recipient === "Киризлеева Марина")
         )
         .reduce((acc, value) => acc + +value.sum, 0);
 
@@ -1003,15 +1011,18 @@ function getProfitRowsSum() {
     );
 
     let sumOfPVZ = rowsProfit.value
-      ?.filter((row) => row.received !== null && (row.recipient === "Владимирова Инна" || row.recipient === "Динис Ольга" || row.recipient === "Киризлеева Марина"))
+      ?.filter(
+        (row) =>
+          row.received !== null &&
+          (row.recipient === "Владимирова Инна" ||
+            row.recipient === "Динис Ольга" ||
+            row.recipient === "Киризлеева Марина")
+      )
       .reduce((acc, value) => acc + +value.sum, 0);
 
     sum1.value = reduceArrayProfit(copyArrayOurRansom.value, "OurRansom");
     sum2.value = reduceArrayProfit(copyArrayClientRansom.value, "ClientRansom");
     allSumProfit.value = sum1.value + sum2.value - sumOfPVZ;
-    if (user.value.username === 'ППВЗ_5' || user.value.username === 'ППВЗ_6') {
-      allSumProfit.value += 10000;
-    }
   } else {
     copyArrayOurRansom.value = ourRansomRows.value?.filter(
       (row) =>
@@ -1035,7 +1046,9 @@ function getProfitRowsSum() {
       ?.filter(
         (row) =>
           row.received !== null &&
-          (row.recipient === "Владимирова Инна" || row.recipient === "Динис Ольга" || row.recipient === "Киризлеева Марина") &&
+          (row.recipient === "Владимирова Инна" ||
+            row.recipient === "Динис Ольга" ||
+            row.recipient === "Киризлеева Марина") &&
           row.pvz === selectedPVZ.value
       )
       .reduce((acc, value) => acc + +value.sum, 0);
@@ -1043,8 +1056,11 @@ function getProfitRowsSum() {
     sum1.value = reduceArrayProfit(copyArrayOurRansom.value, "OurRansom");
     sum2.value = reduceArrayProfit(copyArrayClientRansom.value, "ClientRansom");
     allSumProfit.value = sum1.value + sum2.value - sumOfPVZ;
-    if (user.value.username === 'ППВЗ_5' || user.value.username === 'ППВЗ_6') {
-      allSumProfit.value += 10000;
+
+    if (selectedPVZ.value === "ППВЗ_5") {
+      allSumProfit.value += 6330;
+    } else if (selectedPVZ.value === "ППВЗ_6") {
+      allSumProfit.value += 6508;
     }
   }
 }
@@ -1213,11 +1229,11 @@ function openModalProfitRow(row: IBalance) {
     rowData.value.createdUser = user.value.username;
     rowData.value.pvz = selectedPVZ.value;
     rowData.value.notation = "Вывод дохода";
-    if (user.value.username === 'ППВЗ_5') {
+    if (user.value.username === "ППВЗ_5") {
       rowData.value.recipient = "Владимирова Инна";
-    } else if (user.value.username === 'ППВЗ_6') {
+    } else if (user.value.username === "ППВЗ_6") {
       rowData.value.recipient = "Динис Ольга";
-    } else if (user.value.username === 'ПВЗ_1') {
+    } else if (user.value.username === "ПВЗ_1") {
       rowData.value.recipient = "Киризлеева Марина";
     }
   }
@@ -2407,9 +2423,15 @@ async function updateRow() {
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.recipient"
                 >
-                  <option v-if="user.username === 'ППВЗ_5'" value="Владимирова Инна">Владимирова Инна</option>
-                  <option v-if="user.username === 'ППВЗ_6'" value="Динис Ольга">Динис Ольга</option>
-                  <option v-if="user.username === 'ПВЗ_1'" value="Киризлеева Марина">Киризлеева Марина</option>
+                  <option v-if="user.username === 'ППВЗ_5'" value="Владимирова Инна">
+                    Владимирова Инна
+                  </option>
+                  <option v-if="user.username === 'ППВЗ_6'" value="Динис Ольга">
+                    Динис Ольга
+                  </option>
+                  <option v-if="user.username === 'ПВЗ_1'" value="Киризлеева Марина">
+                    Киризлеева Марина
+                  </option>
                 </select>
               </div>
 
