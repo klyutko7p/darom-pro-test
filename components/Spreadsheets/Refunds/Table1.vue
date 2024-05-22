@@ -267,7 +267,7 @@ onMounted(async () => {
           <th
             scope="col"
             class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER'"
           >
             стоимость возврата
           </th>
@@ -281,7 +281,6 @@ onMounted(async () => {
           <th
             scope="col"
             class="border-2"
-            v-if="user.orderPVZ1 === 'READ' || user.orderPVZ1 === 'WRITE'"
           >
             заказано на сц
           </th>
@@ -384,7 +383,6 @@ onMounted(async () => {
           </td>
           <td
             class="px-2 py-4 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
             {{ row.orderPVZ }}
           </td>

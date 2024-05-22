@@ -1009,6 +1009,9 @@ function getProfitRowsSum() {
     sum1.value = reduceArrayProfit(copyArrayOurRansom.value, "OurRansom");
     sum2.value = reduceArrayProfit(copyArrayClientRansom.value, "ClientRansom");
     allSumProfit.value = sum1.value + sum2.value - sumOfPVZ;
+    if (user.value.username === 'ППВЗ_5' || user.value.username === 'ППВЗ_6') {
+      allSumProfit.value += 10000;
+    }
   } else {
     copyArrayOurRansom.value = ourRansomRows.value?.filter(
       (row) =>
@@ -1040,6 +1043,9 @@ function getProfitRowsSum() {
     sum1.value = reduceArrayProfit(copyArrayOurRansom.value, "OurRansom");
     sum2.value = reduceArrayProfit(copyArrayClientRansom.value, "ClientRansom");
     allSumProfit.value = sum1.value + sum2.value - sumOfPVZ;
+    if (user.value.username === 'ППВЗ_5' || user.value.username === 'ППВЗ_6') {
+      allSumProfit.value += 10000;
+    }
   }
 }
 
