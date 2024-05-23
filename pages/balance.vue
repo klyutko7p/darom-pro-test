@@ -676,6 +676,8 @@ function getAllSum() {
         sum1.value + sum2.value - sumOfPVZ - sumOfPVZ2 + sumOfPVZ3 - sumOfPVZ5;
       if (selectedPVZ.value === "НаДом") {
         allSum.value -= 11110;
+      } else if (selectedPVZ.value === 'ППВЗ_5') {
+        allSum.value -= 5090;
       }
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
