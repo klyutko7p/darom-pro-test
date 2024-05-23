@@ -1604,7 +1604,7 @@ async function updateRow() {
   </Head>
 
   <div v-if="!isLoading">
-    <div v-if="token && user.role === 'ADMIN'">
+    <div v-if="token && (user.role === 'ADMIN' || user.username === 'Шведова')">
       <NuxtLayout name="admin">
         <div class="mt-10">
           <div>
