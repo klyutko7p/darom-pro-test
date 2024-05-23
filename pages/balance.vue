@@ -677,7 +677,7 @@ function getAllSum() {
       if (selectedPVZ.value === "НаДом") {
         allSum.value -= 11110;
       } else if (selectedPVZ.value === 'ППВЗ_5') {
-        allSum.value -= 5090;
+        allSum.value -= 10010;
       }
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
