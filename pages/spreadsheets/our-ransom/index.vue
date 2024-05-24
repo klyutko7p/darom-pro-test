@@ -219,7 +219,7 @@ onMounted(async () => {
 
   originallyRows.value = await storeRansom.getRansomRowsForModalOurRansom();
   await updateCells();
-  
+
   const [pvzData, sortingCentersData, orderAccountsData] = await Promise.all([
     storePVZ.getPVZ(),
     storeSortingCenters.getSortingCenters(),
@@ -517,6 +517,13 @@ async function updateOnlineMoneyRowsStatus() {
   updatedPriceTwoPercent.value = 0;
   itemsId.value = [];
   await updateCells();
+}
+
+function onDateInput(event: any) {
+  if (event.target.value === "") {
+    console.log("Дата удалена!");
+    rowData.value.additionally = '';
+  }
 }
 
 let updatedPriceTwoPercent = ref(0);
@@ -848,6 +855,7 @@ let isOpenOnlineStatus = ref(false);
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.issued"
                     type="datetime-local"
+                    @input="onDateInput"
                   />
                 </div>
 
@@ -1188,6 +1196,7 @@ let isOpenOnlineStatus = ref(false);
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.issued"
                     type="datetime-local"
+                    @input="onDateInput"
                   />
                 </div>
 
