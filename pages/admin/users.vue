@@ -214,9 +214,9 @@ definePageMeta({
               <label for="cell">Ячейка <br />
                 (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.cell1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
@@ -224,351 +224,351 @@ definePageMeta({
               <label for="cell">Ячейка <br />
                 (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.cell2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Дополнительно <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.additionally1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Дополнительно <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.additionally2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Дополнительно <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.additionally3">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Доставлено на СЦ <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredSC1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Доставлено на СЦ <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredSC2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <<option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Доставлено на ПВЗ <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredPVZ1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Доставлено на ПВЗ <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredPVZ2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Дополнительный доход<br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredKGT1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Дополнительный доход<br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredKGT2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Отправка в ПВЗ <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dispatchPVZ1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Отправка в ПВЗ <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dispatchPVZ2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Отправка в ПВЗ <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dispatchPVZ3">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Отсортировано <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.sorted">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Оплачено <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.paid">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Имя <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.name3">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Телефон <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.fromName1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Телефон <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.fromName2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Телефон <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.fromName3">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Выдан клиенту <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.issued1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <<option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Выдан клиенту <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.issued2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Аккаунт заказа <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.orderAccount">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Заказано на СЦ <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.orderPVZ1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Заказано на СЦ <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.orderPVZ2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Заказано на СЦ <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.orderPVZ3">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Процент с клиента <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.percentClient1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Процент с клиента <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.percentClient2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+               <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Процент с клиента <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.percentClient3">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Примечание <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.notation1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+               <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Примечание <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.notation2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Стоимость выкупа товара <br> (Выкуп клиента) </label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.priceProgram">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Стоимость выкупа товара <br> (Доставка) </label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.purchaseOfGoods">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Стоимость сайт <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.priceSite">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Предоплата <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.prepayment1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Предоплата <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.prepayment2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Товар (ссылка) <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.productLink1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Маркетплейс <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.productLink2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Название товара <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.productName1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Количество товаров <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.productName2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
@@ -576,9 +576,9 @@ definePageMeta({
               <label for="cell">Данные <br />
                 (Наш Выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dataOurRansom">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
@@ -586,100 +586,99 @@ definePageMeta({
               <label for="cell">Данные <br />
                 (Выкуп Клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dataClientRansom">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Данные <br /> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dataDelivery">
-                <option value="NONE">NONE
-                </option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Сумма с клиента <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.amountFromClient1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Сумма с клиента <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.amountFromClient2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Сумма с клиента <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.amountFromClient3">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Ссылка для клиента <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.clientLink1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Ссылка для клиента <br> (Выкуп клиента)<br></label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.clientLink2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Ссылка для клиента <br> (Доставка)<br></label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.clientLink3">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div v class="grid grid-cols-2 mb-5">
               <label for="cell">Прибыль (доход) <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.profit1">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Прибыль (доход) <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.profit2">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
 
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Прибыль (доход) <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.profit3">
-                <option value="NONE">NONE</option>
-                <option value="READ">READ</option>
-                <option value="WRITE">WRITE</option>
+                <option value="NONE">Не видеть</option>
+                <option value="READ">Видеть</option>
+                <option value="WRITE">Редактировать</option>
               </select>
             </div>
           </div>
