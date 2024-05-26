@@ -43,7 +43,7 @@ definePageMeta({
             <UIMainButton @click="router.push('/client/delivery')" class="my-2">Доставить мой заказ</UIMainButton>
           </li>
           <li class="mb-3 text-xl max-md:text-lg max-sm:text-base">
-           Ожидайте появлении информации в
+            Информация о статусе заказа в
             <UIMainButton @click="router.push('/client/my-orders')" class="my-2">Мои заказы</UIMainButton>
           </li>
         </ul>

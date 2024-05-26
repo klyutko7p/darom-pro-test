@@ -143,7 +143,7 @@ let item = ref({
   img: "",
   description: "",
   cell: "",
-  percentClient: 8,
+  percentClient: 10,
   marketplace: "",
 });
 
@@ -168,7 +168,7 @@ async function createItem() {
     priceSite: +priceSite.value,
     quantity: quantityOfItem.value,
     img: urlToImg.value,
-    percentClient: 8,
+    percentClient: 10,
     description: description.value,
     cell: "",
     marketplace: marketplace.value,
@@ -431,7 +431,7 @@ function deleteItemFromOrder(productName: number) {
               Ваш заказ успешно оформлен!
             </h1>
             <div class="flex items-center flex-col gap-3">
-              <h1 class="text-xl max-sm:text-center">Ожидайте появление информации в</h1>
+              <h1 class="text-xl max-sm:text-center">Информация о статусе заказа в</h1>
               <UIMainButton class="w-full" @click="router.push('/client/my-orders')">
                 Мои заказы
               </UIMainButton>

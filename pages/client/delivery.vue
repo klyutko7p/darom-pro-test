@@ -240,7 +240,7 @@ let isShowModal = ref(false);
               Ваш заказ успешно оформлен!
             </h1>
             <div class="flex items-center gap-3 max-sm:flex-col">
-              <h1 class="text-xl max-sm:text-lg max-sm:text-center">Ожидайте появление информации в</h1>
+              <h1 class="text-xl max-sm:text-lg max-sm:text-center">Информация о статусе заказа в</h1>
               <UIMainButton
                 class="max-sm:w-full"
                 @click="router.push('/client/my-orders')"

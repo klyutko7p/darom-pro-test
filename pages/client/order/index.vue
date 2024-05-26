@@ -36,11 +36,19 @@ definePageMeta({
           class="absolute top-0 bottom-0 left-0 right-0 bg-opacity-70 bg-black z-[100] h-screen"
         >
           <div class="text-white flex items-center justify-center flex-col h-screen">
-            <h1 class="font-bold text-2xl mb-5 max-sm:text-xl">Выберите как оформить заказ</h1>
+            <h1 class="font-bold text-2xl mb-5 max-sm:text-xl">
+              Выберите как оформить заказ
+            </h1>
             <div class="flex items-center gap-5 flex-col">
-              <UIMainButton class="w-full" @click="router.push('order/independently')">Самостоятельно закажу в интернет-магазине</UIMainButton>
-              <UIMainButton class="w-full" @click="router.push('order/accept-order')">Примите заказ</UIMainButton>
-              <UIMainButton class="w-full" @click="router.push('/client/main')">Назад</UIMainButton>
+              <UIMainButton class="w-full" @click="router.push('order/independently')"
+                >Заказать через администратора</UIMainButton
+              >
+              <UIMainButton class="w-full" @click="router.push('order/accept-order')"
+                >Примите заказ</UIMainButton
+              >
+              <UIMainButton class="w-full" @click="router.push('/client/main')"
+                >Назад</UIMainButton
+              >
             </div>
           </div>
         </div>
@@ -48,6 +56,6 @@ definePageMeta({
     </div>
   </div>
   <div v-else class="flex items-center justify-center">
-      <UISpinner />
+    <UISpinner />
   </div>
 </template>
