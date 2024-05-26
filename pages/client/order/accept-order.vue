@@ -143,7 +143,7 @@ let item = ref({
   img: "",
   description: "",
   cell: "",
-  percentClient: 10,
+  percentClient: 8,
   marketplace: "",
 });
 
@@ -168,7 +168,7 @@ async function createItem() {
     priceSite: +priceSite.value,
     quantity: quantityOfItem.value,
     img: urlToImg.value,
-    percentClient: 10,
+    percentClient: 8,
     description: description.value,
     cell: "",
     marketplace: marketplace.value,
