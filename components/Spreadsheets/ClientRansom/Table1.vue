@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { read, utils, writeFile } from "xlsx";
-
+import Cookies from "js-cookie";
 const storeUsers = useUsersStore();
 const storeRansom = useRansomStore();
 
@@ -138,6 +138,19 @@ function updateCurrentPageData() {
       (row) => row.dispatchPVZ && row.dispatchPVZ.includes(props.user.PVZ)
     );
   }
+
+  let arrayOfProcessing = props.rows?.filter(
+    (row) =>
+      row.orderPVZ === null &&
+      row.deliveredSC === null &&
+      !row.deleted &&
+      row.dispatchPVZ !== "НаДом"
+  );
+
+  arrayOfProcessing?.forEach((row: any) => {
+    processingRows.value.push(row);
+    processingRows.value = [...new Set(processingRows.value)];
+  });
 }
 
 watch([currentPage, totalRows, props.rows], updateCurrentPageData);
@@ -191,6 +204,25 @@ function isExpired(row: any) {
 }
 
 let showPayRejectClient = ref(false);
+let processingRows = ref<Array<IClientRansom>>([]);
+
+let showProcessingRowsFlag = ref(Cookies.get("showProcessingRowsFlag") === "true");
+
+function showProcessingRows() {
+  if (showProcessingRowsFlag.value === true) {
+    returnRows.value = processingRows.value;
+    perPage.value = 2000;
+  } else {
+    perPage.value = 100;
+    updateCurrentPageData();
+  }
+}
+
+
+function changeProcessingRows() {
+  showProcessingRowsFlag.value = !showProcessingRowsFlag.value
+  Cookies.set("showProcessingRowsFlag", JSON.stringify(showProcessingRowsFlag.value));
+}
 </script>
 
 <template>
@@ -361,6 +393,18 @@ let showPayRejectClient = ref(false);
         >Отказ брак
       </UIActionButton2>
     </div>
+  </div>
+
+  <div class="flex flex-col">
+    <span
+      v-if="
+        user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'
+      "
+      class="text-xl text-yellow-400 font-bold hover:opacity-50 cursor-pointer duration-200"
+      @click="changeProcessingRows(), showProcessingRows()"
+    >
+      Ждут обработку {{ processingRows?.length }} товаров
+    </span>
   </div>
 
   <div class="relative max-h-[610px] mt-5 mb-10 mr-5">

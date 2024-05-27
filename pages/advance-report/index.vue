@@ -1018,6 +1018,7 @@ const uniqueNotation = computed(() => {
 function checkExpenditure() {
   if (rowData.value.expenditure) {
     rowData.value.expenditure = rowData.value.expenditure.replace(",", ".");
+    rowData.value.expenditure = rowData.value.expenditure.replace(/[^0-9.]/g, "");
   }
 }
 </script>

@@ -287,6 +287,25 @@ function deleteItemFromOrder(productName: number) {
     }
   }
 }
+function handlePaste(event: any) {
+  event.preventDefault();
+  const pastedData = (event.clipboardData || window.clipboardData).getData("text");
+
+  if (isValidURL(pastedData)) {
+    urlToItem.value = pastedData;
+  } else {
+    toast.error("Вставленные данные не являются допустимой ссылкой");
+  }
+}
+
+function isValidURL(string: string) {
+  try {
+    new URL(string);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
 </script>
 
 <template>
@@ -321,10 +340,14 @@ function deleteItemFromOrder(productName: number) {
         </select>
         <div v-if="address && marketplace" class="mt-5">
           <h1 class="text-lg font-bold">
-            Вставьте ссылку на товар (предварительно выбрав верный размер и цвет):
+            Вставьте ссылку на товар (предварительно выбрав верный размер и цвет на
+            сайте):
           </h1>
           <input
             v-model="urlToItem"
+            @paste="handlePaste"
+            @keypress.prevent
+            @input.prevent
             type="text"
             class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 focus:ring-2 w-full focus:ring-yellow-600 sm:text-sm sm:leading-6"
           />
@@ -418,7 +441,9 @@ function deleteItemFromOrder(productName: number) {
         class="fixed top-0 bottom-0 left-0 bg-black bg-opacity-70 right-0 z-[100]"
       >
         <div class="flex items-center justify-center h-screen text-black font-bold">
-          <div class="bg-white relative p-10 max-sm:p-5 rounded-lg flex items-center flex-col gap-3">
+          <div
+            class="bg-white relative p-10 max-sm:p-5 rounded-lg flex items-center flex-col gap-3"
+          >
             <div class="absolute top-0 right-0">
               <Icon
                 name="material-symbols:close-small"
@@ -441,7 +466,8 @@ function deleteItemFromOrder(productName: number) {
                 * цена на момент обработки вашего заказа может быть изменена маркетплейсом
               </h1>
               <h1 class="text-base font-medium">
-                ** при заказе товаров OZON GLOBAL и WB доставка из-за рубежа, с Вами свяжется менеджер для внесения предоплаты
+                ** при заказе товаров OZON GLOBAL и WB доставка из-за рубежа, с Вами
+                свяжется менеджер для внесения предоплаты
               </h1>
             </div>
           </div>

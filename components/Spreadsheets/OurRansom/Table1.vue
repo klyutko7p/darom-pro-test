@@ -682,7 +682,7 @@ let showPayRejectClient = ref(false);
     </span>
     <span
       v-if="
-        user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER'
+        user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'
       "
       class="text-xl text-yellow-400 font-bold hover:opacity-50 cursor-pointer duration-200"
       @click="changeProcessingRows(), showProcessingRows()"

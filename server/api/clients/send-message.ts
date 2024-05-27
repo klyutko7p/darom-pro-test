@@ -13,9 +13,9 @@ export default defineEventHandler(async (event) => {
       sms: [
         {
           channel: "char",
-          sender: "VIRTA",
-          text: "test1",
           phone: "79517089158",
+          text: "KOD: 21252",
+          sender: "VIRTA",
         },
       ],
     };

@@ -167,7 +167,7 @@ async function createAdvanceReportAdvance() {
 
   const currentDate = new Date();
   const year = currentDate.getFullYear();
-  const date = new Date(year, selectedMonth - 1, 31)
+  const date = new Date()
 
   let resultRows = Object.values(groupedRows).map((groupedRow) => ({
     PVZ: groupedRow.PVZ,
@@ -184,7 +184,6 @@ async function createAdvanceReportAdvance() {
   if (answer) {
     await storeAdvanceReport.createAdvanceReports(resultRows);
   } 
-
 }
 
 async function createAdvanceReportZP() {

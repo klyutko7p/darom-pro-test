@@ -11,6 +11,7 @@ const props = defineProps({
   startingDate: { type: Date },
   endDate: { type: Date },
   type: { type: String, required: true },
+  isDateFilter: { type: Boolean, required: true },
   rowsBalance: { type: Array as PropType<IBalance[]>, required: true },
   rowsDelivery: { type: Array as PropType<IDelivery[]>, required: true },
   rowsOurRansom: { type: Array as PropType<IOurRansom[]>, required: true },
@@ -78,172 +79,248 @@ function updateCurrentPageData() {
   newEndDate.setMilliseconds(0);
 
   returnRows.value = props.rows;
-  filteredRows.value = returnRows.value?.filter((row: IAdvanceReport) => {
-    let rowDate: Date = new Date(row.date);
-    return (
-      rowDate.getMonth() + 1 === +props.month &&
-      row.PVZ !== "" &&
-      (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
-      (!props.endDate || new Date(row.date) <= new Date(newEndDate))
-    );
-  });
-
-  // if (props.company === "Darom.pro" || props.company === "Все") {
-  //   if (props.week.includes("неделя")) {
-  //     rowsBalanceArr.value = props.rowsBalance
-  //       .filter((row: IBalance) => {
-  //         let rowDate: Date = new Date(row.received);
-  //         let [startDate, endDate] = parseWeekRange(props.week);
-  //         return (
-  //           rowDate >= startDate &&
-  //           rowDate <= endDate &&
-  //           row.received !== null &&
-  //           row.recipient === "Шведова"
-  //         );
-  //       })
-  //       .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
-  //   } else {
-  //     rowsBalanceArr.value = props.rowsBalance
-  //       .filter(
-  //         (row: IBalance) =>
-  //           row.received !== null &&
-  //           row.recipient === "Шведова" &&
-  //           new Date(row.received).getMonth() + 1 === +props.month &&
-  //           (!props.startingDate ||
-  //             new Date(row.received) >= new Date(newStartingDate)) &&
-  //           (!props.endDate || new Date(row.received) <= new Date(newEndDate))
-  //       )
-  //       .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
-  //   }
-  // }
-
-  if (props.week.includes("неделя")) {
-    rowsDeliveryArr.value = props.rowsDelivery.filter((row: IDelivery) => {
-      let rowDate: Date = new Date(row.paid);
-      let [startDate, endDate] = parseWeekRange(props.week);
-      return rowDate >= startDate && rowDate <= endDate && row.paid !== null;
-    });
-  } else {
-    rowsDeliveryArr.value = props.rowsDelivery.filter(
-      (row: IDelivery) =>
-        row.paid !== null &&
-        new Date(row.paid).getMonth() + 1 === +props.month &&
-        (!props.startingDate || new Date(row.paid) >= new Date(newStartingDate)) &&
-        (!props.endDate || new Date(row.paid) <= new Date(newEndDate))
-    );
-  }
-
-  if (props.week.includes("неделя")) {
-    arrayOfExpenditure.value = filteredRows.value?.filter((row: IAdvanceReport) => {
+  if (!props.isDateFilter) {
+    filteredRows.value = returnRows.value?.filter((row: IAdvanceReport) => {
       let rowDate: Date = new Date(row.date);
-      let [startDate, endDate] = parseWeekRange(props.week);
       return (
-        rowDate >= startDate &&
-        rowDate <= endDate &&
-        row.typeOfExpenditure !== "Пополнение баланса" &&
-        row.typeOfExpenditure !== "Передача денежных средств" &&
-        row.typeOfExpenditure !== "Перевод в кредитный баланс" &&
-        row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи" &&
-        row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
-        row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
-        row.typeOfExpenditure !== "Новый кредит нал" &&
-        row.typeOfExpenditure !== "Новый кредит безнал" &&
-        row.typeOfExpenditure !== "Вывод дивидендов" &&
-        (!props.type || row.type === props.type)
+        rowDate.getMonth() + 1 === +props.month &&
+        row.PVZ !== "" &&
+        (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
+        (!props.endDate || new Date(row.date) <= new Date(newEndDate))
       );
     });
-  } else {
-    arrayOfExpenditure.value = filteredRows.value?.filter(
-      (row: IAdvanceReport) =>
-        row.typeOfExpenditure !== "Пополнение баланса" &&
-        row.typeOfExpenditure !== "Передача денежных средств" &&
-        row.typeOfExpenditure !== "Перевод в кредитный баланс" &&
-        row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи" &&
-        row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
-        row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
-        row.typeOfExpenditure !== "Новый кредит нал" &&
-        row.typeOfExpenditure !== "Новый кредит безнал" &&
-        row.typeOfExpenditure !== "Перевод с кредитного баланса" &&
-        row.typeOfExpenditure !== "Вывод дивидендов" &&
-        new Date(row.date).getMonth() + 1 === +props.month &&
-        (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
-        (!props.endDate || new Date(row.date) <= new Date(newEndDate)) &&
-        (!props.type || row.type === props.type)
-    );
-  }
 
-  if (props.week.includes("неделя")) {
-    arrayOfReceipts.value = filteredRows.value?.filter((row: IAdvanceReport) => {
-      let rowDate: Date = new Date(row.date);
-      let [startDate, endDate] = parseWeekRange(props.week);
-      return (
-        rowDate >= startDate &&
-        rowDate <= endDate &&
-        row.typeOfExpenditure === "Пополнение баланса"
-      );
-    });
-  } else {
-    arrayOfReceipts.value = filteredRows.value?.filter(
-      (row: IAdvanceReport) =>
-        row.typeOfExpenditure === "Пополнение баланса" &&
-        new Date(row.date).getMonth() + 1 === +props.month &&
-        (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
-        (!props.endDate || new Date(row.date) <= new Date(newEndDate)) &&
-        (!props.type || row.type === props.type)
-    );
-  }
+    // if (props.company === "Darom.pro" || props.company === "Все") {
+    //   if (props.week.includes("неделя")) {
+    //     rowsBalanceArr.value = props.rowsBalance
+    //       .filter((row: IBalance) => {
+    //         let rowDate: Date = new Date(row.received);
+    //         let [startDate, endDate] = parseWeekRange(props.week);
+    //         return (
+    //           rowDate >= startDate &&
+    //           rowDate <= endDate &&
+    //           row.received !== null &&
+    //           row.recipient === "Шведова"
+    //         );
+    //       })
+    //       .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
+    //   } else {
+    //     rowsBalanceArr.value = props.rowsBalance
+    //       .filter(
+    //         (row: IBalance) =>
+    //           row.received !== null &&
+    //           row.recipient === "Шведова" &&
+    //           new Date(row.received).getMonth() + 1 === +props.month &&
+    //           (!props.startingDate ||
+    //             new Date(row.received) >= new Date(newStartingDate)) &&
+    //           (!props.endDate || new Date(row.received) <= new Date(newEndDate))
+    //       )
+    //       .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
+    //   }
+    // }
 
-  // В ДАЛЬНЕЙШЕМ МОЖНО И НУЖНО УБРАТЬ!!!!!!!!
-  // if (props.company === "Darom.pro" || props.company === "Все") {
-  //   if (props.week.includes("неделя")) {
-  //     rowsBalanceArr.value = props.rowsBalance
-  //       .filter((row: IBalance) => {
-  //         let rowDate: Date = new Date(row.received);
-  //         let [startDate, endDate] = parseWeekRange(props.week);
-  //         return (
-  //           rowDate >= startDate &&
-  //           rowDate <= endDate &&
-  //           row.received !== null &&
-  //           row.recipient === "Шведова"
-  //         );
-  //       })
-  //       .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
-  //   } else {
-  //     rowsBalanceArr.value = props.rowsBalance
-  //       .filter(
-  //         (row: IBalance) =>
-  //           row.received !== null &&
-  //           row.recipient === "Шведова" &&
-  //           new Date(row.received).getMonth() + 1 === +props.month &&
-  //           (!props.startingDate ||
-  //             new Date(row.received) >= new Date(newStartingDate)) &&
-  //           (!props.endDate || new Date(row.received) <= new Date(newEndDate))
-  //       )
-  //       .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
-  //   }
-  // }
-
-  if (props.company === "Darom.pro" || props.company === "Все") {
     if (props.week.includes("неделя")) {
-      rowsOnlineArr.value = props.rowsOurRansom.filter((row: IOurRansom) => {
-        let rowDate: Date = new Date(row.issued);
+      rowsDeliveryArr.value = props.rowsDelivery.filter((row: IDelivery) => {
+        let rowDate: Date = new Date(row.paid);
+        let [startDate, endDate] = parseWeekRange(props.week);
+        return rowDate >= startDate && rowDate <= endDate && row.paid !== null;
+      });
+    } else {
+      rowsDeliveryArr.value = props.rowsDelivery.filter(
+        (row: IDelivery) =>
+          row.paid !== null &&
+          new Date(row.paid).getMonth() + 1 === +props.month &&
+          (!props.startingDate || new Date(row.paid) >= new Date(newStartingDate)) &&
+          (!props.endDate || new Date(row.paid) <= new Date(newEndDate))
+      );
+    }
+
+    if (props.week.includes("неделя")) {
+      arrayOfExpenditure.value = filteredRows.value?.filter((row: IAdvanceReport) => {
+        let rowDate: Date = new Date(row.date);
         let [startDate, endDate] = parseWeekRange(props.week);
         return (
           rowDate >= startDate &&
           rowDate <= endDate &&
-          (row.additionally === "Оплачено онлайн" ||
-            row.additionally === "Оплата наличными")
+          row.typeOfExpenditure !== "Пополнение баланса" &&
+          row.typeOfExpenditure !== "Передача денежных средств" &&
+          row.typeOfExpenditure !== "Перевод в кредитный баланс" &&
+          row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи" &&
+          row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
+          row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
+          row.typeOfExpenditure !== "Новый кредит нал" &&
+          row.typeOfExpenditure !== "Новый кредит безнал" &&
+          row.typeOfExpenditure !== "Вывод дивидендов" &&
+          (!props.type || row.type === props.type)
         );
       });
     } else {
-      rowsOnlineArr.value = props.rowsOurRansom.filter(
-        (row: IOurRansom) =>
-          (row.additionally === "Оплачено онлайн" ||
-            row.additionally === "Оплата наличными") &&
-          new Date(row.issued).getMonth() + 1 === +props.month &&
-          (!props.startingDate || new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!props.endDate || new Date(row.issued) <= new Date(newEndDate))
+      arrayOfExpenditure.value = filteredRows.value?.filter(
+        (row: IAdvanceReport) =>
+          row.typeOfExpenditure !== "Пополнение баланса" &&
+          row.typeOfExpenditure !== "Передача денежных средств" &&
+          row.typeOfExpenditure !== "Перевод в кредитный баланс" &&
+          row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи" &&
+          row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
+          row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
+          row.typeOfExpenditure !== "Новый кредит нал" &&
+          row.typeOfExpenditure !== "Новый кредит безнал" &&
+          row.typeOfExpenditure !== "Перевод с кредитного баланса" &&
+          row.typeOfExpenditure !== "Вывод дивидендов" &&
+          new Date(row.date).getMonth() + 1 === +props.month &&
+          (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
+          (!props.endDate || new Date(row.date) <= new Date(newEndDate)) &&
+          (!props.type || row.type === props.type)
       );
+    }
+
+    if (props.week.includes("неделя")) {
+      arrayOfReceipts.value = filteredRows.value?.filter((row: IAdvanceReport) => {
+        let rowDate: Date = new Date(row.date);
+        let [startDate, endDate] = parseWeekRange(props.week);
+        return (
+          rowDate >= startDate &&
+          rowDate <= endDate &&
+          row.typeOfExpenditure === "Пополнение баланса"
+        );
+      });
+    } else {
+      arrayOfReceipts.value = filteredRows.value?.filter(
+        (row: IAdvanceReport) =>
+          row.typeOfExpenditure === "Пополнение баланса" &&
+          new Date(row.date).getMonth() + 1 === +props.month &&
+          (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
+          (!props.endDate || new Date(row.date) <= new Date(newEndDate)) &&
+          (!props.type || row.type === props.type)
+      );
+    }
+
+    if (props.company === "Darom.pro" || props.company === "Все") {
+      if (props.week.includes("неделя")) {
+        rowsOnlineArr.value = props.rowsOurRansom.filter((row: IOurRansom) => {
+          let rowDate: Date = new Date(row.issued);
+          let [startDate, endDate] = parseWeekRange(props.week);
+          return (
+            rowDate >= startDate &&
+            rowDate <= endDate &&
+            (row.additionally === "Оплачено онлайн" ||
+              row.additionally === "Оплата наличными")
+          );
+        });
+      } else {
+        rowsOnlineArr.value = props.rowsOurRansom.filter(
+          (row: IOurRansom) =>
+            (row.additionally === "Оплачено онлайн" ||
+              row.additionally === "Оплата наличными") &&
+            new Date(row.issued).getMonth() + 1 === +props.month &&
+            (!props.startingDate || new Date(row.issued) >= new Date(newStartingDate)) &&
+            (!props.endDate || new Date(row.issued) <= new Date(newEndDate))
+        );
+      }
+    }
+  } else {
+    filteredRows.value = returnRows.value?.filter((row: IAdvanceReport) => {
+      return (
+        row.PVZ !== "" &&
+        (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
+        (!props.endDate || new Date(row.date) <= new Date(newEndDate))
+      );
+    });
+
+    if (props.week.includes("неделя")) {
+      rowsDeliveryArr.value = props.rowsDelivery.filter((row: IDelivery) => {
+        let rowDate: Date = new Date(row.paid);
+        let [startDate, endDate] = parseWeekRange(props.week);
+        return rowDate >= startDate && rowDate <= endDate && row.paid !== null;
+      });
+    } else {
+      rowsDeliveryArr.value = props.rowsDelivery.filter(
+        (row: IDelivery) =>
+          row.paid !== null &&
+          (!props.startingDate || new Date(row.paid) >= new Date(newStartingDate)) &&
+          (!props.endDate || new Date(row.paid) <= new Date(newEndDate))
+      );
+    }
+
+    if (props.week.includes("неделя")) {
+      arrayOfExpenditure.value = filteredRows.value?.filter((row: IAdvanceReport) => {
+        let rowDate: Date = new Date(row.date);
+        let [startDate, endDate] = parseWeekRange(props.week);
+        return (
+          rowDate >= startDate &&
+          rowDate <= endDate &&
+          row.typeOfExpenditure !== "Пополнение баланса" &&
+          row.typeOfExpenditure !== "Передача денежных средств" &&
+          row.typeOfExpenditure !== "Перевод в кредитный баланс" &&
+          row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи" &&
+          row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
+          row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
+          row.typeOfExpenditure !== "Новый кредит нал" &&
+          row.typeOfExpenditure !== "Новый кредит безнал" &&
+          row.typeOfExpenditure !== "Вывод дивидендов" &&
+          (!props.type || row.type === props.type)
+        );
+      });
+    } else {
+      arrayOfExpenditure.value = filteredRows.value?.filter(
+        (row: IAdvanceReport) =>
+          row.typeOfExpenditure !== "Пополнение баланса" &&
+          row.typeOfExpenditure !== "Передача денежных средств" &&
+          row.typeOfExpenditure !== "Перевод в кредитный баланс" &&
+          row.typeOfExpenditure !== "Списание кредитной задолженности торговой империи" &&
+          row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
+          row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
+          row.typeOfExpenditure !== "Новый кредит нал" &&
+          row.typeOfExpenditure !== "Новый кредит безнал" &&
+          row.typeOfExpenditure !== "Перевод с кредитного баланса" &&
+          row.typeOfExpenditure !== "Вывод дивидендов" &&
+          (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
+          (!props.endDate || new Date(row.date) <= new Date(newEndDate)) &&
+          (!props.type || row.type === props.type)
+      );
+    }
+
+    if (props.week.includes("неделя")) {
+      arrayOfReceipts.value = filteredRows.value?.filter((row: IAdvanceReport) => {
+        let rowDate: Date = new Date(row.date);
+        let [startDate, endDate] = parseWeekRange(props.week);
+        return (
+          rowDate >= startDate &&
+          rowDate <= endDate &&
+          row.typeOfExpenditure === "Пополнение баланса"
+        );
+      });
+    } else {
+      arrayOfReceipts.value = filteredRows.value?.filter(
+        (row: IAdvanceReport) =>
+          row.typeOfExpenditure === "Пополнение баланса" &&
+          (!props.startingDate || new Date(row.date) >= new Date(newStartingDate)) &&
+          (!props.endDate || new Date(row.date) <= new Date(newEndDate)) &&
+          (!props.type || row.type === props.type)
+      );
+    }
+
+    if (props.company === "Darom.pro" || props.company === "Все") {
+      if (props.week.includes("неделя")) {
+        rowsOnlineArr.value = props.rowsOurRansom.filter((row: IOurRansom) => {
+          let rowDate: Date = new Date(row.issued);
+          let [startDate, endDate] = parseWeekRange(props.week);
+          return (
+            rowDate >= startDate &&
+            rowDate <= endDate &&
+            (row.additionally === "Оплачено онлайн" ||
+              row.additionally === "Оплата наличными")
+          );
+        });
+      } else {
+        rowsOnlineArr.value = props.rowsOurRansom.filter(
+          (row: IOurRansom) =>
+            (row.additionally === "Оплачено онлайн" ||
+              row.additionally === "Оплата наличными") &&
+            (!props.startingDate || new Date(row.issued) >= new Date(newStartingDate)) &&
+            (!props.endDate || new Date(row.issued) <= new Date(newEndDate))
+        );
+      }
     }
   }
 
@@ -280,14 +357,12 @@ function updateCurrentPageData() {
         profit =
           Math.ceil(
             Math.ceil(
-              row.priceSite +
-                (row.priceSite * row.percentClient) / 100 -
-                row.prepayment
+              row.priceSite + (row.priceSite * row.percentClient) / 100 - row.prepayment
             ) / 10
           ) *
             10 -
-            row.priceSite +
-            row.deliveredKGT;
+          row.priceSite +
+          row.deliveredKGT;
       } else {
         profit = (row.priceSite * row.percentClient) / 100 + row.deliveredKGT;
       }
@@ -457,6 +532,8 @@ watch(() => props.startingDate, clearTotalSums);
 watch(() => props.startingDate, updateCurrentPageData);
 watch(() => props.endDate, clearTotalSums);
 watch(() => props.endDate, updateCurrentPageData);
+watch(() => props.isDateFilter, clearTotalSums);
+watch(() => props.isDateFilter, updateCurrentPageData);
 watch([props.rows, totalRows, filteredRows.value, props.month], updateCurrentPageData);
 
 let pvz = ref([
@@ -521,7 +598,9 @@ function exportToExcel() {
           >
             {{ Math.ceil(sum) }} ₽
           </td>
-          <td class="border-2 p-2 whitespace-nowrap font-bold">{{ Math.ceil(sumOfArray1) }} ₽</td>
+          <td class="border-2 p-2 whitespace-nowrap font-bold">
+            {{ Math.ceil(sumOfArray1) }} ₽
+          </td>
         </tr>
         <tr class="text-center">
           <td class="border-2 p-2 whitespace-nowrap font-bold">Расход</td>
@@ -531,7 +610,9 @@ function exportToExcel() {
           >
             {{ Math.ceil(sum) }} ₽
           </td>
-          <td class="border-2 p-2 whitespace-nowrap font-bold">{{ Math.ceil(sumOfArray2) }} ₽</td>
+          <td class="border-2 p-2 whitespace-nowrap font-bold">
+            {{ Math.ceil(sumOfArray2) }} ₽
+          </td>
         </tr>
         <tr class="text-center">
           <td class="border-2 p-2 whitespace-nowrap font-bold">Итого</td>
@@ -541,7 +622,9 @@ function exportToExcel() {
           >
             {{ Math.ceil(sum) }} ₽
           </td>
-          <td class="border-2 font-bold p-2 whitespace-nowrap">{{ Math.ceil(sumOfArray3) }} ₽</td>
+          <td class="border-2 font-bold p-2 whitespace-nowrap">
+            {{ Math.ceil(sumOfArray3) }} ₽
+          </td>
         </tr>
       </tbody>
     </table>

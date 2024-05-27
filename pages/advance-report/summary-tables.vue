@@ -512,6 +512,7 @@ function filterRowsData(monthData: number) {
   month.value = monthData;
 }
 let type = ref("");
+let isDateFilter = ref(false);
 
 let arrayOfExpenditure = ref<Array<IAdvanceReport>>();
 let sumOfArray3 = ref(0);
@@ -538,6 +539,7 @@ function returnTotal(sum: number) {
       (!endDate.value || new Date(row.date) <= new Date(newEndDate)) &&
       (!type.value || row.type === type.value)
   );
+  console.log(arrayOfExpenditure.value);  
 
   arrayOfExpenditure.value?.forEach((row) => {
     sumOfArray3.value -= parseFloat(row.expenditure);
@@ -587,7 +589,12 @@ function returnTotal(sum: number) {
               />
             </div>
           </div>
-
+          <h1 class="text-xl font-bold mt-10">
+            Баланс чистой прибыли торговой империи за всё время:
+            <span class="text-secondary-color font-bold"
+              >{{ formatNumber(sumOfArray3) }} ₽</span
+            >
+          </h1>
           <div class="my-10 flex items-center gap-5">
             <span
               class="border-2 py-3 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
@@ -618,11 +625,12 @@ function returnTotal(sum: number) {
                 <option value="Безнал">Безнал</option>
                 <option value="">Нал + Безнал</option>
               </select>
+              <div class="ml-2 space-x-2">
+                <input type="checkbox" v-model="isDateFilter" />
+                <label for="">Данные за всё время?</label>
+              </div>
             </div>
           </div>
-          <h1 class="text-xl font-bold">
-            Баланс чистой прибыли торговой империи: {{ formatNumber(sumOfArray3) }} ₽
-          </h1>
 
           <div v-for="company in companies" class="mt-10 mb-10">
             <h1 class="font-bold text-2xl mb-1 max-2xl:border-b-2 border-black p-2">
@@ -635,6 +643,7 @@ function returnTotal(sum: number) {
                 :week="selectedWeek"
                 :month="month"
                 :type="type"
+                :isDateFilter="isDateFilter"
                 :rows-delivery="
                   rowsDelivery?.filter((row) => row.nameOfAction === company)
                 "
@@ -666,6 +675,7 @@ function returnTotal(sum: number) {
                 :company="'Все'"
                 :startingDate="startingDate"
                 :endDate="endDate"
+                :isDateFilter="isDateFilter"
                 @open-modal="openModal"
                 @update-delivery-row="updateDeliveryRow"
                 @return-total="returnTotal"
