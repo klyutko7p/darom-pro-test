@@ -287,25 +287,10 @@ function deleteItemFromOrder(productName: number) {
     }
   }
 }
-function handlePaste(event: any) {
-  event.preventDefault();
-  const pastedData = (event.clipboardData || window.clipboardData).getData("text");
-
-  if (isValidURL(pastedData)) {
-    urlToItem.value = pastedData;
-  } else {
-    toast.error("Вставленные данные не являются допустимой ссылкой");
-  }
+function handlePaste() {
+  urlToItem.value = urlToItem.value.replace(/[а-яА-Я()]/g, '');
 }
 
-function isValidURL(string: string) {
-  try {
-    new URL(string);
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
 </script>
 
 <template>
@@ -345,9 +330,7 @@ function isValidURL(string: string) {
           </h1>
           <input
             v-model="urlToItem"
-            @paste="handlePaste"
-            @keypress.prevent
-            @input.prevent
+            @input="handlePaste"
             type="text"
             class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 focus:ring-2 w-full focus:ring-yellow-600 sm:text-sm sm:leading-6"
           />
