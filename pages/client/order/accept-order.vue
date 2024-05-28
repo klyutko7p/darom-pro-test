@@ -287,6 +287,7 @@ function deleteItemFromOrder(productName: number) {
     }
   }
 }
+
 function handlePaste() {
   urlToItem.value = urlToItem.value.replace(/[а-яА-Я()]/g, '');
 }
