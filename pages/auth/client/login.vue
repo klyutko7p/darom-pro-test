@@ -52,7 +52,7 @@ function validationPhoneNumber() {
   </Head>
   <div v-if="!isLoading" class="h-screen flex items-center justify-center max-sm:block">
     <div
-      class="px-10 py-20 h-full max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50 max-w-[430px] max-sm:max-w-[2000px]"
+      class="px-10 py-20 h-full max-sm:py-32 max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50 max-w-[430px] max-sm:max-w-[2000px]"
     >
       <div class="">
         <div class="flex items-center justify-center">
@@ -143,10 +143,18 @@ function validationPhoneNumber() {
     </div>
 
     <div
-      class="underline absolute top-3 right-2 flex flex-col text-right text-secondary-color font-bold"
+      class="absolute top-3 left-2 flex flex-col text-center text-secondary-color font-bold gap-3"
     >
-      <NuxtLink to="/auth/login">Зайти как сотрудник</NuxtLink>
-      <NuxtLink to="/">На главную</NuxtLink>
+      <UIMainButton
+        class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
+        @click="router.push('/auth/login')"
+        >Зайти как сотрудник</UIMainButton
+      >
+      <UIMainButton
+        class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
+        @click="router.push('/')"
+        >На главную</UIMainButton
+      >
     </div>
   </div>
 

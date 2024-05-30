@@ -66,7 +66,7 @@ export const useClientsStore = defineStore("clients", () => {
 
         userData = user;
 
-        const cookieExpires = isForeignDevice ? 1 / 24 : 7;
+        const cookieExpires = isForeignDevice ? 1 / 24 : 7 * 365 * 100; 
         Cookies.set("token", token, { expires: cookieExpires });
         Cookies.set("user", JSON.stringify(userData), {
           expires: cookieExpires,
