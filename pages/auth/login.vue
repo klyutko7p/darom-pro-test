@@ -110,9 +110,10 @@ let showPassword = ref(false)
     </div>
 
     <div
-      class="text-center underline absolute top-3 right-2 text-secondary-color font-bold"
+      class="underline absolute top-3 right-2 flex flex-col text-right text-secondary-color font-bold"
     >
       <NuxtLink to="/auth/client/login">Зайти как клиент</NuxtLink>
+      <NuxtLink to="/">На главную</NuxtLink>
     </div>
   </div>
   <div v-else class="flex items-center justify-center">

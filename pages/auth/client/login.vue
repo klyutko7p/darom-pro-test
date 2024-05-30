@@ -143,9 +143,10 @@ function validationPhoneNumber() {
     </div>
 
     <div
-      class="text-center underline absolute top-3 right-2 text-secondary-color font-bold"
+      class="underline absolute top-3 right-2 flex flex-col text-right text-secondary-color font-bold"
     >
       <NuxtLink to="/auth/login">Зайти как сотрудник</NuxtLink>
+      <NuxtLink to="/">На главную</NuxtLink>
     </div>
   </div>
 
