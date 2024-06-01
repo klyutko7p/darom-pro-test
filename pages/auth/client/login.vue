@@ -63,7 +63,7 @@ function validationPhoneNumber() {
         <h2
           class="mt-5 text-center text-2xl max-sm:text-xl font-bold leading-9 tracking-tight text-gray-900"
         >
-          Авторизация пользователя
+          Авторизация клиента
         </h2>
       </div>
 
@@ -147,13 +147,17 @@ function validationPhoneNumber() {
     >
       <UIMainButton
         class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
-        @click="router.push('/auth/login')"
-        >Зайти как сотрудник</UIMainButton
-      >
-      <UIMainButton
-        class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
         @click="router.push('/')"
         >На главную</UIMainButton
+      >
+    </div>
+    <div
+      class="absolute top-3 right-2 flex flex-col text-center text-secondary-color font-bold gap-3"
+    >
+      <UIMainButton
+        class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
+        @click="router.push('/auth/login')"
+        >Вход сотрудника</UIMainButton
       >
     </div>
   </div>

@@ -114,13 +114,17 @@ let showPassword = ref(false)
     >
       <UIMainButton
         class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
-        @click="router.push('/auth/client/login')"
-        >Зайти как клиент</UIMainButton
-      >
-      <UIMainButton
-        class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
         @click="router.push('/')"
         >На главную</UIMainButton
+      >
+    </div>
+    <div
+      class="absolute top-3 right-2 flex flex-col text-center text-secondary-color font-bold gap-3"
+    >
+      <UIMainButton
+        class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
+        @click="router.push('/auth/client/login')"
+        >Вход клиента</UIMainButton
       >
     </div>
   </div>

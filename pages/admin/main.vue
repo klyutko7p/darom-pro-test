@@ -60,7 +60,9 @@ definePageMeta({
               class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
               v-if="
                 user.dataOurRansom === 'READ' ||
-                (user.dataOurRansom === 'WRITE' && !user.username.includes('Светлана'))
+                (user.dataOurRansom === 'WRITE' &&
+                  !user.username.includes('Светлана') &&
+                  !user.username.includes('Горцуева'))
               "
             >
               <div class="grid place-items-center mr-4">
@@ -87,7 +89,9 @@ definePageMeta({
               class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
               v-if="
                 user.dataOurRansom === 'READ' ||
-                (user.dataOurRansom === 'WRITE' && user.username.includes('Светлана'))
+                (user.dataOurRansom === 'WRITE' &&
+                  user.username.includes('Светлана') ||
+                  user.username.includes('Горцуева'))
               "
             >
               <div class="grid place-items-center mr-4">
@@ -114,7 +118,9 @@ definePageMeta({
               class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
               v-if="
                 user.dataClientRansom === 'READ' ||
-                (user.dataClientRansom === 'WRITE' && !user.username.includes('Светлана'))
+                (user.dataClientRansom === 'WRITE' &&
+                  !user.username.includes('Светлана') &&
+                  !user.username.includes('Горцуева'))
               "
             >
               <div class="grid place-items-center mr-4">
@@ -141,7 +147,9 @@ definePageMeta({
               class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
               v-if="
                 user.dataClientRansom === 'READ' ||
-                (user.dataClientRansom === 'WRITE' && user.username.includes('Светлана'))
+                (user.dataClientRansom === 'WRITE' &&
+                  user.username.includes('Светлана') ||
+                  user.username.includes('Горцуева'))
               "
             >
               <div class="grid place-items-center mr-4">
@@ -163,7 +171,9 @@ definePageMeta({
             </div>
             <div
               v-if="
-                (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
+                (user.role === 'ADMIN' &&
+                  user.username !== 'Светлана1' &&
+                  user.username !== 'Светлана2') ||
                 user.role === 'ADMINISTRATOR' ||
                 user.role === 'PVZ'
               "
@@ -181,7 +191,8 @@ definePageMeta({
               v-if="
                 (user.dataDelivery === 'READ' || user.dataDelivery === 'WRITE') &&
                 (user.role === 'ADMIN' || user.role === 'OPT') &&
-                user.username !== 'Светлана1'
+                user.username !== 'Светлана1' &&
+                user.username !== 'Светлана2'
               "
               role="button"
               @click="router.push('/spreadsheets/delivery')"
@@ -207,7 +218,9 @@ definePageMeta({
             </div>
             <div
               v-if="
-                (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
+                (user.role === 'ADMIN' &&
+                  !user.username.includes('Светлана') &&
+                  !user.username.includes('Горцуева')) ||
                 user.role === 'ADMINISTRATOR' ||
                 user.role === 'PVZ' ||
                 user.role === 'PPVZ' ||
@@ -225,7 +238,8 @@ definePageMeta({
             </div>
             <div
               v-if="
-                (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
+                (user.role === 'ADMIN' &&
+                  !user.username.includes('Светлана')) ||
                 user.role === 'DRIVER' ||
                 user.role === 'ADMINISTRATOR' ||
                 user.role === 'OFFICE' ||
@@ -268,7 +282,11 @@ definePageMeta({
               <h1>Задачи</h1>
             </div>
             <div
-            v-if="user.role === 'RMANAGER' || user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+              v-if="
+                user.role === 'RMANAGER' ||
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR'
+              "
               role="button"
               @click="router.push('/map')"
               tabindex="0"
@@ -286,7 +304,8 @@ definePageMeta({
               v-if="
                 !user.username.includes('Светлана') &&
                 user.role !== 'ADMINISTRATOR' &&
-                user.role !== 'RMANAGER'
+                user.role !== 'RMANAGER' &&
+                !user.username.includes('Горцуева')
               "
               role="button"
               @click="router.push('/admin/users')"
@@ -311,7 +330,7 @@ definePageMeta({
               <h1>Пользователи</h1>
             </div>
             <div
-              v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+              v-if="!user.username.includes('Светлана') && !user.username.includes('Горцуева') && user.role !== 'ADMINISTRATOR'"
               role="button"
               @click="router.push('/admin/marketplaces')"
               tabindex="0"
@@ -323,7 +342,7 @@ definePageMeta({
               <h1>Маркетплейсы</h1>
             </div>
             <div
-              v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+              v-if="!user.username.includes('Светлана') && !user.username.includes('Горцуева') && user.role !== 'ADMINISTRATOR'"
               role="button"
               @click="router.push('/admin/phone-numbers')"
               tabindex="0"
@@ -335,7 +354,7 @@ definePageMeta({
               <h1>Телефоны и адреса</h1>
             </div>
             <div
-              v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+              v-if="!user.username.includes('Светлана') && !user.username.includes('Горцуева') && user.role !== 'ADMINISTRATOR'"
               role="button"
               @click="router.push('/admin/cells')"
               tabindex="0"
@@ -347,7 +366,7 @@ definePageMeta({
               <h1>Ячейки</h1>
             </div>
             <div
-              v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+              v-if="!user.username.includes('Светлана') && !user.username.includes('Горцуева') && user.role !== 'ADMINISTRATOR'"
               role="button"
               @click="router.push('/admin/pvz')"
               tabindex="0"
@@ -359,7 +378,7 @@ definePageMeta({
               <h1>Пункты выдачи заказов</h1>
             </div>
             <div
-              v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+              v-if="!user.username.includes('Светлана') && !user.username.includes('Горцуева') && user.role !== 'ADMINISTRATOR'"
               role="button"
               @click="router.push('/admin/sorting-centers')"
               tabindex="0"
@@ -371,7 +390,7 @@ definePageMeta({
               <h1>Сортировочные центры</h1>
             </div>
             <div
-              v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+              v-if="!user.username.includes('Светлана') && !user.username.includes('Горцуева') && user.role !== 'ADMINISTRATOR'"
               role="button"
               @click="router.push('/admin/pvz-delivery')"
               tabindex="0"
@@ -383,7 +402,7 @@ definePageMeta({
               <h1>Пункты выдачи заказов (Доставка)</h1>
             </div>
             <div
-              v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+              v-if="!user.username.includes('Светлана') && !user.username.includes('Горцуева') && user.role !== 'ADMINISTRATOR'"
               role="button"
               @click="router.push('/admin/sorting-centers-delivery')"
               tabindex="0"
@@ -398,7 +417,7 @@ definePageMeta({
               <h1>Сортировочные центры (Доставка)</h1>
             </div>
             <div
-              v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
+              v-if="!user.username.includes('Светлана') && !user.username.includes('Горцуева') && user.role !== 'ADMINISTRATOR'"
               role="button"
               @click="router.push('/admin/order-accounts')"
               tabindex="0"

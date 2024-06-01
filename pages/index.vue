@@ -11,11 +11,11 @@ function changeAddress() {
   coordinates.value = selectedAddress.value;
 }
 
-onBeforeMount(() => {
-  if (window.matchMedia("(display-mode: standalone)").matches) {
-    router.push('/auth/client/login')
-  }
-});
+// onBeforeMount(() => {
+//   if (window.matchMedia("(display-mode: standalone)").matches) {
+//     router.push('/auth/client/login')
+//   }
+// });
 
 definePageMeta({
   layout: false,
@@ -29,18 +29,18 @@ definePageMeta({
   <NuxtLayout name="main-page">
     <div class="bg-main-page">
       <div class="py-5 max-md:px-5" v-cloak>
-        <div class="flex items-center gap-5">
-          <UIMainButton @click="router.push('/auth/login')">Сотрудник</UIMainButton>
+        <div class="flex items-center justify-between gap-5">
           <UIMainButton @click="router.push('/auth/client/login')"
-            >Личный кабинет</UIMainButton
+            >Вход в клиента</UIMainButton
           >
+          <UIMainButton @click="router.push('/auth/login')">Вход в сотрудника</UIMainButton>
         </div>
         <div class="flex items-center justify-center flex-col">
           <h1 class="text-secondary-color font-bold text-8xl max-lg:text-6xl mt-3">
             DAROM.pro
           </h1>
           <h1 class="text-secondary-color font-bold uppercase mt-3 max-md:text-center">
-            Доставка из маркетплейсов WILDBERRIES, OZON, ЯНДЕКС МАРКЕТ И ДР.
+            Доставка из интернет-магазинов WILDBERRIES, OZON, ЯНДЕКС МАРКЕТ И ДР.
           </h1>
           <h1 class="text-xl mt-5 max-md:text-center">
             по всем вопросам и для оформления заказа звоните:

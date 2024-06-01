@@ -592,6 +592,7 @@ let pvz = ref([
   "Коломенское ЯМ",
   "Коломенское WB",
   "Мещерино Городок",
+  "Новоандриановка",
   "ПВЗ_1",
   "ПВЗ_2",
   "ПВЗ_3",
@@ -625,6 +626,7 @@ let usersOfIssued = ref([
   "Рейзвих",
   "Эля",
   "КассаЯМ",
+  "Горцуева",
 ]);
 
 import { createClient } from "@supabase/supabase-js";
@@ -1103,7 +1105,7 @@ function checkExpenditure() {
             </div>
           </div>
 
-          <div class="flex justify-end my-3" v-if="user.role === 'ADMIN'">
+          <div class="flex justify-end my-3" v-if="user.role === 'ADMIN' && user.username !== 'Горцуева'">
             <h1
               @click="router.push('/advance-report/summary-tables')"
               class="underline text-secondary-color font-bold cursor-pointer hover:opacity-50 duration-200"
@@ -1183,7 +1185,7 @@ function checkExpenditure() {
             </div>
           </div>
 
-          <div v-if="user.role === 'ADMIN'">
+          <div v-if="user.role === 'ADMIN' && user.username !== 'Горцуева'">
             <div class="flex items-center gap-3 mb-5">
               <h1 class="font-bold text-xl">Проверить баланс сотрудника</h1>
               <Icon
@@ -1689,7 +1691,7 @@ function checkExpenditure() {
             </UIMainButton>
           </div>
 
-          <div class="flex justify-end my-3" v-if="user.role === 'ADMIN'">
+          <div class="flex justify-end my-3" v-if="user.role === 'ADMIN' && user.username !== 'Горцуева'">
             <h1
               @click="router.push('/advance-report/summary-tables')"
               class="underline text-secondary-color font-bold cursor-pointer hover:opacity-50 duration-200"
