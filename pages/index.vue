@@ -31,9 +31,9 @@ definePageMeta({
       <div class="py-5 max-md:px-5" v-cloak>
         <div class="flex items-center justify-between gap-5">
           <UIMainButton @click="router.push('/auth/client/login')"
-            >Вход в клиента</UIMainButton
+            >Вход клиента</UIMainButton
           >
-          <UIMainButton @click="router.push('/auth/login')">Вход в сотрудника</UIMainButton>
+          <UIMainButton @click="router.push('/auth/login')">Вход сотрудника</UIMainButton>
         </div>
         <div class="flex items-center justify-center flex-col">
           <h1 class="text-secondary-color font-bold text-8xl max-lg:text-6xl mt-3">
