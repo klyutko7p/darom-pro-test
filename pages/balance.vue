@@ -568,10 +568,21 @@ function getAllSum() {
         ?.filter((row) => row.received !== null && row.recipient !== "Нет")
         .reduce((acc, value) => acc + +value.sum, 0);
 
+        let sumOfPVZ5 = rowsProfit.value
+        ?.filter(
+          (row) =>
+            row.received !== null &&
+            (row.recipient === "Владимирова Инна" ||
+              row.recipient === "Динис Ольга" ||
+              row.recipient === "Киризлеева Марина")
+        )
+        .reduce((acc, value) => acc + +value.sum, 0);
+
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ + 319610;
+      allSum.value = sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ + 319610 - sumOfPVZ5;
       allSum.value -= 11110;
+      allSum.value -= 1570;
     } else if (selectedPVZ.value === "Все ППВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
