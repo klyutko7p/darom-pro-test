@@ -1,20 +1,26 @@
+import CryptoJS from "crypto-js";
 import { PrismaClient } from "@prisma/client";
 interface IRequestBody {
-  phoneNumber: number;
+  phoneNumber: string;
+  code: string;
 }
 const prisma = new PrismaClient();
+const key = "T%t2m&v@9fN!PcK";
 
 export default defineEventHandler(async (event) => {
   try {
-    const { phoneNumber } = await readBody<IRequestBody>(event);
+    const { phoneNumber, code } = await readBody<IRequestBody>(event);
+    const bytes = CryptoJS.AES.decrypt(code, key);
+    const decryptedCode = bytes.toString(CryptoJS.enc.Utf8);
+    const formattedPhoneNumber = phoneNumber.replace("+", "");
 
     const postData = {
       apiKey: "4nFBfMgZtcGIaNerL9olzNTpC7yz9aZHwkaVlMd3rOrVr095Lruha7avjQMo",
       sms: [
         {
           channel: "char",
-          phone: "79517089158",
-          text: "KOD: 21252",
+          phone: formattedPhoneNumber,
+          text: `Код подтверждения: ${decryptedCode} Darom.pro`,
           sender: "VIRTA",
         },
       ],

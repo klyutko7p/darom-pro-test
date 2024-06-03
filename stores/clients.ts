@@ -1,3 +1,4 @@
+import CryptoJS from "crypto-js";
 import crypto from "crypto-js";
 import Cookies from "js-cookie";
 import { defineStore } from "pinia";
@@ -66,7 +67,7 @@ export const useClientsStore = defineStore("clients", () => {
 
         userData = user;
 
-        const cookieExpires = isForeignDevice ? 1 / 24 : 7 * 365 * 100; 
+        const cookieExpires = isForeignDevice ? 1 / 24 : 7 * 365 * 100;
         Cookies.set("token", token, { expires: cookieExpires });
         Cookies.set("user", JSON.stringify(userData), {
           expires: cookieExpires,
@@ -321,14 +322,16 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
-  async function sendMessage(phoneNumber: string) {
+  async function sendMessage(phoneNumber: string, code: string) {
     try {
+      const encryptedCode = CryptoJS.AES.encrypt(code, key).toString();
+
       let { data } = await useFetch("/api/clients/send-message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ phoneNumber }),
+        body: JSON.stringify({ phoneNumber, code: encryptedCode }),
       });
       return data;
     } catch (error) {
@@ -373,6 +376,23 @@ export const useClientsStore = defineStore("clients", () => {
       } else {
         toast.error("Произошла ошибка при изменении аккаунта!");
       }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function resetPassword(phoneNumber: string, newPassword: string) {
+    try {
+      let { data } = await useFetch("/api/clients/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phoneNumber, newPassword }),
+      });
+      return data.value;
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -459,5 +479,6 @@ export const useClientsStore = defineStore("clients", () => {
     getClientById,
     updateBalance,
     sendMessage,
+    resetPassword,
   };
 });

@@ -62,43 +62,6 @@ export default defineEventHandler(async (event) => {
     } else {
       return "Произошла ошибка";
     }
-
-    // if (
-    //   client.oldPassword &&
-    //   client.oldPassword === hashPassword &&
-    //   flag === "NON-PASS"
-    // ) {
-    //   const updateClient = await prisma.client.update({
-    //     where: {
-    //       id: client.id,
-    //     },
-    //     data: {
-    //       fio: client.fio,
-    //       phoneNumber: client.phoneNumber,
-    //       password: client.password,
-    //     },
-    //   });
-    // } else if (
-    //   client.oldPassword &&
-    //   client.oldPassword === hashPassword &&
-    //   flag === "PASS"
-    // ) {
-    //   const newPassword = await bcrypt.hash(client.password, saltRounds);
-    //   const updateClient = await prisma.client.update({
-    //     where: {
-    //       id: client.id,
-    //     },
-    //     data: {
-    //       fio: client.fio,
-    //       phoneNumber: client.phoneNumber,
-    //       password: newPassword,
-    //     },
-    //   });
-    // } else {
-    //   console.log(client.oldPassword);
-    //   console.log(hashPassword);
-    //   return client.oldPassword + " " + hashPassword;
-    // }
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };
