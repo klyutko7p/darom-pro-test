@@ -63,9 +63,25 @@ const handleCheckboxChange = (row: IOurRansom): void => {
     allSum.value = allSum.value.filter((obj) => obj.rowId !== row.id);
   } else {
     checkedRows.value.push(row.id);
+    const shouldRound = (value: any) => {
+      const referenceDate = new Date("2024-06-05T00:00:01");
+      return new Date(row.created_at) > referenceDate;
+    };
+
+    const ceilNumber = (num: number) => {
+      return Math.ceil(num / 10) * 10;
+    }
+
+    const roundOrCeil = (num: number) => {
+      const lastDigit = num % 10;
+      return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 100;
+    };
+
+    const roundFunction = shouldRound(row) ? roundOrCeil : ceilNumber;
+
     allSum.value.push({
       rowId: row.id,
-      amount: Math.ceil(row.amountFromClient1 / 10) * 10,
+      amount: roundFunction(row.amountFromClient1),
       issued: row.issued,
       deliveredPVZ: row.deliveredPVZ,
       orderPVZ: row.orderPVZ,
@@ -82,6 +98,7 @@ const handleCheckboxChange = (row: IOurRansom): void => {
   showButtonShipped.value = allSum.value.every((obj) => obj.shipped === null);
   showButtonVerified.value = allSum.value.every((obj) => obj.verified === null);
 };
+
 
 const perPage = ref(100);
 const currentPage = ref(1);

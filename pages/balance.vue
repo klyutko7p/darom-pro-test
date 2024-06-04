@@ -140,18 +140,47 @@ function calculateValue(curValue: any) {
       curValue.deliveredKGT = 0;
     }
 
-    return curValue.additionally !== "Отказ клиент наличные" ||
-      curValue.additionally !== "Отказ клиент онлайн" ||
-      curValue.additionally !== "Отказ клиент"
-      ? Math.ceil(
-          Math.ceil(
-            +curValue.priceSite + (+curValue.priceSite * 10) / 100 - +curValue.prepayment
-          ) / 10
-        ) *
-          10 -
-          +curValue.priceSite +
-          +curValue.deliveredKGT
-      : +sumOfReject.value.value;
+    const shouldRound = (value: any) => {
+      if (value.created_at) {
+        const createdDate = new Date(value.created_at);
+        const referenceDate = new Date("2024-06-05T00:00:01");
+        return createdDate > referenceDate;
+      }
+    };
+
+    const roundOrCeil = (num: number) => {
+      const lastDigit = num % 10;
+      return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 100;
+    };
+
+    if (!shouldRound(curValue)) {
+      return curValue.additionally !== "Отказ клиент наличные" ||
+        curValue.additionally !== "Отказ клиент онлайн" ||
+        curValue.additionally !== "Отказ клиент"
+        ? Math.ceil(
+            Math.ceil(
+              +curValue.priceSite +
+                (+curValue.priceSite * 10) / 100 -
+                +curValue.prepayment
+            ) / 10
+          ) *
+            10 -
+            +curValue.priceSite +
+            +curValue.deliveredKGT
+        : +sumOfReject.value.value;
+    } else {
+      return curValue.additionally !== "Отказ клиент наличные" ||
+        curValue.additionally !== "Отказ клиент онлайн" ||
+        curValue.additionally !== "Отказ клиент"
+        ? Math.ceil(
+            roundOrCeil(
+              curValue.priceSite + (curValue.priceSite * 10) / 100 - curValue.prepayment
+            )
+          ) -
+            curValue.priceSite +
+            curValue.deliveredKGT
+        : +sumOfReject.value.value;
+    }
   } else {
     if (!curValue.prepayment) {
       curValue.prepayment = 0;
@@ -165,6 +194,21 @@ function calculateValue(curValue: any) {
       ? (+curValue.priceSite * 10) / 100 + +curValue.deliveredKGT
       : +sumOfReject.value.value;
   }
+}
+
+function roundToNearestTen(num: number): number {
+  const lastDigit = num % 10;
+  if (lastDigit >= 5) {
+    return Math.ceil(num / 10) * 10;
+  } else {
+    return Math.floor(num / 10) * 10;
+  }
+}
+
+function isDateGreaterThanReference(dateString: string | Date): boolean {
+  const referenceDate = new Date("2024-06-05T00:00:01");
+  const inputDate = new Date(dateString);
+  return inputDate > referenceDate;
 }
 
 function reduceArray(array: any, flag: string) {
@@ -191,21 +235,47 @@ function reduceArray(array: any, flag: string) {
     if (flag === "OurRansom") {
       array = array.filter(
         (row: any) =>
-          row.additionally !== "Отказ брак" && row.additionally !== "Отказ клиент онлайн"
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ клиент онлайн" &&
+          new Date(row.created_at) < new Date("2024-06-05T00:00:01")
       );
-      return array.reduce(
+      let array2 = array.filter(
+        (row: any) =>
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ клиент онлайн" &&
+          new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
+      );
+      let firstReduce = array.reduce(
         (ac: any, curValue: any) => ac + Math.ceil(curValue.amountFromClient1 / 10) * 10,
         0
       );
+      let secondReduce = array2.reduce(
+        (ac: any, curValue: any) => ac + roundToNearestTen(curValue.amountFromClient1),
+        0
+      );
+      return firstReduce + secondReduce;
     } else if (flag === "ClientRansom") {
       array = array.filter(
         (row: any) =>
-          row.additionally !== "Отказ брак" && row.additionally !== "Отказ клиент онлайн"
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ клиент онлайн" &&
+          new Date(row.created_at) < new Date("2024-06-05T00:00:01")
       );
-      return array.reduce(
+      let array2 = array.filter(
+        (row: any) =>
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ клиент онлайн" &&
+          new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
+      );
+      let firstReduce = array.reduce(
         (ac: any, curValue: any) => ac + Math.ceil(curValue.amountFromClient2 / 10) * 10,
         0
       );
+      let secondReduce = array2.reduce(
+        (ac: any, curValue: any) => ac + roundToNearestTen(curValue.amountFromClient2),
+        0
+      );
+      return firstReduce + secondReduce;
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (flag === "OurRansom") {
@@ -219,8 +289,12 @@ function reduceArray(array: any, flag: string) {
           let amount = 0;
           if (!curValue.prepayment && curValue.amountFromClient1) {
             curValue.prepayment = 0;
-            amount =
-              Math.ceil(curValue.amountFromClient1 / 10) * 10 + curValue.prepayment;
+            if (new Date(curValue.created_at) < new Date("2024-06-05T00:00:01")) {
+              amount =
+                Math.ceil(curValue.amountFromClient1 / 10) * 10 + curValue.prepayment;
+            } else {
+              amount = roundToNearestTen(curValue.amountFromClient1)
+            }
           } else if (!curValue.amountFromClient1 && curValue.prepayment) {
             curValue.amountFromClient1 = 0;
             amount =
@@ -231,8 +305,12 @@ function reduceArray(array: any, flag: string) {
             amount =
               Math.ceil(curValue.amountFromClient1 / 10) * 10 + curValue.prepayment;
           } else {
-            amount =
-              Math.ceil(curValue.amountFromClient1 / 10) * 10 + curValue.prepayment;
+            if (new Date(curValue.created_at) < new Date("2024-06-05T00:00:01")) {
+              amount =
+                Math.ceil(curValue.amountFromClient1 / 10) * 10 + curValue.prepayment;
+            } else {
+              amount = roundToNearestTen(curValue.amountFromClient1)
+            }
           }
           return ac + amount;
         }, 0);
@@ -247,15 +325,15 @@ function reduceArray(array: any, flag: string) {
       );
       if (array.length > 0) {
         return array.reduce((ac, curValue) => {
-          if (!curValue.prepayment && curValue.amountFromClient1) {
+          if (!curValue.prepayment && curValue.amountFromClient2) {
             curValue.prepayment = 0;
             return ac + curValue.amountFromClient2 + curValue.prepayment;
-          } else if (!curValue.amountFromClient1 && curValue.prepayment) {
-            curValue.amountFromClient1 = 0;
+          } else if (!curValue.amountFromClient2 && curValue.prepayment) {
+            curValue.amountFromClient2 = 0;
             return ac + curValue.amountFromClient2 + curValue.prepayment;
-          } else if (!curValue.amountFromClient1 && !curValue.prepayment) {
+          } else if (!curValue.amountFromClient2 && !curValue.prepayment) {
             curValue.prepayment = 0;
-            curValue.amountFromClient1 = 0;
+            curValue.amountFromClient2 = 0;
             return ac + curValue.amountFromClient2 + curValue.prepayment;
           } else {
             return ac + curValue.amountFromClient2 + curValue.prepayment;
@@ -286,12 +364,25 @@ function reduceArray(array: any, flag: string) {
     if (flag === "OurRansom") {
       array = array.filter(
         (row: any) =>
-          row.additionally !== "Отказ брак" && row.additionally !== "Отказ клиент онлайн"
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ клиент онлайн" &&
+          new Date(row.created_at) < new Date("2024-06-05T00:00:01")
       );
-      return array.reduce(
+      let array2 = array.filter(
+        (row: any) =>
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ клиент онлайн" &&
+          new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
+      );
+      let firstReduce = array.reduce(
         (ac: any, curValue: any) => ac + Math.ceil(curValue.amountFromClient1 / 10) * 10,
         0
       );
+      let secondReduce = array2.reduce(
+        (ac: any, curValue: any) => ac + roundToNearestTen(curValue.amountFromClient1),
+        0
+      );
+      return firstReduce + secondReduce;
     } else if (flag === "ClientRansom") {
       array = array.filter(
         (row: any) =>
@@ -310,12 +401,24 @@ function reduceArray(array: any, flag: string) {
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
-          row.additionally !== "Отказ клиент наличные"
+          row.additionally !== "Отказ клиент наличные" &&
+          new Date(row.created_at) < new Date("2024-06-05T00:00:01")
       );
-      return array.reduce(
+      let array2 = array.filter(
+        (row: any) =>
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ клиент наличные" &&
+          new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
+      );
+      let firstReduce = array.reduce(
         (ac: any, curValue: any) => ac + Math.ceil(curValue.amountFromClient1 / 10) * 10,
         0
       );
+      let secondReduce = array2.reduce(
+        (ac: any, curValue: any) => ac + roundToNearestTen(curValue.amountFromClient1),
+        0
+      );
+      return firstReduce + secondReduce;
     } else if (flag === "ClientRansom") {
       array = array.filter(
         (row: any) =>
@@ -333,12 +436,27 @@ function reduceArray(array: any, flag: string) {
     }
   } else if (selectedTypeOfTransaction.value === "Доход PPVZ") {
     if (flag === "OurRansom") {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
-      return array.reduce(
-        (ac: any, curValue: any) =>
-          ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.025,
+      array = array.filter(
+        (row: any) =>
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ клиент наличные" &&
+          new Date(row.created_at) < new Date("2024-06-05T00:00:01")
+      );
+      let array2 = array.filter(
+        (row: any) =>
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ клиент наличные" &&
+          new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
+      );
+      let firstReduce = array.reduce(
+        (ac: any, curValue: any) => ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.025,
         0
       );
+      let secondReduce = array2.reduce(
+        (ac: any, curValue: any) => ac + roundToNearestTen(curValue.amountFromClient1) * 0.025,
+        0
+      );
+      return firstReduce + secondReduce;
     } else if (flag === "ClientRansom") {
       array = array.filter((row: any) => row.additionally !== "Отказ брак");
       return array.reduce(
@@ -355,60 +473,40 @@ function reduceArray(array: any, flag: string) {
   }
 }
 
-function reduceArrayProfit(array: any, flag: string) {
-  if (flag === "OurRansom") {
-    if (!user.value.PVZ.includes("ПВЗ_1")) {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
-      let amount = array.reduce(
-        (ac: any, curValue: any) =>
-          ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.025,
-        0
-      );
+function reduceArrayProfit(array: any[], flag: string): number {
+  let totalProfit = 0;
 
-      let prepayment = array.reduce((ac: any, curValue: any) => {
-        if (!curValue.prepayment) {
-          curValue.prepayment = 0;
-        }
-        return ac + curValue.prepayment * 0.035;
-      }, 0);
+  const shouldRound = (value: any) => {
+    const createdDate = new Date(value.created_at);
+    const referenceDate = new Date("2024-06-05T00:00:01");
+    return createdDate > referenceDate;
+  };
 
-      return +amount + +prepayment;
-    } else {
-      array = array.filter(
-        (row: any) =>
-          row.additionally !== "Отказ брак" &&
-          new Date(row.issued) >= new Date("2024-04-01")
-      );
-      let amount = array.reduce(
-        (ac: any, curValue: any) =>
-          ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.035,
-        0
-      );
+  const roundOrCeil = (num: number) => {
+    const lastDigit = num % 10;
+    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 100;
+  };
 
-      let prepayment = array.reduce((ac: any, curValue: any) => {
-        if (!curValue.prepayment) {
-          curValue.prepayment = 0;
-        }
-        return ac + curValue.prepayment * 0.035;
-      }, 0);
-      return +amount + +prepayment;
+  array.forEach((row: any) => {
+    if (row.additionally !== "Отказ брак") {
+      const roundFunction = shouldRound(row) ? roundOrCeil : Math.ceil;
+      switch (flag) {
+        case "OurRansom":
+          let amount = roundFunction(row.amountFromClient1) * 0.025;
+          let prepayment = row.prepayment ? row.prepayment * 0.035 : 0;
+          totalProfit += amount + prepayment;
+          break;
+        case "ClientRansom":
+          totalProfit += row.amountFromClient2 * 0.025;
+          break;
+        default:
+          totalProfit += row.amountFromClient2 * 0.025;
+          break;
+      }
     }
-  } else if (flag === "ClientRansom") {
-    array = array.filter((row: any) => row.additionally !== "Отказ брак");
-    let amount = array.reduce(
-      (ac: any, curValue: any) =>
-        ac + Math.ceil(curValue.amountFromClient2 / 10) * 10 * 0.025,
-      0
-    );
-    return amount;
-  } else {
-    let amount = array.reduce(
-      (ac: any, curValue: any) =>
-        ac + Math.ceil(curValue.amountFromClient2 / 10) * 10 * 0.025,
-      0
-    );
-    return amount;
-  }
+  });
+
+  return totalProfit;
 }
 
 function getAllSum() {
@@ -568,7 +666,7 @@ function getAllSum() {
         ?.filter((row) => row.received !== null && row.recipient !== "Нет")
         .reduce((acc, value) => acc + +value.sum, 0);
 
-        let sumOfPVZ5 = rowsProfit.value
+      let sumOfPVZ5 = rowsProfit.value
         ?.filter(
           (row) =>
             row.received !== null &&
@@ -687,7 +785,7 @@ function getAllSum() {
         sum1.value + sum2.value - sumOfPVZ - sumOfPVZ2 + sumOfPVZ3 - sumOfPVZ5;
       if (selectedPVZ.value === "НаДом") {
         allSum.value -= 11110;
-      } 
+      }
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (selectedPVZ.value === "Все ПВЗ") {
@@ -1076,27 +1174,38 @@ function getProfitRowsSum() {
   }
 }
 
-function reduceArrayProfitManager(array: any, flag: string) {
-  if (flag === "OurRansom") {
-    array = array.filter((row: any) => row.additionally !== "Отказ брак");
-    return array.reduce(
-      (ac: any, curValue: any) =>
-        ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.005,
-      0
-    );
-  } else if (flag === "ClientRansom") {
-    array = array.filter((row: any) => row.additionally !== "Отказ брак");
-    return array.reduce(
-      (ac: any, curValue: any) => ac + curValue.amountFromClient2 * 0.005,
-      0
-    );
-  } else {
-    array = array.filter((row: any) => row.additionally !== "Отказ брак");
-    return array.reduce(
-      (ac: any, curValue: any) => ac + curValue.amountFromClient3 * 0.005,
-      0
-    );
-  }
+function reduceArrayProfitManager(array: any[], flag: string): number {
+  let totalProfit = 0;
+
+  const shouldRound = (value: any) => {
+    const createdDate = new Date(value.created_at);
+    const referenceDate = new Date("2024-06-05T00:00:01");
+    return createdDate > referenceDate;
+  };
+
+  const roundOrCeil = (num: number) => {
+    const lastDigit = num % 10;
+    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 100;
+  };
+
+  array.forEach((row: any) => {
+    if (row.additionally !== "Отказ брак") {
+      const roundFunction = shouldRound(row) ? roundOrCeil : Math.ceil;
+      switch (flag) {
+        case "OurRansom":
+          totalProfit += roundFunction(row.amountFromClient1) * 0.005;
+          break;
+        case "ClientRansom":
+          totalProfit += row.amountFromClient2 * 0.005;
+          break;
+        default:
+          totalProfit += row.amountFromClient3 * 0.005;
+          break;
+      }
+    }
+  });
+
+  return totalProfit;
 }
 
 function getProfitManagerRowsSum() {

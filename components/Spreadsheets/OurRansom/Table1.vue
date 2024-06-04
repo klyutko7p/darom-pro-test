@@ -227,9 +227,15 @@ const handleCheckboxChange = (row: IOurRansom): void => {
     allSum.value = allSum.value.filter((obj) => obj.rowId !== row.id);
   } else {
     checkedRows.value.push(row.id);
+    let amountData = 0;
+    if (isDateGreaterThanReference(row.created_at)) {
+      amountData = roundToNearestTen(row.amountFromClient1);
+    } else {
+      amountData = Math.ceil(row.amountFromClient1 / 10) * 10
+    }
     allSum.value.push({
       rowId: row.id,
-      amount: Math.ceil(row.amountFromClient1 / 10) * 10,
+      amount: amountData,
       issued: row.issued,
       deliveredPVZ: row.deliveredPVZ,
       orderPVZ: row.orderPVZ,
@@ -452,6 +458,21 @@ function showExpiredRows() {
 }
 
 let showPayRejectClient = ref(false);
+
+function roundToNearestTen(num: number): number {
+  const lastDigit = num % 10;
+  if (lastDigit >= 5) {
+    return Math.ceil(num / 10) * 10;
+  } else {
+    return Math.floor(num / 10) * 10;
+  }
+}
+
+function isDateGreaterThanReference(dateString: string | Date): boolean {
+  const referenceDate = new Date("2024-06-05T00:00:01");
+  const inputDate = new Date(dateString);
+  return inputDate > referenceDate;
+}
 </script>
 
 <template>
@@ -1039,9 +1060,15 @@ let showPayRejectClient = ref(false);
           </td>
           <td
             class="border-2"
-            v-if="user.amountFromClient1 === 'READ' || user.amountFromClient1 === 'WRITE'"
+            v-if="user.amountFromClient1 === 'READ' || user.amountFromClient1 === 'WRITE' && !isDateGreaterThanReference(row.created_at)"
           >
             {{ Math.ceil(row.amountFromClient1 / 10) * 10 }}
+          </td>
+          <td
+            class="border-2"
+            v-if="user.amountFromClient1 === 'READ' || user.amountFromClient1 === 'WRITE' && isDateGreaterThanReference(row.created_at)"
+          >
+            {{ roundToNearestTen(row.amountFromClient1) }}
           </td>
           <td
             class="px-2 py-4 border-2"
@@ -1097,11 +1124,29 @@ let showPayRejectClient = ref(false);
               row.additionally !== 'Отказ клиент онлайн' &&
               row.additionally !== 'Отказ клиент наличные' &&
               row.additionally !== 'Отказ брак' &&
-              !row.prepayment
+              !row.prepayment && !isDateGreaterThanReference(row.created_at)
             "
           >
             {{
               Math.ceil(row.amountFromClient1 / 10) * 10 -
+              row.priceSite +
+              row.deliveredKGT
+            }}
+          </td>
+
+          <td
+            class="px-1 py-4 border-2"
+            v-if="
+              (user.profit1 === 'READ' || user.profit1 === 'WRITE') &&
+              row.additionally !== 'Отказ клиент' &&
+              row.additionally !== 'Отказ клиент онлайн' &&
+              row.additionally !== 'Отказ клиент наличные' &&
+              row.additionally !== 'Отказ брак' &&
+              !row.prepayment && isDateGreaterThanReference(row.created_at)
+            "
+          >
+            {{
+              roundToNearestTen(row.amountFromClient1) -
               row.priceSite +
               row.deliveredKGT
             }}

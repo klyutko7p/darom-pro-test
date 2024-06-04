@@ -12,31 +12,6 @@ let rowsClientRansom = ref<Array<IClientRansom>>([]);
 let rows = ref<Array<any>>([]);
 let copyRows = ref<Array<IOurRansom | IClientRansom | IDelivery>>();
 
-function getAmountToBePaid(flag: string, flagRansom: number) {
-  let amountToPaid = 0;
-  if (flagRansom === 1) {
-    if (rowsOurRansom.value && flag === "NONE") {
-      amountToPaid = rowsOurRansom.value
-        .filter((value) => !value.issued && value.deleted === null)
-        .reduce((acc, value) => acc + Math.ceil(value.amountFromClient1 / 10) * 10, 0);
-    } else if (rowsOurRansom.value && flag === "PVZ") {
-      amountToPaid = rowsOurRansom.value
-        .filter((value) => value.deliveredPVZ && !value.issued && value.deleted === null)
-        .reduce((acc, value) => acc + Math.ceil(value.amountFromClient1 / 10) * 10, 0);
-    }
-  } else if (flagRansom === 2) {
-    if (rowsClientRansom.value && flag === "NONE") {
-      amountToPaid = rowsClientRansom.value
-        .filter((value) => !value.issued && value.deleted === null)
-        .reduce((acc, value) => acc + Math.ceil(value.amountFromClient2 / 10) * 10, 0);
-    } else if (rowsClientRansom.value && flag === "PVZ") {
-      amountToPaid = rowsClientRansom.value
-        .filter((value) => value.deliveredPVZ && !value.issued && value.deleted === null)
-        .reduce((acc, value) => acc + Math.ceil(value.amountFromClient2 / 10) * 10, 0);
-    }
-  }
-  return amountToPaid;
-}
 
 let showReceivedItems = ref(true);
 

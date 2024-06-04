@@ -89,12 +89,33 @@ interface RowData {
   orderPVZ: Date | null | string | number;
 }
 
+function isDateGreaterThanReference(dateString: string | Date): boolean {
+  const referenceDate = new Date("2024-06-05T00:00:01");
+  const inputDate = new Date(dateString);
+  return inputDate > referenceDate;
+}
+
+function roundToNearestTen(num: number): number {
+  const lastDigit = num % 10;
+  if (lastDigit >= 5) {
+    return Math.ceil(num / 10) * 10;
+  } else {
+    return Math.floor(num / 10) * 10;
+  }
+}
+
 const handleCheckboxChange = (row: IClientRansom): void => {
   if (isChecked(row.id)) {
     checkedRows.value = checkedRows.value.filter((id) => id !== row.id);
     allSum.value = allSum.value.filter((obj) => obj.rowId !== row.id);
   } else {
     checkedRows.value.push(row.id);
+    let amountData = 0;
+    if (isDateGreaterThanReference(row.created_at)) {
+      amountData = roundToNearestTen(row.amountFromClient2);
+    } else {
+      amountData = Math.ceil(row.amountFromClient2 / 10) * 10
+    }
     allSum.value.push({
       rowId: row.id,
       amount: Math.ceil(row.amountFromClient2 / 10) * 10,
@@ -223,6 +244,8 @@ function changeProcessingRows() {
   showProcessingRowsFlag.value = !showProcessingRowsFlag.value
   Cookies.set("showProcessingRowsFlag", JSON.stringify(showProcessingRowsFlag.value));
 }
+
+
 </script>
 
 <template>

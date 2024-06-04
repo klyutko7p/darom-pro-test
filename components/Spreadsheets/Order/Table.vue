@@ -44,6 +44,21 @@ function isExpired(row: any) {
   }
 }
 
+function roundToNearestTen(num: number): number {
+  const lastDigit = num % 10;
+  if (lastDigit >= 5) {
+    return Math.ceil(num / 10) * 10;
+  } else {
+    return Math.floor(num / 10) * 10;
+  }
+}
+
+function isDateGreaterThanReference(dateString: string | Date): boolean {
+  const referenceDate = new Date("2024-06-05T00:00:01");
+  const inputDate = new Date(dateString);
+  return inputDate > referenceDate;
+}
+
 </script>
 
 <template>
@@ -194,13 +209,23 @@ function isExpired(row: any) {
           </td>
           <td
             v-if="
-              row.amountFromClient1 ||
+              (row.amountFromClient1 ||
               row.amountFromClient1 === null ||
-              row.amountFromClient1 === 0
+              row.amountFromClient1 === 0) && !isDateGreaterThanReference(row.created_at)
             "
             class="border-2"
           >
             {{ Math.ceil(row.amountFromClient1 / 10) * 10 }}
+          </td>
+          <td
+            v-if="
+              (row.amountFromClient1 ||
+              row.amountFromClient1 === null ||
+              row.amountFromClient1 === 0) && isDateGreaterThanReference(row.created_at)
+            "
+            class="border-2"
+          >
+            {{ roundToNearestTen(row.amountFromClient1) }}
           </td>
           <td
             v-if="

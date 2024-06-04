@@ -10,38 +10,56 @@ link = link.toString();
 let isLoading = ref(false);
 
 let user = ref({} as User);
-let rows = ref<Array<IOurRansom | IClientRansom | IDelivery>>();
-let copyRows = ref<Array<IOurRansom | IClientRansom | IDelivery>>();
+let rows = ref<Array<any>>([]);
+let copyRows = ref<Array<any>>([]);
 
-function getAmountToBePaid(flag: string) {
+function getAmountToBePaid(flag: string): number {
   let amountToPaid = 0;
-  if (link.startsWith("1")) {
-    if (rows.value && flag === "NONE") {
-      amountToPaid = rows.value
-        .filter((value) => !value.issued && value.deleted === null)
-        .reduce((acc, value) => acc + Math.ceil(value.amountFromClient1 / 10) * 10, 0);
-    } else if (rows.value && flag === "PVZ") {
-      amountToPaid = rows.value
-        .filter((value) => value.deliveredPVZ && !value.issued && value.deleted === null)
-        .reduce((acc, value) => acc + Math.ceil(value.amountFromClient1 / 10) * 10, 0);
+
+  const shouldRound = (value: any) => {
+    const createdDate = new Date(value.created_at);
+    const referenceDate = new Date("2024-06-05T00:00:01");
+    return createdDate > referenceDate;
+  };
+
+  const roundOrCeil = (num: number) => {
+    const lastDigit = num % 10;
+    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 100;
+  };
+
+  rows.value.forEach((value: any) => {
+    if (value.created_at) {
+      const roundFunction = shouldRound(value) ? roundOrCeil : Math.ceil;
+      switch (flag) {
+        case "NONE":
+          if (!value.issued && value.deleted === null) {
+            amountToPaid += roundFunction(value.amountFromClient1);
+          }
+          break;
+        case "PVZ":
+          if (value.deliveredPVZ && !value.issued && value.deleted === null) {
+            amountToPaid += roundFunction(value.amountFromClient1);
+          }
+          break;
+        case "NONE":
+          if (!value.issued && value.deleted === null) {
+            amountToPaid += roundFunction(value.amountFromClient2);
+          }
+          break;
+        case "PVZ":
+          if (value.deliveredPVZ && !value.issued && value.deleted === null) {
+            amountToPaid += roundFunction(value.amountFromClient2);
+          }
+          break;
+        case "NONE":
+          if (!value.paid && value.deleted === null) {
+            amountToPaid += value.amountFromClient3;
+          }
+          break;
+      }
     }
-  } else if (link.startsWith("2")) {
-    if (rows.value && flag === "NONE") {
-      amountToPaid = rows.value
-        .filter((value) => !value.issued && value.deleted === null)
-        .reduce((acc, value) => acc + Math.ceil(value.amountFromClient2 / 10) * 10, 0);
-    } else if (rows.value && flag === "PVZ") {
-      amountToPaid = rows.value
-        .filter((value) => value.deliveredPVZ && !value.issued && value.deleted === null)
-        .reduce((acc, value) => acc + Math.ceil(value.amountFromClient2 / 10) * 10, 0);
-    }
-  } else if (link.startsWith("3")) {
-    if (rows.value && flag === "NONE") {
-      amountToPaid = rows.value
-        .filter((value) => !value.paid && value.deleted === null)
-        .reduce((acc, value) => acc + value.amountFromClient3, 0);
-    }
-  }
+  });
+
   return amountToPaid;
 }
 
@@ -50,21 +68,23 @@ function getAmountFromMonthDelivery() {
   const currentDate = new Date();
   const thirtyDaysAgo = new Date(currentDate.getTime() - 30 * 24 * 60 * 60 * 1000);
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() + 1);
-  if (link.startsWith("3")) {
-    if (rows.value) {
-      amountToPaid = rows.value
-        .filter((value) => {
-          const paidDate = new Date(value.paid);
-          return (
-            paidDate >= thirtyDaysAgo &&
-            paidDate <= currentDate &&
-            value.nameOfAction === "Доставка"
-          );
-        })
-        .reduce((acc, value) => acc + value.purchaseOfGoods, 0);
+  if (typeof link === "string") {
+    if (link.startsWith("3")) {
+      if (rows.value) {
+        amountToPaid = rows.value
+          .filter((value) => {
+            const paidDate = new Date(value.paid);
+            return (
+              paidDate >= thirtyDaysAgo &&
+              paidDate <= currentDate &&
+              value.nameOfAction === "Доставка"
+            );
+          })
+          .reduce((acc, value) => acc + value.purchaseOfGoods, 0);
+      }
     }
+    return amountToPaid;
   }
-  return amountToPaid;
 }
 
 function getAmountFromMonthSorting() {
@@ -72,20 +92,23 @@ function getAmountFromMonthSorting() {
   const currentDate = new Date();
   const thirtyDaysAgo = new Date(currentDate.getTime() - 30 * 24 * 60 * 60 * 1000);
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() + 1);
-  if (link.startsWith("3")) {
-    if (rows.value) {
-      amountToPaid = rows.value
-        .filter((value) => {
-          const paidDate = new Date(value.paid);
-          return (
-            paidDate >= thirtyDaysAgo &&
-            paidDate <= currentDate &&
-            value.nameOfAction === "Сортировка"
-          );
-        })
-        .reduce((acc, value) => acc + value.purchaseOfGoods, 0);
+  if (typeof link === "string") {
+    if (link.startsWith("3")) {
+      if (rows.value) {
+        amountToPaid = rows.value
+          .filter((value) => {
+            const paidDate = new Date(value.paid);
+            return (
+              paidDate >= thirtyDaysAgo &&
+              paidDate <= currentDate &&
+              value.nameOfAction === "Сортировка"
+            );
+          })
+          .reduce((acc, value) => acc + value.purchaseOfGoods, 0);
+      }
     }
   }
+
   return amountToPaid;
 }
 
@@ -134,6 +157,15 @@ function getNumber(phoneNumberData: string) {
   return phoneNumberData.slice(-4);
 }
 
+function roundToNearestTen(num: number): number {
+  const lastDigit = num % 10;
+  if (lastDigit >= 5) {
+    return Math.ceil(num / 10) * 10;
+  } else {
+    return Math.floor(num / 10) * 10;
+  }
+}
+
 let value = ref("");
 </script>
 
@@ -160,7 +192,7 @@ let value = ref("");
           <h1 class="text-xl" v-if="!link.startsWith('3')">
             Оставшаяся сумма к оплате:
             <span class="font-bold">
-              {{ Math.ceil(getAmountToBePaid("NONE") / 10) * 10 }} руб.</span
+              {{ roundToNearestTen(getAmountToBePaid("NONE")) }} руб.</span
             >
           </h1>
           <h1 class="text-xl" v-if="link.startsWith('3')">
@@ -170,7 +202,7 @@ let value = ref("");
           <h1 class="text-xl" v-if="!link.startsWith('3')">
             Сумма к оплате на выдачу:
             <span class="font-bold"
-              >{{ Math.ceil(getAmountToBePaid("PVZ") / 10) * 10 }} руб.</span
+              >{{ roundToNearestTen(getAmountToBePaid("PVZ")) }} руб.</span
             >
           </h1>
           <div
@@ -210,6 +242,6 @@ let value = ref("");
     </div>
   </div>
   <div v-else class="flex items-center justify-center">
-      <UISpinner />
+    <UISpinner />
   </div>
 </template>

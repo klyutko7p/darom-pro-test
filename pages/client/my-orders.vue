@@ -14,29 +14,44 @@ let rows = ref<Array<any>>([]);
 let copyRowsOurRansom = ref<Array<IOurRansom>>();
 let copyRowsClientRansom = ref<Array<IClientRansom>>();
 
-function getAmountToBePaid(flag: string, flagRansom: number) {
+function getAmountToBePaid(flag: string, flagRansom: number): number {
   let amountToPaid = 0;
-  if (flagRansom === 1) {
-    if (rowsOurRansom.value && flag === "NONE") {
-      amountToPaid = rowsOurRansom.value
-        .filter((value) => !value.issued && value.deleted === null)
-        .reduce((acc, value) => acc + Math.ceil(value.amountFromClient1 / 10) * 10, 0);
-    } else if (rowsOurRansom.value && flag === "PVZ") {
-      amountToPaid = rowsOurRansom.value
-        .filter((value) => value.deliveredPVZ && !value.issued && value.deleted === null)
-        .reduce((acc, value) => acc + Math.ceil(value.amountFromClient1 / 10) * 10, 0);
-    }
-  } else if (flagRansom === 2) {
-    if (rowsClientRansom.value && flag === "NONE") {
-      amountToPaid = rowsClientRansom.value
-        .filter((value) => !value.issued && value.deleted === null)
-        .reduce((acc, value) => acc + Math.ceil(value.amountFromClient2 / 10) * 10, 0);
-    } else if (rowsClientRansom.value && flag === "PVZ") {
-      amountToPaid = rowsClientRansom.value
-        .filter((value) => value.deliveredPVZ && !value.issued && value.deleted === null)
-        .reduce((acc, value) => acc + Math.ceil(value.amountFromClient2 / 10) * 10, 0);
-    }
+
+  const shouldRound = (value: any) => {
+    const createdDate = new Date(value.created_at);
+    const referenceDate = new Date("2024-06-05T00:00:01");
+    return createdDate > referenceDate;
+  };
+
+  const roundOrCeil = (num: number) => {
+    const lastDigit = num % 10;
+    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 100;
+  };
+
+  if (rows) {
+    rows.value.forEach((value: any) => {
+      if (value.created_at) {
+        const roundFunction = shouldRound(value) ? roundOrCeil : Math.ceil;
+        switch (flag) {
+          case "NONE":
+            if (!value.issued && value.deleted === null) {
+              amountToPaid += roundFunction(
+                flagRansom === 1 ? value.amountFromClient1 : value.amountFromClient2
+              );
+            }
+            break;
+          case "PVZ":
+            if (value.deliveredPVZ && !value.issued && value.deleted === null) {
+              amountToPaid += roundFunction(
+                flagRansom === 1 ? value.amountFromClient1 : value.amountFromClient2
+              );
+            }
+            break;
+        }
+      }
+    });
   }
+
   return amountToPaid;
 }
 
@@ -64,7 +79,7 @@ let cell = ref("");
 
 onBeforeMount(async () => {
   if (!token) {
-    router.push('/auth/client/login')
+    router.push("/auth/client/login");
   }
 
   isLoading.value = true;
@@ -104,6 +119,15 @@ definePageMeta({
   layout: "client",
 });
 
+function roundToNearestTen(num: number): number {
+  const lastDigit = num % 10;
+  if (lastDigit >= 5) {
+    return Math.ceil(num / 10) * 10;
+  } else {
+    return Math.floor(num / 10) * 10;
+  }
+}
+
 const token = Cookies.get("token");
 let value = ref("");
 </script>
@@ -114,7 +138,9 @@ let value = ref("");
   </Head>
   <div v-if="!isLoading">
     <div v-if="token" class="mt-10">
-      <div class="flex items-center justify-between max-sm:flex-col-reverse max-sm:items-start">
+      <div
+        class="flex items-center justify-between max-sm:flex-col-reverse max-sm:items-start"
+      >
         <div class="max-lg:p-3">
           <div class="mb-5 flex items-center gap-3">
             <h1 class="text-xl">
@@ -126,8 +152,8 @@ let value = ref("");
             Оставшаяся сумма к оплате:
             <span class="font-bold">
               {{
-                Math.ceil(getAmountToBePaid("NONE", 1) / 10) * 10 +
-                Math.ceil(getAmountToBePaid("NONE", 2) / 10) * 10
+                roundToNearestTen(getAmountToBePaid("NONE", 1)) +
+                roundToNearestTen(getAmountToBePaid("NONE", 2))
               }}
               руб.</span
             >
@@ -136,8 +162,8 @@ let value = ref("");
             Сумма к оплате на выдачу:
             <span class="font-bold"
               >{{
-                Math.ceil(getAmountToBePaid("PVZ", 1) / 10) * 10 +
-                Math.ceil(getAmountToBePaid("PVZ", 2) / 10) * 10
+                roundToNearestTen(getAmountToBePaid("PVZ", 1)) +
+                roundToNearestTen(getAmountToBePaid("PVZ", 2))
               }}
               руб.</span
             >

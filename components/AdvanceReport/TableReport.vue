@@ -396,6 +396,15 @@ function updateCurrentPageData() {
   getTotal();
 }
 
+function roundToNearestTen(num: number): number {
+  const lastDigit = num % 10;
+  if (lastDigit >= 5) {
+    return Math.ceil(num / 10) * 10;
+  } else {
+    return Math.floor(num / 10) * 10;
+  }
+}
+
 function getTotal() {
   let array;
   array = props.rows;
@@ -464,8 +473,13 @@ function getTotal() {
     if (!isNaN(receiptsByPVZTotal[row.dispatchPVZ])) {
       let profit;
       if (!row.prepayment && row.profit1 !== 0) {
-        profit =
-          Math.ceil(row.amountFromClient1 / 10) * 10 - row.priceSite + row.deliveredKGT;
+        if (new Date(row.created_at) < new Date("2024-06-05T00:00:01")) {
+          profit =
+            Math.ceil(row.amountFromClient1 / 10) * 10 - row.priceSite + row.deliveredKGT;
+        } else {
+          profit =
+            roundToNearestTen(row.amountFromClient1) - row.priceSite + row.deliveredKGT;
+        }
       } else {
         profit = (row.priceSite * row.percentClient) / 100 + row.deliveredKGT;
       }
