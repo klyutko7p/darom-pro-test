@@ -27,11 +27,15 @@ function getAmountToBePaid(flag: string): number {
     return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 100;
   };
 
+  const ceilMath = (num: number) => {
+    return Math.ceil(num / 10) * 10
+  };
+
   rows.value.forEach((value: any) => {
     if (value.created_at) {
-      const roundFunction = shouldRound(value) ? roundOrCeil : Math.ceil;
+      const roundFunction = shouldRound(value) ? roundOrCeil : ceilMath;
       switch (flag) {
-        case "NONE":
+        case "NONE1":
           if (!value.issued && value.deleted === null) {
             amountToPaid += roundFunction(value.amountFromClient1);
           }
@@ -208,7 +212,7 @@ let value = ref("");
           <h1 class="text-xl" v-if="!link.startsWith('3') && !link.startsWith('2')">
             Сумма к оплате на выдачу:
             <span class="font-bold"
-              >{{ roundToNearestTen(getAmountToBePaid("PVZ1")) }} руб.</span
+              >{{ getAmountToBePaid("PVZ1") }} руб.</span
             >
           </h1>
           <h1 class="text-xl" v-if="!link.startsWith('3') && !link.startsWith('1')">
