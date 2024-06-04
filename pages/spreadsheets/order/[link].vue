@@ -36,22 +36,22 @@ function getAmountToBePaid(flag: string): number {
             amountToPaid += roundFunction(value.amountFromClient1);
           }
           break;
-        case "PVZ":
+        case "PVZ1":
           if (value.deliveredPVZ && !value.issued && value.deleted === null) {
             amountToPaid += roundFunction(value.amountFromClient1);
           }
           break;
-        case "NONE":
+        case "NONE2":
           if (!value.issued && value.deleted === null) {
             amountToPaid += roundFunction(value.amountFromClient2);
           }
           break;
-        case "PVZ":
+        case "PVZ2":
           if (value.deliveredPVZ && !value.issued && value.deleted === null) {
             amountToPaid += roundFunction(value.amountFromClient2);
           }
           break;
-        case "NONE":
+        case "NONE3":
           if (!value.paid && value.deleted === null) {
             amountToPaid += value.amountFromClient3;
           }
@@ -189,20 +189,32 @@ let value = ref("");
             </h1>
             <Icon name="material-symbols:contact-phone-rounded" size="24" />
           </div>
-          <h1 class="text-xl" v-if="!link.startsWith('3')">
+          <h1 class="text-xl" v-if="!link.startsWith('3') && !link.startsWith('2')">
             Оставшаяся сумма к оплате:
             <span class="font-bold">
-              {{ roundToNearestTen(getAmountToBePaid("NONE")) }} руб.</span
+              {{ roundToNearestTen(getAmountToBePaid("NONE1")) }} руб.</span
+            >
+          </h1>
+          <h1 class="text-xl" v-if="!link.startsWith('3') && !link.startsWith('1')">
+            Оставшаяся сумма к оплате:
+            <span class="font-bold">
+              {{ roundToNearestTen(getAmountToBePaid("NONE2")) }} руб.</span
             >
           </h1>
           <h1 class="text-xl" v-if="link.startsWith('3')">
             Оставшаяся сумма к оплате:
-            <span class="font-bold">{{ getAmountToBePaid("NONE") }} руб.</span>
+            <span class="font-bold">{{ getAmountToBePaid("NONE3") }} руб.</span>
           </h1>
-          <h1 class="text-xl" v-if="!link.startsWith('3')">
+          <h1 class="text-xl" v-if="!link.startsWith('3') && !link.startsWith('2')">
             Сумма к оплате на выдачу:
             <span class="font-bold"
-              >{{ roundToNearestTen(getAmountToBePaid("PVZ")) }} руб.</span
+              >{{ roundToNearestTen(getAmountToBePaid("PVZ1")) }} руб.</span
+            >
+          </h1>
+          <h1 class="text-xl" v-if="!link.startsWith('3') && !link.startsWith('1')">
+            Сумма к оплате на выдачу:
+            <span class="font-bold"
+              >{{ roundToNearestTen(getAmountToBePaid("PVZ2")) }} руб.</span
             >
           </h1>
           <div
