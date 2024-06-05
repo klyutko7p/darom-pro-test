@@ -473,13 +473,12 @@ function reduceArray(array: any, flag: string) {
   }
 }
 
-function reduceArrayProfit(array: any[], flag: string): number {
-  let totalProfit = 0;
-
-  const shouldRound = (value: any) => {
-    const createdDate = new Date(value.created_at);
-    const referenceDate = new Date("2024-06-05T00:00:01");
-    return createdDate > referenceDate;
+function reduceArrayProfit(array: any[], flag: string) {
+  const filterArray = (array: any[], dateCondition?: Date) => {
+    return array.filter((row: any) => 
+      row.additionally !== "Отказ брак" && 
+      (!dateCondition || new Date(row.issued) >= dateCondition)
+    );
   };
 
   const roundOrCeil = (num: number) => {
@@ -487,27 +486,82 @@ function reduceArrayProfit(array: any[], flag: string): number {
     return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
   };
 
-  array.forEach((row: any) => {
-    if (row.additionally !== "Отказ брак") {
-      const roundFunction = shouldRound(row) ? roundOrCeil : Math.ceil;
-      switch (flag) {
-        case "OurRansom":
-          let amount = roundFunction(row.amountFromClient1) * 0.025;
-          let prepayment = row.prepayment ? row.prepayment * 0.035 : 0;
-          totalProfit += amount + prepayment;
-          break;
-        case "ClientRansom":
-          totalProfit += row.amountFromClient2 * 0.025;
-          break;
-        default:
-          totalProfit += row.amountFromClient2 * 0.025;
-          break;
-      }
-    }
-  });
+  const calculateAmount = (array: any[], clientField: string, rate: number) => {
+    const thresholdDate = new Date("2024-06-05 00:00:01");
+    return array.reduce((total: number, row: any) => {
+      const createdAt = new Date(row.created_at);
+      const amount = row[clientField];
+      const adjustedAmount = createdAt > thresholdDate ? roundOrCeil(amount) : Math.ceil(amount / 10) * 10;
+      return total + adjustedAmount * rate;
+    }, 0);
+  };
 
-  return totalProfit;
+  const calculatePrepayment = (array: any[], rate: number) => {
+    return array.reduce((total: number, row: any) => {
+      const prepayment = row.prepayment || 0;
+      return total + prepayment * rate;
+    }, 0);
+  };
+
+  if (flag === "OurRansom") {
+    const rate = user.value.PVZ.includes("ПВЗ_1") ? 0.035 : 0.025;
+    const dateCondition = user.value.PVZ.includes("ПВЗ_1") ? new Date("2024-04-01") : undefined;
+
+    const filteredArray = filterArray(array, dateCondition);
+    const amount = calculateAmount(filteredArray, "amountFromClient1", rate);
+    const prepayment = calculatePrepayment(filteredArray, 0.035);
+
+    return amount + prepayment;
+  } else if (flag === "ClientRansom") {
+    const filteredArray = filterArray(array);
+    const amount = calculateAmount(filteredArray, "amountFromClient2", 0.025);
+    return amount;
+  } else {
+    const amount = calculateAmount(array, "amountFromClient2", 0.025);
+    return amount;
+  }
 }
+
+
+// function reduceArrayProfit(array: any[], flag: string): number {
+//   let totalProfit = 0;
+
+//   const shouldRound = (value: any) => {
+//     const createdDate = new Date(value.created_at);
+//     const referenceDate = new Date("2024-06-05T00:00:01");
+//     return createdDate > referenceDate;
+//   };
+
+//   const roundOrCeil = (num: number) => {
+//     const lastDigit = num % 10;
+//     return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
+//   };
+
+//   const ceilMath = (num: number) => {
+//     return Math.ceil(num / 10) * 10;
+//   };
+
+//   array.forEach((row: any) => {
+//     if (row.additionally !== "Отказ брак") {
+//       const roundFunction = shouldRound(row) ? roundOrCeil : ceilMath;
+//       switch (flag) {
+//         case "OurRansom":
+//           let amount = roundFunction(row.amountFromClient1) * 0.025;
+//           let prepayment = row.prepayment ? row.prepayment * 0.035 : 0;
+//           totalProfit += amount + prepayment;
+//           break;
+//         case "ClientRansom":
+//           totalProfit += row.amountFromClient2 * 0.025;
+//           break;
+//         default:
+//           totalProfit += row.amountFromClient2 * 0.025;
+//           break;
+//       }
+//     }
+//   });
+
+//   return totalProfit;
+// }
 
 function getAllSum() {
   let newStartingDate = new Date(startingDate.value);
