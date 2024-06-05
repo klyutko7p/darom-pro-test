@@ -25,7 +25,7 @@ function getAmountToBePaid(flag: string, flagRansom: number): number {
 
   const roundOrCeil = (num: number) => {
     const lastDigit = num % 10;
-    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 100;
+    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
   };
 
   if (rows) {

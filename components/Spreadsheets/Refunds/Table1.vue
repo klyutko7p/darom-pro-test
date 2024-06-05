@@ -74,7 +74,7 @@ const handleCheckboxChange = (row: IOurRansom): void => {
 
     const roundOrCeil = (num: number) => {
       const lastDigit = num % 10;
-      return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 100;
+      return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
     };
 
     const roundFunction = shouldRound(row) ? roundOrCeil : ceilNumber;

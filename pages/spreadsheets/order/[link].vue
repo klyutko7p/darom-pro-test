@@ -24,7 +24,7 @@ function getAmountToBePaid(flag: string): number {
 
   const roundOrCeil = (num: number) => {
     const lastDigit = num % 10;
-    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 100;
+    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
   };
 
   const ceilMath = (num: number) => {
@@ -37,6 +37,7 @@ function getAmountToBePaid(flag: string): number {
       switch (flag) {
         case "NONE1":
           if (!value.issued && value.deleted === null) {
+            console.log(roundFunction(value.amountFromClient1));
             amountToPaid += roundFunction(value.amountFromClient1);
           }
           break;
@@ -196,13 +197,13 @@ let value = ref("");
           <h1 class="text-xl" v-if="!link.startsWith('3') && !link.startsWith('2')">
             Оставшаяся сумма к оплате:
             <span class="font-bold">
-              {{ roundToNearestTen(getAmountToBePaid("NONE1")) }} руб.</span
+              {{ getAmountToBePaid("NONE1") }} руб.</span
             >
           </h1>
           <h1 class="text-xl" v-if="!link.startsWith('3') && !link.startsWith('1')">
             Оставшаяся сумма к оплате:
             <span class="font-bold">
-              {{ roundToNearestTen(getAmountToBePaid("NONE2")) }} руб.</span
+              {{ getAmountToBePaid("NONE2") }} руб.</span
             >
           </h1>
           <h1 class="text-xl" v-if="link.startsWith('3')">

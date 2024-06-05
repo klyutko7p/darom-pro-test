@@ -1060,13 +1060,13 @@ function isDateGreaterThanReference(dateString: string | Date): boolean {
           </td>
           <td
             class="border-2"
-            v-if="user.amountFromClient1 === 'READ' || user.amountFromClient1 === 'WRITE' && !isDateGreaterThanReference(row.created_at)"
+            v-if="(user.amountFromClient1 === 'READ' || user.amountFromClient1 === 'WRITE') && !isDateGreaterThanReference(row.created_at)"
           >
             {{ Math.ceil(row.amountFromClient1 / 10) * 10 }}
           </td>
           <td
             class="border-2"
-            v-if="user.amountFromClient1 === 'READ' || user.amountFromClient1 === 'WRITE' && isDateGreaterThanReference(row.created_at)"
+            v-if="(user.amountFromClient1 === 'READ' || user.amountFromClient1 === 'WRITE') && isDateGreaterThanReference(row.created_at)"
           >
             {{ roundToNearestTen(row.amountFromClient1) }}
           </td>

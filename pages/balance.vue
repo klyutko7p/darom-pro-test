@@ -150,7 +150,7 @@ function calculateValue(curValue: any) {
 
     const roundOrCeil = (num: number) => {
       const lastDigit = num % 10;
-      return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 100;
+      return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
     };
 
     if (!shouldRound(curValue)) {
@@ -484,7 +484,7 @@ function reduceArrayProfit(array: any[], flag: string): number {
 
   const roundOrCeil = (num: number) => {
     const lastDigit = num % 10;
-    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 100;
+    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
   };
 
   array.forEach((row: any) => {
@@ -1185,7 +1185,7 @@ function reduceArrayProfitManager(array: any[], flag: string): number {
 
   const roundOrCeil = (num: number) => {
     const lastDigit = num % 10;
-    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 100;
+    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
   };
 
   array.forEach((row: any) => {
