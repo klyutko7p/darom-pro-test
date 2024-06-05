@@ -14,7 +14,7 @@ let rows = ref<Array<any>>([]);
 let copyRowsOurRansom = ref<Array<IOurRansom>>();
 let copyRowsClientRansom = ref<Array<IClientRansom>>();
 
-function getAmountToBePaid(flag: string, flagRansom: number): number {
+  function getAmountToBePaid(flag: string): number {
   let amountToPaid = 0;
 
   const shouldRound = (value: any) => {
@@ -28,29 +28,58 @@ function getAmountToBePaid(flag: string, flagRansom: number): number {
     return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
   };
 
-  if (rows) {
-    rows.value.forEach((value: any) => {
-      if (value.created_at) {
-        const roundFunction = shouldRound(value) ? roundOrCeil : Math.ceil;
-        switch (flag) {
-          case "NONE":
-            if (!value.issued && value.deleted === null) {
-              amountToPaid += roundFunction(
-                flagRansom === 1 ? value.amountFromClient1 : value.amountFromClient2
-              );
+  const ceilMath = (num: number) => {
+    return Math.ceil(num / 10) * 10
+  };
+
+  rows.value.forEach((value: any) => {
+    if (value.created_at) {
+      const roundFunction = shouldRound(value) ? roundOrCeil : ceilMath;
+      switch (flag) {
+        case "NONE1":
+          if (!value.issued && value.deleted === null) {
+            if (!value.amountFromClient1) {
+              amountToPaid += 0;
+            } else {
+              amountToPaid += roundFunction(value.amountFromClient1);
             }
-            break;
-          case "PVZ":
-            if (value.deliveredPVZ && !value.issued && value.deleted === null) {
-              amountToPaid += roundFunction(
-                flagRansom === 1 ? value.amountFromClient1 : value.amountFromClient2
-              );
+          }
+          break;
+        case "PVZ1":
+          if (value.deliveredPVZ && !value.issued && value.deleted === null) {
+            if (!value.amountFromClient1) {
+              amountToPaid += 0;
+            } else {
+              amountToPaid += roundFunction(value.amountFromClient1);
             }
-            break;
-        }
+          }
+          break;
+        case "NONE2":
+          if (!value.issued && value.deleted === null) {
+            if (!value.amountFromClient2) {
+              amountToPaid += 0;
+            } else {
+              amountToPaid += roundFunction(value.amountFromClient2);
+            }
+          }
+          break;
+        case "PVZ2":
+          if (value.deliveredPVZ && !value.issued && value.deleted === null) {
+            if (!value.amountFromClient2) {
+              amountToPaid += 0;
+            } else {
+              amountToPaid += roundFunction(value.amountFromClient2);
+            }
+          }
+          break;
+        case "NONE3":
+          if (!value.paid && value.deleted === null) {
+            amountToPaid += value.amountFromClient3;
+          }
+          break;
       }
-    });
-  }
+    }
+  });
 
   return amountToPaid;
 }
@@ -152,8 +181,8 @@ let value = ref("");
             Оставшаяся сумма к оплате:
             <span class="font-bold">
               {{
-                roundToNearestTen(getAmountToBePaid("NONE", 1)) +
-                roundToNearestTen(getAmountToBePaid("NONE", 2))
+                getAmountToBePaid("NONE1") +
+                getAmountToBePaid("NONE2")
               }}
               руб.</span
             >
@@ -162,8 +191,8 @@ let value = ref("");
             Сумма к оплате на выдачу:
             <span class="font-bold"
               >{{
-                roundToNearestTen(getAmountToBePaid("PVZ", 1)) +
-                roundToNearestTen(getAmountToBePaid("PVZ", 2))
+                getAmountToBePaid("PVZ1") +
+                getAmountToBePaid("PVZ2")
               }}
               руб.</span
             >

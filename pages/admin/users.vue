@@ -169,7 +169,6 @@ definePageMeta({
                 class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
                 v-model="userData.username" type="text" />
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="role">Роль</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.role">
@@ -186,14 +185,12 @@ definePageMeta({
                 <option value="OFFICE">OFFICE</option>
               </select>
             </div>
-            
             <div class="flex items-center justify-centers gap-3 mb-5 flex-wrap text-center max-sm:flex-col">
               <label v-for="(pvzData, index) in pvz" :key="index">
                 <input type="checkbox" :value="pvzData.name" v-model="userData.PVZ" />
                 {{ pvzData.name }}
               </label>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Сортировочный центр</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.visibleSC">
@@ -201,7 +198,6 @@ definePageMeta({
                 <option v-for="sortingCenter in sortingCenters" :value="sortingCenter.name">{{ sortingCenter.name }}</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">ПВЗ</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.visiblePVZ">
@@ -209,7 +205,6 @@ definePageMeta({
                 <option v-for="valueData in pvz" :value="valueData.name">{{ valueData.name }}</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Ячейка <br />
                 (Наш выкуп)</label>
@@ -219,7 +214,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Ячейка <br />
                 (Выкуп клиента)</label>
@@ -229,7 +223,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Дополнительно <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.additionally1">
@@ -238,7 +231,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Дополнительно <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.additionally2">
@@ -247,7 +239,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Дополнительно <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.additionally3">
@@ -256,7 +247,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Доставлено на СЦ <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredSC1">
@@ -265,7 +255,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Доставлено на СЦ <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredSC2">
@@ -274,7 +263,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Доставлено на ПВЗ <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredPVZ1">
@@ -283,7 +271,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Доставлено на ПВЗ <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredPVZ2">
@@ -292,7 +279,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Дополнительный доход<br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredKGT1">
@@ -301,7 +287,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Дополнительный доход<br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredKGT2">
@@ -310,7 +295,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Отправка в ПВЗ <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dispatchPVZ1">
@@ -319,7 +303,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Отправка в ПВЗ <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dispatchPVZ2">
@@ -328,7 +311,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Отправка в ПВЗ <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dispatchPVZ3">
@@ -337,7 +319,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Отсортировано <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.sorted">
@@ -346,7 +327,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Оплачено <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.paid">
@@ -355,7 +335,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Имя <br> (Доставка)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.name3">
@@ -364,7 +343,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Телефон <br> (Наш выкуп)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.fromName1">
@@ -373,7 +351,6 @@ definePageMeta({
                 <option value="WRITE">Редактировать</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 mb-5">
               <label for="cell">Телефон <br> (Выкуп клиента)</label>
               <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.fromName2">
