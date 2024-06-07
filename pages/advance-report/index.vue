@@ -1021,12 +1021,16 @@ function checkExpenditure() {
   if (rowData.value.expenditure) {
     rowData.value.expenditure = rowData.value.expenditure.replace(",", ".");
     rowData.value.expenditure = rowData.value.expenditure.replace(/(?!^-)[^0-9.]/g, "");
-    if (rowData.value.expenditure.indexOf('-') > 0) {
-      rowData.value.expenditure = rowData.value.expenditure.replace('-', '');
+    if (rowData.value.expenditure.indexOf("-") > 0) {
+      rowData.value.expenditure = rowData.value.expenditure.replace("-", "");
     }
   }
 }
 
+function closeAdvanceReportEmployee() {
+  showBalanceEmployees.value = !showBalanceEmployees.value;
+  selectedUser.value = "Директор";
+}
 </script>
 
 <template>
@@ -1105,7 +1109,10 @@ function checkExpenditure() {
             </div>
           </div>
 
-          <div class="flex justify-end my-3" v-if="user.role === 'ADMIN' && user.username !== 'Горцуева'">
+          <div
+            class="flex justify-end my-3"
+            v-if="user.role === 'ADMIN' && user.username !== 'Горцуева'"
+          >
             <h1
               @click="router.push('/advance-report/summary-tables')"
               class="underline text-secondary-color font-bold cursor-pointer hover:opacity-50 duration-200"
@@ -1189,7 +1196,7 @@ function checkExpenditure() {
             <div class="flex items-center gap-3 mb-5">
               <h1 class="font-bold text-xl">Проверить баланс сотрудника</h1>
               <Icon
-                @click="showBalanceEmployees = !showBalanceEmployees"
+                @click="closeAdvanceReportEmployee"
                 name="clarity:employee-group-line"
                 size="24"
                 class="text-secondary-color hover:opacity-50 cursor-pointer duration-200"
@@ -1691,7 +1698,10 @@ function checkExpenditure() {
             </UIMainButton>
           </div>
 
-          <div class="flex justify-end my-3" v-if="user.role === 'ADMIN' && user.username !== 'Горцуева'">
+          <div
+            class="flex justify-end my-3"
+            v-if="user.role === 'ADMIN' && user.username !== 'Горцуева'"
+          >
             <h1
               @click="router.push('/advance-report/summary-tables')"
               class="underline text-secondary-color font-bold cursor-pointer hover:opacity-50 duration-200"

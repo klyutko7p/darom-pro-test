@@ -4,12 +4,24 @@ import { YandexMap } from "vue-yandex-maps";
 const router = useRouter();
 
 const coordinates = ref([47.98958366983051, 37.8955255423278]);
-const controls = [];
+const controls = [
+  "geolocationControl",
+  "zoomControl",
+  "typeSelector",
+];
 
 let selectedAddress = ref([47.98958366983051, 37.8955255423278]);
 function changeAddress() {
   coordinates.value = selectedAddress.value;
 }
+
+let markers = [
+  [47.98958366983051, 37.8955255423278],
+  [47.945142, 37.960908],
+  [47.955462, 37.964951],
+  [47.946192, 37.90365],
+  [47.960663, 37.883761],
+];
 
 // onBeforeMount(() => {
 //   if (window.matchMedia("(display-mode: standalone)").matches) {
@@ -134,8 +146,14 @@ definePageMeta({
                 v-if="true"
                 :coordinates="coordinates"
                 :controls="controls"
-                :zoom="18"
+                :zoom="10"
               >
+                <YandexMarker
+                  v-for="marker in markers"
+                  :coordinates="marker"
+                  :marker-id="marker"
+                >
+                </YandexMarker>
               </YandexMap>
             </ClientOnly>
           </div>
