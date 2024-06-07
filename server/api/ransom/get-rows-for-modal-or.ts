@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import * as msgpack from '@msgpack/msgpack';
 
 const prisma = new PrismaClient();
 
@@ -17,7 +18,9 @@ export default defineEventHandler(async (event) => {
         created_at: "desc",
       },
     });
-    return rows;
+
+    const packed = msgpack.encode(rows);
+    return packed;
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);

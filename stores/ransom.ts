@@ -204,13 +204,16 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getRansomRowsOurRansom() {
     try {
-      let { data }: any = await useFetch("/api/ransom/get-rows-or", {
+      let response = await fetch("/api/ransom/get-rows-or", {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/octet-stream",
         },
       });
-      return data.value;
+  
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      return unpacked;
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -351,13 +354,16 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getRansomRowsForModalOurRansom() {
     try {
-      let { data }: any = await useFetch("/api/ransom/get-rows-for-modal-or", {
+      let response = await fetch("/api/ransom/get-rows-for-modal-or", {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/octet-stream",
         },
       });
-      return data.value;
+  
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      return unpacked;
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -462,16 +468,16 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getRansomRowsWithDeletedForCellsOurRansom() {
     try {
-      let { data }: any = await useFetch(
-        "/api/ransom/get-rows-with-deleted-for-cells-or",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      return data.value;
+      let response = await fetch("/api/ransom/get-rows-with-deleted-for-cells-or", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      });
+  
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      return unpacked;
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
