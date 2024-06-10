@@ -152,7 +152,7 @@ const currentTime = new Date();
 const hours = currentTime.getHours();
 const minutes = currentTime.getMinutes();
 
-const isDisabled = hours >= 12 && hours < 24 && minutes >= 1;
+const isDisabled = hours >= 18 && hours < 24 && minutes >= 1;
 let pvzData = ref("");
 let isShowModal = ref(false);
 </script>
@@ -213,7 +213,7 @@ let isShowModal = ref(false);
             *штрих-код обновляется каждые 24 часа
           </h1>
           <h1 class="text-base text-secondary-color text-center font-bold">
-            **прикрепить скриншот можно с 00:00 до 12:00 ежедневно
+            **прикрепить скриншот можно с 00:00 до 18:00 ежедневно
           </h1>
         </div>
       </div>
