@@ -19,11 +19,9 @@ export default defineEventHandler(async (event) => {
                 name: pvz.name,
             },
         })
-
     } catch (error) {
         if (error instanceof Error) {
             return { error: error.message };
         }
     }
-
 });

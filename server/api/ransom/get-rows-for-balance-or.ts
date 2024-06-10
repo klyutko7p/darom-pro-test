@@ -22,29 +22,23 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    rows.forEach((row) => {
-      if (row.prepayment === 0) {
-        delete row.prepayment;
-      }
+    const processedRows = rows.map(row => {
+      const newRow = {};
 
-      if (row.deliveredKGT === 0) {
-        delete row.deliveredKGT;
-      }
+      if (row.dispatchPVZ !== undefined) newRow.dp = row.dispatchPVZ;
+      if (row.prepayment !== 0) newRow.pp = row.prepayment;
+      if (row.additionally !== null) newRow.ad = row.additionally;
+      if (row.deliveredKGT !== 0) newRow.dk = row.deliveredKGT;
+      if (row.amountFromClient1 !== undefined) newRow.ac = row.amountFromClient1;
+      if (row.issued !== null) newRow.is = row.issued;
+      if (row.priceSite !== undefined) newRow.ps = row.priceSite;
+      if (row.deleted !== null) newRow.del = row.deleted;
+      if (row.created_at !== undefined) newRow.ca = row.created_at;
 
-      if (row.additionally === null) {
-        delete row.additionally;
-      }
-
-      if (row.issued === null) {
-        delete row.issued;
-      }
-
-      if (row.deleted === null) {
-        delete row.deleted;
-      }
-
+      return newRow;
     });
-    const packed = msgpack.encode(rows);
+
+    const packed = msgpack.encode(processedRows);
     return packed;
   } catch (error) {
     console.error(error.message);

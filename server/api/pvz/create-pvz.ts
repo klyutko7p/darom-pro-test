@@ -10,7 +10,6 @@ interface IRequestBody {
 export default defineEventHandler(async (event) => {
     try {
         const { name } = await readBody<IRequestBody>(event);
-
         const pvz = await prisma.pVZ.create({
             data: {
                 name: name,
@@ -21,5 +20,4 @@ export default defineEventHandler(async (event) => {
             return { error: error.message };
         }
     }
-
 });

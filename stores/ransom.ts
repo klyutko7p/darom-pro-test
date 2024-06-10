@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
 import crypto from "crypto-js";
-import * as msgpack from '@msgpack/msgpack';
+import * as msgpack from "@msgpack/msgpack";
 const toast = useToast();
 
 function generateLink(phoneNumber: string, flag: string) {
@@ -210,7 +210,7 @@ export const useRansomStore = defineStore("ransom", () => {
           "Content-Type": "application/octet-stream",
         },
       });
-  
+
       const arrayBuffer = await response.arrayBuffer();
       const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
       return unpacked;
@@ -360,7 +360,7 @@ export const useRansomStore = defineStore("ransom", () => {
           "Content-Type": "application/octet-stream",
         },
       });
-  
+
       const arrayBuffer = await response.arrayBuffer();
       const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
       return unpacked;
@@ -379,17 +379,32 @@ export const useRansomStore = defineStore("ransom", () => {
           "Content-Type": "application/octet-stream",
         },
       });
-  
+
       const arrayBuffer = await response.arrayBuffer();
       const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
-      return unpacked;
+      return unpacked.map(mapBackToOriginalFields);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
       }
     }
   }
-  
+
+  function mapBackToOriginalFields(row) {
+    const originalRow = {};
+
+    if (row.dp !== undefined) originalRow.dispatchPVZ = row.dp;
+    if (row.pp !== undefined) originalRow.prepayment = row.pp;
+    if (row.ad !== undefined) originalRow.additionally = row.ad;
+    if (row.dk !== undefined) originalRow.deliveredKGT = row.dk;
+    if (row.ac !== undefined) originalRow.amountFromClient1 = row.ac;
+    if (row.is !== undefined) originalRow.issued = row.is;
+    if (row.ps !== undefined) originalRow.priceSite = row.ps;
+    if (row.del !== undefined) originalRow.deleted = row.del;
+    if (row.ca !== undefined) originalRow.created_at = row.ca;
+
+    return originalRow;
+  }
 
   async function getRansomRowsForBalanceClientRansom() {
     try {
@@ -468,13 +483,16 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getRansomRowsWithDeletedForCellsOurRansom() {
     try {
-      let response = await fetch("/api/ransom/get-rows-with-deleted-for-cells-or", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/octet-stream",
-        },
-      });
-  
+      let response = await fetch(
+        "/api/ransom/get-rows-with-deleted-for-cells-or",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        }
+      );
+
       const arrayBuffer = await response.arrayBuffer();
       const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
       return unpacked;
@@ -878,16 +896,16 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getRansomRowsForAdvanceReportOurRansom() {
     try {
-      let { data }: any = await useFetch(
-        "/api/ransom/get-rows-for-advance-report-or",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      return data.value;
+      let response = await fetch("/api/ransom/get-rows-for-advance-report-or", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      return unpacked;
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

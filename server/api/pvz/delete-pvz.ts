@@ -16,11 +16,9 @@ export default defineEventHandler(async (event) => {
                 id: id,
             },
         })
-
     } catch (error) {
         if (error instanceof Error) {
             return { error: error.message };
         }
     }
-
 });

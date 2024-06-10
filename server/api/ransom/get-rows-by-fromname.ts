@@ -39,19 +39,6 @@ export default defineEventHandler(async (event) => {
             });
             return rows;
         }
-        // else if (flag === 'Delivery') {
-        //     const rows = await prisma.delivery.findMany({
-        //         where: {
-        //             clientLink3: link,
-        //             deleted: null,
-        //         },
-        //         orderBy: {
-        //             created_at: 'desc',   
-        //         }
-        //     });
-        //     return rows;
-        // }
-
     } catch (error) {
         if (error instanceof Error) {
             return { error: error.message };

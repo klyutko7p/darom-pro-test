@@ -368,3 +368,413 @@ enum Role {
   SHVEDOVA
   OFFICE
 }
+
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
+// model User {
+//   id                Int             @id @default(autoincrement())
+//   username          String          @unique
+//   role              Role            @default(USER)
+//   password          String
+//   PVZ               PVZ[]           @relation("UserPVZ")
+//   created_at        DateTime        @default(now())
+//   visibleSC         String          @default("ВСЕ")
+//   visiblePVZ        String          @default("ВСЕ")
+//   cell1             String          @default("NONE")
+//   cell2             String          @default("NONE")
+//   additionally1     String          @default("NONE")
+//   additionally2     String          @default("NONE")
+//   additionally3     String          @default("NONE")
+//   deliveredSC1      String          @default("NONE")
+//   deliveredSC2      String          @default("NONE")
+//   deliveredPVZ1     String          @default("NONE")
+//   deliveredPVZ2     String          @default("NONE")
+//   deliveredKGT1     String          @default("NONE")
+//   deliveredKGT2     String          @default("NONE")
+//   dispatchPVZ1      String          @default("NONE")
+//   dispatchPVZ2      String          @default("NONE")
+//   dispatchPVZ3      String          @default("NONE")
+//   name1             String          @default("NONE")
+//   name2             String          @default("NONE")
+//   name3             String          @default("NONE")
+//   fromName1         String          @default("NONE")
+//   fromName2         String          @default("NONE")
+//   fromName3         String          @default("NONE")
+//   issued1           String          @default("NONE")
+//   issued2           String          @default("NONE")
+//   orderAccount      String          @default("NONE")
+//   orderPVZ1         String          @default("NONE")
+//   orderPVZ2         String          @default("NONE")
+//   orderPVZ3         String          @default("NONE")
+//   percentClient1    String          @default("NONE")
+//   percentClient2    String          @default("NONE")
+//   percentClient3    String          @default("NONE")
+//   notation1         String          @default("NONE")
+//   notation2         String          @default("NONE")
+//   priceProgram      String          @default("NONE")
+//   purchaseOfGoods   String          @default("NONE")
+//   sorted            String          @default("NONE")
+//   paid              String          @default("NONE")
+//   nameOfAction      String          @default("NONE")
+//   prepayment1       String          @default("NONE")
+//   prepayment2       String          @default("NONE")
+//   priceSite         String          @default("NONE")
+//   productLink1      String          @default("NONE")
+//   productLink2      String          @default("NONE")
+//   productName1      String          @default("NONE")
+//   productName2      String          @default("NONE")
+//   dataOurRansom     String          @default("NONE")
+//   dataClientRansom  String          @default("NONE")
+//   dataDelivery      String          @default("NONE")
+//   amountFromClient1 String          @default("NONE")
+//   amountFromClient2 String          @default("NONE")
+//   amountFromClient3 String          @default("NONE")
+//   clientLink1       String          @default("NONE")
+//   clientLink2       String          @default("NONE")
+//   clientLink3       String          @default("NONE")
+//   profit1           String          @default("NONE")
+//   profit2           String          @default("NONE")
+//   profit3           String          @default("NONE")
+//   OurRansoms        OurRansom[]
+//   ClientRansoms     ClientRansom[]
+//   Deliveries        Delivery[]
+//   Balance           Balance[]
+//   AdvanceReport     AdvanceReport[]
+//   ProfitPPVZ        ProfitPPVZ[]
+//   ProfitManager     ProfitManager[]
+//   YandexMarker      YandexMarker[]
+// }
+
+// model OurRansom {
+//   id                Int       @id @default(autoincrement())
+//   old_id            Int?      @unique
+//   clientLink1       String?
+//   cell              String?   @default("0")
+//   name              String?
+//   fromName          String?
+//   productLink       String?
+//   productName       String?
+//   notation          String?   @default("")
+//   priceSite         Int       @default(0)
+//   prepayment        Int       @default(0)
+//   percentClient     Float     @default(10)
+//   deliveredKGT      Int       @default(0)
+//   amountFromClient1 Int
+//   dispatchPVZ       String?
+//   orderPVZ          String?
+//   orderAccount      String?
+//   deliveredSC       DateTime?
+//   deliveredPVZ      DateTime?
+//   issued            DateTime?
+//   additionally      String?
+//   profit1           Int
+//   deleted           DateTime?
+//   created_at        DateTime  @default(now())
+//   updated_at        DateTime  @default(now()) @updatedAt
+//   createdUser       User      @relation(fields: [createdUserId], references: [id])
+//   createdUserId     Int
+//   updatedUserId     Int
+//   shipped           DateTime?
+//   shippedUser       String?
+//   verified          DateTime?
+//   verifiedUser      String?
+//   priceRefund       Int?      @default(0)
+// }
+
+// model ClientRansom {
+//   id                Int       @id @default(autoincrement())
+//   clientLink2       String
+//   cell              String    @default("0")
+//   name              String?
+//   fromName          String?
+//   productLink       String?
+//   productName       String
+//   priceProgram      Int       @default(0)
+//   prepayment        Int       @default(0)
+//   percentClient     Float     @default(10)
+//   deliveredKGT      Int       @default(0)
+//   amountFromClient2 Int
+//   dispatchPVZ       String?
+//   orderPVZ          String?
+//   deliveredSC       DateTime?
+//   deliveredPVZ      DateTime?
+//   issued            DateTime?
+//   additionally      String?
+//   profit2           Int
+//   deleted           DateTime?
+//   created_at        DateTime  @default(now())
+//   updated_at        DateTime  @default(now()) @updatedAt
+//   createdUserId     Int
+//   updatedUser       User      @relation(fields: [updatedUserId], references: [id])
+//   updatedUserId     Int
+//   img               String?
+// }
+
+// model Delivery {
+//   id                Int       @id @default(autoincrement())
+//   clientLink3       String
+//   name              String?
+//   fromName          String?
+//   nameOfAction      String?
+//   purchaseOfGoods   Int       @default(0)
+//   percentClient     Float     @default(2)
+//   amountFromClient3 Int
+//   dispatchPVZ       String?
+//   orderPVZ          String?
+//   sorted            DateTime?
+//   paid              DateTime?
+//   additionally      String?
+//   profit3           Int
+//   deleted           DateTime?
+//   created_at        DateTime  @default(now())
+//   updated_at        DateTime  @default(now()) @updatedAt
+//   createdUser       User      @relation(fields: [createdUserId], references: [id])
+//   createdUserId     Int
+//   updatedUserId     Int
+// }
+
+// model Balance {
+//   id             Int       @id @default(autoincrement())
+//   pvz            PVZ?      @relation(fields: [pvzId], references: [id])
+//   pvzId          Int?
+//   sum            String?
+//   issued         DateTime?
+//   received       DateTime?
+//   createdUserId  Int
+//   receivedUser   User      @relation(fields: [receivedUserId], references: [id])
+//   receivedUserId Int
+//   notation       String?
+//   receivedUser2  String?
+//   recipient      String?   @default("Нет")
+//   created_at     DateTime? @default(now())
+// }
+
+// model BalanceOnline {
+//   id  Int     @id @default(autoincrement())
+//   sum String?
+// }
+
+// model BalanceDelivery {
+//   id  Int     @id @default(autoincrement())
+//   sum String?
+// }
+
+// model PVZ {
+//   id            Int             @id @default(autoincrement())
+//   name          String
+//   user          User[]          @relation("UserPVZ")
+//   Balance       Balance[]
+//   PVZDeliveries PVZDelivery[]
+//   Cell          Cell[]
+//   CellClient    CellClient[]
+//   AdvanceReport AdvanceReport[]
+//   Employee      Employee[]
+//   Payroll       Payroll[]
+//   ProfitPPVZ    ProfitPPVZ[]
+//   ProfitManager ProfitManager[]
+// }
+
+// model SortingCenter {
+//   id                    Int                     @id @default(autoincrement())
+//   name                  String
+//   SortingCenterDelivery SortingCenterDelivery[]
+// }
+
+// model Marketplace {
+//   id   Int    @id @default(autoincrement())
+//   name String
+// }
+
+// model PVZDelivery {
+//   id      Int     @id @default(autoincrement())
+//   name    String
+//   address String?
+//   pvz     PVZ     @relation(fields: [pvzId], references: [id])
+//   pvzId   Int
+// }
+
+// model SortingCenterDelivery {
+//   id              Int           @id @default(autoincrement())
+//   name            String
+//   address         String?
+//   sortingCenter   SortingCenter @relation(fields: [sortingCenterId], references: [id])
+//   sortingCenterId Int
+// }
+
+// model OrderAccount {
+//   id   Int    @id @default(autoincrement())
+//   name String
+// }
+
+// model SumOfRejection {
+//   id    Int   @id @default(autoincrement())
+//   value Float
+// }
+
+// model Cell {
+//   id       Int     @id @default(autoincrement())
+//   name     String?
+//   status   String?
+//   fromName String?
+//   PVZ      PVZ     @relation(fields: [pvzId], references: [id])
+//   pvzId    Int
+// }
+
+// model CellClient {
+//   id       Int     @id @default(autoincrement())
+//   name     String?
+//   status   String?
+//   fromName String?
+//   PVZ      PVZ     @relation(fields: [pvzId], references: [id])
+//   pvzId    Int
+// }
+
+// model AdvanceReport {
+//   id                  Int       @id @default(autoincrement())
+//   PVZ                 PVZ?      @relation(fields: [pvzId], references: [id])
+//   pvzId               Int?
+//   date                DateTime?
+//   issuedUserId        Int?
+//   expenditure         String?
+//   typeOfExpenditure   String?
+//   notation            String?
+//   company             String?
+//   supportingDocuments String?
+//   type                String?
+//   createdUser         User      @relation(fields: [createdUserId], references: [id])
+//   createdUserId       Int
+//   received            DateTime?
+//   created_at          DateTime? @default(now())
+// }
+
+// model PhoneNumber {
+//   id      Int     @id @default(autoincrement())
+//   number  String?
+//   address String?
+// }
+
+// model Employee {
+//   id              Int     @id @default(autoincrement())
+//   PVZ             PVZ?    @relation(fields: [pvzId], references: [id])
+//   pvzId           Int?
+//   company         String?
+//   fullname        String?
+//   phone           String?
+//   bank            String?
+//   paymentPerShift Float?
+//   hoursPerShift   Float?
+// }
+
+// model Payroll {
+//   id                Int       @id @default(autoincrement())
+//   PVZ               PVZ?      @relation(fields: [pvzId], references: [id])
+//   pvzId             Int?
+//   company           String?
+//   fullname          String?
+//   phone             String?
+//   bank              String?
+//   paymentPerShift   Float?
+//   advance           Float?
+//   hours             Float?
+//   deductions        Float?
+//   additionalPayment Float?
+//   date              DateTime?
+//   notation          String?
+// }
+
+// model Client {
+//   id                 Int                  @id @default(autoincrement())
+//   fio                String?
+//   role               Role                 @default(CLIENT)
+//   password           String
+//   phoneNumber        String               @unique()
+//   balance            Int?
+//   created_at         DateTime             @default(now())
+//   ClientReferral     ClientReferral[]
+//   ClientDevicesToken ClientDevicesToken[]
+// }
+
+// model ClientReferral {
+//   id         Int      @id @default(autoincrement())
+//   referrer   Client   @relation(fields: [referrerId], references: [id])
+//   referrerId Int
+//   referred   String
+//   isAccrued  Boolean? @default(false)
+// }
+
+// model Task {
+//   id          Int       @id @default(autoincrement())
+//   description String?
+//   notation    String?
+//   done        DateTime?
+//   checked     DateTime?
+// }
+
+// model ProfitPPVZ {
+//   id             Int       @id @default(autoincrement())
+//   pvz            PVZ?      @relation(fields: [pvzId], references: [id])
+//   pvzId          Int?
+//   sum            String?
+//   issued         DateTime?
+//   received       DateTime?
+//   createdUserId  Int?
+//   receivedUser   User?     @relation(fields: [receivedUserId], references: [id])
+//   receivedUserId Int?
+//   notation       String?
+//   receivedUser2  String?
+//   recipient      String?   @default("Нет")
+// }
+
+// model ProfitManager {
+//   id             Int       @id @default(autoincrement())
+//   pvz            PVZ?      @relation(fields: [pvzId], references: [id])
+//   pvzId          Int?
+//   sum            String?
+//   issued         DateTime?
+//   received       DateTime?
+//   createdUserId  Int?
+//   receivedUser   User?     @relation(fields: [receivedUserId], references: [id])
+//   receivedUserId Int?
+//   notation       String?
+//   receivedUser2  String?
+//   recipient      String?   @default("Нет")
+// }
+
+// model YandexMarker {
+//   id            Int      @id @default(autoincrement())
+//   coordinates   Float[]
+//   type          String?
+//   createdUser   User?    @relation(fields: [createdUserId], references: [id])
+//   createdUserId Int?
+//   notation      String?
+//   createdAt     DateTime @default(now())
+// }
+
+// model ClientDevicesToken {
+//   id       Int    @id @default(autoincrement())
+//   client   Client @relation(fields: [clientId], references: [id])
+//   clientId Int
+//   token    String @unique
+// }
+
+// enum Role {
+//   USER
+//   ADMIN
+//   CLIENT
+//   SORTIROVKA
+//   PVZ
+//   PPVZ
+//   RMANAGER
+//   ADMINISTRATOR
+//   COURIER
+//   DRIVER
+//   SHVEDOVA
+//   OFFICE
+// }
