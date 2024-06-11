@@ -736,6 +736,7 @@ function getAllSum() {
       allSum.value -= 11110;
       allSum.value -= 1570;
       allSum.value += 730;
+      allSum.value += 15000;
     } else if (selectedPVZ.value === "Все ППВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -842,6 +843,8 @@ function getAllSum() {
         allSum.value -= 11110;
       } else if (selectedPVZ.value === "ПВЗ_1") {
         allSum.value += 730;
+      } else if (selectedPVZ.value === "ПВЗ_3") {
+        allSum.value += 15000;
       }
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
