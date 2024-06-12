@@ -457,32 +457,6 @@ async function showDeletedRows(flag: boolean) {
   }
 }
 
-// async function updateDeliveryRows(obj: any) {
-//   if (obj.flag === "additionally") {
-//     isOpenOnlineStatus.value = true;
-//     itemsId.value = obj.idArray;
-//     obj.allSum *= 1 + 2 / 100;
-//     updatedPriceTwoPercent.value = obj.allSum;
-//   } else {
-//     let answer = confirm(
-//       `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
-//     );
-//     if (answer) {
-//       isLoading.value = true;
-//       await storeRansom.updateDeliveryRowsStatus(
-//         obj.idArray,
-//         obj.flag,
-//         "OurRansom",
-//         user.value.username
-//       );
-//       filteredRows.value = await storeRansom.getRansomRowsOurRansom();
-//       rows.value = filteredRows.value;
-//       isLoading.value = false;
-//       await updateCells();
-//     }
-//   }
-// }
-
 async function updateDeliveryRows(obj: any) {
   let answer = confirm(
     `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`

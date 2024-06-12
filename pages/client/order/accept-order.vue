@@ -46,10 +46,6 @@ let productName = ref("");
 let urlToImg = ref("");
 let priceSite = ref(0);
 let description = ref("");
-let botAPI1 = "7151653535:AAH3dAXAz1D_7pjqNDWJmakdVziLrs9GEuI";
-let botAPI2 = "7151653535:AAH3dAXAz1D_7pjqNDWJmakdVziLrs9GEuI";
-let chatId = -1002088613649;
-let stringToBot = "/get_price";
 
 async function parsingPage() {
   if (urlToItem.value !== "") {
@@ -289,9 +285,50 @@ function deleteItemFromOrder(productName: number) {
 }
 
 function handlePaste() {
-  urlToItem.value = urlToItem.value.replace(/[а-яА-Я()]/g, '');
+  const urlPattern = /(https?:\/\/[^\s]+)/g;
+  const match = urlToItem.value.match(urlPattern);
+
+  if (match) {
+    urlToItem.value = match[0];
+  } else {
+    urlToItem.value = "";
+  }
 }
 
+const coordinates = ref([47.98958366983051, 37.8955255423278]);
+const controls = ["geolocationControl", "zoomControl", "typeSelector"];
+
+let isOpenMap = ref(false);
+
+function openMap() {
+  isOpenMap.value = true;
+}
+
+function closeMap() {
+  isOpenMap.value = false;
+}
+
+let markers = [
+  [47.98958366983051, 37.8955255423278],
+  [47.945142, 37.960908],
+  [47.955462, 37.964951],
+  [47.946192, 37.90365],
+  [47.960663, 37.883761],
+];
+
+function changeAddress(coordinates: Array<number>) {
+  if (coordinates[0] === 47.98958366983051 && coordinates[1] === 37.8955255423278) {
+    address.value = "ПВЗ_1";
+  } else if (coordinates[0] === 47.945142 && coordinates[1] === 37.960908) {
+    address.value = "ПВЗ_4";
+  } else if (coordinates[0] === 47.955462 && coordinates[1] === 37.964951) {
+    address.value = "ПВЗ_3";
+  } else if ((coordinates[0] === 47.946192, 37.90365 && coordinates[1] === 37.90365)) {
+    address.value = "ППВЗ_5";
+  } else if (coordinates[0] === 47.960663 && coordinates[1] === 37.883761) {
+    address.value = "ППВЗ_6";
+  }
+}
 </script>
 
 <template>
@@ -301,14 +338,36 @@ function handlePaste() {
   <div v-if="!isLoading">
     <div v-if="token">
       <div class="py-10">
-        <h1 class="text-xl font-bold">Выберите пункт выдачи для получения товара:</h1>
+        <div class="flex items-center gap-5 max-sm:flex-col max-sm:items-start">
+          <h1 class="text-xl font-bold">Выберите пункт выдачи для получения товара:</h1>
+          <UIMainButton v-if="!isOpenMap" @click="openMap">ВЫБРАТЬ НА КАРТЕ</UIMainButton>
+          <UIMainButton v-if="isOpenMap" @click="closeMap">ЗАКРЫТЬ КАРТУ</UIMainButton>
+        </div>
+        <ClientOnly>
+          <YandexMap
+            class="w-full max-md:w-full"
+            style="height: 500px; margin-top: 20px"
+            v-if="isOpenMap"
+            :coordinates="coordinates"
+            :controls="controls"
+            :zoom="12"
+          >
+            <YandexMarker
+              v-for="marker in markers"
+              :coordinates="marker"
+              :marker-id="marker"
+              @click="changeAddress(marker)"
+            >
+            </YandexMarker>
+          </YandexMap>
+        </ClientOnly>
         <select
           class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 text-lg w-full focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3"
           v-model="address"
         >
           <option class="text-lg" value="ПВЗ_1">г. Донецк, ул. Антропова 16</option>
           <option class="text-lg" value="ПВЗ_3">г. Донецк, ул. Палладина 20</option>
-          <option class="text-lg" value="ПВЗ_4">г. Донецк, ул. Нартова, 1.</option>
+          <option class="text-lg" value="ПВЗ_4">г. Донецк, ул. Нартова, 1</option>
           <option class="text-lg" value="ППВЗ_5">
             г. Донецк, ул Дудинская, д. 4, кв7
           </option>
@@ -419,6 +478,7 @@ function handlePaste() {
           </div>
         </div>
       </div>
+
       <div
         v-auto-animate
         v-if="isShowModal"

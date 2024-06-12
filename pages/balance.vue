@@ -157,16 +157,7 @@ function calculateValue(curValue: any) {
       return curValue.additionally !== "Отказ клиент наличные" ||
         curValue.additionally !== "Отказ клиент онлайн" ||
         curValue.additionally !== "Отказ клиент"
-        ? Math.ceil(
-            Math.ceil(
-              +curValue.priceSite +
-                (+curValue.priceSite * 10) / 100 -
-                +curValue.prepayment
-            ) / 10
-          ) *
-            10 -
-            +curValue.priceSite +
-            +curValue.deliveredKGT
+        ? Math.ceil(curValue.amountFromClient1 / 10) * 10 - curValue.priceSite + curValue.deliveredKGT
         : +sumOfReject.value.value;
     } else {
       return curValue.additionally !== "Отказ клиент наличные" ||
@@ -736,7 +727,8 @@ function getAllSum() {
       allSum.value -= 11110;
       allSum.value -= 1570;
       allSum.value += 730;
-      allSum.value += 15000;
+      allSum.value += 63940;
+      allSum.value += 26220;
     } else if (selectedPVZ.value === "Все ППВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -844,7 +836,9 @@ function getAllSum() {
       } else if (selectedPVZ.value === "ПВЗ_1") {
         allSum.value += 730;
       } else if (selectedPVZ.value === "ПВЗ_3") {
-        allSum.value += 15000;
+        allSum.value += 63940;
+      } else if (selectedPVZ.value === "ПВЗ_4") {
+        allSum.value += 26220;
       }
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {

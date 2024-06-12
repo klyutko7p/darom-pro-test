@@ -91,7 +91,7 @@ export const useRansomStore = defineStore("ransom", () => {
   }
 
   async function createRansomRow(
-    row: IOurRansom | IClientRansom | IDelivery,
+    row: any,
     username: string,
     flag: string
   ) {
@@ -390,7 +390,7 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-  function mapBackToOriginalFields(row) {
+  function mapBackToOriginalFields(row: IOurRansom) {
     const originalRow = {};
 
     if (row.dp !== undefined) originalRow.dispatchPVZ = row.dp;
@@ -555,7 +555,7 @@ export const useRansomStore = defineStore("ransom", () => {
   }
 
   async function updateRansomRow(
-    row: IOurRansom | IClientRansom | IDelivery,
+    row: any,
     username: string,
     flag: string
   ) {

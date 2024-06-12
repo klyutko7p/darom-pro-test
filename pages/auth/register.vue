@@ -6,7 +6,7 @@ const router = useRouter();
 const route = useRoute();
 const toast = useToast();
 
-const phoneNumberData = ref("");
+const phoneNumberData = ref("+7");
 const fio = ref("");
 const password = ref("");
 const repeatPassword = ref("");
@@ -83,7 +83,9 @@ async function register() {
 
   if (attempts.value >= 2) {
     blockForFifteenMinutes();
-    toast.error("Вам на 15 минут заблокирован доступ к регистрации. Попробуйте зарегистрироваться в следующий раз!")
+    toast.error(
+      "Вам на 15 минут заблокирован доступ к регистрации. Попробуйте зарегистрироваться в следующий раз!"
+    );
   } else {
     isLoading.value = true;
     originallyConfirmationCode.value = generateRandomFiveDigitNumber();
@@ -201,6 +203,9 @@ watch(() => phoneNumberData.value, validationPhoneNumber);
 
 function validationPhoneNumber() {
   phoneNumberData.value = phoneNumberData.value.replace(/[^0-9+]/g, "");
+  if (!phoneNumberData.value.startsWith("+7")) {
+    phoneNumberData.value = "+7" + phoneNumberData.value.replace(/^(\+?7|8)?/, "");
+  }
 }
 
 let showPassword = ref(false);
@@ -256,7 +261,7 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
         <form class="space-y-10" @submit.prevent="register">
           <div>
             <label for="phone" class="block text-sm font-medium leading-6 text-gray-900"
-              >Телефон</label
+              >Телефон (формат +7XXXXXXXXXX)</label
             >
             <div class="mt-2">
               <input
@@ -269,24 +274,6 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
                 placeholder="+7XXXXXXXXXX"
                 class="block w-full ring-1 ring-gray-200 focus:ring-2 focus:ring-yellow-600 bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none"
                 @input="validationPhoneNumber"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label for="fio" class="block text-sm font-medium leading-6 text-gray-900"
-              >ФИО</label
-            >
-            <div class="mt-2">
-              <input
-                v-model="fio"
-                id="fio"
-                name="fio"
-                type="text"
-                autocomplete="fio"
-                required
-                placeholder="Иванов Иван Иванович"
-                class="block w-full ring-1 ring-gray-200 focus:ring-2 focus:ring-yellow-600 bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none"
               />
             </div>
           </div>

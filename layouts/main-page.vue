@@ -1,7 +1,7 @@
 <template>
   <NuxtPwaManifest />
     <div class="main-page">
-      <div class="mx-auto container">
+      <div class="">
         <slot />
       </div>
     </div>

@@ -4,15 +4,12 @@ import { YandexMap } from "vue-yandex-maps";
 const router = useRouter();
 
 const coordinates = ref([47.98958366983051, 37.8955255423278]);
-const controls = [
-  "geolocationControl",
-  "zoomControl",
-  "typeSelector",
-];
+const controls = ["geolocationControl", "zoomControl", "typeSelector"];
 
 let selectedAddress = ref([47.98958366983051, 37.8955255423278]);
-function changeAddress() {
-  coordinates.value = selectedAddress.value;
+function changeAddress(arrayCoordinates: Array<number>) {
+  coordinates.value = arrayCoordinates;
+  zoomValue.value = 10;
 }
 
 let markers = [
@@ -29,6 +26,9 @@ let markers = [
 //   }
 // });
 
+let zoomValue = ref(10);
+let isHiddenMenu = ref(true);
+
 definePageMeta({
   layout: false,
 });
@@ -40,7 +40,7 @@ definePageMeta({
   </Head>
   <NuxtLayout name="main-page">
     <div class="bg-main-page">
-      <div class="py-5 max-md:px-5" v-cloak>
+      <div class="py-5 max-md:px-5 mx-auto container" v-cloak>
         <div class="flex items-center justify-between gap-5">
           <UIMainButton @click="router.push('/auth/client/login')"
             >Вход клиента</UIMainButton
@@ -110,9 +110,39 @@ definePageMeta({
               </div>
             </div>
           </div>
-          <div class="max-md:w-full">
-            <h1 class="text-xl mb-3">Выберите адрес</h1>
-            <select
+          <div class="max-md:w-full w-[770px]">
+            <div class="flex mb-3 items-center gap-3 text-xl">
+              <h1>Выберите адрес</h1>
+              <Icon
+                @click="isHiddenMenu = !isHiddenMenu"
+                class="hover:text-secondary-color duration-200 cursor-pointer"
+                name="material-symbols:arrow-downward"
+              />
+            </div>
+
+            <div v-if="!isHiddenMenu">
+              <ul class="gap-3 flex flex-col text-sm">
+                <li class="border-2 border-secondary-color p-3 hover:bg-secondary-color hover:text-white duration-200 cursor-pointer" @click="changeAddress([47.98958366983051, 37.8955255423278])">
+                  г. Донецк, Буденовский р-н, Заперевальная, ул. Антропова 16, вход
+                  "ремонт обуви" (нет примерочной)
+                </li>
+                <li class="border-2 border-secondary-color p-3 hover:bg-secondary-color hover:text-white duration-200 cursor-pointer" @click="changeAddress([47.945142, 37.960908])">
+                  г. Донецк, ул. Нартова, 1. Возле магазина "Добрый" (есть примерочная)
+                </li>
+                <li class="border-2 border-secondary-color p-3 hover:bg-secondary-color hover:text-white duration-200 cursor-pointer" @click="changeAddress([47.955462, 37.964951])">
+                  г. Донецк, ул. Палладина, 20. (есть примерочная)
+                </li>
+                <li class="border-2 border-secondary-color p-3 hover:bg-secondary-color hover:text-white duration-200 cursor-pointer" @click="changeAddress([47.946192, 37.90365])">
+                  г. Донецк, ул Дудинская, д. 4, кв7
+                </li>
+                <li class="border-2 border-secondary-color p-3 hover:bg-secondary-color hover:text-white duration-200 cursor-pointer" @click="changeAddress([47.960663, 37.883761])">
+                  г. Донецк, ул Довженко, д 55, кв5
+                </li>
+              </ul>
+            </div>
+
+            <!-- <select
+              vif
               name=""
               id=""
               class="bg-transparent text-white border-2 border-secondary-color p-5 rounded-lg w-full"
@@ -139,14 +169,15 @@ definePageMeta({
               <option class="text-black" :value="[47.960663, 37.883761]">
                 г. Донецк, ул Довженко, д 55, кв5
               </option>
-            </select>
+            </select> -->
             <ClientOnly>
               <YandexMap
-                style="width: 100%; height: 300px; margin-top: 20px"
+                class="w-[770px] max-md:w-full"
+                style="height: 300px; margin-top: 20px"
                 v-if="true"
                 :coordinates="coordinates"
                 :controls="controls"
-                :zoom="10"
+                :zoom="zoomValue"
               >
                 <YandexMarker
                   v-for="marker in markers"
