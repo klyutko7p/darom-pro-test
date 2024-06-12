@@ -224,13 +224,14 @@ function reduceArray(array: any, flag: string) {
     }
   } else if (selectedTypeOfTransaction.value === "Баланс наличные") {
     if (flag === "OurRansom") {
+      let arrayCopy = array;
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент онлайн" &&
           new Date(row.created_at) < new Date("2024-06-05T00:00:01")
       );
-      let array2 = array.filter(
+      let array2 = arrayCopy.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент онлайн" &&
@@ -246,13 +247,14 @@ function reduceArray(array: any, flag: string) {
       );
       return firstReduce + secondReduce;
     } else if (flag === "ClientRansom") {
+      let arrayCopy = array;
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент онлайн" &&
           new Date(row.created_at) < new Date("2024-06-05T00:00:01")
       );
-      let array2 = array.filter(
+      let array2 = arrayCopy.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент онлайн" &&
@@ -270,6 +272,7 @@ function reduceArray(array: any, flag: string) {
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (flag === "OurRansom") {
+      let arrayCopy = array;
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
@@ -353,13 +356,14 @@ function reduceArray(array: any, flag: string) {
     return array.reduce((ac: any, curValue: any) => ac + curValue.amountFromClient3, 0);
   } else if (selectedTypeOfTransaction.value === "Заказано1") {
     if (flag === "OurRansom") {
+      let arrayCopy = array;
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент онлайн" &&
           new Date(row.created_at) < new Date("2024-06-05T00:00:01")
       );
-      let array2 = array.filter(
+      let array2 = arrayCopy.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент онлайн" &&
@@ -389,13 +393,14 @@ function reduceArray(array: any, flag: string) {
     }
   } else if (selectedTypeOfTransaction.value === "Заказано2") {
     if (flag === "OurRansom") {
+      let arrayCopy = array;
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент наличные" &&
           new Date(row.created_at) < new Date("2024-06-05T00:00:01")
       );
-      let array2 = array.filter(
+      let array2 = arrayCopy.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент наличные" &&
@@ -427,13 +432,14 @@ function reduceArray(array: any, flag: string) {
     }
   } else if (selectedTypeOfTransaction.value === "Доход PPVZ") {
     if (flag === "OurRansom") {
+      let arrayCopy = array;
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент наличные" &&
           new Date(row.created_at) < new Date("2024-06-05T00:00:01")
       );
-      let array2 = array.filter(
+      let array2 = arrayCopy.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент наличные" &&
@@ -727,8 +733,6 @@ function getAllSum() {
       allSum.value -= 11110;
       allSum.value -= 1570;
       allSum.value += 730;
-      allSum.value += 63940;
-      allSum.value += 26220;
     } else if (selectedPVZ.value === "Все ППВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -835,11 +839,7 @@ function getAllSum() {
         allSum.value -= 11110;
       } else if (selectedPVZ.value === "ПВЗ_1") {
         allSum.value += 730;
-      } else if (selectedPVZ.value === "ПВЗ_3") {
-        allSum.value += 63940;
-      } else if (selectedPVZ.value === "ПВЗ_4") {
-        allSum.value += 26220;
-      }
+      } 
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (selectedPVZ.value === "Все ПВЗ") {
