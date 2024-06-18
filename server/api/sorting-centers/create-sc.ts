@@ -10,7 +10,6 @@ interface IRequestBody {
 export default defineEventHandler(async (event) => {
     try {
         const { name } = await readBody<IRequestBody>(event);
-
         const sortingCenter = await prisma.sortingCenter.create({
             data: {
                 name: name,

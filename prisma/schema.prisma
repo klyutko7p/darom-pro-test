@@ -17,7 +17,6 @@ model User {
   password          String
   PVZ               String[] @default([])
   created_at        DateTime @default(now())
-  // Права доступа
   visibleSC         String   @default("ВСЕ")
   visiblePVZ        String   @default("ВСЕ")
   cell1             String   @default("NONE")
