@@ -31,7 +31,7 @@ defineProps({
         <tr class="bg-white border-b text-center" v-for="userData in users">
           <td class="px-6 py-4 border-2">
             <Icon @click="openModal(userData)" class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
-              name="material-symbols:person-edit-outline" size="32" v-if="userData.role !== 'ADMIN'" />
+              name="material-symbols:person-edit-outline" size="32" />
           </td>
           <td class="px-6 py-4 border-2">
             <Icon @click="deleteUser(userData.username)"

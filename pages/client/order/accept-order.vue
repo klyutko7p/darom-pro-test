@@ -314,6 +314,7 @@ let markers = [
   [47.955462, 37.964951],
   [47.946192, 37.90365],
   [47.960663, 37.883761],
+  [47.974937, 37.837714],
 ];
 
 function changeAddress(coordinates: Array<number>) {
@@ -327,6 +328,8 @@ function changeAddress(coordinates: Array<number>) {
     address.value = "ППВЗ_5";
   } else if (coordinates[0] === 47.960663 && coordinates[1] === 37.883761) {
     address.value = "ППВЗ_6";
+  } else if (coordinates[0] === 47.974937 && coordinates[1] === 37.837714) {
+    address.value = "ППВЗ_7";
   }
 }
 </script>
@@ -372,7 +375,10 @@ function changeAddress(coordinates: Array<number>) {
             г. Донецк, ул Дудинская, д. 4, кв7
           </option>
           <option class="text-lg" value="ППВЗ_6">
-            г. Донецк, ул Довженко, д 55, кв5
+            г. Донецк, ул Довженко, д. 55, кв5
+          </option>
+          <option class="text-lg" value="ППВЗ_7">
+            г. Донецк, ул Жебелева, д. 7
           </option>
         </select>
         <h1 class="text-xl font-bold mt-3">Выберите маркетплейс:</h1>

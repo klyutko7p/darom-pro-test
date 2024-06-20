@@ -732,7 +732,7 @@ function getAllSum() {
       allSum.value = sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ + 319610 - sumOfPVZ5;
       allSum.value -= 11110;
       allSum.value -= 1570;
-      allSum.value += 2005;
+      allSum.value -= 2005;
     } else if (selectedPVZ.value === "Все ППВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -838,7 +838,7 @@ function getAllSum() {
       if (selectedPVZ.value === "НаДом") {
         allSum.value -= 11110;
       } else if (selectedPVZ.value === 'ПВЗ_3') {
-        allSum.value += 2005;
+        allSum.value -= 2005;
       }
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
@@ -1409,6 +1409,8 @@ function openModalProfitRow(row: IBalance) {
       rowData.value.recipient = "Динис Ольга";
     } else if (user.value.username === "ПВЗ_1") {
       rowData.value.recipient = "Киризлеева Марина";
+    } else if (user.value.username === "ППВЗ_7") {
+      rowData.value.recipient = "Смирнов Валерий";
     }
   }
 }
@@ -2605,6 +2607,9 @@ async function updateRow() {
                   </option>
                   <option v-if="user.username === 'ПВЗ_1'" value="Киризлеева Марина">
                     Киризлеева Марина
+                  </option>
+                  <option v-if="user.username === 'ППВЗ_7'" value="Смирнов Валерий">
+                    Смирнов Валерий
                   </option>
                 </select>
               </div>

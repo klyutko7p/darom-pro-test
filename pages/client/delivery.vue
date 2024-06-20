@@ -195,7 +195,10 @@ let isShowModal = ref(false);
             г. Донецк, ул Дудинская, д. 4, кв7
           </option>
           <option class="text-lg" value="ППВЗ_6">
-            г. Донецк, ул Довженко, д 55, кв5
+            г. Донецк, ул Довженко, д. 55, кв5
+          </option>
+          <option class="text-lg" value="ППВЗ_7">
+            г. Донецк, ул Жебелева, д. 7
           </option>
         </select>
         <div
