@@ -14,6 +14,7 @@ const selectedProductName = ref<string | null>(null);
 const selectedDispatchPVZ = ref<string | null>(null);
 const selectedOrderPVZ = ref<string | null>(null);
 const selectedOrderAccount = ref<string | null>(null);
+const selectedNotation = ref<string | null>(null);
 const selectedAdditionally = ref<string | null>(null);
 const selectedPriceSite = ref<number | null>(null);
 const startingDate = ref<Date | string | null>(null);
@@ -27,6 +28,10 @@ const endDate4 = ref<Date | string | null>(null);
 
 const uniqueOrderAccounts = computed(() => {
   return storeRansom.getUniqueNonEmptyValues(props.rows, "orderAccount");
+});
+
+const uniqueNotation = computed(() => {
+  return storeRansom.getUniqueNonEmptyValues(props.rows, "notation");
 });
 
 const uniqueOrderPVZ = computed(() => {
@@ -115,11 +120,18 @@ const filterRows = () => {
     return (
       (!selectedCell.value || row.cell === selectedCell.value) &&
       (!selectedFromName.value || row.fromName === selectedFromName.value) &&
-      (!selectedProductName.value || row.productName.toLowerCase().includes(selectedProductName.value.trim().toLowerCase())) &&
+      (!selectedProductName.value ||
+        row.productName
+          .toLowerCase()
+          .includes(selectedProductName.value.trim().toLowerCase())) &&
       (!selectedDispatchPVZ.value || row.dispatchPVZ === selectedDispatchPVZ.value) &&
       (!selectedOrderPVZ.value || row.orderPVZ === selectedOrderPVZ.value) &&
       (!selectedOrderAccount.value || row.orderAccount === selectedOrderAccount.value) &&
       (!selectedAdditionally.value || row.additionally === selectedAdditionally.value) &&
+      (!selectedNotation.value ||
+        row.notation
+          .toLowerCase()
+          .includes(selectedNotation.value.trim().toLowerCase())) &&
       (!selectedPriceSite.value || row.priceSite == selectedPriceSite.value) &&
       (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
       (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
@@ -143,6 +155,7 @@ function clearFields() {
   selectedOrderAccount.value = "";
   selectedFromName.value = "";
   selectedAdditionally.value = "";
+  selectedNotation.value = "";
   selectedProductName.value = "";
   startingDate.value = "";
   endDate.value = "";
@@ -162,6 +175,7 @@ watch(
     selectedProductName,
     selectedDispatchPVZ,
     selectedOrderPVZ,
+    selectedNotation,
     selectedOrderAccount,
     selectedAdditionally,
     selectedPriceSite,
@@ -185,6 +199,7 @@ let variables = ref([
   selectedOrderPVZ,
   selectedOrderAccount,
   selectedAdditionally,
+  selectedNotation,
   selectedPriceSite,
   startingDate,
   endDate,
@@ -220,6 +235,7 @@ function saveFiltersToLocalStorage() {
   saveToLocalStorage("selectedDispatchPVZ", selectedDispatchPVZ.value);
   saveToLocalStorage("selectedOrderPVZ", selectedOrderPVZ.value);
   saveToLocalStorage("selectedOrderAccount", selectedOrderAccount.value);
+  saveToLocalStorage("selectedNotation", selectedNotation.value);
   saveToLocalStorage("selectedAdditionally", selectedAdditionally.value);
   saveToLocalStorage("selectedPriceSite", selectedPriceSite.value);
   saveToLocalStorage("startingDate", startingDate.value);
@@ -241,6 +257,7 @@ function clearLocalStorage() {
   selectedDispatchPVZ.value = null;
   selectedOrderPVZ.value = null;
   selectedOrderAccount.value = null;
+  selectedNotation.value = null;
   selectedAdditionally.value = null;
   selectedPriceSite.value = null;
   startingDate.value = null;
@@ -292,6 +309,11 @@ onMounted(() => {
   const storedSelectedPriceSite = loadFromLocalStorage("selectedPriceSite");
   if (storedSelectedPriceSite !== null) {
     selectedPriceSite.value = storedSelectedPriceSite;
+  }
+
+  const storedNotation = loadFromLocalStorage("storedNotation");
+  if (storedNotation !== null) {
+    selectedNotation.value = storedNotation;
   }
 
   const storedStartingDate = loadFromLocalStorage("startingDate");
@@ -462,6 +484,20 @@ let dateFilter = ref("issued");
           />
           <datalist id="uniqueAdditionally" class="">
             <option v-for="value in uniqueAdditionally" :value="value">
+              {{ value }}
+            </option>
+          </datalist>
+        </div>
+        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
+          <h1>Примечание:</h1>
+          <input
+            type="text"
+            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+            v-model="selectedNotation"
+            list="uniqueNotation"
+          />
+          <datalist id="uniqueNotation" class="">
+            <option v-for="value in uniqueNotation" :value="value">
               {{ value }}
             </option>
           </datalist>
