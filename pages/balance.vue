@@ -1222,9 +1222,7 @@ function getProfitRowsSum() {
 
     if (selectedPVZ.value === "ППВЗ_5") {
       allSumProfit.value += 6330;
-    } else if (selectedPVZ.value === "ППВЗ_6") {
-      allSumProfit.value += 6508;
-    }
+    } 
   }
 }
 
@@ -1405,8 +1403,6 @@ function openModalProfitRow(row: IBalance) {
     rowData.value.notation = "Вывод дохода";
     if (user.value.username === "ППВЗ_5") {
       rowData.value.recipient = "Владимирова Инна";
-    } else if (user.value.username === "ППВЗ_6") {
-      rowData.value.recipient = "Динис Ольга";
     } else if (user.value.username === "ПВЗ_1") {
       rowData.value.recipient = "Киризлеева Марина";
     } else if (user.value.username === "ППВЗ_7") {
@@ -2601,9 +2597,6 @@ async function updateRow() {
                 >
                   <option v-if="user.username === 'ППВЗ_5'" value="Владимирова Инна">
                     Владимирова Инна
-                  </option>
-                  <option v-if="user.username === 'ППВЗ_6'" value="Динис Ольга">
-                    Динис Ольга
                   </option>
                   <option v-if="user.username === 'ПВЗ_1'" value="Киризлеева Марина">
                     Киризлеева Марина

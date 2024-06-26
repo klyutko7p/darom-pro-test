@@ -17,7 +17,6 @@ let markers = [
   [47.945142, 37.960908],
   [47.955462, 37.964951],
   [47.946192, 37.90365],
-  [47.960663, 37.883761],
   [47.974937, 37.837714],
 ];
 
@@ -135,9 +134,6 @@ definePageMeta({
                 </li>
                 <li class="border-2 border-secondary-color p-3 hover:bg-secondary-color hover:text-white duration-200 cursor-pointer" @click="changeAddress([47.946192, 37.90365])">
                   г. Донецк, ул. Дудинская, д. 4, кв7
-                </li>
-                <li class="border-2 border-secondary-color p-3 hover:bg-secondary-color hover:text-white duration-200 cursor-pointer" @click="changeAddress([47.960663, 37.883761])">
-                  г. Донецк, ул. Довженко, д. 55, кв5
                 </li>
                 <li class="border-2 border-secondary-color p-3 hover:bg-secondary-color hover:text-white duration-200 cursor-pointer" @click="changeAddress([47.974937, 37.837714])">
                   г. Донецк, ул. Жебелева, д. 7
