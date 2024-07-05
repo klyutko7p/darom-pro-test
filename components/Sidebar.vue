@@ -85,8 +85,7 @@ let isShowAddSettings = ref(false);
         v-if="
           user.dataOurRansom === 'READ' ||
           (user.dataOurRansom === 'WRITE' &&
-            !user.username.includes('Светлана') &&
-            !user.username.includes('Горцуева'))
+            !user.username.includes('Светлана'))
         "
       >
         <div class="grid place-items-center mr-4">
@@ -113,8 +112,7 @@ let isShowAddSettings = ref(false);
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
         v-if="
           user.dataOurRansom === 'READ' ||
-          (user.dataOurRansom === 'WRITE' && user.username.includes('Светлана')) ||
-          user.username.includes('Горцуева')
+          (user.dataOurRansom === 'WRITE' && user.username.includes('Светлана'))
         "
       >
         <div class="grid place-items-center mr-4">

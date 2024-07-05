@@ -61,8 +61,7 @@ definePageMeta({
               v-if="
                 user.dataOurRansom === 'READ' ||
                 (user.dataOurRansom === 'WRITE' &&
-                  !user.username.includes('Светлана') &&
-                  !user.username.includes('Горцуева'))
+                  !user.username.includes('Светлана'))
               "
             >
               <div class="grid place-items-center mr-4">
@@ -90,8 +89,7 @@ definePageMeta({
               v-if="
                 user.dataOurRansom === 'READ' ||
                 (user.dataOurRansom === 'WRITE' &&
-                  user.username.includes('Светлана') ||
-                  user.username.includes('Горцуева'))
+                  user.username.includes('Светлана'))
               "
             >
               <div class="grid place-items-center mr-4">
