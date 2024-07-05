@@ -53,6 +53,7 @@ const props = defineProps({
 
 function exportToExcel() {
   let table = document.querySelector("#theTable");
+  perPage.value = 2000;
 
   let wb = utils.table_to_book(table);
 
