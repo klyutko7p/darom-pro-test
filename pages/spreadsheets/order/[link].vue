@@ -226,7 +226,7 @@ let value = ref("");
             class="text-xl max-sm:text-sm flex justify-end items-end flex-col gap-1 mt-7"
             v-if="link.startsWith('3')"
           >
-            Сумма выкупов товаров за 30 дней
+            Сумма выкупа товаров за 30 дней
             <br />
             <h1>
               Доставка =
