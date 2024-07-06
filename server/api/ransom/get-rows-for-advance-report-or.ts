@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
   try {
-    const startDate = new Date("2024-04-01T00:00:00Z");
+    const startDate = new Date("2024-07-01T00:00:00Z");
 
     const rows = await prisma.ourRansom.findMany({
       select: {

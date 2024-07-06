@@ -619,6 +619,11 @@ function isDateGreaterThanReference(dateString: string | Date): boolean {
         @click="updateDeliveryRows('additionally3')"
         >Оплата наличными
       </UIActionButton2>
+      <!-- <UIActionButton2
+        v-if="user.additionally1 === 'WRITE'"
+        @click="updateDeliveryRows('additionally', getAllSum)"
+        >Оплата онлайн
+      </UIActionButton2> -->
       <UIActionButton2
         v-if="user.additionally1 === 'WRITE'"
         @click="updateDeliveryRows('additionally', getAllSum)"

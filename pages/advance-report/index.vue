@@ -984,6 +984,8 @@ function getAllSumFromEmployees() {
       totalSum += allSum;
     });
   totalSum += allSum.value;
+  totalSum -= 19008030;
+  totalSum -= 3247;
   return totalSum;
 }
 

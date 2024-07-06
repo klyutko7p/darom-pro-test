@@ -90,11 +90,7 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-  async function createRansomRow(
-    row: any,
-    username: string,
-    flag: string
-  ) {
+  async function createRansomRow(row: any, username: string, flag: string) {
     try {
       if (flag === "OurRansom") {
         if (row.percentClient === undefined) row.percentClient = 10;
@@ -113,13 +109,18 @@ export const useRansomStore = defineStore("ransom", () => {
           row.clientLink1 = "";
         }
 
-        row.amountFromClient1 = Math.ceil(
-          +row.priceSite +
-            (+row.priceSite * +row.percentClient) / 100 -
-            +row.prepayment
-        );
-        row.profit1 =
-          +row.amountFromClient1 - +row.priceSite + +row.deliveredKGT;
+        if (row.priceSite > row.prepayment) {
+          row.amountFromClient1 = Math.ceil(
+            +row.priceSite +
+              (+row.priceSite * +row.percentClient) / 100 -
+              +row.prepayment
+          );
+          row.profit1 =
+            +row.amountFromClient1 - +row.priceSite + +row.deliveredKGT;
+        } else {
+          row.amountFromClient1 = 0;
+          row.profit1 = row.prepayment - row.priceSite;
+        }
       } else if (flag === "ClientRansom") {
         if (row.percentClient === undefined) row.percentClient = 10;
         if (row.priceProgram === undefined) row.priceProgram = 0;
@@ -554,11 +555,7 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-  async function updateRansomRow(
-    row: any,
-    username: string,
-    flag: string
-  ) {
+  async function updateRansomRow(row: any, username: string, flag: string) {
     try {
       if (flag === "OurRansom") {
         if (row.percentClient === undefined) row.percentClient = 10;
@@ -594,16 +591,25 @@ export const useRansomStore = defineStore("ransom", () => {
           row.amountFromClient1 = 0;
           row.profit1 = 0;
         } else {
-          row.amountFromClient1 = Math.ceil(
-            row.priceSite +
-              (row.priceSite * row.percentClient) / 100 -
-              row.prepayment
-          );
-          if (row.percentClient == 0) {
-            row.profit1 = row.deliveredKGT;
+          if (row.priceSite > row.prepayment) {
+            row.amountFromClient1 = Math.ceil(
+              row.priceSite +
+                (row.priceSite * row.percentClient) / 100 -
+                row.prepayment
+            );
+            if (row.percentClient == 0) {
+              row.profit1 = row.deliveredKGT;
+            } else {
+              row.profit1 =
+                row.amountFromClient1 - row.priceSite + row.deliveredKGT;
+            }
           } else {
-            row.profit1 =
-              row.amountFromClient1 - row.priceSite + row.deliveredKGT;
+            row.amountFromClient1 = 0
+            if (row.percentClient == 0) {
+              row.profit1 = row.deliveredKGT;
+            } else {
+              row.profit1 = row.prepayment - row.priceSite
+            }
           }
         }
       } else if (flag === "ClientRansom") {
