@@ -340,7 +340,7 @@ definePageMeta({
               <h1>Маркетплейсы</h1>
             </div>
             <div
-              v-if="!user.username.includes('Светлана') && !user.username.includes('Горцуева') && user.role !== 'ADMINISTRATOR'"
+              v-if="!user.username.includes('Светлана') && user.role !== 'ADMINISTRATOR'"
               role="button"
               @click="router.push('/admin/phone-numbers')"
               tabindex="0"
