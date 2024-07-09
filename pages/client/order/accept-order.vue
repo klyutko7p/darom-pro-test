@@ -22,7 +22,7 @@ onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeClients.getClient();
   isLoading.value = false;
-  originallyRows.value = await storeRansom.getRansomRowsForModal("OurRansom");
+  originallyRows.value = await storeRansom.getRansomRowsForModalOurRansom();
   cells.value = await storeCells.getCells();
 });
 

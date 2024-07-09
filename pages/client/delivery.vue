@@ -19,7 +19,7 @@ let cellData = ref({} as Cell);
 onBeforeMount(async () => {
   isLoading.value = true;
   user.value = await storeClients.getClient();
-  originallyRows.value = await storeRansom.getRansomRowsForModal("ClientRansom");
+  originallyRows.value = await storeRansom.getRansomRowsForModalClientRansom();
   cells.value = await storeCells.getCellsClient();
   isLoading.value = false;
   await updateCells();

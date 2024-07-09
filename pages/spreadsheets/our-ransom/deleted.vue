@@ -111,7 +111,7 @@ async function updateRow() {
 
   rows.value = filteredRows.value;
   isLoading.value = false;
-  originallyRows.value = await storeRansom.getRansomRowsForModal("OurRansom");
+  originallyRows.value = await storeRansom.getRansomRowsForModalOurRansom();
   await updateCells()
 }
 
@@ -130,7 +130,7 @@ async function createRow() {
   isLoading.value = false;
 
   rows.value = filteredRows.value;
-  originallyRows.value = await storeRansom.getRansomRowsForModal("OurRansom");
+  originallyRows.value = await storeRansom.getRansomRowsForModalOurRansom();
   await updateCells()
 }
 

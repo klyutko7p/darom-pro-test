@@ -261,13 +261,16 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getRansomRowsWithPVZOurRansom() {
     try {
-      let { data }: any = await useFetch("/api/ransom/get-rows-with-pvz-or", {
+      let response = await fetch("/api/ransom/get-rows-with-pvz-or", {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/octet-stream",
         },
       });
-      return data.value;
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      return unpacked;
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -356,6 +359,25 @@ export const useRansomStore = defineStore("ransom", () => {
   async function getRansomRowsForModalOurRansom() {
     try {
       let response = await fetch("/api/ransom/get-rows-for-modal-or", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      return unpacked;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsForModalClientRansom() {
+    try {
+      let response = await fetch("/api/ransom/get-rows-for-modal-cl", {
         method: "GET",
         headers: {
           "Content-Type": "application/octet-stream",
@@ -965,6 +987,7 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsForBalanceClientRansom,
     getRansomRowsForBalanceDelivery,
     getRansomRowsForModalOurRansom,
+    getRansomRowsForModalClientRansom,
     getRansomRowsWithDeletedForCellsOurRansom,
     getRansomRowsWithPVZOurRansom,
     getRansomRowsOurRansom,

@@ -5,13 +5,14 @@ const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
   try {
-    const rows = await prisma.ourRansom.findMany({
+    const rows = await prisma.clientRansom.findMany({
       select: {
+        fromName: true,
+        dispatchPVZ: true,
         deliveredPVZ: true,
         deliveredSC: true,
+        cell: true,
         issued: true,
-        dispatchPVZ: true,
-        deleted: true,
       },
       orderBy: {
         created_at: "desc",

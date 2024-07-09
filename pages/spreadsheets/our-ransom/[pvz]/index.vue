@@ -170,7 +170,7 @@ onMounted(async () => {
 
   isLoading.value = false;
 
-  originallyRows.value = await storeRansom.getRansomRowsForModal("OurRansom");
+  originallyRows.value = await storeRansom.getRansomRowsForModalOurRansom();
   pvz.value = await storePVZ.getPVZ();
   sortingCenters.value = await storeSortingCenters.getSortingCenters();
   orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
