@@ -328,7 +328,7 @@ function getAllSumDirector() {
   getSumCreditCash();
   getSumCreditOnline();
   getSumCreditBalance();
-  return allSum.value + allSum2.value;
+  return allSum.value + allSum2.value - 19008030;
 }
 
 let sumCreditCash = ref(0);
@@ -1137,7 +1137,7 @@ function closeAdvanceReportEmployee() {
             <div class="text-center text-2xl my-5" v-if="selectedUser === 'Директор (С)'">
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
-                {{ formatNumber(allSum) }} ₽
+                {{ formatNumber(allSum - 19008030) }} ₽
               </h1>
             </div>
             <div v-if="selectedUser === 'Директор'">
