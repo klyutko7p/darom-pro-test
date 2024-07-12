@@ -1137,7 +1137,7 @@ function closeAdvanceReportEmployee() {
             <div class="text-center text-2xl my-5" v-if="selectedUser === 'Директор (С)'">
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
-                {{ formatNumber(allSum - 19008030) }} ₽
+                {{ formatNumber(allSum - 19008030 - 91594) }} ₽
               </h1>
             </div>
             <div v-if="selectedUser === 'Директор'">
