@@ -1106,7 +1106,7 @@ function closeAdvanceReportEmployee() {
                 </h1>
                 <h1 class="text-2xl text-center">Междубалансовая задолженность</h1>
                 <h1 class="text-center text-3xl text-secondary-color mb-5">
-                  {{ formatNumber(sumCreditBalanceDebt) }} ₽
+                  {{ formatNumber(sumCreditBalanceDebt + 96000 + 1000000) }} ₽
                 </h1>
               </div>
             </div>
@@ -1174,7 +1174,7 @@ function closeAdvanceReportEmployee() {
                   </h1>
                   <div class="flex items-center justify-center gap-3 mt-1">
                     <h1 class="font-bold text-secondary-color text-4xl text-center">
-                      {{ formatNumber(Math.ceil(allSum2)) }} ₽
+                      {{ formatNumber(Math.ceil(allSum2 - 91594)) }} ₽
                     </h1>
                     <Icon
                       name="solar:money-bag-bold"
