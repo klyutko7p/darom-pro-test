@@ -1,11 +1,18 @@
 import { PrismaClient } from "@prisma/client";
-import * as msgpack from '@msgpack/msgpack';
+import * as msgpack from "@msgpack/msgpack";
 
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
   try {
+    const startDate = new Date("2024-04-01T00:00:00Z");
+
     const rows = await prisma.ourRansom.findMany({
+      where: {
+        created_at: {
+          gt: startDate,
+        },
+      },
       select: {
         fromName: true,
         dispatchPVZ: true,
