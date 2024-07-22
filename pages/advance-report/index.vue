@@ -1174,7 +1174,7 @@ function closeAdvanceReportEmployee() {
                   </h1>
                   <div class="flex items-center justify-center gap-3 mt-1">
                     <h1 class="font-bold text-secondary-color text-4xl text-center">
-                      {{ formatNumber(Math.ceil(allSum2 - 91594)) }} ₽
+                      {{ formatNumber(Math.ceil(allSum2 - 109001)) }} ₽
                     </h1>
                     <Icon
                       name="solar:money-bag-bold"
