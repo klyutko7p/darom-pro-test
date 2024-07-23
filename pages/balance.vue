@@ -157,7 +157,9 @@ function calculateValue(curValue: any) {
       return curValue.additionally !== "Отказ клиент наличные" ||
         curValue.additionally !== "Отказ клиент онлайн" ||
         curValue.additionally !== "Отказ клиент"
-        ? Math.ceil(curValue.amountFromClient1 / 10) * 10 - curValue.priceSite + curValue.deliveredKGT
+        ? Math.ceil(curValue.amountFromClient1 / 10) * 10 -
+            curValue.priceSite +
+            curValue.deliveredKGT
         : +sumOfReject.value.value;
     } else {
       return curValue.additionally !== "Отказ клиент наличные" ||
@@ -287,7 +289,7 @@ function reduceArray(array: any, flag: string) {
               amount =
                 Math.ceil(curValue.amountFromClient1 / 10) * 10 + curValue.prepayment;
             } else {
-              amount = roundToNearestTen(curValue.amountFromClient1)
+              amount = roundToNearestTen(curValue.amountFromClient1);
             }
           } else if (!curValue.amountFromClient1 && curValue.prepayment) {
             curValue.amountFromClient1 = 0;
@@ -303,7 +305,7 @@ function reduceArray(array: any, flag: string) {
               amount =
                 Math.ceil(curValue.amountFromClient1 / 10) * 10 + curValue.prepayment;
             } else {
-              amount = roundToNearestTen(curValue.amountFromClient1)
+              amount = roundToNearestTen(curValue.amountFromClient1);
             }
           }
           return ac + amount;
@@ -446,11 +448,13 @@ function reduceArray(array: any, flag: string) {
           new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
       );
       let firstReduce = array.reduce(
-        (ac: any, curValue: any) => ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.025,
+        (ac: any, curValue: any) =>
+          ac + Math.ceil(curValue.amountFromClient1 / 10) * 10 * 0.025,
         0
       );
       let secondReduce = array2.reduce(
-        (ac: any, curValue: any) => ac + roundToNearestTen(curValue.amountFromClient1) * 0.025,
+        (ac: any, curValue: any) =>
+          ac + roundToNearestTen(curValue.amountFromClient1) * 0.025,
         0
       );
       return firstReduce + secondReduce;
@@ -472,9 +476,10 @@ function reduceArray(array: any, flag: string) {
 
 function reduceArrayProfit(array: any[], flag: string) {
   const filterArray = (array: any[], dateCondition?: Date) => {
-    return array.filter((row: any) => 
-      row.additionally !== "Отказ брак" && 
-      (!dateCondition || new Date(row.issued) >= dateCondition)
+    return array.filter(
+      (row: any) =>
+        row.additionally !== "Отказ брак" &&
+        (!dateCondition || new Date(row.issued) >= dateCondition)
     );
   };
 
@@ -488,7 +493,8 @@ function reduceArrayProfit(array: any[], flag: string) {
     return array.reduce((total: number, row: any) => {
       const createdAt = new Date(row.created_at);
       const amount = row[clientField];
-      const adjustedAmount = createdAt > thresholdDate ? roundOrCeil(amount) : Math.ceil(amount / 10) * 10;
+      const adjustedAmount =
+        createdAt > thresholdDate ? roundOrCeil(amount) : Math.ceil(amount / 10) * 10;
       return total + adjustedAmount * rate;
     }, 0);
   };
@@ -502,7 +508,9 @@ function reduceArrayProfit(array: any[], flag: string) {
 
   if (flag === "OurRansom") {
     const rate = user.value.PVZ.includes("ПВЗ_1") ? 0.035 : 0.025;
-    const dateCondition = user.value.PVZ.includes("ПВЗ_1") ? new Date("2024-04-01") : undefined;
+    const dateCondition = user.value.PVZ.includes("ПВЗ_1")
+      ? new Date("2024-04-01")
+      : undefined;
 
     const filteredArray = filterArray(array, dateCondition);
     const amount = calculateAmount(filteredArray, "amountFromClient1", rate);
@@ -518,7 +526,6 @@ function reduceArrayProfit(array: any[], flag: string) {
     return amount;
   }
 }
-
 
 // function reduceArrayProfit(array: any[], flag: string): number {
 //   let totalProfit = 0;
@@ -837,8 +844,10 @@ function getAllSum() {
         sum1.value + sum2.value - sumOfPVZ - sumOfPVZ2 + sumOfPVZ3 - sumOfPVZ5;
       if (selectedPVZ.value === "НаДом") {
         allSum.value -= 11110;
-      } else if (selectedPVZ.value === 'ПВЗ_3') {
+      } else if (selectedPVZ.value === "ПВЗ_3") {
         allSum.value -= 2005;
+      } else if (selectedPVZ.value === "ПВЗ_1") {
+        allSum.value -= 2330;
       }
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
@@ -1222,7 +1231,7 @@ function getProfitRowsSum() {
 
     if (selectedPVZ.value === "ППВЗ_5") {
       allSumProfit.value += 6330;
-    } 
+    }
   }
 }
 
