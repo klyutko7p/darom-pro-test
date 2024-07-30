@@ -536,6 +536,7 @@ function checkStatus() {
     rowData.value.company = "";
   }
 }
+let isOpenYM = ref(false)
 
 function openModalAdmin(row: IAdvanceReport) {
   row.typeOfExpenditure = "Пополнение баланса";
@@ -550,6 +551,22 @@ function openModalAdmin(row: IAdvanceReport) {
   rowData.value.supportingDocuments = "";
   rowData.value.typeOfExpenditure = row.typeOfExpenditure;
   rowData.value.createdUser = "Директор";
+  rowData.value.date = storeUsers.getISODate(new Date());
+}
+
+function openModalYM(row: IAdvanceReport) {
+  row.typeOfExpenditure = "Пополнение баланса";
+  isOpenYM.value = true;
+  rowData.value = {} as IAdvanceReport;
+  rowData.value.PVZ = "Коломенское ЯМ";
+  rowData.value.company = "W/O/Я start";
+  rowData.value.expenditure = row.expenditure;
+  rowData.value.notation = row.notation;
+  rowData.value.supportingDocuments = "";
+  rowData.value.typeOfExpenditure = row.typeOfExpenditure;
+  rowData.value.issuedUser = "КассаЯМ";
+  rowData.value.createdUser = "КассаЯМ";
+  rowData.value.received = new Date();
   rowData.value.date = storeUsers.getISODate(new Date());
 }
 
@@ -577,6 +594,11 @@ function closeModalAdmin() {
 
 function closeModalAdminOOO() {
   isOpenAdminOOO.value = false;
+  rowData.value = {} as IAdvanceReport;
+}
+
+function closeModalYM() {
+  isOpenYM.value = false;
   rowData.value = {} as IAdvanceReport;
 }
 
@@ -752,6 +774,7 @@ async function createRow() {
     filteredRows.value = rows.value;
 
     closeModal();
+    closeModalYM();
     closeModalAdmin();
     closeModalAdminOOO();
     getSumCreditCash();
@@ -933,8 +956,15 @@ function getAllSumFromName(username: string) {
         row.createdUser === username && (row.issuedUser === "" || row.issuedUser === null)
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
+    
+    let sumOfPVZ4 = originallyRows.value
+    ?.filter(
+      (row) =>
+        row.createdUser === username && row.issuedUser === username
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
 
-  let allSum = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
+  let allSum = sumOfPVZ - sumOfPVZ1 + sumOfPVZ2 - sumOfPVZ3 + sumOfPVZ4;
   return allSum;
 }
 
@@ -1174,7 +1204,7 @@ function closeAdvanceReportEmployee() {
                   </h1>
                   <div class="flex items-center justify-center gap-3 mt-1">
                     <h1 class="font-bold text-secondary-color text-4xl text-center">
-                      {{ formatNumber(Math.ceil(allSum2 - 109001)) }} ₽
+                      {{ formatNumber(Math.ceil(allSum2 - 105101)) }} ₽
                     </h1>
                     <Icon
                       name="solar:money-bag-bold"
@@ -1714,11 +1744,24 @@ function closeAdvanceReportEmployee() {
           </div>
 
           <div>
-            <div class="text-center text-2xl my-5" v-if="selectedUser !== 'Директор'">
-              <h1>Баланс {{ selectedUser }}:</h1>
-              <h1 class="font-bold text-secondary-color text-4xl text-center">
-                {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
-              </h1>
+            <div
+              class="text-center text-2xl my-5 flex items-center justify-center flex-col gap-3"
+              v-if="selectedUser !== 'Директор'"
+            >
+              <div>
+                <h1>Баланс {{ selectedUser }}:</h1>
+                <h1 class="font-bold text-secondary-color text-4xl text-center">
+                  {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
+                </h1>
+              </div>
+
+              <UIMainButton
+                class=""
+                v-if="user.username === 'КассаЯМ'"
+                @click="openModalYM"
+              >
+                Пополнение баланса
+              </UIMainButton>
             </div>
           </div>
 
@@ -2144,6 +2187,41 @@ function closeAdvanceReportEmployee() {
           <div class="flex items-center justify-center gap-3 mt-10">
             <UIMainButton @click="createRow">Создать</UIMainButton>
             <UIErrorButton @click="closeModalAdminOOO">Отменить </UIErrorButton>
+          </div>
+        </UIModal>
+
+        <UIModal v-show="isOpenYM" @close-modal="closeModalYM">
+          <template v-slot:header>
+            <div class="custom-header" v-if="rowData.id">
+              Изменение строки с ID - <b> {{ rowData.id }}</b>
+            </div>
+            <div class="custom-header" v-else>Пополнение баланса</div>
+          </template>
+          <div class="text-black">
+            <div class="grid grid-cols-2 mb-5">
+              <label for="name">Сумма</label>
+              <input
+                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                v-model="rowData.expenditure"
+                type="text"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 mb-5">
+            <label for="name">Дата</label>
+            <input
+              class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+              v-model="rowData.date"
+              type="date"
+              placeholder="ДД.ММ.ГГГГ"
+              onchange="this.className=(this.value!=''?'has-value':'')"
+            />
+          </div>
+
+          <div class="flex items-center justify-center gap-3 mt-10">
+            <UIMainButton @click="createRow">Создать</UIMainButton>
+            <UIErrorButton @click="closeModalYM">Отменить </UIErrorButton>
           </div>
         </UIModal>
       </NuxtLayout>
