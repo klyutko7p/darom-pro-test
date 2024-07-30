@@ -324,14 +324,23 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getRansomRowsByPVZ(PVZ: string | string[], flag: string) {
     try {
-      let { data }: any = await useFetch("/api/ransom/get-rows-by-pvz", {
+      // let { data }: any = await useFetch("/api/ransom/get-rows-by-pvz", {
+      //   method: "POST",
+      //   body: JSON.stringify({ PVZ: PVZ, flag: flag }),
+      // });
+      // return JSON.parse(data.value);
+
+      let response = await fetch("/api/ransom/get-rows-by-pvz", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/octet-stream",
         },
         body: JSON.stringify({ PVZ: PVZ, flag: flag }),
       });
-      return data.value;
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      return unpacked;
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -626,11 +635,11 @@ export const useRansomStore = defineStore("ransom", () => {
                 row.amountFromClient1 - row.priceSite + row.deliveredKGT;
             }
           } else {
-            row.amountFromClient1 = 0
+            row.amountFromClient1 = 0;
             if (row.percentClient == 0) {
               row.profit1 = row.deliveredKGT;
             } else {
-              row.profit1 = row.prepayment - row.priceSite
+              row.profit1 = row.prepayment - row.priceSite;
             }
           }
         }
