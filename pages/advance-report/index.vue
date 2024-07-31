@@ -461,9 +461,11 @@ function getSumCreditBalance() {
       )
       .reduce((acc, value) => acc + +value.expenditure, 0);
 
-    sumCreditBalance.value = sumOfPVZ1 - sumOfPVZ2 < 0 ? 0 : sumOfPVZ1 - sumOfPVZ2;
+    sumCreditBalance.value = sumOfPVZ1 - sumOfPVZ2 - 100000 < 0 ? 0 : sumOfPVZ1 - sumOfPVZ2 - 100000;
     sumCreditBalanceDebt.value =
-      sumOfPVZ1Debt - sumOfPVZ2Debt < 0 ? 0 : sumOfPVZ1Debt - sumOfPVZ2Debt - 800000;
+      sumOfPVZ1Debt - sumOfPVZ2Debt + 1700000 < 0
+        ? 0
+        : sumOfPVZ1Debt - sumOfPVZ2Debt + 1700000;
   }
 }
 
@@ -536,7 +538,7 @@ function checkStatus() {
     rowData.value.company = "";
   }
 }
-let isOpenYM = ref(false)
+let isOpenYM = ref(false);
 
 function openModalAdmin(row: IAdvanceReport) {
   row.typeOfExpenditure = "Пополнение баланса";
@@ -956,12 +958,9 @@ function getAllSumFromName(username: string) {
         row.createdUser === username && (row.issuedUser === "" || row.issuedUser === null)
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
-    
-    let sumOfPVZ4 = originallyRows.value
-    ?.filter(
-      (row) =>
-        row.createdUser === username && row.issuedUser === username
-    )
+
+  let sumOfPVZ4 = originallyRows.value
+    ?.filter((row) => row.createdUser === username && row.issuedUser === username)
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
   let allSum = sumOfPVZ - sumOfPVZ1 + sumOfPVZ2 - sumOfPVZ3 + sumOfPVZ4;
@@ -1136,7 +1135,7 @@ function closeAdvanceReportEmployee() {
                 </h1>
                 <h1 class="text-2xl text-center">Междубалансовая задолженность</h1>
                 <h1 class="text-center text-3xl text-secondary-color mb-5">
-                  {{ formatNumber(sumCreditBalanceDebt + 96000 + 1000000) }} ₽
+                  {{ formatNumber(sumCreditBalanceDebt) }} ₽
                 </h1>
               </div>
             </div>
