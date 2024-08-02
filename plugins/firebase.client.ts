@@ -1,7 +1,6 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getMessaging, onMessage, type Messaging } from "firebase/messaging";
 
-
 declare module "#app" {
   interface NuxtApp {
     $messaging: Messaging;
@@ -27,15 +26,19 @@ export default defineNuxtPlugin(() => {
       measurementId: "G-GC3VTLSR3S",
     });
 
-  const messaging = getMessaging(app);
+  if (typeof navigator.serviceWorker !== "undefined") {
+    const messaging = getMessaging(app);
 
-  onMessage(messaging, (payload) => {
-    alert(JSON.stringify(payload, null, 2));
-  });
+    onMessage(messaging, (payload) => {
+      alert(JSON.stringify(payload, null, 2));
+    });
 
-  return {
-    provide: {
-      messaging,
-    },
-  };
+    return {
+      provide: {
+        messaging,
+      },
+    };
+  } else {
+    console.warn("Service Worker is not supported in this browser.");
+  }
 });
