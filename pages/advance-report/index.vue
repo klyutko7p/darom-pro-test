@@ -461,11 +461,16 @@ function getSumCreditBalance() {
       )
       .reduce((acc, value) => acc + +value.expenditure, 0);
 
-    sumCreditBalance.value = sumOfPVZ1 - sumOfPVZ2 - 100000 < 0 ? 0 : sumOfPVZ1 - sumOfPVZ2 - 100000;
+    sumCreditBalance.value =
+      sumOfPVZ1 - sumOfPVZ2 - 100000 < 0 ? 0 : sumOfPVZ1 - sumOfPVZ2 - 100000;
     sumCreditBalanceDebt.value =
       sumOfPVZ1Debt - sumOfPVZ2Debt + 1700000 < 0
         ? 0
         : sumOfPVZ1Debt - sumOfPVZ2Debt + 1700000;
+
+    if (sumCreditBalanceDebt.value > 0) {
+      sumCreditBalance.value = 0;
+    }
   }
 }
 
