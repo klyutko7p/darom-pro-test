@@ -467,10 +467,6 @@ function getSumCreditBalance() {
       sumOfPVZ1Debt - sumOfPVZ2Debt + 1700000 < 0
         ? 0
         : sumOfPVZ1Debt - sumOfPVZ2Debt + 1700000;
-
-    if (sumCreditBalanceDebt.value > 0) {
-      sumCreditBalance.value = 0;
-    }
   }
 }
 
@@ -1109,8 +1105,11 @@ function closeAdvanceReportEmployee() {
                   {{ formatNumber(sumCreditCashDebt) }} ₽
                 </h1>
                 <h1 class="text-2xl text-center">Междубалансовая задолженность</h1>
-                <h1 class="text-center text-3xl text-secondary-color mb-5">
+                <h1 class="text-center text-3xl text-secondary-color mb-5" v-if="sumCreditBalanceDebt <= 0">
                   {{ formatNumber(sumCreditBalance) }} ₽
+                </h1>
+                <h1 class="text-center text-3xl text-secondary-color mb-5" v-else>
+                  0 ₽
                 </h1>
               </div>
             </div>
