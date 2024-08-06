@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
+import VueMultiselect from "vue-multiselect";
+
 import { read, utils, writeFile, write } from "xlsx";
 const storeAdvanceReport = useAdvanceReports();
 const emit = defineEmits([
@@ -235,7 +237,6 @@ async function createAdvanceReportZP() {
   }
 }
 
-import VueMultiselect from "vue-multiselect";
 
 const storeAdvanceReports = useAdvanceReports();
 let selectedCompany = ref("");
@@ -507,11 +508,5 @@ watch([selectedCompany], filterRowsCompany);
     </table>
   </div>
 </template>
-
-<style scoped>
-.hidden-row {
-  display: none !important;
-}
-</style>
 
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>
