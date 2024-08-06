@@ -345,7 +345,7 @@ let dateFilter = ref("issued");
       <Icon
         @click="showFilters = !showFilters"
         class="cursor-pointer duration-200 hover:text-secondary-color"
-        name="solar:filters-line-duotone"
+        name="material-symbols:settings-rounded"
         size="24"
       />
       <h1 class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full">

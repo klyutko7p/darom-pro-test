@@ -60,22 +60,24 @@ onBeforeMount(() => {
 
 let returnRows = ref<Array<IAdvanceReport>>();
 
-  import Cookies from "js-cookie";
+import Cookies from "js-cookie";
 
 const isDateFilterCookie = Cookies.get("isDateFilter");
 
-let isDateFilter = ref(isDateFilterCookie !== undefined ? JSON.parse(isDateFilterCookie) : true);
+let isDateFilter = ref(
+  isDateFilterCookie !== undefined ? JSON.parse(isDateFilterCookie) : true
+);
 
 function updateCurrentPageData() {
   if (isDateFilter.value) {
-    saveIsDateFilterToCookie(true)
+    saveIsDateFilterToCookie(true);
     returnRows.value = props.rows;
     filteredRows.value = returnRows.value?.filter((row: IAdvanceReport) => {
       let rowDate: Date = new Date(row.date);
       return rowDate.getMonth() + 1 === +month.value;
     });
   } else {
-    saveIsDateFilterToCookie(false)
+    saveIsDateFilterToCookie(false);
     returnRows.value = props.rows;
     filteredRows.value = returnRows.value;
   }
@@ -98,9 +100,9 @@ function exportToExcel() {
   <div
     class="flex items-center justify-between mt-10 max-sm:flex-col max-sm:items-start max-sm:gap-3"
   >
-    <div class="flex items-center max-sm:flex-col max-sm:items-start gap-5">
+    <div class="flex items-center max-sm:items-center max-sm:justify-between max-[400px]:flex-col max-[400px]:items-start gap-5">
       <span
-        class="border-2 py-3 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
+        class="border-2 py-1 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
         @click="showFilters = !showFilters"
         >2024</span
       >
@@ -109,7 +111,7 @@ function exportToExcel() {
         class="flex items-center w-full justify-between max-sm:items-start"
       >
         <select
-          class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+          class="py-1 px-2 border-2 rounded-lg text-base border-secondary-color bg-secondary-color text-white font-bold"
           v-model="month"
           @change="filterRows(month)"
         >
@@ -119,16 +121,18 @@ function exportToExcel() {
         </select>
         <div class="ml-2 space-x-2">
           <input type="checkbox" v-model="isDateFilter" />
-          <label for="">Данные за 1 месяц?</label>
+          <label for="" class="text-sm">Данные за 1 месяц?</label>
         </div>
       </div>
     </div>
-    <Icon
-      class="duration-200 hover:text-secondary-color cursor-pointer"
-      size="40"
-      name="material-symbols:sheets-add-on"
-      @click="exportToExcel"
-    />
+    <div class="max-sm:flex max-sm:justify-end max-sm:w-full">
+      <Icon
+        class="duration-200 hover:text-secondary-color cursor-pointer"
+        size="40"
+        name="bi:filetype-xlsx"
+        @click="exportToExcel"
+      />
+    </div>
   </div>
 
   <div
@@ -161,7 +165,9 @@ function exportToExcel() {
           <th scope="col" class="border-2">Подтверждающий документ</th>
           <th scope="col" class="border-2">Получено</th>
           <th scope="col" class="border-2" v-if="user.username === 'Директор'">Тип</th>
-          <th scope="col" class="border-2" v-if="user.username === 'Директор'">Дата создания</th>
+          <th scope="col" class="border-2" v-if="user.username === 'Директор'">
+            Дата создания
+          </th>
           <th scope="col" class="border-2" v-if="user.username === 'Директор'">
             Удаление
           </th>

@@ -1792,7 +1792,7 @@ async function updateRow() {
               <Icon
                 @click="showFilters = !showFilters"
                 class="cursor-pointer duration-200 hover:text-secondary-color"
-                name="solar:filters-line-duotone"
+                name="material-symbols:settings-rounded"
                 size="24"
               />
             </div>
@@ -2138,7 +2138,7 @@ async function updateRow() {
               <Icon
                 @click="showFilters = !showFilters"
                 class="cursor-pointer duration-200 hover:text-secondary-color"
-                name="solar:filters-line-duotone"
+                name="material-symbols:settings-rounded"
                 size="24"
               />
             </div>

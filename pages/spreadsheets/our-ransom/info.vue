@@ -81,7 +81,7 @@ definePageMeta({
                 @click="router.push('/spreadsheets/our-ransom')">Все товары</UIActionButton>
             </div>
             <div @click="router.push(`/spreadsheets/our-ransom/${pvz}`)" v-for="pvz in user.PVZ"
-              class="border-2 border-secondary-color p-10 font-medium hover:bg-secondary-color hover:text-white duration-300 rounded-2xl cursor-pointer">
+              class="border-2 border-secondary-color px-10 py-5 font-medium hover:bg-secondary-color hover:text-white duration-300 rounded-2xl cursor-pointer">
               <h1 class="text-xl font-bold">{{ pvz }}</h1>
               <h1 v-if="user.role === 'ADMIN'">
                 Товаров заказано:

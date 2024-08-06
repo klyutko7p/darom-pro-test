@@ -1151,7 +1151,7 @@ function closeAdvanceReportEmployee() {
           >
             <h1
               @click="router.push('/advance-report/summary-tables')"
-              class="underline text-secondary-color font-bold cursor-pointer hover:opacity-50 duration-200"
+              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200 cursor-pointer"
             >
               Перейти к сводным таблицам
             </h1>
@@ -1255,8 +1255,8 @@ function closeAdvanceReportEmployee() {
           </div>
 
           <div class="flex items-start gap-3 flex-col">
-            <div class="flex items-center mt-5 gap-9 max-sm:w-full">
-              <UIMainButton class="max-sm:w-full" @click="openModal(rowData, 'CASH')">
+            <div class="flex items-center mt-5 gap-3 w-full max-w-[400px] max-sm:max-w-full">
+              <UIMainButton class="w-full" @click="openModal(rowData, 'CASH')">
                 Создание авансового документа (нал)
               </UIMainButton>
               <div class="max-sm:hidden">
@@ -1265,10 +1265,10 @@ function closeAdvanceReportEmployee() {
             </div>
 
             <div
-              class="flex items-center gap-3 max-sm:w-full"
+              class="flex items-center gap-3 w-full max-w-[400px] max-sm:max-w-full"
               v-if="user.username === 'Директор'"
             >
-              <UIMainButton class="max-sm:w-full" @click="openModal(rowData, 'ONLINE')">
+              <UIMainButton class="w-full" @click="openModal(rowData, 'ONLINE')">
                 Создание авансового документа (безнал)
               </UIMainButton>
               <div class="max-sm:hidden">
@@ -1740,7 +1740,7 @@ function closeAdvanceReportEmployee() {
           >
             <h1
               @click="router.push('/advance-report/summary-tables')"
-              class="underline text-secondary-color font-bold cursor-pointer hover:opacity-50 duration-200"
+              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200 cursor-pointer"
             >
               Перейти к сводным таблицам
             </h1>
@@ -1794,8 +1794,8 @@ function closeAdvanceReportEmployee() {
           </div>
 
           <div class="flex items-start gap-3 flex-col">
-            <div class="flex items-center mt-5 gap-9 max-sm:w-full">
-              <UIMainButton class="max-sm:w-full" @click="openModal(rowData, 'CASH')">
+            <div class="flex items-center mt-5 gap-9 w-full">
+              <UIMainButton class="w-full" @click="openModal(rowData, 'CASH')">
                 Создание авансового документа (нал)
               </UIMainButton>
               <div class="max-sm:hidden">
@@ -1804,10 +1804,10 @@ function closeAdvanceReportEmployee() {
             </div>
 
             <div
-              class="flex items-center gap-3 max-sm:w-full"
+              class="flex items-center gap-3 w-full"
               v-if="user.username === 'Директор'"
             >
-              <UIMainButton class="max-sm:w-full" @click="openModal(rowData, 'ONLINE')">
+              <UIMainButton class="w-full" @click="openModal(rowData, 'ONLINE')">
                 Создание авансового документа (безнал)
               </UIMainButton>
               <div class="max-sm:hidden">

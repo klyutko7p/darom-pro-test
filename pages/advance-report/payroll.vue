@@ -209,7 +209,16 @@ let pvz = ref([
 
 let companies = ref(["W/O/Я start", "Darom.pro", "Сортировка", "Доставка"]);
 
-let banks = ref(["тинькофф", "сбер", "почтабанк", "озон", "яндекс банк", "альфа банк", "центр инвест", "ВТБ"]);
+let banks = ref([
+  "тинькофф",
+  "сбер",
+  "почтабанк",
+  "озон",
+  "яндекс банк",
+  "альфа банк",
+  "центр инвест",
+  "ВТБ",
+]);
 
 function autoInfoByFullname() {
   let row = employees.value.filter((row) => row.fullname === rowData.value.fullname);
@@ -240,12 +249,12 @@ function getSelectedMonth(monthNumber: number) {
       <NuxtLayout name="admin">
         <div class="mt-10">
           <div
-            class="flex items-center justify-between max-sm:flex-col gap-3 max-sm:items-start"
+            class="flex items-center justify-between gap-3 max-sm:items-center"
           >
-            <UIMainButton @click="openModal">Создать запись</UIMainButton>
+            <UIActionButton @click="openModal">Создать запись</UIActionButton>
             <NuxtLink
               to="/advance-report/employees"
-              class="underline text-secondary-color font-bold text-xl hover:opacity-50 duration-200"
+              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200"
               >Перейти к сотрудникам</NuxtLink
             >
           </div>

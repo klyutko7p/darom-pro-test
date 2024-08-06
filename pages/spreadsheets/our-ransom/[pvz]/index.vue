@@ -177,7 +177,6 @@ onMounted(async () => {
 });
 
 onBeforeMount(() => {
-
   if (!token || user.value.dataOurRansom === "NONE") {
     router.push("/auth/login");
   }
@@ -321,15 +320,16 @@ function scanItem() {
 
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
-    scannedLink = convertUrl(scannedLink)
-    window.location.href = 'https://soft-praline-633324.netlify.app/spreadsheets/our-ransom/ПВЗ' + scannedLink
+    scannedLink = convertUrl(scannedLink);
+    window.location.href =
+      "https://soft-praline-633324.netlify.app/spreadsheets/our-ransom/ПВЗ" + scannedLink;
     scanStringItem.value = "";
   }, 500);
 }
 
 function convertUrl(url: string): string {
-    const convertedUrl = url.replace(/\./g, '/');
-    return convertedUrl;
+  const convertedUrl = url.replace(/\./g, "/");
+  return convertedUrl;
 }
 
 // async function updateDeliveryRows(obj: any) {
@@ -358,10 +358,23 @@ function convertUrl(url: string): string {
 // }
 
 async function updateDeliveryRows(obj: any) {
-  let answer = confirm(
-    `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
-  );
-  if (answer) {
+  if (obj.flag !== "additionally") {
+    let answer = confirm(
+      `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
+    );
+    if (answer) {
+      isLoading.value = true;
+      await storeRansom.updateDeliveryRowsStatus(
+        obj.idArray,
+        obj.flag,
+        "OurRansom",
+        user.value.username
+      );
+      filteredRows.value = await storeRansom.getRansomRowsByPVZ(pvzString, "OurRansom");
+      rows.value = filteredRows.value;
+      isLoading.value = false;
+    }
+  } else {
     isLoading.value = true;
     await storeRansom.updateDeliveryRowsStatus(
       obj.idArray,

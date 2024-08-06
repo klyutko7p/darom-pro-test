@@ -1,6 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   runtimeConfig: {
+    merchantId: "MA0003333883",
+    accountId: "40802810601500007607/044525104",
+    tokenQR:
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJ0WmxGcEtVRmNWQTMzZnJIWEI2OXdWNFhyWXFTZ2lYOCJ9.Def-wRz3jyqv1_Mm8UwB4qdvoznQFlzAbftK0nvOhZPXeMN2nu95lYRGsQNEGUlGmTXgFN5kHpNUJHMESQRAQ3Qnlcv4-bY363NnbuKbieBvGTgBjKXiv3HbS1rJe_rLIfM8cRNaJBWs12D6XaMMdm2CvJgGO1Z1edepJaoJaJjZbmGLHeaxrkJ9ZqvTxapNHKlNzSNMoJb8mjXFWz_ex0P3LbF4iFq5aygPNcICuRIXxLp5yAPVJgCL-5vNDF1Ofy9RqSaDb_Ycvy7CLtv0o4SJihe1OkGqcUlP_1CYw0aQ_vVfzOqdvp1zsyhFUdtRyhkQPj-G2tNt6rq1QZ53lPnOt1TWSR8lV0v5UC040QFc_31AHvA6KKVukS64TOxhYG5lMCj7MdNFR2w4QXxHKtLTGErlmHcE-5ReJX80nujxi2K5UMl5jPz5o6BTEkfVkTB398p-lgLKhaOnSrZ6Z-HgBg0w79hp8xCtgc4gdnq0N74xzVrWu-6NdBj_dZ7i",
     public: {
       tokenTelegramBot: "7000545613:AAF8Wn8o1nhLalZ82SnyqFdVWIg_ud2aGNI",
     },

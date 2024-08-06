@@ -8,6 +8,10 @@ input[type="checkbox"] {
   accent-color: #ffb957;
 }
 
+.no-scroll {
+  overflow: hidden;
+}
+
 [v-cloak] {
   display: none;
 }

@@ -258,7 +258,7 @@ watch(
 
   <div class="mt-10 flex items-center gap-5">
     <span
-      class="border-2 py-3 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
+      class="border-2 py-1 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
       @click="showFilters = !showFilters"
       >2024</span
     >
@@ -267,7 +267,7 @@ watch(
       class="flex items-center w-full justify-between max-sm:items-start"
     >
       <select
-        class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+        class="py-1 px-2 border-2 rounded-lg text-base border-secondary-color bg-secondary-color text-white font-bold"
         v-model="month"
         @change="filterRows(month), getWeekdays(), updateCurrentPageData()"
       >

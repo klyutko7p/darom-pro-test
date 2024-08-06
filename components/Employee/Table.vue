@@ -29,7 +29,6 @@ function updateCurrentPageData() {
 }
 
 
-
 watch([props.rows, totalRows, props.user], updateCurrentPageData);
 </script>
 <template>

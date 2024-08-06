@@ -460,10 +460,24 @@ async function showDeletedRows(flag: boolean) {
 }
 
 async function updateDeliveryRows(obj: any) {
-  let answer = confirm(
-    `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
-  );
-  if (answer) {
+  if (obj.flag !== "additionally") {
+    let answer = confirm(
+      `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
+    );
+    if (answer) {
+      isLoading.value = true;
+      await storeRansom.updateDeliveryRowsStatus(
+        obj.idArray,
+        obj.flag,
+        "OurRansom",
+        user.value.username
+      );
+      filteredRows.value = await storeRansom.getRansomRowsOurRansom();
+      rows.value = filteredRows.value;
+      isLoading.value = false;
+      await updateCells();
+    }
+  } else {
     isLoading.value = true;
     await storeRansom.updateDeliveryRowsStatus(
       obj.idArray,
@@ -498,7 +512,7 @@ async function updateOnlineMoneyRowsStatus() {
 function onDateInput(event: any) {
   if (event.target.value === "") {
     console.log("Дата удалена!");
-    rowData.value.additionally = '';
+    rowData.value.additionally = "";
   }
 }
 

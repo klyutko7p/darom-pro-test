@@ -7,7 +7,7 @@ const emit = defineEmits([
   "createReport",
   "updateReport",
   "deleteRow",
-  "getMonth"
+  "getMonth",
 ]);
 
 function openModal(row: IPayroll) {
@@ -51,8 +51,8 @@ const filteredRows = ref(
 );
 
 onMounted(() => {
-  getMonth()
-})
+  getMonth();
+});
 
 let showFilters = ref(false);
 let months = ref([3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2]);
@@ -90,8 +90,6 @@ function getRowByIdFromInput(row: IPayroll) {
   arrayWithModifiedRows.value.push(row);
   arrayWithModifiedRows.value = [...new Set(arrayWithModifiedRows.value)];
 }
-
-watch([props.rows, totalRows, props.user], updateCurrentPageData);
 
 function getAllSumAdvance() {
   return filteredRows.value?.reduce((acc, value) => acc + +value.advance, 0)
@@ -159,15 +157,15 @@ async function createAdvanceReportAdvance() {
         expenditureSum: 0,
       };
     }
-    acc[key].expenditureSum += parseFloat(row.advance); 
+    acc[key].expenditureSum += parseFloat(row.advance);
     return acc;
   }, {});
 
-  const selectedMonth = month.value; 
+  const selectedMonth = month.value;
 
   const currentDate = new Date();
   const year = currentDate.getFullYear();
-  const date = new Date()
+  const date = new Date();
 
   let resultRows = Object.values(groupedRows).map((groupedRow) => ({
     PVZ: groupedRow.PVZ,
@@ -183,7 +181,7 @@ async function createAdvanceReportAdvance() {
   let answer = confirm("Вы точно хотите создать отчет по авансу?");
   if (answer) {
     await storeAdvanceReport.createAdvanceReports(resultRows);
-  } 
+  }
 }
 
 async function createAdvanceReportZP() {
@@ -205,16 +203,20 @@ async function createAdvanceReportZP() {
         expenditureSum: 0,
       };
     }
-    const expenditure = row.hours * row.paymentPerShift - row.advance - row.deductions + row.additionalPayment;
+    const expenditure =
+      row.hours * row.paymentPerShift -
+      row.advance -
+      row.deductions +
+      row.additionalPayment;
     acc[key].expenditureSum += expenditure;
     return acc;
   }, {});
 
-  const selectedMonth = month.value; 
+  const selectedMonth = month.value;
 
   const currentDate = new Date();
   const year = currentDate.getFullYear();
-  const date = new Date(year, selectedMonth - 1, 31)
+  const date = new Date(year, selectedMonth - 1, 31);
 
   let resultRows = Object.values(groupedRows).map((groupedRow) => ({
     PVZ: groupedRow.PVZ,
@@ -230,13 +232,36 @@ async function createAdvanceReportZP() {
   let answer = confirm("Вы точно хотите создать отчет по выплате ЗП?");
   if (answer) {
     await storeAdvanceReport.createAdvanceReports(resultRows);
-  } 
+  }
 }
+
+import VueMultiselect from "vue-multiselect";
+
+const storeAdvanceReports = useAdvanceReports();
+let selectedCompany = ref("");
+
+const uniqueCompany = computed(() => {
+  return storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "company");
+});
+
+const filterRowsCompany = () => {
+  filteredRows.value = props.rows?.slice();
+  filteredRows.value = props.rows?.filter((row) => {
+    return !selectedCompany.value.length || selectedCompany.value.includes(row.company);
+  });
+  filteredRows.value = filteredRows.value?.filter((row: IPayroll) => {
+    let rowDate: Date = new Date(row.date);
+    return rowDate.getMonth() + 1 === +month.value;
+  });
+};
+
+watch([props.rows, totalRows, props.user], updateCurrentPageData);
+watch([selectedCompany], filterRowsCompany);
 </script>
 <template>
   <div class="my-10 flex items-center gap-5">
     <span
-      class="border-2 py-3 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
+      class="border-2 py-1 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
       @click="showFilters = !showFilters"
       >2024</span
     >
@@ -245,51 +270,44 @@ async function createAdvanceReportZP() {
       class="flex items-center w-full justify-between max-sm:flex-col gap-3 max-sm:items-end"
     >
       <select
-        class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+        class="py-1 px-2 border-2 rounded-lg text-base border-secondary-color bg-secondary-color text-white font-bold"
         v-model="month"
         @change="filterRows(month), getMonth()"
       >
-        <option
-          v-for="(monthName, monthNumber) in monthNames"
-          :value="monthNumber"
-        >
+        <option v-for="(monthName, monthNumber) in monthNames" :value="monthNumber">
           {{ monthName }}
         </option>
       </select>
-      <UIMainButton @click="createReport()"
-        >Создать отчет за {{ monthNames[month] }}</UIMainButton
+      <UIActionButton @click="createReport()"
+        >Создать отчет за {{ monthNames[month] }}</UIActionButton
       >
     </div>
   </div>
-  <div class="flex justify-between items-center mb-3 gap-3 max-sm:items-end">
-    <div
-      class="flex items-center gap-3 max-sm:flex-col max-sm:w-full max-sm:items-start"
-    >
-      <UIMainButton @click="createAdvanceReportAdvance"
+  <div
+    class="flex justify-between items-center mb-3 gap-3 max-sm:items-end max-sm:gap-5 max-sm:flex-col"
+  >
+    <div class="flex items-center gap-3 max-sm:flex-col max-sm:w-full max-sm:items-start">
+      <UIMainButton class="max-sm:w-full" @click="createAdvanceReportAdvance"
         >создать отчет по авансу</UIMainButton
       >
-      <UIMainButton @click="createAdvanceReportZP"
+      <UIMainButton class="max-sm:w-full" @click="createAdvanceReportZP"
         >создать отчет по выплате зп</UIMainButton
       >
     </div>
     <Icon
       class="duration-200 hover:text-secondary-color cursor-pointer"
       size="40"
-      name="material-symbols:sheets-add-on"
+      name="bi:filetype-xlsx"
       @click="exportToExcel"
     />
   </div>
 
-  <div class="mb-10">
+  <div class="mb-5">
     <h1 class="font-bold text-4xl mb-3">Итого</h1>
     <div>
       <h1 class="font-medium text-xl">
         Выплачен аванс:
-        {{
-          typeof getAllSumAdvance() === "number"
-            ? getAllSumAdvance().toFixed(0)
-            : 0
-        }}
+        {{ typeof getAllSumAdvance() === "number" ? getAllSumAdvance().toFixed(0) : 0 }}
         ₽
       </h1>
       <h1 class="font-medium text-xl">
@@ -298,23 +316,27 @@ async function createAdvanceReportZP() {
       </h1>
       <h1 class="font-medium text-xl">
         Итого начислено за месяц:
-        {{
-          typeof getAllSumZPMonth() === "number"
-            ? getAllSumZPMonth().toFixed(0)
-            : 0
-        }}
+        {{ typeof getAllSumZPMonth() === "number" ? getAllSumZPMonth().toFixed(0) : 0 }}
         ₽
       </h1>
     </div>
   </div>
 
-  <div class="flex">
-    <UIActionButton
-      @click="updateReport()"
-      v-if="arrayWithModifiedRows.length > 0"
-    >
+  <div class="flex mb-3">
+    <UIActionButton @click="updateReport()" v-if="arrayWithModifiedRows.length > 0">
       Сохранить
     </UIActionButton>
+  </div>
+
+  <div>
+    <h1 class="text-lg mb-1 font-bold">Фильтр по компании:</h1>
+    <VueMultiselect
+      v-model="selectedCompany"
+      :options="uniqueCompany"
+      :multiple="true"
+      :close-on-select="true"
+      placeholder="Выберите компанию"
+    />
   </div>
 
   <div class="relative max-h-[610px] mt-5 mb-10 mr-5">
@@ -332,7 +354,8 @@ async function createAdvanceReportZP() {
             v-if="
               user.dataDelivery === 'WRITE' ||
               user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' 
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
             "
           >
             изменение
@@ -354,7 +377,15 @@ async function createAdvanceReportZP() {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in filteredRows" class="text-center" :class="{'bg-red-500 text-black': row.notation === 'Нам должны', 'bg-pink-900 text-white': row.notation === 'Расчёт уволенных сотрудников', 'bg-yellow-400 text-black': row.notation === 'Оплачено'}">
+        <tr
+          v-for="row in filteredRows"
+          class="text-center"
+          :class="{
+            'bg-red-500 text-black': row.notation === 'Нам должны',
+            'bg-pink-900 text-white': row.notation === 'Расчёт уволенных сотрудников',
+            'bg-yellow-400 text-black': row.notation === 'Оплачено',
+          }"
+        >
           <td class="border-2" v-if="user.role === 'ADMIN'">
             <h1
               @click="openModal(row)"
@@ -376,9 +407,7 @@ async function createAdvanceReportZP() {
           <td class="border-2">
             {{ row.bank }}
           </td>
-          <td class="border-2">
-            {{ row.paymentPerShift ? row.paymentPerShift : 0 }} ₽
-          </td>
+          <td class="border-2">{{ row.paymentPerShift ? row.paymentPerShift : 0 }} ₽</td>
           <td class="border-2">
             <input
               class="max-w-[70px] text-center"
@@ -434,7 +463,7 @@ async function createAdvanceReportZP() {
               ).toFixed(0)
             }}
           </td>
-          <td class="border-2" v-else>0 </td>
+          <td class="border-2" v-else>0</td>
           <td
             class="border-2"
             v-if="
@@ -457,12 +486,13 @@ async function createAdvanceReportZP() {
             ₽
           </td>
           <td class="border-2" v-else>0 ₽</td>
-          <td class="border-2"> {{ row.notation }} </td>
+          <td class="border-2">{{ row.notation }}</td>
           <td
             class="px-6 py-4 border-2"
             v-if="
               (user.dataOurRansom === 'WRITE' && user.role === 'ADMIN') ||
-              user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' 
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
             "
           >
             <Icon
@@ -483,3 +513,5 @@ async function createAdvanceReportZP() {
   display: none !important;
 }
 </style>
+
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>

@@ -1,6 +1,5 @@
 <template>
   <div class="fixed top-0 bottom-0 left-0 right-0 flex justify-center bg-[#000000da] z-[100] max-lg:justify-normal">
-
     <div class="text-black text-center bg-white m-4 overflow-auto py-5 px-5 max-lg:px-1 rounded-3xl border-4 border-secondary-color" @click.stop>
       <div class="text-secondary-color flex justify-end">
         <Icon  @click="$emit('close-modal')" name="material-symbols:close-rounded" size="32" class="cursor-pointer hover:opacity-50 duration-200" />

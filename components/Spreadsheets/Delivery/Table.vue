@@ -161,7 +161,7 @@ let showOtherOptions = ref(false);
           </button>
         </div>
       </div>
-      <Icon class="duration-200 hover:text-secondary-color cursor-pointer" size="40" name="material-symbols:sheets-add-on"
+      <Icon class="duration-200 hover:text-secondary-color cursor-pointer" size="40" name="bi:filetype-xlsx"
         @click="exportToExcel" />
     </div>
   </div>

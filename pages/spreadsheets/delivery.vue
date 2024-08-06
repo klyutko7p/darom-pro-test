@@ -218,7 +218,7 @@ function getFromNameFromName() {
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div v-if="!isLoading" class="mt-14">
-          <NuxtLink v-if="user.username === 'Директор'" to="/summary-tables/delivery" class="text-right w-full underline text-secondary-color font-bold flex items-center justify-end hover:opacity-50 duration-200">
+          <NuxtLink v-if="user.username === 'Директор'" to="/summary-tables/delivery" class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200 cursor-pointer">
             Перейти к сводным таблицам
           </NuxtLink>
           <div>

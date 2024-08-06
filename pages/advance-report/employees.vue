@@ -140,7 +140,7 @@ let banks = ref(["тинькофф", "сбер", "почтабанк", "озон
         <div class="mt-10">
           <div class="flex items-center justify-between max-sm:flex-col max-sm:items-start gap-3">
           <UIMainButton @click="openModal">Создать сотрудника</UIMainButton>
-            <NuxtLink to="/advance-report/payroll" class="underline text-secondary-color font-bold text-xl hover:opacity-50 duration-200">Перейти к расчёту ЗП</NuxtLink>
+            <NuxtLink to="/advance-report/payroll" class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200">Перейти к расчёту ЗП</NuxtLink>
           </div>
 
           <EmployeeTable

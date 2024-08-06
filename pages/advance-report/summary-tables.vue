@@ -560,7 +560,7 @@ function returnTotal(sum: number) {
           <div class="flex justify-end my-3" v-if="user.role === 'ADMIN'">
             <h1
               @click="router.push('/advance-report')"
-              class="underline text-secondary-color font-bold cursor-pointer hover:opacity-50 duration-200"
+              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200 cursor-pointer"
             >
               Перейти к авансовому отчету
             </h1>
@@ -598,7 +598,7 @@ function returnTotal(sum: number) {
           </h1>
           <div class="my-10 flex items-center gap-5">
             <span
-              class="border-2 py-3 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
+              class="border-2 py-1 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
               @click="showFilters = !showFilters"
               >2024</span
             >
@@ -607,7 +607,7 @@ function returnTotal(sum: number) {
               class="flex items-center w-full gap-3 max-sm:items-start"
             >
               <select
-                class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+                class="py-1 px-2 border-2 rounded-lg text-base border-secondary-color bg-secondary-color text-white font-bold"
                 v-model="month"
                 @change="filterRowsData(month)"
               >
