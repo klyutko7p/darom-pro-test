@@ -17,7 +17,11 @@ const token = Cookies.get("token");
 let isLoading = ref(false);
 let rowsDelivery = ref<Array<IDelivery>>();
 
-onBeforeMount(async () => {
+onMounted(async () => {
+  if (!token) {
+    router.push("/auth/login");
+  }
+
   isLoading.value = true;
   try {
     user.value = await storeUsers.getUser();
@@ -78,11 +82,6 @@ onBeforeMount(async () => {
   }
 });
 
-onMounted(() => {
-  if (!token) {
-    router.push("/auth/login");
-  }
-});
 
 definePageMeta({
   layout: false,
@@ -1233,7 +1232,7 @@ function closeAdvanceReportEmployee() {
               <h1 class="font-bold text-xl">Проверить баланс сотрудника</h1>
               <Icon
                 @click="closeAdvanceReportEmployee"
-                name="clarity:employee-group-line"
+                name="clarity:employee-line"
                 size="24"
                 class="text-secondary-color hover:opacity-50 cursor-pointer duration-200"
               />
@@ -1260,7 +1259,7 @@ function closeAdvanceReportEmployee() {
                 Создание авансового документа (нал)
               </UIMainButton>
               <div class="max-sm:hidden">
-                <Icon class="text-secondary-color" name="mdi:cash" size="24" />
+                <Icon class="text-secondary-color" name="tdesign:money" size="24" />
               </div>
             </div>
 
@@ -1274,7 +1273,7 @@ function closeAdvanceReportEmployee() {
               <div class="max-sm:hidden">
                 <Icon
                   class="text-secondary-color"
-                  name="material-symbols:credit-card-outline"
+                  name="hugeicons:credit-card-pos"
                   size="24"
                 />
               </div>
@@ -1773,7 +1772,7 @@ function closeAdvanceReportEmployee() {
               <h1 class="font-bold text-xl">Проверить баланс сотрудника</h1>
               <Icon
                 @click="showBalanceEmployees = !showBalanceEmployees"
-                name="clarity:employee-group-line"
+                name="clarity:employee-line"
                 size="24"
                 class="text-secondary-color hover:opacity-50 cursor-pointer duration-200"
               />
@@ -1799,7 +1798,7 @@ function closeAdvanceReportEmployee() {
                 Создание авансового документа (нал)
               </UIMainButton>
               <div class="max-sm:hidden">
-                <Icon class="text-secondary-color" name="mdi:cash" size="24" />
+                <Icon class="text-secondary-color" name="tdesign:money" size="24" />
               </div>
             </div>
 
@@ -1813,7 +1812,7 @@ function closeAdvanceReportEmployee() {
               <div class="max-sm:hidden">
                 <Icon
                   class="text-secondary-color"
-                  name="material-symbols:credit-card-outline"
+                  name="hugeicons:credit-card-pos"
                   size="24"
                 />
               </div>
@@ -2231,7 +2230,9 @@ function closeAdvanceReportEmployee() {
     </div>
   </div>
 
-  <div v-else class="flex items-center justify-center">
-    <UISpinner />
+  <div v-else>
+    <NuxtLayout name="default">
+      <UISpinner />
+    </NuxtLayout>
   </div>
 </template>

@@ -20,12 +20,6 @@ let markers = [
   [47.974937, 37.837714],
 ];
 
-// onBeforeMount(() => {
-//   if (window.matchMedia("(display-mode: standalone)").matches) {
-//     router.push('/auth/client/login')
-//   }
-// });
-
 let zoomValue = ref(10);
 let isHiddenMenu = ref(true);
 

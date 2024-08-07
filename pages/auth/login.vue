@@ -19,7 +19,7 @@ async function signIn() {
 let user = ref({} as User);
 const token = Cookies.get("token");
 
-onBeforeMount(async () => {
+onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   isLoading.value = false;
@@ -128,7 +128,9 @@ let showPassword = ref(false)
       >
     </div>
   </div>
-  <div v-else class="flex items-center justify-center">
-    <UISpinner />
+  <div v-else>
+    <NuxtLayout name="default">
+      <UISpinner />
+    </NuxtLayout>
   </div>
 </template>

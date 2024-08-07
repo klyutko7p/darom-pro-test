@@ -1551,8 +1551,11 @@ async function checkPaymentStatus(qrcId: string) {
       </template>
     </UIModalQR>
   </div>
+
   <div v-else>
-    <UISpinner />
+    <NuxtLayout name="default">
+      <UISpinner />
+    </NuxtLayout>
   </div>
 </template>
 

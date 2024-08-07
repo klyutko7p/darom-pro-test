@@ -18,7 +18,11 @@ let originallyRows = ref<Array<IOurRansom>>();
 let cells = ref<Array<Cell>>();
 let cellData = ref({} as Cell);
 
-onBeforeMount(async () => {
+onMounted(async () => {
+  if (!token) {
+    router.push("/auth/client/login");
+  }
+
   isLoading.value = true;
   user.value = await storeClients.getClient();
   isLoading.value = false;
@@ -26,11 +30,6 @@ onBeforeMount(async () => {
   cells.value = await storeCells.getCells();
 });
 
-onMounted(() => {
-  if (!token) {
-    router.push("/auth/client/login");
-  }
-});
 
 definePageMeta({
   layout: "client",
@@ -520,7 +519,9 @@ function changeAddress(coordinates: Array<number>) {
       </div>
     </div>
   </div>
-  <div v-else class="flex items-center justify-center">
-    <UISpinner />
+  <div v-else>
+    <NuxtLayout name="default">
+      <UISpinner />
+    </NuxtLayout>
   </div>
 </template>

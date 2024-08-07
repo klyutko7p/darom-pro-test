@@ -13,16 +13,15 @@ let user = ref({} as User);
 const token = Cookies.get("token");
 let isLoading = ref(false);
 
-onBeforeMount(async () => {
-  isLoading.value = true;
-  user.value = await storeUsers.getUser();
-  isLoading.value = false;
-});
 
-onMounted(() => {
+onMounted(async () => {
   if (!token) {
     router.push("/auth/login");
   }
+
+  isLoading.value = true;
+  user.value = await storeUsers.getUser();
+  isLoading.value = false;
 });
 
 definePageMeta({
@@ -296,7 +295,9 @@ let selectedPVZ = ref("");
     </div>
   </div>
 
-  <div v-else class="flex items-center justify-center">
-    <UISpinner />
+  <div v-else>
+    <NuxtLayout name="default">
+      <UISpinner />
+    </NuxtLayout>
   </div>
 </template>

@@ -18,6 +18,10 @@ async function updateDeliveryRow(obj: any) {
 }
 
 onMounted(async () => {
+  if (!token) {
+    router.push("/auth/login");
+  }
+
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   row.value = await storeRansom.getRansomRow(id, "ClientRansom");
@@ -28,11 +32,6 @@ definePageMeta({
   layout: false,
 });
 
-onMounted(() => {
-  if (!token) {
-    router.push("/auth/login");
-  }
-});
 
 const token = Cookies.get("token");
 </script>

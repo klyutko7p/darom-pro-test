@@ -32,7 +32,7 @@ const filteredRows = ref(
 );
 
 const totalRows = computed(() => Math.ceil(props.rows?.length));
-onBeforeMount(() => {
+onMounted(() => {
   updateCurrentPageData();
 });
 

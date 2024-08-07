@@ -11,46 +11,17 @@ let rows = ref<Array<IEmployee>>();
 const token = Cookies.get("token");
 let isLoading = ref(false);
 
-onBeforeMount(async () => {
+
+onMounted(async () => {
+  if (!token) {
+    router.push("/auth/login");
+  }
+
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   const employees = await storeEmployees.getEmployees();
   rows.value = employees!;
   isLoading.value = false;
-
-  //   rows.value = await storeAdvanceReports.getAdvancedReports();
-  //   originallyRows.value = rows.value;
-  //   rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReport(
-  //     "OurRansom"
-  //   );
-  //   rowsDelivery.value = await storeRansom.getRansomRowsForBalance("Delivery");
-  //   originallyRows.value = rows.value;
-
-  //   if (user.value.role !== "ADMIN") {
-  //     rows.value = rows.value?.filter(
-  //       (row) =>
-  //         row.createdUser === user.value.username ||
-  //         row.issuedUser === user.value.username
-  //     );
-  //   } else {
-  //     rows.value = rows.value;
-  //   }
-
-  //   if (rows.value) {
-  //     handleFilteredRows(rows.value);
-  //   }
-
-  //   ourRansomRows.value = await storeRansom.getRansomRowsForBalance("OurRansom");
-  //   clientRansomRows.value = await storeRansom.getRansomRowsForBalance(
-  //     "ClientRansom"
-  //   );
-  //   rowsBalance.value = await storeBalance.getBalanceRows();
-});
-
-onMounted(() => {
-  if (!token) {
-    router.push("/auth/login");
-  }
 });
 
 definePageMeta({
@@ -126,7 +97,16 @@ let pvz = ref([
 
 let companies = ref(["W/O/Я start", "Darom.pro", "Сортировка", "Доставка"]);
 
-let banks = ref(["тинькофф", "сбер", "почтабанк", "озон", "яндекс банк", "альфа банк", "центр инвест", "ВТБ"]);
+let banks = ref([
+  "тинькофф",
+  "сбер",
+  "почтабанк",
+  "озон",
+  "яндекс банк",
+  "альфа банк",
+  "центр инвест",
+  "ВТБ",
+]);
 </script>
 
 <template>
@@ -138,9 +118,15 @@ let banks = ref(["тинькофф", "сбер", "почтабанк", "озон
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="mt-10">
-          <div class="flex items-center justify-between max-sm:flex-col max-sm:items-start gap-3">
-          <UIMainButton @click="openModal">Создать сотрудника</UIMainButton>
-            <NuxtLink to="/advance-report/payroll" class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200">Перейти к расчёту ЗП</NuxtLink>
+          <div
+            class="flex items-center justify-between max-sm:flex-col max-sm:items-start gap-3"
+          >
+            <UIMainButton @click="openModal">Создать сотрудника</UIMainButton>
+            <NuxtLink
+              to="/advance-report/payroll"
+              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200"
+              >Перейти к расчёту ЗП</NuxtLink
+            >
           </div>
 
           <EmployeeTable
@@ -232,10 +218,7 @@ let banks = ref(["тинькофф", "сбер", "почтабанк", "озон
             </div>
           </div>
 
-          <div
-            class="flex items-center justify-center gap-3 mt-10"
-            v-if="rowData.id"
-          >
+          <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
             <UIMainButton @click="updateRow">Сохранить</UIMainButton>
             <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
           </div>
@@ -248,11 +231,13 @@ let banks = ref(["тинькофф", "сбер", "почтабанк", "озон
     </div>
 
     <div v-else>
-      <NuxtLayout name="user"> </NuxtLayout>
+      <NuxtLayout name="user"></NuxtLayout>
     </div>
   </div>
 
-  <div v-else class="flex items-center justify-center">
+  <div v-else>
+    <NuxtLayout name="default">
       <UISpinner />
+    </NuxtLayout>
   </div>
 </template>

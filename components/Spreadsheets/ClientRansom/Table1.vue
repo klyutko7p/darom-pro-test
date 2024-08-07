@@ -114,7 +114,7 @@ const handleCheckboxChange = (row: IClientRansom): void => {
     if (isDateGreaterThanReference(row.created_at)) {
       amountData = roundToNearestTen(row.amountFromClient2);
     } else {
-      amountData = Math.ceil(row.amountFromClient2 / 10) * 10
+      amountData = Math.ceil(row.amountFromClient2 / 10) * 10;
     }
     allSum.value.push({
       rowId: row.id,
@@ -239,13 +239,103 @@ function showProcessingRows() {
   }
 }
 
-
 function changeProcessingRows() {
-  showProcessingRowsFlag.value = !showProcessingRowsFlag.value
+  showProcessingRowsFlag.value = !showProcessingRowsFlag.value;
   Cookies.set("showProcessingRowsFlag", JSON.stringify(showProcessingRowsFlag.value));
 }
+const storeQR = useQRStore();
+let isOpenModalQR = ref(false);
+let isGeneratedQR = ref(false);
+let isOpenModalStatus = ref(false);
+let isLoading = ref(false);
+const qrBody = ref<QRBodyLink>({} as QRBodyLink);
+const qrBodyInfo = ref<QRBodyInfo>({} as QRBodyInfo);
+const paymentStatusMessage = ref<string>("");
 
+async function openModalQR() {
+  // document.body.classList.add("no-scroll");
+  isOpenModalQR.value = true;
+  isLoading.value = true;
+  qrBody.value = {} as QRBodyLink;
+  qrBodyInfo.value = {} as QRBodyInfo;
+  qrBodyInfo.value = await storeQR.createQRCode(
+    getAllSum.value,
+    "Онлайн оплата доставки"
+  );
+  await checkPaymentStatus(qrBodyInfo.value.Data.qrcId);
+  qrBody.value = await storeQR.getQRCode(qrBodyInfo.value.Data.qrcId);
+  isGeneratedQR.value = true;
+  isLoading.value = false;
+}
 
+let intervalId = ref();
+
+function closeModalQR() {
+  isOpenModalQR.value = false;
+  isGeneratedQR.value = false;
+  qrBody.value = {} as QRBodyLink;
+  qrBodyInfo.value = {} as QRBodyInfo;
+
+  if (intervalId.value) {
+    clearInterval(intervalId.value);
+    intervalId.value = null;
+  }
+  // document.body.classList.remove("no-scroll");
+}
+
+function closeModalStatus() {
+  isOpenModalStatus.value = false;
+  if (paymentStatusMessage.value) {
+    updateDeliveryRows("additionally", getAllSum.value.toString());
+  }
+}
+
+function closeModalAfterDelay() {
+  setTimeout(() => {
+    isOpenModalStatus.value = false;
+    if (paymentStatusMessage.value) {
+      updateDeliveryRows("additionally", getAllSum.value.toString());
+    }
+  }, 6000);
+}
+
+async function checkPaymentStatus(qrcId: string) {
+  const interval = 5000;
+
+  intervalId.value = setInterval(async () => {
+    try {
+      let paymentData = (await storeQR.getPaymentStatusQR(qrcId)) as QRPaymentStatus;
+
+      if (
+        paymentData.Data &&
+        paymentData.Data.paymentList &&
+        paymentData.Data.paymentList.length > 0
+      ) {
+        const status = paymentData.Data.paymentList[0].status;
+        paymentStatusMessage.value = status;
+
+        if (status === "Accepted") {
+          toast.success("Операция завершена успешно!");
+          closeModalQR();
+          isOpenModalStatus.value = true;
+          closeModalAfterDelay();
+          clearInterval(intervalId.value);
+        } else if (status === "Rejected") {
+          toast.error("Операция отклонена!");
+          closeModalQR();
+          isOpenModalStatus.value = true;
+          closeModalAfterDelay();
+          clearInterval(intervalId.value);
+        }
+      } else {
+        console.error("Статус платежа не найден или не существует.");
+      }
+    } catch (error) {
+      console.error("Ошибка при получении статуса платежа:", error);
+      clearInterval(intervalId.value);
+    }
+  }, interval);
+}
 </script>
 
 <template>
@@ -263,7 +353,11 @@ function changeProcessingRows() {
       </div>
       <div
         class="flex items-center gap-5"
-        v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+        v-if="
+          user.role === 'ADMIN' ||
+          user.role === 'ADMINISTRATOR' ||
+          user.role === 'RMANAGER'
+        "
       >
         <UIActionButton @click="toggleShowDeletedRows">
           {{ showDeletedRows ? "Скрыть удаленное" : "Показать удаленное" }}
@@ -315,13 +409,17 @@ function changeProcessingRows() {
   <div
     class="fixed z-40 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
     v-if="
-      user.dataClientRansom === 'WRITE' && checkedRows.length > 0 && user.role !== 'PVZ' && user.role !== 'PPVZ'
+      user.dataClientRansom === 'WRITE' &&
+      checkedRows.length > 0 &&
+      user.role !== 'PVZ' &&
+      user.role !== 'PPVZ'
     "
   >
     <UIActionButton
       v-if="
         user.role === 'ADMIN' ||
-        (user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER'  && user.dataOurRansom === 'WRITE')
+        user.role === 'ADMINISTRATOR' ||
+        (user.role === 'RMANAGER' && user.dataOurRansom === 'WRITE')
       "
       @click="deleteSelectedRows"
       >Удалить выделенные записи</UIActionButton
@@ -349,9 +447,14 @@ function changeProcessingRows() {
         >Оплата наличными
       </UIActionButton2>
       <UIActionButton2
+        v-if="user.additionally2 === 'WRITE' && getAllSum > 0"
+        @click="openModalQR"
+        >Оплата онлайн (QR)
+      </UIActionButton2>
+      <UIActionButton2
         v-if="user.additionally2 === 'WRITE'"
         @click="updateDeliveryRows('additionally')"
-        >Оплата онлайн
+        >Оплата онлайн (Старый метод)
       </UIActionButton2>
       <UIActionButton2
         v-if="user.additionally2 === 'WRITE'"
@@ -377,7 +480,9 @@ function changeProcessingRows() {
   <div
     class="fixed z-40 flex flex-col gap-3 top-44 left-1/2 translate-x-[-50%] translate-y-[-50%]"
     v-if="
-      user.dataClientRansom === 'WRITE' && checkedRows.length > 0 && (user.role === 'PVZ' || user.role === 'PPVZ')
+      user.dataClientRansom === 'WRITE' &&
+      checkedRows.length > 0 &&
+      (user.role === 'PVZ' || user.role === 'PPVZ')
     "
   >
     <UIActionButton
@@ -418,12 +523,10 @@ function changeProcessingRows() {
     </div>
   </div>
 
-  <div class="flex flex-col">
+  <div class="py-3 flex max-sm:flex-col gap-5 max-sm:w-full">
     <span
-      v-if="
-        user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'
-      "
-      class="text-xl text-yellow-400 font-bold hover:opacity-50 cursor-pointer duration-200"
+      v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+      class="bg-yellow-400 px-5 py-3 text-white font-bold rounded-full border-yellow-400 border-2 hover:bg-transparent hover:text-black duration-200 cursor-pointer"
       @click="changeProcessingRows(), showProcessingRows()"
     >
       Ждут обработку {{ processingRows?.length }} товаров
@@ -579,35 +682,55 @@ function changeProcessingRows() {
           <th
             scope="col"
             class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
           >
             создан (время)
           </th>
           <th
             scope="col"
             class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
           >
             изменен (время)
           </th>
           <th
             scope="col"
             class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
           >
             удален (время)
           </th>
           <th
             scope="col"
             class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
           >
             создан
           </th>
           <th
             scope="col"
             class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
           >
             изменен
           </th>
@@ -661,7 +784,12 @@ function changeProcessingRows() {
             class="border-2 font-medium underline text-secondary-color whitespace-nowrap"
           >
             <NuxtLink
-              v-if="user.role !== 'PVZ' && user.role !== 'ADMINISTRATOR' && user.role !== 'RMANAGER' && user.role !== 'PPVZ'"
+              v-if="
+                user.role !== 'PVZ' &&
+                user.role !== 'ADMINISTRATOR' &&
+                user.role !== 'RMANAGER' &&
+                user.role !== 'PPVZ'
+              "
               class="cursor-pointer hover:text-orange-200 duration-200"
               :to="`/spreadsheets/record/2/${row.id}`"
             >
@@ -673,9 +801,9 @@ function changeProcessingRows() {
             scope="row"
             class="border-2 font-medium underline text-secondary-color whitespace-nowrap"
           >
-          <a
+            <a
               target="_blank"
-              class="text-secondary-color underline font-bold"
+              class="text-secondary-color hover:opacity-60 duration-200 font-bold"
               v-if="row.img && row.img.length > 2"
               :href="`https://mgbbkkgyorhwryabwabx.supabase.co/storage/v1/object/public/image/img-${row.img}`"
             >
@@ -818,31 +946,51 @@ function changeProcessingRows() {
 
           <td
             class="px-6 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
           >
             {{ storeUsers.getNormalizedDate(row.created_at) }}
           </td>
           <td
             class="px-6 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
           >
             {{ storeUsers.getNormalizedDate(row.updated_at) }}
           </td>
           <td
             class="px-6 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
           >
             {{ storeUsers.getNormalizedDate(row.deleted) }}
           </td>
           <td
             class="px-6 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
           >
             {{ row.createdUser }}
           </td>
           <td
             class="px-6 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
           >
             {{ row.updatedUser }}
           </td>
@@ -851,7 +999,8 @@ function changeProcessingRows() {
             class="px-6 py-4 border-2"
             v-if="
               (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
-              user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' 
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
             "
           >
             <Icon
@@ -872,10 +1021,226 @@ function changeProcessingRows() {
     </div>
     <div id="down"></div>
   </div>
+
+  <UIModalQR v-show="isOpenModalQR && isGeneratedQR" @close-modal="closeModalQR">
+    <template v-slot:icon-header>
+      <Icon
+        size="24"
+        name="streamline:money-cash-bill-3-accounting-billing-payment-finance-cash-currency-money-bill"
+      />
+    </template>
+    <template v-slot:header>
+      <div class="custom-header">
+        <h1 v-if="paymentStatusMessage === 'NotStarted'">
+          Статус: <span class="text-secondary-color"> ОЖИДАНИЕ </span>
+        </h1>
+        <h1
+          v-if="
+            paymentStatusMessage === 'Received' || paymentStatusMessage === 'InProgress'
+          "
+        >
+          Статус: <span class="text-secondary-color"> ОБРАБОТКА </span>
+        </h1>
+        <h1 v-if="paymentStatusMessage === 'Accepted'">
+          Статус: <span class="text-green-500"> УСПЕШНО </span>
+        </h1>
+        <h1 v-if="paymentStatusMessage === 'Rejected'">
+          Статус: <span class="text-red-500"> ОТКЛОНЁН </span>
+        </h1>
+      </div>
+    </template>
+    <template v-slot:body>
+      <div>
+        <h1 class="text-left mb-3">
+          Сумма: <span class="text-secondary-color font-bold">{{ getAllSum }} ₽</span>
+        </h1>
+        <div>
+          <CodeModalQR :value="qrBody.Data?.payload" />
+        </div>
+        <div class="mt-3 max-w-[300px]">
+          <h1>Отсканируйте QR-код для оплаты</h1>
+          <UISpinnerQR />
+          <div class="text-left">
+            <h1>
+              Стоимость оплаты: <b>{{ qrBody.Data?.amount / 100 }} ₽ </b>
+            </h1>
+            <h1>
+              Дата и время создания:
+              <b>{{ storeUsers.getNormalizedDate(qrBody.Data?.createdAt) }} (МСК) </b>
+            </h1>
+            <h1>
+              Уникальный идентификатор QR-кода: <b>{{ qrBody.Data?.qrcId }} </b>
+            </h1>
+            <h1>
+              Источник создания QR-кода: <b>{{ qrBody.Data?.sourceName }} </b>
+            </h1>
+            <h1>
+              Комментарий:
+              <b>
+                {{ qrBody.Data?.paymentPurpose }}
+              </b>
+            </h1>
+          </div>
+        </div>
+      </div>
+    </template>
+    <template v-slot:footer>
+      <UIModalButton @click="closeModalQR">Отменить</UIModalButton>
+    </template>
+  </UIModalQR>
+
+  <UIModalQR v-show="isOpenModalStatus" @close-modal="closeModalStatus">
+    <template v-slot:icon-header>
+      <Icon size="24" name="uil:transaction" />
+    </template>
+    <template v-slot:header>
+      <div class="custom-header">
+        <h1 v-if="paymentStatusMessage === 'Accepted'">
+          Статус: <span class="text-green-500"> УСПЕШНО </span>
+        </h1>
+        <h1 v-if="paymentStatusMessage === 'Rejected'">
+          Статус: <span class="text-red-500"> ОТКЛОНЁН </span>
+        </h1>
+      </div>
+    </template>
+    <template v-slot:body>
+      <div v-if="paymentStatusMessage === 'Accepted'">
+        <div class="animate-pulse max-w-[300px] mx-auto">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+            <circle
+              class="path circle"
+              fill="none"
+              stroke="#60b504"
+              stroke-width="6"
+              stroke-miterlimit="10"
+              cx="65.1"
+              cy="65.1"
+              r="62.1"
+            />
+            <polyline
+              class="path check"
+              fill="none"
+              stroke="#60b504"
+              stroke-width="6"
+              stroke-linecap="round"
+              stroke-miterlimit="10"
+              points="100.2,40.2 51.5,88.8 29.8,67.5 "
+            />
+          </svg>
+        </div>
+        <div class="mt-10 font-semibold text-lg">
+          <h1>Операция прошла успешно!</h1>
+          <h1>Окно закроется автоматически через 5 секунд...</h1>
+        </div>
+      </div>
+      <div v-if="paymentStatusMessage === 'Rejected'">
+        <div class="animate-pulse max-w-[300px] mx-auto">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+            <circle
+              class="path circle"
+              fill="none"
+              stroke="#D06079"
+              stroke-width="6"
+              stroke-miterlimit="10"
+              cx="65.1"
+              cy="65.1"
+              r="62.1"
+            />
+            <line
+              class="path line"
+              fill="none"
+              stroke="#D06079"
+              stroke-width="6"
+              stroke-linecap="round"
+              stroke-miterlimit="10"
+              x1="34.4"
+              y1="37.9"
+              x2="95.8"
+              y2="92.3"
+            />
+            <line
+              class="path line"
+              fill="none"
+              stroke="#D06079"
+              stroke-width="6"
+              stroke-linecap="round"
+              stroke-miterlimit="10"
+              x1="95.8"
+              y1="38"
+              x2="34.4"
+              y2="92.2"
+            />
+          </svg>
+        </div>
+        <div class="mt-10 font-semibold text-lg">
+          <h1>Операция была отклонена!</h1>
+          <h1>Окно закроется автоматически через 5 секунд...</h1>
+        </div>
+      </div>
+    </template>
+    <template v-slot:footer>
+      <UIModalButton @click="closeModalStatus">ЗАКРЫТЬ</UIModalButton>
+    </template>
+  </UIModalQR>
 </template>
 
 <style scoped>
 .hidden-row {
   display: none !important;
+}
+
+.path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 0;
+  &.circle {
+    -webkit-animation: dash 1.8s ease-in-out; /* Увеличено до 1.8s */
+    animation: dash 1.8s ease-in-out; /* Увеличено до 1.8s */
+  }
+  &.line {
+    stroke-dashoffset: 1000;
+    -webkit-animation: dash 1.8s 0.35s ease-in-out forwards; /* Увеличено до 1.8s */
+    animation: dash 1.8s 0.35s ease-in-out forwards; /* Увеличено до 1.8s */
+  }
+  &.check {
+    stroke-dashoffset: -100;
+    -webkit-animation: dash-check 1.8s 0.35s ease-in-out forwards; /* Увеличено до 1.8s */
+    animation: dash-check 1.8s 0.35s ease-in-out forwards; /* Увеличено до 1.8s */
+  }
+}
+
+@-webkit-keyframes dash {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@-webkit-keyframes dash-check {
+  0% {
+    stroke-dashoffset: -100;
+  }
+  100% {
+    stroke-dashoffset: 900;
+  }
+}
+
+@keyframes dash-check {
+  0% {
+    stroke-dashoffset: -100;
+  }
+  100% {
+    stroke-dashoffset: 900;
+  }
 }
 </style>

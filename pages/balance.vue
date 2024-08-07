@@ -25,7 +25,11 @@ let rowsDelivery = ref<Array<IBalanceDelivery>>();
 let sumOfReject = ref<any>();
 let rowsWithProfitRows = ref();
 
-onBeforeMount(async () => {
+onMounted(async () => {
+  if (!token) {
+    router.push("/auth/login");
+  }
+
   isLoading.value = true;
 
   try {
@@ -98,12 +102,6 @@ onBeforeMount(async () => {
     console.error("An error occurred:", error);
   } finally {
     isLoading.value = false;
-  }
-});
-
-onMounted(() => {
-  if (!token) {
-    router.push("/auth/login");
   }
 });
 
@@ -2692,7 +2690,9 @@ async function updateRow() {
     </div>
   </div>
 
-  <div v-else class="flex items-center justify-center">
-    <UISpinner />
+  <div v-else>
+    <NuxtLayout name="default">
+      <UISpinner />
+    </NuxtLayout>
   </div>
 </template>

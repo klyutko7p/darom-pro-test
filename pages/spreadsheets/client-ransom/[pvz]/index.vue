@@ -64,17 +64,34 @@ async function updateDeliveryRow(obj: any) {
 }
 
 async function updateDeliveryRows(obj: any) {
-  let answer = confirm(
-    `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
-  );
-  if (answer)
+  if (obj.flag !== "additionally") {
+    let answer = confirm(
+      `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
+    );
+    if (answer) {
+      isLoading.value = true;
+      await storeRansom.updateDeliveryRowsStatus(
+        obj.idArray,
+        obj.flag,
+        "ClientRansom",
+        user.value.username
+      );
+      filteredRows.value = await storeRansom.getRansomRowsByPVZ(pvzString, "ClientRansom");
+      rows.value = filteredRows.value;
+      isLoading.value = false;
+    }
+  } else {
+    isLoading.value = true;
     await storeRansom.updateDeliveryRowsStatus(
       obj.idArray,
       obj.flag,
       "ClientRansom",
       user.value.username
     );
-  filteredRows.value = await storeRansom.getRansomRowsByPVZ(pvzString, "ClientRansom");
+    filteredRows.value = await storeRansom.getRansomRowsByPVZ(pvzString, "ClientRansom");
+    rows.value = filteredRows.value;
+    isLoading.value = false;
+  }
 }
 
 async function deleteRow(id: number) {
@@ -197,7 +214,7 @@ onMounted(async () => {
   isLoading.value = false;
 });
 
-onBeforeMount(() => {
+onMounted(() => {
   if (!token || user.value.dataClientRansom === "NONE") {
     router.push("/auth/login");
   }

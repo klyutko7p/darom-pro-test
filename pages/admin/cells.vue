@@ -9,18 +9,17 @@ let cells = ref<Array<Cell[]>>()
 const token = Cookies.get("token");
 let isLoading = ref(false);
 
-onBeforeMount(async () => {
+onMounted(async () => {
+    if (!token) {
+        router.push("/auth/login");
+    }
+
     isLoading.value = true;
     user.value = await storeUsers.getUser();
     cells.value = await storeCells.getCells();
     isLoading.value = false;
 });
 
-onMounted(() => {
-    if (!token) {
-        router.push("/auth/login");
-    }
-});
 
 const fields = ["название", "ПВЗ", "статус", "кем занято"];
 

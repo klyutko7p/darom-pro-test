@@ -122,7 +122,11 @@ let sumOfRejection = ref<any>();
 const token = Cookies.get("token");
 let isLoading = ref(false);
 
-onBeforeMount(async () => {
+onMounted(async () => {
+  if (!token) {
+    router.push("/auth/login");
+  }
+
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   users.value = await storeUsers.getUsers();
@@ -132,11 +136,6 @@ onBeforeMount(async () => {
   isLoading.value = false;
 });
 
-onMounted(() => {
-  if (!token) {
-    router.push("/auth/login");
-  }
-});
 
 definePageMeta({
   layout: false,

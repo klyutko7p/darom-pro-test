@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const router = useRouter()
-onBeforeMount(() => {
+onMounted(() => {
     router.push('/auth/login')
 })
 </script>

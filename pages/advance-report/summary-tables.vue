@@ -18,7 +18,11 @@ let rowsBalanceOnline = ref<Array<IBalanceOnline>>();
 let rowsOurRansom = ref<Array<IOurRansom>>();
 let rowsDelivery = ref<Array<IDelivery>>();
 
-onBeforeMount(async () => {
+onMounted(async () => {
+  if (!token) {
+    router.push("/auth/login");
+  }
+
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rows.value = await storeAdvanceReports.getAdvancedReports();
@@ -49,11 +53,6 @@ onBeforeMount(async () => {
   isLoading.value = false;
 });
 
-onMounted(() => {
-  if (!token) {
-    router.push("/auth/login");
-  }
-});
 
 definePageMeta({
   layout: false,
@@ -840,7 +839,9 @@ function returnTotal(sum: number) {
     </div>
   </div>
 
-  <div v-else class="flex items-center justify-center">
-    <UISpinner />
+  <div v-else>
+    <NuxtLayout name="default">
+      <UISpinner />
+    </NuxtLayout>
   </div>
 </template>

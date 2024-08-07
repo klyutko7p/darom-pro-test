@@ -207,6 +207,10 @@ function deleteIssuedRowsTimer() {
 let originallyRows = ref<Array<IOurRansom>>();
 
 onMounted(async () => {
+  if (!token || user.value.dataOurRansom === "NONE") {
+    router.push("/auth/login");
+  }
+
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rows.value = await storeRansom.getRansomRowsOurRansom();
@@ -240,11 +244,6 @@ async function updateCells() {
   cells.value = cells.value?.filter((cell) => cell.PVZ !== "НаДом");
 }
 
-onBeforeMount(() => {
-  if (!token || user.value.dataOurRansom === "NONE") {
-    router.push("/auth/login");
-  }
-});
 
 definePageMeta({
   layout: false,

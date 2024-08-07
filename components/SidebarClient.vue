@@ -17,7 +17,7 @@ function editMenu() {
   isOpen.value = !isOpen.value;
 }
 
-onBeforeMount(async () => {
+onMounted(async () => {
   user.value = storeClients.getClient();
 });
 

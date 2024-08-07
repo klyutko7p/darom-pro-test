@@ -7,7 +7,7 @@ const props = defineProps({
   rows: { type: Array as PropType<IDelivery[]> },
 });
 
-onBeforeMount(() => {
+onMounted(() => {
   updateCurrentPageData();
 });
 let selectedUser = ref("Все");

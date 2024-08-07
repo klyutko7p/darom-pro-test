@@ -166,7 +166,7 @@ const saveBlockState = () => {
   );
 };
 
-onBeforeMount(async () => {
+onMounted(async () => {
   isLoading.value = true;
   user.value = await storeClients.getClient();
   isLoading.value = false;
@@ -242,7 +242,7 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
   </Head>
   <div v-if="!isLoading" class="h-screen flex items-center justify-center max-sm:block">
     <div
-      class="px-10 py-40 max-sm:py-32 max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50"
+      class="px-10 h-full py-40 max-sm:py-32 max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50"
     >
       <div class="">
         <div class="flex items-center justify-center">
@@ -399,7 +399,9 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
       >
     </div>
   </div>
-  <div v-else class="flex items-center justify-center">
-    <UISpinner />
+  <div v-else>
+    <NuxtLayout name="default">
+      <UISpinner />
+    </NuxtLayout>
   </div>
 </template>

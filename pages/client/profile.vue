@@ -14,7 +14,11 @@ const storeRansom = useRansomStore();
 let urlReferral = ref("");
 let isLoading = ref(false);
 
-onBeforeMount(async () => {
+onMounted(async () => {
+  if (!token) {
+    router.push("/auth/client/login");
+  }
+
   isLoading.value = true;
   user.value = await storeClients.getClient();
   let userData = await storeClients.getClientById(user.value.id);
@@ -26,11 +30,6 @@ onBeforeMount(async () => {
   isLoading.value = false;
 });
 
-onMounted(() => {
-  if (!token) {
-    router.push("/auth/client/login");
-  }
-});
 
 const phoneNumber = ref("");
 const fio = ref();
@@ -350,7 +349,9 @@ let newPasswordRepeat = ref("");
       </div>
     </div>
   </div>
-  <div v-else class="flex items-center justify-center">
-    <UISpinner />
+  <div v-else>
+    <NuxtLayout name="default">
+      <UISpinner />
+    </NuxtLayout>
   </div>
 </template>

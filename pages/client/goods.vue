@@ -12,7 +12,6 @@ let rowsClientRansom = ref<Array<IClientRansom>>([]);
 let rows = ref<Array<any>>([]);
 let copyRows = ref<Array<IOurRansom | IClientRansom | IDelivery>>();
 
-
 let showReceivedItems = ref(true);
 
 function disableReceivedItems() {
@@ -29,7 +28,7 @@ let phoneNumber = ref("");
 
 onMounted(async () => {
   if (!token) {
-    router.push('/auth/client/login')
+    router.push("/auth/client/login");
   }
   isLoading.value = true;
   user.value = await storeClients.getClient();
@@ -43,7 +42,7 @@ onMounted(async () => {
     "ClientRansom"
   );
 
-  rows.value = [...rowsOurRansom.value, ...rowsClientRansom.value] 
+  rows.value = [...rowsOurRansom.value, ...rowsClientRansom.value];
 
   if (rows.value) {
     copyRows.value = [...rows.value];
@@ -62,14 +61,6 @@ definePageMeta({
 });
 
 const token = Cookies.get("token");
-
-
-onMounted(() => {
-  if (!token) {
-    router.push("/auth/client/login");
-  }
-});
-
 </script>
 
 <template>
@@ -86,12 +77,19 @@ onMounted(() => {
           <Icon name="material-symbols:contact-phone-rounded" size="24" />
         </div>
       </div>
-      <h1 class="font-bold text-3xl max-sm:text-2xl" v-if="rows.length > 0">Список товаров</h1>
-      <h1 class="font-bold text-3xl max-sm:text-2xl text-center" v-else>Список товаров пуст. <br> Оформите сначала первый заказ! </h1>
+      <h1 class="font-bold text-3xl max-sm:text-2xl" v-if="rows.length > 0">
+        Список товаров
+      </h1>
+      <h1 class="font-bold text-3xl max-sm:text-2xl text-center" v-else>
+        Список товаров пуст. <br />
+        Оформите сначала первый заказ!
+      </h1>
       <SpreadsheetsOrderGoods :rows="rows" :user="user" />
     </div>
   </div>
-  <div v-else class="flex items-center justify-center">
+  <div v-else>
+    <NuxtLayout name="default">
       <UISpinner />
+    </NuxtLayout>
   </div>
 </template>

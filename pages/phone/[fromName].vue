@@ -12,6 +12,10 @@ let user = ref({} as User);
 let row = ref({} as IPhoneNumber);
 
 onMounted(async () => {
+  if (!token) {
+    router.push("/auth/login");
+  }
+
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   await storePhoneNumbers.getPhoneNumbers();
@@ -23,11 +27,6 @@ definePageMeta({
   layout: false,
 });
 
-onMounted(() => {
-  if (!token) {
-    router.push("/auth/login");
-  }
-});
 
 const token = Cookies.get("token");
 </script>

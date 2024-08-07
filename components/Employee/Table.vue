@@ -17,7 +17,7 @@ const props = defineProps({
   rows: { type: Array as PropType<IEmployee[]> },
 });
 
-onBeforeMount(() => {
+onMounted(() => {
   updateCurrentPageData();
 });
 

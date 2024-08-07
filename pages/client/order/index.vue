@@ -8,17 +8,16 @@ let user = ref({} as Client);
 const token = Cookies.get("token");
 let isLoading = ref(false);
 
-onBeforeMount(async () => {
+onMounted(async () => {
+  if (!token) {
+    router.push("/auth/client/login");
+  }
+
   isLoading.value = true;
   user.value = await storeClients.getClient();
   isLoading.value = false;
 });
 
-onMounted(() => {
-  if (!token) {
-    router.push("/auth/client/login");
-  }
-});
 
 definePageMeta({
   layout: "client",
@@ -55,7 +54,9 @@ definePageMeta({
       </div>
     </div>
   </div>
-  <div v-else class="flex items-center justify-center">
-    <UISpinner />
+  <div v-else>
+    <NuxtLayout name="default">
+      <UISpinner />
+    </NuxtLayout>
   </div>
 </template>

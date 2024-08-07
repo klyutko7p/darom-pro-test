@@ -61,18 +61,17 @@ let rows = ref<Array<Task>>();
 const token = Cookies.get("token");
 let isLoading = ref(false);
 
-onBeforeMount(async () => {
+onMounted(async () => {
+  if (!token) {
+    router.push("/auth/login");
+  }
+
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   markers.value = await storeMarkers.getMarkers();
   isLoading.value = false;
 });
 
-onMounted(() => {
-  if (!token) {
-    router.push("/auth/login");
-  }
-});
 
 async function updateMarkers(id: number) {
   isLoading.value = true;
@@ -240,8 +239,10 @@ definePageMeta({
     </div>
   </div>
 
-  <div v-else class="flex items-center justify-center">
-    <UISpinner />
+  <div v-else>
+    <NuxtLayout name="default">
+      <UISpinner />
+    </NuxtLayout>
   </div>
 </template>
 

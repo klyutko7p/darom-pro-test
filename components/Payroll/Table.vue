@@ -73,7 +73,7 @@ let monthNames: any = ref({
   2: "Февраль",
 });
 const totalRows = computed(() => Math.ceil(props.rows?.length));
-onBeforeMount(() => {
+onMounted(() => {
   updateCurrentPageData();
 });
 

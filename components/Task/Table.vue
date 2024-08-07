@@ -17,7 +17,7 @@ const props = defineProps({
   rows: { type: Array as PropType<Task[]> },
 });
 
-onBeforeMount(() => {
+onMounted(() => {
   updateCurrentPageData();
 });
 

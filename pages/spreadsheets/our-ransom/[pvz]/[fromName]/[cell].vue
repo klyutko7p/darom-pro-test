@@ -176,6 +176,10 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
 let originallyRows = ref<Array<IOurRansom>>();
 
 onMounted(async () => {
+  if (!token || user.value.dataOurRansom === "NONE") {
+    router.push("/auth/login");
+  }
+
   isLoading.value = true;
   user.value = await storeUsers.getUser();
 
@@ -215,11 +219,6 @@ onMounted(async () => {
   orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
 });
 
-onBeforeMount(() => {
-  if (!token || user.value.dataOurRansom === "NONE") {
-    router.push("/auth/login");
-  }
-});
 
 definePageMeta({
   layout: false,

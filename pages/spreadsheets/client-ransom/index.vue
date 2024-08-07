@@ -59,17 +59,34 @@ async function updateDeliveryRow(obj: any) {
 }
 
 async function updateDeliveryRows(obj: any) {
-  let answer = confirm(
-    `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
-  );
-  if (answer)
+  if (obj.flag !== "additionally") {
+    let answer = confirm(
+      `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
+    );
+    if (answer) {
+      isLoading.value = true;
+      await storeRansom.updateDeliveryRowsStatus(
+        obj.idArray,
+        obj.flag,
+        "ClientRansom",
+        user.value.username
+      );
+      filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
+      rows.value = filteredRows.value;
+      isLoading.value = false;
+    }
+  } else {
+    isLoading.value = true;
     await storeRansom.updateDeliveryRowsStatus(
       obj.idArray,
       obj.flag,
       "ClientRansom",
       user.value.username
     );
-  filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
+    filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
+    rows.value = filteredRows.value;
+    isLoading.value = false;
+  }
 }
 
 async function deleteRow(id: number) {
@@ -115,7 +132,10 @@ function deleteIssuedRowsTimer() {
   const currentTime = new Date();
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
-  if (currentHour === 23 && currentMinute >= 0 || currentHour === 23 && currentMinute <= 59) {
+  if (
+    (currentHour === 23 && currentMinute >= 0) ||
+    (currentHour === 23 && currentMinute <= 59)
+  ) {
     deleteIssuedRows();
   }
 }
@@ -169,6 +189,10 @@ function handleFilteredRows(filteredRowsData: IClientRansom[]) {
 }
 
 onMounted(async () => {
+  if (!token || user.value.dataClientRansom === "NONE") {
+    router.push("/auth/login");
+  }
+
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rows.value = await storeRansom.getRansomRows("ClientRansom");
@@ -186,11 +210,6 @@ onMounted(async () => {
   marketplaces.value = await storeMarketplaces.getMarketplaces();
 });
 
-onBeforeMount(() => {
-  if (!token || user.value.dataClientRansom === "NONE") {
-    router.push("/auth/login");
-  }
-});
 
 definePageMeta({
   layout: false,

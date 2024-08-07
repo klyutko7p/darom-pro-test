@@ -48,17 +48,15 @@ let user = ref({} as User);
 const token = Cookies.get("token");
 let isLoading = ref(false);
 
-onBeforeMount(async () => {
+onMounted(async () => {
+  if (!token) {
+    router.push("/auth/login");
+  }
+
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   sortingCenters.value = await storeSortingCentersDelivery.getSortingCenters();
   isLoading.value = false;
-});
-
-onMounted(() => {
-  if (!token) {
-    router.push("/auth/login");
-  }
 });
 
 definePageMeta({
