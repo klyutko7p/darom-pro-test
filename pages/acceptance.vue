@@ -80,7 +80,10 @@ function scanItem() {
   }
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
+    console.log(scannedLink);
+    console.log(scanStringItem);
     scannedLink = convertToURL(scannedLink);
+    console.log(scannedLink); 
     scanStringItem.value = "";
     let rowData = await storeRansom.getRansomRowsById(+scannedLink, "OurRansom");
     await acceptItem(rowData);
