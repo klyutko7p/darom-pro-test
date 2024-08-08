@@ -649,7 +649,7 @@ let usersOfIssued = ref([
   "Шарафаненко",
   "Волошина",
   "Рейзвих",
-  "Эля",
+  "+7",
   "КассаЯМ",
   "Горцуева",
 ]);
@@ -1063,6 +1063,22 @@ function closeAdvanceReportEmployee() {
   showBalanceEmployees.value = !showBalanceEmployees.value;
   selectedUser.value = "Директор";
 }
+
+// function lockScroll() {
+//   document.body.classList.add("no-scroll");
+// }
+
+// function unlockScroll() {
+//   document.body.classList.remove("no-scroll");
+// }
+
+// watch(isOpen, (newValue) => {
+//   if (newValue) {
+//     lockScroll();
+//   } else {
+//     unlockScroll();
+//   }
+// });
 </script>
 
 <template>
