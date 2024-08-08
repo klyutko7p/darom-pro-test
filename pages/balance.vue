@@ -831,7 +831,8 @@ function getAllSum() {
             row.pvz === selectedPVZ.value &&
             (row.recipient === "Владимирова Инна" ||
               row.recipient === "Динис Ольга" ||
-              row.recipient === "Киризлеева Марина")
+              row.recipient === "Киризлеева Марина" ||
+              "Смирнов Валерий")
         )
         .reduce((acc, value) => acc + +value.sum, 0);
 
