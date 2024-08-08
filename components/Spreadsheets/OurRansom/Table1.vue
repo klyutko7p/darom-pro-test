@@ -726,7 +726,13 @@ async function checkPaymentStatus(qrcId: string) {
           >Оплата онлайн (QR)
         </UIActionButton2>
         <UIActionButton2
-          v-if="user.additionally1 === 'WRITE'"
+          v-if="
+            user.additionally1 === 'WRITE' &&
+            (user.username === 'Директор' ||
+              user.username === 'Горцуева' ||
+              user.username === 'Светлана1' ||
+              user.username === 'Светлана2')
+          "
           @click="updateDeliveryRows('additionally', getAllSum)"
           >Оплата онлайн (Старый метод)
         </UIActionButton2>
@@ -775,7 +781,13 @@ async function checkPaymentStatus(qrcId: string) {
           >Оплата онлайн (QR)
         </UIActionButton2>
         <UIActionButton2
-          v-if="user.additionally1 === 'WRITE'"
+          v-if="
+            user.additionally1 === 'WRITE' &&
+            (user.username === 'Директор' ||
+              user.username === 'Горцуева' ||
+              user.username === 'Светлана1' ||
+              user.username === 'Светлана2')
+          "
           @click="updateDeliveryRows('additionally', getAllSum)"
           >Оплата онлайн (Старый метод)
         </UIActionButton2>
@@ -1382,7 +1394,7 @@ async function checkPaymentStatus(qrcId: string) {
       <div id="down"></div>
     </div>
 
-    <UIModalQR v-show="isOpenModalQR && isGeneratedQR" @close-modal="closeModalQR">
+    <UINewModal v-show="isOpenModalQR && isGeneratedQR" @close-modal="closeModalQR">
       <template v-slot:icon-header>
         <Icon
           size="24"
@@ -1445,11 +1457,11 @@ async function checkPaymentStatus(qrcId: string) {
         </div>
       </template>
       <template v-slot:footer>
-        <UIModalButton @click="closeModalQR">Отменить</UIModalButton>
+        <UIExitModalButton @click="closeModalQR">Отменить</UIExitModalButton>
       </template>
-    </UIModalQR>
+    </UINewModal>
 
-    <UIModalQR v-show="isOpenModalStatus" @close-modal="closeModalStatus">
+    <UINewModal v-show="isOpenModalStatus" @close-modal="closeModalStatus">
       <template v-slot:icon-header>
         <Icon size="24" name="uil:transaction" />
       </template>
@@ -1547,9 +1559,9 @@ async function checkPaymentStatus(qrcId: string) {
         </div>
       </template>
       <template v-slot:footer>
-        <UIModalButton @click="closeModalStatus">ЗАКРЫТЬ</UIModalButton>
+        <UIExitModalButton @click="closeModalStatus">ЗАКРЫТЬ</UIExitModalButton>
       </template>
-    </UIModalQR>
+    </UINewModal>
   </div>
 
   <div v-else>

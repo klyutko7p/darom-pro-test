@@ -28,26 +28,26 @@ function updateCurrentPageData() {
   returnRows.value = props.rows;
 }
 
-
 watch([props.rows, totalRows, props.user], updateCurrentPageData);
 </script>
 <template>
-  <div class="relative max-h-[700px] overflow-y-auto mt-5 mb-10">
+  <div class="relative max-h-[710px] overflow-y-auto rounded-xl mt-5 mb-10">
     <table
       id="theTable"
-      class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+      class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
     >
       <thead
-        class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center bg-gray-50"
+        class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
       >
         <tr>
           <th
             scope="col"
-            class="exclude-row border-2"
+            class="exclude-row h-[50px] border-2"
             v-if="
               user.dataDelivery === 'WRITE' ||
               user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' 
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
             "
           >
             изменение
@@ -79,7 +79,7 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
           <th scope="row" class="border-2">
             {{ row.company }}
           </th>
-          <td class="border-2 whitespace-nowrap">{{ row.fullname }} </td>
+          <td class="border-2 whitespace-nowrap">{{ row.fullname }}</td>
           <td class="border-2 whitespace-nowrap">
             {{ row.phone }}
           </td>
@@ -92,17 +92,24 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
           <td class="border-2 whitespace-nowrap">
             {{ row.hoursPerShift }}
           </td>
-          <td class="border-2 whitespace-nowrap" v-if="row.paymentPerShift !== null && row.hoursPerShift !== null">
+          <td
+            class="border-2 whitespace-nowrap"
+            v-if="row.paymentPerShift !== null && row.hoursPerShift !== null"
+          >
             {{ (row.paymentPerShift / row.hoursPerShift).toFixed(2) }}
           </td>
-          <td class="border-2 whitespace-nowrap" v-if="row.paymentPerShift === null && row.hoursPerShift === null">
+          <td
+            class="border-2 whitespace-nowrap"
+            v-if="row.paymentPerShift === null && row.hoursPerShift === null"
+          >
             {{ 0 }}
           </td>
           <td
             class="px-6 py-4 border-2"
             v-if="
               (user.dataOurRansom === 'WRITE' && user.role === 'ADMIN') ||
-              user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' 
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
             "
           >
             <Icon
@@ -121,5 +128,9 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
 <style scoped>
 .hidden-row {
   display: none !important;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2; /* Цвет для четных строк */
 }
 </style>

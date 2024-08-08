@@ -148,27 +148,27 @@ function exportToExcel() {
         class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
       >
         <tr>
-          <th scope="col" class="exclude-row px-5" v-if="user.username === 'Директор'">
+          <th scope="col" class="exclude-row px-3 border-2 h-[60px]" v-if="user.username === 'Директор'">
             изменение
           </th>
-          <th scope="col" class="px-1">Дата</th>
-          <th scope="col" class="px-1">ПВЗ</th>
-          <th scope="col" class="px-1">Сумма (₽)</th>
-          <th scope="col" class="px-1">Статья расхода</th>
-          <th scope="col" class="px-1">Комментарий</th>
-          <th scope="col" class="px-1">Компания</th>
-          <th scope="col" class="px-1">Создано</th>
-          <th scope="col" class="px-1">Получил</th>
-          <th scope="col" class="px-1">Подтверждающий документ</th>
-          <th scope="col" class="px-1">Получено</th>
-          <th scope="col" class="px-1" v-if="user.username === 'Директор'">Тип</th>
-          <th scope="col" class="px-1" v-if="user.username === 'Директор'">Дата создания</th>
-          <th scope="col" class="px-1" v-if="user.username === 'Директор'">Удаление</th>
+          <th scope="col" class="px-1 border-2">Дата</th>
+          <th scope="col" class="px-1 border-2">ПВЗ</th>
+          <th scope="col" class="px-1 border-2">Сумма (₽)</th>
+          <th scope="col" class="px-1 border-2">Статья расхода</th>
+          <th scope="col" class="px-1 border-2">Комментарий</th>
+          <th scope="col" class="px-1 border-2">Компания</th>
+          <th scope="col" class="px-1 border-2">Создано</th>
+          <th scope="col" class="px-1 border-2">Получил</th>
+          <th scope="col" class="px-1 border-2">Подтверждающий документ</th>
+          <th scope="col" class="px-1 border-2">Получено</th>
+          <th scope="col" class="px-1 border-2" v-if="user.username === 'Директор'">Тип</th>
+          <th scope="col" class="px-1 border-2" v-if="user.username === 'Директор'">Дата создания</th>
+          <th scope="col" class="px-1 border-2" v-if="user.username === 'Директор'">Удаление</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in filteredRows" class="text-center h-[50px]">
-          <td class="" v-if="user.username === 'Директор'">
+        <tr v-for="row in filteredRows" class="text-center h-[50px] border-2">
+          <td v-if="user.username === 'Директор'">
             <h1
               @click="openModal(row)"
               class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
@@ -176,29 +176,29 @@ function exportToExcel() {
               ✏️
             </h1>
           </td>
-          <th scope="row">
+          <th scope="row" class="border-2 px-3">
             {{ storeUsers.getNormalizedDateWithoutTime(row.date) }}
           </th>
-          <th scope="row" class="px-5">
+          <th scope="row" class="px-5 border-2">
             {{ row.PVZ ? row.PVZ : '—' }}
           </th>
           <td class="whitespace-nowrap">{{ row.expenditure }}</td>
-          <td class="whitespace-nowrap px-5">
+          <td class="whitespace-nowrap px-5 border-2">
             {{ row.typeOfExpenditure }}
           </td>
-          <td class="px-5">
+          <td class="px-5 border-2">
             {{ row.notation ? row.notation : '—' }}
           </td>
-          <td class="whitespace-nowrap px-5">
+          <td class="whitespace-nowrap px-5 border-2">
             {{ row.company ? row.company : '—' }}
           </td>
-          <td class="whitespace-nowrap px-5">
+          <td class="whitespace-nowrap px-5 border-2">
             {{ row.createdUser }}
           </td>
-          <td class="whitespace-nowrap">
+          <td class="whitespace-nowrap border-2">
             {{ row.issuedUser ? row.issuedUser : '—' }}
           </td>
-          <td class="whitespace-nowrap">
+          <td class="whitespace-nowrap border-2">
             <a
               target="_blank"
               class="text-secondary-color hover:opacity-60 duration-200 font-bold"
@@ -209,7 +209,7 @@ function exportToExcel() {
             </a>
             <h1 v-else>—</h1>
           </td>
-          <td class="whitespace-nowrap">
+          <td class="whitespace-nowrap border-2">
             <Icon
               @click="updateDeliveryRow(row)"
               v-if="
@@ -227,15 +227,15 @@ function exportToExcel() {
             </h1>
             <h1 v-if="!row.received && !row.issuedUser">—</h1>
           </td>
-          <td class="whitespace-nowrap px-5" v-if="user.username === 'Директор'">
+          <td class="whitespace-nowrap px-5 border-2" v-if="user.username === 'Директор'">
             {{ row.type }}
           </td>
-          <td class="whitespace-nowrap px-5" v-if="user.username === 'Директор'">
+          <td class="whitespace-nowrap px-5 border-2" v-if="user.username === 'Директор'">
             {{ storeUsers.getNormalizedDate(row.created_at) }}
           </td>
           <td
             @click="deleteRow(row.id)"
-            class="whitespace-nowrap cursor-pointer"
+            class="whitespace-nowrap cursor-pointer border-2"
             v-if="user.username === 'Директор'"
           >
             ❌

@@ -17,9 +17,9 @@ defineProps({
 
 </script>
 <template>
-  <div class="relative max-h-[410px] overflow-y-auto mt-5 mb-10">
-    <table id="theTable" class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500">
-      <thead class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center bg-gray-50">
+  <div class="relative overflow-x-auto overflow-y-auto rounded-xl mt-5">
+    <table id="theTable" class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500">
+      <thead class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center">
         <tr>
           <th scope="col" class="exclude-row border-2"
             v-if="user.dataDelivery === 'WRITE' || (user.role === 'ADMIN')">
@@ -52,3 +52,14 @@ defineProps({
     </table>
   </div>
 </template>
+
+<style scoped>
+.hidden-row {
+  display: none !important;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2; /* Цвет для четных строк */
+}
+
+</style>

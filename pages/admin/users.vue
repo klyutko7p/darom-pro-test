@@ -2,7 +2,7 @@
 import Cookies from "js-cookie";
 const storeUsers = useUsersStore();
 const storePVZ = usePVZStore();
-const storeRansom = useRansomStore()
+const storeRansom = useRansomStore();
 const storeSC = useSortingCentersStore();
 const router = useRouter();
 
@@ -136,11 +136,25 @@ onMounted(async () => {
   isLoading.value = false;
 });
 
-
 definePageMeta({
   layout: false,
 });
 
+function lockScroll() {
+  document.body.classList.add("no-scroll");
+}
+
+function unlockScroll() {
+  document.body.classList.remove("no-scroll");
+}
+
+watch(isOpen, (newValue) => {
+  if (newValue) {
+    lockScroll();
+  } else {
+    unlockScroll();
+  }
+});
 </script>
 
 <template>
@@ -151,519 +165,708 @@ definePageMeta({
   <div v-if="token && user.role === 'ADMIN'">
     <NuxtLayout name="admin">
       <div v-if="!isLoading">
-        <AdminUsersTable :fields="fields" :users="users" @delete-user="deleteUser" @open-modal="openModal" />
+        <AdminUsersTable
+          :fields="fields"
+          :users="users"
+          @delete-user="deleteUser"
+          @open-modal="openModal"
+        />
 
-        <AdminUsersCreate :sum="sumOfRejection" @update-sum="updateSum" @create-user="createUser" />
+        <AdminUsersCreate
+          :sum="sumOfRejection"
+          @update-sum="updateSum"
+          @create-user="createUser"
+        />
 
-        <UIModal v-show="isOpen" @close-modal="closeModal">
+        <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
+          <template v-slot:icon-header>
+            <Icon size="24" name="ci:users" />
+          </template>
           <template v-slot:header>
             <div class="custom-header">
-              Изменение пользователя - <b> {{ userData.username }}</b>
+              <h1 class="text-left">Изменение:  {{ userData.username }}</h1>
             </div>
           </template>
-          <div class="text-black max-sm:text-sm">
-            <div class="grid grid-cols-2 mb-5">
-              <label for="name">Имя пользователя</label>
-              <input
-                class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
-                v-model="userData.username" type="text" />
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="role">Роль</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.role">
-                <option value="ADMIN">ADMIN</option>
-                <option value="USER">USER</option>
-                <option value="SORTIROVKA">SORTIROVKA</option>
-                <option value="PVZ">PVZ</option>
-                <option value="PPVZ">PPVZ</option>
-                <option value="RMANAGER">RMANAGER</option>
-                <option value="ADMINISTRATOR">ADMINISTRATOR</option>
-                <option value="COURIER">COURIER</option>
-                <option value="DRIVER">DRIVER</option>
-                <option value="SHVEDOVA">SHVEDOVA</option>
-                <option value="OFFICE">OFFICE</option>
-              </select>
-            </div>
-            <div class="flex items-center justify-centers gap-3 mb-5 flex-wrap text-center max-sm:flex-col">
-              <label v-for="(pvzData, index) in pvz" :key="index">
-                <input type="checkbox" :value="pvzData.name" v-model="userData.PVZ" />
-                {{ pvzData.name }}
-              </label>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Сортировочный центр</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.visibleSC">
-                <option value="ВСЕ">ВСЕ</option>
-                <option v-for="sortingCenter in sortingCenters" :value="sortingCenter.name">{{ sortingCenter.name }}</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">ПВЗ</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.visiblePVZ">
-                <option value="ВСЕ">ВСЕ</option>
-                <option v-for="valueData in pvz" :value="valueData.name">{{ valueData.name }}</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Ячейка <br />
-                (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.cell1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Ячейка <br />
-                (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.cell2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Дополнительно <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.additionally1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Дополнительно <br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.additionally2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Дополнительно <br> (Доставка)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.additionally3">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Доставлено на СЦ <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredSC1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Доставлено на СЦ <br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredSC2">
-                <<option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Доставлено на ПВЗ <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredPVZ1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Доставлено на ПВЗ <br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredPVZ2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Дополнительный доход<br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredKGT1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Дополнительный доход<br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.deliveredKGT2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Отправка в ПВЗ <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dispatchPVZ1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Отправка в ПВЗ <br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dispatchPVZ2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Отправка в ПВЗ <br> (Доставка)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dispatchPVZ3">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Отсортировано <br> (Доставка)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.sorted">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Оплачено <br> (Доставка)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.paid">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Имя <br> (Доставка)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.name3">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Телефон <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.fromName1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Телефон <br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.fromName2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+          <template v-slot:body>
+            <div class="text-black max-sm:text-sm">
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="name">Имя пользователя</label>
+                <input
+                  class="bg-transparent w-full rounded-xl border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+                  v-model="userData.username"
+                  type="text"
+                />
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="role">Роль</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.role"
+                >
+                  <option value="ADMIN">ADMIN</option>
+                  <option value="USER">USER</option>
+                  <option value="SORTIROVKA">SORTIROVKA</option>
+                  <option value="PVZ">PVZ</option>
+                  <option value="PPVZ">PPVZ</option>
+                  <option value="RMANAGER">RMANAGER</option>
+                  <option value="ADMINISTRATOR">ADMINISTRATOR</option>
+                  <option value="COURIER">COURIER</option>
+                  <option value="DRIVER">DRIVER</option>
+                  <option value="SHVEDOVA">SHVEDOVA</option>
+                  <option value="OFFICE">OFFICE</option>
+                </select>
+              </div>
+              <div
+                class="flex items-center justify-centers gap-3 mb-5 flex-wrap text-center max-sm:flex-col"
+              >
+                <label v-for="(pvzData, index) in pvz" :key="index">
+                  <input type="checkbox" :value="pvzData.name" v-model="userData.PVZ" />
+                  {{ pvzData.name }}
+                </label>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Сортировочный центр</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.visibleSC"
+                >
+                  <option value="ВСЕ">ВСЕ</option>
+                  <option
+                    v-for="sortingCenter in sortingCenters"
+                    :value="sortingCenter.name"
+                  >
+                    {{ sortingCenter.name }}
+                  </option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">ПВЗ</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.visiblePVZ"
+                >
+                  <option value="ВСЕ">ВСЕ</option>
+                  <option v-for="valueData in pvz" :value="valueData.name">
+                    {{ valueData.name }}
+                  </option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Ячейка (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.cell1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Ячейка (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.cell2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Дополнительно (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.additionally1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Дополнительно (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.additionally2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Дополнительно (Доставка)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.additionally3"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Доставлено на СЦ (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.deliveredSC1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Доставлено на СЦ (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.deliveredSC2"
+                >
+                  <
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Доставлено на ПВЗ (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.deliveredPVZ1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Доставлено на ПВЗ (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.deliveredPVZ2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Дополнительный доход (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.deliveredKGT1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Дополнительный доход (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.deliveredKGT2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Отправка в ПВЗ (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.dispatchPVZ1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Отправка в ПВЗ (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.dispatchPVZ2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Отправка в ПВЗ (Доставка)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.dispatchPVZ3"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Отсортировано (Доставка)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.sorted"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Оплачено (Доставка)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.paid"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Имя (Доставка)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.name3"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Телефон (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.fromName1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Телефон (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.fromName2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Телефон <br> (Доставка)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.fromName3">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Телефон (Доставка)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.fromName3"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Выдан клиенту <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.issued1">
-                <<option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Выдан клиенту (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.issued1"
+                >
+                  <
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Выдан клиенту <br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.issued2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Выдан клиенту (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.issued2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Аккаунт заказа <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.orderAccount">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Аккаунт заказа (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.orderAccount"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Заказано на СЦ <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.orderPVZ1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Заказано на СЦ (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.orderPVZ1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Заказано на СЦ <br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.orderPVZ2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Заказано на СЦ (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.orderPVZ2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Заказано на СЦ <br> (Доставка)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.orderPVZ3">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Заказано на СЦ (Доставка)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.orderPVZ3"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Процент с клиента <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.percentClient1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Процент с клиента (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.percentClient1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Процент с клиента <br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.percentClient2">
-               <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Процент с клиента (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.percentClient2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Процент с клиента <br> (Доставка)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.percentClient3">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Процент с клиента (Доставка)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.percentClient3"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Примечание <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.notation1">
-               <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Примечание (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.notation1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Примечание <br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.notation2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Примечание (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.notation2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Стоимость выкупа товара <br> (Выкуп клиента) </label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.priceProgram">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Стоимость выкупа товара (Выкуп клиента) </label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.priceProgram"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Стоимость выкупа товара <br> (Доставка) </label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.purchaseOfGoods">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Стоимость выкупа товара (Доставка) </label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.purchaseOfGoods"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Стоимость сайт <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.priceSite">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Стоимость сайт (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.priceSite"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Предоплата <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.prepayment1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Предоплата (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.prepayment1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Предоплата <br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.prepayment2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Предоплата (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.prepayment2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Товар (ссылка) <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.productLink1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Товар (ссылка) (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.productLink1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Маркетплейс <br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.productLink2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Маркетплейс (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.productLink2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Название товара <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.productName1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Название товара (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.productName1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Количество товаров <br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.productName2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Количество товаров (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.productName2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Данные <br />
-                (Наш Выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dataOurRansom">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Данные (Наш Выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.dataOurRansom"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Данные <br />
-                (Выкуп Клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dataClientRansom">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Данные (Выкуп Клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.dataClientRansom"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Данные <br /> (Доставка)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.dataDelivery">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Данные (Доставка)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.dataDelivery"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Сумма с клиента <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.amountFromClient1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Сумма с клиента (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.amountFromClient1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Сумма с клиента <br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.amountFromClient2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Сумма с клиента (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.amountFromClient2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Сумма с клиента <br> (Доставка)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.amountFromClient3">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Сумма с клиента (Доставка)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.amountFromClient3"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Ссылка для клиента <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.clientLink1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Ссылка для клиента (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.clientLink1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Ссылка для клиента <br> (Выкуп клиента)<br></label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.clientLink2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Ссылка для клиента (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.clientLink2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Ссылка для клиента <br> (Доставка)<br></label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.clientLink3">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Ссылка для клиента (Доставка)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.clientLink3"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div v class="grid grid-cols-2 mb-5">
-              <label for="cell">Прибыль (доход) <br> (Наш выкуп)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.profit1">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div v class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Прибыль (доход) (Наш выкуп)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.profit1"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Прибыль (доход) <br> (Выкуп клиента)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.profit2">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Прибыль (доход) (Выкуп клиента)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.profit2"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="cell">Прибыль (доход) <br> (Доставка)</label>
-              <select class="py-1 px-2 border-2 bg-transparent rounded-lg text-base" v-model="userData.profit3">
-                <option value="NONE">Не видеть</option>
-                <option value="READ">Видеть</option>
-                <option value="WRITE">Редактировать</option>
-              </select>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="cell">Прибыль (доход) (Доставка)</label>
+                <select
+                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                  v-model="userData.profit3"
+                >
+                  <option value="NONE">Не видеть</option>
+                  <option value="READ">Видеть</option>
+                  <option value="WRITE">Редактировать</option>
+                </select>
+              </div>
             </div>
-          </div>
-
-          <div class="flex items-center justify-center gap-3 mt-10">
-            <UIMainButton @click="updateUser">Сохранить</UIMainButton>
-            <UIErrorButton @click="closeModal">Отменить</UIErrorButton>
-          </div>
-        </UIModal>
+          </template>
+          <template v-slot:footer>
+            <div class="flex gap-3 items-center justify-center">
+              <UISaveModalButton @click="updateUser">СОХРАНИТЬ</UISaveModalButton>
+              <UIExitModalButton @click="closeModal">ЗАКРЫТЬ</UIExitModalButton>
+            </div>
+          </template>
+        </UINewModalEdit>
       </div>
 
       <div v-else>

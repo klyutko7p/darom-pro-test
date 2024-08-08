@@ -695,7 +695,7 @@ function returnTotal(sum: number) {
             <div class="grid grid-cols-2 mb-5">
               <label for="dispatchPVZ1">ПВЗ</label>
               <select
-                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                class="py-1 px-2 border-2 bg-transparent w-full rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.PVZ"
               >
                 <option v-for="pvzData in pvz" :value="pvzData">
@@ -707,7 +707,7 @@ function returnTotal(sum: number) {
             <div class="grid grid-cols-2 mb-5" v-if="user.role !== 'ADMIN'">
               <label for="name">Дата</label>
               <input
-                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
                 :min="`2024-${month}-01`"
                 :max="`2024-${month}-31`"
@@ -720,7 +720,7 @@ function returnTotal(sum: number) {
             <div class="grid grid-cols-2 mb-5" v-if="user.role === 'ADMIN'">
               <label for="name">Дата</label>
               <input
-                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
                 type="date"
                 placeholder="ДД.ММ.ГГГГ"
@@ -745,7 +745,7 @@ function returnTotal(sum: number) {
               <label for="name">Расход</label>
               <input
                 :disabled="user.role !== 'ADMIN'"
-                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.expenditure"
                 type="text"
               />
@@ -754,7 +754,7 @@ function returnTotal(sum: number) {
             <div class="grid grid-cols-2 mb-5">
               <label for="dispatchPVZ1">Статья расхода</label>
               <select
-                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                class="py-1 px-2 border-2 bg-transparent w-full rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.typeOfExpenditure"
               >
                 <option v-for="type in typesOfExpenditure" :value="type">
@@ -766,7 +766,7 @@ function returnTotal(sum: number) {
             <div class="grid grid-cols-2 mb-5">
               <label for="name">Комментарий</label>
               <input
-                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.notation"
                 type="text"
               />
@@ -775,7 +775,7 @@ function returnTotal(sum: number) {
             <div class="grid grid-cols-2 mb-5">
               <label for="dispatchPVZ1">Компания</label>
               <select
-                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                class="py-1 px-2 border-2 bg-transparent w-full rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.company"
               >
                 <option v-for="company in companies" :value="company">

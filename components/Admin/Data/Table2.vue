@@ -18,9 +18,9 @@ defineProps({
 </script>
 
 <template>
-  <div class="relative overflow-x-auto mt-5">
-    <table class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500">
-      <thead class="text-xs text-gray-700 uppercase text-center bg-gray-50">
+  <div class="relative overflow-x-auto overflow-y-auto rounded-xl mt-5">
+    <table class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500">
+      <thead class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center">
         <tr>
           <th scope="col" class="px-6 py-3" v-for="field in fields">{{ field }}</th>
         </tr>
@@ -30,7 +30,7 @@ defineProps({
           <th scope="row" class="px-6 py-4 border-2 font-medium text-gray-900 whitespace-nowrap">
             {{ row.name }}
           </th>
-          <th scope="row" class="px-6 py-4 border-2 font-medium text-gray-900 whitespace-nowrap">
+          <th scope="row" class="px-6 py-4 border-2  font-medium text-gray-900 whitespace-nowrap">
             {{ row.address }}
           </th>
           <td class="px-6 py-4 border-2">
@@ -54,3 +54,14 @@ defineProps({
     </table>
   </div>
 </template>
+
+<style scoped>
+.hidden-row {
+  display: none !important;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2; /* Цвет для четных строк */
+}
+
+</style>

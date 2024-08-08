@@ -500,7 +500,6 @@ let isShowAddSettings = ref(false);
       >
         <div class="grid place-items-center mr-4">
           <Icon name="mage:bag-a" size="20" />
-          <Icon name="mage:bag-a" size="20" />
         </div>
         <h1>Наш Выкуп</h1>
       </div>
@@ -853,6 +852,7 @@ let isShowAddSettings = ref(false);
         route.fullPath.includes('+') ||
         route.fullPath === '/spreadsheets/our-ransom' ||
         route.fullPath === '/spreadsheets/client-ransom' ||
+        route.fullPath === '/spreadsheets/delivery' ||
         route.fullPath === '/advance-report/payroll',
     }"
     class="py-1 px-3 fixed z-40 max-xl:right-0 flex items-center max-sm:gap-3 justify-between duration-200 w-full bg-gradient-to-br from-purple-700 to-orange-400 backdrop-blur-2xl text-white"

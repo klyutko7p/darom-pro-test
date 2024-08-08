@@ -237,7 +237,6 @@ async function createAdvanceReportZP() {
   }
 }
 
-
 const storeAdvanceReports = useAdvanceReports();
 let selectedCompany = ref("");
 
@@ -340,18 +339,17 @@ watch([selectedCompany], filterRowsCompany);
     />
   </div>
 
-  <div class="relative max-h-[610px] mt-5 mb-10 mr-5">
+  <div class="relative max-h-[610px] overflow-y-auto rounded-xl mt-5 mb-10">
     <table
-      id="theTable"
-      class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+      class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500 rounded-xl"
     >
       <thead
-        class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center bg-gray-50"
+        class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
       >
         <tr>
           <th
             scope="col"
-            class="exclude-row border-2"
+            class="exclude-row h-[70px] px-3 border-2"
             v-if="
               user.dataDelivery === 'WRITE' ||
               user.role === 'ADMIN' ||
@@ -411,7 +409,7 @@ watch([selectedCompany], filterRowsCompany);
           <td class="border-2">{{ row.paymentPerShift ? row.paymentPerShift : 0 }} ₽</td>
           <td class="border-2">
             <input
-              class="max-w-[70px] text-center"
+              class="max-w-[70px] mx-2 text-center bg-gray-100"
               type="number"
               @input="getRowByIdFromInput(row)"
               v-model="row.advance"
@@ -420,7 +418,7 @@ watch([selectedCompany], filterRowsCompany);
           </td>
           <td class="border-2">
             <input
-              class="max-w-[70px] text-center"
+              class="max-w-[70px] mx-2 text-center bg-gray-100"
               type="number"
               @input="getRowByIdFromInput(row)"
               v-model="row.hours"
@@ -429,7 +427,7 @@ watch([selectedCompany], filterRowsCompany);
           </td>
           <td class="border-2">
             <input
-              class="max-w-[70px] text-center"
+              class="max-w-[70px] mx-2 text-center bg-gray-100"
               type="number"
               @input="getRowByIdFromInput(row)"
               v-model="row.deductions"
@@ -438,7 +436,7 @@ watch([selectedCompany], filterRowsCompany);
           </td>
           <td class="border-2">
             <input
-              class="max-w-[70px] text-center"
+              class="max-w-[70px] mx-2 text-center bg-gray-100"
               type="number"
               @input="getRowByIdFromInput(row)"
               v-model="row.additionalPayment"

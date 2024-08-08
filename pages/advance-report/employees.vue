@@ -107,6 +107,22 @@ let banks = ref([
   "центр инвест",
   "ВТБ",
 ]);
+
+function lockScroll() {
+  document.body.classList.add("no-scroll");
+}
+
+function unlockScroll() {
+  document.body.classList.remove("no-scroll");
+}
+
+watch(isOpen, (newValue) => {
+  if (newValue) {
+    lockScroll();
+  } else {
+    unlockScroll();
+  }
+});
 </script>
 
 <template>
@@ -137,18 +153,22 @@ let banks = ref([
           />
         </div>
 
-        <UIModal v-show="isOpen" @close-modal="closeModal">
+        <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
+          <template v-slot:icon-header>
+            <Icon size="24" name="gravity-ui:circle-ruble" />
+          </template>
           <template v-slot:header>
             <div class="custom-header" v-if="rowData.id">
-              Изменение строки с ID - <b> {{ rowData.id }}</b>
+              Изменение: <b> {{ rowData.id }}</b>
             </div>
-            <div class="custom-header" v-else>Создание нового документа</div>
+            <div class="custom-header" v-else>Создание нового сотрудника</div>
           </template>
-          <div class="text-black">
-            <div class="grid grid-cols-2 mb-5">
+          <template v-slot:body>
+            <div class="text-black">
+            <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="dispatchPVZ1">ПВЗ</label>
               <select
-                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                class="py-1 px-2 border-2 bg-transparent w-full rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.PVZ"
               >
                 <option v-for="pvzData in pvz" :value="pvzData">
@@ -157,10 +177,10 @@ let banks = ref([
               </select>
             </div>
 
-            <div class="grid grid-cols-2 mb-5">
+            <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="dispatchPVZ1">Компания</label>
               <select
-                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                class="py-1 px-2 border-2 bg-transparent w-full rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.company"
               >
                 <option v-for="company in companies" :value="company">
@@ -169,28 +189,28 @@ let banks = ref([
               </select>
             </div>
 
-            <div class="grid grid-cols-2 mb-5">
+            <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="name">ФИО</label>
               <input
-                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.fullname"
                 type="text"
               />
             </div>
 
-            <div class="grid grid-cols-2 mb-5">
+            <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="name">Телефон/Карта</label>
               <input
-                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.phone"
                 type="text"
               />
             </div>
 
-            <div class="grid grid-cols-2 mb-5">
+            <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="dispatchPVZ1">Банк</label>
               <select
-                class="py-1 px-2 border-2 max-w-[200px] bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                class="py-1 px-2 border-2 bg-transparent w-full rounded-lg text-sm disabled:text-gray-400"
                 v-model="rowData.bank"
               >
                 <option v-for="bank in banks" :value="bank">
@@ -199,34 +219,36 @@ let banks = ref([
               </select>
             </div>
 
-            <div class="grid grid-cols-2 mb-5">
+            <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="name">Оплата в смену</label>
               <input
-                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.paymentPerShift"
                 type="number"
               />
             </div>
 
-            <div class="grid grid-cols-2 mb-5">
+            <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="name">Часов в смене</label>
               <input
-                class="bg-transparent w-full max-w-[200px] rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.hoursPerShift"
                 type="number"
               />
             </div>
           </div>
-
-          <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
-            <UIMainButton @click="updateRow">Сохранить</UIMainButton>
-            <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-          </div>
-          <div class="flex items-center justify-center gap-3 mt-10" v-else>
-            <UIMainButton @click="createRow">Создать </UIMainButton>
-            <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-          </div>
-        </UIModal>
+          </template>
+          <template v-slot:footer>
+            <div class="flex items-center justify-center gap-3" v-if="rowData.id">
+              <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
+              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+            </div>
+            <div class="flex items-center justify-center gap-3" v-else>
+              <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
+              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+            </div>
+          </template>
+        </UINewModalEdit>
       </NuxtLayout>
     </div>
 

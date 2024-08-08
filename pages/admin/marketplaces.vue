@@ -63,6 +63,23 @@ onMounted(async () => {
 definePageMeta({
   layout: false,
 });
+
+
+function lockScroll() {
+  document.body.classList.add("no-scroll");
+}
+
+function unlockScroll() {
+  document.body.classList.remove("no-scroll");
+}
+
+watch(isOpen, (newValue) => {
+  if (newValue) {
+    lockScroll();
+  } else {
+    unlockScroll();
+  }
+});
 </script>
 
 <template>
@@ -82,27 +99,34 @@ definePageMeta({
 
         <AdminDataCreate :title="'Маркетплейс'" @create-data="createMarketplace" />
 
-        <UIModal v-show="isOpen" @close-modal="closeModal">
+        <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
+          <template v-slot:icon-header>
+            <Icon size="24" name="fluent:building-retail-money-24-regular" />
+          </template>
           <template v-slot:header>
             <div class="custom-header">
-              Изменение Маркетплейса - <b> {{ marketplaceData.name }}</b>
+              <h1>Изменение:  {{ marketplaceData.name }}</h1>
             </div>
           </template>
-          <div class="text-black">
-            <div class="grid grid-cols-2 mb-5">
-              <label for="name">Название Маркетплейса</label>
-              <input
-                class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
-                v-model="marketplaceData.name"
-                type="text"
-              />
+          <template v-slot:body>
+            <div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="name">Название маркетплейса</label>
+                <input
+                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+                  v-model="marketplaceData.name"
+                  type="text"
+                />
+              </div>
             </div>
-          </div>
-          <div class="flex items-center justify-center gap-3 mt-10">
-            <UIMainButton @click="updateMarketplace">Сохранить</UIMainButton>
-            <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-          </div>
-        </UIModal>
+          </template>
+          <template v-slot:footer>
+            <div class="flex gap-3 items-center justify-center">
+              <UISaveModalButton @click="updateMarketplace">СОХРАНИТЬ</UISaveModalButton>
+              <UIExitModalButton @click="closeModal">ЗАКРЫТЬ</UIExitModalButton>
+            </div>
+          </template>
+        </UINewModalEdit>
       </div>
 
       <div v-else>

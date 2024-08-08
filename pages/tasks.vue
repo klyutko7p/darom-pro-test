@@ -23,7 +23,6 @@ onMounted(async () => {
   isLoading.value = false;
 });
 
-
 definePageMeta({
   layout: false,
   name: "Задачи",
@@ -54,25 +53,25 @@ function closeModal() {
 
 async function createRow() {
   isLoading.value = true;
-  await storeTasks.createTask(rowData.value)
+  await storeTasks.createTask(rowData.value);
   rows.value = await storeTasks.getTasks();
-  closeModal()
+  closeModal();
   isLoading.value = false;
 }
 
 async function updateStatus(obj: any) {
   isLoading.value = true;
-  await storeTasks.updateStatus(obj.row, obj.flag)
+  await storeTasks.updateStatus(obj.row, obj.flag);
   rows.value = await storeTasks.getTasks();
-  closeModal()
+  closeModal();
   isLoading.value = false;
 }
 
 async function updateRow() {
   isLoading.value = true;
-  await storeTasks.updateTask(rowData.value)
+  await storeTasks.updateTask(rowData.value);
   rows.value = await storeTasks.getTasks();
-  closeModal()
+  closeModal();
   isLoading.value = false;
 }
 </script>
@@ -87,61 +86,72 @@ async function updateRow() {
       <div v-if="!isLoading" class="py-10">
         <UIMainButton @click="openModal">Создать задачу</UIMainButton>
 
-        <TaskTable :user="user" :rows="rows" @open-modal="openModal" @update-status="updateStatus" />
+        <TaskTable
+          :user="user"
+          :rows="rows"
+          @open-modal="openModal"
+          @update-status="updateStatus"
+        />
 
-        <UIModal v-show="isOpen" @close-modal="closeModal">
+        <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
+          <template v-slot:icon-header>
+            <Icon size="24" name="material-symbols:task-alt" />
+          </template>
           <template v-slot:header>
             <div class="custom-header" v-if="rowData.id">
-              Изменение задачи с ID - <b> {{ rowData.id }}</b>
+              Изменение: <b> {{ rowData.id }}</b>
             </div>
             <div class="custom-header" v-else>Создание новой задачи</div>
           </template>
-          <div class="text-black">
-            <div class="grid grid-cols-2 mb-5">
-              <label for="description" class="max-sm:text-sm">Задача</label>
-              <textarea
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.description"
-                type="text"
-              />
-            </div>
-            <div class="grid grid-cols-2 mb-5">
-              <label for="notation" class="max-sm:text-sm">Комментарий</label>
-              <input
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.notation"
-                type="text"
-              />
-            </div>
+          <template v-slot:body>
+            <div class="text-black">
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="description" class="max-sm:text-sm">Задача</label>
+                <textarea
+                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+                  v-model="rowData.description"
+                  type="text"
+                />
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="notation" class="max-sm:text-sm">Комментарий</label>
+                <input
+                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+                  v-model="rowData.notation"
+                  type="text"
+                />
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="done" class="max-sm:text-sm">Выполнено</label>
-              <input
-                class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.done"
-                type="datetime-local"
-              />
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="done" class="max-sm:text-sm">Выполнено</label>
+                <input
+                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+                  v-model="rowData.done"
+                  type="datetime-local"
+                />
+              </div>
 
-            <div class="grid grid-cols-2 mb-5">
-              <label for="checked" class="max-sm:text-sm">Проверено</label>
-              <input
-                class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.checked"
-                type="datetime-local"
-              />
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="checked" class="max-sm:text-sm">Проверено</label>
+                <input
+                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+                  v-model="rowData.checked"
+                  type="datetime-local"
+                />
+              </div>
             </div>
-          </div>
-
-          <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
-            <UIMainButton @click="updateRow">Сохранить </UIMainButton>
-            <UIMainButton @click="closeModal">Отменить </UIMainButton>
-          </div>
-          <div class="flex items-center justify-center gap-3 mt-10" v-else>
-            <UIMainButton @click="createRow">Создать </UIMainButton>
-            <UIMainButton @click="closeModal">Отменить </UIMainButton>
-          </div>
-        </UIModal>
+          </template>
+          <template v-slot:footer>
+            <div class="flex items-center justify-center gap-3" v-if="rowData.id">
+              <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
+              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+            </div>
+            <div class="flex items-center justify-center gap-3" v-else>
+              <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
+              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+            </div>
+          </template>
+        </UINewModalEdit>
       </div>
 
       <div v-else>
