@@ -477,12 +477,16 @@ function openModal(row: IAdvanceReport, flag: string = "CASH") {
   isOpen.value = true;
   if (row.id) {
     rowData.value = JSON.parse(JSON.stringify(row));
-    rowData.value.date = rowData.value.date
-      ? storeUsers.getISODate(rowData.value.date)
-      : null;
+    if (user.value.username !== "Директор") {
+      rowData.value.date = rowData.value.date
+        ? storeUsers.getISODate(rowData.value.date)
+        : null;
+    }
   } else {
     rowData.value = {} as IAdvanceReport;
-    rowData.value.date = storeUsers.getISODate(new Date());
+    if (user.value.username !== "Директор") {
+      rowData.value.date = storeUsers.getISODate(new Date());
+    }
   }
   if (!row.type) {
     if (flag === "CASH") {
@@ -1461,7 +1465,6 @@ watch(isOpenYM, (newValue) => {
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Расход</label>
                 <input
-                  :disabled="user.role !== 'ADMIN' || rowData.id === null"
                   class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                   v-model="rowData.expenditure"
                   type="text"
@@ -1703,7 +1706,7 @@ watch(isOpenYM, (newValue) => {
             <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="name">Дата</label>
               <input
-                class="bg-transparent w-full w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                 v-model="rowData.date"
                 type="date"
                 placeholder="ДД.ММ.ГГГГ"
@@ -1997,7 +2000,6 @@ watch(isOpenYM, (newValue) => {
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Расход</label>
                 <input
-                  :disabled="user.role !== 'ADMIN' || rowData.id === null"
                   class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                   v-model="rowData.expenditure"
                   type="text"

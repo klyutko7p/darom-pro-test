@@ -19,7 +19,7 @@ defineProps({
 
 <template>
   <div class="relative overflow-x-auto overflow-y-auto rounded-xl mt-5">
-    <table class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500">
+    <table id="theTable" class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500">
       <thead class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center">
         <tr>
           <th scope="col" class="px-6 py-3" v-for="field in fields">{{ field }}</th>

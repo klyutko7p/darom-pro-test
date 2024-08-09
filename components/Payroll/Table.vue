@@ -218,7 +218,11 @@ async function createAdvanceReportZP() {
 
   const currentDate = new Date();
   const year = currentDate.getFullYear();
-  const date = new Date(year, selectedMonth - 1, 31);
+  const date = new Date(year, selectedMonth - 1, 30);
+  date.setHours(15);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  date.setMilliseconds(0);
 
   let resultRows = Object.values(groupedRows).map((groupedRow) => ({
     PVZ: groupedRow.PVZ,
@@ -239,15 +243,23 @@ async function createAdvanceReportZP() {
 
 const storeAdvanceReports = useAdvanceReports();
 let selectedCompany = ref("");
+let selectedPVZ = ref("");
 
 const uniqueCompany = computed(() => {
   return storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "company");
 });
 
-const filterRowsCompany = () => {
+const uniquePVZ = computed(() => {
+  return storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "PVZ");
+});
+
+const filterRowsCompanyAndPVZ = () => {
   filteredRows.value = props.rows?.slice();
   filteredRows.value = props.rows?.filter((row) => {
-    return !selectedCompany.value.length || selectedCompany.value.includes(row.company);
+    return (
+      (!selectedCompany.value.length || selectedCompany.value.includes(row.company)) &&
+      (!selectedPVZ.value.length || selectedPVZ.value.includes(row.PVZ))
+    );
   });
   filteredRows.value = filteredRows.value?.filter((row: IPayroll) => {
     let rowDate: Date = new Date(row.date);
@@ -256,7 +268,7 @@ const filterRowsCompany = () => {
 };
 
 watch([props.rows, totalRows, props.user], updateCurrentPageData);
-watch([selectedCompany], filterRowsCompany);
+watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
 </script>
 <template>
   <div class="my-10 flex items-center gap-5">
@@ -339,8 +351,20 @@ watch([selectedCompany], filterRowsCompany);
     />
   </div>
 
+  <div>
+    <h1 class="text-lg mb-1 font-bold mt-3">Фильтр по ПВЗ:</h1>
+    <VueMultiselect
+      v-model="selectedPVZ"
+      :options="uniquePVZ"
+      :multiple="true"
+      :close-on-select="true"
+      placeholder="Выберите ПВЗ"
+    />
+  </div>
+
   <div class="relative max-h-[610px] overflow-y-auto rounded-xl mt-5 mb-10">
     <table
+      id="theTable"
       class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500 rounded-xl"
     >
       <thead

@@ -230,7 +230,7 @@ let showOtherOptions = ref(false);
 
   <div class="relative max-h-[600px] rounded-xl mt-5 mb-10">
     <div id="up"></div>
-    <table
+    <table id="theTable"
       class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
       v-if="totalRows > 0"
     >

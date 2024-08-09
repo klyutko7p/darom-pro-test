@@ -1187,7 +1187,7 @@ function getProfitRowsSum() {
           row.received !== null &&
           (row.recipient === "Владимирова Инна" ||
             row.recipient === "Динис Ольга" ||
-            row.recipient === "Киризлеева Марина")
+            row.recipient === "Киризлеева Марина" || row.recipient === "Смирнов Валерий")
       )
       .reduce((acc, value) => acc + +value.sum, 0);
 
@@ -1219,7 +1219,7 @@ function getProfitRowsSum() {
           row.received !== null &&
           (row.recipient === "Владимирова Инна" ||
             row.recipient === "Динис Ольга" ||
-            row.recipient === "Киризлеева Марина") &&
+            row.recipient === "Киризлеева Марина" || row.recipient === "Смирнов Валерий") &&
           row.pvz === selectedPVZ.value
       )
       .reduce((acc, value) => acc + +value.sum, 0);

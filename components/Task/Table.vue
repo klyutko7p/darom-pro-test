@@ -30,7 +30,7 @@ function updateCurrentPageData() {
 </script>
 <template>
   <div class="relative max-h-[700px] overflow-y-auto rounded-xl mt-5 mb-10">
-    <table
+    <table id="theTable"
       class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
     >
       <thead

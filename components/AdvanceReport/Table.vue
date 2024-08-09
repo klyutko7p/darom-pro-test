@@ -141,7 +141,7 @@ function exportToExcel() {
     class="relative max-h-[410px] overflow-y-auto rounded-xl mt-5 mb-10"
     v-if="filteredRows?.length > 0"
   >
-    <table
+    <table id="theTable"
       class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
     >
       <thead

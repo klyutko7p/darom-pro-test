@@ -279,7 +279,7 @@ watch(
   </div>
 
   <div class="relative max-h-[700px] max-w-[1200px] mx-auto mt-5 mb-10">
-    <table
+    <table id="theTable"
       class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
     >
       <thead
