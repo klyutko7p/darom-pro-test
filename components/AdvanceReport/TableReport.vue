@@ -210,8 +210,7 @@ function updateCurrentPageData() {
       } else {
         rowsOnlineArr.value = props.rowsOurRansom.filter(
           (row: IOurRansom) =>
-            (row.additionally === "Оплачено онлайн" ||
-              row.additionally === "Оплата наличными") &&
+            row.additionally !== "Отказ брак" &&
             new Date(row.issued).getMonth() + 1 === +props.month &&
             (!props.startingDate || new Date(row.issued) >= new Date(newStartingDate)) &&
             (!props.endDate || new Date(row.issued) <= new Date(newEndDate))
@@ -315,8 +314,7 @@ function updateCurrentPageData() {
       } else {
         rowsOnlineArr.value = props.rowsOurRansom.filter(
           (row: IOurRansom) =>
-            (row.additionally === "Оплачено онлайн" ||
-              row.additionally === "Оплата наличными") &&
+            row.issued !== null &&
             (!props.startingDate || new Date(row.issued) >= new Date(newStartingDate)) &&
             (!props.endDate || new Date(row.issued) <= new Date(newEndDate))
         );
@@ -352,21 +350,7 @@ function updateCurrentPageData() {
 
   rowsOnlineArr.value?.forEach((row) => {
     if (!isNaN(receiptsByPVZ[row.dispatchPVZ])) {
-      let profit;
-      if (!row.prepayment && row.profit1 !== 0) {
-        profit =
-          Math.ceil(
-            Math.ceil(
-              row.priceSite + (row.priceSite * row.percentClient) / 100 - row.prepayment
-            ) / 10
-          ) *
-            10 -
-          row.priceSite +
-          row.deliveredKGT;
-      } else {
-        profit = (row.priceSite * row.percentClient) / 100 + row.deliveredKGT;
-      }
-      receiptsByPVZ[row.dispatchPVZ] += Math.ceil(profit);
+      receiptsByPVZ[row.dispatchPVZ] += calculateValue(row);
     }
   });
 
@@ -405,6 +389,64 @@ function roundToNearestTen(num: number): number {
   }
 }
 
+function calculateValue(curValue: any) {
+  if (!curValue.prepayment) {
+    if (!curValue.prepayment) {
+      curValue.prepayment = 0;
+    }
+    if (!curValue.deliveredKGT) {
+      curValue.deliveredKGT = 0;
+    }
+
+    const shouldRound = (value: any) => {
+      if (value.created_at) {
+        const createdDate = new Date(value.created_at);
+        const referenceDate = new Date("2024-06-05T00:00:01");
+        return createdDate > referenceDate;
+      }
+    };
+
+    const roundOrCeil = (num: number) => {
+      const lastDigit = num % 10;
+      return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
+    };
+
+    if (!shouldRound(curValue)) {
+      return curValue.additionally !== "Отказ клиент наличные" ||
+        curValue.additionally !== "Отказ клиент онлайн" ||
+        curValue.additionally !== "Отказ клиент"
+        ? Math.ceil(curValue.amountFromClient1 / 10) * 10 -
+            curValue.priceSite +
+            curValue.deliveredKGT
+        : 200;
+    } else {
+      return curValue.additionally !== "Отказ клиент наличные" ||
+        curValue.additionally !== "Отказ клиент онлайн" ||
+        curValue.additionally !== "Отказ клиент"
+        ? Math.ceil(
+            roundOrCeil(
+              curValue.priceSite + (curValue.priceSite * 10) / 100 - curValue.prepayment
+            )
+          ) -
+            curValue.priceSite +
+            curValue.deliveredKGT
+        : 200;
+    }
+  } else {
+    if (!curValue.prepayment) {
+      curValue.prepayment = 0;
+    }
+    if (!curValue.deliveredKGT) {
+      curValue.deliveredKGT = 0;
+    }
+    return curValue.additionally !== "Отказ клиент наличные" ||
+      curValue.additionally !== "Отказ клиент онлайн" ||
+      curValue.additionally !== "Отказ клиент"
+      ? (+curValue.priceSite * 10) / 100 + +curValue.deliveredKGT
+      : 200;
+  }
+}
+
 function getTotal() {
   let array;
   array = props.rows;
@@ -439,8 +481,7 @@ function getTotal() {
   );
 
   rowsOnlineArrTotal.value = props.rowsOurRansom.filter(
-    (row: IOurRansom) =>
-      row.additionally === "Оплачено онлайн" || row.additionally === "Оплата наличными"
+    (row: IOurRansom) => row.additionally !== "Отказ брак"
   );
 
   pvz.value.forEach((pvzName: string) => {
@@ -471,19 +512,7 @@ function getTotal() {
 
   rowsOnlineArrTotal.value?.forEach((row) => {
     if (!isNaN(receiptsByPVZTotal[row.dispatchPVZ])) {
-      let profit;
-      if (!row.prepayment && row.profit1 !== 0) {
-        if (new Date(row.created_at) < new Date("2024-06-05T00:00:01")) {
-          profit =
-            Math.ceil(row.amountFromClient1 / 10) * 10 - row.priceSite + row.deliveredKGT;
-        } else {
-          profit =
-            roundToNearestTen(row.amountFromClient1) - row.priceSite + row.deliveredKGT;
-        }
-      } else {
-        profit = (row.priceSite * row.percentClient) / 100 + row.deliveredKGT;
-      }
-      receiptsByPVZTotal[row.dispatchPVZ] += Math.ceil(profit);
+      receiptsByPVZTotal[row.dispatchPVZ] += calculateValue(row);
     }
   });
 

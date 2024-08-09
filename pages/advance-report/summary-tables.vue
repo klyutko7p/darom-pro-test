@@ -27,7 +27,7 @@ onMounted(async () => {
   user.value = await storeUsers.getUser();
   rows.value = await storeAdvanceReports.getAdvancedReports();
   originallyRows.value = rows.value;
-  rowsOurRansom.value = await storeRansom.getRansomRowsForAdvanceReportOurRansom();
+  rowsOurRansom.value = await storeRansom.getRansomRowsForBalanceOurRansom();
   rowsDelivery.value = await storeRansom.getRansomRowsForBalanceDelivery();
   originallyRows.value = rows.value;
 
@@ -539,7 +539,6 @@ function returnTotal(sum: number) {
       (!endDate.value || new Date(row.date) <= new Date(newEndDate)) &&
       (!type.value || row.type === type.value)
   );
-  console.log(arrayOfExpenditure.value);  
 
   arrayOfExpenditure.value?.forEach((row) => {
     sumOfArray3.value -= parseFloat(row.expenditure);
