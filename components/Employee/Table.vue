@@ -25,7 +25,9 @@ const totalRows = computed(() => Math.ceil(props.rows?.length));
 let returnRows = ref<Array<IEmployee>>();
 
 function updateCurrentPageData() {
-  returnRows.value = props.rows;
+  returnRows.value = props.rows?.sort((a, b) => {
+    return a.fullname.localeCompare(b.fullname, 'ru');
+  });
 }
 
 watch([props.rows, totalRows, props.user], updateCurrentPageData);

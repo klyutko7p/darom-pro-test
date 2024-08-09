@@ -2017,113 +2017,112 @@ async function updateRow() {
             <BalanceTableOnline :rows="rowsOnline" />
           </div>
 
-          <UIModal v-show="isOpen" @close-modal="closeModal">
+          <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
+            <template v-slot:icon-header>
+              <Icon size="24" name="material-symbols-light:account-balance-wallet" />
+            </template>
             <template v-slot:header>
               <div class="custom-header" v-if="rowData.id">
-                Изменение строки с ID - <b> {{ rowData.id }}</b>
+                Изменение: <b> {{ rowData.id }}</b>
               </div>
               <div class="custom-header" v-else>Создание новой заявки</div>
             </template>
-            <div class="text-black">
-              <div class="grid grid-cols-2 mb-5">
-                <label for="dispatchPVZ1">ПВЗ</label>
-                <select
-                  :disabled="rowData.id > 0"
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.pvz"
-                >
-                  <option v-for="pvzData in pvz" :value="pvzData.name">
-                    {{ pvzData.name }}
-                  </option>
-                </select>
+            <template v-slot:body>
+              <div class="text-black">
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="dispatchPVZ1">ПВЗ</label>
+                  <select
+                    :disabled="rowData.id > 0"
+                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    v-model="rowData.pvz"
+                  >
+                    <option v-for="pvzData in pvz" :value="pvzData.name">
+                      {{ pvzData.name }}
+                    </option>
+                  </select>
+                </div>
+  
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="dispatchPVZ1">Получатель</label>
+                  <select
+                    :disabled="rowData.id > 0"
+                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    v-model="rowData.recipient"
+                  >
+                    <option value="Нет">Нет</option>
+                    <option value="Рейзвих">Рейзвих</option>
+                    <option value="Шведова">Шведова</option>
+                    <option value="Директор">Директор</option>
+                    <option value="Косой">Косой</option>
+                  </select>
+                </div>
+  
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="name">Сумма</label>
+                  <input
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.sum"
+                    :disabled="rowData.id > 0"
+                    type="text"
+                  />
+                </div>
+  
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="name">Примечание</label>
+                  <input
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.notation"
+                    type="text"
+                  />
+                </div>
               </div>
-
-              <div class="grid grid-cols-2 mb-5">
-                <label for="dispatchPVZ1">Получатель</label>
-                <select
-                  :disabled="rowData.id > 0"
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.recipient"
-                >
-                  <option value="Нет">Нет</option>
-                  <option value="Рейзвих">Рейзвих</option>
-                  <option value="Шведова">Шведова</option>
-                  <option value="Директор">Директор</option>
-                  <option value="Косой">Косой</option>
-                </select>
-              </div>
-
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Сумма</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.sum"
-                  :disabled="rowData.id > 0"
-                  type="text"
-                />
-              </div>
-
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Примечание</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.notation"
-                  type="text"
-                />
-              </div>
-            </div>
-
-            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
-              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-            </div>
-            <div class="flex items-center justify-center gap-3 mt-10" v-else>
-              <UIMainButton @click="createRow">Создать </UIMainButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-            </div>
-          </UIModal>
-
-          <UIModal v-show="isOpenModalOnline" @close-modal="closeModalOnline">
-            <template v-slot:header>
-              <div class="custom-header">Создание новой заявки</div>
             </template>
-            <div class="text-black">
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Сумма</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.sum"
-                  type="text"
-                />
+            <template v-slot:footer>
+              <div class="flex items-center justify-center gap-3" v-if="rowData.id">
+                <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
+                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
               </div>
-            </div>
-
-            <div class="flex items-center justify-center gap-3 mt-10">
-              <UIMainButton @click="createOnlineRow">Создать </UIMainButton>
-              <UIErrorButton @click="closeModalOnline">Отменить </UIErrorButton>
-            </div>
-          </UIModal>
-
-          <UIModal v-show="isOpenModalDelivery" @close-modal="closeModalDelivery">
-            <template v-slot:header>
-              <div class="custom-header">Создание новой заявки</div>
+              <div class="flex items-center justify-center gap-3" v-else>
+                <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
+                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              </div>
             </template>
-            <div class="text-black">
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Сумма</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.sum"
-                  type="text"
-                />
-              </div>
-            </div>
+          </UINewModalEdit>
 
-            <div class="flex items-center justify-center gap-3 mt-10">
-              <UIMainButton @click="createDeliveryRow">Создать</UIMainButton>
-              <UIErrorButton @click="closeModalDelivery">Отменить</UIErrorButton>
-            </div>
-          </UIModal>
+          <UINewModalEdit v-show="isOpenModalOnline" @close-modal="closeModalOnline">
+            <template v-slot:icon-header>
+              <Icon size="24" name="material-symbols-light:account-balance-wallet" />
+            </template>
+            <template v-slot:header>
+              <div class="custom-header" v-if="rowData.id">
+                Изменение: <b> {{ rowData.id }}</b>
+              </div>
+              <div class="custom-header" v-else>Создание новой заявки</div>
+            </template>
+            <template v-slot:body>
+              <div class="text-black">
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="name">Сумма</label>
+                  <input
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.sum"
+                    type="text"
+                  />
+                </div>
+              </div>
+            </template>
+            <template v-slot:footer>
+              <div class="flex items-center justify-center gap-3" v-if="rowData.id">
+                <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
+                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              </div>
+              <div class="flex items-center justify-center gap-3" v-else>
+                <UISaveModalButton @click="createOnlineRow">Создать </UISaveModalButton>
+                <UIErrorButton @click="closeModalOnline">Отменить </UIErrorButton>
+              </div>
+            </template>
+          </UINewModalEdit>
+          
         </div>
       </NuxtLayout>
     </div>
@@ -2437,255 +2436,263 @@ async function updateRow() {
             <BalanceTableOnline :rows="rowsOnline" />
           </div>
 
-          <UIModal v-show="isOpen" @close-modal="closeModal">
+          <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
+            <template v-slot:icon-header>
+              <Icon size="24" name="material-symbols-light:account-balance-wallet" />
+            </template>
             <template v-slot:header>
               <div class="custom-header" v-if="rowData.id">
-                Изменение строки с ID - <b> {{ rowData.id }}</b>
+                Изменение: <b> {{ rowData.id }}</b>
               </div>
               <div class="custom-header" v-else>Создание новой заявки</div>
             </template>
-            <div class="text-black">
-              <div class="grid grid-cols-2 mb-5">
-                <label for="dispatchPVZ1">ПВЗ</label>
-                <select
-                  :disabled="rowData.id > 0"
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.pvz"
-                >
-                  <option v-for="pvzData in user.PVZ" :value="pvzData">
-                    {{ pvzData }}
-                  </option>
-                </select>
+            <template v-slot:body>
+              <div class="text-black">
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="dispatchPVZ1">ПВЗ</label>
+                  <select
+                    :disabled="rowData.id > 0"
+                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    v-model="rowData.pvz"
+                  >
+                    <option v-for="pvzData in user.PVZ" :value="pvzData">
+                      {{ pvzData }}
+                    </option>
+                  </select>
+                </div>
+  
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="dispatchPVZ1">Получатель</label>
+                  <select
+                    :disabled="rowData.id > 0"
+                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    v-model="rowData.recipient"
+                  >
+                    <option value="Нет">Нет</option>
+                    <option value="Рейзвих">Рейзвих</option>
+                    <option value="Шведова">Шведова</option>
+                    <option value="Директор">Директор</option>
+                    <option value="Косой">Косой</option>
+                    <option value="RMANAGER1">RMANAGER1</option>
+                  </select>
+                </div>
+  
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="name">Сумма</label>
+                  <input
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.sum"
+                    :disabled="rowData.id > 0"
+                    type="text"
+                  />
+                </div>
+  
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="name">Примечание</label>
+                  <input
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.notation"
+                    type="text"
+                  />
+                </div>
               </div>
-
-              <div class="grid grid-cols-2 mb-5">
-                <label for="dispatchPVZ1">Получатель</label>
-                <select
-                  :disabled="rowData.id > 0"
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.recipient"
-                >
-                  <option value="Нет">Нет</option>
-                  <option value="Рейзвих">Рейзвих</option>
-                  <option value="Шведова">Шведова</option>
-                  <option value="Директор">Директор</option>
-                  <option value="Косой">Косой</option>
-                  <option value="RMANAGER1">RMANAGER1</option>
-                </select>
+            </template>
+            <template v-slot:footer>
+              <div class="flex items-center justify-center gap-3" v-if="rowData.id">
+                <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
+                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
               </div>
-
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Сумма</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.sum"
-                  :disabled="rowData.id > 0"
-                  type="text"
-                />
+              <div class="flex items-center justify-center gap-3" v-else>
+                <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
+                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
               </div>
+            </template>
+          </UINewModalEdit>
 
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Примечание</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.notation"
-                  type="text"
-                />
-              </div>
-            </div>
-
-            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
-              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-            </div>
-            <div class="flex items-center justify-center gap-3 mt-10" v-else>
-              <UIMainButton @click="createRow">Создать </UIMainButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-            </div>
-          </UIModal>
-
-          <UIModal
-            v-show="isOpenModalProfitManager"
-            @close-modal="closeModalProfitRowManager"
-          >
+          <UINewModalEdit v-show="isOpenModalProfitManager" @close-modal="closeModalProfitRowManager">
+            <template v-slot:icon-header>
+              <Icon size="24" name="material-symbols-light:account-balance-wallet" />
+            </template>
             <template v-slot:header>
               <div class="custom-header" v-if="rowData.id">
-                Изменение строки с ID - <b> {{ rowData.id }}</b>
+                Изменение: <b> {{ rowData.id }}</b>
               </div>
               <div class="custom-header" v-else>Создание новой заявки</div>
             </template>
-            <div class="text-black">
-              <div class="grid grid-cols-2 mb-5">
-                <label for="dispatchPVZ1">ПВЗ</label>
-                <select
-                  :disabled="rowData.id > 0"
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.pvz"
-                >
-                  <option v-for="pvzData in user.PVZ" :value="pvzData">
-                    {{ pvzData }}
-                  </option>
-                </select>
+            <template v-slot:body>
+              <div class="text-black">
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="dispatchPVZ1">ПВЗ</label>
+                  <select
+                    :disabled="rowData.id > 0"
+                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    v-model="rowData.pvz"
+                  >
+                    <option v-for="pvzData in user.PVZ" :value="pvzData">
+                      {{ pvzData }}
+                    </option>
+                  </select>
+                </div>
+  
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="dispatchPVZ1">Получатель</label>
+                  <select
+                    :disabled="rowData.id > 0"
+                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    v-model="rowData.recipient"
+                  >
+                    <option value="Нет">Нет</option>
+                    <option value="Рейзвих">Рейзвих</option>
+                    <option value="Шведова">Шведова</option>
+                    <option value="Директор">Директор</option>
+                    <option value="Косой">Косой</option>
+                    <option value="RMANAGER1">RMANAGER1</option>
+                    <option value="PPVZ1">PPVZ1</option>
+                  </select>
+                </div>
+  
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="name">Сумма</label>
+                  <input
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.sum"
+                    :disabled="rowData.id > 0"
+                    type="text"
+                  />
+                </div>
+  
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="name">Примечание</label>
+                  <input
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.notation"
+                    type="text"
+                  />
+                </div>
               </div>
-
-              <div class="grid grid-cols-2 mb-5">
-                <label for="dispatchPVZ1">Получатель</label>
-                <select
-                  :disabled="rowData.id > 0"
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.recipient"
-                >
-                  <option value="Нет">Нет</option>
-                  <option value="Рейзвих">Рейзвих</option>
-                  <option value="Шведова">Шведова</option>
-                  <option value="Директор">Директор</option>
-                  <option value="Косой">Косой</option>
-                  <option value="RMANAGER1">RMANAGER1</option>
-                  <option value="PPVZ1">PPVZ1</option>
-                </select>
+            </template>
+            <template v-slot:footer>
+              <div class="flex items-center justify-center gap-3" v-if="rowData.id">
+                <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
+                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
               </div>
-
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Сумма</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.sum"
-                  :disabled="rowData.id > 0"
-                  type="text"
-                />
+              <div class="flex items-center justify-center gap-3" v-else>
+                <UISaveModalButton @click="createProfitManagerRow">Создать </UISaveModalButton>
+                <UIErrorButton @click="closeModalProfitRowManager">Отменить </UIErrorButton>
               </div>
+            </template>
+          </UINewModalEdit>
 
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Примечание</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.notation"
-                  type="text"
-                />
-              </div>
-            </div>
-
-            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
-              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-            </div>
-            <div class="flex items-center justify-center gap-3 mt-10" v-else>
-              <UIMainButton @click="createProfitManagerRow">Создать </UIMainButton>
-              <UIErrorButton @click="closeModalProfitRowManager">Отменить </UIErrorButton>
-            </div>
-          </UIModal>
-
-          <UIModal v-show="isOpenModalProfit" @close-modal="closeModalProfitRow">
+          <UINewModalEdit v-show="isOpenModalProfit" @close-modal="closeModalProfitRow">
+            <template v-slot:icon-header>
+              <Icon size="24" name="material-symbols-light:account-balance-wallet" />
+            </template>
             <template v-slot:header>
               <div class="custom-header" v-if="rowData.id">
-                Изменение строки с ID - <b> {{ rowData.id }}</b>
+                Изменение: <b> {{ rowData.id }}</b>
               </div>
               <div class="custom-header" v-else>Создание новой заявки</div>
             </template>
-            <div class="text-black">
-              <div class="grid grid-cols-2 mb-5">
-                <label for="dispatchPVZ1">ПВЗ</label>
-                <select
-                  :disabled="rowData.id > 0"
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.pvz"
-                >
-                  <option v-for="pvzData in user.PVZ" :value="pvzData">
-                    {{ pvzData }}
-                  </option>
-                </select>
+            <template v-slot:body>
+              <div class="text-black">
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="dispatchPVZ1">ПВЗ</label>
+                  <select
+                    :disabled="rowData.id > 0"
+                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    v-model="rowData.pvz"
+                  >
+                    <option v-for="pvzData in user.PVZ" :value="pvzData">
+                      {{ pvzData }}
+                    </option>
+                  </select>
+                </div>
+  
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="dispatchPVZ1">Получатель</label>
+                  <select
+                    :disabled="rowData.id > 0"
+                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    v-model="rowData.recipient"
+                  >
+                    <option v-if="user.username === 'ППВЗ_5'" value="Владимирова Инна">
+                      Владимирова Инна
+                    </option>
+                    <option v-if="user.username === 'ПВЗ_1'" value="Киризлеева Марина">
+                      Киризлеева Марина
+                    </option>
+                    <option v-if="user.username === 'ППВЗ_7'" value="Смирнов Валерий">
+                      Смирнов Валерий
+                    </option>
+                  </select>
+                </div>
+  
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="name">Сумма</label>
+                  <input
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.sum"
+                    :disabled="rowData.id > 0"
+                    type="text"
+                  />
+                </div>
+  
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="name">Примечание</label>
+                  <input
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.notation"
+                    type="text"
+                  />
+                </div>
               </div>
-
-              <div class="grid grid-cols-2 mb-5">
-                <label for="dispatchPVZ1">Получатель</label>
-                <select
-                  :disabled="rowData.id > 0"
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.recipient"
-                >
-                  <option v-if="user.username === 'ППВЗ_5'" value="Владимирова Инна">
-                    Владимирова Инна
-                  </option>
-                  <option v-if="user.username === 'ПВЗ_1'" value="Киризлеева Марина">
-                    Киризлеева Марина
-                  </option>
-                  <option v-if="user.username === 'ППВЗ_7'" value="Смирнов Валерий">
-                    Смирнов Валерий
-                  </option>
-                </select>
-              </div>
-
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Сумма</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.sum"
-                  :disabled="rowData.id > 0"
-                  type="text"
-                />
-              </div>
-
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Примечание</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.notation"
-                  type="text"
-                />
-              </div>
-            </div>
-
-            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
-              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-            </div>
-            <div class="flex items-center justify-center gap-3 mt-10" v-else>
-              <UIMainButton @click="createProfitRow">Создать </UIMainButton>
-              <UIErrorButton @click="closeModalProfitRow">Отменить </UIErrorButton>
-            </div>
-          </UIModal>
-
-          <UIModal v-show="isOpenModalOnline" @close-modal="closeModalOnline">
-            <template v-slot:header>
-              <div class="custom-header">Создание новой заявки</div>
             </template>
-            <div class="text-black">
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Сумма</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.sum"
-                  type="text"
-                />
+            <template v-slot:footer>
+              <div class="flex items-center justify-center gap-3" v-if="rowData.id">
+                <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
+                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
               </div>
-            </div>
-
-            <div class="flex items-center justify-center gap-3 mt-10">
-              <UIMainButton @click="createOnlineRow">Создать </UIMainButton>
-              <UIErrorButton @click="closeModalOnline">Отменить </UIErrorButton>
-            </div>
-          </UIModal>
-
-          <UIModal v-show="isOpenModalDelivery" @close-modal="closeModalDelivery">
-            <template v-slot:header>
-              <div class="custom-header">Создание новой заявки</div>
+              <div class="flex items-center justify-center gap-3" v-else>
+                <UISaveModalButton @click="createProfitRow">Создать </UISaveModalButton>
+                <UIErrorButton @click="closeModalProfitRow">Отменить </UIErrorButton>
+              </div>
             </template>
-            <div class="text-black">
-              <div class="grid grid-cols-2 mb-5">
-                <label for="name">Сумма</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.sum"
-                  type="text"
-                />
-              </div>
-            </div>
+          </UINewModalEdit>
 
-            <div class="flex items-center justify-center gap-3 mt-10">
-              <UIMainButton @click="createDeliveryRow">Создать</UIMainButton>
-              <UIErrorButton @click="closeModalDelivery">Отменить</UIErrorButton>
-            </div>
-          </UIModal>
+          <UINewModalEdit v-show="isOpenModalOnline" @close-modal="closeModalOnline">
+            <template v-slot:icon-header>
+              <Icon size="24" name="material-symbols-light:account-balance-wallet" />
+            </template>
+            <template v-slot:header>
+              <div class="custom-header" v-if="rowData.id">
+                Изменение: <b> {{ rowData.id }}</b>
+              </div>
+              <div class="custom-header" v-else>Создание новой заявки</div>
+            </template>
+            <template v-slot:body>
+              <div class="text-black">
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="name">Сумма</label>
+                  <input
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.sum"
+                    type="text"
+                  />
+                </div>
+              </div>
+            </template>
+            <template v-slot:footer>
+              <div class="flex items-center justify-center gap-3" v-if="rowData.id">
+                <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
+                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              </div>
+              <div class="flex items-center justify-center gap-3" v-else>
+                <UISaveModalButton @click="createOnlineRow">Создать </UISaveModalButton>
+                <UIErrorButton @click="closeModalOnline">Отменить </UIErrorButton>
+              </div>
+            </template>
+          </UINewModalEdit>
+
         </div>
       </NuxtLayout>
     </div>
