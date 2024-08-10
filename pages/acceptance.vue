@@ -78,22 +78,26 @@ async function acceptItem(row: any) {
 }
 
 let arrayOfRows = ref<Array<IOurRansom | IClientRansom | IDelivery>>([]);
+
 let scannedLink = ref("");
 
-async function scanItem() {
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-
-  scannedLink.value = scanStringItem.value.trim();
-  scannedLink.value = convertToURL(scannedLink.value) || "";
-  scanStringItem.value = "";
-
-  if (scannedLink.value) {
-    let rowData = await storeRansom.getRansomRowsById(+scannedLink.value, "OurRansom");
-    await acceptItem(rowData);
-    arrayOfRows.value.push(rowData);
+function scanItem() {
+  if (timeoutId !== null) {
+    clearTimeout(timeoutId);
   }
-  scannedLink.value = "";
+  timeoutId = setTimeout(async () => {
+    scannedLink.value = scanStringItem.value.trim();
+    scannedLink.value = convertToURL(scannedLink.value) || "";
+    scanStringItem.value = "";
 
+    if (scannedLink.value) {
+      let rowData = await storeRansom.getRansomRowsById(+scannedLink.value, "OurRansom");
+      await acceptItem(rowData);
+      arrayOfRows.value.push(rowData);
+    }
+    
+    scannedLink.value = "";
+  }, 1200);
   focusInput();
 }
 
