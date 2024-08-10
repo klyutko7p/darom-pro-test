@@ -97,7 +97,7 @@ function scanItem() {
     }
     
     scannedLink.value = "";
-  }, 1200);
+  }, 1700);
   focusInput();
 }
 
