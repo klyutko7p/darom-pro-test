@@ -16,6 +16,7 @@ const props = defineProps({
   rowsDelivery: { type: Array as PropType<IDelivery[]>, required: true },
   rowsOurRansom: { type: Array as PropType<IOurRansom[]>, required: true },
   company: { type: String, required: true },
+  selectedTypeOfExpenditure: { type: Array as PropType<string[]>, required: true },
 });
 
 const emit = defineEmits(["returnTotal"]);
@@ -89,35 +90,6 @@ function updateCurrentPageData() {
         (!props.endDate || new Date(row.date) <= new Date(newEndDate))
       );
     });
-
-    // if (props.company === "Darom.pro" || props.company === "Все") {
-    //   if (props.week.includes("неделя")) {
-    //     rowsBalanceArr.value = props.rowsBalance
-    //       .filter((row: IBalance) => {
-    //         let rowDate: Date = new Date(row.received);
-    //         let [startDate, endDate] = parseWeekRange(props.week);
-    //         return (
-    //           rowDate >= startDate &&
-    //           rowDate <= endDate &&
-    //           row.received !== null &&
-    //           row.recipient === "Шведова"
-    //         );
-    //       })
-    //       .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
-    //   } else {
-    //     rowsBalanceArr.value = props.rowsBalance
-    //       .filter(
-    //         (row: IBalance) =>
-    //           row.received !== null &&
-    //           row.recipient === "Шведова" &&
-    //           new Date(row.received).getMonth() + 1 === +props.month &&
-    //           (!props.startingDate ||
-    //             new Date(row.received) >= new Date(newStartingDate)) &&
-    //           (!props.endDate || new Date(row.received) <= new Date(newEndDate))
-    //       )
-    //       .map((row: IBalance) => ({ ...row, company: "Darom.pro" }));
-    //   }
-    // }
 
     if (props.week.includes("неделя")) {
       rowsDeliveryArr.value = props.rowsDelivery.filter((row: IDelivery) => {
@@ -380,15 +352,6 @@ function updateCurrentPageData() {
   getTotal();
 }
 
-function roundToNearestTen(num: number): number {
-  const lastDigit = num % 10;
-  if (lastDigit >= 5) {
-    return Math.ceil(num / 10) * 10;
-  } else {
-    return Math.floor(num / 10) * 10;
-  }
-}
-
 function calculateValue(curValue: any) {
   if (!curValue.prepayment) {
     if (!curValue.prepayment) {
@@ -608,74 +571,76 @@ function exportToExcel() {
 }
 </script>
 <template>
-  <div class="flex justify-end">
-    <Icon
-      class="duration-200 hover:text-secondary-color cursor-pointer"
-      size="40"
-      name="bi:filetype-xlsx"
-      @click="exportToExcel"
-    />
-  </div>
-  <div class="relative max-h-[410px] mt-5 mb-10">
-    <table
-      id="theTable"
-      class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
-    >
-      <thead
-        class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center bg-gray-50"
+  <div class="relative">
+    <div class="absolute top-[-65px] right-0">
+      <UTooltip
+        text="Скачать EXCEL"
+        :shortcuts="['xlsx']"
+        :popper="{ placement: 'right' }"
       >
-        <tr>
-          <td class="border-2 p-2 whitespace-nowrap font-bold">Статус</td>
-          <th scope="col" class="border-2 p-2 whitespace-nowrap" v-for="pvzName in pvz">
-            {{ pvzName }}
-          </th>
-          <td class="border-2 p-2 whitespace-nowrap font-bold">Итого</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="text-center">
-          <td class="border-2 p-2 whitespace-nowrap font-bold">Поступления</td>
-          <td
-            class="border-2 p-2 whitespace-nowrap font-bold"
-            v-for="sum in receiptsByPVZ"
-          >
-            {{ Math.ceil(sum) }} ₽
-          </td>
-          <td class="border-2 p-2 whitespace-nowrap font-bold">
-            {{ Math.ceil(sumOfArray1) }} ₽
-          </td>
-        </tr>
-        <tr class="text-center">
-          <td class="border-2 p-2 whitespace-nowrap font-bold">Расход</td>
-          <td
-            class="border-2 p-2 whitespace-nowrap font-bold"
-            v-for="sum in expenditureByPVZ"
-          >
-            {{ Math.ceil(sum) }} ₽
-          </td>
-          <td class="border-2 p-2 whitespace-nowrap font-bold">
-            {{ Math.ceil(sumOfArray2) }} ₽
-          </td>
-        </tr>
-        <tr class="text-center">
-          <td class="border-2 p-2 whitespace-nowrap font-bold">Итого</td>
-          <td
-            class="border-2 p-2 whitespace-nowrap font-bold"
-            v-for="sum in differenceByPVZ"
-          >
-            {{ Math.ceil(sum) }} ₽
-          </td>
-          <td class="border-2 font-bold p-2 whitespace-nowrap">
-            {{ Math.ceil(sumOfArray3) }} ₽
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        <div
+          class="bg-secondary-color cursor-pointer border-2 border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
+          @click="exportToExcel"
+        >
+          <Icon class="duration-200" size="32" name="bi:filetype-xlsx" />
+        </div>
+      </UTooltip>
+    </div>
+    <div class="relative rounded-xl mt-5 mb-10">
+      <table
+        id="theTable"
+        class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+      >
+        <thead
+          class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
+        >
+          <tr>
+            <td class="border-2 p-2 whitespace-nowrap font-bold">Статус</td>
+            <th scope="col" class="border-2 p-2 whitespace-nowrap" v-for="pvzName in pvz">
+              {{ pvzName }}
+            </th>
+            <td class="border-2 p-2 whitespace-nowrap font-bold">Итого</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="text-center">
+            <td class="border-2 p-2 whitespace-nowrap font-bold">Поступления</td>
+            <td
+              class="border-2 p-2 whitespace-nowrap font-bold"
+              v-for="sum in receiptsByPVZ"
+            >
+              {{ Math.ceil(sum) }} ₽
+            </td>
+            <td class="border-2 p-2 whitespace-nowrap font-bold">
+              {{ Math.ceil(sumOfArray1) }} ₽
+            </td>
+          </tr>
+          <tr class="text-center">
+            <td class="border-2 p-2 whitespace-nowrap font-bold">Расход</td>
+            <td
+              class="border-2 p-2 whitespace-nowrap font-bold"
+              v-for="sum in expenditureByPVZ"
+            >
+              {{ Math.ceil(sum) }} ₽
+            </td>
+            <td class="border-2 p-2 whitespace-nowrap font-bold">
+              {{ Math.ceil(sumOfArray2) }} ₽
+            </td>
+          </tr>
+          <tr class="text-center">
+            <td class="border-2 p-2 whitespace-nowrap font-bold">Итого</td>
+            <td
+              class="border-2 p-2 whitespace-nowrap font-bold"
+              v-for="sum in differenceByPVZ"
+            >
+              {{ Math.ceil(sum) }} ₽
+            </td>
+            <td class="border-2 font-bold p-2 whitespace-nowrap">
+              {{ Math.ceil(sumOfArray3) }} ₽
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
-
-<style scoped>
-.hidden-row {
-  display: none !important;
-}
-</style>

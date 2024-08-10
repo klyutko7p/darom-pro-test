@@ -128,12 +128,18 @@ function exportToExcel() {
       </div>
     </div>
     <div class="max-sm:flex max-sm:justify-end max-sm:w-full">
-      <Icon
-        class="duration-200 hover:text-secondary-color cursor-pointer"
-        size="40"
-        name="bi:filetype-xlsx"
-        @click="exportToExcel"
-      />
+      <UTooltip
+        text="Скачать EXCEL"
+        :shortcuts="['xlsx']"
+        :popper="{ placement: 'right' }"
+      >
+        <div
+          class="bg-secondary-color cursor-pointer border-2 border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
+          @click="exportToExcel"
+        >
+          <Icon class="duration-200" size="32" name="bi:filetype-xlsx" />
+        </div>
+      </UTooltip>
     </div>
   </div>
 
@@ -141,14 +147,19 @@ function exportToExcel() {
     class="relative max-h-[410px] overflow-y-auto rounded-xl mt-5 mb-10"
     v-if="filteredRows?.length > 0"
   >
-    <table id="theTable"
+    <table
+      id="theTable"
       class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
     >
       <thead
         class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
       >
         <tr>
-          <th scope="col" class="exclude-row px-3 border-2 h-[60px]" v-if="user.username === 'Директор'">
+          <th
+            scope="col"
+            class="exclude-row px-3 border-2 h-[60px]"
+            v-if="user.username === 'Директор'"
+          >
             изменение
           </th>
           <th scope="col" class="px-1 border-2">Дата</th>
@@ -161,9 +172,15 @@ function exportToExcel() {
           <th scope="col" class="px-1 border-2">Получил</th>
           <th scope="col" class="px-1 border-2">Подтверждающий документ</th>
           <th scope="col" class="px-1 border-2">Получено</th>
-          <th scope="col" class="px-1 border-2" v-if="user.username === 'Директор'">Тип</th>
-          <th scope="col" class="px-1 border-2" v-if="user.username === 'Директор'">Дата создания</th>
-          <th scope="col" class="px-1 border-2" v-if="user.username === 'Директор'">Удаление</th>
+          <th scope="col" class="px-1 border-2" v-if="user.username === 'Директор'">
+            Тип
+          </th>
+          <th scope="col" class="px-1 border-2" v-if="user.username === 'Директор'">
+            Дата создания
+          </th>
+          <th scope="col" class="px-1 border-2" v-if="user.username === 'Директор'">
+            Удаление
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -180,23 +197,23 @@ function exportToExcel() {
             {{ storeUsers.getNormalizedDateWithoutTime(row.date) }}
           </th>
           <th scope="row" class="px-5 border-2">
-            {{ row.PVZ ? row.PVZ : '—' }}
+            {{ row.PVZ ? row.PVZ : "—" }}
           </th>
           <td class="whitespace-nowrap">{{ row.expenditure }}</td>
           <td class="whitespace-nowrap px-5 border-2">
             {{ row.typeOfExpenditure }}
           </td>
           <td class="px-5 border-2">
-            {{ row.notation ? row.notation : '—' }}
+            {{ row.notation ? row.notation : "—" }}
           </td>
           <td class="whitespace-nowrap px-5 border-2">
-            {{ row.company ? row.company : '—' }}
+            {{ row.company ? row.company : "—" }}
           </td>
           <td class="whitespace-nowrap px-5 border-2">
             {{ row.createdUser }}
           </td>
           <td class="whitespace-nowrap border-2">
-            {{ row.issuedUser ? row.issuedUser : '—' }}
+            {{ row.issuedUser ? row.issuedUser : "—" }}
           </td>
           <td class="whitespace-nowrap border-2">
             <a
@@ -258,5 +275,4 @@ function exportToExcel() {
 tr:nth-child(even) {
   background-color: #f2f2f2; /* Цвет для четных строк */
 }
-
 </style>

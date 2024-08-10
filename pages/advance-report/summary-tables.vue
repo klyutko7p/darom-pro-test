@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
+import VueMultiselect from "vue-multiselect";
+import { vAutoAnimate } from "@formkit/auto-animate";
 
 const storeUsers = useUsersStore();
 const storeAdvanceReports = useAdvanceReports();
@@ -26,10 +28,16 @@ onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rows.value = await storeAdvanceReports.getAdvancedReports();
+
+  const [ rowsOurRansomValue, rowsDeliveryValue, clientRansomRowsValue, rowsBalanceValue] = await Promise.all([
+    storeRansom.getRansomRowsForBalanceOurRansom(),
+    storeRansom.getRansomRowsForBalanceDelivery(),
+    storeRansom.getRansomRowsForBalanceClientRansom(),
+    storeBalance.getBalanceRows()
+]);
   originallyRows.value = rows.value;
-  rowsOurRansom.value = await storeRansom.getRansomRowsForBalanceOurRansom();
-  rowsDelivery.value = await storeRansom.getRansomRowsForBalanceDelivery();
-  originallyRows.value = rows.value;
+  rowsOurRansom.value = rowsOurRansomValue;
+  rowsDelivery.value = rowsDeliveryValue;
 
   if (user.value.role !== "ADMIN") {
     rows.value = rows.value?.filter(
@@ -44,29 +52,22 @@ onMounted(async () => {
     handleFilteredRows(rows.value);
   }
 
-  ourRansomRows.value = await storeRansom.getRansomRowsForBalanceOurRansom();
-  clientRansomRows.value = await storeRansom.getRansomRowsForBalanceClientRansom();
-  rowsBalance.value = await storeBalance.getBalanceRows();
+  ourRansomRows.value = rowsOurRansom.value;
+  clientRansomRows.value = clientRansomRowsValue;
+  rowsBalance.value = rowsBalanceValue;
 
   getAllSum();
 
   isLoading.value = false;
 });
 
-
 definePageMeta({
   layout: false,
   name: "Сводные таблицы",
 });
 
-let isOpen = ref(false);
-let isOpenAdmin = ref(false);
-let rowData = ref({} as IAdvanceReport);
-let sum1 = ref(0);
-let sum2 = ref(0);
 let allSum = ref(0);
 let allSum2 = ref(0);
-let sumOfReject = ref(200);
 
 let copyArrayOurRansom = ref<Array<IOurRansom>>();
 let copyArrayClientRansom = ref<Array<IClientRansom>>();
@@ -228,158 +229,7 @@ function getAllSum() {
   }
 }
 
-function closeModal() {
-  isOpen.value = false;
-  rowData.value = {} as IAdvanceReport;
-}
-
-function openModal(row: IAdvanceReport) {
-  isOpen.value = true;
-  if (row.id) {
-    rowData.value = JSON.parse(JSON.stringify(row));
-    rowData.value.date = rowData.value.date
-      ? storeUsers.getISODateTime(rowData.value.date)
-      : null;
-  } else {
-    rowData.value = {} as IAdvanceReport;
-  }
-}
-
-function openModalAdmin(row: IAdvanceReport) {
-  isOpenAdmin.value = true;
-  rowData.value = {} as IAdvanceReport;
-  rowData.value.PVZ = "";
-  rowData.value.company = "";
-  rowData.value.expenditure = row.expenditure;
-  rowData.value.notation = "Пополнение баланса";
-  rowData.value.issuedUser = "Директор";
-  rowData.value.received = new Date();
-  rowData.value.supportingDocuments = "";
-  rowData.value.typeOfExpenditure = "";
-  rowData.value.createdUser = "Директор";
-  rowData.value.date = new Date();
-}
-
-function closeModalAdmin() {
-  isOpenAdmin.value = false;
-  rowData.value = {} as IAdvanceReport;
-}
-
-let pvz = ref([
-  "Ряженое",
-  "Алексеевка",
-  "Латоново",
-  "Надежда",
-  "Александровка",
-  "Новониколаевка",
-  "Политотдельское",
-  "Мещерино",
-  "Коломенское ЯМ",
-  "Коломенское WB",
-  "Бессоново",
-  "Новоандриановка",
-  "ПВЗ_1",
-  "ПВЗ_2",
-  "ПВЗ_3",
-  "ПВЗ_4",
-  "ППВЗ_5",
-  "ППВЗ_7",
-  "Офис",
-  "НаДом",
-]);
-
-let typesOfExpenditure = ref([
-  "Передача денежных средств",
-  "Сопутствующие расходы",
-  "Автомобили",
-  "Ежемесячные платежи",
-  "Оплата ФОТ",
-  "Оплата Налоги. ПФР, СОЦ и т.д.",
-  "Вывод дивидендов",
-  "Перевод в междубалансовый, кредитный баланс",
-  "Списание кредитной задолженности торговой империи",
-]);
-
 let companies = ref(["W/O/Я start", "Darom.pro", "Сортировка", "Доставка", "Чаевые"]);
-
-let usersOfIssued = ref([
-  "Шведова",
-  "Директор",
-  "Косой",
-  "Шарафаненко",
-  "Волошина",
-  "Рейзвих",
-]);
-
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  "https://mgbbkkgyorhwryabwabx.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1nYmJra2d5b3Jod3J5YWJ3YWJ4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwMzE0NjQ5OCwiZXhwIjoyMDE4NzIyNDk4fQ.Ogcld2z2P5M3V5N2yEpyfmHPsXor9Mv_5fUya5wgEoY"
-);
-
-async function createRow() {
-  isLoading.value = true;
-  await storeAdvanceReports.createAdvanceReport(rowData.value, user.value.username);
-  rows.value = await storeAdvanceReports.getAdvancedReports();
-  originallyRows.value = rows.value;
-
-  if (user.value.role !== "ADMIN") {
-    rows.value = rows.value?.filter(
-      (row) =>
-        row.createdUser === user.value.username || row.issuedUser === user.value.username
-    );
-  } else {
-    rows.value = rows.value;
-  }
-  filteredRows.value = rows.value;
-
-  getAllSum();
-  closeModal();
-  closeModalAdmin();
-  isLoading.value = false;
-}
-
-async function updateRow() {
-  isLoading.value = true;
-  await storeAdvanceReports.updateAdvanceReport(rowData.value, user.value.username);
-  rows.value = await storeAdvanceReports.getAdvancedReports();
-  originallyRows.value = rows.value;
-
-  if (user.value.role !== "ADMIN") {
-    rows.value = rows.value?.filter(
-      (row) =>
-        row.createdUser === user.value.username || row.issuedUser === user.value.username
-    );
-  } else {
-    rows.value = rows.value;
-  }
-  filteredRows.value = rows.value;
-
-  getAllSum();
-  closeModal();
-  isLoading.value = false;
-}
-
-async function updateDeliveryRow(row: any) {
-  isLoading.value = true;
-  await storeAdvanceReports.updateDeliveryStatus(row.row);
-  rows.value = await storeAdvanceReports.getAdvancedReports();
-  originallyRows.value = rows.value;
-
-  if (user.value.role !== "ADMIN") {
-    rows.value = rows.value?.filter(
-      (row) =>
-        row.createdUser === user.value.username || row.issuedUser === user.value.username
-    );
-  } else {
-    rows.value = rows.value;
-  }
-  filteredRows.value = rows.value;
-
-  getAllSum();
-  isLoading.value = false;
-}
 
 function formatNumber(number: number) {
   let numberString = Math.ceil(number).toString();
@@ -407,92 +257,14 @@ function handleFilteredRows(filteredRowsData: IAdvanceReport[]) {
   filteredRows.value = filteredRowsData;
 }
 
-async function handleFileChange(event) {
-  const selectedFile = event.target.files[0];
-  const { data, error } = await supabase.storage
-    .from("image")
-    .upload(`img-${selectedFile.name}`, selectedFile);
-  rowData.value.supportingDocuments = selectedFile.name;
-  if (data) {
-    console.log(data);
-  } else {
-    console.log(error);
-  }
-}
 let selectedWeek = ref("март");
-
-function getWeeks() {
-  const currentDate = new Date();
-  const currentMonth = currentDate.getMonth();
-  const currentYear = currentDate.getFullYear();
-
-  const weeks = [];
-  let currentWeekStart = 1;
-  let currentWeekEnd = 0;
-  let weekNumber = 1;
-
-  while (currentWeekStart <= getDaysInMonth(currentYear, currentMonth)) {
-    const weekStart = new Date(currentYear, currentMonth, currentWeekStart);
-    const dayOfWeek = weekStart.getDay();
-
-    currentWeekEnd = currentWeekStart + (7 - dayOfWeek);
-    if (currentWeekEnd > getDaysInMonth(currentYear, currentMonth)) {
-      currentWeekEnd = getDaysInMonth(currentYear, currentMonth);
-    }
-
-    weeks.push(
-      `${weekNumber} неделя (${formatDate(weekStart)}-${formatDate(
-        new Date(currentYear, currentMonth, currentWeekEnd)
-      )})`
-    );
-
-    currentWeekStart = currentWeekEnd + 1;
-    weekNumber++;
-  }
-  const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
-  const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
-  weeks.push(
-    `${getMonthName(currentMonth)} (${formatDate(firstDayOfMonth)}-${formatDate(
-      lastDayOfMonth
-    )})`
-  );
-  return weeks;
-}
-
-function getDaysInMonth(year, month) {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-function formatDate(date) {
-  return String(date.getDate()).padStart(2, "0");
-}
-
-function getMonthName(month) {
-  const monthNames = [
-    "Январь",
-    "Февраль",
-    "Март",
-    "Апрель",
-    "Май",
-    "Июнь",
-    "Июль",
-    "Август",
-    "Сентябрь",
-    "Октябрь",
-    "Ноябрь",
-    "Декабрь",
-  ];
-  return monthNames[month];
-}
-
-const weeks = getWeeks();
 
 let month = ref(new Date().getMonth() + 1);
 const startingDate = ref<Date | string | null>(null);
 const endDate = ref<Date | string | null>(null);
 
 let showFilters = ref(false);
-let months = ref([3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2]);
+let showAllFilters = ref(false);
 let monthNames: any = ref({
   3: "Март",
   4: "Апрель",
@@ -544,6 +316,71 @@ function returnTotal(sum: number) {
     sumOfArray3.value -= parseFloat(row.expenditure);
   });
 }
+
+const selectedTypeOfExpenditure = ref<Array<string>>([]);
+
+const uniqueTypeOfExpenditure = computed(() => {
+  return storeAdvanceReports.getUniqueNonEmptyValues(rows.value, "typeOfExpenditure");
+});
+
+function clearFields() {
+  selectedTypeOfExpenditure.value = [];
+  startingDate.value = ""
+  endDate.value = ""
+  selected.value.start = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  selected.value.end = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+  filterRows();
+}
+
+const filterRows = async () => {
+  filteredRows.value = rows.value?.slice();
+  filteredRows.value = rows.value?.filter((row) => {
+    return (
+      !selectedTypeOfExpenditure.value.length ||
+      selectedTypeOfExpenditure.value.includes(row.typeOfExpenditure)
+    );
+  });
+};
+
+watch([selectedTypeOfExpenditure], filterRows);
+
+import { sub, format, isSameDay, type Duration } from 'date-fns'
+
+const ranges = [
+  { label: 'Текущий месяц', duration: { month: 'current' } },
+  { label: 'Сегодня', duration: { days: 0 } },
+  { label: 'Последние 7 дней', duration: { days: 7 } },
+  { label: 'Последние 14 дней', duration: { days: 14 } },
+  { label: 'Последние 30 дней', duration: { days: 30 } },
+  { label: 'Последние 3 месяца', duration: { months: 3 } },
+  { label: 'Последние 6 месяцев', duration: { months: 6 } },
+  { label: 'Последний год', duration: { years: 1 } }
+]
+
+const selected = ref({
+  start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
+})
+
+function isRangeSelected(duration: Duration) {
+  if (duration.month === 'current') {
+    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+    const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
+    return isSameDay(selected.value.start, startOfMonth) && isSameDay(selected.value.end, endOfMonth)
+  }
+  return isSameDay(selected.value.start, sub(new Date(), duration)) && isSameDay(selected.value.end, new Date())
+}
+
+function selectRange(duration: Duration) {
+  if (duration.month === 'current') {
+    selected.value = {
+      start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+      end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
+    }
+  } else {
+    selected.value = { start: sub(new Date(), duration), end: new Date() }
+  }
+}
 </script>
 
 <template>
@@ -555,6 +392,157 @@ function returnTotal(sum: number) {
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="mt-10">
+          <div v-auto-animate>
+            <div class="flex items-center gap-3 mt-14 max-xl:mt-0">
+              <h1 class="text-xl font-bold">Фильтры</h1>
+              <Icon
+                @click="showAllFilters = !showAllFilters"
+                class="cursor-pointer duration-200 hover:text-secondary-color"
+                name="material-symbols:settings-rounded"
+                size="24"
+              />
+            </div>
+
+            <div
+              v-if="showAllFilters"
+              class="border-2 border-secondary-color border-dashed py-10 px-10 max-sm:px-5 shadow-2xl mt-3"
+            >
+              <div
+                class="duration-200 flex items-center justify-between max-lg:flex-col max-lg:space-y-5 max-lg:items-start"
+              >
+                <div class="w-full">
+                  <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+                    <h1>Статья расхода</h1>
+                    <VueMultiselect
+                      class=""
+                      v-model="selectedTypeOfExpenditure"
+                      :options="uniqueTypeOfExpenditure"
+                      :multiple="true"
+                      :close-on-select="true"
+                      placeholder="Выберите статью расхода"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div
+                v-auto-animate
+                class="my-10 flex items-center gap-5 max-lg:flex-col max-lg:items-start"
+              >
+                <span
+                  class="border-2 bg-white py-1 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
+                  @click="showFilters = !showFilters"
+                  >2024</span
+                >
+                <div v-auto-animate v-if="showFilters" class="flex flex-col">
+                  <div
+                    v-auto-animate
+                    class="flex items-center w-full gap-3 max-sm:items-start max-sm:flex-col"
+                  >
+                    <div v-auto-animate class="space-x-3 flex">
+                      <select
+                        class="py-1 px-2 border-2 rounded-lg text-base border-secondary-color bg-secondary-color text-white font-bold"
+                        v-model="month"
+                        @change="filterRowsData(month)"
+                      >
+                        <option
+                          v-for="(monthName, monthNumber) in monthNames"
+                          :value="monthNumber"
+                        >
+                          {{ monthName }}
+                        </option>
+                      </select>
+                      <select
+                        class="py-1 px-1 border-2 bg-white rounded-lg text-base"
+                        v-model="type"
+                      >
+                        <option value="Нал">Нал</option>
+                        <option value="Безнал">Безнал</option>
+                        <option value="">Нал + Безнал</option>
+                      </select>
+                    </div>
+
+                    <div class="ml-2 space-x-2">
+                      <input type="checkbox" v-model="isDateFilter" />
+                      <label for="">Данные за всё время?</label>
+                    </div>
+                  </div>
+                </div>
+                <UPopover class="block max-sm:hidden" :popper="{ placement: 'auto' }">
+                  <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
+                    {{ format(selected.start, "d MMM, yyy") }} -
+                    {{ format(selected.end, "d MMM, yyy") }}
+                  </UButton>
+
+                  <template #panel="{ close }">
+                    <div
+                      class="flex items-center sm:divide-x divide-gray-200 dark:divide-gray-800"
+                    >
+                      <div class="hidden sm:flex flex-col py-4">
+                        <UButton
+                          v-for="(range, index) in ranges"
+                          :key="index"
+                          :label="range.label"
+                          color="white"
+                          variant="ghost"
+                          class="rounded-none px-6"
+                          :class="[
+                            isRangeSelected(range.duration)
+                              ? 'bg-gray-100 dark:bg-gray-800'
+                              : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                          ]"
+                          truncate
+                          @click="selectRange(range.duration)"
+                        />
+                      </div>
+
+                      <DatePicker v-model="selected" @close="close" />
+                    </div>
+                  </template>
+                </UPopover>
+                <UPopover class="hidden max-sm:block" :popper="{ placement: 'auto' }">
+                  <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
+                    {{ format(selected.start, "d MMM, yyy") }} -
+                    {{ format(selected.end, "d MMM, yyy") }}
+                  </UButton>
+
+                  <template #panel="{ close }">
+                    <div
+                      class="flex items-center sm:divide-x divide-gray-200 dark:divide-gray-800"
+                    >
+                      <div class="hidden sm:flex flex-col py-4">
+                        <UButton
+                          v-for="(range, index) in ranges"
+                          :key="index"
+                          :label="range.label"
+                          color="white"
+                          variant="ghost"
+                          class="rounded-none px-6"
+                          :class="[
+                            isRangeSelected(range.duration)
+                              ? 'bg-gray-100 dark:bg-gray-800'
+                              : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                          ]"
+                          truncate
+                          @click="selectRange(range.duration)"
+                        />
+                      </div>
+
+                      <DatePickerSingleMonth v-model="selected" @close="close" />
+                    </div>
+                  </template>
+                </UPopover>
+              </div>
+
+              <div class="flex justify-end gap-3 mt-3">
+                <UIMainButton @click="filterRows(), (showAllFilters = !showAllFilters)"
+                  >Принять</UIMainButton
+                >
+                <UIActionButton @click="clearFields">Очистить фильтры</UIActionButton>
+              </div>
+            </div>
+          </div>
+
           <div class="flex justify-end my-3" v-if="user.role === 'ADMIN'">
             <h1
               @click="router.push('/advance-report')"
@@ -564,75 +552,15 @@ function returnTotal(sum: number) {
             </h1>
           </div>
 
-          <div
-            class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5"
-          >
-            <div class="flex items-center gap-3 mr-5">
-              <h1 class="max-sm:mr-3">С</h1>
-              <input
-                class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                type="date"
-                placeholder="ДД.ММ.ГГГГ"
-                onchange="this.className=(this.value!=''?'has-value':'')"
-                v-model="startingDate"
-              />
-            </div>
-            <div class="flex items-center gap-3 max-sm:mb-7">
-              <h1>По</h1>
-              <input
-                class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                type="date"
-                placeholder="ДД.ММ.ГГГГ"
-                onchange="this.className=(this.value!=''?'has-value':'')"
-                v-model="endDate"
-              />
-            </div>
-          </div>
           <h1 class="text-xl font-bold mt-10">
             Баланс чистой прибыли торговой империи за всё время:
             <span class="text-secondary-color font-bold"
               >{{ formatNumber(sumOfArray3) }} ₽</span
             >
           </h1>
-          <div class="my-10 flex items-center gap-5">
-            <span
-              class="border-2 py-1 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
-              @click="showFilters = !showFilters"
-              >2024</span
-            >
-            <div
-              v-if="showFilters"
-              class="flex items-center w-full gap-3 max-sm:items-start"
-            >
-              <select
-                class="py-1 px-2 border-2 rounded-lg text-base border-secondary-color bg-secondary-color text-white font-bold"
-                v-model="month"
-                @change="filterRowsData(month)"
-              >
-                <option
-                  v-for="(monthName, monthNumber) in monthNames"
-                  :value="monthNumber"
-                >
-                  {{ monthName }}
-                </option>
-              </select>
-              <select
-                class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
-                v-model="type"
-              >
-                <option value="Нал">Нал</option>
-                <option value="Безнал">Безнал</option>
-                <option value="">Нал + Безнал</option>
-              </select>
-              <div class="ml-2 space-x-2">
-                <input type="checkbox" v-model="isDateFilter" />
-                <label for="">Данные за всё время?</label>
-              </div>
-            </div>
-          </div>
 
           <div v-for="company in companies" class="mt-10 mb-10">
-            <h1 class="font-bold text-2xl mb-1 max-2xl:border-b-2 border-black p-2">
+            <h1 class="font-bold text-xl">
               {{ company }}
             </h1>
             <div>
@@ -649,17 +577,17 @@ function returnTotal(sum: number) {
                 :rows-balance="rowsBalance"
                 :rows-our-ransom="rowsOurRansom"
                 :company="company"
-                :startingDate="startingDate"
-                :endDate="endDate"
-                @open-modal="openModal"
-                @update-delivery-row="updateDeliveryRow"
+                :startingDate="selected.start"
+                :endDate="selected.end"
+                :selectedTypeOfExpenditure="selectedTypeOfExpenditure"
               />
             </div>
           </div>
 
           <div class="mt-10 mb-10" v-if="!selectedWeek.includes('неделя')">
-            <h1 class="font-bold text-2xl mb-1 max-2xl:border-b-2 border-black p-2">
-              Итог месяца прибыли по всем проектам
+            <h1 class="font-bold text-xl">
+              Итог месяца прибыли <br class="hidden max-sm:block" />
+              по всем проектам
             </h1>
             <div>
               <AdvanceReportTableReport
@@ -672,164 +600,14 @@ function returnTotal(sum: number) {
                 :rows-delivery="rowsDelivery"
                 :rows-our-ransom="rowsOurRansom"
                 :company="'Все'"
-                :startingDate="startingDate"
-                :endDate="endDate"
+                :startingDate="selected.start"
+                :endDate="selected.end"
                 :isDateFilter="isDateFilter"
-                @open-modal="openModal"
-                @update-delivery-row="updateDeliveryRow"
                 @return-total="returnTotal"
               />
             </div>
           </div>
         </div>
-
-        <UIModal v-show="isOpen" @close-modal="closeModal">
-          <template v-slot:header>
-            <div class="custom-header" v-if="rowData.id">
-              Изменение строки с ID - <b> {{ rowData.id }}</b>
-            </div>
-            <div class="custom-header" v-else>Создание нового документа</div>
-          </template>
-          <div class="text-black">
-            <div class="grid grid-cols-2 mb-5">
-              <label for="dispatchPVZ1">ПВЗ</label>
-              <select
-                class="py-1 px-2 border-2 bg-transparent w-full rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.PVZ"
-              >
-                <option v-for="pvzData in pvz" :value="pvzData">
-                  {{ pvzData }}
-                </option>
-              </select>
-            </div>
-
-            <div class="grid grid-cols-2 mb-5" v-if="user.role !== 'ADMIN'">
-              <label for="name">Дата</label>
-              <input
-                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.date"
-                :min="`2024-${month}-01`"
-                :max="`2024-${month}-31`"
-                type="date"
-                placeholder="ДД.ММ.ГГГГ"
-                onchange="this.className=(this.value!=''?'has-value':'')"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 mb-5" v-if="user.role === 'ADMIN'">
-              <label for="name">Дата</label>
-              <input
-                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.date"
-                type="date"
-                placeholder="ДД.ММ.ГГГГ"
-                onchange="this.className=(this.value!=''?'has-value':'')"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 mb-5">
-              <label for="name">Получатель</label>
-              <select
-                :disabled="user.role !== 'ADMIN'"
-                class="py-1 px-2 border-2 bg-transparent max-w-[200px] rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.issuedUser"
-              >
-                <option v-for="user in usersOfIssued" :value="user">
-                  {{ user }}
-                </option>
-              </select>
-            </div>
-
-            <div class="grid grid-cols-2 mb-5">
-              <label for="name">Расход</label>
-              <input
-                :disabled="user.role !== 'ADMIN'"
-                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.expenditure"
-                type="text"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 mb-5">
-              <label for="dispatchPVZ1">Статья расхода</label>
-              <select
-                class="py-1 px-2 border-2 bg-transparent w-full rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.typeOfExpenditure"
-              >
-                <option v-for="type in typesOfExpenditure" :value="type">
-                  {{ type }}
-                </option>
-              </select>
-            </div>
-
-            <div class="grid grid-cols-2 mb-5">
-              <label for="name">Комментарий</label>
-              <input
-                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.notation"
-                type="text"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 mb-5">
-              <label for="dispatchPVZ1">Компания</label>
-              <select
-                class="py-1 px-2 border-2 bg-transparent w-full rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.company"
-              >
-                <option v-for="company in companies" :value="company">
-                  {{ company }}
-                </option>
-              </select>
-            </div>
-
-            <div class="grid grid-cols-2 mb-5">
-              <label for="name"
-                >Подтверждающий <br />
-                документ</label
-              >
-              <input
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                @change="handleFileChange"
-                type="file"
-              />
-            </div>
-          </div>
-
-          <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
-            <UIMainButton @click="updateRow">Сохранить</UIMainButton>
-            <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-          </div>
-          <div class="flex items-center justify-center gap-3 mt-10" v-else>
-            <UIMainButton @click="createRow">Создать </UIMainButton>
-            <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-          </div>
-        </UIModal>
-
-        <UIModal v-show="isOpenAdmin" @close-modal="closeModalAdmin">
-          <template v-slot:header>
-            <div class="custom-header" v-if="rowData.id">
-              Изменение строки с ID - <b> {{ rowData.id }}</b>
-            </div>
-            <div class="custom-header" v-else>Пополнение баланса</div>
-          </template>
-          <div class="text-black">
-            <div class="grid grid-cols-2 mb-5">
-              <label for="name">Сумма</label>
-              <input
-                :disabled="user.role !== 'ADMIN'"
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.expenditure"
-                type="text"
-              />
-            </div>
-          </div>
-
-          <div class="flex items-center justify-center gap-3 mt-10">
-            <UIMainButton @click="createRow">Создать</UIMainButton>
-            <UIErrorButton @click="closeModalAdmin">Отменить </UIErrorButton>
-          </div>
-        </UIModal>
       </NuxtLayout>
     </div>
 
@@ -844,3 +622,5 @@ function returnTotal(sum: number) {
     </NuxtLayout>
   </div>
 </template>
+
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>

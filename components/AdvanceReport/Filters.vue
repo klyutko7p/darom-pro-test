@@ -4,6 +4,45 @@ const props = defineProps({
   user: { type: Object as PropType<User>, required: true },
 });
 import VueMultiselect from "vue-multiselect";
+import { vAutoAnimate } from "@formkit/auto-animate";
+
+import { sub, format, isSameDay, type Duration } from 'date-fns'
+
+const ranges = [
+  { label: 'Текущий месяц', duration: { month: 'current' } },
+  { label: 'Сегодня', duration: { days: 0 } },
+  { label: 'Последние 7 дней', duration: { days: 7 } },
+  { label: 'Последние 14 дней', duration: { days: 14 } },
+  { label: 'Последние 30 дней', duration: { days: 30 } },
+  { label: 'Последние 3 месяца', duration: { months: 3 } },
+  { label: 'Последние 6 месяцев', duration: { months: 6 } },
+  { label: 'Последний год', duration: { years: 1 } }
+]
+
+const selected = ref({
+  start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
+})
+
+function isRangeSelected(duration: Duration) {
+  if (duration.month === 'current') {
+    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+    const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
+    return isSameDay(selected.value.start, startOfMonth) && isSameDay(selected.value.end, endOfMonth)
+  }
+  return isSameDay(selected.value.start, sub(new Date(), duration)) && isSameDay(selected.value.end, new Date())
+}
+
+function selectRange(duration: Duration) {
+  if (duration.month === 'current') {
+    selected.value = {
+      start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+      end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
+    }
+  } else {
+    selected.value = { start: sub(new Date(), duration), end: new Date() }
+  }
+}
 
 const storeAdvanceReports = useAdvanceReports();
 
@@ -55,13 +94,13 @@ const filteredRows = ref<Array<IAdvanceReport>>();
 const emit = defineEmits(["filtered-rows"]);
 
 const filterRows = () => {
-  let newStartingDate = new Date(startingDate.value);
+  let newStartingDate = new Date(selected.value.start);
   newStartingDate.setHours(0);
   newStartingDate.setMinutes(0);
   newStartingDate.setSeconds(0);
   newStartingDate.setMilliseconds(0);
 
-  let newEndDate = new Date(endDate.value);
+  let newEndDate = new Date(selected.value.end);
   newEndDate.setHours(23);
   newEndDate.setMinutes(59);
   newEndDate.setSeconds(59);
@@ -93,8 +132,8 @@ const filterRows = () => {
       (!selectedCreatedUser.value.length ||
         selectedCreatedUser.value.includes(row.createdUser)) &&
       (!selectedIssuedUser.value || row.issuedUser === selectedIssuedUser.value) &&
-      (!startingDate.value || new Date(row.date) >= new Date(newStartingDate)) &&
-      (!endDate.value || new Date(row.date) <= new Date(newEndDate)) &&
+      (!selected.value.start || new Date(row.date) >= new Date(newStartingDate)) &&
+      (!selected.value.end || new Date(row.date) <= new Date(newEndDate)) &&
       (!startingDate2.value || new Date(row.received) >= new Date(newStartingDate2)) &&
       (!endDate2.value || new Date(row.received) <= new Date(newEndDate2))
     );
@@ -115,6 +154,8 @@ function clearFields() {
   endDate.value = "";
   startingDate2.value = "";
   endDate2.value = "";
+  selected.value.start = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  selected.value.end = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
   filterRows();
 }
 
@@ -131,6 +172,7 @@ watch(
     endDate,
     startingDate2,
     endDate2,
+    selected,
   ],
   filterRows
 );
@@ -165,7 +207,7 @@ const nonEmptyCount = computed(() => {
   } else if (endDate2.value) {
     count++;
   }
-  
+
   return count;
 });
 
@@ -173,119 +215,168 @@ const uniqueType = ref(["Нал", "Безнал"]);
 </script>
 
 <template>
-  <div class="flex items-center gap-3 mt-14 max-xl:mt-0">
-    <h1 class="text-xl font-bold">Фильтры</h1>
-    <Icon
-      @click="showFilters = !showFilters"
-      class="cursor-pointer duration-200 hover:text-secondary-color"
-      name="material-symbols:settings-rounded"
-      size="24"
-    />
-    <h1 class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full">
-      {{ nonEmptyCount }}
-    </h1>
-  </div>
+  <div v-auto-animate>
+    <div class="flex items-center gap-3 mt-14 max-xl:mt-0">
+      <h1 class="text-xl font-bold">Фильтры</h1>
+      <Icon
+        @click="showFilters = !showFilters"
+        class="cursor-pointer duration-200 hover:text-secondary-color"
+        name="material-symbols:settings-rounded"
+        size="24"
+      />
+      <h1 class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full">
+        {{ nonEmptyCount }}
+      </h1>
+    </div>
 
-  <div v-if="showFilters" class="border-2 border-gray-300 p-3 mt-3 border-dashed">
-    <div class="grid grid-cols-2 max-xl:grid-cols-2 max-md:grid-cols-1">
-      <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-        <h1>Компания:</h1>
-        <VueMultiselect
-          v-model="selectedCompany"
-          :options="uniqueCompany"
-          :multiple="true"
-          :close-on-select="true"
-          placeholder="Выберите компанию"
-        />
+    <div
+      v-if="showFilters"
+      class="border-2 border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
+    >
+      <div class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5">
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Компания</h1>
+          <VueMultiselect
+            v-model="selectedCompany"
+            :options="uniqueCompany"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите компанию"
+          />
+        </div>
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Показать для ПВЗ</h1>
+          <VueMultiselect
+            v-model="selectedPVZ"
+            :options="uniquePVZ"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите ПВЗ"
+          />
+        </div>
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Тип</h1>
+          <VueMultiselect
+            v-model="selectedType"
+            :options="uniqueType"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите тип"
+          />
+        </div>
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Статья расхода</h1>
+          <VueMultiselect
+            v-model="selectedTypeOfExpenditure"
+            :options="uniqueTypeOfExpenditure"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите статью"
+          />
+        </div>
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Расход</h1>
+          <VueMultiselect
+            v-model="selectedExpenditure"
+            :options="uniqueExpenditure"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите расход"
+          />
+        </div>
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Комментарий</h1>
+          <VueMultiselect
+            v-model="selectedNotation"
+            :options="uniqueNotation"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите комментарий"
+          />
+        </div>
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Создано</h1>
+          <VueMultiselect
+            v-model="selectedCreatedUser"
+            :options="uniqueCreatedUser"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите кем"
+          />
+        </div>
       </div>
-      <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-        <h1>Показать для ПВЗ:</h1>
-        <VueMultiselect
-          v-model="selectedPVZ"
-          :options="uniquePVZ"
-          :multiple="true"
-          :close-on-select="true"
-          placeholder="Выберите ПВЗ"
-        />
-      </div>
-      <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-        <h1>Тип:</h1>
-        <VueMultiselect
-          v-model="selectedType"
-          :options="uniqueType"
-          :multiple="true"
-          :close-on-select="true"
-          placeholder="Выберите тип"
-        />
-      </div>
-      <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-        <h1>Статья расхода:</h1>
-        <VueMultiselect
-          v-model="selectedTypeOfExpenditure"
-          :options="uniqueTypeOfExpenditure"
-          :multiple="true"
-          :close-on-select="true"
-          placeholder="Выберите статью"
-        />
-      </div>
-      <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-        <h1>Расход:</h1>
-        <VueMultiselect
-          v-model="selectedExpenditure"
-          :options="uniqueExpenditure"
-          :multiple="true"
-          :close-on-select="true"
-          placeholder="Выберите расход"
-        />
-      </div>
-      <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-        <h1>Комментарий:</h1>
-        <VueMultiselect
-          v-model="selectedNotation"
-          :options="uniqueNotation"
-          :multiple="true"
-          :close-on-select="true"
-          placeholder="Выберите комментарий"
-        />
-      </div>
-      <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-        <h1>Создано:</h1>
-        <VueMultiselect
-          v-model="selectedCreatedUser"
-          :options="uniqueCreatedUser"
-          :multiple="true"
-          :close-on-select="true"
-          placeholder="Выберите кем"
-        />
-      </div>
-    </div>
-    <div class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5">
-      <div class="flex items-center gap-3 mr-5">
-        <h1 class="max-sm:mr-3">С</h1>
-        <input
-          class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-          type="date"
-          placeholder="ДД.ММ.ГГГГ"
-          onchange="this.className=(this.value!=''?'has-value':'')"
-          v-model="startingDate"
-        />
-      </div>
-      <div class="flex items-center gap-3 max-sm:mb-7">
-        <h1>По</h1>
-        <input
-          class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-          type="date"
-          placeholder="ДД.ММ.ГГГГ"
-          onchange="this.className=(this.value!=''?'has-value':'')"
-          v-model="endDate"
-        />
-      </div>
-    </div>
-    <div class="flex justify-end gap-3 mt-3">
-      <UIMainButton @click="filterRows(), (showFilters = !showFilters)"
-        >Принять</UIMainButton
+      <UPopover 
+        :popper="{ placement: 'auto' }"
+        class="block max-sm:hidden my-5 max-w-[220px]" 
       >
-      <UIActionButton @click="clearFields">Очистить фильтры</UIActionButton>
+        <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
+          {{ format(selected.start, "d MMM, yyy") }} -
+          {{ format(selected.end, "d MMM, yyy") }}
+        </UButton>
+
+        <template #panel="{ close }">
+          <div class="flex items-center sm:divide-x divide-gray-200 dark:divide-gray-800">
+            <div class="hidden sm:flex flex-col py-4">
+              <UButton
+                v-for="(range, index) in ranges"
+                :key="index"
+                :label="range.label"
+                color="white"
+                variant="ghost"
+                class="rounded-none px-6"
+                :class="[
+                  isRangeSelected(range.duration)
+                    ? 'bg-gray-100 dark:bg-gray-800'
+                    : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                ]"
+                truncate
+                @click="selectRange(range.duration)"
+              />
+            </div>
+
+            <DatePicker v-model="selected" @close="close" />
+          </div>
+        </template>
+      </UPopover>
+      <UPopover
+        :popper="{ placement: 'auto' }"
+        class="hidden max-sm:block mx-auto max-w-[220px] my-5"
+      >
+        <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
+          {{ format(selected.start, "d MMM, yyy") }} -
+          {{ format(selected.end, "d MMM, yyy") }}
+        </UButton>
+
+        <template #panel="{ close }">
+          <div class="flex items-center sm:divide-x divide-gray-200 dark:divide-gray-800">
+            <div class="hidden sm:flex flex-col py-4">
+              <UButton
+                v-for="(range, index) in ranges"
+                :key="index"
+                :label="range.label"
+                color="white"
+                variant="ghost"
+                class="rounded-none px-6"
+                :class="[
+                  isRangeSelected(range.duration)
+                    ? 'bg-gray-100 dark:bg-gray-800'
+                    : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                ]"
+                truncate
+                @click="selectRange(range.duration)"
+              />
+            </div>
+
+            <DatePickerSingleMonth v-model="selected" @close="close" />
+          </div>
+        </template>
+      </UPopover>
+      <div class="flex justify-end gap-3 mt-3">
+        <UIMainButton @click="filterRows(), (showFilters = !showFilters)"
+          >Принять</UIMainButton
+        >
+        <UIActionButton @click="clearFields">Очистить фильтры</UIActionButton>
+      </div>
     </div>
   </div>
 </template>

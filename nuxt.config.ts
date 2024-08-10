@@ -22,7 +22,6 @@ export default defineNuxtConfig({
   //   }
   // },
   modules: [
-    "@nuxtjs/tailwindcss",
     "@pinia/nuxt",
     "nuxt-icon",
     "@nuxtjs/supabase",
@@ -43,10 +42,13 @@ export default defineNuxtConfig({
         },
       },
     ],
+    "@nuxt/ui",
   ],
-
-  swiper: {
+    swiper: {
     styleLang: "css",
+  },
+  colorMode: {
+    preference: 'light'
   },
   supabase: {
     redirect: false,

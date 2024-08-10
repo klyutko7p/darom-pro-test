@@ -11,7 +11,12 @@
   },
   "devDependencies": {
     "@bg-dev/nuxt-fcm": "^0.2.9",
+    "@iconify-json/ic": "^1.1.18",
+    "@iconify-json/material-symbols": "^1.1.87",
+    "@iconify-json/material-symbols-light": "^1.1.27",
+    "@iconify-json/mdi": "^1.1.68",
     "@nuxt/devtools": "latest",
+    "@nuxt/ui": "^2.18.4",
     "@nuxtjs/tailwindcss": "^6.10.1",
     "@shelacek/ubjson": "^1.1.1",
     "browserify-zlib": "^0.2.0",
@@ -25,7 +30,7 @@
   },
   "dependencies": {
     "@firebase/app-types": "^0.9.1",
-    "@formkit/auto-animate": "^0.8.1",
+    "@formkit/auto-animate": "^0.8.2",
     "@msgpack/msgpack": "^3.0.0-beta2",
     "@nuxtjs/firebase": "^8.2.2",
     "@nuxtjs/supabase": "^1.1.4",
@@ -47,6 +52,7 @@
     "cheerio": "^1.0.0-rc.12",
     "chromedriver": "^123.0.1",
     "crypto-js": "^4.2.0",
+    "date-fns": "^3.6.0",
     "firebase": "^10.11.1",
     "firebase-admin": "^12.1.0",
     "firebase-functions": "^5.0.1",
@@ -64,6 +70,7 @@
     "qrcode.vue": "^3.4.1",
     "resend": "^3.2.0",
     "selenium-webdriver": "^4.19.0",
+    "v-calendar": "^3.1.2",
     "vue-toastification": "^2.0.0-rc.5",
     "vue-yandex-maps": "^1.1.0",
     "vuefire": "^3.1.23",
@@ -74,5 +81,6 @@
   "resolutions": {
     "string-width": "4.2.3",
     "jackspeak": "2.1.1"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

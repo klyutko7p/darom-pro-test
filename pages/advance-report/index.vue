@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { vAutoAnimate } from "@formkit/auto-animate";
 import Cookies from "js-cookie";
 const toast = useToast();
 const storeUsers = useUsersStore();
@@ -1064,9 +1065,14 @@ function checkExpenditure() {
   }
 }
 
+let isFirstClick = ref(true);
+
 function closeAdvanceReportEmployee() {
-  showBalanceEmployees.value = !showBalanceEmployees.value;
-  selectedUser.value = "Директор";
+  if (isFirstClick) {
+    showBalanceEmployees.value = !showBalanceEmployees.value;
+    selectedUser.value = "Директор";
+    isFirstClick.value = false; 
+  }
 }
 
 function lockScroll() {

@@ -1,11 +1,11 @@
-import type updateDelivery from "~/server/api/ransom/update-delivery"; import
-type { userInfo } from "os";
+import type updateDelivery from "~/server/api/ransom/update-delivery"; import type {
+userInfo } from "os";
 <script setup lang="ts">
 import type { PropType } from "vue";
 import { useToast } from "vue-toastification";
 import { read, utils, writeFile } from "xlsx";
 
-const toast = useToast()
+const toast = useToast();
 
 const storeUsers = useUsersStore();
 
@@ -25,7 +25,7 @@ function exportToExcel() {
 
   writeFile(wb, "информация_о_заказе.xlsx");
 }
-let isShowWarning = ref(false)
+let isShowWarning = ref(false);
 
 function isExpired(row: any) {
   if (row.deliveredSC !== null && row.deliveredPVZ !== null && row.issued === null) {
@@ -40,7 +40,7 @@ function isExpired(row: any) {
     if (daysDifference >= 7) {
       isShowWarning.value = true;
       return daysDifference >= 7;
-    } 
+    }
   }
 }
 
@@ -58,27 +58,29 @@ function isDateGreaterThanReference(dateString: string | Date): boolean {
   const inputDate = new Date(dateString);
   return inputDate > referenceDate;
 }
-
 </script>
 
 <template>
-  <h1 v-if="isShowWarning" class="mt-3 font-bold text-xl max-sm:text-center text-red-500">Некоторые товары скоро будут отправлены в возврат, рекомендуем забрать заказ в ближайшее время!</h1>
+  <h1 v-if="isShowWarning" class="mt-3 font-bold text-xl max-sm:text-center text-red-500">
+    Некоторые товары скоро будут отправлены в возврат, рекомендуем забрать заказ в
+    ближайшее время!
+  </h1>
   <div class="flex justify-end">
-    <Icon
-      class="duration-200 hover:text-secondary-color cursor-pointer"
-      size="40"
-      name="bi:filetype-xlsx"
-      @click="exportToExcel"
-    />
+    <UTooltip text="Скачать EXCEL" :shortcuts="['xlsx']" :popper="{ placement: 'right' }">
+      <div
+        class="bg-secondary-color cursor-pointer border-2 border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
+        @click="exportToExcel"
+      >
+        <Icon class="duration-200" size="32" name="bi:filetype-xlsx" />
+      </div>
+    </UTooltip>
   </div>
   <div class="relative max-h-[760px] mt-5" v-if="rows">
     <table
       id="theTable"
       class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
     >
-      <thead
-        class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center"
-      >
+      <thead class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center">
         <tr>
           <th scope="col" class="border-2">номер</th>
           <th
@@ -89,15 +91,11 @@ function isDateGreaterThanReference(dateString: string | Date): boolean {
             ячейка
           </th>
           <th scope="col" class="border-2" v-if="link?.startsWith('3')">имя</th>
-          <th scope="col" class="border-2" v-if="link?.startsWith('3')">
-            название
-          </th>
+          <th scope="col" class="border-2" v-if="link?.startsWith('3')">название</th>
           <th scope="col" class="border-2" v-if="link?.startsWith('1')">
             товар (ссылка)
           </th>
-          <th scope="col" class="border-2" v-if="link?.startsWith('2')">
-            маркетплейс
-          </th>
+          <th scope="col" class="border-2" v-if="link?.startsWith('2')">маркетплейс</th>
           <th scope="col" class="border-2" v-if="link?.startsWith('1')">
             название товара
           </th>
@@ -125,12 +123,8 @@ function isDateGreaterThanReference(dateString: string | Date): boolean {
           >
             доставлено на сц
           </th>
-          <th scope="col" class="border-2" v-if="link?.startsWith('3')">
-            отсортировано
-          </th>
-          <th scope="col" class="border-2" v-if="link?.startsWith('3')">
-            оплачено
-          </th>
+          <th scope="col" class="border-2" v-if="link?.startsWith('3')">отсортировано</th>
+          <th scope="col" class="border-2" v-if="link?.startsWith('3')">оплачено</th>
           <th
             scope="col"
             class="border-2"
@@ -171,10 +165,7 @@ function isDateGreaterThanReference(dateString: string | Date): boolean {
           <td class="border-2">
             {{ index + 1 }}
           </td>
-          <td
-            class="border-2"
-            v-if="link?.startsWith('1') || link?.startsWith('2')"
-          >
+          <td class="border-2" v-if="link?.startsWith('1') || link?.startsWith('2')">
             {{ row.cell }}
           </td>
           <td class="px-2 border-2" v-if="link?.startsWith('3')">
@@ -201,17 +192,15 @@ function isDateGreaterThanReference(dateString: string | Date): boolean {
           >
             {{ row.productLink }}
           </td>
-          <td
-            v-if="link?.startsWith('1') || link?.startsWith('2')"
-            class="border-2"
-          >
+          <td v-if="link?.startsWith('1') || link?.startsWith('2')" class="border-2">
             {{ row.productName }}
           </td>
           <td
             v-if="
               (row.amountFromClient1 ||
-              row.amountFromClient1 === null ||
-              row.amountFromClient1 === 0) && !isDateGreaterThanReference(row.created_at)
+                row.amountFromClient1 === null ||
+                row.amountFromClient1 === 0) &&
+              !isDateGreaterThanReference(row.created_at)
             "
             class="border-2"
           >
@@ -220,8 +209,9 @@ function isDateGreaterThanReference(dateString: string | Date): boolean {
           <td
             v-if="
               (row.amountFromClient1 ||
-              row.amountFromClient1 === null ||
-              row.amountFromClient1 === 0) && isDateGreaterThanReference(row.created_at)
+                row.amountFromClient1 === null ||
+                row.amountFromClient1 === 0) &&
+              isDateGreaterThanReference(row.created_at)
             "
             class="border-2"
           >
@@ -253,10 +243,7 @@ function isDateGreaterThanReference(dateString: string | Date): boolean {
           >
             {{ row.amountFromClient3 }}
           </td>
-          <td
-            v-if="link?.startsWith('1') || link?.startsWith('2')"
-            class="border-2"
-          >
+          <td v-if="link?.startsWith('1') || link?.startsWith('2')" class="border-2">
             {{ row.prepayment }}
           </td>
           <td class="border-2" v-if="link?.startsWith('3')">
@@ -264,10 +251,7 @@ function isDateGreaterThanReference(dateString: string | Date): boolean {
               {{ row.sorted ? storeUsers.getNormalizedDate(row.sorted) : "" }}
             </h1>
           </td>
-          <td
-            class="border-2"
-            v-if="link?.startsWith('1') || link?.startsWith('2')"
-          >
+          <td class="border-2" v-if="link?.startsWith('1') || link?.startsWith('2')">
             <h1 class="font-medium text-gray-400 text-xs" v-if="row.orderPVZ !== null">
               {{
                 row.deliveredSC
@@ -276,9 +260,7 @@ function isDateGreaterThanReference(dateString: string | Date): boolean {
               }}
             </h1>
             <h1 class="font-medium text-gray-400 text-xs" v-else>
-              {{
-                "В обработке"
-              }}
+              {{ "В обработке" }}
             </h1>
           </td>
           <td class="border-2" v-if="link?.startsWith('3')">
@@ -286,30 +268,17 @@ function isDateGreaterThanReference(dateString: string | Date): boolean {
               {{ row.paid ? storeUsers.getNormalizedDate(row.paid) : "" }}
             </h1>
           </td>
-          <td
-            class="border-2"
-            v-if="link?.startsWith('1') || link?.startsWith('2')"
-          >
+          <td class="border-2" v-if="link?.startsWith('1') || link?.startsWith('2')">
             <h1 class="font-bold text-green-500">
-              {{
-                row.deliveredPVZ
-                  ? storeUsers.getNormalizedDate(row.deliveredPVZ)
-                  : ""
-              }}
+              {{ row.deliveredPVZ ? storeUsers.getNormalizedDate(row.deliveredPVZ) : "" }}
             </h1>
           </td>
-          <td
-            class="border-2"
-            v-if="link?.startsWith('1') || link?.startsWith('2')"
-          >
+          <td class="border-2" v-if="link?.startsWith('1') || link?.startsWith('2')">
             <h1 class="font-bold text-green-500">
               {{ row.issued ? storeUsers.getNormalizedDate(row.issued) : "" }}
             </h1>
           </td>
-          <td
-            class="border-2"
-            v-if="link?.startsWith('1') || link?.startsWith('2')"
-          >
+          <td class="border-2" v-if="link?.startsWith('1') || link?.startsWith('2')">
             {{ row.additionally ? row.additionally : "Пусто" }}
           </td>
           <td

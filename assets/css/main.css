@@ -5,7 +5,7 @@
 }
 
 input[type="checkbox"] {
-  accent-color: #ffb957;
+  accent-color: #ffb957 !important  ; 
 }
 
 .no-scroll {
@@ -79,8 +79,6 @@ body {
   background-color: #000C1C;
 }
 
-
-
 input {
   color: black;
   border: none;
@@ -90,17 +88,6 @@ input:focus {
   border: var(--secondary-color);
 }
 
-input[type="date"] {
-  min-height: 40px;
-  min-width: 200px;
-}
-
-@supports (-webkit-touch-callout: none) {
-  input[type="date"]:not(:focus):not(.has-value):before{
-    color: lightgray;
-    content: attr(placeholder);
-  }
-}
 
 h1 {
   font-family: "Exo 2", sans-serif;

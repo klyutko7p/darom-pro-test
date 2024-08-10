@@ -651,12 +651,18 @@ async function checkPaymentStatus(qrcId: string) {
             </button>
           </div>
         </div>
-        <Icon
-          class="duration-200 hover:text-secondary-color cursor-pointer"
-          size="40"
-          name="bi:filetype-xlsx"
-          @click="exportToExcel"
-        />
+        <UTooltip
+          text="Скачать EXCEL"
+          :shortcuts="['xlsx']"
+          :popper="{ placement: 'right' }"
+        >
+          <div
+            class="bg-secondary-color cursor-pointer border-2 border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
+            @click="exportToExcel"
+          >
+            <Icon class="duration-200" size="32" name="bi:filetype-xlsx" />
+          </div>
+        </UTooltip>
       </div>
     </div>
 

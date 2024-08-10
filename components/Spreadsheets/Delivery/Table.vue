@@ -174,12 +174,18 @@ let showOtherOptions = ref(false);
           </button>
         </div>
       </div>
-      <Icon
-        class="duration-200 hover:text-secondary-color cursor-pointer"
-        size="40"
-        name="bi:filetype-xlsx"
-        @click="exportToExcel"
-      />
+      <UTooltip
+        text="Скачать EXCEL"
+        :shortcuts="['xlsx']"
+        :popper="{ placement: 'right' }"
+      >
+        <div
+          class="bg-secondary-color cursor-pointer border-2 border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
+          @click="exportToExcel"
+        >
+          <Icon class="duration-200" size="32" name="bi:filetype-xlsx" />
+        </div>
+      </UTooltip>
     </div>
   </div>
 
@@ -230,7 +236,8 @@ let showOtherOptions = ref(false);
 
   <div class="relative max-h-[600px] rounded-xl mt-5 mb-10">
     <div id="up"></div>
-    <table id="theTable"
+    <table
+      id="theTable"
       class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
       v-if="totalRows > 0"
     >
@@ -238,11 +245,7 @@ let showOtherOptions = ref(false);
         class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
       >
         <tr>
-          <th
-            scope="col"
-            class="border-2 px-3"
-            v-if="user.dataDelivery === 'WRITE'"
-          >
+          <th scope="col" class="border-2 px-3" v-if="user.dataDelivery === 'WRITE'">
             Выделение
           </th>
           <th
