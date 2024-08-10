@@ -5,6 +5,8 @@ const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
   try {
+    const startDate = new Date("2024-06-01T00:00:00Z");
+
     const rows = await prisma.ourRansom.findMany({
       select: {
         deliveredPVZ: true,
@@ -12,6 +14,11 @@ export default defineEventHandler(async (event) => {
         issued: true,
         dispatchPVZ: true,
         deleted: true,
+      },
+      where: {
+        created_at: {
+          gt: startDate,
+        },
       },
       orderBy: {
         created_at: "desc",

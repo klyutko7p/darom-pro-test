@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
 import { useToast } from "vue-toastification";
+import { useClientsStore } from "../stores/clients";
 
 const toast = useToast();
 
@@ -10,9 +11,9 @@ const storeClients = useClientsStore();
 const router = useRouter();
 
 let user = ref({} as User);
+let clients = ref<Array<Client>>([]);
 const token = Cookies.get("token");
 let isLoading = ref(false);
-
 
 onMounted(async () => {
   if (!token) {
@@ -22,6 +23,7 @@ onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   isLoading.value = false;
+  clients.value = await storeClients.getClients();
 });
 
 definePageMeta({
@@ -37,6 +39,7 @@ let timeoutId: ReturnType<typeof setTimeout> | null = null;
 async function updateDeliveryRow(row: any, flag: any) {
   await storeRansom.updateDeliveryStatus(row, flag, "OurRansom", user.value.username);
 }
+
 async function acceptItem(row: any) {
   if (
     user.value.role === "PVZ" ||
@@ -51,11 +54,13 @@ async function acceptItem(row: any) {
     ) {
       if (row.deliveredPVZ === null && row.deliveredSC !== null) {
         await updateDeliveryRow(row, "PVZ");
-        await storeClients.sendMessageToClient(
-          "Статус заказа: Darom.pro",
-          "Уважаемый клиент, Ваш заказ готов к получению.",
-          row.fromName
-        );
+        if (clients.value.find((client) => client.phoneNumber === row.fromName)) {
+          await storeClients.sendMessageToClient(
+            "Статус заказа: Darom.pro",
+            "Уважаемый клиент, Ваш заказ готов к получению.",
+            row.fromName
+          );
+        }
         toast.success("Товар принят на ПВЗ!");
       } else if (row.deliveredPVZ !== null) {
         toast.warning("Товар принят ранее!");
@@ -73,26 +78,26 @@ async function acceptItem(row: any) {
 }
 
 let arrayOfRows = ref<Array<IOurRansom | IClientRansom | IDelivery>>([]);
+let scannedLink = ref("");
 
-function scanItem() {
-  if (timeoutId !== null) {
-    clearTimeout(timeoutId);
-  }
-  timeoutId = setTimeout(async () => {
-    let scannedLink = scanStringItem.value.trim();
-    console.log(scannedLink);
-    console.log(scanStringItem);
-    scannedLink = convertToURL(scannedLink);
-    console.log(scannedLink); 
-    scanStringItem.value = "";
-    let rowData = await storeRansom.getRansomRowsById(+scannedLink, "OurRansom");
+async function scanItem() {
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+
+  scannedLink.value = scanStringItem.value.trim();
+  scannedLink.value = convertToURL(scannedLink.value) || "";
+  scanStringItem.value = "";
+
+  if (scannedLink.value) {
+    let rowData = await storeRansom.getRansomRowsById(+scannedLink.value, "OurRansom");
     await acceptItem(rowData);
     arrayOfRows.value.push(rowData);
-  }, 1200);
+  }
+  scannedLink.value = "";
+
   focusInput();
 }
 
-function convertToURL(inputString: string) {
+function convertToURL(inputString: string): string | undefined {
   if (inputString.includes("/")) {
     const parts = inputString.split("/");
     const entryID = parts[parts.length - 1];
@@ -102,6 +107,8 @@ function convertToURL(inputString: string) {
     const entryID = parts[parts.length - 1];
     return entryID;
   }
+
+  return undefined;
 }
 
 const myInput = ref(null);
