@@ -117,9 +117,36 @@ export const useRansomStore = defineStore("ransom", () => {
           );
           row.profit1 =
             +row.amountFromClient1 - +row.priceSite + +row.deliveredKGT;
-        } else {
+        } else if (
+          roundToNearestTen(
+            row.priceSite + (row.priceSite * row.percentClient) / 100
+          ) -
+            row.prepayment !==
+          0
+        ) {
+          row.amountFromClient1 = Math.ceil(
+            row.priceSite +
+              (row.priceSite * row.percentClient) / 100 -
+              row.prepayment
+          );
+          if (row.percentClient == 0) {
+            row.profit1 = row.deliveredKGT;
+          } else {
+            row.profit1 = row.prepayment - row.priceSite;
+          }
+        } else if (
+          roundToNearestTen(
+            row.priceSite + (row.priceSite * row.percentClient) / 100
+          ) -
+            row.prepayment ===
+          0
+        ) {
           row.amountFromClient1 = 0;
-          row.profit1 = row.prepayment - row.priceSite;
+          if (row.percentClient == 0) {
+            row.profit1 = row.deliveredKGT;
+          } else {
+            row.profit1 = row.prepayment - row.priceSite;
+          }
         }
       } else if (flag === "ClientRansom") {
         if (row.percentClient === undefined) row.percentClient = 10;
@@ -586,6 +613,15 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  function roundToNearestTen(num: number): number {
+    const lastDigit = num % 10;
+    if (lastDigit >= 5) {
+      return Math.ceil(num / 10) * 10;
+    } else {
+      return Math.floor(num / 10) * 10;
+    }
+  }
+
   async function updateRansomRow(row: any, username: string, flag: string) {
     try {
       if (flag === "OurRansom") {
@@ -634,7 +670,30 @@ export const useRansomStore = defineStore("ransom", () => {
               row.profit1 =
                 row.amountFromClient1 - row.priceSite + row.deliveredKGT;
             }
-          } else {
+          } else if (
+            roundToNearestTen(
+              row.priceSite + (row.priceSite * row.percentClient) / 100
+            ) -
+              row.prepayment !==
+            0
+          ) {
+            row.amountFromClient1 = Math.ceil(
+              row.priceSite +
+                (row.priceSite * row.percentClient) / 100 -
+                row.prepayment
+            );
+            if (row.percentClient == 0) {
+              row.profit1 = row.deliveredKGT;
+            } else {
+              row.profit1 = row.prepayment - row.priceSite;
+            }
+          } else if (
+            roundToNearestTen(
+              row.priceSite + (row.priceSite * row.percentClient) / 100
+            ) -
+              row.prepayment ===
+            0
+          ) {
             row.amountFromClient1 = 0;
             if (row.percentClient == 0) {
               row.profit1 = row.deliveredKGT;
@@ -706,20 +765,20 @@ export const useRansomStore = defineStore("ransom", () => {
       //     toast.error("Неправильный формат записи телефона!")
       // }
 
-      let data = await useFetch("/api/ransom/edit-row", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ row: row, flag: flag }),
-      });
+      // let data = await useFetch("/api/ransom/edit-row", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({ row: row, flag: flag }),
+      // });
 
-      if (data.data.value === undefined) {
-        toast.success("Запись успешно обновлена!");
-      } else {
-        console.log(data.data.value);
-        toast.error("Произошла ошибка при обновлении записи!");
-      }
+      // if (data.data.value === undefined) {
+      //   toast.success("Запись успешно обновлена!");
+      // } else {
+      //   console.log(data.data.value);
+      //   toast.error("Произошла ошибка при обновлении записи!");
+      // }
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
