@@ -2,9 +2,8 @@
 import Cookies from "js-cookie";
 import { useToast } from "vue-toastification";
 import VueMultiselect from "vue-multiselect";
-
+import ru from 'date-fns/locale/ru'
 import { vAutoAnimate } from "@formkit/auto-animate";
-
 import { sub, format, isSameDay, type Duration } from 'date-fns'
 
 const storeUsers = useUsersStore();
@@ -1392,11 +1391,11 @@ function formatNumber(number: number) {
 }
 
 watch(
-  [selectedPVZ, selectedTypeOfTransaction, selected.value.start, selected.value.end],
+  [selectedPVZ, selectedTypeOfTransaction, selected],
   getProfitManagerRowsSum
 );
-watch([selectedPVZ, selectedTypeOfTransaction, selected.value.start, selected.value.end], getProfitRowsSum);
-watch([selectedPVZ, selectedTypeOfTransaction, selected.value.start, selected.value.end], getAllSum);
+watch([selectedPVZ, selectedTypeOfTransaction, selected, selected], getProfitRowsSum);
+watch([selectedPVZ, selectedTypeOfTransaction, selected, selected], getAllSum);
 
 function clearFields() {
   selectedPVZ.value = "Все ПВЗ";
@@ -1847,30 +1846,40 @@ let pvzDataOriginally = [
               <div class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5">
                 <div class="flex items-start space-y-2 flex-col mt-5 text-center">
                   <h1>Показать для ПВЗ</h1>
-                  <UInputMenu
-                    color="orange"
-                    class="w-full"
+                  <select
                     v-if="
                       user.role !== 'PVZ' &&
                       user.role !== 'COURIER' &&
                       user.role !== 'PPVZ' &&
                       user.role !== 'RMANAGER'
                     "
+                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
                     v-model="selectedPVZ"
-                    :options="pvzDataOriginally"
-                  />
-                  <UInputMenu
-                    color="orange"
+                  >
+                    <option value="Все ПВЗ" selected>Все ПВЗ</option>
+                    <option v-for="pvzValue in pvz">
+                      {{ pvzValue.name }}
+                    </option>
+                  </select>
+                  <select
                     v-else-if="user.role === 'RMANAGER'"
+                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
                     v-model="selectedPVZ"
-                    :options="user.PVZ"
-                  />
-                  <UInputMenu
-                    color="orange"
+                  >
+                    <option value="Все ППВЗ" selected>Все ППВЗ</option>
+                    <option v-for="pvzValue in user.PVZ">
+                      {{ pvzValue }}
+                    </option>
+                  </select>
+                  <select
                     v-else
+                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
                     v-model="selectedPVZ"
-                    :options="user.PVZ"
-                  />
+                  >
+                    <option v-for="pvzValue in user.PVZ">
+                      {{ pvzValue }}
+                    </option>
+                  </select>
                 </div>
                 <div class="flex items-start space-y-2 flex-col mt-5 text-center">
                   <h1>Тип транзакции</h1>
@@ -1968,8 +1977,8 @@ let pvzDataOriginally = [
                   class="block max-sm:hidden my-5 max-w-[220px]"
                 >
                   <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
-                    {{ format(selected.start, "d MMM, yyy") }} -
-                    {{ format(selected.end, "d MMM, yyy") }}
+                    {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
+                    {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
                   </UButton>
 
                   <template #panel="{ close }">
@@ -1999,12 +2008,13 @@ let pvzDataOriginally = [
                   </template>
                 </UPopover>
                 <UPopover
+                  :overlay="true"
                   :popper="{ placement: 'auto' }"
                   class="hidden max-sm:block mx-auto max-w-[220px] my-5"
                 >
                   <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
-                    {{ format(selected.start, "d MMM, yyy") }} -
-                    {{ format(selected.end, "d MMM, yyy") }}
+                    {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
+                    {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
                   </UButton>
 
                   <template #panel="{ close }">

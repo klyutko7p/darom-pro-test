@@ -28,7 +28,7 @@ const attrs = {
   borderless: true,
   color: "orange",
   "is-dark": { selector: "html", darkClass: "dark" },
-  "first-day-of-week": 4,
+  "first-day-of-week": 2,
 };
 </script>
 

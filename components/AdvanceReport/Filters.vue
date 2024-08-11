@@ -5,8 +5,8 @@ const props = defineProps({
 });
 import VueMultiselect from "vue-multiselect";
 import { vAutoAnimate } from "@formkit/auto-animate";
-
-import { sub, format, isSameDay, type Duration } from 'date-fns'
+import { formatRelative, subDays, sub, format, isSameDay, type Duration } from 'date-fns'
+import ru from 'date-fns/locale/ru'
 
 const ranges = [
   { label: 'Текущий месяц', duration: { month: 'current' } },
@@ -305,13 +305,13 @@ const uniqueType = ref(["Нал", "Безнал"]);
           />
         </div>
       </div>
-      <UPopover 
+      <UPopover
         :popper="{ placement: 'auto' }"
-        class="block max-sm:hidden my-5 max-w-[220px]" 
+        class="block max-sm:hidden my-5 max-w-[220px]"
       >
-        <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
-          {{ format(selected.start, "d MMM, yyy") }} -
-          {{ format(selected.end, "d MMM, yyy") }}
+        <UButton type="button" icon="i-heroicons-calendar-days-20-solid" color="orange">
+          {{ format(selected.start, "dd MMM yyy", { locale: ru }) }}  —
+          {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
         </UButton>
 
         <template #panel="{ close }">
@@ -339,12 +339,17 @@ const uniqueType = ref(["Нал", "Безнал"]);
         </template>
       </UPopover>
       <UPopover
+        :overlay="true"
         :popper="{ placement: 'auto' }"
         class="hidden max-sm:block mx-auto max-w-[220px] my-5"
       >
-        <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
-          {{ format(selected.start, "d MMM, yyy") }} -
-          {{ format(selected.end, "d MMM, yyy") }}
+        <UButton
+          type="button"
+          icon="i-heroicons-calendar-days-20-solid"
+          color="orange"
+        >
+          {{ format(selected.start, "dd MMM yyy", { locale: ru }) }}  —
+          {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
         </UButton>
 
         <template #panel="{ close }">
@@ -371,7 +376,7 @@ const uniqueType = ref(["Нал", "Безнал"]);
           </div>
         </template>
       </UPopover>
-      <div class="flex justify-end gap-3 mt-3">
+      <div class="flex justify-end gap-3 mt-3 mb-5">
         <UIMainButton @click="filterRows(), (showFilters = !showFilters)"
           >Принять</UIMainButton
         >

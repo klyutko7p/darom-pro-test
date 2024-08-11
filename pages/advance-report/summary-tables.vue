@@ -2,6 +2,7 @@
 import Cookies from "js-cookie";
 import VueMultiselect from "vue-multiselect";
 import { vAutoAnimate } from "@formkit/auto-animate";
+import ru from 'date-fns/locale/ru'
 
 const storeUsers = useUsersStore();
 const storeAdvanceReports = useAdvanceReports();
@@ -469,9 +470,14 @@ function selectRange(duration: Duration) {
                   </div>
                 </div>
                 <UPopover class="block max-sm:hidden" :popper="{ placement: 'auto' }">
-                  <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
-                    {{ format(selected.start, "d MMM, yyy") }} -
-                    {{ format(selected.end, "d MMM, yyy") }}
+                  <UButton
+                    :overlay="true"
+                    type="button"
+                    icon="i-heroicons-calendar-days-20-solid"
+                    color="orange"
+                  >
+                    {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
+                    {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
                   </UButton>
 
                   <template #panel="{ close }">
@@ -500,10 +506,14 @@ function selectRange(duration: Duration) {
                     </div>
                   </template>
                 </UPopover>
-                <UPopover class="hidden max-sm:block" :popper="{ placement: 'auto' }">
-                  <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
-                    {{ format(selected.start, "d MMM, yyy") }} -
-                    {{ format(selected.end, "d MMM, yyy") }}
+                <UPopover class="hidden max-sm:block" :overlay="true" :popper="{ placement: 'auto' }">
+                  <UButton 
+                    type="button"
+                    icon="i-heroicons-calendar-days-20-solid"
+                    color="orange"
+                  >
+                    {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
+                    {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
                   </UButton>
 
                   <template #panel="{ close }">
