@@ -111,12 +111,16 @@ export const useRansomStore = defineStore("ransom", () => {
 
         if (row.priceSite > row.prepayment) {
           row.amountFromClient1 = Math.ceil(
-            +row.priceSite +
-              (+row.priceSite * +row.percentClient) / 100 -
-              +row.prepayment
+            row.priceSite +
+              (row.priceSite * row.percentClient) / 100 -
+              row.prepayment
           );
-          row.profit1 =
-            +row.amountFromClient1 - +row.priceSite + +row.deliveredKGT;
+          if (row.percentClient == 0) {
+            row.profit1 = row.deliveredKGT;
+          } else {
+            row.profit1 =
+              row.amountFromClient1 - row.priceSite + row.deliveredKGT;
+          }
         } else if (
           roundToNearestTen(
             row.priceSite + (row.priceSite * row.percentClient) / 100
@@ -677,10 +681,6 @@ export const useRansomStore = defineStore("ransom", () => {
               row.prepayment !==
             0
           ) {
-            console.log(roundToNearestTen(
-              row.priceSite + (row.priceSite * row.percentClient) / 100
-            ) -
-              row.prepayment);
             row.amountFromClient1 = Math.ceil(
               row.priceSite +
                 (row.priceSite * row.percentClient) / 100 -
@@ -698,10 +698,6 @@ export const useRansomStore = defineStore("ransom", () => {
               row.prepayment ===
             0
           ) {
-            console.log(roundToNearestTen(
-              row.priceSite + (row.priceSite * row.percentClient) / 100
-            ) -
-              row.prepayment);
             row.amountFromClient1 = 0;
             if (row.percentClient == 0) {
               row.profit1 = row.deliveredKGT;
