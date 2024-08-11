@@ -677,6 +677,10 @@ export const useRansomStore = defineStore("ransom", () => {
               row.prepayment !==
             0
           ) {
+            console.log(roundToNearestTen(
+              row.priceSite + (row.priceSite * row.percentClient) / 100
+            ) -
+              row.prepayment);
             row.amountFromClient1 = Math.ceil(
               row.priceSite +
                 (row.priceSite * row.percentClient) / 100 -
@@ -694,6 +698,10 @@ export const useRansomStore = defineStore("ransom", () => {
               row.prepayment ===
             0
           ) {
+            console.log(roundToNearestTen(
+              row.priceSite + (row.priceSite * row.percentClient) / 100
+            ) -
+              row.prepayment);
             row.amountFromClient1 = 0;
             if (row.percentClient == 0) {
               row.profit1 = row.deliveredKGT;
@@ -765,20 +773,20 @@ export const useRansomStore = defineStore("ransom", () => {
       //     toast.error("Неправильный формат записи телефона!")
       // }
 
-      // let data = await useFetch("/api/ransom/edit-row", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({ row: row, flag: flag }),
-      // });
+      let data = await useFetch("/api/ransom/edit-row", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ row: row, flag: flag }),
+      });
 
-      // if (data.data.value === undefined) {
-      //   toast.success("Запись успешно обновлена!");
-      // } else {
-      //   console.log(data.data.value);
-      //   toast.error("Произошла ошибка при обновлении записи!");
-      // }
+      if (data.data.value === undefined) {
+        toast.success("Запись успешно обновлена!");
+      } else {
+        console.log(data.data.value);
+        toast.error("Произошла ошибка при обновлении записи!");
+      }
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
