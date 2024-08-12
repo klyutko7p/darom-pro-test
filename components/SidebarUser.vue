@@ -61,7 +61,7 @@ function formatPhoneNumber(phoneNumber: string) {
       <h1 class="font-bold text-xl text-secondary-color">DAROM.PRO</h1>
       <Icon
         @click="editMenu"
-        name="ooui:arrow-previous-ltr"
+        name="ion:ios-arrow-back"
         size="20"
         class="hover:text-orange-300 duration-200 cursor-pointer"
       />
@@ -271,7 +271,7 @@ function formatPhoneNumber(phoneNumber: string) {
     v-if="isOpen"
   >
     <Icon
-      name="material-symbols:close"
+      name="material-symbols:cancel-rounded"
       class="absolute duration-200 cursor-pointer hover:text-orange-400 top-2 right-4"
       size="40"
       @click="editMenu"
@@ -559,7 +559,7 @@ function formatPhoneNumber(phoneNumber: string) {
     </h1>
     <Icon
       @click="router.go(-1)"
-      name="material-symbols:arrow-back-rounded"
+      name="ion:ios-arrow-back"
       size="32"
       class="cursor-pointer hover:opacity-50 duration-200"
     />

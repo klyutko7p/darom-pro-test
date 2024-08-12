@@ -290,14 +290,19 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
             >
           </h1>
           <div class="mt-2 flex gap-2 items-center justify-start">
-            <UCheckbox v-model="isForeignDevice" color="orange" required :model-value="false" />
-            <label for="isForeignDevice" class="text-sm">Чужое устройство</label>
+            <input
+              v-model="isForeignDevice"
+              id="isForeignDevice"
+              name="isForeignDevice"
+              type="checkbox"
+            />
+            <label for="isForeignDevice">Чужое устройство</label>
           </div>
           <div v-if="message !== ''">
             <h1 class="text-red-700 text-center">{{ message }}</h1>
           </div>
           <div class="flex items-center justify-center">
-            <UIMainButton class="w-full">Войти</UIMainButton>
+            <UIMainButton class="w-full max-sm:max-w-[400px]">Войти</UIMainButton>
           </div>
           <div class="text-center underline text-secondary-color font-bold">
             <NuxtLink to="/auth/register">Или зарегистрируйтесь</NuxtLink>
@@ -317,7 +322,7 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
             <Icon
               @click="isShowFirstConfirmationModal = !isShowFirstConfirmationModal"
               class="hover:text-hover-color duration-200 cursor-pointer"
-              name="material-symbols:close-rounded"
+              name="material-symbols:cancel-rounded"
               size="24"
             />
           </div>
@@ -358,7 +363,7 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
             <Icon
               @click="isShowSecondConfirmationModal = !isShowSecondConfirmationModal"
               class="hover:text-hover-color duration-200 cursor-pointer"
-              name="material-symbols:close-rounded"
+              name="material-symbols:cancel-rounded"
               size="24"
             />
           </div>
@@ -397,7 +402,7 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
             <Icon
               @click="isShowThirdConfirmationModal = !isShowThirdConfirmationModal"
               class="hover:text-hover-color duration-200 cursor-pointer"
-              name="material-symbols:close-rounded"
+              name="material-symbols:cancel-rounded"
               size="24"
             />
           </div>

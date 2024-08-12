@@ -103,7 +103,7 @@ let showPassword = ref(false)
             <h1 class="text-red-700">{{ message }}</h1>
           </div>
           <div class="flex items-center justify-center">
-            <UIMainButton class="w-full">Войти</UIMainButton>
+            <UIMainButton class="w-full max-sm:max-w-[400px]">Войти</UIMainButton>
           </div>
         </form>
       </div>

@@ -75,12 +75,12 @@ function isDateGreaterThanReference(dateString: string | Date): boolean {
       </div>
     </UTooltip>
   </div>
-  <div class="relative max-h-[760px] mt-5" v-if="rows">
+  <div class="relative max-h-[700px] rounded-xl mt-5 mb-10" v-if="rows">
     <table
       id="theTable"
-      class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+      class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
     >
-      <thead class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center">
+      <thead class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center">
         <tr>
           <th scope="col" class="border-2">номер</th>
           <th

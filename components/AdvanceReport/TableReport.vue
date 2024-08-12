@@ -352,6 +352,168 @@ function updateCurrentPageData() {
   getTotal();
 }
 
+
+// function updateCurrentPageData() {
+//   const newStartingDate = new Date(props.startingDate);
+//   newStartingDate.setHours(0, 0, 0, 0);
+
+//   const newEndDate = new Date(props.endDate);
+//   newEndDate.setHours(23, 59, 59, 999);
+
+//   const isDateInRange = (date) =>
+//     (!props.startingDate || date >= newStartingDate) &&
+//     (!props.endDate || date <= newEndDate);
+
+//   const isWithinWeekRange = (date, week) => {
+//     const [startDate, endDate] = parseWeekRange(week);
+//     return date >= startDate && date <= endDate;
+//   };
+
+//   const isValidExpenditureType = (type) =>
+//     ![
+//       "Пополнение баланса",
+//       "Передача денежных средств",
+//       "Перевод в кредитный баланс",
+//       "Списание кредитной задолженности торговой империи",
+//       "Перевод с кредитного баланса нал",
+//       "Перевод с кредитного баланса безнал",
+//       "Новый кредит нал",
+//       "Новый кредит безнал",
+//       "Вывод дивидендов",
+//     ].includes(type);
+
+//   returnRows.value = props.rows;
+//   const monthFilter = +props.month;
+
+//   if (!props.isDateFilter) {
+//     filteredRows.value = returnRows.value.filter((row) => {
+//       const rowDate = new Date(row.date);
+//       return (
+//         row.PVZ !== "" && rowDate.getMonth() + 1 === monthFilter && isDateInRange(rowDate)
+//       );
+//     });
+
+//     const filterDeliveries = (row) => {
+//       const rowDate = new Date(row.paid);
+//       return (
+//         row.paid !== null &&
+//         (props.week.includes("неделя")
+//           ? isWithinWeekRange(rowDate, props.week)
+//           : rowDate.getMonth() + 1 === monthFilter) &&
+//         isDateInRange(rowDate)
+//       );
+//     };
+
+//     rowsDeliveryArr.value = props.rowsDelivery.filter(filterDeliveries);
+
+//     const filterRansoms = (row) => {
+//       const rowDate = new Date(row.issued);
+//       return (
+//         row.additionally !== "Отказ брак" &&
+//         (props.week.includes("неделя")
+//           ? isWithinWeekRange(rowDate, props.week)
+//           : rowDate.getMonth() + 1 === monthFilter) &&
+//         isDateInRange(rowDate)
+//       );
+//     };
+
+//     rowsOnlineArr.value =
+//       props.company === "Darom.pro" || props.company === "Все"
+//         ? props.rowsOurRansom.filter(filterRansoms)
+//         : [];
+//   } else {
+//     filteredRows.value = returnRows.value.filter((row) => {
+//       return row.PVZ !== "" && isDateInRange(new Date(row.date));
+//     });
+
+//     rowsDeliveryArr.value = props.rowsDelivery.filter((row) => {
+//       const rowDate = new Date(row.paid);
+//       return (
+//         row.paid !== null &&
+//         (props.week.includes("неделя")
+//           ? isWithinWeekRange(rowDate, props.week)
+//           : isDateInRange(rowDate))
+//       );
+//     });
+
+//     rowsOnlineArr.value =
+//       props.company === "Darom.pro" || props.company === "Все"
+//         ? props.rowsOurRansom.filter((row) => {
+//             const rowDate = new Date(row.issued);
+//             return (
+//               row.additionally !== "Отказ брак" &&
+//               (props.week.includes("неделя")
+//                 ? isWithinWeekRange(rowDate, props.week)
+//                 : isDateInRange(rowDate))
+//             );
+//           })
+//         : [];
+//   }
+
+//   arrayOfExpenditure.value = filteredRows.value.filter((row) => {
+//     const rowDate = new Date(row.date);
+//     return (
+//       isValidExpenditureType(row.typeOfExpenditure) &&
+//       (props.week.includes("неделя")
+//         ? isWithinWeekRange(rowDate, props.week)
+//         : rowDate.getMonth() + 1 === monthFilter) &&
+//       (!props.type || row.type === props.type)
+//     );
+//   });
+
+//   arrayOfReceipts.value = filteredRows.value.filter((row) => {
+//     const rowDate = new Date(row.date);
+//     return (
+//       row.typeOfExpenditure === "Пополнение баланса" &&
+//       (props.week.includes("неделя")
+//         ? isWithinWeekRange(rowDate, props.week)
+//         : rowDate.getMonth() + 1 === monthFilter) &&
+//       (!props.type || row.type === props.type)
+//     );
+//   });
+
+//   pvz.value.forEach((pvzName) => {
+//     expenditureByPVZ[pvzName] = 0;
+//     receiptsByPVZ[pvzName] = 0;
+//   });
+
+//   arrayOfExpenditure.value.forEach((row) => {
+//     expenditureByPVZ[row.PVZ] += parseFloat(row.expenditure);
+//   });
+
+//   arrayOfReceipts.value.forEach((row) => {
+//     receiptsByPVZ[row.PVZ] += parseFloat(row.expenditure);
+//   });
+
+//   rowsBalanceArr.value?.forEach((row) => {
+//     receiptsByPVZ[row.pvz] += parseFloat(row.sum);
+//   });
+
+//   rowsOnlineArr.value.forEach((row) => {
+//     receiptsByPVZ[row.dispatchPVZ] += calculateValue(row);
+//   });
+
+//   rowsDeliveryArr.value.forEach((row) => {
+//     receiptsByPVZ[row.orderPVZ] += row.amountFromClient3;
+//   });
+
+//   pvz.value.forEach((pvzName) => {
+//     differenceByPVZ[pvzName] = receiptsByPVZ[pvzName] - expenditureByPVZ[pvzName];
+//   });
+
+//   sumOfArray2.value = Object.values(expenditureByPVZ).reduce(
+//     (sum, value) => sum + value,
+//     0
+//   );
+//   sumOfArray1.value = Object.values(receiptsByPVZ).reduce((sum, value) => sum + value, 0);
+//   sumOfArray3.value = Object.values(differenceByPVZ).reduce(
+//     (sum, value) => sum + value,
+//     0
+//   );
+
+//   getTotal();
+// }
+
 function calculateValue(curValue: any) {
   if (!curValue.prepayment) {
     if (!curValue.prepayment) {
@@ -369,11 +531,6 @@ function calculateValue(curValue: any) {
       }
     };
 
-    const roundOrCeil = (num: number) => {
-      const lastDigit = num % 10;
-      return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
-    };
-
     if (!shouldRound(curValue)) {
       return curValue.additionally !== "Отказ клиент наличные" ||
         curValue.additionally !== "Отказ клиент онлайн" ||
@@ -387,10 +544,14 @@ function calculateValue(curValue: any) {
         curValue.additionally !== "Отказ клиент онлайн" ||
         curValue.additionally !== "Отказ клиент"
         ? Math.ceil(
-            roundOrCeil(
-              curValue.priceSite + (curValue.priceSite * 10) / 100 - curValue.prepayment
+            Math.ceil(
+              (curValue.priceSite +
+                (curValue.priceSite * 10) / 100 -
+                curValue.prepayment) /
+                10
             )
-          ) -
+          ) *
+            10 -
             curValue.priceSite +
             curValue.deliveredKGT
         : 200;

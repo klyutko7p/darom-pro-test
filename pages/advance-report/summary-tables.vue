@@ -506,8 +506,12 @@ function selectRange(duration: Duration) {
                     </div>
                   </template>
                 </UPopover>
-                <UPopover class="hidden max-sm:block" :overlay="true" :popper="{ placement: 'auto' }">
-                  <UButton 
+                <UPopover
+                  class="hidden max-sm:block"
+                  :overlay="true"
+                  :popper="{ placement: 'auto' }"
+                >
+                  <UButton
                     type="button"
                     icon="i-heroicons-calendar-days-20-solid"
                     color="orange"

@@ -37,7 +37,7 @@ function roundToNearestTen(num: number): number {
   <div class="flex items-center gap-3 justify-around mt-10 flex-col" v-if="rows">
     <div
       v-for="row in rows.filter((row) => row.productName)"
-      class="border-2 border-black bg-gray-100 shadow-xl border-dashed py-16 px-5 w-full mb-5"
+      class="border-2 border-secondary-color shadow-xl border-dashed py-16 px-10 w-full mb-5"
     >
       <div v-if="row.amountFromClient1">
         <h1 class="text-3xl mb-3 font-bold">{{ row.productName }}</h1>

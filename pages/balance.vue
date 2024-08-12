@@ -2044,7 +2044,7 @@ let pvzDataOriginally = [
                   </template>
                 </UPopover>
               </div>
-              <div class="flex justify-end">
+              <div class="flex justify-end mb-3">
                 <UIActionButton @click="clearFields">Очистить фильтры</UIActionButton>
               </div>
             </div>
@@ -2389,7 +2389,7 @@ let pvzDataOriginally = [
                   </div>
                 </div>
               </div>
-              <div class="flex justify-end">
+              <div class="flex justify-end mb-3">
                 <UIActionButton @click="clearFields">Очистить фильтры</UIActionButton>
               </div>
             </div>

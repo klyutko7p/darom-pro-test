@@ -88,7 +88,10 @@ function scanItem() {
   timeoutId = setTimeout(async () => {
     scannedLink.value = scanStringItem.value.trim();
     scannedLink.value = convertToURL(scannedLink.value) || "";
+    console.log(scannedLink);
+    console.log(scanStringItem);
     scanStringItem.value = "";
+    console.log(scannedLink);
 
     if (scannedLink.value) {
       let rowData = await storeRansom.getRansomRowsById(+scannedLink.value, "OurRansom");
@@ -97,6 +100,7 @@ function scanItem() {
     }
     
     scannedLink.value = "";
+    console.log(scannedLink);
   }, 1700);
   focusInput();
 }
@@ -184,7 +188,7 @@ let selectedPVZ = ref("");
               @input="scanItem"
             />
             <div class="w-full gap-10 flex flex-col">
-              <div v-for="row in arrayOfRows" class="border-2 border-dashed p-5">
+              <div v-for="row in arrayOfRows" class="border-2 border-dashed border-secondary-color p-5">
                 <div v-if="'clientLink1' in row">
                   <div class="mt-5 flex items-center justify-between">
                     <div>
@@ -263,10 +267,10 @@ let selectedPVZ = ref("");
               v-model="scanStringItem"
               @input="scanItem"
             />
-            <div class="w-full gap-10 flex flex-col-reverse">
-              <div v-for="row in arrayOfRows" class="border-2 border-dashed p-5">
-                <div v-if="'clientLink1' in row" class="flex flex-col-reverse">
-                  <div class="flex items-end justify-between">
+            <div class="w-full gap-10 flex flex-col">
+              <div v-for="row in arrayOfRows" class="border-2 border-dashed border-secondary-color p-5">
+                <div v-if="'clientLink1' in row">
+                  <div class="mt-5 flex items-center justify-between">
                     <div>
                       <h1>ID: {{ row.id }}</h1>
                       <h1>{{ formatPhoneNumber(row.fromName) }}</h1>
@@ -284,7 +288,7 @@ let selectedPVZ = ref("");
                   </div>
                 </div>
                 <div v-if="'clientLink2' in row">
-                  <div class="flex items-center justify-between">
+                  <div class="mt-5 flex items-center justify-between">
                     <div>
                       <h1>{{ row.id }}</h1>
                       <h1>{{ formatPhoneNumber(row.fromName) }}</h1>

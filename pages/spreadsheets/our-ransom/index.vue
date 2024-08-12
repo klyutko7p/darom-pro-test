@@ -244,7 +244,6 @@ async function updateCells() {
   cells.value = cells.value?.filter((cell) => cell.PVZ !== "НаДом");
 }
 
-
 definePageMeta({
   layout: false,
   name: "Все товары: Наш Выкуп",
@@ -518,6 +517,92 @@ function onDateInput(event: any) {
 let updatedPriceTwoPercent = ref(0);
 let itemsId = ref<Array<number[]>>();
 let isOpenOnlineStatus = ref(false);
+
+const storeClients = useClientsStore();
+
+let isActiveParsing = ref(false);
+async function parsingPage() {
+  if (rowData.value.productLink) {
+    if (rowData.value.productLink.length > 20) {
+      if (rowData.value.productLink.includes("wildberries")) {
+        isLoading.value = true;
+        let itemInfo = await storeClients.fetchSiteWB(rowData.value.productLink);
+        if (itemInfo.error === "fetch failed") {
+          toast.error("Извините, мы не можем сейчас обработать данные.");
+          isLoading.value = false;
+          return;
+        }
+        if (!itemInfo[0]) {
+          toast.error("Извините, мы не можем обработать название товара.");
+          isLoading.value = false;
+          return;
+        }
+        rowData.value.productName = itemInfo[0].imt_name;
+
+        let priceInfoPromise = storeClients.fetchSitePrice(rowData.value.productLink);
+        let timeoutPromise = new Promise((resolve, reject) => {
+          setTimeout(() => {
+            reject(new Error("Request timeout"));
+          }, 10000);
+        });
+
+        try {
+          let priceInfo = await Promise.race([priceInfoPromise, timeoutPromise]);
+          rowData.value.productName = itemInfo[0].imt_name;
+
+          if (priceInfo.message) {
+            rowData.value.priceSite = parseFloat(
+              priceInfo.message.split(" ")[0] + priceInfo.message.split(" ")[1]
+            );
+          } else {
+            toast.error(
+              "Извините, мы не можем обработать товар. Возможно, Вы не выбрали размер или товара нет в наличии!"
+            );
+            isLoading.value = false;
+            return;
+          }
+        } catch (error) {
+          toast.error(
+            "Извините, мы не можем обработать товар. Возможно, Вы не выбрали размер или товара нет в наличии!"
+          );
+          isLoading.value = false;
+          return;
+        }
+        toast.success("Данные успешно подвязаны!");
+        isLoading.value = false;
+      } else if (rowData.value.productLink.includes("ozon")) {
+        isLoading.value = true;
+        let jsonString = await storeClients.fetchSiteOZ(rowData.value.productLink);
+        if (jsonString.pageInfo.pageTypeTracking === "error") {
+          toast.error("Извините, произошла ошибка. Проверьте ссылку на товар!");
+          isLoading.value = false;
+          return;
+        }
+        rowData.value.productName = JSON.parse(jsonString.seo.script[0].innerHTML).name;
+        rowData.value.priceSite = JSON.parse(
+          jsonString.seo.script[0].innerHTML
+        ).offers.price;
+        toast.success("Данные успешно подвязаны!");
+        isLoading.value = false;
+      }
+    } else {
+      toast.error("Ссылка на товар недействительна!");
+    }
+  } else {
+    toast.error("Добавьте ссылку товара для обработки!");
+  }
+}
+
+async function handlePaste() {
+  const urlPattern = /(https?:\/\/[^\s]+)/g;
+  const match = rowData.value.productLink.match(urlPattern);
+
+  if (match) {
+    rowData.value.productLink = match[0];
+  } else {
+    rowData.value.productLink = "";
+  }
+}
 </script>
 
 <template>
@@ -655,12 +740,18 @@ let isOpenOnlineStatus = ref(false);
                 v-if="user.productLink1 === 'READ' || user.productLink1 === 'WRITE'"
               >
                 <label for="productLink1" class="max-sm:text-sm">Товар (ссылка)</label>
-                <input
-                  :disabled="user.productLink1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.productLink"
-                  type="text"
-                />
+                <div>
+                  <input
+                    :disabled="user.productLink1 === 'READ'"
+                    class="bg-transparent w-full rounded-md border-2 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.productLink"
+                    @input="handlePaste"
+                    type="text"
+                  />
+                  <div class="flex gap-3 items-center justify-center mt-2">
+                    <UIActionButton @click="parsingPage">Подтянуть данные</UIActionButton>
+                  </div>
+                </div>
               </div>
 
               <div

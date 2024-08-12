@@ -38,7 +38,7 @@ definePageMeta({
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="py-5">
-          <div class="mt-10 mb-10 flex items-center gap-3">
+          <div class="mt-3 mb-5 flex items-center gap-3">
             <h1 v-if="user.username !== 'Директор'" class="text-xl">
               Приветствуем, {{ user.username }}!
             </h1>

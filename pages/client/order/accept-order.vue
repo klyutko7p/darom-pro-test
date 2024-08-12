@@ -490,7 +490,7 @@ function changeAddress(coordinates: Array<number>) {
           >
             <div class="absolute top-0 right-0">
               <Icon
-                name="material-symbols:close-small"
+                name="material-symbols:cancel-rounded-small"
                 size="40"
                 class="cursor-pointer hover:text-secondary-color duration-200"
                 @click="isShowModal = !isShowModal"

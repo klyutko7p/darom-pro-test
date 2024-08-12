@@ -194,21 +194,11 @@ let isShowInfo = ref(false);
           <UIMainButton @click="isShowInfo = true">Важная информация</UIMainButton>
         </div>
       </div>
-      <div
-        v-if="isShowInfo"
-        class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-70 z-[200]"
-      >
-        <div class="h-screen flex items-center justify-center max-sm:px-2">
-          <div class="bg-white relative py-10 px-5 max-sm:px-3 rounded-2xl max-w-[500px]">
-            <Icon
-              class="absolute top-0 right-0 hover:text-secondary-color duration-200 cursor-pointer"
-              name="material-symbols:close-small"
-              size="40"
-              @click="isShowInfo = false"
-            />
-            <h1 class="font-bold text-2xl text-center mb-5 text-secondary-color">
-              ВАЖНАЯ ИНФОРМАЦИЯ
-            </h1>
+      <UINewModalEdit v-show="isShowInfo" @close-modal="isShowInfo = !isShowInfo">
+        <template v-slot:icon-header> </template>
+        <template v-slot:header> ВАЖНАЯ ИНФОРМАЦИЯ </template>
+        <template v-slot:body>
+          <div class="text-left px-0">
             <div>
               <h1 class="font-bold text-xl">Стоимость доставки:</h1>
               <h1 class="italic text-base">≈10% от стоимости товара</h1>
@@ -226,19 +216,20 @@ let isShowInfo = ref(false);
               </ul>
             </div>
             <div class="mt-3">
-              <h1 class="font-bold text-xl text-center max-sm:text-left max-sm:text-lg">
+              <h1 class="font-bold text-lg text-left max-sm:text-left max-sm:text-lg">
                 Проверяйте товары в пункте выдачи на комплектность, размер и брак. <br />
                 Возврат из дома не принимаем!
               </h1>
             </div>
             <div class="mt-3">
-              <h1 class="font-bold text-xl text-center max-sm:text-left max-sm:text-lg">
-                При заказе товаров OZON GLOBAL и WB доставка из-за рубежа, с Вами свяжется менеджер для внесения предоплаты
+              <h1 class="font-bold text-lg text-left max-sm:text-left max-sm:text-lg">
+                При заказе товаров OZON GLOBAL и WB доставка из-за рубежа, с Вами свяжется
+                менеджер для внесения предоплаты
               </h1>
             </div>
           </div>
-        </div>
-      </div>
+        </template>
+      </UINewModalEdit>
     </div>
   </div>
   <div v-else>

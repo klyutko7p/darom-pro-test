@@ -135,46 +135,46 @@ async function saveChanges() {
   isLoading.value = false;
 }
 
-function copyToClipboard() {
-  const el = document.createElement("textarea");
-  el.value = urlReferral.value;
-  el.setAttribute("readonly", "");
-  el.style.position = "absolute";
-  el.style.left = "-9999px";
-  document.body.appendChild(el);
-  el.select();
-  document.execCommand("copy");
-  document.body.removeChild(el);
-  toast.success("Вы успешно скопировали ссылку!");
-}
+// function copyToClipboard() {
+//   const el = document.createElement("textarea");
+//   el.value = urlReferral.value;
+//   el.setAttribute("readonly", "");
+//   el.style.position = "absolute";
+//   el.style.left = "-9999px";
+//   document.body.appendChild(el);
+//   el.select();
+//   document.execCommand("copy");
+//   document.body.removeChild(el);
+//   toast.success("Вы успешно скопировали ссылку!");
+// }
 
-async function updateBalance() {
-  let sum = 0;
-  isLoading.value = true;
-  for (const element of clientsReferred.value) {
-    if (!element.isAccrued) {
-      ourRansomRows.value = await storeRansom.getRansomRowsByFromNameWithoutCell(
-        element.referrer,
-        "OurRansom"
-      );
+// async function updateBalance() {
+//   let sum = 0;
+//   isLoading.value = true;
+//   for (const element of clientsReferred.value) {
+//     if (!element.isAccrued) {
+//       ourRansomRows.value = await storeRansom.getRansomRowsByFromNameWithoutCell(
+//         element.referrer,
+//         "OurRansom"
+//       );
 
-      if (
-        ourRansomRows.value.reduce((acc, row) => acc + row.amountFromClient1, 0) >= 3000
-      ) {
-        await storeClients.updateBalanceStatus(element.referrer);
-        sum += 500;
-      } else {
-        console.log("Баланс никак не изменится!");
-      }
-    }
-  }
-  if (sum !== 0) {
-    await storeClients.updateBalanceSum(user.value.id, user.value.balance + sum);
-  }
-  let userData = await storeClients.getClientById(user.value.id);
-  user.value = userData;
-  isLoading.value = false;
-}
+//       if (
+//         ourRansomRows.value.reduce((acc, row) => acc + row.amountFromClient1, 0) >= 3000
+//       ) {
+//         await storeClients.updateBalanceStatus(element.referrer);
+//         sum += 500;
+//       } else {
+//         console.log("Баланс никак не изменится!");
+//       }
+//     }
+//   }
+//   if (sum !== 0) {
+//     await storeClients.updateBalanceSum(user.value.id, user.value.balance + sum);
+//   }
+//   let userData = await storeClients.getClientById(user.value.id);
+//   user.value = userData;
+//   isLoading.value = false;
+// }
 
 let showPassword = ref(false);
 let newPasswordRepeat = ref("");
@@ -188,7 +188,7 @@ let newPasswordRepeat = ref("");
     <div v-if="token">
       <div class="py-5">
         <h1 class="text-2xl mt-5 text-center">Изменить личные данные пользователя</h1>
-        <div class="mt-10">
+        <div class="mt-10 shadow-2xl p-10 border-2 border-dashed border-secondary-color">
           <div class="mb-5">
             <label for="phone" class="block text-sm font-medium leading-6 text-gray-900"
               >Телефон</label
@@ -320,7 +320,7 @@ let newPasswordRepeat = ref("");
             </div>
           </div>
           <h1 class="text-center font-bold text-red-500 mb-5">{{ errorTextValidation }}</h1>
-          <div class="flex items-center gap-5 max-sm:flex-col">
+          <div class="flex items-center justify-end gap-5 mt-10 max-sm:flex-col">
             <UIMainButton class="max-sm:w-full" @click="showChangePassword">Поменять пароль</UIMainButton>
             <UIMainButton class="max-sm:w-full" @click="saveChanges">Сохранить</UIMainButton>
           </div>

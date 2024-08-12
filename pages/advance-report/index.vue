@@ -1139,7 +1139,7 @@ watch(isOpenYM, (newValue) => {
             <div class="h-screen flex items-center justify-center font-bold">
               <div class="bg-white max-sm:px-3 max-w-[500px] p-10 rounded-2xl relative">
                 <Icon
-                  name="material-symbols:close-small"
+                  name="material-symbols:cancel-rounded-small"
                   size="40"
                   class="absolute top-0 right-0 hover:text-secondary-color duration-200 cursor-pointer"
                   @click="isShowCreditBalanceCash = !isShowCreditBalanceCash"
@@ -1173,7 +1173,7 @@ watch(isOpenYM, (newValue) => {
             <div class="h-screen flex items-center justify-center font-bold">
               <div class="bg-white max-sm:px-3 max-w-[500px] p-10 rounded-2xl relative">
                 <Icon
-                  name="material-symbols:close-small"
+                  name="material-symbols:cancel-rounded-small"
                   size="40"
                   class="absolute top-0 right-0 hover:text-secondary-color duration-200 cursor-pointer"
                   @click="isShowCreditBalanceOnline = !isShowCreditBalanceOnline"
@@ -1242,7 +1242,7 @@ watch(isOpenYM, (newValue) => {
                   </div>
                 </div>
                 <UIMainButton
-                  class="max-sm:w-full"
+                  class="max-sm:w-full max-w-[400px]"
                   v-if="user.role === 'ADMIN'"
                   @click="openModalAdmin"
                 >
@@ -1269,7 +1269,7 @@ watch(isOpenYM, (newValue) => {
                   </div>
                 </div>
                 <UIMainButton
-                  class="max-sm:w-full"
+                  class="max-sm:w-full max-w-[400px]"
                   v-if="user.username === 'Директор'"
                   @click="openModalAdminOOO"
                 >
@@ -1309,7 +1309,7 @@ watch(isOpenYM, (newValue) => {
             <div
               class="flex items-center mt-5 gap-3 w-full max-w-[400px] max-sm:max-w-full"
             >
-              <UIMainButton class="w-full" @click="openModal(rowData, 'CASH')">
+              <UIMainButton class="w-full max-sm:max-w-[400px] mx-auto" @click="openModal(rowData, 'CASH')">
                 Создание авансового документа (нал)
               </UIMainButton>
               <div class="max-sm:hidden">
@@ -1321,7 +1321,7 @@ watch(isOpenYM, (newValue) => {
               class="flex items-center gap-3 w-full max-w-[400px] max-sm:max-w-full"
               v-if="user.username === 'Директор'"
             >
-              <UIMainButton class="w-full" @click="openModal(rowData, 'ONLINE')">
+              <UIMainButton class="w-full max-sm:max-w-[400px] mx-auto" @click="openModal(rowData, 'ONLINE')">
                 Создание авансового документа (безнал)
               </UIMainButton>
               <div class="max-sm:hidden">
@@ -1872,7 +1872,7 @@ watch(isOpenYM, (newValue) => {
             <div
               class="flex items-center mt-5 gap-3 w-full max-w-[400px] max-sm:max-w-full"
             >
-              <UIMainButton class="w-full" @click="openModal(rowData, 'CASH')">
+              <UIMainButton class="w-full max-sm:max-w-[400px] mx-auto" @click="openModal(rowData, 'CASH')">
                 Создание авансового документа (нал)
               </UIMainButton>
               <div class="max-sm:hidden">
@@ -1884,7 +1884,7 @@ watch(isOpenYM, (newValue) => {
               class="flex items-center mt-5 gap-3 w-full max-w-[400px] max-sm:max-w-fulll"
               v-if="user.username === 'Директор'"
             >
-              <UIMainButton class="w-full" @click="openModal(rowData, 'ONLINE')">
+              <UIMainButton class="w-full max-sm:max-w-[400px] mx-auto" @click="openModal(rowData, 'ONLINE')">
                 Создание авансового документа (безнал)
               </UIMainButton>
               <div class="max-sm:hidden">

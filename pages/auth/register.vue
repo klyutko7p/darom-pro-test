@@ -330,7 +330,7 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
             <h1 class="text-red-700">{{ message }}</h1>
           </div>
           <div class="flex items-center justify-center">
-            <UIMainButton class="w-full" :disabled="isButtonDisabled || isBlocked"
+            <UIMainButton class="w-full max-sm:max-w-[400px]" :disabled="isButtonDisabled || isBlocked"
               >Зарегистрироваться</UIMainButton
             >
           </div>
@@ -353,7 +353,7 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
             <Icon
               @click="isShowConfirmationModal = !isShowConfirmationModal"
               class="hover:text-hover-color duration-200 cursor-pointer"
-              name="material-symbols:close-rounded"
+              name="material-symbols:cancel-rounded"
               size="24"
             />
           </div>

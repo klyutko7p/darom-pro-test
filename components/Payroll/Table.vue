@@ -299,10 +299,10 @@ watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
     class="flex justify-between items-center mb-3 gap-3 max-sm:items-end max-sm:gap-5 max-sm:flex-col"
   >
     <div class="flex items-center gap-3 max-sm:flex-col max-sm:w-full max-sm:items-start">
-      <UIMainButton class="max-sm:w-full" @click="createAdvanceReportAdvance"
+      <UIMainButton class="max-sm:w-full max-sm:max-w-[400px] mx-auto" @click="createAdvanceReportAdvance"
         >создать отчет по авансу</UIMainButton
       >
-      <UIMainButton class="max-sm:w-full" @click="createAdvanceReportZP"
+      <UIMainButton class="max-sm:w-full max-sm:max-w-[400px] mx-auto" @click="createAdvanceReportZP"
         >создать отчет по выплате зп</UIMainButton
       >
     </div>

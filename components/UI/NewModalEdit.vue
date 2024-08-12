@@ -16,7 +16,7 @@ const closeModal = () => {
         </h1>
         <Icon
           @click="closeModal"
-          name="material-symbols:close-rounded"
+          name="material-symbols:cancel-rounded"
           size="32"
           class="cursor-pointer hover:opacity-50 duration-200 ml-5"
         />

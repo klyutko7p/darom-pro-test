@@ -160,7 +160,7 @@ function exportToExcel() {
             class="exclude-row px-3 border-2 h-[60px]"
             v-if="user.username === 'Директор'"
           >
-            изменение
+            редакт.
           </th>
           <th scope="col" class="px-1 border-2">Дата</th>
           <th scope="col" class="px-1 border-2">ПВЗ</th>
@@ -170,7 +170,7 @@ function exportToExcel() {
           <th scope="col" class="px-1 border-2">Компания</th>
           <th scope="col" class="px-1 border-2">Создано</th>
           <th scope="col" class="px-1 border-2">Получил</th>
-          <th scope="col" class="px-1 border-2">Подтверждающий документ</th>
+          <th scope="col" class="px-1 border-2">Документ</th>
           <th scope="col" class="px-1 border-2">Получено</th>
           <th scope="col" class="px-1 border-2" v-if="user.username === 'Директор'">
             Тип
@@ -196,11 +196,11 @@ function exportToExcel() {
           <th scope="row" class="border-2 px-3">
             {{ storeUsers.getNormalizedDateWithoutTime(row.date) }}
           </th>
-          <th scope="row" class="px-5 border-2">
+          <th scope="row" class="border-2">
             {{ row.PVZ ? row.PVZ : "—" }}
           </th>
           <td class="whitespace-nowrap">{{ row.expenditure }}</td>
-          <td class="whitespace-nowrap px-5 border-2">
+          <td class="whitespace-nowrap px-2 border-2">
             {{ row.typeOfExpenditure }}
           </td>
           <td class="px-5 border-2">
