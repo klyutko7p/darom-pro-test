@@ -328,18 +328,24 @@ function clearFields() {
   selectedTypeOfExpenditure.value = [];
   startingDate.value = ""
   endDate.value = ""
+  month.value = new Date().getMonth() + 1;
   selected.value.start = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   selected.value.end = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
   filterRows();
 }
 
-// let watchSelectedValueStart = ref(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
-// let watchSelectedValueEnd = ref(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0))
-
+let watchSelectedValueStart = ref(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
+let watchSelectedValueEnd = ref(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0))
+let monthSelected = ref(new Date().getMonth() + 1);
+let typeSelected = ref("");
+const watchSelectedTypeOfExpenditure = ref<Array<string>>([]);
 
 const filterRows = async () => {
-  // watchSelectedValueStart.value = selected.value.start;
-  // watchSelectedValueEnd.value = selected.value.end;
+  watchSelectedValueStart.value = selected.value.start;
+  watchSelectedValueEnd.value = selected.value.end;
+  monthSelected.value = month.value;
+  typeSelected.value = type.value;
+  watchSelectedTypeOfExpenditure.value = selectedTypeOfExpenditure.value;
   filteredRows.value = rows.value?.slice();
   filteredRows.value = rows.value?.filter((row) => {
     return (
@@ -348,8 +354,6 @@ const filterRows = async () => {
     );
   });
 };
-
-watch([selectedTypeOfExpenditure], filterRows);
 
 import { sub, format, isSameDay, type Duration } from 'date-fns'
 
@@ -588,8 +592,8 @@ function selectRange(duration: Duration) {
                 :rows="filteredRows?.filter((row) => row.company === company)"
                 :user="user"
                 :week="selectedWeek"
-                :month="month"
-                :type="type"
+                :month="monthSelected"
+                :type="typeSelected"
                 :isDateFilter="isDateFilter"
                 :rows-delivery="
                   rowsDelivery?.filter((row) => row.nameOfAction === company)
@@ -597,9 +601,9 @@ function selectRange(duration: Duration) {
                 :rows-balance="rowsBalance"
                 :rows-our-ransom="rowsOurRansom"
                 :company="company"
-                :startingDate="selected.start"
-                :endDate="selected.end"
-                :selectedTypeOfExpenditure="selectedTypeOfExpenditure"
+                :startingDate="watchSelectedValueStart"
+                :endDate="watchSelectedValueEnd"
+                :selectedTypeOfExpenditure="watchSelectedTypeOfExpenditure"
               />
             </div>
           </div>
@@ -614,15 +618,16 @@ function selectRange(duration: Duration) {
                 :rows="filteredRows"
                 :user="user"
                 :week="selectedWeek"
-                :month="month"
-                :type="type"
+                :month="monthSelected"
+                :type="typeSelected"
                 :rows-balance="rowsBalance"
                 :rows-delivery="rowsDelivery"
                 :rows-our-ransom="rowsOurRansom"
                 :company="'Все'"
-                :startingDate="selected.start"
-                :endDate="selected.end"
+                :startingDate="watchSelectedValueStart"
+                :endDate="watchSelectedValueEnd"
                 :isDateFilter="isDateFilter"
+                :selectedTypeOfExpenditure="watchSelectedTypeOfExpenditure"
                 @return-total="returnTotal"
               />
             </div>
