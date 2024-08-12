@@ -333,7 +333,13 @@ function clearFields() {
   filterRows();
 }
 
+// let watchSelectedValueStart = ref(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
+// let watchSelectedValueEnd = ref(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0))
+
+
 const filterRows = async () => {
+  // watchSelectedValueStart.value = selected.value.start;
+  // watchSelectedValueEnd.value = selected.value.end;
   filteredRows.value = rows.value?.slice();
   filteredRows.value = rows.value?.filter((row) => {
     return (

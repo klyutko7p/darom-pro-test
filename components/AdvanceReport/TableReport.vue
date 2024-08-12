@@ -690,7 +690,9 @@ function clearTotalSums() {
   sumOfArray2Total.value = 0;
   sumOfArray3Total.value = 0;
 }
+
 watch([props.rows, totalRows, filteredRows.value, props.month], clearTotalSums);
+watch([props.rows, totalRows, filteredRows.value, props.month], updateCurrentPageData);
 watch(() => props.month, clearTotalSums);
 watch(() => props.month, updateCurrentPageData);
 watch(() => props.type, clearTotalSums);
@@ -701,7 +703,7 @@ watch(() => props.endDate, clearTotalSums);
 watch(() => props.endDate, updateCurrentPageData);
 watch(() => props.isDateFilter, clearTotalSums);
 watch(() => props.isDateFilter, updateCurrentPageData);
-watch([props.rows, totalRows, filteredRows.value, props.month], updateCurrentPageData);
+
 
 let pvz = ref([
   "Ряженое",

@@ -1181,13 +1181,13 @@ function getAllSum() {
 }
 
 function getProfitRowsSum() {
-  let newStartingDate = new Date(selected.value.start.value);
+  let newStartingDate = new Date(selected.value.start);
   newStartingDate.setHours(0);
   newStartingDate.setMinutes(0);
   newStartingDate.setSeconds(0);
   newStartingDate.setMilliseconds(0);
 
-  let newEndDate = new Date(selected.value.end.value);
+  let newEndDate = new Date(selected.value.end);
   newEndDate.setHours(23);
   newEndDate.setMinutes(59);
   newEndDate.setSeconds(59);
@@ -1302,13 +1302,13 @@ function reduceArrayProfitManager(array: any[], flag: string): number {
 }
 
 function getProfitManagerRowsSum() {
-  let newStartingDate = new Date(selected.value.start.value);
+  let newStartingDate = new Date(selected.value.start);
   newStartingDate.setHours(0);
   newStartingDate.setMinutes(0);
   newStartingDate.setSeconds(0);
   newStartingDate.setMilliseconds(0);
 
-  let newEndDate = new Date(selected.value.end.value);
+  let newEndDate = new Date(selected.value.end);
   newEndDate.setHours(23);
   newEndDate.setMinutes(59);
   newEndDate.setSeconds(59);
@@ -2232,11 +2232,11 @@ let pvzDataOriginally = [
 
             <div
               v-if="showFilters"
-              class="border-2 border-gray-300 p-3 mt-3 border-dashed"
+              class="border-2 border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
             >
-              <div class="grid grid-cols-2 max-xl:grid-cols-2 max-md:grid-cols-1">
-                <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-                  <h1>Показать для ПВЗ:</h1>
+              <div class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5">
+                <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+                  <h1>Показать для ПВЗ</h1>
                   <select
                     v-if="
                       user.role !== 'PVZ' &&
@@ -2244,7 +2244,7 @@ let pvzDataOriginally = [
                       user.role !== 'PPVZ' &&
                       user.role !== 'RMANAGER'
                     "
-                    class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
                     v-model="selectedPVZ"
                   >
                     <option value="Все ПВЗ" selected>Все ПВЗ</option>
@@ -2254,7 +2254,7 @@ let pvzDataOriginally = [
                   </select>
                   <select
                     v-else-if="user.role === 'RMANAGER'"
-                    class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
                     v-model="selectedPVZ"
                   >
                     <option value="Все ППВЗ" selected>Все ППВЗ</option>
@@ -2264,7 +2264,7 @@ let pvzDataOriginally = [
                   </select>
                   <select
                     v-else
-                    class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
                     v-model="selectedPVZ"
                   >
                     <option v-for="pvzValue in user.PVZ">
@@ -2272,10 +2272,10 @@ let pvzDataOriginally = [
                     </option>
                   </select>
                 </div>
-                <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-                  <h1>Тип транзакции:</h1>
+                <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+                  <h1>Тип транзакции</h1>
                   <select
-                    class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
                     v-model="selectedTypeOfTransaction"
                   >
                     <option
@@ -2307,8 +2307,7 @@ let pvzDataOriginally = [
                       v-if="
                         user.role !== 'PVZ' &&
                         user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ' &&
-                        user.role !== 'RMANAGER'
+                        user.role !== 'PPVZ'
                       "
                       value="Баланс безнал"
                     >
@@ -2364,43 +2363,84 @@ let pvzDataOriginally = [
                     </option>
                   </select>
                 </div>
-                <div
-                  class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5"
+                <UPopover
+                  :popper="{ placement: 'auto' }"
+                  class="block max-sm:hidden my-5 max-w-[220px]"
                 >
-                  <div class="flex items-center gap-3 mr-5">
-                    <h1 class="max-sm:mr-3">С</h1>
-                    <input
-                      class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                      type="date"
-                      placeholder="ДД.ММ.ГГГГ"
-                      onchange="this.className=(this.value!=''?'has-value':'')"
-                      v-model="selected.value.start"
-                    />
-                  </div>
-                  <div class="flex items-center gap-3 max-sm:mb-7">
-                    <h1>По</h1>
-                    <input
-                      class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                      type="date"
-                      placeholder="ДД.ММ.ГГГГ"
-                      onchange="this.className=(this.value!=''?'has-value':'')"
-                      v-model="selected.value.end"
-                    />
-                  </div>
-                </div>
+                  <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
+                    {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
+                    {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
+                  </UButton>
+
+                  <template #panel="{ close }">
+                    <div
+                      class="flex items-center sm:divide-x divide-gray-200 dark:divide-gray-800"
+                    >
+                      <div class="hidden sm:flex flex-col py-4">
+                        <UButton
+                          v-for="(range, index) in ranges"
+                          :key="index"
+                          :label="range.label"
+                          color="white"
+                          variant="ghost"
+                          class="rounded-none px-6"
+                          :class="[
+                            isRangeSelected(range.duration)
+                              ? 'bg-gray-100 dark:bg-gray-800'
+                              : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                          ]"
+                          truncate
+                          @click="selectRange(range.duration)"
+                        />
+                      </div>
+
+                      <DatePicker v-model="selected" @close="close" />
+                    </div>
+                  </template>
+                </UPopover>
+                <UPopover
+                  :overlay="true"
+                  :popper="{ placement: 'auto' }"
+                  class="hidden max-sm:block mx-auto max-w-[220px] my-5"
+                >
+                  <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
+                    {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
+                    {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
+                  </UButton>
+
+                  <template #panel="{ close }">
+                    <div
+                      class="flex items-center sm:divide-x divide-gray-200 dark:divide-gray-800"
+                    >
+                      <div class="hidden sm:flex flex-col py-4">
+                        <UButton
+                          v-for="(range, index) in ranges"
+                          :key="index"
+                          :label="range.label"
+                          color="white"
+                          variant="ghost"
+                          class="rounded-none px-6"
+                          :class="[
+                            isRangeSelected(range.duration)
+                              ? 'bg-gray-100 dark:bg-gray-800'
+                              : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                          ]"
+                          truncate
+                          @click="selectRange(range.duration)"
+                        />
+                      </div>
+
+                      <DatePickerSingleMonth v-model="selected" @close="close" />
+                    </div>
+                  </template>
+                </UPopover>
               </div>
               <div class="flex justify-end mb-3">
                 <UIActionButton @click="clearFields">Очистить фильтры</UIActionButton>
               </div>
             </div>
 
-            <div
-              v-if="
-                selectedTypeOfTransaction !== 'Доставка' &&
-                user.role !== 'RMANAGER' &&
-                user.role !== 'PPVZ'
-              "
-            >
+            <div v-if="selectedTypeOfTransaction !== 'Доставка'">
               <div class="text-center text-2xl mt-10">
                 <h1>Итого</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
@@ -2408,23 +2448,8 @@ let pvzDataOriginally = [
                 </h1>
               </div>
             </div>
-
             <div
-              v-else-if="
-                selectedTypeOfTransaction !== 'Доставка' &&
-                (user.role === 'RMANAGER' || user.role === 'PPVZ')
-              "
-            >
-              <div class="text-center text-2xl mt-10">
-                <h1>Баланс ППВЗ</h1>
-                <h1 class="font-bold text-secondary-color text-4xl mt-3">
-                  {{ formatNumber(Math.ceil(allSum)) }} ₽
-                </h1>
-              </div>
-            </div>
-
-            <div
-              v-else-if="selectedTypeOfTransaction === 'Доставка'"
+              v-else
               class="flex items-center justify-center max-md:flex-col gap-24 max-md:gap-0"
             >
               <div class="text-center text-2xl mt-10">
