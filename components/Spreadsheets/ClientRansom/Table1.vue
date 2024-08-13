@@ -458,17 +458,6 @@ async function checkPaymentStatus(qrcId: string) {
         >Оплата онлайн (QR)
       </UIActionButton2>
       <UIActionButton2
-        v-if="
-          user.additionally2 === 'WRITE' &&
-          (user.username === 'Директор' ||
-            user.username === 'Горцуева' ||
-            user.username === 'Светлана1' ||
-            user.username === 'Светлана2')
-        "
-        @click="updateDeliveryRows('additionally')"
-        >Оплата онлайн (Старый метод)
-      </UIActionButton2>
-      <UIActionButton2
         v-if="user.additionally2 === 'WRITE'"
         @click="showPayRejectClient = !showPayRejectClient"
         >Отказ клиент
@@ -510,9 +499,9 @@ async function checkPaymentStatus(qrcId: string) {
         >Оплата наличными
       </UIActionButton2>
       <UIActionButton2
-        v-if="user.additionally2 === 'WRITE'"
-        @click="updateDeliveryRows('additionally')"
-        >Оплачено онлайн
+        v-if="user.additionally2 === 'WRITE' && getAllSum > 0"
+        @click="openModalQR"
+        >Оплата онлайн (QR)
       </UIActionButton2>
       <UIActionButton2
         v-if="user.additionally2 === 'WRITE'"

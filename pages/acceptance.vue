@@ -187,7 +187,7 @@ let selectedPVZ = ref("");
               v-model="scanStringItem"
               @input="scanItem"
             />
-            <div class="w-full gap-10 flex flex-col">
+            <div class="w-full gap-10 flex flex-col-reverse">
               <div v-for="row in arrayOfRows" class="border-2 border-dashed border-secondary-color p-5">
                 <div v-if="'clientLink1' in row">
                   <div class="mt-5 flex items-center justify-between">
@@ -267,7 +267,7 @@ let selectedPVZ = ref("");
               v-model="scanStringItem"
               @input="scanItem"
             />
-            <div class="w-full gap-10 flex flex-col">
+            <div class="w-full gap-10 flex flex-col-reverse">
               <div v-for="row in arrayOfRows" class="border-2 border-dashed border-secondary-color p-5">
                 <div v-if="'clientLink1' in row">
                   <div class="mt-5 flex items-center justify-between">
