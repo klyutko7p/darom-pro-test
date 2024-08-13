@@ -40,7 +40,10 @@ const ranges = [
   { label: 'Последний год', duration: { years: 1 } }
 ]
 
-const selected = ref({ start: sub(new Date(), { years: 1 }), end: new Date() })
+const selected = ref({
+  start: new Date(new Date().getFullYear(), 0, 1),
+  end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
+})
 
 function isRangeSelected(duration: Duration) {
   if (duration.month === 'current') {
