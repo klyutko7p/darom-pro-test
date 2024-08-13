@@ -30,10 +30,10 @@ export default defineEventHandler(async (event) => {
       if (row.additionally !== null) newRow.ad = row.additionally;
       if (row.deliveredKGT !== 0) newRow.dk = row.deliveredKGT;
       if (row.amountFromClient1 !== undefined) newRow.ac = row.amountFromClient1;
-      if (row.issued !== null) newRow.is = row.issued;
-      if (row.priceSite !== undefined) newRow.ps = row.priceSite;
-      if (row.deleted !== null) newRow.del = row.deleted;
-      if (row.created_at !== undefined) newRow.ca = row.created_at;
+      if (row.issued !== null) newRow.i = row.issued;
+      if (row.priceSite !== undefined) newRow.p = row.priceSite;
+      if (row.deleted !== null) newRow.d = row.deleted;
+      if (row.created_at !== undefined) newRow.c = row.created_at;
 
       return newRow;
     });

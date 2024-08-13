@@ -152,7 +152,7 @@ function getAllSumDirector() {
     ?.filter(
       (row) =>
         row.createdUser === "Директор" &&
-        (row.issuedUser === "" || row.issuedUser === null) &&
+        !row.issuedUser &&
         row.type === "Нал" &&
         row.typeOfExpenditure !== "Кредитовый баланс нал" &&
         row.typeOfExpenditure !== "Перевод с баланса безнал"
@@ -248,7 +248,7 @@ function getAllSumDirector() {
     ?.filter(
       (row) =>
         row.createdUser === "Директор" &&
-        row.issuedUser === "" &&
+        !row.issuedUser &&
         row.type === "Безнал" &&
         row.typeOfExpenditure !== "Перевод с баланса нал" &&
         row.typeOfExpenditure !== "Кредитовый баланс безнал"
@@ -662,8 +662,8 @@ import { createClient } from "@supabase/supabase-js";
 import { useToast } from "vue-toastification";
 
 const supabase = createClient(
-  "https://mgbbkkgyorhwryabwabx.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1nYmJra2d5b3Jod3J5YWJ3YWJ4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwMzE0NjQ5OCwiZXhwIjoyMDE4NzIyNDk4fQ.Ogcld2z2P5M3V5N2yEpyfmHPsXor9Mv_5fUya5wgEoY"
+  "https://fomoljxhkywsdgnchewy.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvbW9sanhoa3l3c2RnbmNoZXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM1ODMwMTksImV4cCI6MjAzOTE1OTAxOX0.ItZhBr3_OBP0nii6RX-jy9Q7hu2qvNQ2UBVZNJyZDFs"
 );
 
 async function createRow() {
@@ -959,7 +959,7 @@ function getAllSumFromName(username: string) {
   let sumOfPVZ3 = originallyRows.value
     ?.filter(
       (row) =>
-        row.createdUser === username && (row.issuedUser === "" || row.issuedUser === null)
+        row.createdUser === username && !row.issuedUser
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
@@ -1006,7 +1006,7 @@ function getAllSumFromEmployees() {
         ?.filter(
           (row) =>
             row.createdUser === username &&
-            (row.issuedUser === "" || row.issuedUser === null)
+            !row.issuedUser
         )
         .reduce((acc, value) => acc + +value.expenditure, 0);
       sumOfPVZ = sumOfPVZ === undefined ? 0 : sumOfPVZ;
@@ -1071,7 +1071,7 @@ function closeAdvanceReportEmployee() {
   if (isFirstClick) {
     showBalanceEmployees.value = !showBalanceEmployees.value;
     selectedUser.value = "Директор";
-    isFirstClick.value = false; 
+    isFirstClick.value = false;
   }
 }
 
@@ -1139,7 +1139,7 @@ watch(isOpenYM, (newValue) => {
             <div class="h-screen flex items-center justify-center font-bold">
               <div class="bg-white max-sm:px-3 max-w-[500px] p-10 rounded-2xl relative">
                 <Icon
-                  name="material-symbols:cancel-rounded-small"
+                  name="material-symbols:cancel-rounded"
                   size="40"
                   class="absolute top-0 right-0 hover:text-secondary-color duration-200 cursor-pointer"
                   @click="isShowCreditBalanceCash = !isShowCreditBalanceCash"
@@ -1173,7 +1173,7 @@ watch(isOpenYM, (newValue) => {
             <div class="h-screen flex items-center justify-center font-bold">
               <div class="bg-white max-sm:px-3 max-w-[500px] p-10 rounded-2xl relative">
                 <Icon
-                  name="material-symbols:cancel-rounded-small"
+                  name="material-symbols:cancel-rounded"
                   size="40"
                   class="absolute top-0 right-0 hover:text-secondary-color duration-200 cursor-pointer"
                   @click="isShowCreditBalanceOnline = !isShowCreditBalanceOnline"
@@ -1309,7 +1309,10 @@ watch(isOpenYM, (newValue) => {
             <div
               class="flex items-center mt-5 gap-3 w-full max-w-[400px] max-sm:max-w-full"
             >
-              <UIMainButton class="w-full max-sm:max-w-[400px] mx-auto" @click="openModal(rowData, 'CASH')">
+              <UIMainButton
+                class="w-full max-sm:max-w-[400px] mx-auto"
+                @click="openModal(rowData, 'CASH')"
+              >
                 Создание авансового документа (нал)
               </UIMainButton>
               <div class="max-sm:hidden">
@@ -1321,7 +1324,10 @@ watch(isOpenYM, (newValue) => {
               class="flex items-center gap-3 w-full max-w-[400px] max-sm:max-w-full"
               v-if="user.username === 'Директор'"
             >
-              <UIMainButton class="w-full max-sm:max-w-[400px] mx-auto" @click="openModal(rowData, 'ONLINE')">
+              <UIMainButton
+                class="w-full max-sm:max-w-[400px] mx-auto"
+                @click="openModal(rowData, 'ONLINE')"
+              >
                 Создание авансового документа (безнал)
               </UIMainButton>
               <div class="max-sm:hidden">
@@ -1872,7 +1878,10 @@ watch(isOpenYM, (newValue) => {
             <div
               class="flex items-center mt-5 gap-3 w-full max-w-[400px] max-sm:max-w-full"
             >
-              <UIMainButton class="w-full max-sm:max-w-[400px] mx-auto" @click="openModal(rowData, 'CASH')">
+              <UIMainButton
+                class="w-full max-sm:max-w-[400px] mx-auto"
+                @click="openModal(rowData, 'CASH')"
+              >
                 Создание авансового документа (нал)
               </UIMainButton>
               <div class="max-sm:hidden">
@@ -1884,7 +1893,10 @@ watch(isOpenYM, (newValue) => {
               class="flex items-center mt-5 gap-3 w-full max-w-[400px] max-sm:max-w-fulll"
               v-if="user.username === 'Директор'"
             >
-              <UIMainButton class="w-full max-sm:max-w-[400px] mx-auto" @click="openModal(rowData, 'ONLINE')">
+              <UIMainButton
+                class="w-full max-sm:max-w-[400px] mx-auto"
+                @click="openModal(rowData, 'ONLINE')"
+              >
                 Создание авансового документа (безнал)
               </UIMainButton>
               <div class="max-sm:hidden">

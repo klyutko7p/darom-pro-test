@@ -461,10 +461,10 @@ export const useRansomStore = defineStore("ransom", () => {
     if (row.ad !== undefined) originalRow.additionally = row.ad;
     if (row.dk !== undefined) originalRow.deliveredKGT = row.dk;
     if (row.ac !== undefined) originalRow.amountFromClient1 = row.ac;
-    if (row.is !== undefined) originalRow.issued = row.is;
-    if (row.ps !== undefined) originalRow.priceSite = row.ps;
-    if (row.del !== undefined) originalRow.deleted = row.del;
-    if (row.ca !== undefined) originalRow.created_at = row.ca;
+    if (row.i !== undefined) originalRow.issued = row.i;
+    if (row.p !== undefined) originalRow.priceSite = row.p;
+    if (row.d !== undefined) originalRow.deleted = row.d;
+    if (row.c !== undefined) originalRow.created_at = row.c;
 
     return originalRow;
   }
@@ -632,15 +632,9 @@ export const useRansomStore = defineStore("ransom", () => {
         if (row.percentClient === undefined) row.percentClient = 10;
         if (row.priceSite === undefined || row.priceSite === 0)
           row.priceSite = 0;
-        if (
-          row.deliveredKGT === undefined ||
-          row.deliveredKGT === 0 ||
-          row.deliveredKGT === ""
-        )
-          row.deliveredKGT = 0;
-        if (row.productName === undefined || row.productName === "")
-          row.productName = "";
-        if (row.prepayment === undefined) row.prepayment = 0;
+        if (!row.deliveredKGT) row.deliveredKGT = 0;
+        if (!row.productName) row.productName = "";
+        if (!row.prepayment) row.prepayment = 0;
 
         row.updatedUser = username;
         row.updated_at = new Date().toISOString();
@@ -665,8 +659,8 @@ export const useRansomStore = defineStore("ransom", () => {
           if (row.priceSite > row.prepayment) {
             row.amountFromClient1 = Math.ceil(
               row.priceSite +
-              (row.priceSite * row.percentClient) / 100 -
-              row.prepayment
+                (row.priceSite * row.percentClient) / 100 -
+                row.prepayment
             );
             if (row.percentClient == 0) {
               row.profit1 = row.deliveredKGT;
@@ -678,13 +672,13 @@ export const useRansomStore = defineStore("ransom", () => {
             roundToNearestTen(
               row.priceSite + (row.priceSite * row.percentClient) / 100
             ) -
-            row.prepayment !==
+              row.prepayment !==
             0
           ) {
             row.amountFromClient1 = Math.ceil(
               row.priceSite +
-              (row.priceSite * row.percentClient) / 100 -
-              row.prepayment
+                (row.priceSite * row.percentClient) / 100 -
+                row.prepayment
             );
             if (row.percentClient == 0) {
               row.profit1 = row.deliveredKGT;
@@ -695,7 +689,7 @@ export const useRansomStore = defineStore("ransom", () => {
             roundToNearestTen(
               row.priceSite + (row.priceSite * row.percentClient) / 100
             ) -
-            row.prepayment ===
+              row.prepayment ===
             0
           ) {
             row.amountFromClient1 = 0;
@@ -710,15 +704,10 @@ export const useRansomStore = defineStore("ransom", () => {
         if (row.percentClient === undefined) row.percentClient = 10;
         if (row.priceProgram === undefined || row.priceProgram === 0)
           row.priceProgram = 0;
-        if (
-          row.deliveredKGT === undefined ||
-          row.deliveredKGT === 0 ||
-          row.deliveredKGT === ""
-        )
-          row.deliveredKGT = 0;
-        if (row.productName === undefined || row.productName === "")
+        if (!row.deliveredKGT) row.deliveredKGT = 0;
+        if (!row.productName)
           row.productName = "";
-        if (row.prepayment === undefined) row.prepayment = 0;
+        if (!row.prepayment) row.prepayment = 0;
 
         row.updatedUser = username;
         row.updated_at = new Date().toISOString();

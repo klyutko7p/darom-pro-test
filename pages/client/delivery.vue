@@ -45,8 +45,8 @@ import { createClient } from "@supabase/supabase-js";
 import { useToast } from "vue-toastification";
 
 const supabase = createClient(
-  "https://mgbbkkgyorhwryabwabx.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1nYmJra2d5b3Jod3J5YWJ3YWJ4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwMzE0NjQ5OCwiZXhwIjoyMDE4NzIyNDk4fQ.Ogcld2z2P5M3V5N2yEpyfmHPsXor9Mv_5fUya5wgEoY"
+  "https://fomoljxhkywsdgnchewy.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvbW9sanhoa3l3c2RnbmNoZXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM1ODMwMTksImV4cCI6MjAzOTE1OTAxOX0.ItZhBr3_OBP0nii6RX-jy9Q7hu2qvNQ2UBVZNJyZDFs"
 );
 
 let rowData = ref({} as IClientRansom);
@@ -227,7 +227,7 @@ let isShowModal = ref(false);
           >
             <div class="absolute top-0 right-0">
               <Icon
-                name="material-symbols:cancel-rounded-small"
+                name="material-symbols:cancel-rounded"
                 size="40"
                 class="cursor-pointer hover:text-secondary-color duration-200"
                 @click="isShowModal = !isShowModal"

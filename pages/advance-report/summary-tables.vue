@@ -115,7 +115,7 @@ function getAllSum() {
     ?.filter(
       (row) =>
         row.createdUser === user.value.username &&
-        row.issuedUser === "" &&
+        !row.issuedUser &&
         row.type === "Нал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -183,7 +183,7 @@ function getAllSum() {
     ?.filter(
       (row) =>
         row.createdUser === user.value.username &&
-        row.issuedUser === "" &&
+        !row.issuedUser &&
         row.type === "Безнал"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
