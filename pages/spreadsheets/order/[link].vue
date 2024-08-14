@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
+import { useToast } from "vue-toastification";
 const storeUsers = useUsersStore();
 const storeRansom = useRansomStore();
 const route = useRoute();
 const router = useRouter();
 let link = route.params.link as string;
+
+const toast = useToast();
 
 let isLoading = ref(false);
 
@@ -157,6 +160,12 @@ onMounted(async () => {
 
   await createModalQR();
   isLoading.value = false;
+
+  const someRowsPaidNull = rows.value.some((row) => row.paid === null);
+
+  if (link.startsWith("3") && someRowsPaidNull) {
+    await checkPayment();
+  }
 });
 
 function getNumber(phoneNumberData: string) {
@@ -188,6 +197,76 @@ async function createModalQR() {
     );
     qrBody.value = await storeQR.getQRCode(qrBodyInfo.value.Data.qrcId);
   }
+}
+
+let isOpenModalQR = ref(false);
+let isGeneratedQR = ref(false);
+let isOpenModalStatus = ref(false);
+const paymentStatusMessage = ref<string>("");
+let intervalId = ref();
+
+async function updateDeliveryRows() {
+  let ransomRow = copyRows.value;
+  let nameOfWholesaler = ransomRow[ransomRow.length - 1].name;
+  let rowsWithNoPaid = copyRows.value.filter((row) => !row.paid);
+  let ids = rowsWithNoPaid.map((row) => row.id);
+  isLoading.value = true;
+  await storeRansom.updateDeliveryRowsStatus(
+    ids,
+    "paid1",
+    "Delivery",
+    nameOfWholesaler
+  );
+  rows.value = await storeRansom.getRansomRowsByLink(link, "Delivery");
+
+  if (rows.value) {
+    copyRows.value = [...rows.value];
+    let ransomRow = copyRows.value;
+    phoneNumber.value = copyRows.value[0].fromName;
+    dispatchPVZ.value = ransomRow[ransomRow.length - 1].dispatchPVZ;
+    cell.value = ransomRow[ransomRow.length - 1].cell;
+    value.value = `${dispatchPVZ.value}/${phoneNumber.value}/${cell.value}`;
+  }
+
+  disableReceivedItems();
+  isLoading.value = false;
+}
+
+async function checkPaymentStatus(qrcId: string) {
+  const interval = 5000;
+
+  intervalId.value = setInterval(async () => {
+    try {
+      let paymentData = (await storeQR.getPaymentStatusQR(qrcId)) as QRPaymentStatus;
+
+      if (
+        paymentData.Data &&
+        paymentData.Data.paymentList &&
+        paymentData.Data.paymentList.length > 0
+      ) {
+        const status = paymentData.Data.paymentList[0].status;
+        paymentStatusMessage.value = status;
+
+        if (status === "Accepted") {
+          toast.success("Оплата прошла успешно!");
+          await updateDeliveryRows()
+          clearInterval(intervalId.value);
+        } else if (status === "Rejected") {
+          toast.error("Оплата была отклонена. Попробуйте ещё раз!");
+          clearInterval(intervalId.value);
+        }
+      } else {
+        console.error("Статус платежа не найден или не существует.");
+      }
+    } catch (error) {
+      console.error("Ошибка при получении статуса платежа:", error);
+      clearInterval(intervalId.value);
+    }
+  }, interval);
+}
+
+async function checkPayment() {
+  await checkPaymentStatus(qrBodyInfo.value.Data.qrcId);
 }
 
 let value = ref("");
