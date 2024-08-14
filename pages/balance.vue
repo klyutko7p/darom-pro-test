@@ -83,7 +83,9 @@ onMounted(async () => {
       balanceProfitRowsData,
       balanceProfitManagerRowsData,
       balanceDeliveryRowsData,
-      ransomRowsForBalanceOurRansomData,
+      ransomRowsForBalanceOurRansomDataPartOne,
+      ransomRowsForBalanceOurRansomDataPartTwo,
+      ransomRowsForBalanceOurRansomDataPartThree,
       ransomRowsForBalanceClientRansomData,
       pvzData,
     ] = await Promise.all([
@@ -94,7 +96,9 @@ onMounted(async () => {
       storeBalance.getBalanceProfitRows(),
       storeBalance.getBalanceProfitManagerRows(),
       storeBalance.getBalanceDeliveryRows(),
-      storeRansom.getRansomRowsForBalanceOurRansom(),
+      storeRansom.getRansomRowsForBalanceOurRansomPartOne(),
+      storeRansom.getRansomRowsForBalanceOurRansomPartTwo(),
+      storeRansom.getRansomRowsForBalanceOurRansomPartThree(),
       storeRansom.getRansomRowsForBalanceClientRansom(),
       storePVZ.getPVZ(),
     ]);
@@ -106,7 +110,7 @@ onMounted(async () => {
     rowsProfit.value = balanceProfitRowsData;
     rowsProfitManager.value = balanceProfitManagerRowsData;
     rowsDelivery.value = balanceDeliveryRowsData;
-    ourRansomRows.value = ransomRowsForBalanceOurRansomData;
+    ourRansomRows.value = [...ransomRowsForBalanceOurRansomDataPartOne, ...ransomRowsForBalanceOurRansomDataPartTwo, ...ransomRowsForBalanceOurRansomDataPartThree];
     clientRansomRows.value = ransomRowsForBalanceClientRansomData;
     pvz.value = pvzData;
 

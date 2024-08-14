@@ -30,14 +30,18 @@ onMounted(async () => {
   user.value = await storeUsers.getUser();
   rows.value = await storeAdvanceReports.getAdvancedReports();
 
-  const [ rowsOurRansomValue, rowsDeliveryValue, clientRansomRowsValue, rowsBalanceValue] = await Promise.all([
-    storeRansom.getRansomRowsForBalanceOurRansom(),
+  const [ ransomRowsForBalanceOurRansomDataPartOne,
+      ransomRowsForBalanceOurRansomDataPartTwo,
+      ransomRowsForBalanceOurRansomDataPartThree, rowsDeliveryValue, clientRansomRowsValue, rowsBalanceValue] = await Promise.all([
+    storeRansom.getRansomRowsForBalanceOurRansomPartOne(),
+      storeRansom.getRansomRowsForBalanceOurRansomPartTwo(),
+      storeRansom.getRansomRowsForBalanceOurRansomPartThree(),
     storeRansom.getRansomRowsForBalanceDelivery(),
     storeRansom.getRansomRowsForBalanceClientRansom(),
     storeBalance.getBalanceRows()
 ]);
   originallyRows.value = rows.value;
-  rowsOurRansom.value = rowsOurRansomValue;
+  rowsOurRansom.value = [...ransomRowsForBalanceOurRansomDataPartOne, ...ransomRowsForBalanceOurRansomDataPartTwo, ...ransomRowsForBalanceOurRansomDataPartThree];
   rowsDelivery.value = rowsDeliveryValue;
 
   if (user.value.role !== "ADMIN") {

@@ -453,6 +453,63 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  async function getRansomRowsForBalanceOurRansomPartOne() {
+    try {
+      let response = await fetch("/api/ransom/get-rows-for-balance-or-part-one", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsForBalanceOurRansomPartTwo() {
+    try {
+      let response = await fetch("/api/ransom/get-rows-for-balance-or-part-two", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsForBalanceOurRansomPartThree() {
+    try {
+      let response = await fetch("/api/ransom/get-rows-for-balance-or-part-three", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   function mapBackToOriginalFields(row: IOurRansom) {
     const originalRow = {};
 
@@ -1017,6 +1074,9 @@ export const useRansomStore = defineStore("ransom", () => {
   };
 
   return {
+    getRansomRowsForBalanceOurRansomPartOne,
+    getRansomRowsForBalanceOurRansomPartTwo,
+    getRansomRowsForBalanceOurRansomPartThree,
     createRansomRow,
     getRansomRows,
     updateRansomRow,
