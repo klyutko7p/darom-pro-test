@@ -24,6 +24,7 @@ onMounted(async () => {
   user.value = await storeUsers.getUser();
   isLoading.value = false;
   clients.value = await storeClients.getClients();
+  focusInput();
 });
 
 definePageMeta({
@@ -38,6 +39,10 @@ let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
 async function updateDeliveryRow(row: any, flag: any) {
   await storeRansom.updateDeliveryStatus(row, flag, "OurRansom", user.value.username);
+}
+
+function updatePage() {
+  location.reload();
 }
 
 async function acceptItem(row: any) {
@@ -62,10 +67,37 @@ async function acceptItem(row: any) {
           );
         }
         toast.success("Товар принят на ПВЗ!");
+        if (
+          user.value.username === "Гриценко" ||
+          user.value.username === "Коростелева" ||
+          user.value.username === "Гарник"
+        ) {
+          setTimeout(() => {
+            updatePage();
+          }, 3000);
+        }
       } else if (row.deliveredPVZ !== null) {
         toast.warning("Товар принят ранее!");
+        if (
+          user.value.username === "Гриценко" ||
+          user.value.username === "Коростелева" ||
+          user.value.username === "Гарник"
+        ) {
+          setTimeout(() => {
+            updatePage();
+          }, 3000);
+        }
       } else if (row.deliveredSC === null) {
         toast.warning("Товар неотсортирован!");
+        if (
+          user.value.username === "Гриценко" ||
+          user.value.username === "Коростелева" ||
+          user.value.username === "Гарник"
+        ) {
+          setTimeout(() => {
+            updatePage();
+          }, 3000);
+        }
       } else {
         toast.error("Неизвестная ошибка!");
       }
@@ -98,7 +130,7 @@ function scanItem() {
       await acceptItem(rowData);
       arrayOfRows.value.push(rowData);
     }
-    
+
     scannedLink.value = "";
     console.log(scannedLink);
   }, 1700);
@@ -143,7 +175,16 @@ function formatPhoneNumber(phoneNumber: string) {
   return maskedPhoneNumber;
 }
 
-let selectedPVZ = ref("");
+const selectedPVZ = ref(Cookies.get("selectedPVZ") || "");
+
+const updateCookies = () => {
+  Cookies.set("selectedPVZ", selectedPVZ.value, { expires: 7 });
+  console.log(selectedPVZ.value);
+};
+
+watch(selectedPVZ, (newValue) => {
+  Cookies.set("selectedPVZ", newValue, { expires: 7 });
+});
 </script>
 
 <template>
@@ -162,6 +203,7 @@ let selectedPVZ = ref("");
             <select
               class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
               v-model="selectedPVZ"
+              @change="updateCookies"
               name="pvz"
             >
               <option disabled value="">Выберите ПВЗ</option>
@@ -188,7 +230,10 @@ let selectedPVZ = ref("");
               @input="scanItem"
             />
             <div class="w-full gap-10 flex flex-col-reverse">
-              <div v-for="row in arrayOfRows" class="border-2 border-dashed border-secondary-color p-5">
+              <div
+                v-for="row in arrayOfRows"
+                class="border-2 border-dashed border-secondary-color p-5"
+              >
                 <div v-if="'clientLink1' in row">
                   <div class="mt-5 flex items-center justify-between">
                     <div>
@@ -268,7 +313,10 @@ let selectedPVZ = ref("");
               @input="scanItem"
             />
             <div class="w-full gap-10 flex flex-col-reverse">
-              <div v-for="row in arrayOfRows" class="border-2 border-dashed border-secondary-color p-5">
+              <div
+                v-for="row in arrayOfRows"
+                class="border-2 border-dashed border-secondary-color p-5"
+              >
                 <div v-if="'clientLink1' in row">
                   <div class="mt-5 flex items-center justify-between">
                     <div>
