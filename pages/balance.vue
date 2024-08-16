@@ -776,6 +776,7 @@ function getAllSum() {
       allSum.value -= 11110;
       allSum.value -= 1570;
       allSum.value -= 2005;
+      allSum.value -= 13100;
     } else if (selectedPVZ.value === "Все ППВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
