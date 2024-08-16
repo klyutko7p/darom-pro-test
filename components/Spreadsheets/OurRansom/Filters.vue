@@ -121,9 +121,10 @@ const filterRows = () => {
       (!selectedCell.value || row.cell === selectedCell.value) &&
       (!selectedFromName.value || row.fromName === selectedFromName.value) &&
       (!selectedProductName.value ||
-        row.productName
-          .toLowerCase()
-          .includes(selectedProductName.value.trim().toLowerCase())) &&
+        (row.productName &&
+          row.productName
+            .toLowerCase()
+            .includes(selectedProductName.value.trim().toLowerCase()))) &&
       (!selectedDispatchPVZ.value || row.dispatchPVZ === selectedDispatchPVZ.value) &&
       (!selectedOrderPVZ.value || row.orderPVZ === selectedOrderPVZ.value) &&
       (!selectedOrderAccount.value || row.orderAccount === selectedOrderAccount.value) &&
