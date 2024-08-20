@@ -1270,7 +1270,7 @@ function getProfitRowsSum() {
     allSumProfit.value = sum1.value + sum2.value - sumOfPVZ;
 
     if (selectedPVZ.value === "ППВЗ_5") {
-      allSumProfit.value += 6330;
+      allSumProfit.value += 9413;
     }
   }
 }

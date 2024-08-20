@@ -232,7 +232,7 @@ const items = [
                 Просмотреть
                 <a
                   class="font-bold underline text-secondary-color duration-200 cursor-pointer hover:opacity-50"
-                  href="https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/files/docx/requisite.docx?t=2024-08-19T23%3A56%3A36.401Z"
+                  href="https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/files/docx/requisite.docx"
                   >реквизиты юридического лица</a
                 >
               </p>
