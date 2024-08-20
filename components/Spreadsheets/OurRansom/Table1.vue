@@ -1086,7 +1086,12 @@ async function checkPaymentStatus(qrcId: string) {
                 :value="row.id"
                 :checked="isChecked(row.id)"
                 @change="handleCheckboxChange(row)"
-                :disabled="user.username === 'Кожемякина' || user.username === 'Гарник'"
+                :disabled="
+                  user.username === 'Кожемякина' ||
+                  user.username === 'Гарник' ||
+                  user.username === 'Коростелева' ||
+                  user.username === 'Гриценко'
+                "
               />
             </td>
             <td
