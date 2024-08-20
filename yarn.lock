@@ -1875,6 +1875,13 @@
   dependencies:
     "@iconify/types" "*"
 
+"@iconify-json/ci@^1.1.14":
+  version "1.1.14"
+  resolved "https://registry.yarnpkg.com/@iconify-json/ci/-/ci-1.1.14.tgz#cc580a9a530950480542200b3b7992d4cade92b2"
+  integrity sha512-i/idwyOyz11qT6zxTDaIUDt+mCdS9LBSoiT29KOqdOy27j3AfjHFOtKRaIbPcaO3gwJXr+S7LCd0UDc1WPJTEA==
+  dependencies:
+    "@iconify/types" "*"
+
 "@iconify-json/clarity@^1.1.14":
   version "1.1.14"
   resolved "https://registry.yarnpkg.com/@iconify-json/clarity/-/clarity-1.1.14.tgz#2a34b5e63a1cf97bb6a89e43337e3ef18df2a51f"
@@ -1886,6 +1893,20 @@
   version "1.1.11"
   resolved "https://registry.yarnpkg.com/@iconify-json/eos-icons/-/eos-icons-1.1.11.tgz#2da6a6f3949ed91fa853a36a0610f59154dc4cd8"
   integrity sha512-zOACSRM2yFQCCS6oxP+Khkw5gJdS+/ZdDNFSA1IuhLbczbdSIGCfDPnptxrhaEcs4LwhDEFXR0YJ9XuqrwRoEw==
+  dependencies:
+    "@iconify/types" "*"
+
+"@iconify-json/fluent@^1.1.62":
+  version "1.1.62"
+  resolved "https://registry.yarnpkg.com/@iconify-json/fluent/-/fluent-1.1.62.tgz#88fdb1319d408f2779aa01f941aedf406217e8fd"
+  integrity sha512-+k1+XlL158AZNL4SlAwNOUy1rQSpKptq7MiTOEgCfFtL1H2UYOkwHS/BnfrePhpqg8UQpwphhvuUgUJRcFXdew==
+  dependencies:
+    "@iconify/types" "*"
+
+"@iconify-json/gravity-ui@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@iconify-json/gravity-ui/-/gravity-ui-1.1.5.tgz#a21ab51167644e200fdcadeab4f280e0bc6420be"
+  integrity sha512-6mfIAuC2a5dKYSXElpBGDRjG1yjxn0W79yIdpTI+a8FlUnWKOOkmf+RNKciPA6xIOjjGl01/XFfuA6eXtO1OIg==
   dependencies:
     "@iconify/types" "*"
 
