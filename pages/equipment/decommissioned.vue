@@ -18,12 +18,6 @@ let allStateEquipments = ref<Array<string>>([]);
 onMounted(async () => {
   if (!token) {
     router.push("/auth/login");
-    return
-  }
-
-  if (user.value.username !== "Директор") {
-    router.push("/user/main");
-    return
   }
 
   isLoading.value = true;
@@ -90,7 +84,7 @@ function handleFilteredRows(filteredRowsData: IDecommissionedEquipmentRow[]) {
               >Показать оборудование</NuxtLink
             >
           </div>
-          <div class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 mt-10 pb-5 space-y-1">
+          <div class="bg-[#f8f9fd] px-5 pt-3 mt-10 pb-5 space-y-10">
             <EquipmentDecommissionedFilters
               v-if="rows"
               @filtered-rows="handleFilteredRows"

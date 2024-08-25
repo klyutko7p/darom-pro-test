@@ -130,13 +130,6 @@ function formatPhoneNumber(phoneNumber: string) {
         <h1>Возвраты</h1>
       </div>
       <div
-        v-if="
-          user.username === 'Волошина' ||
-          user.username === 'Шарафаненко' ||
-          user.username === 'Шведова' ||
-          user.username === 'Директор' ||
-          user.username === 'Горцуева'
-        "
         role="button"
         @click="router.push('/equipment')"
         tabindex="0"
@@ -155,8 +148,7 @@ function formatPhoneNumber(phoneNumber: string) {
           user.role === 'OFFICE' ||
           user.role === 'COURIER' ||
           user.username === 'Волошина' ||
-          user.role === 'RMANAGER' ||
-          user.username === 'КассаЯМ'
+          user.role === 'RMANAGER' || user.username === 'КассаЯМ'
         "
         role="button"
         @click="router.push('/advance-report')"
@@ -360,13 +352,6 @@ function formatPhoneNumber(phoneNumber: string) {
         <h1>Возвраты</h1>
       </div>
       <div
-        v-if="
-          user.username === 'Волошина' ||
-          user.username === 'Шарафаненко' ||
-          user.username === 'Шведова' ||
-          user.username === 'Директор' ||
-          user.username === 'Горцуева'
-        "
         role="button"
         @click="router.push('/equipment')"
         tabindex="0"
@@ -385,8 +370,7 @@ function formatPhoneNumber(phoneNumber: string) {
           user.role === 'OFFICE' ||
           user.role === 'COURIER' ||
           user.username === 'Волошина' ||
-          user.role === 'RMANAGER' ||
-          user.username === 'КассаЯМ'
+          user.role === 'RMANAGER' || user.username === 'КассаЯМ'
         "
         role="button"
         @click="router.push('/advance-report')"

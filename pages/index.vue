@@ -9,7 +9,7 @@ const controls = ["geolocationControl", "zoomControl", "typeSelector"];
 let selectedAddress = ref([47.98958366983051, 37.8955255423278]);
 function changeAddress(arrayCoordinates: Array<number>) {
   coordinates.value = arrayCoordinates;
-  zoomValue.value = 10;
+  zoomValue.value = 9;
 }
 
 let markers = [

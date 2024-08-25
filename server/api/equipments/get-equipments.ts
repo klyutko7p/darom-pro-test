@@ -2,23 +2,19 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-interface IRequestBody {
-  id: number;
-}
-
 export default defineEventHandler(async (event) => {
   try {
-    const { id } = await readBody<IRequestBody>(event);
-    const row = await prisma.equipmentRow.findUnique({
+    const equipments = await prisma.equipmentRow.findMany({
       include: {
         pvz: true,
         updatedUser: true,
+        DecommissionedEquipmentRow: true,
       },
-      where: {
-        id: id,
+      orderBy: {
+        id: 'desc',
       },
     });
-    return row;
+    return equipments;
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };

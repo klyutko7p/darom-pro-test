@@ -159,13 +159,6 @@ let isShowAddSettings = ref(false);
         <h1>Возвраты</h1>
       </div>
       <div
-        v-if="
-          user.username === 'Волошина' ||
-          user.username === 'Шарафаненко' ||
-          user.username === 'Шведова' ||
-          user.username === 'Директор' ||
-          user.username === 'Горцуева'
-        "
         role="button"
         @click="router.push('/equipment')"
         tabindex="0"
@@ -592,13 +585,6 @@ let isShowAddSettings = ref(false);
         <h1>Возвраты</h1>
       </div>
       <div
-        v-if="
-          user.username === 'Волошина' ||
-          user.username === 'Шарафаненко' ||
-          user.username === 'Шведова' ||
-          user.username === 'Директор' ||
-          user.username === 'Горцуева'
-        "
         role="button"
         @click="router.push('/equipment')"
         tabindex="0"
@@ -1028,13 +1014,6 @@ let isShowAddSettings = ref(false);
         <h1>Возвраты</h1>
       </div>
       <div
-        v-if="
-          user.username === 'Волошина' ||
-          user.username === 'Шарафаненко' ||
-          user.username === 'Шведова' ||
-          user.username === 'Директор' ||
-          user.username === 'Горцуева'
-        "
         role="button"
         @click="router.push('/equipment')"
         tabindex="0"

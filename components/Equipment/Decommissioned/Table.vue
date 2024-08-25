@@ -55,15 +55,15 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
 </script>
 
 <template>
-  <div v-if="!isLoading">
-    <div class="flex items-end justify-between mb-5 max-sm:flex-col max-sm:items-start">
+  <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 pt-3 mt-10 pb-5">
+    <div class="flex items-end justify-between mb-5">
       <div>
-        <h1 class="text-xl max-sm:text-lg font-bold mb-3 max-sm:mb-0">
+        <h1 class="text-xl font-bold mb-3">
           Списанного оборудования:
           <span class="text-secondary-color">{{ totalRows }} шт.</span>
         </h1>
       </div>
-      <div class="flex items-end max-sm:mt-2 max-lg:mt-5 max-lg:justify-between gap-20">
+      <div class="flex items-end max-lg:mt-5 max-lg:justify-between gap-20">
         <UTooltip
           text="Скачать EXCEL"
           :shortcuts="['xlsx']"
@@ -91,14 +91,14 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
           class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
         >
           <tr>
-            <th scope="col" class="px-1 py-2">списано</th>
-            <th scope="col" class="px-1 py-2 max-w-[150px]">название</th>
+            <th scope="col" class="py-2">Дата списания</th>
+            <th scope="col" class="px-1 py-2">название оборудования</th>
             <th scope="col" class="px-1 py-2">причина</th>
             <th scope="col" class="px-1 py-2">изменил</th>
-            <th scope="col" class="px-1 py-2">дата изм.</th>
+            <th scope="col" class="px-1 py-2">дата изменения</th>
             <th scope="col" class="px-1 py-2">пвз</th>
             <th scope="col" class="px-1 py-2">списал</th>
-            <th scope="col" class="py-2">удаление</th>
+            <th scope="col" class="px-1 py-2">удаление</th>
           </tr>
         </thead>
         <tbody class="bg-white">
@@ -106,7 +106,7 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
             <td class="border-[1px] max-sm:px-2 py-2">
               {{ storeUsers.getNormalizedDate(row.decommissionDate) }}
             </td>
-            <td class="border-[1px] max-w-[150px] max-sm:py-1 max-sm:px-1 max-md:min-w-[260px]">
+            <td class="border-[1px] max-sm:px-2">
               {{ row.equipmentRow.nameOfEquipment }}
             </td>
             <td class="border-[1px] max-sm:px-2">

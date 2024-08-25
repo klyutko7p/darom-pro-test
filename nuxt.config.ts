@@ -26,6 +26,7 @@ export default defineNuxtConfig({
     "nuxt-icon",
     "@nuxtjs/supabase",
     "@vite-pwa/nuxt",
+    "nuxt-swiper",
     "@formkit/auto-animate/nuxt",
     [
       "nuxt-vuefire",
@@ -43,6 +44,9 @@ export default defineNuxtConfig({
     ],
     "@nuxt/ui",
   ],
+    swiper: {
+    styleLang: "css",
+  },
   colorMode: {
     preference: 'light'
   },
