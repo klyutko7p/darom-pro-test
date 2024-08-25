@@ -14,6 +14,7 @@ async function updateStateRows(flag: string) {
     flag: flag,
   });
   checkedRows.value = [];
+  updateCurrentPageData();
 }
 
 async function updatePVZRows() {
@@ -60,8 +61,11 @@ const handleCheckboxChange = (row: IEquipmentRow): void => {
     checkedRows.value = checkedRows.value.filter((id) => id !== row.id);
   } else {
     checkedRows.value.push(row.id);
+    isOpen.value = true;
   }
-  isOpen.value = true;
+  if (!checkedRows.value.length) {
+    isAllSelected.value = false;
+  }
 };
 
 const perPage = ref(20000);
@@ -123,13 +127,32 @@ const items = [
 ];
 
 watch([props.rows, totalRows, props.user], updateCurrentPageData);
+
+const storeEquipments = useEquipmentsStore();
+let arrayWithModifiedRows = ref<Array<IEquipmentRow>>([]);
+async function getRowByIdFromInput(row: IEquipmentRow) {
+  arrayWithModifiedRows.value.push(row);
+  arrayWithModifiedRows.value = [...new Set(arrayWithModifiedRows.value)];
+  await storeEquipments.updateEquipments(arrayWithModifiedRows.value);
+}
+
+let isAllSelected = ref(false);
+function handleCheckboxChangeAll() {
+  if (isAllSelected.value) {
+    let arrayId = props.rows.filter((row) => !row.deleted).map((row) => row.id);
+    checkedRows.value = arrayId;
+    isOpen.value = true;
+  } else {
+    checkedRows.value = [];
+  }
+}
 </script>
 
 <template>
   <div v-if="!isLoading">
     <div class="flex items-end justify-between mb-5">
       <div>
-        <h1 class="text-xl font-bold mb-3">
+        <h1 class="text-xl max-sm:text-lg font-bold mb-3">
           Строк в таблице: <span class="text-secondary-color">{{ totalRows }} шт.</span>
         </h1>
       </div>
@@ -161,13 +184,20 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
           class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
         >
           <tr>
-            <th scope="col" class="py-2">выделение</th>
-            <th scope="col" class="pr-1 py-2">id</th>
+            <th scope="col" class="max-md:px-1">
+              <input
+                type="checkbox"
+                class=""
+                v-model="isAllSelected"
+                @change="handleCheckboxChangeAll()"
+              />
+            </th>
+            <th scope="col" class="py-2">id</th>
             <th scope="col" class="px-1 py-2">пвз</th>
-            <th scope="col" class="px-1 py-2">название оборудования</th>
+            <th scope="col" class="max-w-[150px]">название</th>
             <th scope="col" class="px-1 py-2">состояние</th>
             <th scope="col" class="px-1 py-2">изменил</th>
-            <th scope="col" class="px-1 py-2">дата создания/изменения</th>
+            <th scope="col" class="px-1">дата изм.</th>
           </tr>
         </thead>
         <tbody class="bg-white">
@@ -188,28 +218,34 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
             </td>
             <th
               scope="row"
-              class="font-bold border-[1px] max-sm:px-2 underline text-secondary-color whitespace-nowrap"
+              class="font-bold border-[1px] max-md:px-2 underline text-secondary-color whitespace-nowrap"
             >
               <NuxtLink
                 class="cursor-pointer hover:text-orange-200 duration-200"
-                :to="`/spreadsheets/record/1/${row.id}`"
+                :to="`/equipment/record/${row.id}`" target="_blank"
               >
                 {{ row.id }}
               </NuxtLink>
             </th>
-            <td class="border-[1px] max-sm:px-2 py-2">
+            <td class="border-[1px] max-md:px-2 py-2">
               {{ row.pvz.name }}
             </td>
-            <td class="border-[1px] max-sm:px-2">
-              {{ row.nameOfEquipment }}
+            <td class="border-[1px] max-w-[150px] max-sm:py-1 max-sm:px-1 max-md:min-w-[260px]">
+              <textarea
+                class="ring-1 ring-gray-200 focus:ring-2 focus:ring-black bg-transparent text-center mx-auto text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none px-2 h-[50px] w-full max-md:min-w-[250px] max-h-[100px]"
+                type="text"
+                v-model="row.nameOfEquipment"
+                @blur="getRowByIdFromInput(row)"
+              />
+              <span class="hidden">{{ row.nameOfEquipment }} ₽</span>
             </td>
-            <td class="border-[1px] max-sm:px-2">
+            <td class="border-[1px] max-md:px-2">
               {{ row.state }}
             </td>
-            <td class="border-[1px] max-sm:px-2">
+            <td class="border-[1px] max-md:px-2">
               {{ row.updatedUser.username }}
             </td>
-            <td class="border-[1px] max-sm:px-2">
+            <td class="border-[1px] max-md:px-2">
               {{ storeUsers.getNormalizedDate(row.updated_at) }}
             </td>
           </tr>
@@ -255,7 +291,14 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
               class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
             >
               <tr>
-                <th scope="col" class="py-2">выд.</th>
+                <th scope="col" class="max-md:px-1">
+                  <input
+                    type="checkbox"
+                    class=""
+                    v-model="isAllSelected"
+                    @change="handleCheckboxChangeAll()"
+                  />
+                </th>
                 <th scope="col" class="">пвз</th>
                 <th scope="col" class="">название</th>
                 <th scope="col" class="">состояние</th>
@@ -280,7 +323,10 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
                 <td class="border-[1px] py-1">
                   {{ row.pvz.name }}
                 </td>
-                <td class="border-[1px]">
+                <td
+                  :title="row.nameOfEquipment"
+                  class="border-[1px] overflow-hidden max-w-[100px]"
+                >
                   {{ row.nameOfEquipment }}
                 </td>
                 <td class="border-[1px]">
@@ -362,7 +408,6 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
         </UAccordion>
 
         <div
-          v-auto-animate
           v-if="checkedRows.length && user.username === 'Директор'"
           @click="updateDecommissionedRows()"
           class="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 flex-shrink-0 font-medium rounded-md text-sm gap-x-1.5 px-2.5 py-1.5 text-orange-500 dark:text-orange-400 bg-orange-50 hover:bg-orange-100 disabled:bg-orange-50 dark:bg-orange-950 dark:hover:bg-orange-900 dark:disabled:bg-orange-950 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-500 dark:focus-visible:ring-orange-400 inline-flex items-center mb-1.5 w-full cursor-pointer duration-100"
