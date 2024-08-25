@@ -21,6 +21,7 @@ onMounted(async () => {
     user.value.username === "Директор" ||
     user.value.username === "Горцуева"
   ) {
+    toast.success("Доступ разрешен");
   } else {
     toast.error("Доступ запрещён");
     router.push("/user/main");

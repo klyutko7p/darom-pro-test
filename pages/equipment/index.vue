@@ -15,44 +15,36 @@ let rows = ref<Array<IEquipmentRow>>([]);
 let allPVZ = ref<Array<PVZ>>([]);
 let allStateEquipments = ref<Array<string>>([]);
 
-const allowedUsers = ["Директор", "Горцуева", "Шведова", "Волошина", "Шарафаненко"];
-
-function filterAndAddDefaultPVZ(pvzData: PVZ[]) {
-  if (!pvzData.some((pvz) => pvz.id === 111111)) {
-    pvzData.unshift({ id: 111111, name: "Все ПВЗ" });
+onMounted(async () => {
+  if (!token) {
+    router.push("/auth/login");
   }
-  return pvzData.filter((pvz) => pvz.name !== "НаДом");
-}
 
-async function initializeUser() {
+  isLoading.value = true;
   try {
     user.value = await storeUsers.getUser();
+    allStateEquipments.value = storeEquipments.getAllStateEquipments();
 
-    const [equipments, pvzData] = await Promise.all([
+    const [rowsData, allPVZData] = await Promise.all([
       storeEquipments.getEquipments(),
       storePVZ.getPVZ(),
     ]);
 
-    rows.value = equipments;
+    rows.value = rowsData;
 
     if (rows.value) {
       handleFilteredRows(rows.value);
     }
 
-    allPVZ.value = filterAndAddDefaultPVZ(pvzData);
+    allPVZ.value = allPVZData;
+    if (!allPVZ.value.some((pvz) => pvz.id === 111111)) {
+      allPVZ.value.unshift({ id: 111111, name: "Все ПВЗ" });
+    }
+    allPVZ.value = allPVZ.value.filter((pvz) => pvz.name !== "НаДом");
   } catch (error) {
-    console.error("Error during user initialization:", error);
+    console.error("An error occurred:", error);
   } finally {
     isLoading.value = false;
-  }
-}
-
-onMounted(() => {
-  if (!token && !allowedUsers.includes(user.value.username)) {
-    router.push("/auth/login");
-  } else {
-    isLoading.value = true;
-    initializeUser();
   }
 });
 

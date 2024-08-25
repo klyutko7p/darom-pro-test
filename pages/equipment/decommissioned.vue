@@ -18,17 +18,15 @@ let allStateEquipments = ref<Array<string>>([]);
 onMounted(async () => {
   if (!token) {
     router.push("/auth/login");
-    return
   }
+  user.value = await storeUsers.getUser();
 
   if (user.value.username !== "Директор") {
     router.push("/user/main");
-    return
   }
 
   isLoading.value = true;
   try {
-    user.value = await storeUsers.getUser();
     allStateEquipments.value = storeEquipments.getAllStateEquipments();
 
     const [rowsData, allPVZData] = await Promise.all([
