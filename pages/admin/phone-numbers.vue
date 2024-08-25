@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { PhoneNumber } from "@prisma/client";
 import Cookies from "js-cookie";
 import { useToast } from "vue-toastification";
+
 const toast = useToast();
 const storeUsers = useUsersStore();
 const storePhoneNumbers = usePhoneNumbersStore();
@@ -27,7 +27,7 @@ definePageMeta({
   layout: false,
 });
 
-let rowData = ref({} as PhoneNumber);
+let rowData = ref({} as IPhoneNumber);
 
 async function createRow() {
   isLoading.value = true;
