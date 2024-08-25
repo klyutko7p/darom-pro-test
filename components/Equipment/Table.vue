@@ -234,6 +234,7 @@ function handleCheckboxChangeAll() {
               <textarea
                 class="ring-1 ring-gray-200 focus:ring-2 focus:ring-black bg-transparent text-center mx-auto text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none px-2 h-[50px] w-full max-md:min-w-[250px] max-h-[100px]"
                 type="text"
+                :disabled="user.username !== 'Директор'"
                 v-model="row.nameOfEquipment"
                 @blur="getRowByIdFromInput(row)"
               />

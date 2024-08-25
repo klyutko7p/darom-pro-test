@@ -338,25 +338,35 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
     <div v-else>
       <NuxtLayout name="user">
         <div class="mt-10">
-          <div class="flex items-center justify-between">
+          <div
+            class="flex items-center justify-between max-[400px]:flex-col max-sm:gap-2 max-[400px]:items-start"
+          >
             <UIMainButton @click="openModal">Создать строку</UIMainButton>
+            <NuxtLink
+              v-if="user.username === 'Директор'"
+              to="/equipment/decommissioned"
+              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200"
+              >Показать списанное
+            </NuxtLink>
           </div>
 
-          <EquipmentFilters
-            v-if="rows"
-            @filtered-rows="handleFilteredRows"
-            :rows="rows"
-            :user="user"
-          />
+          <div class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 mt-10 pb-5 space-y-1">
+            <EquipmentFilters
+              v-if="rows"
+              @filtered-rows="handleFilteredRows"
+              :rows="rows"
+              :user="user"
+            />
 
-          <EquipmentTable
-            @updateStateRows="updateStateRows"
-            @updatePVZRows="updatePVZRows"
-            @updateDecommissionedRows="updateDecommissionedRows"
-            :user="user"
-            :rows="filteredRows"
-            :allPVZ="allPVZ"
-          />
+            <EquipmentTable
+              @updateStateRows="updateStateRows"
+              @updatePVZRows="updatePVZRows"
+              @updateDecommissionedRows="updateDecommissionedRows"
+              :user="user"
+              :rows="filteredRows"
+              :allPVZ="allPVZ"
+            />
+          </div>
 
           <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
             <template v-slot:icon-header>
