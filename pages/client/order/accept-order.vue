@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
-import * as cheerio from "cheerio";
 import { useToast } from "vue-toastification";
 
 const toast = useToast();
