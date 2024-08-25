@@ -1089,7 +1089,6 @@ async function checkPaymentStatus(qrcId: string) {
                 :disabled="
                   user.username === 'Кожемякина' ||
                   user.username === 'Гарник' ||
-                  user.username === 'Коростелева' ||
                   user.username === 'Гриценко'
                 "
               />

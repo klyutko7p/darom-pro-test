@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 
+import { vAutoAnimate } from "@formkit/auto-animate";
 const router = useRouter();
 const route = useRoute();
 const storeRansom = useRansomStore();
@@ -8,7 +9,7 @@ const storeRansom = useRansomStore();
 const props = defineProps({
   user: { type: Object as PropType<User>, required: true },
   rows: { type: Array as PropType<IOurRansom[]> },
-  pvzLink: { type: String },
+  pvzLink: { type: String, required: true },
 });
 
 const showDeletedRows = ref(false);
@@ -46,19 +47,24 @@ function updateCurrentPageData() {
 
 watch([currentPage, totalRows, props.rows], updateCurrentPageData);
 
-function updateRowsByFromName() {
+function updateRowsByFromName(): void {
   updateCurrentPageData();
-  returnRows.value = (returnRows.value || [])
-    .reduce((acc, element) => {
+
+  const currentRows: IOurRansom[] = returnRows.value || [];
+
+  returnRows.value = currentRows
+    .reduce<IOurRansom[]>((acc, element) => {
       const foundIndex = acc.findIndex(
         (i) => i.cell === element.cell && i.fromName === element.fromName
       );
+
       if (foundIndex === -1) {
         acc.push(element);
       }
+
       return acc;
     }, [])
-    .sort((a, b) => +b.cell - +a.cell);
+    .sort((a, b) => +b.cell - +a.cell); 
 }
 
 let searchQuery = ref("");
@@ -86,18 +92,23 @@ function formatPhoneNumber(phoneNumber: string) {
 }
 
 function getCountOfItemsByPVZOurRansom(PVZ: string) {
+  if (!props.rows || !props.user) {
+    return 0;
+  }
+
   if (props.user.role !== "PVZ") {
-    return props.rows?.filter(
+    return props.rows.filter(
       (row) =>
         row.dispatchPVZ === PVZ && row.deliveredPVZ === null && row.deleted === null
     ).length;
-  } else if (props.user.role === "PVZ" || props.user.role === 'PPVZ') {
+  } else if (props.user.role === "PVZ" || props.user.role === "PPVZ") {
     let today = new Date().toLocaleDateString("ru-RU", {
       day: "2-digit",
       month: "2-digit",
       year: "2-digit",
     });
-    return props.rows?.filter(
+
+    return props.rows.filter(
       (row) =>
         row.dispatchPVZ === PVZ &&
         row.deliveredSC !== null &&
@@ -109,10 +120,16 @@ function getCountOfItemsByPVZOurRansom(PVZ: string) {
           row.issued === null)
     ).length;
   }
+
+  return 0;
 }
 
 function getCountOfItemsByPVZOurRansomIssued(PVZ: string) {
-  return props.rows?.filter(
+  if (!props.rows) {
+    return 0;
+  }
+
+  return props.rows.filter(
     (row) =>
       row.dispatchPVZ === PVZ &&
       row.deliveredSC !== null &&
@@ -123,10 +140,13 @@ function getCountOfItemsByPVZOurRansomIssued(PVZ: string) {
 }
 </script>
 <template>
-  <div class="flex items-center justify-between max-lg:block mt-10">
+  <div class="flex items-center justify-between max-lg:block mt-10" v-auto-animate>
     <div>
       <div class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-1">
-        <h1 class="text-xl" v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'">
+        <h1
+          class="text-xl max-sm:text-base"
+          v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
+        >
           Товаров в работе:
           <span class="text-secondary-color font-bold">
             {{
@@ -140,38 +160,37 @@ function getCountOfItemsByPVZOurRansomIssued(PVZ: string) {
           <span class="text-secondary-color font-bold">{{ totalRows }}</span>
         </h1>
       </div>
-      <div
-        class="flex items-center gap-5"
-        v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
-      ></div>
     </div>
   </div>
 
-  <div class="mt-2">
+  <div class="mt-2" v-auto-animate>
     <div class="flex flex-col gap-10 mb-5">
-      <h1 class="text-2xl">Режим выдачи товаров ({{ pvzLink }})</h1>
+      <h1 class="text-2xl max-sm:text-lg">Режим выдачи товаров ({{ pvzLink }})</h1>
     </div>
     <input
       type="text"
       v-model="searchQuery"
-      class="block w-full bg-transparent mb-5 border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 rounded-2xl focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+      class="block w-full bg-transparent mb-10 border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 rounded-xl focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
       placeholder="Введите телефон или ячейку..."
       @input="updateRowsByFromName"
     />
-    <div v-for="row in returnRows">
+    <div v-for="row in returnRows" v-auto-animate>
       <div
         @click="
           router.push(`/spreadsheets/our-ransom/${pvzLink}/${row.fromName}/${row.cell}`)
         "
-        class="cursor-pointer hover:bg-hover-color duration-300 flex items-center justify-between p-10 mb-3 border-2"
+        class="cursor-pointer border-secondary-color hover:bg-secondary-color rounded-xl duration-300 flex items-center justify-between p-10 mb-5 border-2"
       >
         <div
-          class="rounded-full border-2 p-3 min-w-[50px] text-center border-secondary-color"
+          class="rounded-full min-w-[50px] font-bold text-3xl text-center border-secondary-color"
         >
           <h1>{{ row.cell }}</h1>
         </div>
-        <div>
-          <h1>Телефон: {{ formatPhoneNumber(row.fromName) }}</h1>
+        <div class="flex items-center gap-3">
+          <Icon name="material-symbols:call" size="20" />
+          <h1>
+            {{ formatPhoneNumber(row.fromName) }}
+          </h1>
         </div>
       </div>
     </div>

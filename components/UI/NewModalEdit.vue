@@ -17,8 +17,8 @@ const closeModal = () => {
         <Icon
           @click="closeModal"
           name="material-symbols:cancel-rounded"
-          size="32"
-          class="cursor-pointer hover:opacity-50 duration-200 ml-5"
+          size="24"
+          class="cursor-pointer hover:text-secondary-color duration-200 ml-5"
         />
       </header>
       <section class="modal-container-body rtf">
@@ -84,7 +84,7 @@ a {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 15px 30px rgba(255, 255, 255, 0.25);
 }
 
 @media (max-width: 600px) {

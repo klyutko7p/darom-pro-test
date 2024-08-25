@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useToast } from "vue-toastification";
 import Cookies from "js-cookie";
+import { vAutoAnimate } from "@formkit/auto-animate";
 
 let toast = useToast();
 
@@ -331,31 +332,6 @@ function convertUrl(url: string): string {
   return convertedUrl;
 }
 
-// async function updateDeliveryRows(obj: any) {
-//   if (obj.flag === "additionally") {
-//     isOpenOnlineStatus.value = true;
-//     itemsId.value = obj.idArray;
-//     obj.allSum *= 1 + 2 / 100;
-//     updatedPriceTwoPercent.value = obj.allSum;
-//   } else {
-//     let answer = confirm(
-//       `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
-//     );
-//     if (answer) {
-//       isLoading.value = true;
-//       await storeRansom.updateDeliveryRowsStatus(
-//         obj.idArray,
-//         obj.flag,
-//         "OurRansom",
-//         user.value.username
-//       );
-//       filteredRows.value = await storeRansom.getRansomRows("OurRansom");
-//       rows.value = filteredRows.value;
-//       isLoading.value = false;
-//     }
-//   }
-// }
-
 async function updateDeliveryRows(obj: any) {
   if (obj.flag !== "additionally") {
     let answer = confirm(
@@ -453,6 +429,7 @@ let isOpenOnlineStatus = ref(false);
             @update-delivery-rows="updateDeliveryRows"
             @create-copy-row="createCopyRow"
             :pvz-link="pvzString"
+            v-auto-animate
           />
 
           <UIModal v-show="isOpen" @close-modal="closeModal">
@@ -784,6 +761,7 @@ let isOpenOnlineStatus = ref(false);
             @update-delivery-rows="updateDeliveryRows"
             @create-copy-row="createCopyRow"
             :pvz-link="pvzString"
+            v-auto-animate
           />
 
           <UIModal v-show="isOpen" @close-modal="closeModal">

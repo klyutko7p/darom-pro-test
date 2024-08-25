@@ -159,6 +159,17 @@ let isShowAddSettings = ref(false);
         <h1>Возвраты</h1>
       </div>
       <div
+        role="button"
+        @click="router.push('/equipment')"
+        tabindex="0"
+        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+      >
+        <div class="grid place-items-center mr-4">
+          <Icon name="material-symbols:rule-settings" size="20" />
+        </div>
+        <h1>Оборудование ПВЗ</h1>
+      </div>
+      <div
         v-if="
           (user.dataDelivery === 'READ' || user.dataDelivery === 'WRITE') &&
           (user.role === 'ADMIN' || user.role === 'OPT') &&
@@ -507,10 +518,13 @@ let isShowAddSettings = ref(false);
         route.fullPath === '/spreadsheets/our-ransom' ||
         route.fullPath === '/spreadsheets/client-ransom' ||
         route.fullPath === '/spreadsheets/delivery' ||
-        route.fullPath === '/advance-report/summary-tables' )
+        route.fullPath === '/equipment' ||
+        route.fullPath === '/advance-report/summary-tables')
     "
   >
-    <nav class="flex flex-col gap-1 p-2 font-sans mt-10 pl-24 text-lg font-normal text-black">
+    <nav
+      class="flex flex-col gap-1 p-2 font-sans mt-10 pl-24 text-lg font-normal text-black"
+    >
       <div class="flex items-center mb-5 gap-24">
         <h1 class="font-bold text-3xl text-secondary-color">DAROM.PRO</h1>
         <Icon
@@ -569,6 +583,17 @@ let isShowAddSettings = ref(false);
           <Icon name="hugeicons:delivery-return-01" size="20" />
         </div>
         <h1>Возвраты</h1>
+      </div>
+      <div
+        role="button"
+        @click="router.push('/equipment')"
+        tabindex="0"
+        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+      >
+        <div class="grid place-items-center mr-4">
+          <Icon name="material-symbols:rule-settings" size="20" />
+        </div>
+        <h1>Оборудование ПВЗ</h1>
       </div>
       <div
         v-if="
@@ -923,7 +948,7 @@ let isShowAddSettings = ref(false);
       route.fullPath !== '/spreadsheets/our-ransom' &&
       route.fullPath !== '/spreadsheets/client-ransom' &&
       route.fullPath !== '/spreadsheets/delivery' &&
-      route.fullPath !== '/advance-report/summary-tables' 
+      route.fullPath !== '/advance-report/summary-tables'
     "
   >
     <nav
@@ -987,6 +1012,17 @@ let isShowAddSettings = ref(false);
           <Icon name="hugeicons:delivery-return-01" size="20" />
         </div>
         <h1>Возвраты</h1>
+      </div>
+      <div
+        role="button"
+        @click="router.push('/equipment')"
+        tabindex="0"
+        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
+      >
+        <div class="grid place-items-center mr-4">
+          <Icon name="material-symbols:rule-settings" size="20" />
+        </div>
+        <h1>Оборудование ПВЗ</h1>
       </div>
       <div
         v-if="
@@ -1341,6 +1377,7 @@ let isShowAddSettings = ref(false);
         route.fullPath === '/spreadsheets/our-ransom' ||
         route.fullPath === '/spreadsheets/client-ransom' ||
         route.fullPath === '/spreadsheets/delivery' ||
+        route.fullPath === '/equipment' ||
         route.fullPath === '/advance-report/payroll',
     }"
     class="py-1 px-3 fixed z-40 max-xl:right-0 flex items-center max-sm:gap-3 justify-between duration-200 w-full bg-gradient-to-br from-purple-700 to-orange-400 backdrop-blur-2xl text-white"

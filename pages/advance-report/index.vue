@@ -957,10 +957,7 @@ function getAllSumFromName(username: string) {
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
   let sumOfPVZ3 = originallyRows.value
-    ?.filter(
-      (row) =>
-        row.createdUser === username && !row.issuedUser
-    )
+    ?.filter((row) => row.createdUser === username && !row.issuedUser)
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
   let sumOfPVZ4 = originallyRows.value
@@ -1003,11 +1000,7 @@ function getAllSumFromEmployees() {
         .reduce((acc, value) => acc + +value.expenditure, 0);
 
       let sumOfPVZ3 = originallyRows.value
-        ?.filter(
-          (row) =>
-            row.createdUser === username &&
-            !row.issuedUser
-        )
+        ?.filter((row) => row.createdUser === username && !row.issuedUser)
         .reduce((acc, value) => acc + +value.expenditure, 0);
       sumOfPVZ = sumOfPVZ === undefined ? 0 : sumOfPVZ;
       sumOfPVZ1 = sumOfPVZ1 === undefined ? 0 : sumOfPVZ1;

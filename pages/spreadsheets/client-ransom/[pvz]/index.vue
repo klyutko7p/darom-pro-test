@@ -261,24 +261,6 @@ function getFromNameFromCell() {
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div v-if="!isLoading" class="mt-3">
-          <div>
-            <SpreadsheetsClientRansomFilters
-              v-if="rows"
-              @filtered-rows="handleFilteredRows"
-              :rows="rows"
-            />
-            <div
-              class="mt-5 flex items-center gap-3"
-              v-if="user.dataClientRansom === 'WRITE'"
-            >
-              <UIMainButton
-                v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
-                @click="openModal"
-              >
-                Создать новую запись</UIMainButton
-              >
-            </div>
-          </div>
 
           <SpreadsheetsClientRansomTable
             @update-delivery-row="updateDeliveryRow"

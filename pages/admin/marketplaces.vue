@@ -25,7 +25,7 @@ function openModal(row: Marketplace) {
 
 function closeModal() {
   isOpen.value = false;
-  marketplaceData.value = {} as OrderAccount;
+  marketplaceData.value = {} as Marketplace;
 }
 
 async function updateMarketplace() {
