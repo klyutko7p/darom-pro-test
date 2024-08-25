@@ -30,6 +30,23 @@ export const useEquipmentsStore = defineStore("equipments", () => {
     }
   }
 
+  async function getEquipment(id: number) {
+    try {
+      let { data }: any = await useFetch("/api/equipments/get-equipment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function getDecommissionedEquipments() {
     try {
       let { data }: any = await useFetch(
@@ -58,7 +75,11 @@ export const useEquipmentsStore = defineStore("equipments", () => {
         },
         body: JSON.stringify({ equipment }),
       });
-      if (data.data.value.success) {
+      if (
+        data.data.value &&
+        "success" in data.data.value &&
+        data.data.value.success
+      ) {
         toast.success("Оборудование успешно создано!");
       } else {
         toast.error("Произошла ошибка!");
@@ -79,7 +100,11 @@ export const useEquipmentsStore = defineStore("equipments", () => {
         },
         body: JSON.stringify({ equipment }),
       });
-      if (data.data.value.success) {
+      if (
+        data.data.value &&
+        "success" in data.data.value &&
+        data.data.value.success
+      ) {
         toast.success("Оборудование успешно изменено!");
       } else {
         toast.error("Произошла ошибка!");
@@ -108,7 +133,11 @@ export const useEquipmentsStore = defineStore("equipments", () => {
           userId,
         }),
       });
-      if (data.data.value.success) {
+      if (
+        data.data.value &&
+        "success" in data.data.value &&
+        data.data.value.success
+      ) {
         toast.success("Состояние успешно изменено!");
       } else {
         toast.error("Произошла ошибка!");
@@ -126,7 +155,7 @@ export const useEquipmentsStore = defineStore("equipments", () => {
   ): string[] => {
     const uniqueNonEmptyValues = new Set<string>();
     rows.forEach((row) => {
-      const value = row[fieldName];
+      const value = row[fieldName] as any;
       if (value !== "" && value !== null && value !== undefined) {
         uniqueNonEmptyValues.add(value);
       }
@@ -140,7 +169,7 @@ export const useEquipmentsStore = defineStore("equipments", () => {
   ): string[] => {
     const uniqueNonEmptyValues = new Set<string>();
     rows.forEach((row) => {
-      const value = row[fieldName];
+      const value = row[fieldName] as any;
       if (value !== "" && value !== null && value !== undefined) {
         uniqueNonEmptyValues.add(value);
       }
@@ -154,22 +183,46 @@ export const useEquipmentsStore = defineStore("equipments", () => {
     userId: number
   ) {
     try {
-      let data = await useFetch("/api/equipments/update-pvz-rows", {
+      if (idArray.length) {
+        let data = await useFetch("/api/equipments/update-pvz-rows", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            idArray,
+            pvzId,
+            userId,
+          }),
+        });
+        if (
+          data.data.value &&
+          "success" in data.data.value &&
+          data.data.value.success
+        ) {
+          toast.success("ПВЗ успешно изменено!");
+        } else {
+          toast.error("Произошла ошибка!");
+        }
+      } else {
+        toast.error("Произошла ошибка. Выделите нужные записи");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function updateEquipments(rows: IEquipmentRow[]) {
+    try {
+      let data = await useFetch("/api/equipments/update-equipments", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          idArray,
-          pvzId,
-          userId,
-        }),
+        body: JSON.stringify({ rows }),
       });
-      if (data.data.value.success) {
-        toast.success("ПВЗ успешно изменено!");
-      } else {
-        toast.error("Произошла ошибка!");
-      }
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -194,7 +247,11 @@ export const useEquipmentsStore = defineStore("equipments", () => {
           userId,
         }),
       });
-      if (data.data.value.success) {
+      if (
+        data.data.value &&
+        "success" in data.data.value &&
+        data.data.value.success
+      ) {
         toast.success("Оборудование успешно списано!");
       } else {
         toast.error("Произошла ошибка!");
@@ -218,7 +275,11 @@ export const useEquipmentsStore = defineStore("equipments", () => {
           body: JSON.stringify({ id }),
         }
       );
-      if (data.data.value.success) {
+      if (
+        data.data.value &&
+        "success" in data.data.value &&
+        data.data.value.success
+      ) {
         toast.success("Списанное оборудование успешно удалено!");
       } else {
         toast.error("Произошла ошибка!");
@@ -242,5 +303,7 @@ export const useEquipmentsStore = defineStore("equipments", () => {
     deleteDecommissionedEquipment,
     getUniqueNonEmptyValues,
     getUniqueNonEmptyValuesDecommissioned,
+    updateEquipments,
+    getEquipment,
   };
 });

@@ -1896,6 +1896,13 @@
   dependencies:
     "@iconify/types" "*"
 
+"@iconify-json/fluent-emoji@^1.1.19":
+  version "1.1.19"
+  resolved "https://registry.yarnpkg.com/@iconify-json/fluent-emoji/-/fluent-emoji-1.1.19.tgz#6de11db35d462fa3f56360bb8003f875f5c363cf"
+  integrity sha512-NdrMN6ooYZP2jDUPG7r3u6dogYQ+iY1rUAqwLtUTFG8nRSFXtMN0CbmGczr2jXokWQbuVxFl+qj280LlpTUtog==
+  dependencies:
+    "@iconify/types" "*"
+
 "@iconify-json/fluent@^1.1.62":
   version "1.1.62"
   resolved "https://registry.yarnpkg.com/@iconify-json/fluent/-/fluent-1.1.62.tgz#88fdb1319d408f2779aa01f941aedf406217e8fd"

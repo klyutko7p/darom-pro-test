@@ -15,36 +15,44 @@ let rows = ref<Array<IEquipmentRow>>([]);
 let allPVZ = ref<Array<PVZ>>([]);
 let allStateEquipments = ref<Array<string>>([]);
 
-onMounted(async () => {
-  if (!token) {
-    router.push("/auth/login");
-  }
+const allowedUsers = ["Директор", "Горцуева", "Шведова", "Волошина", "Шарафаненко"];
 
-  isLoading.value = true;
+function filterAndAddDefaultPVZ(pvzData: PVZ[]) {
+  if (!pvzData.some((pvz) => pvz.id === 111111)) {
+    pvzData.unshift({ id: 111111, name: "Все ПВЗ" });
+  }
+  return pvzData.filter((pvz) => pvz.name !== "НаДом");
+}
+
+async function initializeUser() {
   try {
     user.value = await storeUsers.getUser();
-    allStateEquipments.value = storeEquipments.getAllStateEquipments();
 
-    const [rowsData, allPVZData] = await Promise.all([
+    const [equipments, pvzData] = await Promise.all([
       storeEquipments.getEquipments(),
       storePVZ.getPVZ(),
     ]);
 
-    rows.value = rowsData;
+    rows.value = equipments;
 
     if (rows.value) {
       handleFilteredRows(rows.value);
     }
 
-    allPVZ.value = allPVZData;
-    if (!allPVZ.value.some((pvz) => pvz.id === 111111)) {
-      allPVZ.value.unshift({ id: 111111, name: "Все ПВЗ" });
-    }
-    allPVZ.value = allPVZ.value.filter((pvz) => pvz.name !== "НаДом");
+    allPVZ.value = filterAndAddDefaultPVZ(pvzData);
   } catch (error) {
-    console.error("An error occurred:", error);
+    console.error("Error during user initialization:", error);
   } finally {
     isLoading.value = false;
+  }
+}
+
+onMounted(() => {
+  if (!token && !allowedUsers.includes(user.value.username)) {
+    router.push("/auth/login");
+  } else {
+    isLoading.value = true;
+    initializeUser();
   }
 });
 
@@ -116,6 +124,9 @@ async function createEquipmentRow() {
     await storeEquipments.createEquipment(equipmentRowData.value);
     rows.value = await storeEquipments.getEquipments();
     closeModal();
+    if (rows.value) {
+      handleFilteredRows(rows.value);
+    }
     isLoading.value = false;
   }
 }
@@ -127,6 +138,9 @@ async function updateEquipmentRow() {
     await storeEquipments.updateEquipment(equipmentRowData.value);
     rows.value = await storeEquipments.getEquipments();
     closeModal();
+    if (rows.value) {
+      handleFilteredRows(rows.value);
+    }
     isLoading.value = false;
   }
 }
@@ -139,6 +153,9 @@ async function updateStateRows(obj: any) {
     isLoading.value = true;
     await storeEquipments.updateStateRows(obj.idArray, obj.flag, user.value.id);
     rows.value = await storeEquipments.getEquipments();
+    if (rows.value) {
+      handleFilteredRows(rows.value);
+    }
     isLoading.value = false;
   }
 }
@@ -151,6 +168,9 @@ async function updatePVZRows(obj: any) {
     isLoading.value = true;
     await storeEquipments.updatePVZRows(obj.idArray, obj.transferPVZ, user.value.id);
     rows.value = await storeEquipments.getEquipments();
+    if (rows.value) {
+      handleFilteredRows(rows.value);
+    }
     isLoading.value = false;
   }
 }
@@ -174,6 +194,9 @@ async function updateDecommissionedRowsAccept() {
     user.value.id
   );
   rows.value = await storeEquipments.getEquipments();
+  if (rows.value) {
+    handleFilteredRows(rows.value);
+  }
   isLoading.value = false;
   closeModalReason();
 }
@@ -197,17 +220,19 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="mt-10">
-          <div class="flex items-center justify-between">
+          <div
+            class="flex items-center justify-between max-[400px]:flex-col max-sm:gap-2 max-[400px]:items-start"
+          >
             <UIMainButton @click="openModal">Создать строку</UIMainButton>
             <NuxtLink
               v-if="user.username === 'Директор'"
               to="/equipment/decommissioned"
               class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200"
-              >Показать списанное</NuxtLink
-            >
+              >Показать списанное
+            </NuxtLink>
           </div>
 
-          <div class="bg-[#f8f9fd] px-5 pt-3 mt-10 pb-5 space-y-10">
+          <div class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 mt-10 pb-5 space-y-1">
             <EquipmentFilters
               v-if="rows"
               @filtered-rows="handleFilteredRows"
