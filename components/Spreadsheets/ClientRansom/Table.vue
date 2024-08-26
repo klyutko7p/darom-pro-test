@@ -177,7 +177,7 @@ function getCountOfItemsByPVZClientRansomIssued(PVZ: string) {
     <div v-for="row in returnRows" v-auto-animate>
       <div
         @click="
-          router.push(`/spreadsheets/our-ransom/${pvzLink}/${row.fromName}/${row.cell}`)
+          router.push(`/spreadsheets/client-ransom/${pvzLink}/${row.fromName}/${row.cell}`)
         "
         class="cursor-pointer border-secondary-color hover:bg-secondary-color rounded-xl duration-300 flex items-center justify-between p-10 mb-5 border-2"
       >

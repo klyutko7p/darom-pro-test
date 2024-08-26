@@ -112,12 +112,20 @@ async function updateDeliveryRows(obj: any) {
     );
     originallyRows.value = await storeRansom.getRansomRows("ClientRansom");
 
-    if (user.value.role !== 'PVZ') {
-        rows.value = originallyRows.value?.filter((row) => row.fromName === fromNameString && row.cell === cellString)
-        filteredRows.value = rows.value
+    if (user.value.role !== "PVZ") {
+      rows.value = originallyRows.value?.filter(
+        (row) => row.fromName === fromNameString && row.cell === cellString
+      );
+      filteredRows.value = rows.value;
     } else {
-        rows.value = originallyRows.value?.filter((row) => row.fromName === fromNameString && row.cell === cellString && row.deliveredSC !== null && row.issued === null)
-        filteredRows.value = rows.value
+      rows.value = originallyRows.value?.filter(
+        (row) =>
+          row.fromName === fromNameString &&
+          row.cell === cellString &&
+          row.deliveredSC !== null &&
+          row.issued === null
+      );
+      filteredRows.value = rows.value;
     }
     isLoading.value = false;
   }
@@ -252,7 +260,11 @@ onMounted(async () => {
 
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  //   rows.value = await storeRansom.getRansomRowsByFromName(fromNameString, cellString, "ClientRansom");
+  // rows.value = await storeRansom.getRansomRowsByFromName(
+  //   fromNameString,
+  //   cellString,
+  //   "ClientRansom"
+  // );
   originallyRows.value = await storeRansom.getRansomRows("ClientRansom");
   rows.value = originallyRows.value?.filter(
     (row) => row.fromName === fromNameString && row.cell === cellString
@@ -274,7 +286,6 @@ onMounted(async () => {
 
   isLoading.value = false;
 });
-
 
 definePageMeta({
   layout: false,
