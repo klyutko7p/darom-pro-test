@@ -31,7 +31,7 @@ onMounted(async () => {
 
     const [rowsData, allPVZData] = await Promise.all([
       storeEquipments.getDecommissionedEquipments(),
-      storePVZ.getPVZ(),
+      storePVZ.getAllPVZ(),
     ]);
 
     rows.value = rowsData;

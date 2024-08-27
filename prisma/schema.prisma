@@ -188,9 +188,8 @@ model BalanceDelivery {
 }
 
 model PVZ {
-  id            Int            @id @default(autoincrement())
-  name          String
-  equipmentRows EquipmentRow[]
+  id   Int    @id @default(autoincrement())
+  name String
 }
 
 model SortingCenter {
@@ -356,10 +355,16 @@ model ClientDevicesToken {
   token       String @unique
 }
 
+model allPVZ {
+  id            Int            @id @default(autoincrement())
+  name          String
+  equipmentRows EquipmentRow[]
+}
+
 model EquipmentRow {
   id                         Int                          @id @default(autoincrement())
   pvzId                      Int
-  pvz                        PVZ                          @relation(fields: [pvzId], references: [id])
+  pvz                        allPVZ                       @relation(fields: [pvzId], references: [id])
   nameOfEquipment            String
   state                      String
   updatedUserId              Int

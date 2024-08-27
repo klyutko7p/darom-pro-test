@@ -27,7 +27,7 @@ const totalRows = computed(() =>
 );
 
 let returnRows = ref<Array<IDecommissionedEquipmentRow>>([]);
-  let filteredRows = ref<Array<IDecommissionedEquipmentRow>>([]);
+let filteredRows = ref<Array<IDecommissionedEquipmentRow>>([]);
 
 function updateCurrentPageData() {
   const startIndex = (currentPage.value - 1) * perPage.value;
@@ -92,10 +92,10 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
         >
           <tr>
             <th scope="col" class="px-1 py-2">списано</th>
-            <th scope="col" class="px-1 py-2 max-w-[150px]">название</th>
+            <th scope="col" class="px-1 py-2">название</th>
             <th scope="col" class="px-1 py-2">причина</th>
             <th scope="col" class="px-1 py-2">изменил</th>
-            <th scope="col" class="px-1 py-2">дата изм.</th>
+            <th scope="col" class="px-1 py-2">дата изменения</th>
             <th scope="col" class="px-1 py-2">пвз</th>
             <th scope="col" class="px-1 py-2">списал</th>
             <th scope="col" class="py-2">удаление</th>
@@ -106,10 +106,12 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
             <td class="border-[1px] max-sm:px-2 py-2">
               {{ storeUsers.getNormalizedDate(row.decommissionDate) }}
             </td>
-            <td class="border-[1px] max-w-[150px] max-sm:py-1 max-sm:px-1 max-md:min-w-[260px]">
+            <td
+              class="border-[1px] max-w-[200px]"
+            >
               {{ row.equipmentRow.nameOfEquipment }}
             </td>
-            <td class="border-[1px] max-sm:px-2">
+            <td class="border-[1px] max-sm:px-2 max-w-[200px]">
               {{ row.reason }}
             </td>
             <td class="border-[1px] max-sm:px-2">

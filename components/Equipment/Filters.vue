@@ -202,7 +202,6 @@ const nonEmptyCount = computed(() => {
         </div>
       </div>
       <div class="flex items-start space-y-2 flex-col mt-5 text-center">
-        <h1>Дата создания/изменения</h1>
         <UPopover
           :popper="{ placement: 'auto' }"
           class="block max-sm:hidden my-5 max-w-[220px]"

@@ -184,20 +184,21 @@ function handleCheckboxChangeAll() {
           class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
         >
           <tr>
-            <th scope="col" class="max-md:px-1">
+            <th scope="col" class="max-md:px-1 max-xl:px-2">
               <input
+                class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[1px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[1px] ring-secondary-color bg-transparent"
                 type="checkbox"
-                class=""
                 v-model="isAllSelected"
                 @change="handleCheckboxChangeAll()"
               />
             </th>
-            <th scope="col" class="py-2">id</th>
-            <th scope="col" class="px-1 py-2">пвз</th>
+            <th scope="col" class="py-1 max-xl:px-2">id</th>
+            <th scope="col" class="px-1 py-2 max-xl:px-2">пвз</th>
             <th scope="col" class="max-w-[150px]">название</th>
-            <th scope="col" class="px-1 py-2">состояние</th>
-            <th scope="col" class="px-1 py-2">изменил</th>
-            <th scope="col" class="px-1">дата изм.</th>
+            <th scope="col" class="max-w-[150px]">состояние</th>
+            <th scope="col" class="px-1 py-2 max-xl:px-3">изменил</th>
+            <th scope="col" class="px-1 max-xl:px-3">дата создания</th>
+            <th scope="col" class="px-1 max-xl:px-3">дата изменения</th>
           </tr>
         </thead>
         <tbody class="bg-white">
@@ -210,6 +211,7 @@ function handleCheckboxChangeAll() {
           >
             <td class="text-secondary-color border-[1px]">
               <input
+                class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[1px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[1px] ring-secondary-color"
                 type="checkbox"
                 :value="row.id"
                 :checked="isChecked(row.id)"
@@ -222,7 +224,8 @@ function handleCheckboxChangeAll() {
             >
               <NuxtLink
                 class="cursor-pointer hover:text-orange-200 duration-200"
-                :to="`/equipment/record/${row.id}`" target="_blank"
+                :to="`/equipment/record/${row.id}`"
+                target="_blank"
               >
                 {{ row.id }}
               </NuxtLink>
@@ -230,21 +233,55 @@ function handleCheckboxChangeAll() {
             <td class="border-[1px] max-md:px-2 py-2">
               {{ row.pvz.name }}
             </td>
-            <td class="border-[1px] max-w-[150px] max-sm:py-1 max-sm:px-1 max-md:min-w-[260px]">
-              <textarea
-                class="ring-1 ring-gray-200 focus:ring-2 focus:ring-black bg-transparent text-center mx-auto text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none px-2 h-[50px] w-full max-md:min-w-[250px] max-h-[100px]"
-                type="text"
+            <td
+              class="border-[1px] px-2 max-w-[150px] max-sm:py-1 max-sm:px-1 max-xl:min-w-[300px]"
+            >
+              <UTextarea
+                autoresize
                 :disabled="user.username !== 'Директор'"
-                v-model="row.nameOfEquipment"
                 @blur="getRowByIdFromInput(row)"
+                :model-value="row.nameOfEquipment"
               />
               <span class="hidden">{{ row.nameOfEquipment }} ₽</span>
             </td>
-            <td class="border-[1px] max-md:px-2">
-              {{ row.state }}
+            <td
+              v-if="row.state === 'Исправное'"
+              class="max-w-[100px] border-[1px] px-2 max-xl:min-w-[150px] max-lg:min-w-[180px]"
+            >
+              <h1
+                class="mx-auto text-green-500 py-1 rounded-full w-full max-lg:min-w-[150px]"
+                :class="{ 'bg-green-100': !isChecked(row.id) }"
+              >
+                {{ row.state }}
+              </h1>
+            </td>
+            <td
+              v-if="row.state === 'Требуется ремонт'"
+              class="max-w-[100px] border-[1px] px-2 max-xl:min-w-[150px] max-lg:min-w-[180px]"
+            >
+              <h1
+                class="mx-auto text-yellow-500 py-1 rounded-full w-full max-lg:px-2 max-lg:min-w-[150px]"
+                :class="{ 'bg-yellow-100': !isChecked(row.id) }"
+              >
+                {{ row.state }}
+              </h1>
+            </td>
+            <td
+              v-if="row.state === 'Неисправное'"
+              class="max-w-[100px] border-[1px] px-2 max-xl:min-w-[150px] max-lg:min-w-[180px]"
+            >
+              <h1
+                class="mx-auto text-red-500 py-1 rounded-full w-full max-lg:min-w-[150px]"
+                :class="{ 'bg-red-100': !isChecked(row.id) }"
+              >
+                {{ row.state }}
+              </h1>
             </td>
             <td class="border-[1px] max-md:px-2">
               {{ row.updatedUser.username }}
+            </td>
+            <td class="border-[1px] max-md:px-2">
+              {{ storeUsers.getNormalizedDate(row.created_at) }}
             </td>
             <td class="border-[1px] max-md:px-2">
               {{ storeUsers.getNormalizedDate(row.updated_at) }}
@@ -294,15 +331,15 @@ function handleCheckboxChangeAll() {
               <tr>
                 <th scope="col" class="max-md:px-1">
                   <input
+                    class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[1px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[1px] ring-secondary-color"
                     type="checkbox"
-                    class=""
                     v-model="isAllSelected"
                     @change="handleCheckboxChangeAll()"
                   />
                 </th>
                 <th scope="col" class="">пвз</th>
                 <th scope="col" class="">название</th>
-                <th scope="col" class="">состояние</th>
+                <th scope="col" class="">сост.</th>
               </tr>
             </thead>
             <tbody class="bg-white">
@@ -315,6 +352,7 @@ function handleCheckboxChangeAll() {
               >
                 <td class="text-secondary-color border-[1px]">
                   <input
+                    class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[1px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[1px] ring-secondary-color"
                     type="checkbox"
                     :value="row.id"
                     :checked="isChecked(row.id)"
@@ -330,8 +368,20 @@ function handleCheckboxChangeAll() {
                 >
                   {{ row.nameOfEquipment }}
                 </td>
-                <td class="border-[1px]">
-                  {{ row.state }}
+                <td v-if="row.state === 'Исправное'" class="border-[1px]">
+                  <h1 class="mx-auto text-green-500">
+                    {{ row.state }}
+                  </h1>
+                </td>
+                <td v-if="row.state === 'Требуется ремонт'" class="border-[1px]">
+                  <h1 class="mx-auto text-yellow-500">
+                    {{ row.state }}
+                  </h1>
+                </td>
+                <td v-if="row.state === 'Неисправное'" class="border-[1px]">
+                  <h1 class="mx-auto text-red-500">
+                    {{ row.state }}
+                  </h1>
                 </td>
               </tr>
             </tbody>
@@ -411,7 +461,7 @@ function handleCheckboxChangeAll() {
         <div
           v-if="checkedRows.length && user.username === 'Директор'"
           @click="updateDecommissionedRows()"
-          class="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 flex-shrink-0 font-medium rounded-md text-sm gap-x-1.5 px-2.5 py-1.5 text-orange-500 dark:text-orange-400 bg-orange-50 hover:bg-orange-100 disabled:bg-orange-50 dark:bg-orange-950 dark:hover:bg-orange-900 dark:disabled:bg-orange-950 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-500 dark:focus-visible:ring-orange-400 inline-flex items-center mb-1.5 w-full cursor-pointer duration-100"
+          class="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 flex-shrink-0 font-medium rounded-full-md text-sm gap-x-1.5 px-2.5 py-1.5 text-orange-500 dark:text-orange-400 bg-orange-50 hover:bg-orange-100 disabled:bg-orange-50 dark:bg-orange-950 dark:hover:bg-orange-900 dark:disabled:bg-orange-950 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-500 dark:focus-visible:ring-orange-400 inline-flex items-center mb-1.5 w-full cursor-pointer duration-100"
         >
           <Icon name="material-symbols:cancel-schedule-send" size="20" />
           <h1 class="text-sm">Списать</h1>
