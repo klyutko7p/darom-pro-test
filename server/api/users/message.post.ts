@@ -12,35 +12,31 @@ interface IRequestBody {
 export default defineEventHandler(async (event) => {
   const { title, message, username } = await readBody<IRequestBody>(event);
 
-  if (typeof navigator.serviceWorker !== "undefined") {
-    const app = initializeApp();
-    const messaging = getMessaging(app);
-    let tokensArray: string[] = [];
+  const app = initializeApp();
+  const messaging = getMessaging(app);
+  let tokensArray: string[] = [];
 
-    try {
-      const employeeDevices = await prisma.employeeDevicesToken.findMany({
-        where: {
-          username,
-        },
-      });
-      tokensArray = employeeDevices.map((device) => device.token);
-    } catch (error) {
-      if (error instanceof Error) {
-        return { error: error.message };
-      }
-    }
-
-    await messaging.sendEachForMulticast({
-      tokens: tokensArray,
-      notification: {
-        title: title,
-        body: message,
+  try {
+    const employeeDevices = await prisma.employeeDevicesToken.findMany({
+      where: {
+        username,
       },
     });
-
-    messaging.sendToTopic("topic", { notification: {} });
-    deleteApp(app);
-  } else {
-    console.warn("Service Worker is not supported in this browser.");
+    tokensArray = employeeDevices.map((device) => device.token);
+  } catch (error) {
+    if (error instanceof Error) {
+      return { error: error.message };
+    }
   }
+
+  await messaging.sendEachForMulticast({
+    tokens: tokensArray,
+    notification: {
+      title: title,
+      body: message,
+    },
+  });
+
+  messaging.sendToTopic("topic", { notification: {} });
+  deleteApp(app);
 });

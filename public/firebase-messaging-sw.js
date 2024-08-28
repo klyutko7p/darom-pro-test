@@ -46,7 +46,7 @@ try {
 
           const title = payload.notification.title;
           const notification = {
-            body: "Статус заказа: Darom.pro",
+            body: "Darom.pro",
             icon: "pwa-512x512.png",
           };
 
