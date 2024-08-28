@@ -21,16 +21,18 @@ export const useUsersStore = defineStore("users", () => {
 
   async function createTokenDevice(username: string, token: string) {
     try {
-      let { data } = await useFetch(
-        "/api/client-devices/create-employee-token",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username, token }),
-        }
-      );
+      let data = await useFetch("/api/client-devices/create-employee-token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, token }),
+      });
+      if (data.data.value === undefined) {
+        toast.success("Вы успешно подключили уведомления на этом устройстве");
+      } else {
+        toast.error("Ошибка: токен устройства уже подключен!");
+      }
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

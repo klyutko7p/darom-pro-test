@@ -63,14 +63,17 @@ function requestPermission() {
   <div v-if="!isLoading">
     <div v-if="token">
       <div class="py-5">
-        <div class="mt-5 mb-5 flex items-center max-sm:flex-col max-sm:items-start gap-3">
-          <h1 class="text-xl">
-            Приветствуем, {{ user.username }}!
-          </h1>
-          <div>
-            <UIMainButton @click="requestPermission"
-              >Подписаться на обновления</UIMainButton
-            >
+        <div class="mt-5 mb-5 flex items-center gap-3">
+          <h1 class="text-xl">Приветствуем, {{ user.username }}!</h1>
+          <div
+            @click="requestPermission"
+            class="bg-orange-100 duration-200 cursor-pointer hover:opacity-50 pt-1 rounded-full px-1"
+          >
+            <Icon
+              name="material-symbols:add-alert"
+              size="24"
+              class="text-secondary-color"
+            />
           </div>
         </div>
         <div>

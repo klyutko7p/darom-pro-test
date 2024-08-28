@@ -55,7 +55,8 @@ function requestPermission() {
     });
   }
 }
-</script>-
+</script>
+-
 <template>
   <Head>
     <Title>Главная страница</Title>
@@ -64,17 +65,24 @@ function requestPermission() {
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="py-5">
-          <div class="mt-5 mb-5 flex items-center max-sm:flex-col max-sm:items-start gap-3">
+          <div
+            class="mt-5 mb-5 flex items-center gap-3"
+          >
             <h1 v-if="user.username !== 'Директор'" class="text-xl">
               Приветствуем, {{ user.username }}!
             </h1>
             <h1 v-if="user.username === 'Директор'" class="text-xl">
               Приветствуем, Император!
             </h1>
-            <div>
-              <UIMainButton @click="requestPermission"
-                >Подписаться на обновления</UIMainButton
-              >
+            <div
+              @click="requestPermission"
+              class="bg-orange-100 duration-200 cursor-pointer hover:opacity-50 pt-1 rounded-full px-1"
+            >
+              <Icon
+                name="material-symbols:add-alert"
+                size="24"
+                class="text-secondary-color"
+              />
             </div>
           </div>
           <div>
