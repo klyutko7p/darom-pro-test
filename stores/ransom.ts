@@ -549,8 +549,8 @@ export const useRansomStore = defineStore("ransom", () => {
       );
 
       const arrayBuffer = await response.arrayBuffer();
-      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
-      return unpacked;
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

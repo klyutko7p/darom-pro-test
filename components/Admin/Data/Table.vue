@@ -18,32 +18,32 @@ defineProps({
 </script>
 
 <template>
-  <div class="relative overflow-x-auto overflow-y-auto rounded-xl mt-5">
-    <table id="theTable" class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500">
-      <thead class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center">
+  <div class="relative overflow-x-auto overflow-y-auto mt-5 mb-5">
+    <table id="theTable" class="w-full border-gray-50 text-sm text-left rtl:text-right text-gray-500">
+      <thead class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center">
         <tr>
           <th scope="col" class="px-6 py-3" v-for="field in fields">{{ field }}</th>
         </tr>
       </thead>
       <tbody>
-        <tr class="bg-white border-2 text-center" v-for="row in rows">
-          <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+        <tr class="bg-white border-[1px] text-center" v-for="row in rows">
+          <th scope="row" class="py-1 font-medium text-gray-900 whitespace-nowrap">
             {{ row.name }}
           </th>
-          <td class="px-6 py-4 border-2">
+          <td class="border-[1px]">
             <Icon
               @click="openModal(row)"
               class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
-              name="material-symbols:edit"
-              size="32"
+              name="ic:baseline-mode-edit"
+              size="24"
             />
           </td>
-          <td class="px-6 py-4 border-2">
+          <td class="py-1 border-[1px]">
             <Icon
               @click="deleteRow(row.id)"
               class="text-red-600 cursor-pointer hover:text-red-300 duration-200"
-              name="material-symbols:playlist-remove-rounded"
-              size="32"
+              name="material-symbols:delete-sweep-rounded"
+              size="24"
             />
           </td>
         </tr>

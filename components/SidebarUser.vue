@@ -255,7 +255,7 @@ function formatPhoneNumber(phoneNumber: string) {
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
       >
         <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols:edit-location-alt-outline" size="20" />
+          <Icon name="ic:baseline-mode-edit-location-alt-outline" size="20" />
         </div>
         <h1>Карта</h1>
       </div>
@@ -485,7 +485,7 @@ function formatPhoneNumber(phoneNumber: string) {
         class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
       >
         <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols:edit-location-alt-outline" size="20" />
+          <Icon name="ic:baseline-mode-edit-location-alt-outline" size="20" />
         </div>
         <h1>Карта</h1>
       </div>
