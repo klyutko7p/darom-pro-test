@@ -9,14 +9,14 @@ const storeRansom = useRansomStore();
 const router = useRouter();
 
 let user = ref({} as User);
-let rows = ref<Array<IAdvanceReport>>();
-let originallyRows = ref<Array<IAdvanceReport>>();
-let rowsBalance = ref<Array<IBalance>>();
-let rowsBalanceOnline = ref<Array<IBalanceOnline>>();
-let rowsOurRansom = ref<Array<IOurRansom>>();
+let rows = ref<Array<IAdvanceReport>>([]);
+let originallyRows = ref<Array<IAdvanceReport>>([]);
+let rowsBalance = ref<Array<IBalance>>([]);
+let rowsBalanceOnline = ref<Array<IBalanceOnline>>([]);
+let rowsOurRansom = ref<Array<IOurRansom>>([]);
 const token = Cookies.get("token");
 let isLoading = ref(false);
-let rowsDelivery = ref<Array<IDelivery>>();
+let rowsDelivery = ref<Array<IDelivery>>([]);
 
 onMounted(async () => {
   if (!token) {
@@ -764,6 +764,21 @@ async function createRow() {
     toast.error("Выберите получателя!");
   } else {
     isLoading.value = true;
+    if (rowData.value.typeOfExpenditure === "Передача денежных средств") {
+      if (rowData.value.issuedUser !== "Директор (С)") {
+        await storeUsers.sendMessageToEmployee(
+          "Авансовый отчёт: Darom.pro",
+          `Подтвердите получение денежных средств`,
+          rowData.value.issuedUser
+        );
+      } else {
+        await storeUsers.sendMessageToEmployee(
+          "Авансовый отчёт: Darom.pro",
+          `Подтвердите получение денежных средств`,
+          "Директор"
+        );
+      }
+    }
     await storeAdvanceReports.createAdvanceReport(rowData.value, user.value.username);
     rows.value = await storeAdvanceReports.getAdvancedReports();
     originallyRows.value = rows.value;

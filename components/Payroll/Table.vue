@@ -299,10 +299,14 @@ watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
     class="flex justify-between items-center mb-3 gap-3 max-sm:items-end max-sm:gap-5 max-sm:flex-col"
   >
     <div class="flex items-center gap-3 max-sm:flex-col max-sm:w-full max-sm:items-start">
-      <UIMainButton class="max-sm:w-full max-sm:max-w-[400px] mx-auto" @click="createAdvanceReportAdvance"
+      <UIMainButton
+        class="max-sm:w-full max-sm:max-w-[400px] mx-auto"
+        @click="createAdvanceReportAdvance"
         >создать отчет по авансу</UIMainButton
       >
-      <UIMainButton class="max-sm:w-full max-sm:max-w-[400px] mx-auto" @click="createAdvanceReportZP"
+      <UIMainButton
+        class="max-sm:w-full max-sm:max-w-[400px] mx-auto"
+        @click="createAdvanceReportZP"
         >создать отчет по выплате зп</UIMainButton
       >
     </div>
@@ -316,23 +320,49 @@ watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
     </UTooltip>
   </div>
 
-  <div class="mb-5">
-    <h1 class="font-bold text-4xl mb-3">Итого</h1>
+  <div class="mb-5 flex items-center justify-between max-lg:flex-col max-lg:items-start max-lg:gap-5">
     <div>
-      <h1 class="font-medium text-xl">
-        Выплачен аванс:
-        {{ typeof getAllSumAdvance() === "number" ? getAllSumAdvance().toFixed(0) : 0 }}
-        ₽
-      </h1>
-      <h1 class="font-medium text-xl">
-        ЗП к начислению:
-        {{ typeof getAllSumZP() === "number" ? getAllSumZP().toFixed(0) : 0 }} ₽
-      </h1>
-      <h1 class="font-medium text-xl">
-        Итого начислено за месяц:
-        {{ typeof getAllSumZPMonth() === "number" ? getAllSumZPMonth().toFixed(0) : 0 }}
-        ₽
-      </h1>
+      <h1 class="font-bold text-4xl mb-3">Итого</h1>
+      <div>
+        <h1 class="font-medium text-xl">
+          Выплачен аванс:
+          {{ typeof getAllSumAdvance() === "number" ? getAllSumAdvance().toFixed(0) : 0 }}
+          ₽
+        </h1>
+        <h1 class="font-medium text-xl">
+          ЗП к начислению:
+          {{ typeof getAllSumZP() === "number" ? getAllSumZP().toFixed(0) : 0 }} ₽
+        </h1>
+        <h1 class="font-medium text-xl">
+          Итого начислено за месяц:
+          {{ typeof getAllSumZPMonth() === "number" ? getAllSumZPMonth().toFixed(0) : 0 }}
+          ₽
+        </h1>
+      </div>
+    </div>
+
+    <div class="w-full max-w-[500px] max-lg:max-w-none">
+      <div>
+        <h1 class="text-lg mb-1 font-bold">Фильтр по компании</h1>
+        <VueMultiselect
+          v-model="selectedCompany"
+          :options="uniqueCompany"
+          :multiple="true"
+          :close-on-select="true"
+          placeholder="Выберите компанию"
+        />
+      </div>
+
+      <div>
+        <h1 class="text-lg mb-1 font-bold mt-3">Фильтр по ПВЗ</h1>
+        <VueMultiselect
+          v-model="selectedPVZ"
+          :options="uniquePVZ"
+          :multiple="true"
+          :close-on-select="true"
+          placeholder="Выберите ПВЗ"
+        />
+      </div>
     </div>
   </div>
 
@@ -340,28 +370,6 @@ watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
     <UIActionButton @click="updateReport()" v-if="arrayWithModifiedRows.length > 0">
       Сохранить
     </UIActionButton>
-  </div>
-
-  <div>
-    <h1 class="text-lg mb-1 font-bold">Фильтр по компании:</h1>
-    <VueMultiselect
-      v-model="selectedCompany"
-      :options="uniqueCompany"
-      :multiple="true"
-      :close-on-select="true"
-      placeholder="Выберите компанию"
-    />
-  </div>
-
-  <div>
-    <h1 class="text-lg mb-1 font-bold mt-3">Фильтр по ПВЗ:</h1>
-    <VueMultiselect
-      v-model="selectedPVZ"
-      :options="uniquePVZ"
-      :multiple="true"
-      :close-on-select="true"
-      placeholder="Выберите ПВЗ"
-    />
   </div>
 
   <div class="relative max-h-[610px] overflow-y-auto rounded-xl mt-5 mb-10">

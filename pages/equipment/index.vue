@@ -147,6 +147,13 @@ async function updateStateRows(obj: any) {
   if (answer) {
     isLoading.value = true;
 
+    await storeEquipments.updateStateRows(obj.idArray, obj.flag, user.value.id);
+    rows.value = await storeEquipments.getEquipments();
+    if (rows.value) {
+      handleFilteredRows(rows.value);
+    }
+    isLoading.value = false;
+
     if (obj.flag === "RP") {
       await storeUsers.sendMessageToEmployee(
         "Статус оборудования: Darom.pro",
@@ -182,13 +189,6 @@ async function updateStateRows(obj: any) {
         "Директор"
       );
     }
-
-    await storeEquipments.updateStateRows(obj.idArray, obj.flag, user.value.id);
-    rows.value = await storeEquipments.getEquipments();
-    if (rows.value) {
-      handleFilteredRows(rows.value);
-    }
-    isLoading.value = false;
   }
 }
 

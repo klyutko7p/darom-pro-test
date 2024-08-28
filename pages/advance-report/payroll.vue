@@ -262,11 +262,11 @@ watch(isOpen, (newValue) => {
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="mt-10">
-          <div class="flex items-center justify-between gap-3 max-sm:items-center">
+          <div class="flex items-center justify-between gap-3 max-sm:items-start max-sm:flex-col">
             <UIActionButton @click="openModal">Создать запись</UIActionButton>
             <NuxtLink
               to="/advance-report/employees"
-              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200"
+              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200 max-sm:text-sm"
               >Перейти к сотрудникам</NuxtLink
             >
           </div>
@@ -297,7 +297,7 @@ watch(isOpen, (newValue) => {
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">ПВЗ</label>
                   <select
-                    class="py-1 px-2 border-2 w-full  bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                    class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
                     v-model="rowData.PVZ"
                   >
                     <option v-for="pvzData in pvz" :value="pvzData">
@@ -309,7 +309,7 @@ watch(isOpen, (newValue) => {
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">Компания</label>
                   <select
-                    class="py-1 px-2 border-2 w-full  bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                    class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
                     v-model="rowData.company"
                   >
                     <option v-for="company in companies" :value="company">
@@ -321,7 +321,7 @@ watch(isOpen, (newValue) => {
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">ФИО</label>
                   <select
-                    class="py-1 px-2 border-2 w-full  bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                    class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
                     @change="autoInfoByFullname"
                     v-model="rowData.fullname"
                   >
@@ -339,7 +339,7 @@ watch(isOpen, (newValue) => {
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Телефон</label>
                   <input
-                    class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.phone"
                     type="text"
                   />
@@ -348,7 +348,7 @@ watch(isOpen, (newValue) => {
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">Банк</label>
                   <select
-                    class="py-1 px-2 border-2 w-full  bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                    class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
                     v-model="rowData.bank"
                   >
                     <option v-for="bank in banks" :value="bank">
@@ -360,7 +360,7 @@ watch(isOpen, (newValue) => {
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Аванс</label>
                   <input
-                    class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.advance"
                     type="number"
                   />
@@ -369,7 +369,7 @@ watch(isOpen, (newValue) => {
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Кол-во часов всего</label>
                   <input
-                    class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.hours"
                     type="number"
                   />
@@ -378,7 +378,7 @@ watch(isOpen, (newValue) => {
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Удержания</label>
                   <input
-                    class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.deductions"
                     type="number"
                   />
@@ -387,7 +387,7 @@ watch(isOpen, (newValue) => {
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Доплата</label>
                   <input
-                    class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.additionalPayment"
                     type="number"
                   />
