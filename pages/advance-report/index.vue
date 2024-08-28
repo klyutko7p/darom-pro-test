@@ -301,7 +301,6 @@ function getAllSumDirector() {
         sumOfPVZ2 -
         sumOfPVZ3 +
         sumOfPVZ4 +
-        sumOfPVZ5 -
         sumOfPVZ6 +
         sumOfPVZ7 +
         sumOfPVZ8 -
@@ -311,7 +310,8 @@ function getAllSumDirector() {
         sumOfPVZ12 -
         149000 +
         sumOfPVZ1 +
-        332531;
+        332531 +
+        1477830;
 
       allSum2.value =
         +sumOfPVZ1Cashless +
