@@ -26,6 +26,34 @@ function signOut() {
 definePageMeta({
   layout: "user",
 });
+
+import { getToken } from "firebase/messaging";
+
+const messagingToken = ref("");
+
+async function setToken() {
+  const { $messaging } = useNuxtApp();
+  const token = await getToken($messaging, {
+    vapidKey:
+      "BLA8pMjiR3G7gYFd09kR1ZSHyIypsNJlQV5ZP-uXtW0_eslYlfZjpVHmE9XwMu_91v8BhEarXKFJiXKJFMk3QTk",
+  });
+  messagingToken.value = token;
+  await storeUsers.createTokenDevice(user.value.username, token);
+}
+
+function requestPermission() {
+  if (!window.Notification) return;
+
+  if (window.Notification.permission === "granted") {
+    setToken();
+  } else {
+    window.Notification.requestPermission((value) => {
+      if (value === "granted") {
+        setToken();
+      }
+    });
+  }
+}
 </script>
 
 <template>
@@ -35,7 +63,16 @@ definePageMeta({
   <div v-if="!isLoading">
     <div v-if="token">
       <div class="py-5">
-        <h1 class="text-xl mt-10 mb-10">Приветствуем, {{ user.username }}!</h1>
+        <div class="mt-5 mb-5 flex items-center max-sm:flex-col max-sm:items-start gap-3">
+          <h1 class="text-xl">
+            Приветствуем, {{ user.username }}!
+          </h1>
+          <div>
+            <UIMainButton @click="requestPermission"
+              >Подписаться на обновления</UIMainButton
+            >
+          </div>
+        </div>
         <div>
           <h1
             class="font-bold text-6xl max-[400px]:text-4xl max-md:text-center text-secondary-color mb-5"

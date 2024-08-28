@@ -199,12 +199,15 @@ export const useBalanceStore = defineStore("balance", () => {
 
   async function getBalanceProfitManagerRows() {
     try {
-      let { data }: any = await useFetch("/api/balance/get-profit-manager-rows", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      let { data }: any = await useFetch(
+        "/api/balance/get-profit-manager-rows",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       return data.value;
     } catch (error) {
       if (error instanceof Error) {
@@ -362,6 +365,6 @@ export const useBalanceStore = defineStore("balance", () => {
     updateDeliveryProfitStatus,
     getBalanceProfitManagerRows,
     updateDeliveryProfitManagerStatus,
-    createBalanceProfitManagerRow
+    createBalanceProfitManagerRow,
   };
 });

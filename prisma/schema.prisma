@@ -355,6 +355,12 @@ model ClientDevicesToken {
   token       String @unique
 }
 
+model EmployeeDevicesToken {
+  id       Int    @id @default(autoincrement())
+  username String
+  token    String @unique
+}
+
 model allPVZ {
   id            Int            @id @default(autoincrement())
   name          String

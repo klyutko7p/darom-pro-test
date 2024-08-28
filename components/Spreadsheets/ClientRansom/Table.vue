@@ -35,11 +35,15 @@ function updateCurrentPageData() {
 
   if (searchQuery.value !== "") {
     returnRows.value = props.rows?.filter(
-      (row) => row.cell && row.cell.includes(searchQuery.value.trim())
+      (row) =>
+        row.cell &&
+        row.cell.toLowerCase().includes(searchQuery.value.trim().toLowerCase())
     );
     if (returnRows.value?.length === 0) {
       returnRows.value = props.rows?.filter(
-        (row) => row.fromName && row.fromName.includes(searchQuery.value.trim())
+        (row) =>
+          row.fromName &&
+          row.fromName.toLowerCase().includes(searchQuery.value.trim().toLowerCase())
       );
     }
   }
@@ -64,7 +68,7 @@ function updateRowsByFromName(): void {
 
       return acc;
     }, [])
-    .sort((a, b) => +b.cell - +a.cell); 
+    .sort((a, b) => +b.cell - +a.cell);
 }
 
 let searchQuery = ref("");
@@ -163,21 +167,23 @@ function getCountOfItemsByPVZClientRansomIssued(PVZ: string) {
     </div>
   </div>
 
+  <div class="flex flex-col gap-10 mb-5">
+    <h1 class="text-2xl max-sm:text-lg">Режим выдачи товаров ({{ pvzLink }})</h1>
+  </div>
+  <input
+    type="text"
+    v-model="searchQuery"
+    class="block w-full bg-transparent mb-10 border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 rounded-xl focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+    placeholder="Введите телефон или ячейку..."
+    @input="updateRowsByFromName"
+  />
   <div class="mt-2" v-auto-animate>
-    <div class="flex flex-col gap-10 mb-5">
-      <h1 class="text-2xl max-sm:text-lg">Режим выдачи товаров ({{ pvzLink }})</h1>
-    </div>
-    <input
-      type="text"
-      v-model="searchQuery"
-      class="block w-full bg-transparent mb-10 border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 rounded-xl focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
-      placeholder="Введите телефон или ячейку..."
-      @input="updateRowsByFromName"
-    />
     <div v-for="row in returnRows" v-auto-animate>
       <div
         @click="
-          router.push(`/spreadsheets/client-ransom/${pvzLink}/${row.fromName}/${row.cell}`)
+          router.push(
+            `/spreadsheets/client-ransom/${pvzLink}/${row.fromName}/${row.cell}`
+          )
         "
         class="cursor-pointer border-secondary-color hover:bg-secondary-color rounded-xl duration-300 flex items-center justify-between p-10 mb-5 border-2"
       >

@@ -14,7 +14,7 @@ export const useClientsStore = defineStore("clients", () => {
 
   function getClient() {
     try {
-      const user = Cookies.get("user");
+      const user = Cookies.get("user") as string;
       return JSON.parse(user);
     } catch (error) {
       return null;

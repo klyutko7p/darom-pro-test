@@ -501,13 +501,16 @@ export const useCellsStore = defineStore("cells", () => {
 
       if (uniqueArray.length > 0) {
         try {
-          let data = await useFetch("/api/cells/cell-update-not-empty-rows-client", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ cells: uniqueArray }),
-          });
+          let data = await useFetch(
+            "/api/cells/cell-update-not-empty-rows-client",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ cells: uniqueArray }),
+            }
+          );
           if (data.data.value === "Updated successfully") {
             cashedCells = null;
           } else {
@@ -549,13 +552,16 @@ export const useCellsStore = defineStore("cells", () => {
 
       if (uniqueArray1.length > 0) {
         try {
-          let data = await useFetch("/api/cells/cell-update-empty-rows-client", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ cells: uniqueArray1 }),
-          });
+          let data = await useFetch(
+            "/api/cells/cell-update-empty-rows-client",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ cells: uniqueArray1 }),
+            }
+          );
           if (data.data.value === "Updated successfully") {
             cashedCells = null;
           } else {

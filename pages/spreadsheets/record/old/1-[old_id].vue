@@ -16,7 +16,7 @@ async function updateDeliveryRow(obj: any) {
   isLoading.value = true;
   let answer = confirm("Вы точно хотите изменить статус доставки?");
   if (answer) await storeRansom.updateDeliveryStatus(obj.row, obj.flag, "OurRansom");
-  row.value = await storeRansom.getOldRansomRow(old_id, "OurRansom");
+  // row.value = await storeRansom.getOldRansomRow(old_id, "OurRansom");
   isLoading.value = false;
 }
 
@@ -27,7 +27,7 @@ onMounted(async () => {
 
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  row.value = await storeRansom.getOldRansomRow(old_id, "OurRansom");
+  // row.value = await storeRansom.getOldRansomRow(old_id, "OurRansom");
   isLoading.value = false;
 });
 

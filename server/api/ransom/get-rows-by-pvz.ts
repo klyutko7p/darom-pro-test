@@ -25,6 +25,7 @@ export default defineEventHandler(async (event) => {
         },
         where: {
           dispatchPVZ: PVZ,
+          deleted: null,
         },
         orderBy: [
           {
@@ -33,9 +34,22 @@ export default defineEventHandler(async (event) => {
         ],
       });
 
-      //   return JSON.stringify(rows);
-
-      const packed = msgpack.encode(rows);
+      const processedRows = rows.map(row => {
+        const newRow = {};
+  
+        if (row.cell !== undefined) newRow.cc = row.cell;
+        if (row.fromName !== undefined) newRow.fm = row.fromName;
+        if (row.dispatchPVZ !== undefined) newRow.dp = row.dispatchPVZ;
+        if (row.deliveredSC !== undefined) newRow.ds = row.deliveredSC;
+        if (row.deliveredPVZ !== undefined) newRow.dz = row.deliveredPVZ;
+        if (row.orderPVZ !== undefined) newRow.oz = row.orderPVZ;
+        if (row.issued !== undefined) newRow.i = row.issued;
+        if (row.deleted !== undefined) newRow.d = row.deleted;
+  
+        return newRow;
+      });
+  
+      const packed = msgpack.encode(processedRows);
       return packed;
     } else if (flag === "ClientRansom") {
       const rows = await prisma.clientRansom.findMany({

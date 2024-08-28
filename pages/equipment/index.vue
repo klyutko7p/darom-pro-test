@@ -11,6 +11,7 @@ const token = Cookies.get("token");
 
 let isLoading = ref(false);
 let user = ref({} as User);
+let users = ref<Array<User>>([]);
 let rows = ref<Array<IEquipmentRow>>([]);
 let allPVZ = ref<Array<PVZ>>([]);
 let allStateEquipments = ref<Array<string>>([]);
@@ -25,12 +26,14 @@ onMounted(async () => {
     user.value = await storeUsers.getUser();
     allStateEquipments.value = storeEquipments.getAllStateEquipments();
 
-    const [rowsData, allPVZData] = await Promise.all([
+    const [rowsData, allPVZData, usersData] = await Promise.all([
       storeEquipments.getEquipments(),
       storePVZ.getAllPVZ(),
+      storeUsers.getUsers(),
     ]);
 
     rows.value = rowsData;
+    users.value = usersData;
 
     if (rows.value) {
       handleFilteredRows(rows.value);
@@ -143,6 +146,43 @@ async function updateStateRows(obj: any) {
   );
   if (answer) {
     isLoading.value = true;
+
+    if (obj.flag === "RP") {
+      await storeUsers.sendMessageToEmployee(
+        "Статус оборудования: Darom.pro",
+        `У оборудования изменен статус на «Требуется ремонт»`,
+        "Директор"
+      );
+      await storeUsers.sendMessageToEmployee(
+        "Статус оборудования: Darom.pro",
+        `У оборудования изменен статус на «Требуется ремонт»`,
+        "Волошина"
+      );
+      await storeUsers.sendMessageToEmployee(
+        "Статус оборудования: Darom.pro",
+        `У оборудования изменен статус на «Требуется ремонт»`,
+        "Шарафаненко"
+      );
+      await storeUsers.sendMessageToEmployee(
+        "Статус оборудования: Darom.pro",
+        `У оборудования изменен статус на «Требуется ремонт»`,
+        "Шведова"
+      );
+      await storeUsers.sendMessageToEmployee(
+        "Статус оборудования: Darom.pro",
+        `У оборудования изменен статус на «Требуется ремонт»`,
+        "Горцуева"
+      );
+    }
+
+    if (obj.flag === "FT") {
+      await storeUsers.sendMessageToEmployee(
+        "Статус оборудования: Darom.pro",
+        `У оборудования изменен статус на «Неисправное»`,
+        "Директор"
+      );
+    }
+
     await storeEquipments.updateStateRows(obj.idArray, obj.flag, user.value.id);
     rows.value = await storeEquipments.getEquipments();
     if (rows.value) {

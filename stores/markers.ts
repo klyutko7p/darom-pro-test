@@ -27,7 +27,12 @@ export const useMarkersStore = defineStore("markers", () => {
     }
   }
 
-  async function createMarker(coordinates: number[], type: string, username: string, notation: string) {
+  async function createMarker(
+    coordinates: number[],
+    type: string,
+    username: string,
+    notation: string
+  ) {
     try {
       let data = await useFetch("/api/markers/create-marker", {
         method: "POST",
@@ -47,25 +52,25 @@ export const useMarkersStore = defineStore("markers", () => {
 
   async function deleteMarker(id: number) {
     try {
-        let data = await useFetch('/api/markers/delete-marker', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id: id }),
-        });
-        cashedMarkers = null; 
-        toast.success("Маркер успешно удален!")
+      let data = await useFetch("/api/markers/delete-marker", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: id }),
+      });
+      cashedMarkers = null;
+      toast.success("Маркер успешно удален!");
     } catch (error) {
-        if (error instanceof Error) {
-            toast.error(error.message);
-        }
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
     }
-}
+  }
 
   return {
     getMarkers,
     createMarker,
-    deleteMarker
+    deleteMarker,
   };
 });

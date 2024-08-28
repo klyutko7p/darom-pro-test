@@ -273,23 +273,6 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-  async function getRansomRowsWithPVZ(flag: string) {
-    try {
-      let { data }: any = await useFetch("/api/ransom/get-rows-with-pvz", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ flag: flag }),
-      });
-      return data.value;
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    }
-  }
-
   async function getRansomRowsWithPVZOurRansom() {
     try {
       let response = await fetch("/api/ransom/get-rows-with-pvz-or", {
@@ -355,12 +338,6 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getRansomRowsByPVZ(PVZ: string | string[], flag: string) {
     try {
-      // let { data }: any = await useFetch("/api/ransom/get-rows-by-pvz", {
-      //   method: "POST",
-      //   body: JSON.stringify({ PVZ: PVZ, flag: flag }),
-      // });
-      // return JSON.parse(data.value);
-
       let response = await fetch("/api/ransom/get-rows-by-pvz", {
         method: "POST",
         headers: {
@@ -370,25 +347,8 @@ export const useRansomStore = defineStore("ransom", () => {
       });
 
       const arrayBuffer = await response.arrayBuffer();
-      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
-      return unpacked;
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    }
-  }
-
-  async function getRansomRowsForModal(flag: string) {
-    try {
-      let { data }: any = await useFetch("/api/ransom/get-rows-for-modal", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ flag: flag }),
-      });
-      return data.value;
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -434,36 +394,20 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-  async function getRansomRowsForBalanceOurRansom() {
-    try {
-      let response = await fetch("/api/ransom/get-rows-for-balance-or", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/octet-stream",
-        },
-      });
-
-      const arrayBuffer = await response.arrayBuffer();
-      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
-      return unpacked.map(mapBackToOriginalFields);
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    }
-  }
-
   async function getRansomRowsForBalanceOurRansomPartOne() {
     try {
-      let response = await fetch("/api/ransom/get-rows-for-balance-or-part-one", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/octet-stream",
-        },
-      });
+      let response = await fetch(
+        "/api/ransom/get-rows-for-balance-or-part-one",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        }
+      );
 
       const arrayBuffer = await response.arrayBuffer();
-      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
       return unpacked.map(mapBackToOriginalFields);
     } catch (error) {
       if (error instanceof Error) {
@@ -474,15 +418,18 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getRansomRowsForBalanceOurRansomPartTwo() {
     try {
-      let response = await fetch("/api/ransom/get-rows-for-balance-or-part-two", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/octet-stream",
-        },
-      });
+      let response = await fetch(
+        "/api/ransom/get-rows-for-balance-or-part-two",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        }
+      );
 
       const arrayBuffer = await response.arrayBuffer();
-      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
       return unpacked.map(mapBackToOriginalFields);
     } catch (error) {
       if (error instanceof Error) {
@@ -493,15 +440,18 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getRansomRowsForBalanceOurRansomPartThree() {
     try {
-      let response = await fetch("/api/ransom/get-rows-for-balance-or-part-three", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/octet-stream",
-        },
-      });
+      let response = await fetch(
+        "/api/ransom/get-rows-for-balance-or-part-three",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        }
+      );
 
       const arrayBuffer = await response.arrayBuffer();
-      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
       return unpacked.map(mapBackToOriginalFields);
     } catch (error) {
       if (error instanceof Error) {
@@ -510,10 +460,14 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-  function mapBackToOriginalFields(row: IOurRansom) {
-    const originalRow = {};
+  function mapBackToOriginalFields(row: any) {
+    const originalRow = {} as IOurRansom;
 
+    if (row.fm !== undefined) originalRow.fromName = row.fm;
     if (row.dp !== undefined) originalRow.dispatchPVZ = row.dp;
+    if (row.ds !== undefined) originalRow.deliveredSC = row.ds;
+    if (row.dz !== undefined) originalRow.deliveredPVZ = row.dz;
+    if (row.oz !== undefined) originalRow.orderPVZ = row.oz;
     if (row.pp !== undefined) originalRow.prepayment = row.pp;
     if (row.ad !== undefined) originalRow.additionally = row.ad;
     if (row.dk !== undefined) originalRow.deliveredKGT = row.dk;
@@ -522,6 +476,7 @@ export const useRansomStore = defineStore("ransom", () => {
     if (row.p !== undefined) originalRow.priceSite = row.p;
     if (row.d !== undefined) originalRow.deleted = row.d;
     if (row.c !== undefined) originalRow.created_at = row.c;
+    if (row.cc !== undefined) originalRow.cell = row.cc;
 
     return originalRow;
   }
@@ -581,26 +536,6 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-  async function getRansomRowsWithDeletedForCells(flag: string) {
-    try {
-      let { data }: any = await useFetch(
-        "/api/ransom/get-rows-with-deleted-for-cells",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ flag: flag }),
-        }
-      );
-      return data.value;
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    }
-  }
-
   async function getRansomRowsWithDeletedForCellsOurRansom() {
     try {
       let response = await fetch(
@@ -616,23 +551,6 @@ export const useRansomStore = defineStore("ransom", () => {
       const arrayBuffer = await response.arrayBuffer();
       const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
       return unpacked;
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    }
-  }
-
-  async function getRansomRowsFirstHundred(flag: string) {
-    try {
-      let { data }: any = await useFetch("/api/ransom/get-rows-first-hundred", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ flag: flag }),
-      });
-      return data.value;
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -762,8 +680,7 @@ export const useRansomStore = defineStore("ransom", () => {
         if (row.priceProgram === undefined || row.priceProgram === 0)
           row.priceProgram = 0;
         if (!row.deliveredKGT) row.deliveredKGT = 0;
-        if (!row.productName)
-          row.productName = "";
+        if (!row.productName) row.productName = "";
         if (!row.prepayment) row.prepayment = 0;
 
         row.updatedUser = username;
@@ -986,23 +903,6 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-  async function getOldRansomRow(old_id: number, flag: string) {
-    try {
-      let { data }: any = await useFetch("/api/ransom/get-old-row", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ old_id: old_id, flag: flag }),
-      });
-      return data.value;
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    }
-  }
-
   async function getRansomRowsRefunds(flag: string) {
     try {
       let { data }: any = await useFetch("/api/ransom/get-rows-refunds", {
@@ -1012,26 +912,6 @@ export const useRansomStore = defineStore("ransom", () => {
         },
         body: JSON.stringify({ flag: flag }),
       });
-      return data.value;
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    }
-  }
-
-  async function getRansomRowsForAdvanceReport(flag: string) {
-    try {
-      let { data }: any = await useFetch(
-        "/api/ransom/get-rows-for-advance-report",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ flag: flag }),
-        }
-      );
       return data.value;
     } catch (error) {
       if (error instanceof Error) {
@@ -1089,22 +969,15 @@ export const useRansomStore = defineStore("ransom", () => {
     updateDeliveryRowsStatus,
     createCopyRow,
     deleteIssuedRows,
-    getOldRansomRow,
     getRansomRowsByPVZ,
     getRansomRowsByFromName,
     getSumOfRejection,
     updateSumOfRejection,
     getRansomRowsById,
-    getRansomRowsWithPVZ,
-    getRansomRowsForModal,
     getRansomRowsWithDeleted,
-    getRansomRowsFirstHundred,
-    getRansomRowsWithDeletedForCells,
     getRansomRowsRefunds,
-    getRansomRowsForAdvanceReport,
     getRansomRowsForUpdateCells,
     getRansomRowsByFromNameWithoutCell,
-    getRansomRowsForBalanceOurRansom,
     getRansomRowsForBalanceClientRansom,
     getRansomRowsForBalanceDelivery,
     getRansomRowsForModalOurRansom,

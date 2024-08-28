@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { read, utils, writeFile, write } from "xlsx";
 import { vAutoAnimate } from "@formkit/auto-animate";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const emit = defineEmits([
   "updateStateRows",
@@ -60,6 +63,7 @@ const handleCheckboxChange = (row: IEquipmentRow): void => {
   if (isChecked(row.id)) {
     checkedRows.value = checkedRows.value.filter((id) => id !== row.id);
   } else {
+    checkedRows.value = [];
     checkedRows.value.push(row.id);
     isOpen.value = true;
   }
@@ -138,13 +142,15 @@ async function getRowByIdFromInput(row: IEquipmentRow) {
 
 let isAllSelected = ref(false);
 function handleCheckboxChangeAll() {
-  if (isAllSelected.value) {
-    let arrayId = props.rows.filter((row) => !row.deleted).map((row) => row.id);
-    checkedRows.value = arrayId;
-    isOpen.value = true;
-  } else {
-    checkedRows.value = [];
-  }
+  // if (isAllSelected.value) {
+  //   let arrayId = props.rows.filter((row) => !row.deleted).map((row) => row.id);
+  //   checkedRows.value = arrayId;
+  //   isOpen.value = true;
+  // } else {
+  //   checkedRows.value = [];
+  // }
+  isAllSelected.value = false;
+  toast.warning("Вы не можете выделить все записи");
 }
 </script>
 
