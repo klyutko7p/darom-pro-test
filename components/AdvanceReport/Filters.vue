@@ -55,7 +55,6 @@ const selectedTypeOfExpenditure = ref<Array<string>>([]);
 const selectedNotation = ref<Array<string>>([]);
 const selectedCompany = ref<Array<string>>([]);
 const selectedCreatedUser = ref<Array<string>>([]);
-const selectedIssuedUser = ref<number | string | null>(null);
 const startingDate = ref<Date | string | null>(null);
 const endDate = ref<Date | string | null>(null);
 const startingDate2 = ref<Date | string | null>(null);
@@ -83,10 +82,6 @@ const uniqueCompany = computed(() => {
 
 const uniqueCreatedUser = computed(() => {
   return storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "createdUser");
-});
-
-const uniqueIssuedUser = computed(() => {
-  return storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "issuedUser");
 });
 
 const filteredRows = ref<Array<IAdvanceReport>>();
@@ -131,7 +126,6 @@ const filterRows = () => {
       (!selectedCompany.value.length || selectedCompany.value.includes(row.company)) &&
       (!selectedCreatedUser.value.length ||
         selectedCreatedUser.value.includes(row.createdUser)) &&
-      (!selectedIssuedUser.value || row.issuedUser === selectedIssuedUser.value) &&
       (!selected.value.start || new Date(row.date) >= new Date(newStartingDate)) &&
       (!selected.value.end || new Date(row.date) <= new Date(newEndDate)) &&
       (!startingDate2.value || new Date(row.received) >= new Date(newStartingDate2)) &&
@@ -149,7 +143,6 @@ function clearFields() {
   selectedCompany.value = [];
   selectedNotation.value = [];
   selectedCreatedUser.value = [];
-  selectedIssuedUser.value = "";
   startingDate.value = "";
   endDate.value = "";
   startingDate2.value = "";
@@ -167,7 +160,7 @@ watch(
     selectedType,
     selectedCompany,
     selectedCreatedUser,
-    selectedIssuedUser,
+    selectedNotation,
     startingDate,
     endDate,
     startingDate2,
@@ -212,6 +205,111 @@ const nonEmptyCount = computed(() => {
 });
 
 const uniqueType = ref(["Нал", "Безнал"]);
+
+function saveToLocalStorage(key: string, value: any) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function loadFromLocalStorage(key: string) {
+  const storedValue = localStorage.getItem(key);
+  return storedValue ? JSON.parse(storedValue) : null;
+}
+
+function saveFiltersToLocalStorage() {
+  saveToLocalStorage("selectedPVZAR", selectedPVZ.value);
+  saveToLocalStorage("selectedTypeOfExpenditureAR", selectedTypeOfExpenditure.value);
+  saveToLocalStorage("selectedExpenditureAR", selectedExpenditure.value);
+  saveToLocalStorage("selectedTypeAR", selectedType.value);
+  saveToLocalStorage("selectedCompanyAR", selectedCompany.value);
+  saveToLocalStorage("selectedCreatedUserAR", selectedCreatedUser.value);
+  saveToLocalStorage("selectedNotationAR", selectedNotation.value);
+  saveToLocalStorage("startingDateAR", selected.value.start);
+  saveToLocalStorage("endDateAR", selected.value.end);
+  saveToLocalStorage("startingDate2AR", startingDate2.value);
+  saveToLocalStorage("endDate2AR", endDate2.value);
+  showFilters.value = false;
+}
+
+function clearLocalStorage() {
+  localStorage.clear();
+  selectedPVZ.value = [];
+  selectedExpenditure.value = [];
+  selectedTypeOfExpenditure.value = [];
+  selectedType.value = [];
+  selectedCompany.value = [];
+  selectedCreatedUser.value = [];
+  selectedNotation.value = [];
+  startingDate.value = null;
+  endDate.value = null;
+  startingDate2.value = null;
+  endDate2.value = null;
+}
+
+onUnmounted(() => {
+  clearLocalStorage();
+})
+
+onMounted(() => {
+  const storedSelectedPVZ = loadFromLocalStorage("selectedPVZAR");
+  if (storedSelectedPVZ !== null) {
+    selectedPVZ.value = storedSelectedPVZ;
+  }
+
+  const storedSelectedTypeOfExpenditure = loadFromLocalStorage("selectedTypeOfExpenditureAR");
+  if (storedSelectedTypeOfExpenditure !== null) {
+    selectedTypeOfExpenditure.value = storedSelectedTypeOfExpenditure;
+  }
+
+  const storedSelectedExpenditure = loadFromLocalStorage("selectedExpenditureAR");
+  if (storedSelectedExpenditure !== null) {
+    selectedExpenditure.value = storedSelectedExpenditure;
+  }
+
+  const storedSelectedType = loadFromLocalStorage("selectedTypeAR");
+  if (storedSelectedType !== null) {
+    selectedType.value = storedSelectedType;
+  }
+
+  const storedSelectedCompany = loadFromLocalStorage("selectedCompanyAR");
+  if (storedSelectedCompany !== null) {
+    selectedCompany.value = storedSelectedCompany;
+  }
+
+  const storedSelectedCreatedUser = loadFromLocalStorage("selectedCreatedUserAR");
+  if (storedSelectedCreatedUser !== null) {
+    selectedCreatedUser.value = storedSelectedCreatedUser;
+  }
+
+  const storedSelectedNotation = loadFromLocalStorage("selectedNotationAR");
+  if (storedSelectedNotation !== null) {
+    selectedNotation.value = storedSelectedNotation;
+  }
+
+  const storedNotation = loadFromLocalStorage("storedNotationAR");
+  if (storedNotation !== null) {
+    selectedNotation.value = storedNotation;
+  }
+
+  const storedStartingDate = loadFromLocalStorage("startingDateAR");
+  if (storedStartingDate !== null) {
+    selected.value.start = storedStartingDate;
+  }
+
+  const storedEndDate = loadFromLocalStorage("endDateAR");
+  if (storedEndDate !== null) {
+    selected.value.end = storedEndDate;
+  }
+
+  const storedStartingDate2 = loadFromLocalStorage("startingDate2AR");
+  if (storedStartingDate2 !== null) {
+    startingDate2.value = storedStartingDate2;
+  }
+
+  const storedEndDate2 = loadFromLocalStorage("endDate2AR");
+  if (storedEndDate2 !== null) {
+    endDate2.value = storedEndDate2;
+  }
+});
 </script>
 
 <template>
@@ -310,7 +408,7 @@ const uniqueType = ref(["Нал", "Безнал"]);
         class="block max-sm:hidden my-5 max-w-[220px]"
       >
         <UButton type="button" icon="i-heroicons-calendar-days-20-solid" color="orange">
-          {{ format(selected.start, "dd MMM yyy", { locale: ru }) }}  —
+          {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
           {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
         </UButton>
 
@@ -343,12 +441,8 @@ const uniqueType = ref(["Нал", "Безнал"]);
         :popper="{ placement: 'auto' }"
         class="hidden max-sm:block mx-auto max-w-[220px] my-5"
       >
-        <UButton
-          type="button"
-          icon="i-heroicons-calendar-days-20-solid"
-          color="orange"
-        >
-          {{ format(selected.start, "dd MMM yyy", { locale: ru }) }}  —
+        <UButton type="button" icon="i-heroicons-calendar-days-20-solid" color="orange">
+          {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
           {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
         </UButton>
 
@@ -377,10 +471,12 @@ const uniqueType = ref(["Нал", "Безнал"]);
         </template>
       </UPopover>
       <div class="flex justify-end gap-3 mt-3 mb-5">
-        <UIMainButton @click="filterRows(), (showFilters = !showFilters)"
+        <UIMainButton @click="saveFiltersToLocalStorage(), filterRows()"
           >Принять</UIMainButton
         >
-        <UIActionButton @click="clearFields">Очистить фильтры</UIActionButton>
+        <UIActionButton @click="clearFields(), clearLocalStorage()"
+          >Очистить фильтры</UIActionButton
+        >
       </div>
     </div>
   </div>

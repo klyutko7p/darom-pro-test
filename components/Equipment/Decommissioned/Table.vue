@@ -56,11 +56,10 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
 
 <template>
   <div v-if="!isLoading">
-    <div class="flex items-end justify-between mb-5 max-sm:flex-col max-sm:items-start">
+    <div class="flex items-end justify-between mb-5">
       <div>
-        <h1 class="text-xl max-sm:text-lg font-bold mb-3 max-sm:mb-0">
-          Списанного оборудования:
-          <span class="text-secondary-color">{{ totalRows }} шт.</span>
+        <h1 class="text-xl max-sm:text-lg font-bold mb-3">
+          Строк в таблице: <span class="text-secondary-color">{{ totalRows }} шт.</span>
         </h1>
       </div>
       <div class="flex items-end max-sm:mt-2 max-lg:mt-5 max-lg:justify-between gap-20">

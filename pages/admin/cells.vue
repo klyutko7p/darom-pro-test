@@ -5,52 +5,50 @@ const storeCells = useCellsStore();
 const router = useRouter();
 
 let user = ref({} as User);
-let cells = ref<Array<Cell[]>>()
+let cells = ref<Array<Cell[]>>();
 const token = Cookies.get("token");
 let isLoading = ref(false);
 
 onMounted(async () => {
-    if (!token) {
-        router.push("/auth/login");
-    }
+  if (!token) {
+    router.push("/auth/login");
+  }
 
-    isLoading.value = true;
-    user.value = await storeUsers.getUser();
-    cells.value = await storeCells.getCells();
-    isLoading.value = false;
+  isLoading.value = true;
+  user.value = await storeUsers.getUser();
+  cells.value = await storeCells.getCells();
+  isLoading.value = false;
 });
 
-
-const fields = ["название", "ПВЗ", "статус", "кем занято"];
+const fields = ["номер", "ПВЗ", "статус", "кем занято"];
 
 definePageMeta({
-    layout: false,
+  layout: false,
 });
-
 </script>
 
 <template>
-    <Head>
-        <Title>Ячейки</Title>
-    </Head>
+  <Head>
+    <Title>Ячейки</Title>
+  </Head>
 
-    <div v-if="token && user.role === 'ADMIN'">
-        <NuxtLayout name="admin">
-            <div v-if="!isLoading" class="mt-10">
-                <AdminDataTable3 :fields="fields" :rows="cells" />
-            </div>
+  <div v-if="token && user.role === 'ADMIN'">
+    <NuxtLayout name="admin">
+      <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5 space-y-1">
+        <AdminDataTable3 :fields="fields" :rows="cells" />
+      </div>
 
-            <div v-else>
-                <UISpinner />
-            </div>
-        </NuxtLayout>
-    </div>
+      <div v-else>
+        <UISpinner />
+      </div>
+    </NuxtLayout>
+  </div>
 
-    <div v-else-if="user.role === 'USER'">
-        <NuxtLayout name="user">
-            <h1>
-                У вас недостаточно прав на просмотр этой информации. Обратитесь к администратору
-            </h1>
-        </NuxtLayout>
-    </div>
+  <div v-else-if="user.role === 'USER'">
+    <NuxtLayout name="user">
+      <h1>
+        У вас недостаточно прав на просмотр этой информации. Обратитесь к администратору
+      </h1>
+    </NuxtLayout>
+  </div>
 </template>

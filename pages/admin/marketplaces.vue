@@ -89,7 +89,7 @@ watch(isOpen, (newValue) => {
 
   <div v-if="token && user.role === 'ADMIN'">
     <NuxtLayout name="admin">
-      <div v-if="!isLoading">
+      <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5 space-y-1">
         <AdminDataTable
           :fields="fields"
           :rows="marketplaces"

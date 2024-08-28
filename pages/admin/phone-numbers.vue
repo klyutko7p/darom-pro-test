@@ -84,8 +84,8 @@ watch(isOpen, (newValue) => {
 
   <div v-if="token && user.role === 'ADMIN'">
     <NuxtLayout name="admin">
-      <div v-if="!isLoading" class="mt-10">
-        <UIMainButton @click="openModal"> Привязка телефона к адресу </UIMainButton>
+      <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 max-sm:px-1 pb-5 pt-10 space-y-1">
+        <UIMainButton class="mb-5" @click="openModal"> Привязка телефона к адресу </UIMainButton>
         <PhoneNumberTable :rows="phoneNumbers" :user="user" @open-modal="openModal" />
 
         <UINewModalEdit v-show="isOpen" @close-modal="closeModal">

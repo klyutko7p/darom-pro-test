@@ -88,7 +88,7 @@ function handleFilteredRows(filteredRowsData: IDecommissionedEquipmentRow[]) {
               >Показать оборудование</NuxtLink
             >
           </div>
-          <div class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 mt-10 pb-5 space-y-1">
+          <div class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5 space-y-1">
             <EquipmentDecommissionedFilters
               v-if="rows"
               @filtered-rows="handleFilteredRows"

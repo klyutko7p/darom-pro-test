@@ -127,14 +127,48 @@ onMounted(async () => {
     router.push("/auth/login");
   }
 
-  isLoading.value = true;
-  user.value = await storeUsers.getUser();
-  users.value = await storeUsers.getUsers();
-  pvz.value = await storePVZ.getPVZ();
-  sortingCenters.value = await storeSC.getSortingCenters();
-  sumOfRejection.value = await storeRansom.getSumOfRejection();
+  const [
+    userResponse,
+    usersResponse,
+    pvzResponse,
+    sortingCentersResponse,
+    sumOfRejectionResponse,
+  ] = await Promise.all([
+    await storeUsers.getUser(),
+    storeUsers.getUsers(),
+    await storePVZ.getPVZ(),
+    await storeSC.getSortingCenters(),
+    storeRansom.getSumOfRejection(),
+  ]);
+
+  user.value = userResponse;
+  users.value = usersResponse;
+  sortingCenters.value = prepareSCList(sortingCentersResponse);
+  pvz.value = preparePVZList(pvzResponse);
+  sumOfRejection.value = sumOfRejectionResponse;
+
   isLoading.value = false;
 });
+
+function prepareSCList(sortingCenters: SortingCenter[]): SortingCenter[] {
+  const updatedSCList = [...sortingCenters];
+
+  if (!updatedSCList.some((sc) => sc.id === 111111)) {
+    updatedSCList.unshift({ id: 111111, name: "ВСЕ", address: "" });
+  }
+
+  return updatedSCList;
+}
+
+function preparePVZList(pvzList: PVZ[]): PVZ[] {
+  const updatedPVZList = [...pvzList];
+
+  if (!updatedPVZList.some((pvz) => pvz.id === 111111)) {
+    updatedPVZList.unshift({ id: 111111, name: "ВСЕ" });
+  }
+
+  return updatedPVZList;
+}
 
 definePageMeta({
   layout: false,
@@ -155,6 +189,26 @@ watch(isOpen, (newValue) => {
     unlockScroll();
   }
 });
+
+const roles = [
+  "USER",
+  "ADMIN",
+  "SORTIROVKA",
+  "PVZ",
+  "PPVZ",
+  "RMANAGER",
+  "ADMINISTRATOR",
+  "COURIER",
+  "DRIVER",
+  "SHVEDOVA",
+  "OFFICE",
+];
+
+const userOptions = [
+  { value: "NONE", text: "Не видеть" },
+  { value: "READ", text: "Видеть" },
+  { value: "WRITE", text: "Редактировать" },
+];
 </script>
 
 <template>
@@ -164,7 +218,7 @@ watch(isOpen, (newValue) => {
 
   <div v-if="token && user.role === 'ADMIN'">
     <NuxtLayout name="admin">
-      <div v-if="!isLoading">
+      <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5 space-y-1">
         <AdminUsersTable
           :fields="fields"
           :users="users"
@@ -184,7 +238,7 @@ watch(isOpen, (newValue) => {
           </template>
           <template v-slot:header>
             <div class="custom-header">
-              <h1 class="text-left">Изменение:  {{ userData.username }}</h1>
+              <h1 class="text-left">Изменение: {{ userData.username }}</h1>
             </div>
           </template>
           <template v-slot:body>
@@ -199,22 +253,7 @@ watch(isOpen, (newValue) => {
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="role">Роль</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
-                  v-model="userData.role"
-                >
-                  <option value="ADMIN">ADMIN</option>
-                  <option value="USER">USER</option>
-                  <option value="SORTIROVKA">SORTIROVKA</option>
-                  <option value="PVZ">PVZ</option>
-                  <option value="PPVZ">PPVZ</option>
-                  <option value="RMANAGER">RMANAGER</option>
-                  <option value="ADMINISTRATOR">ADMINISTRATOR</option>
-                  <option value="COURIER">COURIER</option>
-                  <option value="DRIVER">DRIVER</option>
-                  <option value="SHVEDOVA">SHVEDOVA</option>
-                  <option value="OFFICE">OFFICE</option>
-                </select>
+                <USelectMenu class="w-full" v-model="userData.role" :options="roles" />
               </div>
               <div
                 class="flex items-center justify-centers gap-3 mb-5 flex-wrap text-center max-sm:flex-col"
@@ -226,517 +265,466 @@ watch(isOpen, (newValue) => {
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Сортировочный центр</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="name"
+                  option-attribute="name"
                   v-model="userData.visibleSC"
-                >
-                  <option value="ВСЕ">ВСЕ</option>
-                  <option
-                    v-for="sortingCenter in sortingCenters"
-                    :value="sortingCenter.name"
-                  >
-                    {{ sortingCenter.name }}
-                  </option>
-                </select>
+                  :options="sortingCenters"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">ПВЗ</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="name"
+                  option-attribute="name"
                   v-model="userData.visiblePVZ"
-                >
-                  <option value="ВСЕ">ВСЕ</option>
-                  <option v-for="valueData in pvz" :value="valueData.name">
-                    {{ valueData.name }}
-                  </option>
-                </select>
+                  :options="pvz"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Ячейка (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.cell1"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Ячейка (Выкуп клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.cell2"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Дополнительно (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.additionally1"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Дополнительно (Выкуп клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.additionally2"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Дополнительно (Доставка)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.additionally3"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Доставлено на СЦ (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.deliveredSC1"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Доставлено на СЦ (Выкуп клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.deliveredSC2"
-                >
-                  <
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Доставлено на ПВЗ (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.deliveredPVZ1"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Доставлено на ПВЗ (Выкуп клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.deliveredPVZ2"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Дополнительный доход (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.deliveredKGT1"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Дополнительный доход (Выкуп клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.deliveredKGT2"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Отправка в ПВЗ (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.dispatchPVZ1"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Отправка в ПВЗ (Выкуп клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.dispatchPVZ2"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Отправка в ПВЗ (Доставка)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.dispatchPVZ3"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Отсортировано (Доставка)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.sorted"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Оплачено (Доставка)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.paid"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Имя (Доставка)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.name3"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Телефон (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.fromName1"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Телефон (Выкуп клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.fromName2"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Телефон (Доставка)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.fromName3"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Выдан клиенту (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.issued1"
-                >
-                  <
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Выдан клиенту (Выкуп клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.issued2"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Аккаунт заказа (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.orderAccount"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Заказано на СЦ (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.orderPVZ1"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Заказано на СЦ (Выкуп клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.orderPVZ2"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Заказано на СЦ (Доставка)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.orderPVZ3"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Процент с клиента (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.percentClient1"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Процент с клиента (Выкуп клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.percentClient2"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Процент с клиента (Доставка)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.percentClient3"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Примечание (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.notation1"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Примечание (Выкуп клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.notation2"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Стоимость выкупа товара (Выкуп клиента) </label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.priceProgram"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Стоимость выкупа товара (Доставка) </label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.purchaseOfGoods"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Стоимость сайт (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.priceSite"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Предоплата (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.prepayment1"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Предоплата (Выкуп клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.prepayment2"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Товар (ссылка) (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.productLink1"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Маркетплейс (Выкуп клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.productLink2"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Название товара (Наш выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.productName1"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Количество товаров (Выкуп клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.productName2"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Данные (Наш Выкуп)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.dataOurRansom"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Данные (Выкуп Клиента)</label>
-                <select
-                  class="py-1.5 px-3 border-2 bg-transparent w-full rounded-xl text-base"
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
                   v-model="userData.dataClientRansom"
-                >
-                  <option value="NONE">Не видеть</option>
-                  <option value="READ">Видеть</option>
-                  <option value="WRITE">Редактировать</option>
-                </select>
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
@@ -749,6 +737,13 @@ watch(isOpen, (newValue) => {
                   <option value="READ">Видеть</option>
                   <option value="WRITE">Редактировать</option>
                 </select>
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
+                  v-model="userData.dispatchPVZ3"
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
@@ -761,6 +756,13 @@ watch(isOpen, (newValue) => {
                   <option value="READ">Видеть</option>
                   <option value="WRITE">Редактировать</option>
                 </select>
+                <USelectMenu
+                  class="w-full"
+                  value-attribute="value"
+                  option-attribute="text"
+                  v-model="userData.dispatchPVZ3"
+                  :options="userOptions"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">

@@ -216,6 +216,7 @@ let banks = ref([
   "альфа банк",
   "центр инвест",
   "ВТБ",
+  "Райффайзен",
 ]);
 
 function autoInfoByFullname() {

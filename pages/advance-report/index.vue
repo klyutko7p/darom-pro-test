@@ -337,6 +337,7 @@ let sumCreditBalance = ref(0);
 let sumCreditCashDebt = ref(0);
 let sumCreditOnlineDebt = ref(0);
 let sumCreditBalanceDebt = ref(0);
+
 function getSumCreditCash() {
   if (rows.value) {
     let sumOfPVZ = rows.value

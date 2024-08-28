@@ -22,34 +22,48 @@ onMounted(async () => {
   }
 
   isLoading.value = true;
-  try {
-    user.value = await storeUsers.getUser();
-    allStateEquipments.value = storeEquipments.getAllStateEquipments();
 
-    const [rowsData, allPVZData, usersData] = await Promise.all([
+  try {
+    const [
+      currentUser,
+      equipmentStates,
+      equipments,
+      pvzList,
+      usersList,
+    ] = await Promise.all([
+      storeUsers.getUser(),
+      storeEquipments.getAllStateEquipments(),
       storeEquipments.getEquipments(),
       storePVZ.getAllPVZ(),
       storeUsers.getUsers(),
     ]);
 
-    rows.value = rowsData;
-    users.value = usersData;
+    user.value = currentUser;
+    allStateEquipments.value = equipmentStates;
+    rows.value = equipments;
+    users.value = usersList;
 
     if (rows.value) {
       handleFilteredRows(rows.value);
     }
 
-    allPVZ.value = allPVZData;
-    if (!allPVZ.value.some((pvz) => pvz.id === 111111)) {
-      allPVZ.value.unshift({ id: 111111, name: "Все ПВЗ" });
-    }
-    allPVZ.value = allPVZ.value.filter((pvz) => pvz.name !== "НаДом");
+    allPVZ.value = preparePVZList(pvzList);
   } catch (error) {
-    console.error("An error occurred:", error);
+    console.error("An error occurred while loading data:", error);
   } finally {
     isLoading.value = false;
   }
 });
+
+function preparePVZList(pvzList: PVZ[]): PVZ[] {
+  const updatedPVZList = [...pvzList];
+
+  if (!updatedPVZList.some((pvz) => pvz.id === 111111)) {
+    updatedPVZList.unshift({ id: 111111, name: "Все ПВЗ" });
+  }
+
+  return updatedPVZList.filter((pvz) => pvz.name !== "НаДом");
+}
 
 definePageMeta({
   layout: false,
@@ -59,6 +73,7 @@ definePageMeta({
 let equipmentRowData = ref({} as IEquipmentRow);
 
 let isOpen = ref(false);
+
 function openModal(row: IEquipmentRow) {
   isOpen.value = true;
   if (row.id) {
@@ -140,6 +155,16 @@ async function updateEquipmentRow() {
   }
 }
 
+async function notifyEmployees(subject: string, message: string, employees: string[]) {
+  const filteredEmployees = employees.filter(
+    (employee) => employee !== user.value.username
+  );
+
+  for (const employee of filteredEmployees) {
+    await storeUsers.sendMessageToEmployee(subject, message, employee);
+  }
+}
+
 async function updateStateRows(obj: any) {
   let answer = confirm(
     `Вы точно хотите изменить статус состояния? Количество записей: ${obj.idArray.length}`
@@ -155,39 +180,21 @@ async function updateStateRows(obj: any) {
     isLoading.value = false;
 
     if (obj.flag === "RP") {
-      await storeUsers.sendMessageToEmployee(
-        "Статус оборудования: Darom.pro",
-        `У оборудования изменен статус на «Требуется ремонт»`,
-        "Директор"
-      );
-      await storeUsers.sendMessageToEmployee(
-        "Статус оборудования: Darom.pro",
-        `У оборудования изменен статус на «Требуется ремонт»`,
-        "Волошина"
-      );
-      await storeUsers.sendMessageToEmployee(
-        "Статус оборудования: Darom.pro",
-        `У оборудования изменен статус на «Требуется ремонт»`,
-        "Шарафаненко"
-      );
-      await storeUsers.sendMessageToEmployee(
-        "Статус оборудования: Darom.pro",
-        `У оборудования изменен статус на «Требуется ремонт»`,
-        "Шведова"
-      );
-      await storeUsers.sendMessageToEmployee(
-        "Статус оборудования: Darom.pro",
-        `У оборудования изменен статус на «Требуется ремонт»`,
-        "Горцуева"
-      );
+      const subject = "Статус оборудования: Darom.pro";
+      const message = "У оборудования изменен статус на «Требуется ремонт»";
+      const employees = ["Директор", "Волошина", "Шарафаненко", "Шведова", "Горцуева"];
+
+      await notifyEmployees(subject, message, employees);
     }
 
     if (obj.flag === "FT") {
-      await storeUsers.sendMessageToEmployee(
-        "Статус оборудования: Darom.pro",
-        `У оборудования изменен статус на «Неисправное»`,
-        "Директор"
-      );
+      if (user.value.username !== "Директор") {
+        await storeUsers.sendMessageToEmployee(
+          "Статус оборудования: Darom.pro",
+          "У оборудования изменен статус на «Неисправное»",
+          "Директор"
+        );
+      }
     }
   }
 }
@@ -264,7 +271,7 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
             </NuxtLink>
           </div>
 
-          <div class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 mt-10 pb-5 space-y-1">
+          <div class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5 space-y-1">
             <EquipmentFilters
               v-if="rows"
               @filtered-rows="handleFilteredRows"
@@ -390,7 +397,7 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
             </NuxtLink>
           </div>
 
-          <div class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 mt-10 pb-5 space-y-1">
+          <div class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5 space-y-1">
             <EquipmentFilters
               v-if="rows"
               @filtered-rows="handleFilteredRows"

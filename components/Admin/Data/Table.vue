@@ -42,7 +42,7 @@ defineProps({
             <Icon
               @click="deleteRow(row.id)"
               class="text-red-600 cursor-pointer hover:text-red-300 duration-200"
-              name="material-symbols:delete-sweep-rounded"
+              name="ic:round-delete"
               size="24"
             />
           </td>

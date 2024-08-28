@@ -63,7 +63,6 @@ definePageMeta({
   layout: false,
 });
 
-
 function lockScroll() {
   document.body.classList.add("no-scroll");
 }
@@ -88,7 +87,10 @@ watch(isOpen, (newValue) => {
 
   <div v-if="token && user.role === 'ADMIN'">
     <NuxtLayout name="admin">
-      <div v-if="!isLoading">
+      <div
+        v-if="!isLoading"
+        class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5 space-y-1"
+      >
         <AdminDataTable2
           :fields="fields"
           :rows="sortingCenters"
@@ -96,7 +98,10 @@ watch(isOpen, (newValue) => {
           @open-modal="openModal"
         />
 
-        <AdminDataCreate2 :title="'Сортировочный Центр'" @create-data="createSortingCenter" />
+        <AdminDataCreate2
+          :title="'Сортировочный Центр'"
+          @create-data="createSortingCenter"
+        />
 
         <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
           <template v-slot:icon-header>
@@ -104,7 +109,7 @@ watch(isOpen, (newValue) => {
           </template>
           <template v-slot:header>
             <div class="custom-header">
-              <h1>Изменение:  {{ sortingCentersData.name }}</h1>
+              <h1>Изменение: {{ sortingCentersData.name }}</h1>
             </div>
           </template>
           <template v-slot:body>
@@ -129,7 +134,9 @@ watch(isOpen, (newValue) => {
           </template>
           <template v-slot:footer>
             <div class="flex gap-3 items-center justify-center">
-              <UISaveModalButton @click="updateSortingCenters">СОХРАНИТЬ</UISaveModalButton>
+              <UISaveModalButton @click="updateSortingCenters"
+                >СОХРАНИТЬ</UISaveModalButton
+              >
               <UIExitModalButton @click="closeModal">ЗАКРЫТЬ</UIExitModalButton>
             </div>
           </template>
