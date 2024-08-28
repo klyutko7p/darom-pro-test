@@ -912,6 +912,14 @@ async function updateDeliveryRow(row: any) {
   isLoading.value = false;
 }
 
+function clearLocalStorage() {
+  localStorage.clear();
+}
+
+onUnmounted(() => {
+  clearLocalStorage();
+})
+
 async function deleteRow(id: any) {
   let answer = confirm("Вы точно хотите удалить строку?");
   if (answer) {

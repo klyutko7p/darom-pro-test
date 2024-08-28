@@ -245,10 +245,6 @@ function clearLocalStorage() {
   endDate2.value = null;
 }
 
-onUnmounted(() => {
-  clearLocalStorage();
-})
-
 onMounted(() => {
   const storedSelectedPVZ = loadFromLocalStorage("selectedPVZAR");
   if (storedSelectedPVZ !== null) {
