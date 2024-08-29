@@ -53,15 +53,13 @@ let rowData = ref({} as IClientRansom);
 let marketplace = ref("");
 
 let phoneNumbersWithoutPercent = ref<Array<string>>([
-  "+79494530129",
-  "+79494527899",
   "+79494140214",
   "+79494140215",
   "+79493263518",
   "+79493485709",
   "+79494140217",
   "+79493479188",
-  "+79494189093",
+  "+79494690310",
 ]);
 
 async function handleFileChange(event) {

@@ -1076,9 +1076,9 @@ function handleFilteredRows(filteredRowsData: IAdvanceReport[]) {
   filteredRows.value = filteredRowsData;
 }
 
-async function handleFileChange(event) {
+async function handleFileChange(fileList: FileList) {
   isLoading.value = true;
-  const selectedFile = event.target.files[0];
+  const selectedFile = fileList[0];
   const { data, error } = await supabase.storage
     .from("image")
     .upload(`img-${selectedFile.name}`, selectedFile);
@@ -1630,6 +1630,7 @@ const typeOfOptions = [
                 <UInputMenu
                   class="w-full"
                   v-model="rowData.notation"
+                  v-model:query="rowData.notation"
                   :options="uniqueNotation"
                 />
               </div>
@@ -1814,6 +1815,7 @@ const typeOfOptions = [
                   :disabled="user.role !== 'ADMIN'"
                   class="w-full"
                   v-model="rowData.notation"
+                  v-model:query="rowData.notation"
                   type="text"
                   :options="uniqueNotation"
                 />
@@ -1941,6 +1943,7 @@ const typeOfOptions = [
                   :disabled="user.role !== 'ADMIN'"
                   class="w-full"
                   v-model="rowData.notation"
+                  v-model:query="rowData.notation"
                   type="text"
                   :options="uniqueNotation"
                 />
@@ -2164,6 +2167,7 @@ const typeOfOptions = [
                 <UInputMenu
                   class="w-full"
                   v-model="rowData.notation"
+                  v-model:query="rowData.notation"
                   :options="uniqueNotation"
                 />
               </div>
