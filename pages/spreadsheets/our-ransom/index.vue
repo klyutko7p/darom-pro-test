@@ -622,7 +622,7 @@ async function handlePaste() {
           </h1>
           <div class="flex gap-5 mt-5 items-center justify-center">
             <UIActionButton @click="isOpenOnlineStatus = false">Отменить</UIActionButton>
-            <UIErrorButton @click="updateOnlineMoneyRowsStatus">Принять</UIErrorButton>
+            <UIExitModalButton @click="updateOnlineMoneyRowsStatus">Принять</UIExitModalButton>
           </div>
         </div>
       </div>

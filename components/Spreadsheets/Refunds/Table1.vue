@@ -340,12 +340,16 @@ onMounted(async () => {
             class="border-2"
             v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
           >
-            <Icon
+          <div
               @click="openModal(row)"
-              class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
-              name="ic:baseline-mode-edit"
-              size="32"
-            />
+              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+            >
+              <Icon
+                class="text-green-500"
+                name="ic:baseline-mode-edit"
+                size="18"
+              />
+            </div>
           </td>
           <th
             scope="row"

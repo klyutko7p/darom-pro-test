@@ -9,9 +9,9 @@ const storeEmployees = useEmployeesStore();
 const router = useRouter();
 
 let user = ref({} as User);
-let rows = ref<Array<IPayroll>>();
+let rows = ref<Array<IPayroll>>([]);
 let employees = ref<Array<IEmployee>>([]);
-let originallyRows = ref<Array<IPayroll>>();
+let originallyRows = ref<Array<IPayroll>>([]);
 const token = Cookies.get("token");
 let isLoading = ref(false);
 
@@ -53,6 +53,9 @@ function openModal(row: IPayroll) {
   }
 
   rowData.value = JSON.parse(JSON.stringify(row));
+  rowData.value.fullname = employees.value.find(
+    (employee) => employee.fullname === rowData.value.fullname
+  )?.id;
   rowData.value.date = newDate;
 }
 
@@ -87,12 +90,18 @@ async function updateReport(rowsData: IPayroll[]) {
 }
 
 async function createRow() {
+  rowData.value.fullname = employees.value.find(
+    (employee) => employee.id === rowData.value.fullname
+  )?.fullname;
   await storePayrolls.createPayroll(rowData.value);
   rows.value = await storePayrolls.getPayrolls();
   closeModal();
 }
 
 async function updateRow() {
+  rowData.value.fullname = employees.value.find(
+    (employee) => employee.id === rowData.value.fullname
+  )?.fullname;
   await storePayrolls.updatePayroll(rowData.value);
   rows.value = await storePayrolls.getPayrolls();
   closeModal();
@@ -107,80 +116,6 @@ async function deleteRow(id: number) {
 }
 
 const filteredRows = ref<Array<IAdvanceReport>>();
-function handleFilteredRows(filteredRowsData: IAdvanceReport[]) {
-  filteredRows.value = filteredRowsData;
-}
-
-let selectedWeek = ref("");
-
-function getWeeks() {
-  const currentDate = new Date();
-  const currentMonth = currentDate.getMonth();
-  const currentYear = currentDate.getFullYear();
-
-  const weeks = [];
-  let currentWeekStart = 1;
-  let currentWeekEnd = 0;
-  let weekNumber = 1;
-
-  while (currentWeekStart <= getDaysInMonth(currentYear, currentMonth)) {
-    const weekStart = new Date(currentYear, currentMonth, currentWeekStart);
-    const dayOfWeek = weekStart.getDay();
-
-    currentWeekEnd = currentWeekStart + (7 - dayOfWeek);
-    if (currentWeekEnd > getDaysInMonth(currentYear, currentMonth)) {
-      currentWeekEnd = getDaysInMonth(currentYear, currentMonth);
-    }
-
-    weeks.push(
-      `${weekNumber} неделя (${formatDate(weekStart)}-${formatDate(
-        new Date(currentYear, currentMonth, currentWeekEnd)
-      )})`
-    );
-
-    currentWeekStart = currentWeekEnd + 1;
-    weekNumber++;
-  }
-  const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
-  const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
-  weeks.push(
-    `${getMonthName(currentMonth)} (${formatDate(firstDayOfMonth)}-${formatDate(
-      lastDayOfMonth
-    )})`
-  );
-  selectedWeek.value = weeks[0];
-  return weeks;
-}
-
-function getDaysInMonth(year: any, month: any) {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-function formatDate(date: any) {
-  return String(date.getDate()).padStart(2, "0");
-}
-
-function getMonthName(month: any) {
-  const monthNames = [
-    "Январь",
-    "Февраль",
-    "Март",
-    "Апрель",
-    "Май",
-    "Июнь",
-    "Июль",
-    "Август",
-    "Сентябрь",
-    "Октябрь",
-    "Ноябрь",
-    "Декабрь",
-  ];
-  return monthNames[month];
-}
-
-const weeks = getWeeks();
-
-let month = ref(new Date().getMonth() + 1);
 
 let pvz = ref([
   "Ряженое",
@@ -216,11 +151,11 @@ let banks = ref([
   "альфа банк",
   "центр инвест",
   "ВТБ",
-  "Райффайзен",
+  "райффайзен",
 ]);
 
 function autoInfoByFullname() {
-  let row = employees.value.filter((row) => row.fullname === rowData.value.fullname);
+  let row = employees.value.filter((row) => row.id === rowData.value.fullname);
   rowData.value.PVZ = row[0].PVZ;
   rowData.value.company = row[0].company;
   rowData.value.phone = row[0].phone;
@@ -252,6 +187,13 @@ watch(isOpen, (newValue) => {
     unlockScroll();
   }
 });
+
+const options = [
+  { value: "", label: "Пусто" },
+  { value: "Нам должны", label: "Нам должны" },
+  { value: "Расчёт уволенных сотрудников", label: "Расчёт уволенных сотрудников" },
+  { value: "Оплачено", label: "Оплачено" },
+];
 </script>
 
 <template>
@@ -262,8 +204,10 @@ watch(isOpen, (newValue) => {
   <div v-if="!isLoading">
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
-        <div class="mt-10">
-          <div class="flex items-center justify-between gap-3 max-sm:items-start max-sm:flex-col">
+        <div class="bg-[#f8f9fd] px-5 pt-10 max-sm:px-1 pb-5">
+          <div
+            class="flex items-center justify-between gap-3 max-sm:items-start max-sm:flex-col"
+          >
             <UIActionButton @click="openModal">Создать запись</UIActionButton>
             <NuxtLink
               to="/advance-report/employees"
@@ -297,98 +241,61 @@ watch(isOpen, (newValue) => {
               <div class="text-black">
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">ПВЗ</label>
-                  <select
-                    class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                    v-model="rowData.PVZ"
-                  >
-                    <option v-for="pvzData in pvz" :value="pvzData">
-                      {{ pvzData }}
-                    </option>
-                  </select>
+                  <USelectMenu class="w-full" v-model="rowData.PVZ" :options="pvz" />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">Компания</label>
-                  <select
-                    class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                  <USelectMenu
+                    class="w-full"
                     v-model="rowData.company"
-                  >
-                    <option v-for="company in companies" :value="company">
-                      {{ company }}
-                    </option>
-                  </select>
+                    :options="companies"
+                  />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">ФИО</label>
-                  <select
-                    class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                    @change="autoInfoByFullname"
+                  <UInputMenu
+                    class="w-full"
                     v-model="rowData.fullname"
-                  >
-                    <option
-                      v-for="employee in employees.sort((a, b) =>
-                        a.fullname.localeCompare(b.fullname)
-                      )"
-                      :value="employee.fullname"
-                    >
-                      {{ employee.fullname }}
-                    </option>
-                  </select>
+                    value-attribute="id"
+                    option-attribute="fullname"
+                    :options="
+                      employees.sort((a, b) => a.fullname.localeCompare(b.fullname))
+                    "
+                    @change="autoInfoByFullname"
+                  />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Телефон</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.phone"
-                    type="text"
-                  />
+                  <UInput class="w-full" v-model="rowData.phone" type="text" />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">Банк</label>
-                  <select
-                    class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                    v-model="rowData.bank"
-                  >
-                    <option v-for="bank in banks" :value="bank">
-                      {{ bank }}
-                    </option>
-                  </select>
+                  <USelectMenu class="w-full" v-model="rowData.bank" :options="banks" />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Аванс</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.advance"
-                    type="number"
-                  />
+                  <UInput class="w-full" v-model="rowData.advance" type="number" />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Кол-во часов всего</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.hours"
-                    type="number"
-                  />
+                  <UInput class="w-full" v-model="rowData.hours" type="number" />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Удержания</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.deductions"
-                    type="number"
-                  />
+                  <UInput class="w-full" v-model="rowData.deductions" type="number" />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Доплата</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  <UInput
+                    class="w-full"
                     v-model="rowData.additionalPayment"
                     type="number"
                   />
@@ -396,28 +303,24 @@ watch(isOpen, (newValue) => {
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Примечание</label>
-                  <select
-                    class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                  <USelectMenu
+                    class="w-full"
                     v-model="rowData.notation"
-                  >
-                    <option value="">Пусто</option>
-                    <option value="Нам должны">Нам должны</option>
-                    <option value="Расчёт уволенных сотрудников">
-                      Расчёт уволенных сотрудников
-                    </option>
-                    <option value="Оплачено">Оплачено</option>
-                  </select>
+                    option-attribute="label"
+                    value-attribute="value"
+                    :options="options"
+                  />
                 </div>
               </div>
             </template>
             <template v-slot:footer>
               <div class="flex items-center justify-center gap-3" v-if="rowData.id">
                 <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
-                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+                <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
               </div>
               <div class="flex items-center justify-center gap-3" v-else>
                 <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
-                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+                <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
               </div>
             </template>
           </UINewModalEdit>

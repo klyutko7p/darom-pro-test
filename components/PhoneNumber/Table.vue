@@ -17,7 +17,7 @@ defineProps({
   <div class="relative overflow-x-auto overflow-y-auto mt-5 mb-5">
     <table
       id="theTable"
-      class="w-full border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+      class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
     >
       <thead
         class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
@@ -37,12 +37,16 @@ defineProps({
       <tbody>
         <tr v-for="row in rows" class="text-center">
           <td class="border-[1px]">
-            <Icon
+            <div
               @click="openModal(row)"
-              class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
-              name="ic:baseline-mode-edit"
-              size="24"
-            />
+              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+            >
+              <Icon
+                class="text-green-500"
+                name="ic:baseline-mode-edit"
+                size="18"
+              />
+            </div>
           </td>
           <th scope="row" class="border-[1px]">
             {{ row.number }}

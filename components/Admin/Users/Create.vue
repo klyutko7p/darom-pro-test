@@ -39,8 +39,8 @@ function updateSum() {
 </script>
 
 <template>
-  <div class="flex items-center justify-between mt-10 mb-10 max-lg:flex-col">
-    <div>
+  <div class="flex items-center justify-between mt-10 mb-10 max-xl:flex-col">
+    <div class="max-xl:w-full">
       <h1 class="text-xl mb-2">
         Добавить нового пользователя
         <Icon
@@ -96,12 +96,16 @@ function updateSum() {
         </div>
         <div class="flex flex-col gap-1 max-md:mb-3">
           <label for="role">Роль</label>
-          <USelectMenu class="w-40" v-model="role" :options="roles" />
+          <USelectMenu
+            class="min-w-40 max-sm:max-w-none max-sm:w-full"
+            v-model="role"
+            :options="roles"
+          />
         </div>
       </div>
       <UIMainButton class="mt-3" @click="createUser">Добавить</UIMainButton>
     </div>
-    <div class="max-lg:mt-10">
+    <div class="max-xl:mt-10 max-xl:w-full">
       <h1 class="text-xl mb-2">
         Изменить сумму за отказ клиента
         <Icon

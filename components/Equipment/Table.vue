@@ -184,7 +184,7 @@ function handleCheckboxChangeAll() {
     >
       <table
         id="theTable"
-        class="w-full border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+        class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
       >
         <thead
           class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
@@ -329,7 +329,7 @@ function handleCheckboxChangeAll() {
         <div class="relative max-h-[200px] overflow-y-auto mt-5 mb-10">
           <table
             id="theTable"
-            class="w-full border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+            class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
           >
             <thead
               class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
@@ -450,8 +450,7 @@ function handleCheckboxChangeAll() {
                 @change="filterRows()"
                 color="orange"
                 placeholder="Выберите ПВЗ"
-                value-attribute="id"
-                option-attribute="name"
+                x
                 class="z-[50] w-40 bg-white"
               />
               <UIActionButton2

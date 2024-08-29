@@ -23,7 +23,7 @@ const sortedRows = props.rows.slice().sort((a: any, b: any) => {
   <div class="relative overflow-x-auto overflow-y-auto mt-5">
     <table
       id="theTable"
-      class="w-full border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+      class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
     >
       <thead
         class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"

@@ -102,7 +102,9 @@ const showDeletedRows = ref(false);
 
 const perPage = ref(100);
 const currentPage = ref(1);
-const totalPages = computed(() => Math.ceil((props.rows?.length || 0) / perPage.value));
+const totalPages = computed(() =>
+  Math.ceil((props.rows?.length || 0) / perPage.value)
+);
 const totalRows = computed(() => Math.ceil(props.rows?.length || 0));
 let returnRows = ref<Array<IDelivery>>();
 
@@ -163,14 +165,20 @@ let showOtherOptions = ref(false);
             :disabled="currentPage === 1"
             class="disabled:opacity-40 disabled:cursor-not-allowed duration-150 bg-secondary-color flex items-center justify-center rounded-sm p-3"
           >
-            <Icon name="material-symbols:arrow-back-ios-new-rounded" class="text-white" />
+            <Icon
+              name="material-symbols:arrow-back-ios-new-rounded"
+              class="text-white"
+            />
           </button>
           <button
             @click="nextPage(), updateCurrentPageData()"
             :disabled="currentPage === totalPages"
             class="disabled:opacity-40 disabled:cursor-not-allowed duration-150 bg-secondary-color flex items-center justify-center rounded-sm p-3"
           >
-            <Icon name="material-symbols:arrow-forward-ios-rounded" class="text-white" />
+            <Icon
+              name="material-symbols:arrow-forward-ios-rounded"
+              class="text-white"
+            />
           </button>
         </div>
       </div>
@@ -225,10 +233,14 @@ let showOtherOptions = ref(false);
       >Оплачено
     </UIActionButton>
     <div v-if="showOtherOptions" class="flex flex-col gap-3">
-      <UIActionButton2 v-if="user.paid === 'WRITE'" @click="updateDeliveryRows('paid1')"
+      <UIActionButton2
+        v-if="user.paid === 'WRITE'"
+        @click="updateDeliveryRows('paid1')"
         >Оплачено онлайн
       </UIActionButton2>
-      <UIActionButton2 v-if="user.paid === 'WRITE'" @click="updateDeliveryRows('paid2')"
+      <UIActionButton2
+        v-if="user.paid === 'WRITE'"
+        @click="updateDeliveryRows('paid2')"
         >Оплачено наличными
       </UIActionButton2>
     </div>
@@ -245,7 +257,11 @@ let showOtherOptions = ref(false);
         class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
       >
         <tr>
-          <th scope="col" class="border-2 px-3" v-if="user.dataDelivery === 'WRITE'">
+          <th
+            scope="col"
+            class="border-2 px-3"
+            v-if="user.dataDelivery === 'WRITE'"
+          >
             Выделение
           </th>
           <th
@@ -287,21 +303,29 @@ let showOtherOptions = ref(false);
           <th
             scope="col"
             class="border-2"
-            v-if="user.purchaseOfGoods === 'READ' || user.purchaseOfGoods === 'WRITE'"
+            v-if="
+              user.purchaseOfGoods === 'READ' ||
+              user.purchaseOfGoods === 'WRITE'
+            "
           >
             стоимость выкупа товара
           </th>
           <th
             scope="col"
             class="border-2"
-            v-if="user.percentClient3 === 'READ' || user.percentClient3 === 'WRITE'"
+            v-if="
+              user.percentClient3 === 'READ' || user.percentClient3 === 'WRITE'
+            "
           >
             процент с клиента (%)
           </th>
           <th
             scope="col"
             class="border-2"
-            v-if="user.amountFromClient3 === 'READ' || user.amountFromClient3 === 'WRITE'"
+            v-if="
+              user.amountFromClient3 === 'READ' ||
+              user.amountFromClient3 === 'WRITE'
+            "
           >
             сумма с клиента
           </th>
@@ -338,7 +362,9 @@ let showOtherOptions = ref(false);
           <th
             scope="col"
             class="border-2 text-[10px]"
-            v-if="user.additionally3 === 'READ' || user.additionally3 === 'WRITE'"
+            v-if="
+              user.additionally3 === 'READ' || user.additionally3 === 'WRITE'
+            "
           >
             дополнительно
           </th>
@@ -415,12 +441,16 @@ let showOtherOptions = ref(false);
             class="border-2"
             v-if="user.dataDelivery === 'WRITE' && user.role === 'ADMIN'"
           >
-            <Icon
+          <div
               @click="openModal(row)"
-              class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
-              name="ic:baseline-mode-edit"
-              size="32"
-            />
+              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+            >
+              <Icon
+                class="text-green-500"
+                name="ic:baseline-mode-edit"
+                size="18"
+              />
+            </div>
           </td>
           <th
             scope="row"
@@ -472,19 +502,27 @@ let showOtherOptions = ref(false);
           </td>
           <td
             class="border-2"
-            v-if="user.purchaseOfGoods === 'READ' || user.purchaseOfGoods === 'WRITE'"
+            v-if="
+              user.purchaseOfGoods === 'READ' ||
+              user.purchaseOfGoods === 'WRITE'
+            "
           >
             {{ row.purchaseOfGoods }}
           </td>
           <td
             class="border-2"
-            v-if="user.percentClient3 === 'READ' || user.percentClient3 === 'WRITE'"
+            v-if="
+              user.percentClient3 === 'READ' || user.percentClient3 === 'WRITE'
+            "
           >
             {{ row.percentClient }}
           </td>
           <td
             class="border-2"
-            v-if="user.amountFromClient3 === 'READ' || user.amountFromClient3 === 'WRITE'"
+            v-if="
+              user.amountFromClient3 === 'READ' ||
+              user.amountFromClient3 === 'WRITE'
+            "
           >
             {{ row.amountFromClient3 }}
           </td>
@@ -500,7 +538,10 @@ let showOtherOptions = ref(false);
           >
             {{ row.orderPVZ }}
           </td>
-          <td class="border-2" v-if="user.sorted === 'READ' || user.sorted === 'WRITE'">
+          <td
+            class="border-2"
+            v-if="user.sorted === 'READ' || user.sorted === 'WRITE'"
+          >
             <Icon
               @click="updateDeliveryRow(row, 'sorted')"
               v-if="!row.sorted && user.sorted === 'WRITE'"
@@ -512,7 +553,10 @@ let showOtherOptions = ref(false);
               {{ row.sorted ? storeUsers.getNormalizedDate(row.sorted) : "" }}
             </h1>
           </td>
-          <td class="border-2" v-if="user.paid === 'READ' || user.paid === 'WRITE'">
+          <td
+            class="border-2"
+            v-if="user.paid === 'READ' || user.paid === 'WRITE'"
+          >
             <Icon
               @click="updateDeliveryRow(row, 'paid')"
               v-if="!row.paid && user.paid === 'WRITE'"
@@ -526,7 +570,9 @@ let showOtherOptions = ref(false);
           </td>
           <td
             class="border-2"
-            v-if="user.additionally3 === 'READ' || user.additionally3 === 'WRITE'"
+            v-if="
+              user.additionally3 === 'READ' || user.additionally3 === 'WRITE'
+            "
           >
             {{ row.additionally ? row.additionally : "Пусто" }}
           </td>
@@ -573,12 +619,12 @@ let showOtherOptions = ref(false);
             class="border-2"
             v-if="user.dataDelivery === 'WRITE' && user.role === 'ADMIN'"
           >
-            <Icon
+            <div
               @click="deleteRow(row.id)"
-              class="text-red-600 cursor-pointer hover:text-red-300 duration-200"
-              name="ic:round-delete"
-              size="32"
-            />
+              class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+            >
+              <Icon class="text-red-600" name="ic:round-delete" size="18" />
+            </div>
           </td>
           <div id="right"></div>
         </tr>

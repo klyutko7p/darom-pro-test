@@ -522,7 +522,7 @@ function getFromNameFromCell() {
 
             <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
               <UIMainButton @click="updateRow">Сохранить </UIMainButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
               <UIMainButton
@@ -530,7 +530,7 @@ function getFromNameFromCell() {
                 @click="createRow"
                 >Создать
               </UIMainButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
             </div>
           </UIModal>
         </div>
@@ -822,7 +822,7 @@ function getFromNameFromCell() {
 
             <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
               <UIMainButton @click="updateRow">Сохранить </UIMainButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
               <UIMainButton
@@ -830,7 +830,7 @@ function getFromNameFromCell() {
                 @click="createRow"
                 >Создать
               </UIMainButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
             </div>
           </UIModal>
         </div>

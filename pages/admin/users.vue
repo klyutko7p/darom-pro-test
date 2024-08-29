@@ -116,6 +116,7 @@ async function deleteUser(usernameData: string) {
 let user = ref({} as User);
 let users = ref<Array<User>>();
 let pvz = ref<Array<PVZ>>();
+let allPVZ = ref<Array<PVZ>>();
 let sortingCenters = ref<Array<SortingCenter>>();
 let sumOfRejection = ref<any>();
 
@@ -144,6 +145,7 @@ onMounted(async () => {
   user.value = userResponse;
   users.value = usersResponse;
   sortingCenters.value = prepareSCList(sortingCentersResponse);
+  allPVZ.value = pvzResponse;
   pvz.value = preparePVZList(pvzResponse);
   sumOfRejection.value = sumOfRejectionResponse;
 
@@ -218,7 +220,7 @@ const userOptions = [
 
   <div v-if="token && user.role === 'ADMIN'">
     <NuxtLayout name="admin">
-      <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5 space-y-1">
+      <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5">
         <AdminUsersTable
           :fields="fields"
           :users="users"
@@ -245,10 +247,11 @@ const userOptions = [
             <div class="text-black max-sm:text-sm">
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Имя пользователя</label>
-                <input
-                  class="bg-transparent w-full rounded-xl border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+                <UInput
+                  color="white"
+                  variant="outline"
                   v-model="userData.username"
-                  type="text"
+                  class="w-full"
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
@@ -257,11 +260,12 @@ const userOptions = [
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="role">ПВЗ</label>
-                <USelectMenu v-if="pvz"
+                <USelectMenu
+                  v-if="pvz"
                   v-model="userData.PVZ"
                   value-attribute="name"
                   option-attribute="name"
-                  :options="pvz.splice(0, 1)"
+                  :options="allPVZ"
                   multiple
                   placeholder="Выберите ПВЗ"
                   class="w-full"

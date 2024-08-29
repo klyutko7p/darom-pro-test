@@ -32,7 +32,8 @@ onMounted(async () => {
 
     if (user.value.role === "ADMIN") {
       advanceReportsPromise = storeAdvanceReports.getAdvancedReports();
-      ourRansomRowsPromise = storeRansom.getRansomRowsForAdvanceReportOurRansom();
+      ourRansomRowsPromise =
+        storeRansom.getRansomRowsForAdvanceReportOurRansom();
       deliveryRowsPromise = storeRansom.getRansomRowsForBalanceDelivery();
     } else {
       advanceReportsPromise = storeAdvanceReports.getAdvancedReports();
@@ -160,10 +161,16 @@ function getAllSumDirector() {
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
   let sumOfPVZ4 = rowsDelivery.value
-    ?.filter((row) => row.paid !== null && row.paid && new Date(row.paid) >= march312024)
+    ?.filter(
+      (row) =>
+        row.paid !== null && row.paid && new Date(row.paid) >= march312024
+    )
     .reduce((acc, value) => acc + +value.amountFromClient3, 0);
 
-  let sumOfPVZ5 = rowsBalanceOnline.value?.reduce((acc, value) => acc + +value.sum, 0);
+  let sumOfPVZ5 = rowsBalanceOnline.value?.reduce(
+    (acc, value) => acc + +value.sum,
+    0
+  );
 
   let sumOfPVZ6 = rowsOurRansom.value
     ?.filter((row) => row.verified !== null)
@@ -321,7 +328,8 @@ function getAllSumDirector() {
         +sumOfPVZ5Cashless;
       break;
     default:
-      allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
+      allSum.value =
+        +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
       break;
   }
   getSumCreditCash();
@@ -344,7 +352,8 @@ function getSumCreditCash() {
       .filter(
         (row) =>
           row.createdUser === "Директор" &&
-          row.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
+          row.typeOfExpenditure ===
+            "Перевод в междубалансовый, кредитный баланс" &&
           row.type === "Нал"
       )
       .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -371,7 +380,8 @@ function getSumCreditCash() {
       .filter(
         (row) =>
           row.createdUser === "Директор" &&
-          row.typeOfExpenditure === "Списание кредитной задолженности торговой империи" &&
+          row.typeOfExpenditure ===
+            "Списание кредитной задолженности торговой империи" &&
           row.type === "Нал"
       )
       .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -387,7 +397,8 @@ function getSumCreditOnline() {
       .filter(
         (row) =>
           row.createdUser === "Директор" &&
-          row.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
+          row.typeOfExpenditure ===
+            "Перевод в междубалансовый, кредитный баланс" &&
           row.type === "Безнал"
       )
       .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -414,7 +425,8 @@ function getSumCreditOnline() {
       .filter(
         (row) =>
           row.createdUser === "Директор" &&
-          row.typeOfExpenditure === "Списание кредитной задолженности торговой империи" &&
+          row.typeOfExpenditure ===
+            "Списание кредитной задолженности торговой империи" &&
           row.type === "Безнал"
       )
       .reduce((acc, value) => acc + +value.expenditure, 0);
@@ -480,15 +492,11 @@ function openModal(row: IAdvanceReport, flag: string = "CASH") {
   if (row.id) {
     rowData.value = JSON.parse(JSON.stringify(row));
     if (user.value.username !== "Директор") {
-      rowData.value.date = rowData.value.date
-        ? storeUsers.getISODate(rowData.value.date)
-        : null;
+      rowData.value.date = rowData.value.date ? rowData.value.date : null;
     }
   } else {
     rowData.value = {} as IAdvanceReport;
-    if (user.value.username !== "Директор") {
-      rowData.value.date = storeUsers.getISODate(new Date());
-    }
+    rowData.value.date = new Date();
   }
   if (!row.type) {
     if (flag === "CASH") {
@@ -507,7 +515,8 @@ function checkStatus() {
       "Списание кредитной задолженности торговой империи" ||
     rowData.value.typeOfExpenditure ===
       "Списание балансовой задолженности торговой империи" ||
-    rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс"
+    rowData.value.typeOfExpenditure ===
+      "Перевод в междубалансовый, кредитный баланс"
   ) {
     rowData.value.PVZ = "";
     rowData.value.issuedUser = "";
@@ -645,7 +654,13 @@ let typesOfExpenditure = ref([
   "Списание кредитной задолженности торговой империи",
 ]);
 
-let companies = ref(["W/O/Я start", "Darom.pro", "Сортировка", "Доставка", "Чаевые"]);
+let companies = ref([
+  "W/O/Я start",
+  "Darom.pro",
+  "Сортировка",
+  "Доставка",
+  "Чаевые",
+]);
 
 let usersOfIssued = ref([
   "Директор (С)",
@@ -669,14 +684,16 @@ const supabase = createClient(
 
 async function createRow() {
   if (
-    rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
+    rowData.value.typeOfExpenditure ===
+      "Перевод в междубалансовый, кредитный баланс" &&
     +rowData.value.expenditure > +sumCreditCashDebt.value &&
     rowData.value.type === "Нал"
   ) {
     toast.error("Задолженность кредита меньше чем вписанная сумма!");
     return;
   } else if (
-    rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
+    rowData.value.typeOfExpenditure ===
+      "Перевод в междубалансовый, кредитный баланс" &&
     +rowData.value.expenditure > +sumCreditOnlineDebt.value &&
     rowData.value.type === "Безнал"
   ) {
@@ -726,7 +743,8 @@ async function createRow() {
     rowData.value.typeOfExpenditure !== "Передача денежных средств" &&
     rowData.value.typeOfExpenditure !==
       "Списание кредитной задолженности торговой империи" &&
-    rowData.value.typeOfExpenditure !== "Перевод в междубалансовый, кредитный баланс" &&
+    rowData.value.typeOfExpenditure !==
+      "Перевод в междубалансовый, кредитный баланс" &&
     rowData.value.typeOfExpenditure !== "Новый кредит нал" &&
     rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
     rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
@@ -742,7 +760,8 @@ async function createRow() {
     rowData.value.typeOfExpenditure !== "Передача денежных средств" &&
     rowData.value.typeOfExpenditure !==
       "Списание кредитной задолженности торговой империи" &&
-    rowData.value.typeOfExpenditure !== "Перевод в междубалансовый, кредитный баланс" &&
+    rowData.value.typeOfExpenditure !==
+      "Перевод в междубалансовый, кредитный баланс" &&
     rowData.value.typeOfExpenditure !== "Новый кредит нал" &&
     rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
     rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
@@ -780,7 +799,10 @@ async function createRow() {
         );
       }
     }
-    await storeAdvanceReports.createAdvanceReport(rowData.value, user.value.username);
+    await storeAdvanceReports.createAdvanceReport(
+      rowData.value,
+      user.value.username
+    );
     rows.value = await storeAdvanceReports.getAdvancedReports();
     originallyRows.value = rows.value;
 
@@ -810,14 +832,16 @@ async function createRow() {
 async function updateRow() {
   isLoading.value = true;
   if (
-    rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
+    rowData.value.typeOfExpenditure ===
+      "Перевод в междубалансовый, кредитный баланс" &&
     +rowData.value.expenditure > +sumCreditCashDebt.value &&
     rowData.value.type === "Нал"
   ) {
     toast.error("Задолженность меньше чем сумма расхода!");
     return;
   } else if (
-    rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
+    rowData.value.typeOfExpenditure ===
+      "Перевод в междубалансовый, кредитный баланс" &&
     +rowData.value.expenditure > +sumCreditOnlineDebt.value &&
     rowData.value.type === "Безнал"
   ) {
@@ -844,13 +868,15 @@ async function updateRow() {
   }
 
   if (
-    rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
+    rowData.value.typeOfExpenditure ===
+      "Перевод в междубалансовый, кредитный баланс" &&
     +rowData.value.expenditure > +sumCreditCashDebt.value
   ) {
     toast.error("Задолженность кредита меньше чем вписанная сумма!");
     return;
   } else if (
-    rowData.value.typeOfExpenditure === "Перевод в междубалансовый, кредитный баланс" &&
+    rowData.value.typeOfExpenditure ===
+      "Перевод в междубалансовый, кредитный баланс" &&
     +rowData.value.expenditure > +sumCreditOnlineDebt.value
   ) {
     toast.error("Задолженность кредита меньше чем вписанная сумма!");
@@ -876,7 +902,8 @@ async function updateRow() {
   if (user.value.role !== "ADMIN") {
     rows.value = rows.value?.filter(
       (row) =>
-        row.createdUser === user.value.username || row.issuedUser === user.value.username
+        row.createdUser === user.value.username ||
+        row.issuedUser === user.value.username
     );
   } else {
     rows.value = rows.value;
@@ -899,7 +926,8 @@ async function updateDeliveryRow(row: any) {
   if (user.value.role !== "ADMIN") {
     rows.value = rows.value?.filter(
       (row) =>
-        row.createdUser === user.value.username || row.issuedUser === user.value.username
+        row.createdUser === user.value.username ||
+        row.issuedUser === user.value.username
     );
   } else {
     rows.value = rows.value;
@@ -918,7 +946,7 @@ function clearLocalStorage() {
 
 onUnmounted(() => {
   clearLocalStorage();
-})
+});
 
 async function deleteRow(id: any) {
   let answer = confirm("Вы точно хотите удалить строку?");
@@ -985,7 +1013,9 @@ function getAllSumFromName(username: string) {
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
   let sumOfPVZ4 = originallyRows.value
-    ?.filter((row) => row.createdUser === username && row.issuedUser === username)
+    ?.filter(
+      (row) => row.createdUser === username && row.issuedUser === username
+    )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
   let allSum = sumOfPVZ - sumOfPVZ1 + sumOfPVZ2 - sumOfPVZ3 + sumOfPVZ4;
@@ -1009,7 +1039,9 @@ function getAllSumFromEmployees() {
   let totalSum = 0;
 
   usersOfIssued.value
-    .filter((username) => username !== "Директор" && username !== "Директор (С)")
+    .filter(
+      (username) => username !== "Директор" && username !== "Директор (С)"
+    )
     .forEach((username) => {
       let sumOfPVZ = rowsBalance.value
         ?.filter((row) => row.received !== null && row.recipient === username)
@@ -1075,7 +1107,10 @@ const uniqueNotation = computed(() => {
 function checkExpenditure() {
   if (rowData.value.expenditure) {
     rowData.value.expenditure = rowData.value.expenditure.replace(",", ".");
-    rowData.value.expenditure = rowData.value.expenditure.replace(/(?!^-)[^0-9.]/g, "");
+    rowData.value.expenditure = rowData.value.expenditure.replace(
+      /(?!^-)[^0-9.]/g,
+      ""
+    );
     if (rowData.value.expenditure.indexOf("-") > 0) {
       rowData.value.expenditure = rowData.value.expenditure.replace("-", "");
     }
@@ -1131,6 +1166,22 @@ watch(isOpenYM, (newValue) => {
     unlockScroll();
   }
 });
+
+import ru from "date-fns/locale/ru";
+import { format } from "date-fns";
+const date = ref(new Date());
+
+const paymentOptions = [
+  { value: "Нал", label: "Нал" },
+  { value: "Безнал", label: "Безнал" },
+];
+
+const typeOfOptions = [
+  { value: "Новый кредит нал", label: "Новый" },
+  { value: "Пополнение баланса", label: "Нет" },
+  { value: "Перевод с кредитного баланса нал", label: "С кредитного баланса" },
+  { value: "Перевод с баланса безнал", label: "С баланса безнал" },
+];
 </script>
 
 <template>
@@ -1141,7 +1192,7 @@ watch(isOpenYM, (newValue) => {
   <div v-if="!isLoading">
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
-        <div class="mt-10">
+        <div class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5">
           <AdvanceReportFilters
             v-if="rows"
             @filtered-rows="handleFilteredRows"
@@ -1154,7 +1205,9 @@ watch(isOpenYM, (newValue) => {
             class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-70 z-[200]"
           >
             <div class="h-screen flex items-center justify-center font-bold">
-              <div class="bg-white max-sm:px-3 max-w-[500px] p-10 rounded-2xl relative">
+              <div
+                class="bg-white max-sm:px-3 max-w-[500px] p-10 rounded-2xl relative"
+              >
                 <Icon
                   name="material-symbols:cancel-rounded"
                   size="40"
@@ -1171,14 +1224,21 @@ watch(isOpenYM, (newValue) => {
                 <h1 class="text-center text-3xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditCashDebt) }} ₽
                 </h1>
-                <h1 class="text-2xl text-center">Междубалансовая задолженность</h1>
+                <h1 class="text-2xl text-center">
+                  Междубалансовая задолженность
+                </h1>
                 <h1
                   class="text-center text-3xl text-secondary-color mb-5"
                   v-if="sumCreditBalanceDebt <= 0"
                 >
                   {{ formatNumber(sumCreditBalance) }} ₽
                 </h1>
-                <h1 class="text-center text-3xl text-secondary-color mb-5" v-else>0 ₽</h1>
+                <h1
+                  class="text-center text-3xl text-secondary-color mb-5"
+                  v-else
+                >
+                  0 ₽
+                </h1>
               </div>
             </div>
           </div>
@@ -1188,12 +1248,16 @@ watch(isOpenYM, (newValue) => {
             class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-70 z-[200]"
           >
             <div class="h-screen flex items-center justify-center font-bold">
-              <div class="bg-white max-sm:px-3 max-w-[500px] p-10 rounded-2xl relative">
+              <div
+                class="bg-white max-sm:px-3 max-w-[500px] p-10 rounded-2xl relative"
+              >
                 <Icon
                   name="material-symbols:cancel-rounded"
                   size="40"
                   class="absolute top-0 right-0 hover:text-secondary-color duration-200 cursor-pointer"
-                  @click="isShowCreditBalanceOnline = !isShowCreditBalanceOnline"
+                  @click="
+                    isShowCreditBalanceOnline = !isShowCreditBalanceOnline
+                  "
                 />
                 <h1 class="text-2xl text-center">
                   Междубалансовый, кредитный баланс безнал
@@ -1205,7 +1269,9 @@ watch(isOpenYM, (newValue) => {
                 <h1 class="text-center text-3xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditOnlineDebt) }} ₽
                 </h1>
-                <h1 class="text-2xl text-center">Междубалансовая задолженность</h1>
+                <h1 class="text-2xl text-center">
+                  Междубалансовая задолженность
+                </h1>
                 <h1 class="text-center text-3xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditBalanceDebt) }} ₽
                 </h1>
@@ -1228,14 +1294,19 @@ watch(isOpenYM, (newValue) => {
           <div>
             <div
               class="text-center text-2xl my-5"
-              v-if="selectedUser !== 'Директор' && selectedUser !== 'Директор (С)'"
+              v-if="
+                selectedUser !== 'Директор' && selectedUser !== 'Директор (С)'
+              "
             >
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
                 {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
               </h1>
             </div>
-            <div class="text-center text-2xl my-5" v-if="selectedUser === 'Директор (С)'">
+            <div
+              class="text-center text-2xl my-5"
+              v-if="selectedUser === 'Директор (С)'"
+            >
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
                 {{ formatNumber(allSum - 19008030 - 91594) }} ₽
@@ -1246,7 +1317,9 @@ watch(isOpenYM, (newValue) => {
                 <div class="text-center text-xl my-3">
                   <h1>Баланс Торговой Империи онлайн&наличные:</h1>
                   <div class="flex items-center justify-center gap-3 mt-1">
-                    <h1 class="font-bold text-secondary-color text-4xl text-center">
+                    <h1
+                      class="font-bold text-secondary-color text-4xl text-center"
+                    >
                       {{ formatNumber(Math.ceil(getAllSumFromEmployees())) }}
                       ₽
                     </h1>
@@ -1254,7 +1327,9 @@ watch(isOpenYM, (newValue) => {
                       name="solar:money-bag-bold"
                       size="30"
                       class="text-secondary-color hover:opacity-50 cursor-pointer duration-200"
-                      @click="isShowCreditBalanceCash = !isShowCreditBalanceCash"
+                      @click="
+                        isShowCreditBalanceCash = !isShowCreditBalanceCash
+                      "
                     />
                   </div>
                 </div>
@@ -1274,14 +1349,18 @@ watch(isOpenYM, (newValue) => {
                     безнал:
                   </h1>
                   <div class="flex items-center justify-center gap-3 mt-1">
-                    <h1 class="font-bold text-secondary-color text-4xl text-center">
+                    <h1
+                      class="font-bold text-secondary-color text-4xl text-center"
+                    >
                       {{ formatNumber(Math.ceil(allSum2 - 105101)) }} ₽
                     </h1>
                     <Icon
                       name="solar:money-bag-bold"
                       size="30"
                       class="text-secondary-color hover:opacity-50 cursor-pointer duration-200"
-                      @click="isShowCreditBalanceOnline = !isShowCreditBalanceOnline"
+                      @click="
+                        isShowCreditBalanceOnline = !isShowCreditBalanceOnline
+                      "
                     />
                   </div>
                 </div>
@@ -1308,11 +1387,11 @@ watch(isOpenYM, (newValue) => {
             </div>
             <div
               v-if="showBalanceEmployees"
-              class="text-xl border-2 p-5 border-dashed border-black"
+              class="text-xl border-2 bg-white p-5 border-dashed border-black"
             >
               <select
                 v-model="selectedUser"
-                class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+                class="relative disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 inline-flex items-center text-left cursor-default rounded-md text-sm gap-x-1.5 px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 pe-9"
               >
                 <option value="Директор">Торговая Империя</option>
                 <option :value="user" v-for="user in usersOfIssued">
@@ -1333,7 +1412,11 @@ watch(isOpenYM, (newValue) => {
                 Создание авансового документа (нал)
               </UIMainButton>
               <div class="max-sm:hidden">
-                <Icon class="text-secondary-color" name="tdesign:money" size="24" />
+                <Icon
+                  class="text-secondary-color"
+                  name="tdesign:money"
+                  size="24"
+                />
               </div>
             </div>
 
@@ -1358,11 +1441,14 @@ watch(isOpenYM, (newValue) => {
           </div>
 
           <AdvanceReportTable
-            v-if="selectedUser !== 'Директор (С)' && selectedUser !== 'Директор'"
+            v-if="
+              selectedUser !== 'Директор (С)' && selectedUser !== 'Директор'
+            "
             :rows="
               filteredRows?.filter(
                 (row) =>
-                  row.issuedUser === selectedUser || row.createdUser === selectedUser
+                  row.issuedUser === selectedUser ||
+                  row.createdUser === selectedUser
               )
             "
             :user="user"
@@ -1406,15 +1492,15 @@ watch(isOpenYM, (newValue) => {
             <div class="custom-header" v-if="rowData.id">
               Изменение: <b> {{ rowData.id }}</b>
             </div>
-            <div class="custom-header" v-else>Создание авансового документа</div>
+            <div class="custom-header" v-else>
+              Создание авансового документа
+            </div>
           </template>
           <template v-slot:body>
             <div class="text-black">
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="dispatchPVZ1">ПВЗ</label>
-                <select
-                  class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                  v-model="rowData.PVZ"
+                <USelectMenu
                   :disabled="
                     rowData.typeOfExpenditure ===
                       'Списание кредитной задолженности торговой империи' ||
@@ -1425,11 +1511,10 @@ watch(isOpenYM, (newValue) => {
                       'Списание балансовой задолженности торговой империи' ||
                     rowData.typeOfExpenditure === 'Вывод дивидендов'
                   "
-                >
-                  <option v-for="pvzData in pvz" :value="pvzData">
-                    {{ pvzData }}
-                  </option>
-                </select>
+                  class="w-full"
+                  v-model="rowData.PVZ"
+                  :options="pvz"
+                />
               </div>
 
               <div
@@ -1437,23 +1522,37 @@ watch(isOpenYM, (newValue) => {
                 v-if="user.role !== 'ADMIN'"
               >
                 <label for="name">Дата</label>
-                <input
-                  :disabled="
-                    rowData.typeOfExpenditure ===
-                      'Списание кредитной задолженности торговой империи' ||
-                    rowData.typeOfExpenditure ===
-                      'Списание балансовой задолженности торговой империи' ||
-                    rowData.typeOfExpenditure ===
-                      'Перевод в междубалансовый, кредитный баланс'
-                  "
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.date"
-                  :min="`2024-${month}-01`"
-                  :max="`2024-${month}-31`"
-                  type="date"
-                  placeholder="ДД.ММ.ГГГГ"
-                  onchange="this.className=(this.value!=''?'has-value':'')"
-                />
+                <UPopover
+                  v-if="rowData.date"
+                  class="w-full"
+                  :popper="{ placement: 'bottom-start' }"
+                >
+                  <UButton
+                    :overlay="true"
+                    type="button"
+                    icon="i-heroicons-calendar-days-20-solid"
+                    color="white"
+                    class="w-full"
+                    :disabled="
+                      rowData.typeOfExpenditure ===
+                        'Списание кредитной задолженности торговой империи' ||
+                      rowData.typeOfExpenditure ===
+                        'Списание балансовой задолженности торговой империи' ||
+                      rowData.typeOfExpenditure ===
+                        'Перевод в междубалансовый, кредитный баланс'
+                    "
+                  >
+                    {{ format(rowData.date, "dd MMM yyy", { locale: ru }) }}
+                  </UButton>
+
+                  <template #panel="{ close }">
+                    <DatePickerNotRange
+                      v-model="rowData.date"
+                      is-required
+                      @close="close"
+                    />
+                  </template>
+                </UPopover>
               </div>
 
               <div
@@ -1461,40 +1560,55 @@ watch(isOpenYM, (newValue) => {
                 v-if="user.role === 'ADMIN'"
               >
                 <label for="name">Дата</label>
-                <input
-                  :disabled="
-                    rowData.typeOfExpenditure ===
-                      'Списание кредитной задолженности торговой империи' ||
-                    rowData.typeOfExpenditure ===
-                      'Списание балансовой задолженности торговой империи' ||
-                    rowData.typeOfExpenditure ===
-                      'Перевод в междубалансовый, кредитный баланс'
-                  "
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.date"
-                  type="date"
-                  placeholder="ДД.ММ.ГГГГ"
-                  onchange="this.className=(this.value!=''?'has-value':'')"
-                />
+                <UPopover
+                  v-if="rowData.date"
+                  class="w-full"
+                  :popper="{ placement: 'bottom-start' }"
+                >
+                  <UButton
+                    :overlay="true"
+                    type="button"
+                    icon="i-heroicons-calendar-days-20-solid"
+                    color="white"
+                    class="w-full"
+                    :disabled="
+                      rowData.typeOfExpenditure ===
+                        'Списание кредитной задолженности торговой империи' ||
+                      rowData.typeOfExpenditure ===
+                        'Списание балансовой задолженности торговой империи' ||
+                      rowData.typeOfExpenditure ===
+                        'Перевод в междубалансовый, кредитный баланс'
+                    "
+                  >
+                    {{ format(rowData.date, "dd MMM yyy", { locale: ru }) }}
+                  </UButton>
+
+                  <template #panel="{ close }">
+                    <DatePickerNotRange
+                      v-model="rowData.date"
+                      is-required
+                      @close="close"
+                    />
+                  </template>
+                </UPopover>
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Получатель</label>
-                <select
-                  :disabled="rowData.typeOfExpenditure !== 'Передача денежных средств'"
-                  class="py-1 px-2 border-2 bg-transparent w-full rounded-lg text-sm disabled:text-gray-400"
+                <USelectMenu
+                  :disabled="
+                    rowData.typeOfExpenditure !== 'Передача денежных средств'
+                  "
+                  class="w-full"
                   v-model="rowData.issuedUser"
-                >
-                  <option v-for="user in usersOfIssued" :value="user">
-                    {{ user }}
-                  </option>
-                </select>
+                  :options="usersOfIssued"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Расход</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                <UInput
+                  class="w-full"
                   v-model="rowData.expenditure"
                   type="text"
                   @input="checkExpenditure"
@@ -1503,35 +1617,26 @@ watch(isOpenYM, (newValue) => {
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="dispatchPVZ1">Статья расхода</label>
-                <select
-                  class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                  v-model="rowData.typeOfExpenditure"
+                <USelectMenu
                   @change="checkStatus"
-                >
-                  <option v-for="type in typesOfExpenditure" :value="type">
-                    {{ type }}
-                  </option>
-                </select>
+                  class="w-full"
+                  v-model="rowData.typeOfExpenditure"
+                  :options="typesOfExpenditure"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Комментарий</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                <UInputMenu
+                  class="w-full"
                   v-model="rowData.notation"
-                  type="text"
-                  list="uniqueNotation"
+                  :options="uniqueNotation"
                 />
-                <datalist id="uniqueNotation">
-                  <option v-for="value in uniqueNotation" :value="value">
-                    {{ value }}
-                  </option>
-                </datalist>
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="dispatchPVZ1">Компания</label>
-                <select
+                <USelectMenu
                   :disabled="
                     rowData.typeOfExpenditure ===
                       'Списание кредитной задолженности торговой империи' ||
@@ -1543,18 +1648,15 @@ watch(isOpenYM, (newValue) => {
                     rowData.typeOfExpenditure === 'Передача денежных средств' ||
                     rowData.typeOfExpenditure === 'Вывод дивидендов'
                   "
-                  class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                  class="w-full"
                   v-model="rowData.company"
-                >
-                  <option v-for="company in companies" :value="company">
-                    {{ company }}
-                  </option>
-                </select>
+                  :options="companies"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Подтверждающий документ</label>
-                <input
+                <UInput
                   :disabled="
                     rowData.typeOfExpenditure ===
                       'Списание кредитной задолженности торговой империи' ||
@@ -1563,9 +1665,11 @@ watch(isOpenYM, (newValue) => {
                     rowData.typeOfExpenditure ===
                       'Перевод в междубалансовый, кредитный баланс'
                   "
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  class="w-full"
                   @change="handleFileChange"
                   type="file"
+                  size="sm"
+                  icon="i-heroicons-folder"
                 />
               </div>
 
@@ -1574,25 +1678,30 @@ watch(isOpenYM, (newValue) => {
                 v-if="user.username === 'Директор'"
               >
                 <label for="name">Тип</label>
-                <select
-                  class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                  v-model="rowData.type"
+                <USelectMenu
                   :disabled="rowData.type !== null"
-                >
-                  <option value="Нал">Нал</option>
-                  <option value="Безнал">Безнал</option>
-                </select>
+                  class="w-full"
+                  value-attribute="value"
+                  id-attribute="value"
+                  v-model="rowData.type"
+                  :options="paymentOptions"
+                />
               </div>
             </div>
           </template>
           <template v-slot:footer>
-            <div class="flex items-center justify-center gap-3" v-if="rowData.id">
-              <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+            <div
+              class="flex items-center justify-center gap-3"
+              v-if="rowData.id"
+            >
+              <UISaveModalButton @click="updateRow"
+                >Сохранить
+              </UISaveModalButton>
+              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3" v-else>
               <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
             </div>
           </template>
         </UINewModalEdit>
@@ -1611,9 +1720,9 @@ watch(isOpenYM, (newValue) => {
             <div class="text-black">
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Сумма</label>
-                <input
+                <UInput
                   :disabled="user.role !== 'ADMIN'"
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  class="w-full"
                   v-model="rowData.expenditure"
                   @input="checkExpenditure"
                   type="text"
@@ -1623,92 +1732,108 @@ watch(isOpenYM, (newValue) => {
 
             <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="name">Дата</label>
-              <input
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.date"
-                type="date"
-                placeholder="ДД.ММ.ГГГГ"
-                onchange="this.className=(this.value!=''?'has-value':'')"
-              />
+              <UPopover
+                v-if="rowData.date"
+                class="w-full"
+                :popper="{ placement: 'bottom-start' }"
+              >
+                <UButton
+                  :overlay="true"
+                  type="button"
+                  icon="i-heroicons-calendar-days-20-solid"
+                  color="white"
+                  class="w-full"
+                  :disabled="
+                    rowData.typeOfExpenditure ===
+                      'Списание кредитной задолженности торговой империи' ||
+                    rowData.typeOfExpenditure ===
+                      'Списание балансовой задолженности торговой империи' ||
+                    rowData.typeOfExpenditure ===
+                      'Перевод в междубалансовый, кредитный баланс'
+                  "
+                >
+                  {{ format(rowData.date, "dd MMM yyy", { locale: ru }) }}
+                </UButton>
+
+                <template #panel="{ close }">
+                  <DatePickerNotRange
+                    v-model="rowData.date"
+                    is-required
+                    @close="close"
+                  />
+                </template>
+              </UPopover>
             </div>
 
             <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="dispatchPVZ1">ПВЗ</label>
-              <select
-                class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.PVZ"
+              <USelectMenu
                 :disabled="
                   rowData.typeOfExpenditure === 'Новый кредит нал' ||
                   rowData.typeOfExpenditure === 'Перевод с баланса безнал' ||
-                  rowData.typeOfExpenditure === 'Перевод с кредитного баланса нал'
+                  rowData.typeOfExpenditure ===
+                    'Перевод с кредитного баланса нал'
                 "
-              >
-                <option v-for="pvzData in pvz" :value="pvzData">
-                  {{ pvzData }}
-                </option>
-              </select>
+                class="w-full"
+                v-model="rowData.PVZ"
+                :options="pvz"
+              />
             </div>
 
             <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="dispatchPVZ1">Компания</label>
-              <select
-                class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.company"
+              <USelectMenu
                 :disabled="
                   rowData.typeOfExpenditure === 'Новый кредит нал' ||
                   rowData.typeOfExpenditure === 'Перевод с баланса безнал' ||
-                  rowData.typeOfExpenditure === 'Перевод с кредитного баланса нал'
+                  rowData.typeOfExpenditure ===
+                    'Перевод с кредитного баланса нал'
                 "
-              >
-                <option v-for="company in companies" :value="company">
-                  {{ company }}
-                </option>
-              </select>
+                class="w-full"
+                v-model="rowData.company"
+                :options="companies"
+              />
             </div>
 
             <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="dispatchPVZ1">Кредит</label>
-              <select
-                class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
+              <USelectMenu
+                class="w-full"
                 v-model="rowData.typeOfExpenditure"
+                :options="typeOfOptions"
+                value-attribute="value"
+                id-attribute="label"
                 @change="checkStatus"
-              >
-                <option value="Новый кредит нал">Новый</option>
-                <option value="Пополнение баланса">Нет</option>
-                <option value="Перевод с кредитного баланса нал">
-                  С кредитного баланса
-                </option>
-                <option value="Перевод с баланса безнал">С баланса безнал</option>
-              </select>
+              />
             </div>
 
             <div class="text-black">
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Комментарий</label>
-                <input
+                <UInputMenu
                   :disabled="user.role !== 'ADMIN'"
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  class="w-full"
                   v-model="rowData.notation"
                   type="text"
-                  list="uniqueNotation"
+                  :options="uniqueNotation"
                 />
-                <datalist id="uniqueNotation">
-                  <option v-for="value in uniqueNotation" :value="value">
-                    {{ value }}
-                  </option>
-                </datalist>
               </div>
             </div>
           </template>
           <template v-slot:footer>
             <div class="flex items-center justify-center gap-3 mt-10">
               <UISaveModalButton @click="createRow">Создать</UISaveModalButton>
-              <UIExitModalButton @click="closeModalAdmin">Отменить</UIExitModalButton>
+              <UIExitModalButton @click="closeModalAdmin"
+                >Отменить</UIExitModalButton
+              >
             </div>
           </template>
         </UINewModalEdit>
 
-        <UINewModalEdit v-show="isOpenAdminOOO" @close-modal="closeModalAdminOOO">
+        <UINewModalEdit
+          v-show="isOpenAdminOOO"
+          @close-modal="closeModalAdminOOO"
+        >
           <template v-slot:icon-header>
             <Icon size="24" name="hugeicons:credit-card-validation" />
           </template>
@@ -1722,9 +1847,9 @@ watch(isOpenYM, (newValue) => {
             <div class="text-black">
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Сумма</label>
-                <input
+                <UInput
                   :disabled="user.role !== 'ADMIN'"
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  class="w-full"
                   v-model="rowData.expenditure"
                   @input="checkExpenditure"
                   type="text"
@@ -1734,87 +1859,100 @@ watch(isOpenYM, (newValue) => {
 
             <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="name">Дата</label>
-              <input
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.date"
-                type="date"
-                placeholder="ДД.ММ.ГГГГ"
-                onchange="this.className=(this.value!=''?'has-value':'')"
-              />
+              <UPopover
+                v-if="rowData.date"
+                class="w-full"
+                :popper="{ placement: 'bottom-start' }"
+              >
+                <UButton
+                  :overlay="true"
+                  type="button"
+                  icon="i-heroicons-calendar-days-20-solid"
+                  color="white"
+                  class="w-full"
+                  :disabled="
+                    rowData.typeOfExpenditure ===
+                      'Списание кредитной задолженности торговой империи' ||
+                    rowData.typeOfExpenditure ===
+                      'Списание балансовой задолженности торговой империи' ||
+                    rowData.typeOfExpenditure ===
+                      'Перевод в междубалансовый, кредитный баланс'
+                  "
+                >
+                  {{ format(rowData.date, "dd MMM yyy", { locale: ru }) }}
+                </UButton>
+
+                <template #panel="{ close }">
+                  <DatePickerNotRange
+                    v-model="rowData.date"
+                    is-required
+                    @close="close"
+                  />
+                </template>
+              </UPopover>
             </div>
 
             <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="dispatchPVZ1">ПВЗ</label>
-              <select
-                class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.PVZ"
+              <USelectMenu
                 :disabled="
-                  rowData.typeOfExpenditure === 'Новый кредит безнал' ||
-                  rowData.typeOfExpenditure === 'Перевод с баланса нал' ||
-                  rowData.typeOfExpenditure === 'Перевод с кредитного баланса безнал'
+                  rowData.typeOfExpenditure === 'Новый кредит нал' ||
+                  rowData.typeOfExpenditure === 'Перевод с баланса безнал' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод с кредитного баланса нал'
                 "
-              >
-                <option v-for="pvzData in pvz" :value="pvzData">
-                  {{ pvzData }}
-                </option>
-              </select>
+                class="w-full"
+                v-model="rowData.PVZ"
+                :options="pvz"
+              />
             </div>
 
             <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="dispatchPVZ1">Компания</label>
-              <select
-                class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.company"
+              <USelectMenu
                 :disabled="
-                  rowData.typeOfExpenditure === 'Новый кредит безнал' ||
-                  rowData.typeOfExpenditure === 'Перевод с баланса нал' ||
-                  rowData.typeOfExpenditure === 'Перевод с кредитного баланса безнал'
+                  rowData.typeOfExpenditure === 'Новый кредит нал' ||
+                  rowData.typeOfExpenditure === 'Перевод с баланса безнал' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод с кредитного баланса нал'
                 "
-              >
-                <option v-for="company in companies" :value="company">
-                  {{ company }}
-                </option>
-              </select>
+                class="w-full"
+                v-model="rowData.company"
+                :options="companies"
+              />
             </div>
 
             <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="dispatchPVZ1">Кредит</label>
-              <select
-                class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
+              <USelectMenu
+                class="w-full"
                 v-model="rowData.typeOfExpenditure"
+                :options="typeOfOptions"
+                value-attribute="value"
+                id-attribute="label"
                 @change="checkStatus"
-              >
-                <option value="Новый кредит безнал">Новый</option>
-                <option value="Пополнение баланса">Нет</option>
-                <option value="Перевод с кредитного баланса безнал">
-                  С кредитного баланса
-                </option>
-                <option value="Перевод с баланса нал">С баланса нал</option>
-              </select>
+              />
             </div>
 
             <div class="text-black">
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Комментарий</label>
-                <input
+                <UInputMenu
                   :disabled="user.role !== 'ADMIN'"
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  class="w-full"
                   v-model="rowData.notation"
                   type="text"
-                  list="uniqueNotation"
+                  :options="uniqueNotation"
                 />
-                <datalist id="uniqueNotation">
-                  <option v-for="value in uniqueNotation" :value="value">
-                    {{ value }}
-                  </option>
-                </datalist>
               </div>
             </div>
           </template>
           <template v-slot:footer>
             <div class="flex items-center justify-center gap-3 mt-10">
               <UISaveModalButton @click="createRow">Создать</UISaveModalButton>
-              <UIExitModalButton @click="closeModalAdminOOO">Отменить</UIExitModalButton>
+              <UIExitModalButton @click="closeModalAdminOOO"
+                >Отменить</UIExitModalButton
+              >
             </div>
           </template>
         </UINewModalEdit>
@@ -1823,27 +1961,7 @@ watch(isOpenYM, (newValue) => {
 
     <div v-else>
       <NuxtLayout name="user">
-        <div class="mt-10">
-          <div
-            class="flex items-center gap-3 max-sm:flex-col max-sm:items-start mb-10 mt-3"
-          >
-            <UIMainButton v-if="user.role === 'ADMIN'" @click="openModalAdmin">
-              Пополнение баланса торговой империи
-            </UIMainButton>
-          </div>
-
-          <div
-            class="flex justify-end my-3"
-            v-if="user.role === 'ADMIN' && user.username !== 'Горцуева'"
-          >
-            <h1
-              @click="router.push('/advance-report/summary-tables')"
-              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200 cursor-pointer"
-            >
-              Перейти к сводным таблицам
-            </h1>
-          </div>
-
+        <div class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5">
           <div>
             <div
               class="text-center text-2xl my-5 flex items-center justify-center flex-col gap-3"
@@ -1866,31 +1984,6 @@ watch(isOpenYM, (newValue) => {
             </div>
           </div>
 
-          <div v-if="user.role === 'ADMIN'">
-            <div class="flex items-center gap-3 mb-5">
-              <h1 class="font-bold text-xl">Проверить баланс сотрудника</h1>
-              <Icon
-                @click="showBalanceEmployees = !showBalanceEmployees"
-                name="clarity:employee-line"
-                size="24"
-                class="text-secondary-color hover:opacity-50 cursor-pointer duration-200"
-              />
-            </div>
-            <div
-              v-if="showBalanceEmployees"
-              class="text-xl border-2 p-5 border-dashed border-black"
-            >
-              <select
-                v-model="selectedUser"
-                class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
-              >
-                <option :value="user" v-for="user in usersOfIssued">
-                  {{ user }}
-                </option>
-              </select>
-            </div>
-          </div>
-
           <div class="flex items-start gap-3 flex-col">
             <div
               class="flex items-center mt-5 gap-3 w-full max-w-[400px] max-sm:max-w-full"
@@ -1902,24 +1995,9 @@ watch(isOpenYM, (newValue) => {
                 Создание авансового документа (нал)
               </UIMainButton>
               <div class="max-sm:hidden">
-                <Icon class="text-secondary-color" name="tdesign:money" size="24" />
-              </div>
-            </div>
-
-            <div
-              class="flex items-center mt-5 gap-3 w-full max-w-[400px] max-sm:max-w-fulll"
-              v-if="user.username === 'Директор'"
-            >
-              <UIMainButton
-                class="w-full max-sm:max-w-[400px] mx-auto"
-                @click="openModal(rowData, 'ONLINE')"
-              >
-                Создание авансового документа (безнал)
-              </UIMainButton>
-              <div class="max-sm:hidden">
                 <Icon
                   class="text-secondary-color"
-                  name="hugeicons:credit-card-pos"
+                  name="tdesign:money"
                   size="24"
                 />
               </div>
@@ -1930,7 +2008,8 @@ watch(isOpenYM, (newValue) => {
             :rows="
               filteredRows?.filter(
                 (row) =>
-                  row.issuedUser === selectedUser || row.createdUser === selectedUser
+                  row.issuedUser === selectedUser ||
+                  row.createdUser === selectedUser
               )
             "
             :user="user"
@@ -1947,15 +2026,15 @@ watch(isOpenYM, (newValue) => {
             <div class="custom-header" v-if="rowData.id">
               Изменение: <b> {{ rowData.id }}</b>
             </div>
-            <div class="custom-header" v-else>Создание авансового документа</div>
+            <div class="custom-header" v-else>
+              Создание авансового документа
+            </div>
           </template>
           <template v-slot:body>
             <div class="text-black">
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="dispatchPVZ1">ПВЗ</label>
-                <select
-                  class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                  v-model="rowData.PVZ"
+                <USelectMenu
                   :disabled="
                     rowData.typeOfExpenditure ===
                       'Списание кредитной задолженности торговой империи' ||
@@ -1966,11 +2045,10 @@ watch(isOpenYM, (newValue) => {
                       'Списание балансовой задолженности торговой империи' ||
                     rowData.typeOfExpenditure === 'Вывод дивидендов'
                   "
-                >
-                  <option v-for="pvzData in pvz" :value="pvzData">
-                    {{ pvzData }}
-                  </option>
-                </select>
+                  class="w-full"
+                  v-model="rowData.PVZ"
+                  :options="pvz"
+                />
               </div>
 
               <div
@@ -1978,23 +2056,37 @@ watch(isOpenYM, (newValue) => {
                 v-if="user.role !== 'ADMIN'"
               >
                 <label for="name">Дата</label>
-                <input
-                  :disabled="
-                    rowData.typeOfExpenditure ===
-                      'Списание кредитной задолженности торговой империи' ||
-                    rowData.typeOfExpenditure ===
-                      'Списание балансовой задолженности торговой империи' ||
-                    rowData.typeOfExpenditure ===
-                      'Перевод в междубалансовый, кредитный баланс'
-                  "
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.date"
-                  :min="`2024-${month}-01`"
-                  :max="`2024-${month}-31`"
-                  type="date"
-                  placeholder="ДД.ММ.ГГГГ"
-                  onchange="this.className=(this.value!=''?'has-value':'')"
-                />
+                <UPopover
+                  v-if="rowData.date"
+                  class="w-full"
+                  :popper="{ placement: 'bottom-start' }"
+                >
+                  <UButton
+                    :overlay="true"
+                    type="button"
+                    icon="i-heroicons-calendar-days-20-solid"
+                    color="white"
+                    class="w-full"
+                    :disabled="
+                      rowData.typeOfExpenditure ===
+                        'Списание кредитной задолженности торговой империи' ||
+                      rowData.typeOfExpenditure ===
+                        'Списание балансовой задолженности торговой империи' ||
+                      rowData.typeOfExpenditure ===
+                        'Перевод в междубалансовый, кредитный баланс'
+                    "
+                  >
+                    {{ format(rowData.date, "dd MMM yyy", { locale: ru }) }}
+                  </UButton>
+
+                  <template #panel="{ close }">
+                    <DatePickerNotRange
+                      v-model="rowData.date"
+                      is-required
+                      @close="close"
+                    />
+                  </template>
+                </UPopover>
               </div>
 
               <div
@@ -2002,40 +2094,55 @@ watch(isOpenYM, (newValue) => {
                 v-if="user.role === 'ADMIN'"
               >
                 <label for="name">Дата</label>
-                <input
-                  :disabled="
-                    rowData.typeOfExpenditure ===
-                      'Списание кредитной задолженности торговой империи' ||
-                    rowData.typeOfExpenditure ===
-                      'Списание балансовой задолженности торговой империи' ||
-                    rowData.typeOfExpenditure ===
-                      'Перевод в междубалансовый, кредитный баланс'
-                  "
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.date"
-                  type="date"
-                  placeholder="ДД.ММ.ГГГГ"
-                  onchange="this.className=(this.value!=''?'has-value':'')"
-                />
+                <UPopover
+                  v-if="rowData.date"
+                  class="w-full"
+                  :popper="{ placement: 'bottom-start' }"
+                >
+                  <UButton
+                    :overlay="true"
+                    type="button"
+                    icon="i-heroicons-calendar-days-20-solid"
+                    color="white"
+                    class="w-full"
+                    :disabled="
+                      rowData.typeOfExpenditure ===
+                        'Списание кредитной задолженности торговой империи' ||
+                      rowData.typeOfExpenditure ===
+                        'Списание балансовой задолженности торговой империи' ||
+                      rowData.typeOfExpenditure ===
+                        'Перевод в междубалансовый, кредитный баланс'
+                    "
+                  >
+                    {{ format(rowData.date, "dd MMM yyy", { locale: ru }) }}
+                  </UButton>
+
+                  <template #panel="{ close }">
+                    <DatePickerNotRange
+                      v-model="rowData.date"
+                      is-required
+                      @close="close"
+                    />
+                  </template>
+                </UPopover>
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Получатель</label>
-                <select
-                  :disabled="rowData.typeOfExpenditure !== 'Передача денежных средств'"
-                  class="py-1 px-2 border-2 bg-transparent w-full rounded-lg text-sm disabled:text-gray-400"
+                <USelectMenu
+                  :disabled="
+                    rowData.typeOfExpenditure !== 'Передача денежных средств'
+                  "
+                  class="w-full"
                   v-model="rowData.issuedUser"
-                >
-                  <option v-for="user in usersOfIssued" :value="user">
-                    {{ user }}
-                  </option>
-                </select>
+                  :options="usersOfIssued"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Расход</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                <UInput
+                  class="w-full"
                   v-model="rowData.expenditure"
                   type="text"
                   @input="checkExpenditure"
@@ -2044,35 +2151,26 @@ watch(isOpenYM, (newValue) => {
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="dispatchPVZ1">Статья расхода</label>
-                <select
-                  class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                  v-model="rowData.typeOfExpenditure"
+                <USelectMenu
                   @change="checkStatus"
-                >
-                  <option v-for="type in typesOfExpenditure" :value="type">
-                    {{ type }}
-                  </option>
-                </select>
+                  class="w-full"
+                  v-model="rowData.typeOfExpenditure"
+                  :options="typesOfExpenditure"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Комментарий</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                <UInputMenu
+                  class="w-full"
                   v-model="rowData.notation"
-                  type="text"
-                  list="uniqueNotation"
+                  :options="uniqueNotation"
                 />
-                <datalist id="uniqueNotation">
-                  <option v-for="value in uniqueNotation" :value="value">
-                    {{ value }}
-                  </option>
-                </datalist>
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="dispatchPVZ1">Компания</label>
-                <select
+                <USelectMenu
                   :disabled="
                     rowData.typeOfExpenditure ===
                       'Списание кредитной задолженности торговой империи' ||
@@ -2084,18 +2182,15 @@ watch(isOpenYM, (newValue) => {
                     rowData.typeOfExpenditure === 'Передача денежных средств' ||
                     rowData.typeOfExpenditure === 'Вывод дивидендов'
                   "
-                  class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
+                  class="w-full"
                   v-model="rowData.company"
-                >
-                  <option v-for="company in companies" :value="company">
-                    {{ company }}
-                  </option>
-                </select>
+                  :options="companies"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Подтверждающий документ</label>
-                <input
+                <UInput
                   :disabled="
                     rowData.typeOfExpenditure ===
                       'Списание кредитной задолженности торговой империи' ||
@@ -2104,9 +2199,11 @@ watch(isOpenYM, (newValue) => {
                     rowData.typeOfExpenditure ===
                       'Перевод в междубалансовый, кредитный баланс'
                   "
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  class="w-full"
                   @change="handleFileChange"
                   type="file"
+                  size="sm"
+                  icon="i-heroicons-folder"
                 />
               </div>
 
@@ -2115,247 +2212,30 @@ watch(isOpenYM, (newValue) => {
                 v-if="user.username === 'Директор'"
               >
                 <label for="name">Тип</label>
-                <select
-                  class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                  v-model="rowData.type"
+                <USelectMenu
                   :disabled="rowData.type !== null"
-                >
-                  <option value="Нал">Нал</option>
-                  <option value="Безнал">Безнал</option>
-                </select>
+                  class="w-full"
+                  value-attribute="value"
+                  id-attribute="value"
+                  v-model="rowData.type"
+                  :options="paymentOptions"
+                />
               </div>
             </div>
           </template>
           <template v-slot:footer>
-            <div class="flex items-center justify-center gap-3" v-if="rowData.id">
-              <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+            <div
+              class="flex items-center justify-center gap-3"
+              v-if="rowData.id"
+            >
+              <UISaveModalButton @click="updateRow"
+                >Сохранить
+              </UISaveModalButton>
+              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3" v-else>
               <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
-            </div>
-          </template>
-        </UINewModalEdit>
-
-        <UINewModalEdit v-show="isOpenAdmin" @close-modal="closeModalAdmin">
-          <template v-slot:icon-header>
-            <Icon size="24" name="iconoir:hand-cash" />
-          </template>
-          <template v-slot:header>
-            <div class="custom-header" v-if="rowData.id">
-              Изменение: <b> {{ rowData.id }}</b>
-            </div>
-            <div class="custom-header" v-else>Пополнение баланса</div>
-          </template>
-          <template v-slot:body>
-            <div class="text-black">
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="name">Сумма</label>
-                <input
-                  :disabled="user.role !== 'ADMIN'"
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.expenditure"
-                  @input="checkExpenditure"
-                  type="text"
-                />
-              </div>
-            </div>
-
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="name">Дата</label>
-              <input
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.date"
-                type="date"
-                placeholder="ДД.ММ.ГГГГ"
-                onchange="this.className=(this.value!=''?'has-value':'')"
-              />
-            </div>
-
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="dispatchPVZ1">ПВЗ</label>
-              <select
-                class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.PVZ"
-                :disabled="
-                  rowData.typeOfExpenditure === 'Новый кредит нал' ||
-                  rowData.typeOfExpenditure === 'Перевод с баланса безнал' ||
-                  rowData.typeOfExpenditure === 'Перевод с кредитного баланса нал'
-                "
-              >
-                <option v-for="pvzData in pvz" :value="pvzData">
-                  {{ pvzData }}
-                </option>
-              </select>
-            </div>
-
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="dispatchPVZ1">Компания</label>
-              <select
-                class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.company"
-                :disabled="
-                  rowData.typeOfExpenditure === 'Новый кредит нал' ||
-                  rowData.typeOfExpenditure === 'Перевод с баланса безнал' ||
-                  rowData.typeOfExpenditure === 'Перевод с кредитного баланса нал'
-                "
-              >
-                <option v-for="company in companies" :value="company">
-                  {{ company }}
-                </option>
-              </select>
-            </div>
-
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="dispatchPVZ1">Кредит</label>
-              <select
-                class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.typeOfExpenditure"
-                @change="checkStatus"
-              >
-                <option value="Новый кредит нал">Новый</option>
-                <option value="Пополнение баланса">Нет</option>
-                <option value="Перевод с кредитного баланса нал">
-                  С кредитного баланса
-                </option>
-                <option value="Перевод с баланса безнал">С баланса безнал</option>
-              </select>
-            </div>
-
-            <div class="text-black">
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="name">Комментарий</label>
-                <input
-                  :disabled="user.role !== 'ADMIN'"
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.notation"
-                  type="text"
-                  list="uniqueNotation"
-                />
-                <datalist id="uniqueNotation">
-                  <option v-for="value in uniqueNotation" :value="value">
-                    {{ value }}
-                  </option>
-                </datalist>
-              </div>
-            </div>
-          </template>
-          <template v-slot:footer>
-            <div class="flex items-center justify-center gap-3 mt-10">
-              <UISaveModalButton @click="createRow">Создать</UISaveModalButton>
-              <UIExitModalButton @click="closeModalAdmin">Отменить</UIExitModalButton>
-            </div>
-          </template>
-        </UINewModalEdit>
-
-        <UINewModalEdit v-show="isOpenAdminOOO" @close-modal="closeModalAdminOOO">
-          <template v-slot:icon-header>
-            <Icon size="24" name="hugeicons:credit-card-validation" />
-          </template>
-          <template v-slot:header>
-            <div class="custom-header" v-if="rowData.id">
-              Изменение: <b> {{ rowData.id }}</b>
-            </div>
-            <div class="custom-header" v-else>Пополнение баланса</div>
-          </template>
-          <template v-slot:body>
-            <div class="text-black">
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="name">Сумма</label>
-                <input
-                  :disabled="user.role !== 'ADMIN'"
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.expenditure"
-                  @input="checkExpenditure"
-                  type="text"
-                />
-              </div>
-            </div>
-
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="name">Дата</label>
-              <input
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.date"
-                type="date"
-                placeholder="ДД.ММ.ГГГГ"
-                onchange="this.className=(this.value!=''?'has-value':'')"
-              />
-            </div>
-
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="dispatchPVZ1">ПВЗ</label>
-              <select
-                class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.PVZ"
-                :disabled="
-                  rowData.typeOfExpenditure === 'Новый кредит безнал' ||
-                  rowData.typeOfExpenditure === 'Перевод с баланса нал' ||
-                  rowData.typeOfExpenditure === 'Перевод с кредитного баланса безнал'
-                "
-              >
-                <option v-for="pvzData in pvz" :value="pvzData">
-                  {{ pvzData }}
-                </option>
-              </select>
-            </div>
-
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="dispatchPVZ1">Компания</label>
-              <select
-                class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.company"
-                :disabled="
-                  rowData.typeOfExpenditure === 'Новый кредит безнал' ||
-                  rowData.typeOfExpenditure === 'Перевод с баланса нал' ||
-                  rowData.typeOfExpenditure === 'Перевод с кредитного баланса безнал'
-                "
-              >
-                <option v-for="company in companies" :value="company">
-                  {{ company }}
-                </option>
-              </select>
-            </div>
-
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="dispatchPVZ1">Кредит</label>
-              <select
-                class="py-1 px-2 border-2 w-full bg-transparent rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.typeOfExpenditure"
-                @change="checkStatus"
-              >
-                <option value="Новый кредит безнал">Новый</option>
-                <option value="Пополнение баланса">Нет</option>
-                <option value="Перевод с кредитного баланса безнал">
-                  С кредитного баланса
-                </option>
-                <option value="Перевод с баланса нал">С баланса нал</option>
-              </select>
-            </div>
-
-            <div class="text-black">
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="name">Комментарий</label>
-                <input
-                  :disabled="user.role !== 'ADMIN'"
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.notation"
-                  type="text"
-                  list="uniqueNotation"
-                />
-                <datalist id="uniqueNotation">
-                  <option v-for="value in uniqueNotation" :value="value">
-                    {{ value }}
-                  </option>
-                </datalist>
-              </div>
-            </div>
-          </template>
-          <template v-slot:footer>
-            <div class="flex items-center justify-center gap-3 mt-10">
-              <UISaveModalButton @click="createRow">Создать</UISaveModalButton>
-              <UIExitModalButton @click="closeModalAdminOOO">Отменить</UIExitModalButton>
+              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
             </div>
           </template>
         </UINewModalEdit>
@@ -2374,8 +2254,8 @@ watch(isOpenYM, (newValue) => {
             <div class="text-black">
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Сумма</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                <UInput
+                  class="w-full"
                   v-model="rowData.expenditure"
                   type="text"
                 />
@@ -2384,19 +2264,45 @@ watch(isOpenYM, (newValue) => {
 
             <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="name">Дата</label>
-              <input
-                class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.date"
-                type="date"
-                placeholder="ДД.ММ.ГГГГ"
-                onchange="this.className=(this.value!=''?'has-value':'')"
-              />
+              <UPopover
+                v-if="rowData.date"
+                class="w-full"
+                :popper="{ placement: 'bottom-start' }"
+              >
+                <UButton
+                  :overlay="true"
+                  type="button"
+                  icon="i-heroicons-calendar-days-20-solid"
+                  color="white"
+                  class="w-full"
+                  :disabled="
+                    rowData.typeOfExpenditure ===
+                      'Списание кредитной задолженности торговой империи' ||
+                    rowData.typeOfExpenditure ===
+                      'Списание балансовой задолженности торговой империи' ||
+                    rowData.typeOfExpenditure ===
+                      'Перевод в междубалансовый, кредитный баланс'
+                  "
+                >
+                  {{ format(rowData.date, "dd MMM yyy", { locale: ru }) }}
+                </UButton>
+
+                <template #panel="{ close }">
+                  <DatePickerNotRange
+                    v-model="rowData.date"
+                    is-required
+                    @close="close"
+                  />
+                </template>
+              </UPopover>
             </div>
           </template>
           <template v-slot:footer>
             <div class="flex items-center justify-center gap-3 mt-10">
               <UISaveModalButton @click="createRow">Создать</UISaveModalButton>
-              <UIExitModalButton @click="closeModalYM">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModalYM"
+                >Отменить
+              </UIExitModalButton>
             </div>
           </template>
         </UINewModalEdit>

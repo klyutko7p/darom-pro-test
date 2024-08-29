@@ -28,24 +28,24 @@ onMounted(() => {});
         class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center bg-gray-50"
       >
         <tr>
-          <th scope="col" class="border-2">ПВЗ</th>
-          <th scope="col" class="border-2">Сумма</th>
-          <th scope="col" class="border-2">Выдано</th>
-          <th scope="col" class="border-2">Получено</th>
-          <th scope="col" class="border-2">Кем выдано</th>
-          <th scope="col" class="border-2">Кому выдать</th>
-          <th scope="col" class="border-2">Примечание</th>
+          <th scope="col" class="border-[1px]">ПВЗ</th>
+          <th scope="col" class="border-[1px]">Сумма</th>
+          <th scope="col" class="border-[1px]">Выдано</th>
+          <th scope="col" class="border-[1px]">Получено</th>
+          <th scope="col" class="border-[1px]">Кем выдано</th>
+          <th scope="col" class="border-[1px]">Кому выдать</th>
+          <th scope="col" class="border-[1px]">Примечание</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="row in rows" class="text-center">
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.pvz }}
           </th>
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.sum }}
           </th>
-          <td class="border-2 whitespace-nowrap">
+          <td class="border-[1px] whitespace-nowrap">
             <Icon
               @click="updateDeliveryRow(row, 'issued')"
               v-if="
@@ -69,7 +69,7 @@ onMounted(() => {});
               }}
             </h1>
           </td>
-          <td class="border-2 whitespace-nowrap">
+          <td class="border-[1px] whitespace-nowrap">
             <Icon
               @click="updateDeliveryRow(row, 'received')"
               v-if="
@@ -85,13 +85,13 @@ onMounted(() => {});
               {{ row.received ? storeUsers.getNormalizedDate(row.received) : "" }}
             </h1>
           </td>
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.receivedUser }}
           </th>
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.recipient }}
           </th>
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.notation }}
           </th>
         </tr>

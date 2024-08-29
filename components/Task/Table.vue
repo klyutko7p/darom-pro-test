@@ -29,46 +29,50 @@ function updateCurrentPageData() {
 
 </script>
 <template>
-  <div class="relative max-h-[700px] overflow-y-auto rounded-xl mt-5 mb-10">
+  <div class="relative overflow-x-auto overflow-y-auto mt-5 mb-5">
     <table id="theTable"
-      class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+      class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
     >
       <thead
-        class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
+        class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
       >
         <tr>
           <th
             scope="col"
-            class="exclude-row border-2 h-[50px] px-3"
+            class="exclude-row border-[1px] h-[30px] px-3"
             v-if="
               user.username === 'Директор'
             "
           >
             изменение
           </th>
-          <th scope="col" class="border-2">Задача</th>
-          <th scope="col" class="border-2">Комментарий</th>
-          <th scope="col" class="border-2">Выполнено</th>
-          <th scope="col" class="border-2">Проверено</th>
+          <th scope="col" class="border-[1px]">Задача</th>
+          <th scope="col" class="border-[1px]">Комментарий</th>
+          <th scope="col" class="border-[1px]">Выполнено</th>
+          <th scope="col" class="border-[1px]">Проверено</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="row in returnRows" class="text-center">
-          <td class="border-2" v-if="user.username === 'Директор'">
-            <h1
+          <td class="border-[1px]">
+            <div
               @click="openModal(row)"
-              class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
+              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
             >
-              ✏️
-            </h1>
+              <Icon
+                class="text-green-500"
+                name="ic:baseline-mode-edit"
+                size="18"
+              />
+            </div>
           </td>
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.description }}
           </th>
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.notation }}
           </th>
-          <td class="border-2 whitespace-nowrap">
+          <td class="border-[1px] whitespace-nowrap">
             <Icon
               @click="updateStatus(row, 'DONE')"
               v-if="!row.done"
@@ -80,7 +84,7 @@ function updateCurrentPageData() {
               {{ row.done ? storeUsers.getNormalizedDate(row.done) : "" }}
             </h1>
           </td>
-          <td class="border-2 whitespace-nowrap">
+          <td class="border-[1px] whitespace-nowrap">
             <Icon
               @click="updateStatus(row, 'CHECKED')"
               v-if="!row.checked"

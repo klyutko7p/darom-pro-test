@@ -325,7 +325,7 @@ onMounted(() => {
 
     <div
       v-if="showFilters"
-      class="border-2 border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
+      class="border-2 bg-white border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
     >
       <div class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5">
         <div class="flex items-start space-y-2 flex-col mt-5 text-center">

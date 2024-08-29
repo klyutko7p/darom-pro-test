@@ -2,9 +2,9 @@
 import Cookies from "js-cookie";
 import { useToast } from "vue-toastification";
 import VueMultiselect from "vue-multiselect";
-import ru from 'date-fns/locale/ru'
+import ru from "date-fns/locale/ru";
 import { vAutoAnimate } from "@formkit/auto-animate";
-import { sub, format, isSameDay, type Duration } from 'date-fns'
+import { sub, format, isSameDay, type Duration } from "date-fns";
 
 const storeUsers = useUsersStore();
 const storePVZ = usePVZStore();
@@ -30,38 +30,52 @@ let sumOfReject = ref<any>();
 let rowsWithProfitRows = ref();
 
 const ranges = [
-  { label: 'Текущий месяц', duration: { month: 'current' } },
-  { label: 'Сегодня', duration: { days: 0 } },
-  { label: 'Последние 7 дней', duration: { days: 7 } },
-  { label: 'Последние 14 дней', duration: { days: 14 } },
-  { label: 'Последние 30 дней', duration: { days: 30 } },
-  { label: 'Последние 3 месяца', duration: { months: 3 } },
-  { label: 'Последние 6 месяцев', duration: { months: 6 } },
-  { label: 'Последний год', duration: { years: 1 } }
-]
+  { label: "Текущий месяц", duration: { month: "current" } },
+  { label: "Сегодня", duration: { days: 0 } },
+  { label: "Последние 7 дней", duration: { days: 7 } },
+  { label: "Последние 14 дней", duration: { days: 14 } },
+  { label: "Последние 30 дней", duration: { days: 30 } },
+  { label: "Последние 3 месяца", duration: { months: 3 } },
+  { label: "Последние 6 месяцев", duration: { months: 6 } },
+  { label: "Последний год", duration: { years: 1 } },
+];
 
 const selected = ref({
   start: new Date(new Date().getFullYear(), 0, 1),
-  end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-})
+  end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+});
 
 function isRangeSelected(duration: Duration) {
-  if (duration.month === 'current') {
-    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-    const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-    return isSameDay(selected.value.start, startOfMonth) && isSameDay(selected.value.end, endOfMonth)
+  if (duration.month === "current") {
+    const startOfMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      1
+    );
+    const endOfMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      0
+    );
+    return (
+      isSameDay(selected.value.start, startOfMonth) &&
+      isSameDay(selected.value.end, endOfMonth)
+    );
   }
-  return isSameDay(selected.value.start, sub(new Date(), duration)) && isSameDay(selected.value.end, new Date())
+  return (
+    isSameDay(selected.value.start, sub(new Date(), duration)) &&
+    isSameDay(selected.value.end, new Date())
+  );
 }
 
 function selectRange(duration: Duration) {
-  if (duration.month === 'current') {
+  if (duration.month === "current") {
     selected.value = {
       start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-      end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-    }
+      end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+    };
   } else {
-    selected.value = { start: sub(new Date(), duration), end: new Date() }
+    selected.value = { start: sub(new Date(), duration), end: new Date() };
   }
 }
 
@@ -110,7 +124,11 @@ onMounted(async () => {
     rowsProfit.value = balanceProfitRowsData;
     rowsProfitManager.value = balanceProfitManagerRowsData;
     rowsDelivery.value = balanceDeliveryRowsData;
-    ourRansomRows.value = [...ransomRowsForBalanceOurRansomDataPartOne, ...ransomRowsForBalanceOurRansomDataPartTwo, ...ransomRowsForBalanceOurRansomDataPartThree];
+    ourRansomRows.value = [
+      ...ransomRowsForBalanceOurRansomDataPartOne,
+      ...ransomRowsForBalanceOurRansomDataPartTwo,
+      ...ransomRowsForBalanceOurRansomDataPartThree,
+    ];
     clientRansomRows.value = ransomRowsForBalanceClientRansomData;
     pvz.value = pvzData;
 
@@ -130,13 +148,15 @@ onMounted(async () => {
       selectedPVZ.value = user.value.visiblePVZ;
       rows.value = rows.value?.filter(
         (row) =>
-          row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
+          row.pvz === user.value.visiblePVZ ||
+          user.value.PVZ.includes(row.recipient)
       );
     } else if (user.value.role === "RMANAGER") {
       selectedPVZ.value = "Все ППВЗ";
       rows.value = rows.value?.filter(
         (row) =>
-          user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
+          user.value.PVZ.includes(row.pvz) ||
+          user.value.PVZ.includes(row.recipient)
       );
     }
 
@@ -192,7 +212,9 @@ function calculateValue(curValue: any) {
 
     const roundOrCeil = (num: number) => {
       const lastDigit = num % 10;
-      return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
+      return lastDigit >= 5
+        ? Math.ceil(num / 10) * 10
+        : Math.floor(num / 10) * 10;
     };
 
     if (!shouldRound(curValue)) {
@@ -209,7 +231,9 @@ function calculateValue(curValue: any) {
         curValue.additionally !== "Отказ клиент"
         ? Math.ceil(
             roundOrCeil(
-              curValue.priceSite + (curValue.priceSite * 10) / 100 - curValue.prepayment
+              curValue.priceSite +
+                (curValue.priceSite * 10) / 100 -
+                curValue.prepayment
             )
           ) -
             curValue.priceSite +
@@ -244,7 +268,10 @@ function reduceArray(array: any, flag: string) {
   if (selectedTypeOfTransaction.value === "Доход") {
     if (flag === "OurRansom") {
       array = array.filter((row: any) => row.additionally !== "Отказ брак");
-      return array.reduce((ac: any, curValue: any) => ac + calculateValue(curValue), 0);
+      return array.reduce(
+        (ac: any, curValue: any) => ac + calculateValue(curValue),
+        0
+      );
     } else if (flag === "ClientRansom") {
       array = array.filter((row: any) => row.additionally !== "Отказ брак");
       return array.reduce((ac: any, curValue: any) => ac + curValue.profit2, 0);
@@ -254,11 +281,17 @@ function reduceArray(array: any, flag: string) {
     }
   } else if (selectedTypeOfTransaction.value === "Заказано") {
     if (flag === "OurRansom") {
-      return array.reduce((ac: any, curValue: any) => ac + curValue.priceSite, 0);
+      return array.reduce(
+        (ac: any, curValue: any) => ac + curValue.priceSite,
+        0
+      );
     }
   } else if (selectedTypeOfTransaction.value === "Заказано3") {
     if (flag === "OurRansom") {
-      return array.reduce((ac: any, curValue: any) => ac + curValue.priceSite, 0);
+      return array.reduce(
+        (ac: any, curValue: any) => ac + curValue.priceSite,
+        0
+      );
     }
   } else if (selectedTypeOfTransaction.value === "Баланс наличные") {
     if (flag === "OurRansom") {
@@ -276,11 +309,13 @@ function reduceArray(array: any, flag: string) {
           new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
       );
       let firstReduce = array.reduce(
-        (ac: any, curValue: any) => ac + Math.ceil(curValue.amountFromClient1 / 10) * 10,
+        (ac: any, curValue: any) =>
+          ac + Math.ceil(curValue.amountFromClient1 / 10) * 10,
         0
       );
       let secondReduce = array2.reduce(
-        (ac: any, curValue: any) => ac + roundToNearestTen(curValue.amountFromClient1),
+        (ac: any, curValue: any) =>
+          ac + roundToNearestTen(curValue.amountFromClient1),
         0
       );
       return firstReduce + secondReduce;
@@ -299,11 +334,13 @@ function reduceArray(array: any, flag: string) {
           new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
       );
       let firstReduce = array.reduce(
-        (ac: any, curValue: any) => ac + Math.ceil(curValue.amountFromClient2 / 10) * 10,
+        (ac: any, curValue: any) =>
+          ac + Math.ceil(curValue.amountFromClient2 / 10) * 10,
         0
       );
       let secondReduce = array2.reduce(
-        (ac: any, curValue: any) => ac + roundToNearestTen(curValue.amountFromClient2),
+        (ac: any, curValue: any) =>
+          ac + roundToNearestTen(curValue.amountFromClient2),
         0
       );
       return firstReduce + secondReduce;
@@ -321,25 +358,33 @@ function reduceArray(array: any, flag: string) {
           let amount = 0;
           if (!curValue.prepayment && curValue.amountFromClient1) {
             curValue.prepayment = 0;
-            if (new Date(curValue.created_at) < new Date("2024-06-05T00:00:01")) {
+            if (
+              new Date(curValue.created_at) < new Date("2024-06-05T00:00:01")
+            ) {
               amount =
-                Math.ceil(curValue.amountFromClient1 / 10) * 10 + curValue.prepayment;
+                Math.ceil(curValue.amountFromClient1 / 10) * 10 +
+                curValue.prepayment;
             } else {
               amount = roundToNearestTen(curValue.amountFromClient1);
             }
           } else if (!curValue.amountFromClient1 && curValue.prepayment) {
             curValue.amountFromClient1 = 0;
             amount =
-              Math.ceil(curValue.amountFromClient1 / 10) * 10 + curValue.prepayment;
+              Math.ceil(curValue.amountFromClient1 / 10) * 10 +
+              curValue.prepayment;
           } else if (!curValue.amountFromClient1 && !curValue.prepayment) {
             curValue.prepayment = 0;
             curValue.amountFromClient1 = 0;
             amount =
-              Math.ceil(curValue.amountFromClient1 / 10) * 10 + curValue.prepayment;
+              Math.ceil(curValue.amountFromClient1 / 10) * 10 +
+              curValue.prepayment;
           } else {
-            if (new Date(curValue.created_at) < new Date("2024-06-05T00:00:01")) {
+            if (
+              new Date(curValue.created_at) < new Date("2024-06-05T00:00:01")
+            ) {
               amount =
-                Math.ceil(curValue.amountFromClient1 / 10) * 10 + curValue.prepayment;
+                Math.ceil(curValue.amountFromClient1 / 10) * 10 +
+                curValue.prepayment;
             } else {
               amount = roundToNearestTen(curValue.amountFromClient1);
             }
@@ -391,7 +436,10 @@ function reduceArray(array: any, flag: string) {
     }
   } else if (selectedTypeOfTransaction.value === "Доставка") {
     array = array.filter((row: any) => row.additionally !== "Отказ брак");
-    return array.reduce((ac: any, curValue: any) => ac + curValue.amountFromClient3, 0);
+    return array.reduce(
+      (ac: any, curValue: any) => ac + curValue.amountFromClient3,
+      0
+    );
   } else if (selectedTypeOfTransaction.value === "Заказано1") {
     if (flag === "OurRansom") {
       let arrayCopy = array;
@@ -408,26 +456,36 @@ function reduceArray(array: any, flag: string) {
           new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
       );
       let firstReduce = array.reduce(
-        (ac: any, curValue: any) => ac + Math.ceil(curValue.amountFromClient1 / 10) * 10,
+        (ac: any, curValue: any) =>
+          ac + Math.ceil(curValue.amountFromClient1 / 10) * 10,
         0
       );
       let secondReduce = array2.reduce(
-        (ac: any, curValue: any) => ac + roundToNearestTen(curValue.amountFromClient1),
+        (ac: any, curValue: any) =>
+          ac + roundToNearestTen(curValue.amountFromClient1),
         0
       );
       return firstReduce + secondReduce;
     } else if (flag === "ClientRansom") {
       array = array.filter(
         (row: any) =>
-          row.additionally !== "Отказ брак" && row.additionally !== "Отказ клиент онлайн"
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ клиент онлайн"
       );
-      return array.reduce((ac: any, curValue: any) => ac + curValue.amountFromClient2, 0);
+      return array.reduce(
+        (ac: any, curValue: any) => ac + curValue.amountFromClient2,
+        0
+      );
     } else {
       array = array.filter(
         (row: any) =>
-          row.additionally !== "Отказ брак" && row.additionally !== "Отказ клиент онлайн"
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ клиент онлайн"
       );
-      return array.reduce((ac: any, curValue: any) => ac + curValue.amountFromClient3, 0);
+      return array.reduce(
+        (ac: any, curValue: any) => ac + curValue.amountFromClient3,
+        0
+      );
     }
   } else if (selectedTypeOfTransaction.value === "Заказано2") {
     if (flag === "OurRansom") {
@@ -445,11 +503,13 @@ function reduceArray(array: any, flag: string) {
           new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
       );
       let firstReduce = array.reduce(
-        (ac: any, curValue: any) => ac + Math.ceil(curValue.amountFromClient1 / 10) * 10,
+        (ac: any, curValue: any) =>
+          ac + Math.ceil(curValue.amountFromClient1 / 10) * 10,
         0
       );
       let secondReduce = array2.reduce(
-        (ac: any, curValue: any) => ac + roundToNearestTen(curValue.amountFromClient1),
+        (ac: any, curValue: any) =>
+          ac + roundToNearestTen(curValue.amountFromClient1),
         0
       );
       return firstReduce + secondReduce;
@@ -459,14 +519,20 @@ function reduceArray(array: any, flag: string) {
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент наличные"
       );
-      return array.reduce((ac: any, curValue: any) => ac + curValue.amountFromClient2, 0);
+      return array.reduce(
+        (ac: any, curValue: any) => ac + curValue.amountFromClient2,
+        0
+      );
     } else {
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент наличные"
       );
-      return array.reduce((ac: any, curValue: any) => ac + curValue.amountFromClient3, 0);
+      return array.reduce(
+        (ac: any, curValue: any) => ac + curValue.amountFromClient3,
+        0
+      );
     }
   } else if (selectedTypeOfTransaction.value === "Доход PPVZ") {
     if (flag === "OurRansom") {
@@ -521,7 +587,9 @@ function reduceArrayProfit(array: any[], flag: string) {
 
   const roundOrCeil = (num: number) => {
     const lastDigit = num % 10;
-    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
+    return lastDigit >= 5
+      ? Math.ceil(num / 10) * 10
+      : Math.floor(num / 10) * 10;
   };
 
   const calculateAmount = (array: any[], clientField: string, rate: number) => {
@@ -530,7 +598,9 @@ function reduceArrayProfit(array: any[], flag: string) {
       const createdAt = new Date(row.created_at);
       const amount = row[clientField];
       const adjustedAmount =
-        createdAt > thresholdDate ? roundOrCeil(amount) : Math.ceil(amount / 10) * 10;
+        createdAt > thresholdDate
+          ? roundOrCeil(amount)
+          : Math.ceil(amount / 10) * 10;
       return total + adjustedAmount * rate;
     }, 0);
   };
@@ -621,14 +691,16 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start || new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
           (!selected.value.end || new Date(row.issued) <= new Date(newEndDate))
       );
 
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start || new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
           (!selected.value.end || new Date(row.issued) <= new Date(newEndDate))
       );
 
@@ -647,7 +719,8 @@ function getAllSum() {
         (row) =>
           row.dispatchPVZ === selectedPVZ.value &&
           row.issued !== null &&
-          (!selected.value.start || new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
           (!selected.value.end || new Date(row.issued) <= new Date(newEndDate))
       );
 
@@ -655,7 +728,8 @@ function getAllSum() {
         (row) =>
           row.dispatchPVZ === selectedPVZ.value &&
           row.issued !== null &&
-          (!selected.value.start || new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
           (!selected.value.end || new Date(row.issued) <= new Date(newEndDate))
       );
 
@@ -678,7 +752,8 @@ function getAllSum() {
           !row.deleted &&
           (!selected.value.start ||
             new Date(row.created_at) >= new Date(newStartingDate)) &&
-          (!selected.value.end || new Date(row.created_at) <= new Date(newEndDate))
+          (!selected.value.end ||
+            new Date(row.created_at) <= new Date(newEndDate))
       );
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       allSum.value = sum1.value;
@@ -688,9 +763,10 @@ function getAllSum() {
           row.dispatchPVZ === selectedPVZ.value &&
           row.issued === null &&
           row.deleted === null &&
-          (!selected.value.start||
+          (!selected.value.start ||
             new Date(row.created_at) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.created_at) <= new Date(newEndDate))
+          (!selected.value.end ||
+            new Date(row.created_at) <= new Date(newEndDate))
       );
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       allSum.value = sum1.value;
@@ -699,13 +775,14 @@ function getAllSum() {
     if (selectedPVZ.value === "Все ПВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
-          (!selected.value.start||
+          (!selected.value.start ||
             new Date(row.created_at) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.created_at) <= new Date(newEndDate))
+          (!selected.value.end ||
+            new Date(row.created_at) <= new Date(newEndDate))
       );
       if (
-        (selected.value.start!== null && selected.value.start!== "") ||
-        (selected.value.end!== null && selected.value.end!== "")
+        (selected.value.start !== null && selected.value.start !== "") ||
+        (selected.value.end !== null && selected.value.end !== "")
       ) {
         sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
         allSum.value = sum1.value;
@@ -716,13 +793,14 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.dispatchPVZ === selectedPVZ.value &&
-          (!selected.value.start||
+          (!selected.value.start ||
             new Date(row.created_at) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.created_at) <= new Date(newEndDate))
+          (!selected.value.end ||
+            new Date(row.created_at) <= new Date(newEndDate))
       );
       if (
-        (selected.value.start!== null && selected.value.start!== "") ||
-        (selected.value.end!== null && selected.value.end!== "")
+        (selected.value.start !== null && selected.value.start !== "") ||
+        (selected.value.end !== null && selected.value.end !== "")
       ) {
         sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
         allSum.value = sum1.value;
@@ -735,8 +813,10 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплата наличными" ||
             row.additionally === "Отказ клиент наличные" ||
             row.additionally === "Отказ клиент")
@@ -745,8 +825,10 @@ function getAllSum() {
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплата наличными" ||
             row.additionally === "Отказ клиент наличные" ||
             row.additionally === "Отказ клиент")
@@ -772,7 +854,8 @@ function getAllSum() {
 
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value = sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ + 319610 - sumOfPVZ5;
+      allSum.value =
+        sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ + 319610 - sumOfPVZ5;
       allSum.value -= 11110;
       allSum.value -= 1570;
       allSum.value -= 2005;
@@ -781,8 +864,10 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплата наличными" ||
             row.additionally === "Отказ клиент наличные" ||
             row.additionally === "Отказ клиент") &&
@@ -792,8 +877,10 @@ function getAllSum() {
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплата наличными" ||
             row.additionally === "Отказ клиент наличные" ||
             row.additionally === "Отказ клиент") &&
@@ -825,8 +912,10 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплата наличными" ||
             row.additionally === "Отказ клиент наличные" ||
             row.additionally === "Отказ клиент") &&
@@ -836,8 +925,10 @@ function getAllSum() {
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплата наличными" ||
             row.additionally === "Отказ клиент наличные" ||
             row.additionally === "Отказ клиент") &&
@@ -860,7 +951,9 @@ function getAllSum() {
         )
         .reduce((acc, value) => acc + +value.sum, 0);
       let sumOfPVZ3 = rows.value
-        ?.filter((row) => row.received !== null && row.recipient === selectedPVZ.value)
+        ?.filter(
+          (row) => row.received !== null && row.recipient === selectedPVZ.value
+        )
         .reduce((acc, value) => acc + +value.sum, 0);
 
       let sumOfPVZ5 = rowsProfit.value
@@ -893,8 +986,10 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.issued &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплачено онлайн" ||
             row.additionally === "Отказ клиент онлайн")
       );
@@ -902,13 +997,18 @@ function getAllSum() {
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
         (row) =>
           row.issued &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплачено онлайн" ||
             row.additionally === "Отказ клиент онлайн")
       );
 
-      let sumOfPVZ = rowsOnline.value?.reduce((acc, value) => acc + +value.sum, 0);
+      let sumOfPVZ = rowsOnline.value?.reduce(
+        (acc, value) => acc + +value.sum,
+        0
+      );
 
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
@@ -917,8 +1017,10 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплачено онлайн" ||
             row.additionally === "Отказ клиент онлайн") &&
           row.dispatchPVZ === selectedPVZ.value
@@ -927,14 +1029,19 @@ function getAllSum() {
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплачено онлайн" ||
             row.additionally === "Отказ клиент онлайн") &&
           row.dispatchPVZ === selectedPVZ.value
       );
 
-      let sumOfPVZ = rowsOnline.value?.reduce((acc, value) => acc + +value.sum, 0);
+      let sumOfPVZ = rowsOnline.value?.reduce(
+        (acc, value) => acc + +value.sum,
+        0
+      );
 
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
@@ -946,22 +1053,29 @@ function getAllSum() {
         (row) =>
           row.nameOfAction === "Доставка" &&
           row.paid !== null &&
-          (!selected.value.start|| new Date(row.paid) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.paid) <= new Date(newEndDate))
+          (!selected.value.start ||
+            new Date(row.paid) >= new Date(newStartingDate)) &&
+          (!selected.value.end || new Date(row.paid) <= new Date(newEndDate))
       );
 
       copyArrayDelivery2.value = deliveryRansomRows.value?.filter(
         (row) =>
           row.nameOfAction === "Сортировка" &&
           row.paid !== null &&
-          (!selected.value.start|| new Date(row.paid) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.paid) <= new Date(newEndDate))
+          (!selected.value.start ||
+            new Date(row.paid) >= new Date(newStartingDate)) &&
+          (!selected.value.end || new Date(row.paid) <= new Date(newEndDate))
       );
 
-      let sumOfPVZ = rowsDelivery.value?.reduce((acc, value) => acc + +value.sum, 0);
+      let sumOfPVZ = rowsDelivery.value?.reduce(
+        (acc, value) => acc + +value.sum,
+        0
+      );
 
-      sum1.value = reduceArray(copyArrayDelivery1.value, "Delivery") - sumOfPVZ / 2;
-      sum2.value = reduceArray(copyArrayDelivery2.value, "Delivery") - sumOfPVZ / 2;
+      sum1.value =
+        reduceArray(copyArrayDelivery1.value, "Delivery") - sumOfPVZ / 2;
+      sum2.value =
+        reduceArray(copyArrayDelivery2.value, "Delivery") - sumOfPVZ / 2;
       allSum.value = sum1.value + sum2.value + sum3.value;
     } else {
       copyArrayDelivery1.value = deliveryRansomRows.value?.filter(
@@ -969,8 +1083,9 @@ function getAllSum() {
           row.dispatchPVZ === selectedPVZ.value &&
           row.nameOfAction === "Доставка" &&
           row.paid !== null &&
-          (!selected.value.start|| new Date(row.paid) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.paid) <= new Date(newEndDate))
+          (!selected.value.start ||
+            new Date(row.paid) >= new Date(newStartingDate)) &&
+          (!selected.value.end || new Date(row.paid) <= new Date(newEndDate))
       );
 
       copyArrayDelivery2.value = deliveryRansomRows.value?.filter(
@@ -978,13 +1093,14 @@ function getAllSum() {
           row.dispatchPVZ === selectedPVZ.value &&
           row.nameOfAction === "Сортировка" &&
           row.paid !== null &&
-          (!selected.value.start|| new Date(row.paid) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.paid) <= new Date(newEndDate))
+          (!selected.value.start ||
+            new Date(row.paid) >= new Date(newStartingDate)) &&
+          (!selected.value.end || new Date(row.paid) <= new Date(newEndDate))
       );
 
       if (
-        (selected.value.start!== null && selected.value.start!== "") ||
-        (selected.value.end!== null && selected.value.end!== "")
+        (selected.value.start !== null && selected.value.start !== "") ||
+        (selected.value.end !== null && selected.value.end !== "")
       ) {
         sum1.value = reduceArray(copyArrayDelivery1.value, "Delivery");
         sum2.value = reduceArray(copyArrayDelivery2.value, "Delivery");
@@ -1000,8 +1116,10 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплата наличными" ||
             row.additionally === "Отказ клиент наличные" ||
             row.additionally === "Отказ клиент")
@@ -1010,15 +1128,17 @@ function getAllSum() {
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплата наличными" ||
             row.additionally === "Отказ клиент наличные" ||
             row.additionally === "Отказ клиент")
       );
       if (
-        (selected.value.start!== null && selected.value.start!== "") ||
-        (selected.value.end!== null && selected.value.end!== "")
+        (selected.value.start !== null && selected.value.start !== "") ||
+        (selected.value.end !== null && selected.value.end !== "")
       ) {
         sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
         sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
@@ -1030,8 +1150,10 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплата наличными" ||
             row.additionally === "Отказ клиент наличные" ||
             row.additionally === "Отказ клиент") &&
@@ -1041,8 +1163,10 @@ function getAllSum() {
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплата наличными" ||
             row.additionally === "Отказ клиент наличные" ||
             row.additionally === "Отказ клиент") &&
@@ -1050,8 +1174,8 @@ function getAllSum() {
       );
 
       if (
-        (selected.value.start!== null && selected.value.start!== "") ||
-        (selected.value.end!== null && selected.value.end!== "")
+        (selected.value.start !== null && selected.value.start !== "") ||
+        (selected.value.end !== null && selected.value.end !== "")
       ) {
         sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
         sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
@@ -1065,8 +1189,10 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплачено онлайн" ||
             row.additionally === "Отказ клиент онлайн")
       );
@@ -1074,14 +1200,16 @@ function getAllSum() {
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплачено онлайн" ||
             row.additionally === "Отказ клиент онлайн")
       );
       if (
-        (selected.value.start!== null && selected.value.start!== "") ||
-        (selected.value.end!== null && selected.value.end!== "")
+        (selected.value.start !== null && selected.value.start !== "") ||
+        (selected.value.end !== null && selected.value.end !== "")
       ) {
         sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
         sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
@@ -1093,8 +1221,10 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплачено онлайн" ||
             row.additionally === "Отказ клиент онлайн") &&
           row.dispatchPVZ === selectedPVZ.value
@@ -1103,16 +1233,18 @@ function getAllSum() {
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           (row.additionally === "Оплачено онлайн" ||
             row.additionally === "Отказ клиент онлайн") &&
           row.dispatchPVZ === selectedPVZ.value
       );
 
       if (
-        (selected.value.start!== null && selected.value.start!== "") ||
-        (selected.value.end!== null && selected.value.end!== "")
+        (selected.value.start !== null && selected.value.start !== "") ||
+        (selected.value.end !== null && selected.value.end !== "")
       ) {
         sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
         sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
@@ -1126,8 +1258,10 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           row.additionally !== null &&
           user.value.PVZ.includes(row.dispatchPVZ)
       );
@@ -1135,8 +1269,10 @@ function getAllSum() {
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           row.additionally !== null &&
           user.value.PVZ.includes(row.dispatchPVZ)
       );
@@ -1157,8 +1293,10 @@ function getAllSum() {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           row.additionally !== null &&
           row.dispatchPVZ === selectedPVZ.value
       );
@@ -1166,8 +1304,10 @@ function getAllSum() {
       copyArrayClientRansom.value = clientRansomRows.value?.filter(
         (row) =>
           row.issued !== null &&
-          (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-          (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
           row.additionally !== null &&
           row.dispatchPVZ === selectedPVZ.value
       );
@@ -1205,8 +1345,9 @@ function getProfitRowsSum() {
     copyArrayOurRansom.value = ourRansomRows.value?.filter(
       (row) =>
         row.issued !== null &&
-        (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-        (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+        (!selected.value.start ||
+          new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!selected.value.end || new Date(row.issued) <= new Date(newEndDate)) &&
         row.additionally !== null &&
         user.value.PVZ.includes(row.dispatchPVZ)
     );
@@ -1214,8 +1355,9 @@ function getProfitRowsSum() {
     copyArrayClientRansom.value = clientRansomRows.value?.filter(
       (row) =>
         row.issued !== null &&
-        (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-        (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+        (!selected.value.start ||
+          new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!selected.value.end || new Date(row.issued) <= new Date(newEndDate)) &&
         row.additionally !== null &&
         user.value.PVZ.includes(row.dispatchPVZ)
     );
@@ -1238,8 +1380,9 @@ function getProfitRowsSum() {
     copyArrayOurRansom.value = ourRansomRows.value?.filter(
       (row) =>
         row.issued !== null &&
-        (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-        (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+        (!selected.value.start ||
+          new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!selected.value.end || new Date(row.issued) <= new Date(newEndDate)) &&
         row.additionally !== null &&
         row.dispatchPVZ === selectedPVZ.value
     );
@@ -1247,8 +1390,9 @@ function getProfitRowsSum() {
     copyArrayClientRansom.value = clientRansomRows.value?.filter(
       (row) =>
         row.issued !== null &&
-        (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-        (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+        (!selected.value.start ||
+          new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!selected.value.end || new Date(row.issued) <= new Date(newEndDate)) &&
         row.additionally !== null &&
         row.dispatchPVZ === selectedPVZ.value
     );
@@ -1286,7 +1430,9 @@ function reduceArrayProfitManager(array: any[], flag: string): number {
 
   const roundOrCeil = (num: number) => {
     const lastDigit = num % 10;
-    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
+    return lastDigit >= 5
+      ? Math.ceil(num / 10) * 10
+      : Math.floor(num / 10) * 10;
   };
 
   array.forEach((row: any) => {
@@ -1326,8 +1472,9 @@ function getProfitManagerRowsSum() {
     copyArrayOurRansom.value = ourRansomRows.value?.filter(
       (row) =>
         row.issued !== null &&
-        (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-        (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+        (!selected.value.start ||
+          new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!selected.value.end || new Date(row.issued) <= new Date(newEndDate)) &&
         row.additionally !== null &&
         user.value.PVZ.includes(row.dispatchPVZ)
     );
@@ -1335,8 +1482,9 @@ function getProfitManagerRowsSum() {
     copyArrayClientRansom.value = clientRansomRows.value?.filter(
       (row) =>
         row.issued !== null &&
-        (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-        (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+        (!selected.value.start ||
+          new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!selected.value.end || new Date(row.issued) <= new Date(newEndDate)) &&
         row.additionally !== null &&
         user.value.PVZ.includes(row.dispatchPVZ)
     );
@@ -1345,15 +1493,22 @@ function getProfitManagerRowsSum() {
       ?.filter((row) => row.received !== null && row.recipient === "Нет")
       .reduce((acc, value) => acc + +value.sum, 0);
 
-    sum1.value = reduceArrayProfitManager(copyArrayOurRansom.value, "OurRansom");
-    sum2.value = reduceArrayProfitManager(copyArrayClientRansom.value, "ClientRansom");
+    sum1.value = reduceArrayProfitManager(
+      copyArrayOurRansom.value,
+      "OurRansom"
+    );
+    sum2.value = reduceArrayProfitManager(
+      copyArrayClientRansom.value,
+      "ClientRansom"
+    );
     allSumProfitManager.value = sum1.value + sum2.value - sumOfPVZ;
   } else {
     copyArrayOurRansom.value = ourRansomRows.value?.filter(
       (row) =>
         row.issued !== null &&
-        (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-        (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+        (!selected.value.start ||
+          new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!selected.value.end || new Date(row.issued) <= new Date(newEndDate)) &&
         row.additionally !== null &&
         row.dispatchPVZ === selectedPVZ.value
     );
@@ -1361,8 +1516,9 @@ function getProfitManagerRowsSum() {
     copyArrayClientRansom.value = clientRansomRows.value?.filter(
       (row) =>
         row.issued !== null &&
-        (!selected.value.start|| new Date(row.issued) >= new Date(newStartingDate)) &&
-        (!selected.value.end|| new Date(row.issued) <= new Date(newEndDate)) &&
+        (!selected.value.start ||
+          new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!selected.value.end || new Date(row.issued) <= new Date(newEndDate)) &&
         row.additionally !== null &&
         row.dispatchPVZ === selectedPVZ.value
     );
@@ -1371,8 +1527,14 @@ function getProfitManagerRowsSum() {
       ?.filter((row) => row.received !== null && row.recipient === "Нет")
       .reduce((acc, value) => acc + +value.sum, 0);
 
-    sum1.value = reduceArrayProfitManager(copyArrayOurRansom.value, "OurRansom");
-    sum2.value = reduceArrayProfitManager(copyArrayClientRansom.value, "ClientRansom");
+    sum1.value = reduceArrayProfitManager(
+      copyArrayOurRansom.value,
+      "OurRansom"
+    );
+    sum2.value = reduceArrayProfitManager(
+      copyArrayClientRansom.value,
+      "ClientRansom"
+    );
     allSumProfitManager.value = sum1.value + sum2.value - sumOfPVZ;
   }
 }
@@ -1402,7 +1564,10 @@ watch(
   [selectedPVZ, selectedTypeOfTransaction, selected],
   getProfitManagerRowsSum
 );
-watch([selectedPVZ, selectedTypeOfTransaction, selected, selected], getProfitRowsSum);
+watch(
+  [selectedPVZ, selectedTypeOfTransaction, selected, selected],
+  getProfitRowsSum
+);
 watch([selectedPVZ, selectedTypeOfTransaction, selected, selected], getAllSum);
 
 function clearFields() {
@@ -1410,8 +1575,8 @@ function clearFields() {
   selectedTypeOfTransaction.value = "Баланс наличные";
   selected.value = {
     start: new Date(new Date().getFullYear(), 0, 1),
-    end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-  }
+    end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+  };
   getAllSum();
 }
 
@@ -1543,13 +1708,15 @@ async function createRow() {
       selectedPVZ.value = user.value.visiblePVZ;
       rows.value = rows.value?.filter(
         (row) =>
-          row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
+          row.pvz === user.value.visiblePVZ ||
+          user.value.PVZ.includes(row.recipient)
       );
     } else if (user.value.role === "RMANAGER") {
       selectedPVZ.value = "Все ППВЗ";
       rows.value = rows.value?.filter(
         (row) =>
-          user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
+          user.value.PVZ.includes(row.pvz) ||
+          user.value.PVZ.includes(row.recipient)
       );
     }
   }
@@ -1606,7 +1773,11 @@ async function updateDeliveryProfitRow(obj: any) {
   isLoading.value = true;
   let answer = confirm("Вы точно хотите изменить статус?");
   if (answer)
-    await storeBalance.updateDeliveryProfitStatus(obj.row, obj.flag, user.value.username);
+    await storeBalance.updateDeliveryProfitStatus(
+      obj.row,
+      obj.flag,
+      user.value.username
+    );
   if (obj.flag === "received") {
     await storeAdvanceReport.createAdvanceReport(
       {
@@ -1632,12 +1803,16 @@ async function updateDeliveryProfitRow(obj: any) {
   ) {
     selectedPVZ.value = user.value.visiblePVZ;
     rows.value = rows.value?.filter(
-      (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
+      (row) =>
+        row.pvz === user.value.visiblePVZ ||
+        user.value.PVZ.includes(row.recipient)
     );
   } else if (user.value.role === "RMANAGER") {
     selectedPVZ.value = "Все ППВЗ";
     rows.value = rows.value?.filter(
-      (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
+      (row) =>
+        user.value.PVZ.includes(row.pvz) ||
+        user.value.PVZ.includes(row.recipient)
     );
   }
   isLoading.value = false;
@@ -1677,12 +1852,16 @@ async function updateDeliveryProfitManagerStatus(obj: any) {
   ) {
     selectedPVZ.value = user.value.visiblePVZ;
     rows.value = rows.value?.filter(
-      (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
+      (row) =>
+        row.pvz === user.value.visiblePVZ ||
+        user.value.PVZ.includes(row.recipient)
     );
   } else if (user.value.role === "RMANAGER") {
     selectedPVZ.value = "Все ППВЗ";
     rows.value = rows.value?.filter(
-      (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
+      (row) =>
+        user.value.PVZ.includes(row.pvz) ||
+        user.value.PVZ.includes(row.recipient)
     );
   }
   isLoading.value = false;
@@ -1738,14 +1917,19 @@ async function updateDeliveryRow(obj: any) {
           user.value.username
         );
       }
-      rowsProfitManager.value = await storeBalance.getBalanceProfitManagerRows();
+      rowsProfitManager.value =
+        await storeBalance.getBalanceProfitManagerRows();
       rowsWithProfitRows.value = [
         ...rows.value,
         ...rowsProfit.value,
         ...rowsProfitManager.value,
       ];
     } else {
-      await storeBalance.updateDeliveryStatus(obj.row, obj.flag, user.value.username);
+      await storeBalance.updateDeliveryStatus(
+        obj.row,
+        obj.flag,
+        user.value.username
+      );
       rows.value = await storeBalance.getBalanceRows();
       getAllSum();
       getProfitRowsSum();
@@ -1760,12 +1944,16 @@ async function updateDeliveryRow(obj: any) {
   ) {
     selectedPVZ.value = user.value.visiblePVZ;
     rows.value = rows.value?.filter(
-      (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
+      (row) =>
+        row.pvz === user.value.visiblePVZ ||
+        user.value.PVZ.includes(row.recipient)
     );
   } else if (user.value.role === "RMANAGER") {
     selectedPVZ.value = "Все ППВЗ";
     rows.value = rows.value?.filter(
-      (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
+      (row) =>
+        user.value.PVZ.includes(row.pvz) ||
+        user.value.PVZ.includes(row.recipient)
     );
   }
 
@@ -1807,12 +1995,16 @@ async function updateRow() {
   ) {
     selectedPVZ.value = user.value.visiblePVZ;
     rows.value = rows.value?.filter(
-      (row) => row.pvz === user.value.visiblePVZ || user.value.PVZ.includes(row.recipient)
+      (row) =>
+        row.pvz === user.value.visiblePVZ ||
+        user.value.PVZ.includes(row.recipient)
     );
   } else if (user.value.role === "RMANAGER") {
     selectedPVZ.value = "Все ППВЗ";
     rows.value = rows.value?.filter(
-      (row) => user.value.PVZ.includes(row.pvz) || user.value.PVZ.includes(row.recipient)
+      (row) =>
+        user.value.PVZ.includes(row.pvz) ||
+        user.value.PVZ.includes(row.recipient)
     );
   }
   isLoading.value = false;
@@ -1828,6 +2020,8 @@ let pvzDataOriginally = [
   "ППВЗ_7",
   "НаДом",
 ];
+
+const options = ["Нет", "Рейзвих", "Шведова", "Директор", "Косой"];
 </script>
 
 <template>
@@ -1838,7 +2032,7 @@ let pvzDataOriginally = [
   <div v-if="!isLoading">
     <div v-if="token && (user.role === 'ADMIN' || user.username === 'Шведова')">
       <NuxtLayout name="admin">
-        <div class="mt-10">
+        <div class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5">
           <div v-auto-animate>
             <div class="flex items-center gap-3 mt-14 max-xl:mt-0">
               <h1 class="text-xl font-bold">Фильтры</h1>
@@ -1852,10 +2046,14 @@ let pvzDataOriginally = [
 
             <div
               v-if="showFilters"
-              class="border-2 border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
+              class="border-2 bg-white border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
             >
-              <div class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5">
-                <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+              <div
+                class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5"
+              >
+                <div
+                  class="flex items-start space-y-2 flex-col mt-5 text-center"
+                >
                   <h1>Показать для ПВЗ</h1>
                   <select
                     v-if="
@@ -1892,7 +2090,9 @@ let pvzDataOriginally = [
                     </option>
                   </select>
                 </div>
-                <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+                <div
+                  class="flex items-start space-y-2 flex-col mt-5 text-center"
+                >
                   <h1>Тип транзакции</h1>
                   <select
                     class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
@@ -1987,7 +2187,10 @@ let pvzDataOriginally = [
                   :popper="{ placement: 'auto' }"
                   class="block max-sm:hidden my-5 max-w-[220px]"
                 >
-                  <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
+                  <UButton
+                    icon="i-heroicons-calendar-days-20-solid"
+                    color="orange"
+                  >
                     {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
                     {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
                   </UButton>
@@ -2023,7 +2226,10 @@ let pvzDataOriginally = [
                   :popper="{ placement: 'auto' }"
                   class="hidden max-sm:block mx-auto max-w-[220px] my-5"
                 >
-                  <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
+                  <UButton
+                    icon="i-heroicons-calendar-days-20-solid"
+                    color="orange"
+                  >
                     {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
                     {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
                   </UButton>
@@ -2050,13 +2256,18 @@ let pvzDataOriginally = [
                         />
                       </div>
 
-                      <DatePickerSingleMonth v-model="selected" @close="close" />
+                      <DatePickerSingleMonth
+                        v-model="selected"
+                        @close="close"
+                      />
                     </div>
                   </template>
                 </UPopover>
               </div>
               <div class="flex justify-end mb-3">
-                <UIActionButton @click="clearFields">Очистить фильтры</UIActionButton>
+                <UIActionButton @click="clearFields"
+                  >Очистить фильтры</UIActionButton
+                >
               </div>
             </div>
 
@@ -2120,7 +2331,10 @@ let pvzDataOriginally = [
 
           <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
             <template v-slot:icon-header>
-              <Icon size="24" name="material-symbols-light:account-balance-wallet" />
+              <Icon
+                size="24"
+                name="material-symbols-light:account-balance-wallet"
+              />
             </template>
             <template v-slot:header>
               <div class="custom-header" v-if="rowData.id">
@@ -2132,36 +2346,30 @@ let pvzDataOriginally = [
               <div class="text-black">
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">ПВЗ</label>
-                  <select
+                  <USelectMenu
                     :disabled="rowData.id > 0"
-                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    class="w-full"
                     v-model="rowData.pvz"
-                  >
-                    <option v-for="pvzData in pvz" :value="pvzData.name">
-                      {{ pvzData.name }}
-                    </option>
-                  </select>
+                    value-attribute="id"
+                    option-attribute="name"
+                    :options="pvz"
+                  />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">Получатель</label>
-                  <select
+                  <USelectMenu
                     :disabled="rowData.id > 0"
-                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    class="w-full"
                     v-model="rowData.recipient"
-                  >
-                    <option value="Нет">Нет</option>
-                    <option value="Рейзвих">Рейзвих</option>
-                    <option value="Шведова">Шведова</option>
-                    <option value="Директор">Директор</option>
-                    <option value="Косой">Косой</option>
-                  </select>
+                    :options="options"
+                  />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Сумма</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  <UInput
+                    class="w-full"
                     v-model="rowData.sum"
                     :disabled="rowData.id > 0"
                     type="text"
@@ -2170,8 +2378,8 @@ let pvzDataOriginally = [
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Примечание</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  <UInput
+                    class="w-full"
                     v-model="rowData.notation"
                     type="text"
                   />
@@ -2179,20 +2387,37 @@ let pvzDataOriginally = [
               </div>
             </template>
             <template v-slot:footer>
-              <div class="flex items-center justify-center gap-3" v-if="rowData.id">
-                <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
-                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <div
+                class="flex items-center justify-center gap-3"
+                v-if="rowData.id"
+              >
+                <UISaveModalButton @click="updateRow"
+                  >Сохранить
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
               </div>
               <div class="flex items-center justify-center gap-3" v-else>
-                <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
-                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+                <UISaveModalButton @click="createRow"
+                  >Создать
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
               </div>
             </template>
           </UINewModalEdit>
 
-          <UINewModalEdit v-show="isOpenModalOnline" @close-modal="closeModalOnline">
+          <UINewModalEdit
+            v-show="isOpenModalOnline"
+            @close-modal="closeModalOnline"
+          >
             <template v-slot:icon-header>
-              <Icon size="24" name="material-symbols-light:account-balance-wallet" />
+              <Icon
+                size="24"
+                name="material-symbols-light:account-balance-wallet"
+              />
             </template>
             <template v-slot:header>
               <div class="custom-header" v-if="rowData.id">
@@ -2204,22 +2429,34 @@ let pvzDataOriginally = [
               <div class="text-black">
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Сумма</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  <UInput
+                    class="w-full"
                     v-model="rowData.sum"
+                    :disabled="rowData.id > 0"
                     type="text"
                   />
                 </div>
               </div>
             </template>
             <template v-slot:footer>
-              <div class="flex items-center justify-center gap-3" v-if="rowData.id">
-                <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
-                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <div
+                class="flex items-center justify-center gap-3"
+                v-if="rowData.id"
+              >
+                <UISaveModalButton @click="updateRow"
+                  >Сохранить
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
               </div>
               <div class="flex items-center justify-center gap-3" v-else>
-                <UISaveModalButton @click="createOnlineRow">Создать </UISaveModalButton>
-                <UIErrorButton @click="closeModalOnline">Отменить </UIErrorButton>
+                <UISaveModalButton @click="createOnlineRow"
+                  >Создать
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModalOnline"
+                  >Отменить
+                </UIExitModalButton>
               </div>
             </template>
           </UINewModalEdit>
@@ -2229,7 +2466,7 @@ let pvzDataOriginally = [
 
     <div v-else>
       <NuxtLayout name="user">
-        <div class="mt-10">
+        <div class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5">
           <div v-auto-animate>
             <div class="flex items-center gap-3 mt-14 max-xl:mt-0">
               <h1 class="text-xl font-bold">Фильтры</h1>
@@ -2243,10 +2480,14 @@ let pvzDataOriginally = [
 
             <div
               v-if="showFilters"
-              class="border-2 border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
+              class="border-2 bg-white border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
             >
-              <div class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5">
-                <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+              <div
+                class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5"
+              >
+                <div
+                  class="flex items-start space-y-2 flex-col mt-5 text-center"
+                >
                   <h1>Показать для ПВЗ</h1>
                   <select
                     v-if="
@@ -2283,7 +2524,9 @@ let pvzDataOriginally = [
                     </option>
                   </select>
                 </div>
-                <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+                <div
+                  class="flex items-start space-y-2 flex-col mt-5 text-center"
+                >
                   <h1>Тип транзакции</h1>
                   <select
                     class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
@@ -2378,7 +2621,10 @@ let pvzDataOriginally = [
                   :popper="{ placement: 'auto' }"
                   class="block max-sm:hidden my-5 max-w-[220px]"
                 >
-                  <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
+                  <UButton
+                    icon="i-heroicons-calendar-days-20-solid"
+                    color="orange"
+                  >
                     {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
                     {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
                   </UButton>
@@ -2414,7 +2660,10 @@ let pvzDataOriginally = [
                   :popper="{ placement: 'auto' }"
                   class="hidden max-sm:block mx-auto max-w-[220px] my-5"
                 >
-                  <UButton icon="i-heroicons-calendar-days-20-solid" color="orange">
+                  <UButton
+                    icon="i-heroicons-calendar-days-20-solid"
+                    color="orange"
+                  >
                     {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
                     {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
                   </UButton>
@@ -2441,13 +2690,18 @@ let pvzDataOriginally = [
                         />
                       </div>
 
-                      <DatePickerSingleMonth v-model="selected" @close="close" />
+                      <DatePickerSingleMonth
+                        v-model="selected"
+                        @close="close"
+                      />
                     </div>
                   </template>
                 </UPopover>
               </div>
               <div class="flex justify-end mb-3">
-                <UIActionButton @click="clearFields">Очистить фильтры</UIActionButton>
+                <UIActionButton @click="clearFields"
+                  >Очистить фильтры</UIActionButton
+                >
               </div>
             </div>
 
@@ -2549,7 +2803,11 @@ let pvzDataOriginally = [
           <BalanceTableProfitManager
             v-if="user.role === 'RMANAGER'"
             @update-delivery-row="updateDeliveryProfitManagerStatus"
-            :rows="rowsProfitManager?.filter((row) => row.createdUser === user.username)"
+            :rows="
+              rowsProfitManager?.filter(
+                (row) => row.createdUser === user.username
+              )
+            "
             :user="user"
             @open-modal="openModalProfitRow"
           />
@@ -2563,7 +2821,10 @@ let pvzDataOriginally = [
 
           <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
             <template v-slot:icon-header>
-              <Icon size="24" name="material-symbols-light:account-balance-wallet" />
+              <Icon
+                size="24"
+                name="material-symbols-light:account-balance-wallet"
+              />
             </template>
             <template v-slot:header>
               <div class="custom-header" v-if="rowData.id">
@@ -2575,37 +2836,30 @@ let pvzDataOriginally = [
               <div class="text-black">
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">ПВЗ</label>
-                  <select
+                  <USelectMenu
                     :disabled="rowData.id > 0"
-                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    class="w-full"
                     v-model="rowData.pvz"
-                  >
-                    <option v-for="pvzData in user.PVZ" :value="pvzData">
-                      {{ pvzData }}
-                    </option>
-                  </select>
+                    value-attribute="id"
+                    option-attribute="name"
+                    :options="pvz"
+                  />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">Получатель</label>
-                  <select
+                  <USelectMenu
                     :disabled="rowData.id > 0"
-                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    class="w-full"
                     v-model="rowData.recipient"
-                  >
-                    <option value="Нет">Нет</option>
-                    <option value="Рейзвих">Рейзвих</option>
-                    <option value="Шведова">Шведова</option>
-                    <option value="Директор">Директор</option>
-                    <option value="Косой">Косой</option>
-                    <option value="RMANAGER1">RMANAGER1</option>
-                  </select>
+                    :options="options"
+                  />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Сумма</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  <UInput
+                    class="w-full"
                     v-model="rowData.sum"
                     :disabled="rowData.id > 0"
                     type="text"
@@ -2614,8 +2868,8 @@ let pvzDataOriginally = [
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Примечание</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  <UInput
+                    class="w-full"
                     v-model="rowData.notation"
                     type="text"
                   />
@@ -2623,13 +2877,24 @@ let pvzDataOriginally = [
               </div>
             </template>
             <template v-slot:footer>
-              <div class="flex items-center justify-center gap-3" v-if="rowData.id">
-                <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
-                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <div
+                class="flex items-center justify-center gap-3"
+                v-if="rowData.id"
+              >
+                <UISaveModalButton @click="updateRow"
+                  >Сохранить
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
               </div>
               <div class="flex items-center justify-center gap-3" v-else>
-                <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
-                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+                <UISaveModalButton @click="createRow"
+                  >Создать
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
               </div>
             </template>
           </UINewModalEdit>
@@ -2639,7 +2904,10 @@ let pvzDataOriginally = [
             @close-modal="closeModalProfitRowManager"
           >
             <template v-slot:icon-header>
-              <Icon size="24" name="material-symbols-light:account-balance-wallet" />
+              <Icon
+                size="24"
+                name="material-symbols-light:account-balance-wallet"
+              />
             </template>
             <template v-slot:header>
               <div class="custom-header" v-if="rowData.id">
@@ -2651,38 +2919,30 @@ let pvzDataOriginally = [
               <div class="text-black">
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">ПВЗ</label>
-                  <select
+                  <USelectMenu
                     :disabled="rowData.id > 0"
-                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    class="w-full"
                     v-model="rowData.pvz"
-                  >
-                    <option v-for="pvzData in user.PVZ" :value="pvzData">
-                      {{ pvzData }}
-                    </option>
-                  </select>
+                    value-attribute="id"
+                    option-attribute="name"
+                    :options="pvz"
+                  />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">Получатель</label>
-                  <select
+                  <USelectMenu
                     :disabled="rowData.id > 0"
-                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    class="w-full"
                     v-model="rowData.recipient"
-                  >
-                    <option value="Нет">Нет</option>
-                    <option value="Рейзвих">Рейзвих</option>
-                    <option value="Шведова">Шведова</option>
-                    <option value="Директор">Директор</option>
-                    <option value="Косой">Косой</option>
-                    <option value="RMANAGER1">RMANAGER1</option>
-                    <option value="PPVZ1">PPVZ1</option>
-                  </select>
+                    :options="options"
+                  />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Сумма</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  <UInput
+                    class="w-full"
                     v-model="rowData.sum"
                     :disabled="rowData.id > 0"
                     type="text"
@@ -2691,8 +2951,8 @@ let pvzDataOriginally = [
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Примечание</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  <UInput
+                    class="w-full"
                     v-model="rowData.notation"
                     type="text"
                   />
@@ -2700,24 +2960,37 @@ let pvzDataOriginally = [
               </div>
             </template>
             <template v-slot:footer>
-              <div class="flex items-center justify-center gap-3" v-if="rowData.id">
-                <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
-                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <div
+                class="flex items-center justify-center gap-3"
+                v-if="rowData.id"
+              >
+                <UISaveModalButton @click="updateRow"
+                  >Сохранить
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
               </div>
               <div class="flex items-center justify-center gap-3" v-else>
                 <UISaveModalButton @click="createProfitManagerRow"
                   >Создать
                 </UISaveModalButton>
-                <UIErrorButton @click="closeModalProfitRowManager"
+                <UIExitModalButton @click="closeModalProfitRowManager"
                   >Отменить
-                </UIErrorButton>
+                </UIExitModalButton>
               </div>
             </template>
           </UINewModalEdit>
 
-          <UINewModalEdit v-show="isOpenModalProfit" @close-modal="closeModalProfitRow">
+          <UINewModalEdit
+            v-show="isOpenModalProfit"
+            @close-modal="closeModalProfitRow"
+          >
             <template v-slot:icon-header>
-              <Icon size="24" name="material-symbols-light:account-balance-wallet" />
+              <Icon
+                size="24"
+                name="material-symbols-light:account-balance-wallet"
+              />
             </template>
             <template v-slot:header>
               <div class="custom-header" v-if="rowData.id">
@@ -2729,15 +3002,14 @@ let pvzDataOriginally = [
               <div class="text-black">
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">ПВЗ</label>
-                  <select
+                  <USelectMenu
                     :disabled="rowData.id > 0"
-                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
+                    class="w-full"
                     v-model="rowData.pvz"
-                  >
-                    <option v-for="pvzData in user.PVZ" :value="pvzData">
-                      {{ pvzData }}
-                    </option>
-                  </select>
+                    value-attribute="id"
+                    option-attribute="name"
+                    :options="user.PVZ"
+                  />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
@@ -2747,13 +3019,22 @@ let pvzDataOriginally = [
                     class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400 w-full"
                     v-model="rowData.recipient"
                   >
-                    <option v-if="user.username === 'ППВЗ_5'" value="Владимирова Инна">
+                    <option
+                      v-if="user.username === 'ППВЗ_5'"
+                      value="Владимирова Инна"
+                    >
                       Владимирова Инна
                     </option>
-                    <option v-if="user.username === 'ПВЗ_1'" value="Киризлеева Марина">
+                    <option
+                      v-if="user.username === 'ПВЗ_1'"
+                      value="Киризлеева Марина"
+                    >
                       Киризлеева Марина
                     </option>
-                    <option v-if="user.username === 'ППВЗ_7'" value="Смирнов Валерий">
+                    <option
+                      v-if="user.username === 'ППВЗ_7'"
+                      value="Смирнов Валерий"
+                    >
                       Смирнов Валерий
                     </option>
                   </select>
@@ -2761,8 +3042,8 @@ let pvzDataOriginally = [
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Сумма</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  <UInput
+                    class="w-full"
                     v-model="rowData.sum"
                     :disabled="rowData.id > 0"
                     type="text"
@@ -2771,8 +3052,8 @@ let pvzDataOriginally = [
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Примечание</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  <UInput
+                    class="w-full"
                     v-model="rowData.notation"
                     type="text"
                   />
@@ -2780,20 +3061,37 @@ let pvzDataOriginally = [
               </div>
             </template>
             <template v-slot:footer>
-              <div class="flex items-center justify-center gap-3" v-if="rowData.id">
-                <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
-                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <div
+                class="flex items-center justify-center gap-3"
+                v-if="rowData.id"
+              >
+                <UISaveModalButton @click="updateRow"
+                  >Сохранить
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
               </div>
               <div class="flex items-center justify-center gap-3" v-else>
-                <UISaveModalButton @click="createProfitRow">Создать </UISaveModalButton>
-                <UIErrorButton @click="closeModalProfitRow">Отменить </UIErrorButton>
+                <UISaveModalButton @click="createProfitRow"
+                  >Создать
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModalProfitRow"
+                  >Отменить
+                </UIExitModalButton>
               </div>
             </template>
           </UINewModalEdit>
 
-          <UINewModalEdit v-show="isOpenModalOnline" @close-modal="closeModalOnline">
+          <UINewModalEdit
+            v-show="isOpenModalOnline"
+            @close-modal="closeModalOnline"
+          >
             <template v-slot:icon-header>
-              <Icon size="24" name="material-symbols-light:account-balance-wallet" />
+              <Icon
+                size="24"
+                name="material-symbols-light:account-balance-wallet"
+              />
             </template>
             <template v-slot:header>
               <div class="custom-header" v-if="rowData.id">
@@ -2805,22 +3103,34 @@ let pvzDataOriginally = [
               <div class="text-black">
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Сумма</label>
-                  <input
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  <UInput
+                    class="w-full"
                     v-model="rowData.sum"
+                    :disabled="rowData.id > 0"
                     type="text"
                   />
                 </div>
               </div>
             </template>
             <template v-slot:footer>
-              <div class="flex items-center justify-center gap-3" v-if="rowData.id">
-                <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
-                <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <div
+                class="flex items-center justify-center gap-3"
+                v-if="rowData.id"
+              >
+                <UISaveModalButton @click="updateRow"
+                  >Сохранить
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
               </div>
               <div class="flex items-center justify-center gap-3" v-else>
-                <UISaveModalButton @click="createOnlineRow">Создать </UISaveModalButton>
-                <UIErrorButton @click="closeModalOnline">Отменить </UIErrorButton>
+                <UISaveModalButton @click="createOnlineRow"
+                  >Создать
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModalOnline"
+                  >Отменить
+                </UIExitModalButton>
               </div>
             </template>
           </UINewModalEdit>

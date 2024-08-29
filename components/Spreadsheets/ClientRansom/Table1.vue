@@ -137,7 +137,9 @@ const showDeletedRows = ref(false);
 
 const perPage = ref(100);
 const currentPage = ref(1);
-const totalPages = computed(() => Math.ceil((props.rows?.length || 0) / perPage.value));
+const totalPages = computed(() =>
+  Math.ceil((props.rows?.length || 0) / perPage.value)
+);
 const totalRows = computed(() => Math.ceil(props.rows?.length || 0));
 
 let returnRows = ref<Array<IClientRansom>>();
@@ -211,7 +213,11 @@ const router = useRouter();
 let showOthersVariants = ref(false);
 
 function isExpired(row: any) {
-  if (row.deliveredSC !== null && row.deliveredPVZ !== null && row.issued === null) {
+  if (
+    row.deliveredSC !== null &&
+    row.deliveredPVZ !== null &&
+    row.issued === null
+  ) {
     const currentDate = new Date();
 
     const deliveredDate = new Date(row.deliveredPVZ);
@@ -227,7 +233,9 @@ function isExpired(row: any) {
 let showPayRejectClient = ref(false);
 let processingRows = ref<Array<IClientRansom>>([]);
 
-let showProcessingRowsFlag = ref(Cookies.get("showProcessingRowsFlag") === "true");
+let showProcessingRowsFlag = ref(
+  Cookies.get("showProcessingRowsFlag") === "true"
+);
 
 function showProcessingRows() {
   if (showProcessingRowsFlag.value === true) {
@@ -241,7 +249,10 @@ function showProcessingRows() {
 
 function changeProcessingRows() {
   showProcessingRowsFlag.value = !showProcessingRowsFlag.value;
-  Cookies.set("showProcessingRowsFlag", JSON.stringify(showProcessingRowsFlag.value));
+  Cookies.set(
+    "showProcessingRowsFlag",
+    JSON.stringify(showProcessingRowsFlag.value)
+  );
 }
 const storeQR = useQRStore();
 let isOpenModalQR = ref(false);
@@ -304,7 +315,9 @@ async function checkPaymentStatus(qrcId: string) {
 
   intervalId.value = setInterval(async () => {
     try {
-      let paymentData = (await storeQR.getPaymentStatusQR(qrcId)) as QRPaymentStatus;
+      let paymentData = (await storeQR.getPaymentStatusQR(
+        qrcId
+      )) as QRPaymentStatus;
 
       if (
         paymentData.Data &&
@@ -341,7 +354,9 @@ async function checkPaymentStatus(qrcId: string) {
 <template>
   <div class="flex items-center justify-between max-lg:block mt-10">
     <div>
-      <div class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5">
+      <div
+        class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5"
+      >
         <h1 class="text-xl" v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'">
           Товаров в работе:
           <span class="text-secondary-color font-bold">{{ totalRows }}</span>
@@ -374,14 +389,20 @@ async function checkPaymentStatus(qrcId: string) {
             :disabled="currentPage === 1"
             class="disabled:opacity-40 disabled:cursor-not-allowed duration-150 bg-secondary-color flex items-center justify-center rounded-sm p-3"
           >
-            <Icon name="material-symbols:arrow-back-ios-new-rounded" class="text-white" />
+            <Icon
+              name="material-symbols:arrow-back-ios-new-rounded"
+              class="text-white"
+            />
           </button>
           <button
             @click="nextPage(), updateCurrentPageData()"
             :disabled="currentPage === totalPages"
             class="disabled:opacity-40 disabled:cursor-not-allowed duration-150 bg-secondary-color flex items-center justify-center rounded-sm p-3"
           >
-            <Icon name="material-symbols:arrow-forward-ios-rounded" class="text-white" />
+            <Icon
+              name="material-symbols:arrow-forward-ios-rounded"
+              class="text-white"
+            />
           </button>
         </div>
       </div>
@@ -431,7 +452,9 @@ async function checkPaymentStatus(qrcId: string) {
       >Удалить выделенные записи</UIActionButton
     >
     <UIActionButton
-      v-if="user.deliveredPVZ2 === 'WRITE' && showButtonPVZ && user.role === 'ADMIN'"
+      v-if="
+        user.deliveredPVZ2 === 'WRITE' && showButtonPVZ && user.role === 'ADMIN'
+      "
       @click="updateDeliveryRows('PVZ')"
       >Доставить на пвз
     </UIActionButton>
@@ -545,7 +568,11 @@ async function checkPaymentStatus(qrcId: string) {
         class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center bg-gray-50"
       >
         <tr>
-          <th scope="col" class="border-2" v-if="user.dataClientRansom === 'WRITE'">
+          <th
+            scope="col"
+            class="border-2"
+            v-if="user.dataClientRansom === 'WRITE'"
+          >
             Выделение
           </th>
           <th
@@ -613,21 +640,28 @@ async function checkPaymentStatus(qrcId: string) {
           <th
             scope="col"
             class="border-2"
-            v-if="user.percentClient2 === 'READ' || user.percentClient2 === 'WRITE'"
+            v-if="
+              user.percentClient2 === 'READ' || user.percentClient2 === 'WRITE'
+            "
           >
             процент с клиента (%)
           </th>
           <th
             scope="col"
             class="border-2"
-            v-if="user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'"
+            v-if="
+              user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'
+            "
           >
             дополнительный доход
           </th>
           <th
             scope="col"
             class="border-2"
-            v-if="user.amountFromClient2 === 'READ' || user.amountFromClient2 === 'WRITE'"
+            v-if="
+              user.amountFromClient2 === 'READ' ||
+              user.amountFromClient2 === 'WRITE'
+            "
           >
             сумма с клиента
           </th>
@@ -655,7 +689,9 @@ async function checkPaymentStatus(qrcId: string) {
           <th
             scope="col"
             class="border-2"
-            v-if="user.deliveredPVZ2 === 'READ' || user.deliveredPVZ2 === 'WRITE'"
+            v-if="
+              user.deliveredPVZ2 === 'READ' || user.deliveredPVZ2 === 'WRITE'
+            "
           >
             доставлено на пвз
           </th>
@@ -669,7 +705,9 @@ async function checkPaymentStatus(qrcId: string) {
           <th
             scope="col"
             class="border-2"
-            v-if="user.additionally2 === 'READ' || user.additionally2 === 'WRITE'"
+            v-if="
+              user.additionally2 === 'READ' || user.additionally2 === 'WRITE'
+            "
           >
             дополнительно
           </th>
@@ -773,12 +811,16 @@ async function checkPaymentStatus(qrcId: string) {
               user.username === 'Волошина'
             "
           >
-            <Icon
+          <div
               @click="openModal(row)"
-              class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
-              name="ic:baseline-mode-edit"
-              size="32"
-            />
+              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+            >
+              <Icon
+                class="text-green-500"
+                name="ic:baseline-mode-edit"
+                size="18"
+              />
+            </div>
           </td>
           <th
             scope="row"
@@ -823,7 +865,10 @@ async function checkPaymentStatus(qrcId: string) {
               {{ row.clientLink2 }}
             </NuxtLink>
           </td>
-          <td v-if="user.cell2 === 'READ' || user.cell2 === 'WRITE'" class="border-2">
+          <td
+            v-if="user.cell2 === 'READ' || user.cell2 === 'WRITE'"
+            class="border-2"
+          >
             {{ row.cell }}
           </td>
           <td
@@ -864,19 +909,26 @@ async function checkPaymentStatus(qrcId: string) {
           </td>
           <td
             class="border-2"
-            v-if="user.percentClient2 === 'READ' || user.percentClient2 === 'WRITE'"
+            v-if="
+              user.percentClient2 === 'READ' || user.percentClient2 === 'WRITE'
+            "
           >
             {{ row.percentClient }}
           </td>
           <td
             class="border-2"
-            v-if="user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'"
+            v-if="
+              user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'
+            "
           >
             {{ row.deliveredKGT }}
           </td>
           <td
             class="border-2"
-            v-if="user.amountFromClient2 === 'READ' || user.amountFromClient2 === 'WRITE'"
+            v-if="
+              user.amountFromClient2 === 'READ' ||
+              user.amountFromClient2 === 'WRITE'
+            "
           >
             {{ row.amountFromClient2 }}
           </td>
@@ -897,25 +949,40 @@ async function checkPaymentStatus(qrcId: string) {
             v-if="user.deliveredSC2 === 'READ' || user.deliveredSC2 === 'WRITE'"
           >
             <h1 class="font-bold text-green-500">
-              {{ row.deliveredSC ? storeUsers.getNormalizedDate(row.deliveredSC) : "" }}
+              {{
+                row.deliveredSC
+                  ? storeUsers.getNormalizedDate(row.deliveredSC)
+                  : ""
+              }}
             </h1>
           </td>
           <td
             class="border-2"
-            v-if="user.deliveredPVZ2 === 'READ' || user.deliveredPVZ2 === 'WRITE'"
+            v-if="
+              user.deliveredPVZ2 === 'READ' || user.deliveredPVZ2 === 'WRITE'
+            "
           >
             <h1 class="font-bold text-green-500">
-              {{ row.deliveredPVZ ? storeUsers.getNormalizedDate(row.deliveredPVZ) : "" }}
+              {{
+                row.deliveredPVZ
+                  ? storeUsers.getNormalizedDate(row.deliveredPVZ)
+                  : ""
+              }}
             </h1>
           </td>
-          <td class="border-2" v-if="user.issued2 === 'READ' || user.issued2 === 'WRITE'">
+          <td
+            class="border-2"
+            v-if="user.issued2 === 'READ' || user.issued2 === 'WRITE'"
+          >
             <h1 class="font-bold text-green-500">
               {{ row.issued ? storeUsers.getNormalizedDate(row.issued) : "" }}
             </h1>
           </td>
           <td
             class="border-2"
-            v-if="user.additionally2 === 'READ' || user.additionally2 === 'WRITE'"
+            v-if="
+              user.additionally2 === 'READ' || user.additionally2 === 'WRITE'
+            "
           >
             {{ row.additionally ? row.additionally : "Пусто" }}
           </td>
@@ -1004,18 +1071,21 @@ async function checkPaymentStatus(qrcId: string) {
               user.role === 'RMANAGER'
             "
           >
-            <Icon
+            <div
               @click="deleteRow(row.id)"
-              class="text-red-600 cursor-pointer hover:text-red-300 duration-200"
-              name="ic:round-delete"
-              size="32"
-            />
+              class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+            >
+              <Icon class="text-red-600" name="ic:round-delete" size="18" />
+            </div>
           </td>
           <div id="right"></div>
         </tr>
       </tbody>
     </table>
-    <div v-else class="flex items-center flex-col justify-center mt-10 text-2xl">
+    <div
+      v-else
+      class="flex items-center flex-col justify-center mt-10 text-2xl"
+    >
       <Icon name="ion:ios-close-empty" size="100" class="text-red-500" />
       <h1>Извините, записи по данным фильтрам не были найдены!</h1>
       <h1>Попробуйте поставить другие фильтры или очистить их</h1>
@@ -1023,7 +1093,10 @@ async function checkPaymentStatus(qrcId: string) {
     <div id="down"></div>
   </div>
 
-  <UINewModal v-show="isOpenModalQR && isGeneratedQR" @close-modal="closeModalQR">
+  <UINewModal
+    v-show="isOpenModalQR && isGeneratedQR"
+    @close-modal="closeModalQR"
+  >
     <template v-slot:icon-header>
       <Icon
         size="24"
@@ -1037,7 +1110,8 @@ async function checkPaymentStatus(qrcId: string) {
         </h1>
         <h1
           v-if="
-            paymentStatusMessage === 'Received' || paymentStatusMessage === 'InProgress'
+            paymentStatusMessage === 'Received' ||
+            paymentStatusMessage === 'InProgress'
           "
         >
           Статус: <span class="text-secondary-color"> ОБРАБОТКА </span>
@@ -1053,7 +1127,8 @@ async function checkPaymentStatus(qrcId: string) {
     <template v-slot:body>
       <div>
         <h1 class="text-left mb-3">
-          Сумма: <span class="text-secondary-color font-bold">{{ getAllSum }} ₽</span>
+          Сумма:
+          <span class="text-secondary-color font-bold">{{ getAllSum }} ₽</span>
         </h1>
         <div>
           <CodeModalQR :value="qrBody.Data?.payload" />
@@ -1067,7 +1142,12 @@ async function checkPaymentStatus(qrcId: string) {
             </h1>
             <h1>
               Дата и время создания:
-              <b>{{ storeUsers.getNormalizedDate(qrBody.Data?.createdAt) }} (МСК) </b>
+              <b
+                >{{
+                  storeUsers.getNormalizedDate(qrBody.Data?.createdAt)
+                }}
+                (МСК)
+              </b>
             </h1>
             <h1>
               Уникальный идентификатор QR-кода: <b>{{ qrBody.Data?.qrcId }} </b>
@@ -1107,7 +1187,11 @@ async function checkPaymentStatus(qrcId: string) {
     <template v-slot:body>
       <div v-if="paymentStatusMessage === 'Accepted'">
         <div class="animate-pulse max-w-[300px] mx-auto">
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+          <svg
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 130.2 130.2"
+          >
             <circle
               class="path circle"
               fill="none"
@@ -1136,7 +1220,11 @@ async function checkPaymentStatus(qrcId: string) {
       </div>
       <div v-if="paymentStatusMessage === 'Rejected'">
         <div class="animate-pulse max-w-[300px] mx-auto">
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
+          <svg
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 130.2 130.2"
+          >
             <circle
               class="path circle"
               fill="none"

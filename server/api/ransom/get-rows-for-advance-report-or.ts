@@ -32,7 +32,26 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    const packed = msgpack.encode(rows);
+
+    const processedRows = rows.map(row => {
+      const newRow = {};
+
+      if (row.verified !== undefined) newRow.v = row.verified;
+      if (row.priceRefund !== undefined) newRow.pr = row.priceRefund;
+      if (row.dispatchPVZ !== undefined) newRow.dp = row.dispatchPVZ;
+      if (row.prepayment !== undefined) newRow.pp = row.prepayment;
+      if (row.additionally !== undefined) newRow.ad = row.additionally;
+      if (row.deliveredKGT !== undefined) newRow.dk = row.deliveredKGT;
+      if (row.amountFromClient1 !== undefined) newRow.ac = row.amountFromClient1;
+      if (row.issued !== undefined) newRow.i = row.issued;
+      if (row.priceSite !== undefined) newRow.p = row.priceSite;
+      if (row.profit1 !== undefined) newRow.pf1 = row.profit1;
+      if (row.deleted !== undefined) newRow.d = row.deleted;
+
+      return newRow;
+    });
+
+    const packed = msgpack.encode(processedRows);
     return packed;
   } catch (error) {
     if (error instanceof Error) {

@@ -156,8 +156,8 @@ definePageMeta({
             />
             <div class="flex gap-5">
               <UIMainButton @click="createMarker">Создать маркер</UIMainButton>
-              <UIErrorButton @click="isShowCreatingMarker = !isShowCreatingMarker"
-                >Отменить</UIErrorButton
+              <UIExitModalButton @click="isShowCreatingMarker = !isShowCreatingMarker"
+                >Отменить</UIExitModalButton
               >
             </div>
           </div>
@@ -229,8 +229,8 @@ definePageMeta({
             />
             <div class="flex gap-5">
               <UIMainButton @click="createMarker">Создать маркер</UIMainButton>
-              <UIErrorButton @click="isShowCreatingMarker = !isShowCreatingMarker"
-                >Отменить</UIErrorButton
+              <UIExitModalButton @click="isShowCreatingMarker = !isShowCreatingMarker"
+                >Отменить</UIExitModalButton
               >
             </div>
           </div>

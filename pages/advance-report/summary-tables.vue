@@ -406,7 +406,7 @@ function selectRange(duration: Duration) {
   <div v-if="!isLoading">
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
-        <div class="mt-10">
+        <div class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5">
           <div v-auto-animate>
             <div class="flex items-center gap-3 mt-14 max-xl:mt-0">
               <h1 class="text-xl font-bold">Фильтры</h1>
@@ -420,7 +420,7 @@ function selectRange(duration: Duration) {
 
             <div
               v-if="showAllFilters"
-              class="border-2 border-secondary-color border-dashed py-10 px-10 max-sm:px-5 shadow-2xl mt-3"
+              class="border-2 bg-white border-secondary-color border-dashed py-10 px-10 max-sm:px-5 shadow-2xl mt-3"
             >
               <div
                 class="duration-200 flex items-center justify-between max-lg:flex-col max-lg:space-y-5 max-lg:items-start"

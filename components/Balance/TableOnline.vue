@@ -8,18 +8,18 @@ defineProps({
 
 </script>
 <template>
-  <div class="relative max-h-[610px] overflow-y-auto rounded-xl mt-5 mb-10">
-    <table id="theTable" class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500">
+  <div class="relative max-h-[610px] overflow-y-auto mt-5 mb-10">
+    <table id="theTable" class="w-full border-[1px] border-gray-50 text-sm text-left rtl:text-right text-gray-500">
       <thead class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center">
         <tr>
-          <th scope="col" class="border-2">
+          <th scope="col" class="border-[1px]">
             Сумма
           </th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="row in rows" class="text-center">
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.sum }}
           </th>
         </tr>

@@ -74,6 +74,10 @@ async function updateRow() {
   closeModal();
   isLoading.value = false;
 }
+
+import ru from "date-fns/locale/ru";
+import { format } from "date-fns";
+const date = ref(new Date());
 </script>
 
 <template>
@@ -83,8 +87,8 @@ async function updateRow() {
 
   <div v-if="token && user.role === 'ADMIN'">
     <NuxtLayout name="admin">
-      <div v-if="!isLoading" class="py-10">
-        <UIMainButton @click="openModal">Создать задачу</UIMainButton>
+      <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 pt-10 max-sm:px-1 pb-5">
+        <UIMainButton @click="openModal" class="mb-5">Создать задачу</UIMainButton>
 
         <TaskTable
           :user="user"
@@ -107,48 +111,81 @@ async function updateRow() {
             <div class="text-black">
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="description" class="max-sm:text-sm">Задача</label>
-                <textarea
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
-                  v-model="rowData.description"
-                  type="text"
-                />
+                <UTextarea class="w-full" v-model="rowData.description" />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="notation" class="max-sm:text-sm">Комментарий</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+                <UInput
+                  color="white"
+                  variant="outline"
                   v-model="rowData.notation"
-                  type="text"
+                  class="w-full"
                 />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="done" class="max-sm:text-sm">Выполнено</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
-                  v-model="rowData.done"
-                  type="datetime-local"
-                />
+                <UPopover
+                  class="w-full"
+                  v-if="rowData.done"
+                  :popper="{ placement: 'bottom-start' }"
+                >
+                  <UButton
+                    :overlay="true"
+                    type="button"
+                    icon="i-heroicons-calendar-days-20-solid"
+                    color="white"
+                    class="w-full"
+                  >
+                    {{ format(rowData.done, "dd MMM yyy", { locale: ru }) }}
+                  </UButton>
+
+                  <template #panel="{ close }">
+                    <DatePickerNotRange
+                      v-model="rowData.done"
+                      is-required
+                      @close="close"
+                    />
+                  </template>
+                </UPopover>
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="checked" class="max-sm:text-sm">Проверено</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
-                  v-model="rowData.checked"
-                  type="datetime-local"
-                />
+                <UPopover
+                  class="w-full"
+                  v-if="rowData.checked"
+                  :popper="{ placement: 'bottom-start' }"
+                >
+                  <UButton
+                    :overlay="true"
+                    type="button"
+                    icon="i-heroicons-calendar-days-20-solid"
+                    color="white"
+                    class="w-full"
+                  >
+                    {{ format(rowData.checked, "dd MMM yyy", { locale: ru }) }}
+                  </UButton>
+
+                  <template #panel="{ close }">
+                    <DatePickerNotRange
+                      v-model="rowData.checked"
+                      is-required
+                      @close="close"
+                    />
+                  </template>
+                </UPopover>
               </div>
             </div>
           </template>
           <template v-slot:footer>
             <div class="flex items-center justify-center gap-3" v-if="rowData.id">
               <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3" v-else>
               <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
             </div>
           </template>
         </UINewModalEdit>

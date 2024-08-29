@@ -201,7 +201,10 @@ function scanItem() {
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertToURL(scannedLink);
-    let rowData = await storeRansom.getRansomRowsById(+scannedLink, "OurRansom");
+    let rowData = await storeRansom.getRansomRowsById(
+      +scannedLink,
+      "OurRansom"
+    );
     handleCheckboxChange(rowData);
     scanStringItem.value = "";
   }, 1000);
@@ -264,7 +267,9 @@ const handleCheckboxChange = (row: IOurRansom): void => {
 
   if (allFromNamesEqual.value) {
     getAllSumBonuses.value = clients.value
-      .filter((client: Client) => client.phoneNumber === allSum.value[0].fromName)
+      .filter(
+        (client: Client) => client.phoneNumber === allSum.value[0].fromName
+      )
       .reduce((sum, obj) => sum + obj.balance, 0);
   }
   showButton.value = allSum.value.every((obj) => obj.issued === null);
@@ -286,7 +291,9 @@ const showDeletedRows = ref(false);
 
 const perPage = ref(100);
 const currentPage = ref(1);
-const totalPages = computed(() => Math.ceil((props.rows?.length || 0) / perPage.value));
+const totalPages = computed(() =>
+  Math.ceil((props.rows?.length || 0) / perPage.value)
+);
 const totalRows = computed(() =>
   Math.ceil(props.rows?.filter((row) => row.deleted === null).length || 0)
 );
@@ -370,7 +377,10 @@ function updateCurrentPageDataDeleted() {
   }
 }
 
-watch([currentPage, totalRows, props.rows, returnRows.value], updateCurrentPageData);
+watch(
+  [currentPage, totalRows, props.rows, returnRows.value],
+  updateCurrentPageData
+);
 
 const prevPage = () => {
   if (currentPage.value > 1) {
@@ -412,7 +422,11 @@ function focusInput() {
 }
 
 function isExpired(row: any) {
-  if (row.deliveredSC !== null && row.deliveredPVZ !== null && row.issued === null) {
+  if (
+    row.deliveredSC !== null &&
+    row.deliveredPVZ !== null &&
+    row.issued === null
+  ) {
     const currentDate = new Date();
 
     const deliveredDate = new Date(row.deliveredPVZ);
@@ -430,7 +444,9 @@ function isProcessing(row: IOurRansom) {
     return true;
   }
 }
-let showProcessingRowsFlag = ref(Cookies.get("showProcessingRowsFlag") === "true");
+let showProcessingRowsFlag = ref(
+  Cookies.get("showProcessingRowsFlag") === "true"
+);
 
 function showProcessingRows() {
   if (showProcessingRowsFlag.value === true) {
@@ -444,7 +460,10 @@ function showProcessingRows() {
 
 function changeProcessingRows() {
   showProcessingRowsFlag.value = !showProcessingRowsFlag.value;
-  Cookies.set("showProcessingRowsFlag", JSON.stringify(showProcessingRowsFlag.value));
+  Cookies.set(
+    "showProcessingRowsFlag",
+    JSON.stringify(showProcessingRowsFlag.value)
+  );
 }
 
 let showExpiredRowsFlag = ref(false);
@@ -537,7 +556,9 @@ async function checkPaymentStatus(qrcId: string) {
 
   intervalId.value = setInterval(async () => {
     try {
-      let paymentData = (await storeQR.getPaymentStatusQR(qrcId)) as QRPaymentStatus;
+      let paymentData = (await storeQR.getPaymentStatusQR(
+        qrcId
+      )) as QRPaymentStatus;
 
       if (
         paymentData.Data &&
@@ -590,12 +611,20 @@ async function checkPaymentStatus(qrcId: string) {
           v-model="scanStringItem"
           @input="scanItem"
         />
-        <div class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5">
-          <h1 class="text-xl" v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'">
+        <div
+          class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5"
+        >
+          <h1
+            class="text-xl"
+            v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
+          >
             Товаров в работе:
             <span class="text-secondary-color font-bold">{{ totalRows }}</span>
           </h1>
-          <h1 class="text-xl" v-if="user.role === 'PVZ' || user.role === 'PPVZ'">
+          <h1
+            class="text-xl"
+            v-if="user.role === 'PVZ' || user.role === 'PPVZ'"
+          >
             Товаров к выдаче:
             <span class="text-secondary-color font-bold">{{ totalRows }}</span>
           </h1>
@@ -613,7 +642,11 @@ async function checkPaymentStatus(qrcId: string) {
             @click="toggleShowDeletedRows"
             v-if="!route.fullPath.includes('+')"
           >
-            {{ showDeletedRows ? "Скрыть удаленное" : "Показать удаленное за неделю" }}
+            {{
+              showDeletedRows
+                ? "Скрыть удаленное"
+                : "Показать удаленное за неделю"
+            }}
           </UIActionButton>
 
           <UIActionButton
@@ -707,7 +740,11 @@ async function checkPaymentStatus(qrcId: string) {
         >Удалить выделенные записи</UIActionButton
       >
       <UIActionButton
-        v-if="user.deliveredPVZ1 === 'WRITE' && showButtonPVZ && user.role === 'ADMIN'"
+        v-if="
+          user.deliveredPVZ1 === 'WRITE' &&
+          showButtonPVZ &&
+          user.role === 'ADMIN'
+        "
         @click="updateDeliveryRows('PVZ')"
         >Доставить на пвз
       </UIActionButton>
@@ -728,7 +765,9 @@ async function checkPaymentStatus(qrcId: string) {
           @click="updateDeliveryRows('additionally3')"
           >Оплата наличными
         </UIActionButton2>
-        <UIActionButton2 v-if="user.additionally1 === 'WRITE'" @click="openModalQR"
+        <UIActionButton2
+          v-if="user.additionally1 === 'WRITE'"
+          @click="openModalQR"
           >Оплата онлайн (QR)
         </UIActionButton2>
         <UIActionButton2
@@ -783,7 +822,9 @@ async function checkPaymentStatus(qrcId: string) {
           @click="updateDeliveryRows('additionally3')"
           >Оплата наличными
         </UIActionButton2>
-        <UIActionButton2 v-if="user.additionally1 === 'WRITE'" @click="openModalQR"
+        <UIActionButton2
+          v-if="user.additionally1 === 'WRITE'"
+          @click="openModalQR"
           >Оплата онлайн (QR)
         </UIActionButton2>
         <UIActionButton2
@@ -849,7 +890,11 @@ async function checkPaymentStatus(qrcId: string) {
           class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center bg-gray-50"
         >
           <tr>
-            <th scope="col" class="border-2" v-if="user.dataOurRansom === 'WRITE'">
+            <th
+              scope="col"
+              class="border-2"
+              v-if="user.dataOurRansom === 'WRITE'"
+            >
               Выделение
             </th>
             <th
@@ -887,14 +932,18 @@ async function checkPaymentStatus(qrcId: string) {
             <th
               scope="col"
               class="border-2"
-              v-if="user.productLink1 === 'READ' || user.productLink1 === 'WRITE'"
+              v-if="
+                user.productLink1 === 'READ' || user.productLink1 === 'WRITE'
+              "
             >
               товар (ссылка)
             </th>
             <th
               scope="col"
               class="border-2"
-              v-if="user.productName1 === 'READ' || user.productName1 === 'WRITE'"
+              v-if="
+                user.productName1 === 'READ' || user.productName1 === 'WRITE'
+              "
             >
               название товара
             </th>
@@ -922,14 +971,19 @@ async function checkPaymentStatus(qrcId: string) {
             <th
               scope="col"
               class="border-2"
-              v-if="user.percentClient1 === 'READ' || user.percentClient1 === 'WRITE'"
+              v-if="
+                user.percentClient1 === 'READ' ||
+                user.percentClient1 === 'WRITE'
+              "
             >
               процент с клиента (%)
             </th>
             <th
               scope="col"
               class="border-2"
-              v-if="user.deliveredKGT1 === 'READ' || user.deliveredKGT1 === 'WRITE'"
+              v-if="
+                user.deliveredKGT1 === 'READ' || user.deliveredKGT1 === 'WRITE'
+              "
             >
               дополнительный доход
             </th>
@@ -937,7 +991,8 @@ async function checkPaymentStatus(qrcId: string) {
               scope="col"
               class="border-2"
               v-if="
-                user.amountFromClient1 === 'READ' || user.amountFromClient1 === 'WRITE'
+                user.amountFromClient1 === 'READ' ||
+                user.amountFromClient1 === 'WRITE'
               "
             >
               сумма с клиента
@@ -945,7 +1000,9 @@ async function checkPaymentStatus(qrcId: string) {
             <th
               scope="col"
               class="border-2"
-              v-if="user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'"
+              v-if="
+                user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'
+              "
             >
               отправка в пвз
             </th>
@@ -959,21 +1016,27 @@ async function checkPaymentStatus(qrcId: string) {
             <th
               scope="col"
               class="border-2"
-              v-if="user.orderAccount === 'READ' || user.orderAccount === 'WRITE'"
+              v-if="
+                user.orderAccount === 'READ' || user.orderAccount === 'WRITE'
+              "
             >
               аккаунт заказа
             </th>
             <th
               scope="col"
               class="border-2"
-              v-if="user.deliveredSC1 === 'READ' || user.deliveredSC1 === 'WRITE'"
+              v-if="
+                user.deliveredSC1 === 'READ' || user.deliveredSC1 === 'WRITE'
+              "
             >
               доставлено на сц
             </th>
             <th
               scope="col"
               class="border-2"
-              v-if="user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'"
+              v-if="
+                user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'
+              "
             >
               доставлено на пвз
             </th>
@@ -987,7 +1050,9 @@ async function checkPaymentStatus(qrcId: string) {
             <th
               scope="col"
               class="border-2"
-              v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'"
+              v-if="
+                user.additionally1 === 'READ' || user.additionally1 === 'WRITE'
+              "
             >
               дополнительно
             </th>
@@ -1132,7 +1197,10 @@ async function checkPaymentStatus(qrcId: string) {
                 {{ row.clientLink1 }}
               </NuxtLink>
             </td>
-            <td v-if="user.cell1 === 'READ' || user.cell1 === 'WRITE'" class="border-2">
+            <td
+              v-if="user.cell1 === 'READ' || user.cell1 === 'WRITE'"
+              class="border-2"
+            >
               {{ row.cell }}
             </td>
             <td
@@ -1149,7 +1217,9 @@ async function checkPaymentStatus(qrcId: string) {
             </td>
             <td
               class="underline border-2 text-secondary-color whitespace-nowrap overflow-hidden max-w-[30px]"
-              v-if="user.productLink1 === 'READ' || user.productLink1 === 'WRITE'"
+              v-if="
+                user.productLink1 === 'READ' || user.productLink1 === 'WRITE'
+              "
             >
               <a
                 :href="row.productLink"
@@ -1160,7 +1230,9 @@ async function checkPaymentStatus(qrcId: string) {
             </td>
             <td
               class="border-2 overflow-hidden max-h-[40px]"
-              v-if="user.productName1 === 'READ' || user.productName1 === 'WRITE'"
+              v-if="
+                user.productName1 === 'READ' || user.productName1 === 'WRITE'
+              "
             >
               {{ row.productName }}
             </td>
@@ -1184,13 +1256,18 @@ async function checkPaymentStatus(qrcId: string) {
             </td>
             <td
               class="border-2"
-              v-if="user.percentClient1 === 'READ' || user.percentClient1 === 'WRITE'"
+              v-if="
+                user.percentClient1 === 'READ' ||
+                user.percentClient1 === 'WRITE'
+              "
             >
               {{ row.percentClient }}
             </td>
             <td
               class="border-2"
-              v-if="user.deliveredKGT1 === 'READ' || user.deliveredKGT1 === 'WRITE'"
+              v-if="
+                user.deliveredKGT1 === 'READ' || user.deliveredKGT1 === 'WRITE'
+              "
             >
               {{ row.deliveredKGT }}
             </td>
@@ -1216,7 +1293,9 @@ async function checkPaymentStatus(qrcId: string) {
             </td>
             <td
               class="px-2 py-4 border-2"
-              v-if="user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'"
+              v-if="
+                user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'
+              "
             >
               {{ row.dispatchPVZ }}
             </td>
@@ -1228,25 +1307,37 @@ async function checkPaymentStatus(qrcId: string) {
             </td>
             <td
               class="px-2 py-4 border-2"
-              v-if="user.orderAccount === 'READ' || user.orderAccount === 'WRITE'"
+              v-if="
+                user.orderAccount === 'READ' || user.orderAccount === 'WRITE'
+              "
             >
               {{ row.orderAccount }}
             </td>
             <td
               class="border-2"
-              v-if="user.deliveredSC1 === 'READ' || user.deliveredSC1 === 'WRITE'"
+              v-if="
+                user.deliveredSC1 === 'READ' || user.deliveredSC1 === 'WRITE'
+              "
             >
               <h1 class="font-bold text-green-500">
-                {{ row.deliveredSC ? storeUsers.getNormalizedDate(row.deliveredSC) : "" }}
+                {{
+                  row.deliveredSC
+                    ? storeUsers.getNormalizedDate(row.deliveredSC)
+                    : ""
+                }}
               </h1>
             </td>
             <td
               class="border-2"
-              v-if="user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'"
+              v-if="
+                user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'
+              "
             >
               <h1 class="font-bold text-green-500">
                 {{
-                  row.deliveredPVZ ? storeUsers.getNormalizedDate(row.deliveredPVZ) : ""
+                  row.deliveredPVZ
+                    ? storeUsers.getNormalizedDate(row.deliveredPVZ)
+                    : ""
                 }}
               </h1>
             </td>
@@ -1260,7 +1351,9 @@ async function checkPaymentStatus(qrcId: string) {
             </td>
             <td
               class="px-6 py-4 border-2"
-              v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'"
+              v-if="
+                user.additionally1 === 'READ' || user.additionally1 === 'WRITE'
+              "
             >
               {{ row.additionally ? row.additionally : "Пусто" }}
             </td>
@@ -1317,7 +1410,8 @@ async function checkPaymentStatus(qrcId: string) {
               {{
                 row.percentClient !== 0
                   ? Math.ceil(
-                      (row.priceSite * row.percentClient) / 100 + row.deliveredKGT
+                      (row.priceSite * row.percentClient) / 100 +
+                        row.deliveredKGT
                     )
                   : row.deliveredKGT
               }}
@@ -1395,7 +1489,12 @@ async function checkPaymentStatus(qrcId: string) {
                 user.role === 'RMANAGER'
               "
             >
-              <h1 @click="deleteRow(row.id)" class="cursor-pointer">❌</h1>
+              <div
+                @click="deleteRow(row.id)"
+                class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+              >
+                <Icon class="text-red-600" name="ic:round-delete" size="18" />
+              </div>
             </td>
             <div id="right"></div>
           </tr>
@@ -1404,7 +1503,10 @@ async function checkPaymentStatus(qrcId: string) {
       <div id="down"></div>
     </div>
 
-    <UINewModal v-show="isOpenModalQR && isGeneratedQR" @close-modal="closeModalQR">
+    <UINewModal
+      v-show="isOpenModalQR && isGeneratedQR"
+      @close-modal="closeModalQR"
+    >
       <template v-slot:icon-header>
         <Icon
           size="24"
@@ -1418,7 +1520,8 @@ async function checkPaymentStatus(qrcId: string) {
           </h1>
           <h1
             v-if="
-              paymentStatusMessage === 'Received' || paymentStatusMessage === 'InProgress'
+              paymentStatusMessage === 'Received' ||
+              paymentStatusMessage === 'InProgress'
             "
           >
             Статус: <span class="text-secondary-color"> ОБРАБОТКА </span>
@@ -1434,7 +1537,10 @@ async function checkPaymentStatus(qrcId: string) {
       <template v-slot:body>
         <div>
           <h1 class="text-left mb-3">
-            Сумма: <span class="text-secondary-color font-bold">{{ getAllSum }} ₽</span>
+            Сумма:
+            <span class="text-secondary-color font-bold"
+              >{{ getAllSum }} ₽</span
+            >
           </h1>
           <div>
             <CodeModalQR :value="qrBody.Data?.payload" />
@@ -1448,10 +1554,16 @@ async function checkPaymentStatus(qrcId: string) {
               </h1>
               <h1>
                 Дата и время создания:
-                <b>{{ storeUsers.getNormalizedDate(qrBody.Data?.createdAt) }} (МСК) </b>
+                <b
+                  >{{
+                    storeUsers.getNormalizedDate(qrBody.Data?.createdAt)
+                  }}
+                  (МСК)
+                </b>
               </h1>
               <h1>
-                Уникальный идентификатор QR-кода: <b>{{ qrBody.Data?.qrcId }} </b>
+                Уникальный идентификатор QR-кода:
+                <b>{{ qrBody.Data?.qrcId }} </b>
               </h1>
               <h1>
                 Источник создания QR-кода: <b>{{ qrBody.Data?.sourceName }} </b>

@@ -5,13 +5,24 @@ defineProps({
 </script>
 
 <template>
-  <button
+  <!-- <button
     :disabled="disabled"
     class="button-62 disabled:opacity-50 disabled:cursor-not-allowed"
     role="button"
   >
     <slot />
-  </button>
+  </button> -->
+  <UButton
+    icon="material-symbols:cancel-presentation"
+    size="sm"
+    color="red"
+    variant="solid"
+    label="Button"
+    :trailing="false"
+    class="duration-200"
+  >
+    <slot />
+  </UButton>
 </template>
 
 <style scoped>
@@ -22,7 +33,8 @@ defineProps({
   color: #ffffff;
   cursor: pointer;
   display: inline-block;
-  font-family: -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 2.5;

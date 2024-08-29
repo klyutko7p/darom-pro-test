@@ -80,7 +80,7 @@ function handleFilteredRows(filteredRowsData: IDecommissionedEquipmentRow[]) {
   <div v-if="!isLoading">
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="admin">
-        <div class="mt-10">
+        <div class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5">
           <div class="flex items-center justify-end">
             <NuxtLink
               to="/equipment"
@@ -88,7 +88,7 @@ function handleFilteredRows(filteredRowsData: IDecommissionedEquipmentRow[]) {
               >Показать оборудование</NuxtLink
             >
           </div>
-          <div class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5 space-y-1">
+          <div>
             <EquipmentDecommissionedFilters
               v-if="rows"
               @filtered-rows="handleFilteredRows"

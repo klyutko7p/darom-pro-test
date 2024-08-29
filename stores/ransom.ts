@@ -477,6 +477,10 @@ export const useRansomStore = defineStore("ransom", () => {
     if (row.d !== undefined) originalRow.deleted = row.d;
     if (row.c !== undefined) originalRow.created_at = row.c;
     if (row.cc !== undefined) originalRow.cell = row.cc;
+    if (row.pc !== undefined) originalRow.percentClient = row.pc;
+    if (row.v !== undefined) originalRow.verified = row.v;
+    if (row.pr !== undefined) originalRow.priceRefund = row.pr;
+    if (row.pf1 !== undefined) originalRow.profit1 = row.pf1;
 
     return originalRow;
   }
@@ -930,8 +934,8 @@ export const useRansomStore = defineStore("ransom", () => {
       });
 
       const arrayBuffer = await response.arrayBuffer();
-      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
-      return unpacked;
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

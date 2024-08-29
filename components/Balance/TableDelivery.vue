@@ -12,14 +12,14 @@ defineProps({
     <table id="theTable" class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500">
       <thead class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center bg-gray-50">
         <tr>
-          <th scope="col" class="border-2">
+          <th scope="col" class="border-[1px]">
             Сумма
           </th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="row in rows" class="text-center">
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.sum }}
           </th>
         </tr>

@@ -6,7 +6,10 @@ const emit = defineEmits(["deleteRow"]);
 const props = defineProps({
   user: { type: Object as PropType<User>, required: true },
   allPVZ: { type: Array as PropType<PVZ[]>, required: true },
-  rows: { type: Array as PropType<IDecommissionedEquipmentRow[]>, required: true },
+  rows: {
+    type: Array as PropType<IDecommissionedEquipmentRow[]>,
+    required: true,
+  },
 });
 
 async function exportToExcel() {
@@ -59,10 +62,13 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
     <div class="flex items-end justify-between mb-5">
       <div>
         <h1 class="text-xl max-sm:text-lg font-bold mb-3">
-          Строк в таблице: <span class="text-secondary-color">{{ totalRows }} шт.</span>
+          Строк в таблице:
+          <span class="text-secondary-color">{{ totalRows }} шт.</span>
         </h1>
       </div>
-      <div class="flex items-end max-sm:mt-2 max-lg:mt-5 max-lg:justify-between gap-20">
+      <div
+        class="flex items-end max-sm:mt-2 max-lg:mt-5 max-lg:justify-between gap-20"
+      >
         <UTooltip
           text="Скачать EXCEL"
           :shortcuts="['xlsx']"
@@ -84,7 +90,7 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
     >
       <table
         id="theTable"
-        class="w-full border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+        class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
       >
         <thead
           class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
@@ -105,9 +111,7 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
             <td class="border-[1px] max-sm:px-2 py-2">
               {{ storeUsers.getNormalizedDate(row.decommissionDate) }}
             </td>
-            <td
-              class="border-[1px] max-w-[200px]"
-            >
+            <td class="border-[1px] max-w-[200px]">
               {{ row.equipmentRow.nameOfEquipment }}
             </td>
             <td class="border-[1px] max-sm:px-2 max-w-[200px]">
@@ -126,12 +130,12 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
               {{ row.decommissionedUser.username }}
             </td>
             <td class="border-[1px] max-sm:px-2 py-2">
-              <Icon
-                name="material-symbols:delete"
-                size="24"
-                class="text-red-500 cursor-pointer hover:opacity-50 duration-200"
+              <div
                 @click="deleteRow(row.id)"
-              />
+                class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+              >
+                <Icon class="text-red-600" name="ic:round-delete" size="18" />
+              </div>
             </td>
           </tr>
         </tbody>

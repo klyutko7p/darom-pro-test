@@ -11,7 +11,6 @@ let rows = ref<Array<IEmployee>>();
 const token = Cookies.get("token");
 let isLoading = ref(false);
 
-
 onMounted(async () => {
   if (!token) {
     router.push("/auth/login");
@@ -133,14 +132,14 @@ watch(isOpen, (newValue) => {
   <div v-if="!isLoading">
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
-        <div class="mt-10">
+        <div class="bg-[#f8f9fd] px-5 pt-10 max-sm:px-1 pb-5">
           <div
             class="flex items-center justify-between max-sm:flex-col max-sm:items-start gap-3"
           >
             <UIMainButton @click="openModal">Создать сотрудника</UIMainButton>
             <NuxtLink
               to="/advance-report/payroll"
-              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200"
+              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200 max-sm:px-5 max-sm:text-sm"
               >Перейти к расчёту ЗП</NuxtLink
             >
           </div>
@@ -165,87 +164,54 @@ watch(isOpen, (newValue) => {
           </template>
           <template v-slot:body>
             <div class="text-black">
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="dispatchPVZ1">ПВЗ</label>
-              <select
-                class="py-1 px-2 border-2 bg-transparent w-full rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.PVZ"
-              >
-                <option v-for="pvzData in pvz" :value="pvzData">
-                  {{ pvzData }}
-                </option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="dispatchPVZ1">ПВЗ</label>
+                <USelectMenu class="w-full" v-model="rowData.PVZ" :options="pvz" />
+              </div>
 
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="dispatchPVZ1">Компания</label>
-              <select
-                class="py-1 px-2 border-2 bg-transparent w-full rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.company"
-              >
-                <option v-for="company in companies" :value="company">
-                  {{ company }}
-                </option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="dispatchPVZ1">Компания</label>
+                <USelectMenu
+                  class="w-full"
+                  v-model="rowData.company"
+                  :options="companies"
+                />
+              </div>
 
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="name">ФИО</label>
-              <input
-                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.fullname"
-                type="text"
-              />
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="name">ФИО</label>
+                <UInput class="w-full" v-model="rowData.fullname" type="text" />
+              </div>
 
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="name">Телефон/Карта</label>
-              <input
-                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.phone"
-                type="text"
-              />
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="name">Телефон/Карта</label>
+                <UInput class="w-full" v-model="rowData.phone" type="text" />
+              </div>
 
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="dispatchPVZ1">Банк</label>
-              <select
-                class="py-1 px-2 border-2 bg-transparent w-full rounded-lg text-sm disabled:text-gray-400"
-                v-model="rowData.bank"
-              >
-                <option v-for="bank in banks" :value="bank">
-                  {{ bank }}
-                </option>
-              </select>
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="dispatchPVZ1">Банк</label>
+                <USelectMenu class="w-full" v-model="rowData.bank" :options="banks" />
+              </div>
 
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="name">Оплата в смену</label>
-              <input
-                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.paymentPerShift"
-                type="number"
-              />
-            </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="name">Оплата в смену</label>
+                <UInput class="w-full" v-model="rowData.paymentPerShift" type="number" />
+              </div>
 
-            <div class="flex flex-col items-start text-left gap-2 mb-5">
-              <label for="name">Часов в смене</label>
-              <input
-                class="bg-transparent w-full  rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                v-model="rowData.hoursPerShift"
-                type="number"
-              />
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="name">Часов в смене</label>
+                <UInput class="w-full" v-model="rowData.hoursPerShift" type="number" />
+              </div>
             </div>
-          </div>
           </template>
           <template v-slot:footer>
             <div class="flex items-center justify-center gap-3" v-if="rowData.id">
               <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3" v-else>
               <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
-              <UIErrorButton @click="closeModal">Отменить </UIErrorButton>
+              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
             </div>
           </template>
         </UINewModalEdit>

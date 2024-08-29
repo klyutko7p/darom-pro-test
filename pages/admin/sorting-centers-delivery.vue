@@ -116,16 +116,16 @@ watch(isOpen, (newValue) => {
             <div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Название СЦ</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+                <UInput
+                  class="w-full"
                   v-model="sortingCentersData.name"
                   type="text"
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Адрес СЦ</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+                <UInput
+                  class="w-full"
                   v-model="sortingCentersData.address"
                   type="text"
                 />

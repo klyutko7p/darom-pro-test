@@ -19,7 +19,7 @@ defineProps({
 
 <template>
   <div class="relative overflow-x-auto overflow-y-auto mt-5 mb-5">
-    <table id="theTable" class="w-full border-gray-50 text-sm text-left rtl:text-right text-gray-500">
+    <table id="theTable" class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500">
       <thead class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center">
         <tr>
           <th scope="col" class="px-6 py-3" v-for="field in fields">{{ field }}</th>
@@ -31,20 +31,24 @@ defineProps({
             {{ row.name }}
           </th>
           <td class="border-[1px]">
-            <Icon
+            <div
               @click="openModal(row)"
-              class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
-              name="ic:baseline-mode-edit"
-              size="24"
-            />
+              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+            >
+              <Icon
+                class="text-green-500"
+                name="ic:baseline-mode-edit"
+                size="18"
+              />
+            </div>
           </td>
           <td class="py-1 border-[1px]">
-            <Icon
+            <div
               @click="deleteRow(row.id)"
-              class="text-red-600 cursor-pointer hover:text-red-300 duration-200"
-              name="ic:round-delete"
-              size="24"
-            />
+              class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+            >
+              <Icon class="text-red-600" name="ic:round-delete" size="18" />
+            </div>
           </td>
         </tr>
       </tbody>

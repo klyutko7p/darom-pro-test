@@ -273,7 +273,7 @@ watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
 <template>
   <div class="my-10 flex items-center gap-5">
     <span
-      class="border-2 py-1 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
+      class="border-[1px] py-1 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white bg-white duration-200 rounded-full"
       @click="showFilters = !showFilters"
       >2024</span
     >
@@ -282,7 +282,7 @@ watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
       class="flex items-center w-full justify-between max-sm:flex-col gap-3 max-sm:items-end"
     >
       <select
-        class="py-1 px-2 border-2 rounded-lg text-base border-secondary-color bg-secondary-color text-white font-bold"
+        class="py-1 px-2 border-[1px] rounded-lg text-base border-secondary-color bg-secondary-color text-white font-bold"
         v-model="month"
         @change="filterRows(month), getMonth()"
       >
@@ -312,7 +312,7 @@ watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
     </div>
     <UTooltip text="Скачать EXCEL" :shortcuts="['xlsx']" :popper="{ placement: 'right' }">
       <div
-        class="bg-secondary-color cursor-pointer border-2 border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
+        class="bg-secondary-color cursor-pointer border-[1px] border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
         @click="exportToExcel"
       >
         <Icon class="duration-200" size="32" name="bi:filetype-xlsx" />
@@ -320,7 +320,9 @@ watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
     </UTooltip>
   </div>
 
-  <div class="mb-5 flex items-center justify-between max-lg:flex-col max-lg:items-start max-lg:gap-5">
+  <div
+    class="mb-5 flex items-center justify-between max-lg:flex-col max-lg:items-start max-lg:gap-5"
+  >
     <div>
       <h1 class="font-bold text-4xl mb-3">Итого</h1>
       <div>
@@ -372,18 +374,18 @@ watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
     </UIActionButton>
   </div>
 
-  <div class="relative max-h-[610px] overflow-y-auto rounded-xl mt-5 mb-10">
+  <div class="relative max-h-[610px] bg-white overflow-y-auto mt-5 mb-10">
     <table
       id="theTable"
-      class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500 rounded-xl"
+      class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
     >
       <thead
-        class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
+        class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
       >
         <tr>
           <th
             scope="col"
-            class="exclude-row h-[70px] px-3 border-2"
+            class="exclude-row h-[50px] px-3 border-[1px]"
             v-if="
               user.dataDelivery === 'WRITE' ||
               user.role === 'ADMIN' ||
@@ -393,20 +395,20 @@ watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
           >
             изменение
           </th>
-          <th scope="col" class="border-2">ПВЗ</th>
-          <th scope="col" class="border-2">Компания</th>
-          <th scope="col" class="border-2">ФИО</th>
-          <th scope="col" class="border-2">Телефон</th>
-          <th scope="col" class="border-2">Банк</th>
-          <th scope="col" class="border-2">оплата в час</th>
-          <th scope="col" class="border-2">Аванс</th>
-          <th scope="col" class="border-2">Кол-во часов</th>
-          <th scope="col" class="border-2">Удержания</th>
-          <th scope="col" class="border-2">Доплата</th>
-          <th scope="col" class="border-2">ЗП к начислению</th>
-          <th scope="col" class="border-2">Итого начислено за месяц</th>
-          <th scope="col" class="border-2">Примечание</th>
-          <th scope="col" class="border-2">удаление</th>
+          <th scope="col" class="border-[1px]">ПВЗ</th>
+          <th scope="col" class="border-[1px]">Компания</th>
+          <th scope="col" class="border-[1px]">ФИО</th>
+          <th scope="col" class="border-[1px]">Телефон</th>
+          <th scope="col" class="border-[1px]">Банк</th>
+          <th scope="col" class="border-[1px]">оплата в час</th>
+          <th scope="col" class="border-[1px]">Аванс</th>
+          <th scope="col" class="border-[1px]">Кол-во часов</th>
+          <th scope="col" class="border-[1px]">Удержания</th>
+          <th scope="col" class="border-[1px]">Доплата</th>
+          <th scope="col" class="border-[1px]">ЗП к начислению</th>
+          <th scope="col" class="border-[1px]">Итого начислено за месяц</th>
+          <th scope="col" class="border-[1px]">Примечание</th>
+          <th scope="col" class="border-[1px]">удаление</th>
         </tr>
       </thead>
       <tbody>
@@ -419,66 +421,68 @@ watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
             'bg-yellow-400 text-black': row.notation === 'Оплачено',
           }"
         >
-          <td class="border-2" v-if="user.role === 'ADMIN'">
-            <h1
+          <td class="border-[1px]">
+            <div
               @click="openModal(row)"
-              class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
+              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
             >
-              ✏️
-            </h1>
+              <Icon class="text-green-500" name="ic:baseline-mode-edit" size="18" />
+            </div>
           </td>
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.PVZ }}
           </th>
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.company }}
           </th>
-          <td class="border-2">{{ row.fullname }}</td>
-          <td class="border-2">
+          <td class="border-[1px]">{{ row.fullname }}</td>
+          <td class="border-[1px]">
             {{ row.phone }}
           </td>
-          <td class="border-2">
+          <td class="border-[1px]">
             {{ row.bank }}
           </td>
-          <td class="border-2">{{ row.paymentPerShift ? row.paymentPerShift : 0 }} ₽</td>
-          <td class="border-2">
-            <input
-              class="max-w-[70px] mx-2 text-center bg-gray-100"
-              type="number"
+          <td class="border-[1px]">
+            {{ row.paymentPerShift ? row.paymentPerShift : 0 }} ₽
+          </td>
+          <td class="border-[1px]">
+            <UInput
+              class="w-[85px] mx-1 text-center bg-gray-100"
               @input="getRowByIdFromInput(row)"
               v-model="row.advance"
+              type="number"
             />
             <span class="hidden">{{ row.advance }} ₽</span>
           </td>
-          <td class="border-2">
-            <input
-              class="max-w-[70px] mx-2 text-center bg-gray-100"
-              type="number"
+          <td class="border-[1px]">
+            <UInput
+              class="w-[85px] mx-1 text-center bg-gray-100"
               @input="getRowByIdFromInput(row)"
               v-model="row.hours"
+              type="number"
             />
             <span class="hidden">{{ row.hours }} ₽</span>
           </td>
-          <td class="border-2">
-            <input
-              class="max-w-[70px] mx-2 text-center bg-gray-100"
-              type="number"
+          <td class="border-[1px]">
+            <UInput
+              class="w-[85px] mx-1 text-center bg-gray-100"
               @input="getRowByIdFromInput(row)"
               v-model="row.deductions"
+              type="number"
             />
             <span class="hidden">{{ row.deductions }} ₽</span>
           </td>
-          <td class="border-2">
-            <input
-              class="max-w-[70px] mx-2 text-center bg-gray-100"
-              type="number"
+          <td class="border-[1px]">
+            <UInput
+              class="w-[85px] mx-1 text-center bg-gray-100"
               @input="getRowByIdFromInput(row)"
               v-model="row.additionalPayment"
+              type="number"
             />
             <span class="hidden">{{ row.additionalPayment }} ₽</span>
           </td>
           <td
-            class="border-2"
+            class="border-[1px]"
             v-if="
               row.hours !== '' &&
               row.paymentPerShift !== '' &&
@@ -496,9 +500,9 @@ watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
               ).toFixed(0)
             }}
           </td>
-          <td class="border-2" v-else>0</td>
+          <td class="border-[1px]" v-else>0</td>
           <td
-            class="border-2"
+            class="border-[1px]"
             v-if="
               row.hours !== '' &&
               row.paymentPerShift !== '' &&
@@ -518,22 +522,22 @@ watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
             }}
             ₽
           </td>
-          <td class="border-2" v-else>0 ₽</td>
-          <td class="border-2">{{ row.notation }}</td>
+          <td class="border-[1px]" v-else>0 ₽</td>
+          <td class="border-[1px]">{{ row.notation }}</td>
           <td
-            class="px-6 py-4 border-2"
+            class="py-3 border-[1px]"
             v-if="
               (user.dataOurRansom === 'WRITE' && user.role === 'ADMIN') ||
               user.role === 'ADMINISTRATOR' ||
               user.role === 'RMANAGER'
             "
           >
-            <Icon
+            <div
               @click="deleteRow(row.id)"
-              class="text-red-600 cursor-pointer hover:text-red-300 duration-200"
-              name="ic:round-delete"
-              size="32"
-            />
+              class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+            >
+              <Icon class="text-red-600" name="ic:round-delete" size="18" />
+            </div>
           </td>
         </tr>
       </tbody>

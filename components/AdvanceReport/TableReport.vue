@@ -742,7 +742,7 @@ function exportToExcel() {
         :popper="{ placement: 'right' }"
       >
         <div
-          class="bg-secondary-color cursor-pointer border-2 border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
+          class="bg-secondary-color cursor-pointer border-[1px] border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
           @click="exportToExcel"
         >
           <Icon class="duration-200" size="32" name="bi:filetype-xlsx" />
@@ -752,53 +752,53 @@ function exportToExcel() {
     <div class="relative rounded-xl mt-5 mb-10">
       <table
         id="theTable"
-        class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+        class="w-full border-[1px] border-gray-50 text-sm text-left rtl:text-right text-gray-500"
       >
         <thead
           class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
         >
           <tr>
-            <td class="border-2 p-2 whitespace-nowrap font-bold">Статус</td>
-            <th scope="col" class="border-2 p-2 whitespace-nowrap" v-for="pvzName in pvz">
+            <td class="border-[1px] p-2 whitespace-nowrap font-bold">Статус</td>
+            <th scope="col" class="border-[1px] p-2 whitespace-nowrap" v-for="pvzName in pvz">
               {{ pvzName }}
             </th>
-            <td class="border-2 p-2 whitespace-nowrap font-bold">Итого</td>
+            <td class="border-[1px] p-2 whitespace-nowrap font-bold">Итого</td>
           </tr>
         </thead>
         <tbody>
-          <tr class="text-center">
-            <td class="border-2 p-2 whitespace-nowrap font-bold">Поступления</td>
+          <tr class="text-center bg-white">
+            <td class="border-[1px] p-2 whitespace-nowrap font-bold">Поступления</td>
             <td
-              class="border-2 p-2 whitespace-nowrap font-bold"
+              class="border-[1px] p-2 whitespace-nowrap font-bold"
               v-for="sum in receiptsByPVZ"
             >
               {{ Math.ceil(sum) }} ₽
             </td>
-            <td class="border-2 p-2 whitespace-nowrap font-bold">
+            <td class="border-[1px] p-2 whitespace-nowrap font-bold">
               {{ Math.ceil(sumOfArray1) }} ₽
             </td>
           </tr>
-          <tr class="text-center">
-            <td class="border-2 p-2 whitespace-nowrap font-bold">Расход</td>
+          <tr class="text-center bg-white">
+            <td class="border-[1px] p-2 whitespace-nowrap font-bold">Расход</td>
             <td
-              class="border-2 p-2 whitespace-nowrap font-bold"
+              class="border-[1px] p-2 whitespace-nowrap font-bold"
               v-for="sum in expenditureByPVZ"
             >
               {{ Math.ceil(sum) }} ₽
             </td>
-            <td class="border-2 p-2 whitespace-nowrap font-bold">
+            <td class="border-[1px] p-2 whitespace-nowrap font-bold">
               {{ Math.ceil(sumOfArray2) }} ₽
             </td>
           </tr>
-          <tr class="text-center">
-            <td class="border-2 p-2 whitespace-nowrap font-bold">Итого</td>
+          <tr class="text-center bg-white">
+            <td class="border-[1px] p-2 whitespace-nowrap font-bold">Итого</td>
             <td
-              class="border-2 p-2 whitespace-nowrap font-bold"
+              class="border-[1px] p-2 whitespace-nowrap font-bold"
               v-for="sum in differenceByPVZ"
             >
               {{ Math.ceil(sum) }} ₽
             </td>
-            <td class="border-2 font-bold p-2 whitespace-nowrap">
+            <td class="border-[1px] font-bold p-2 whitespace-nowrap">
               {{ Math.ceil(sumOfArray3) }} ₽
             </td>
           </tr>

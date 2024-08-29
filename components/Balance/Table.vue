@@ -19,9 +19,9 @@ defineProps({
 onMounted(() => {});
 </script>
 <template>
-  <div class="relative max-h-[265px] overflow-y-auto rounded-xl mt-5 mb-10">
+  <div class="relative max-h-[265px] overflow-y-auto mt-5 mb-10">
     <table id="theTable"
-      class="w-full border-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+      class="w-full border-[1px] border-gray-50 text-sm text-left rtl:text-right text-gray-500"
     >
       <thead
         class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
@@ -29,7 +29,7 @@ onMounted(() => {});
         <tr>
           <th
             scope="col"
-            class="exclude-row border-2 h-[40px] px-3"
+            class="exclude-row border-[1px] h-[40px] px-3"
             v-if="
               user.role === 'ADMIN' ||
               user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' 
@@ -37,21 +37,21 @@ onMounted(() => {});
           >
             изменение
           </th>
-          <th scope="col" class="border-2">ПВЗ</th>
-          <th scope="col" class="border-2">Сумма</th>
-          <th scope="col" class="border-2">Выдано</th>
-          <th scope="col" class="border-2">Получено</th>
-          <th scope="col" class="border-2">Кем выдано</th>
-          <th scope="col" class="border-2">Кому выдать</th>
+          <th scope="col" class="border-[1px]">ПВЗ</th>
+          <th scope="col" class="border-[1px]">Сумма</th>
+          <th scope="col" class="border-[1px]">Выдано</th>
+          <th scope="col" class="border-[1px]">Получено</th>
+          <th scope="col" class="border-[1px]">Кем выдано</th>
+          <th scope="col" class="border-[1px]">Кому выдать</th>
           <th
             scope="col"
-            class="border-2"
+            class="border-[1px]"
             v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
           >
             Кем получено
           </th>
-          <th scope="col" class="border-2">Примечание</th>
-          <th scope="col" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">Дата создания</th>
+          <th scope="col" class="border-[1px]">Примечание</th>
+          <th scope="col" class="border-[1px]" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">Дата создания</th>
         </tr>
       </thead>
       <tbody>
@@ -65,7 +65,7 @@ onMounted(() => {});
           }
         })" class="text-center">
           <td
-            class="border-2"
+            class="border-[1px]"
             v-if="user.role !== 'PVZ' && user.role !== 'COURIER' && user.role !== 'PPVZ'"
           >
             <h1
@@ -76,13 +76,13 @@ onMounted(() => {});
               ✏️
             </h1>
           </td>
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.pvz }}
           </th>
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.sum }}
           </th>
-          <td class="border-2 whitespace-nowrap">
+          <td class="border-[1px] whitespace-nowrap">
             <Icon
               @click="updateDeliveryRow(row, 'issued')"
               v-if="
@@ -96,7 +96,7 @@ onMounted(() => {});
               {{ row.issued ? storeUsers.getNormalizedDate(row.issued) : "Учитывается в балансе" }}
             </h1>
           </td>
-          <td class="border-2 whitespace-nowrap">
+          <td class="border-[1px] whitespace-nowrap">
             <Icon
               @click="updateDeliveryRow(row, 'received')"
               v-if="
@@ -114,23 +114,23 @@ onMounted(() => {});
               }}
             </h1>
           </td>
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.receivedUser }}
           </th>
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.recipient }}
           </th>
           <th
             scope="row"
-            class="border-2"
+            class="border-[1px]"
             v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
           >
             {{ row.receivedUser2 }}
           </th>
-          <th scope="row" class="border-2">
+          <th scope="row" class="border-[1px]">
             {{ row.notation }}
           </th>
-          <th scope="row" class="border-2" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
+          <th scope="row" class="border-[1px]" v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'">
             {{ storeUsers.getNormalizedDate(row.created_at) }}
           </th>
         </tr>

@@ -89,7 +89,7 @@ watch(isOpen, (newValue) => {
 
   <div v-if="token && user.role === 'ADMIN'">
     <NuxtLayout name="admin">
-      <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5 space-y-1">
+      <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5">
         <AdminDataTable2
           :fields="fields"
           :rows="pvz"
@@ -112,16 +112,16 @@ watch(isOpen, (newValue) => {
             <div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Название ПВЗ</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+                <UInput
+                  class="w-full"
                   v-model="pvzData.name"
                   type="text"
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Адрес ПВЗ</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+                <UInput
+                  class="w-full"
                   v-model="pvzData.address"
                   type="text"
                 />

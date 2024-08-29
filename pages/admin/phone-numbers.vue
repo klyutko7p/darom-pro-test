@@ -85,7 +85,9 @@ watch(isOpen, (newValue) => {
   <div v-if="token && user.role === 'ADMIN'">
     <NuxtLayout name="admin">
       <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 max-sm:px-1 pb-5 pt-10 space-y-1">
-        <UIMainButton class="mb-5" @click="openModal"> Привязка телефона к адресу </UIMainButton>
+        <UIMainButton class="mb-5" @click="openModal">
+          Привязка телефона к адресу
+        </UIMainButton>
         <PhoneNumberTable :rows="phoneNumbers" :user="user" @open-modal="openModal" />
 
         <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
@@ -102,19 +104,11 @@ watch(isOpen, (newValue) => {
             <div class="text-black">
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Телефон</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.number"
-                  type="text"
-                />
+                <UInput class="w-full" v-model="rowData.number" type="text" />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Адрес</label>
-                <input
-                  class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.address"
-                  type="text"
-                />
+                <UInput class="w-full" v-model="rowData.address" type="text" />
               </div>
             </div>
           </template>
