@@ -56,6 +56,9 @@ async function updateDeliveryRow(obj: any) {
     );
   filteredRows.value = await storeRansom.getRansomRows("Delivery");
   rows.value = filteredRows.value;
+  if (rows.value) {
+    handleFilteredRows(rows.value);
+  }
   isLoading.value = false;
 }
 
@@ -71,6 +74,9 @@ async function updateDeliveryRows(obj: any) {
     );
   filteredRows.value = await storeRansom.getRansomRows("Delivery");
   rows.value = filteredRows.value;
+  if (rows.value) {
+    handleFilteredRows(rows.value);
+  }
   isLoading.value = false;
 }
 
@@ -80,6 +86,9 @@ async function deleteRow(id: number) {
   if (answer) await storeRansom.deleteRansomRow(id, "Delivery");
   filteredRows.value = await storeRansom.getRansomRows("Delivery");
   rows.value = filteredRows.value;
+  if (rows.value) {
+    handleFilteredRows(rows.value);
+  }
   isLoading.value = false;
 }
 
@@ -89,6 +98,9 @@ async function deleteSelectedRows(idArray: number[]) {
   if (answer) await storeRansom.deleteRansomSelectedRows(idArray, "Delivery");
   filteredRows.value = await storeRansom.getRansomRows("Delivery");
   rows.value = filteredRows.value;
+  if (rows.value) {
+    handleFilteredRows(rows.value);
+  }
   isLoading.value = false;
 }
 
@@ -98,6 +110,9 @@ async function updateRow() {
   filteredRows.value = await storeRansom.getRansomRows("Delivery");
   rows.value = filteredRows.value;
   closeModal();
+  if (rows.value) {
+    handleFilteredRows(rows.value);
+  }
   isLoading.value = false;
 }
 
@@ -107,6 +122,9 @@ async function createRow() {
   filteredRows.value = await storeRansom.getRansomRows("Delivery");
   rows.value = filteredRows.value;
   closeModal();
+  if (rows.value) {
+    handleFilteredRows(rows.value);
+  }
   isLoading.value = false;
 }
 
@@ -115,6 +133,9 @@ async function createCopyRow(id: number) {
   await storeRansom.createCopyRow(id, "Delivery");
   filteredRows.value = await storeRansom.getRansomRows("Delivery");
   rows.value = filteredRows.value;
+  if (rows.value) {
+    handleFilteredRows(rows.value);
+  }
   isLoading.value = false;
 }
 
@@ -218,10 +239,19 @@ function getFromNameFromName() {
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div v-if="!isLoading" class="mt-5">
-          <div class="flex justify-end">
-            <NuxtLink v-if="user.username === 'Директор'" to="/summary-tables/delivery" class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200 cursor-pointer">
-              Перейти к сводным таблицам
-            </NuxtLink>
+          <div
+            class="flex justify-end"
+            v-if="user.username === 'Директор'"
+          >
+            <div
+              class="bg-secondary-color cursor-pointer hover:opacity-50 duration-200 rounded-full pt-1.5 px-1.5 text-white"
+              @click="router.push('/summary-tables/delivery')"
+            >
+              <Icon
+                name="material-symbols:table-chart-view"
+                size="24"
+              />
+            </div>
           </div>
           <div>
             <SpreadsheetsDeliveryFilters

@@ -118,7 +118,7 @@ a {
 
 .modal-container-body {
   height: 450px;
-  padding: 10px 32px 51px;
+  padding: 10px 32px 10px;
   overflow-y: auto;
 }
 
@@ -176,13 +176,13 @@ a {
 }
 
 .modal-container-footer {
-  padding: 20px 32px;
+  padding: 15px 32px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   border-top: 1px solid #ddd;
-  gap: 12px;
 }
+
 
 .modal-container-footer::after {
   content: "";

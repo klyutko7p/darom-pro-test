@@ -6,7 +6,7 @@ const storeClients = useClientsStore();
 const router = useRouter();
 
 const toast = useToast();
-const phoneNumber = ref("");
+const phoneNumber = ref("+7");
 const password = ref("");
 const message = ref("");
 
@@ -57,7 +57,7 @@ const attempts = ref(0);
 const isBlocked = ref(false);
 const blockDuration = ref(0);
 let blockInterval: NodeJS.Timeout | null = null;
-let phoneNumberData = ref("");
+let phoneNumberData = ref("+7");
 
 async function validatePhone() {
   if (phoneNumberData.value.length < 11) {
@@ -162,12 +162,21 @@ function generateRandomPassword(length: number) {
 
 watch(() => phoneNumber.value, validationPhoneNumber);
 
-function validationPhoneNumber() {
-  phoneNumber.value = phoneNumber.value.replace(/[^0-9+]/g, "");
+function validationPhoneNumberData() {
   phoneNumberData.value = phoneNumberData.value.replace(/[^0-9+]/g, "");
+  if (!phoneNumberData.value.startsWith("+7")) {
+    phoneNumberData.value = "+7" + phoneNumberData.value.replace(/^(\+?7|8)?/, "");
+  }
 }
 
-watch(() => phoneNumberData.value, validationPhoneNumber);
+function validationPhoneNumber() {
+  phoneNumber.value = phoneNumber.value.replace(/[^0-9+]/g, "");
+  if (!phoneNumber.value.startsWith("+7")) {
+    phoneNumber.value = "+7" + phoneNumber.value.replace(/^(\+?7|8)?/, "");
+  }
+}
+
+watch(() => phoneNumberData.value, validationPhoneNumberData);
 
 let showPassword = ref(false);
 let confirmationCode = ref("");
@@ -233,22 +242,20 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
       <div class="mt-10 max-sm:px-3">
         <form class="space-y-6" @submit.prevent="signIn">
           <div>
-            <label
-              for="phoneNumber"
-              class="block text-sm font-medium leading-6 text-gray-900"
-              >Телефон</label
+            <label for="phone" class="block text-sm font-medium leading-6 text-gray-900"
+              >Телефон (формат +7XXXXXXXXXX)</label
             >
             <div class="mt-2">
               <input
-                @input="validationPhoneNumber"
                 v-model="phoneNumber"
-                id="phoneNumber"
-                name="phoneNumber"
+                id="phone"
+                name="phone"
                 type="text"
-                autocomplete="phoneNumber"
+                autocomplete="phone"
                 required
                 placeholder="+7XXXXXXXXXX"
                 class="block w-full ring-1 ring-gray-200 focus:ring-2 focus:ring-yellow-600 bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none"
+                @input="validationPhoneNumber"
               />
             </div>
           </div>
@@ -333,7 +340,7 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
             </p>
             <div class="flex justify-center mt-5">
               <input
-                @input="validationPhoneNumber"
+                @input="validationPhoneNumberData"
                 v-model="phoneNumberData"
                 id="phoneNumber"
                 name="phoneNumber"

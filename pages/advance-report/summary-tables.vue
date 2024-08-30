@@ -2,7 +2,7 @@
 import Cookies from "js-cookie";
 import VueMultiselect from "vue-multiselect";
 import { vAutoAnimate } from "@formkit/auto-animate";
-import ru from 'date-fns/locale/ru'
+import ru from "date-fns/locale/ru";
 
 const storeUsers = useUsersStore();
 const storeAdvanceReports = useAdvanceReports();
@@ -30,24 +30,34 @@ onMounted(async () => {
   user.value = await storeUsers.getUser();
   rows.value = await storeAdvanceReports.getAdvancedReports();
 
-  const [ ransomRowsForBalanceOurRansomDataPartOne,
-      ransomRowsForBalanceOurRansomDataPartTwo,
-      ransomRowsForBalanceOurRansomDataPartThree, rowsDeliveryValue, clientRansomRowsValue, rowsBalanceValue] = await Promise.all([
+  const [
+    ransomRowsForBalanceOurRansomDataPartOne,
+    ransomRowsForBalanceOurRansomDataPartTwo,
+    ransomRowsForBalanceOurRansomDataPartThree,
+    rowsDeliveryValue,
+    clientRansomRowsValue,
+    rowsBalanceValue,
+  ] = await Promise.all([
     storeRansom.getRansomRowsForBalanceOurRansomPartOne(),
-      storeRansom.getRansomRowsForBalanceOurRansomPartTwo(),
-      storeRansom.getRansomRowsForBalanceOurRansomPartThree(),
+    storeRansom.getRansomRowsForBalanceOurRansomPartTwo(),
+    storeRansom.getRansomRowsForBalanceOurRansomPartThree(),
     storeRansom.getRansomRowsForBalanceDelivery(),
     storeRansom.getRansomRowsForBalanceClientRansom(),
-    storeBalance.getBalanceRows()
-]);
+    storeBalance.getBalanceRows(),
+  ]);
   originallyRows.value = rows.value;
-  rowsOurRansom.value = [...ransomRowsForBalanceOurRansomDataPartOne, ...ransomRowsForBalanceOurRansomDataPartTwo, ...ransomRowsForBalanceOurRansomDataPartThree];
+  rowsOurRansom.value = [
+    ...ransomRowsForBalanceOurRansomDataPartOne,
+    ...ransomRowsForBalanceOurRansomDataPartTwo,
+    ...ransomRowsForBalanceOurRansomDataPartThree,
+  ];
   rowsDelivery.value = rowsDeliveryValue;
 
   if (user.value.role !== "ADMIN") {
     rows.value = rows.value?.filter(
       (row) =>
-        row.createdUser === user.value.username || row.issuedUser === user.value.username
+        row.createdUser === user.value.username ||
+        row.issuedUser === user.value.username
     );
   } else {
     rows.value = rows.value;
@@ -93,7 +103,9 @@ function getAllSum() {
   );
 
   let sumOfPVZ = rowsBalance.value
-    ?.filter((row) => row.received !== null && row.recipient === user.value.username)
+    ?.filter(
+      (row) => row.received !== null && row.recipient === user.value.username
+    )
     .reduce((acc, value) => acc + +value.sum, 0);
 
   let sumOfPVZ1 = rows.value
@@ -128,7 +140,10 @@ function getAllSum() {
     ?.filter((row) => row.paid !== null)
     .reduce((acc, value) => acc + +value.amountFromClient3, 0);
 
-  let sumOfPVZ5 = rowsBalanceOnline.value?.reduce((acc, value) => acc + +value.sum, 0);
+  let sumOfPVZ5 = rowsBalanceOnline.value?.reduce(
+    (acc, value) => acc + +value.sum,
+    0
+  );
 
   let sumOfPVZ6 = rowsOurRansom.value
     ?.filter((row) => row.verified !== null)
@@ -226,15 +241,25 @@ function getAllSum() {
         +sumOfPVZ10;
 
       allSum2.value =
-        +sumOfPVZ - +sumOfPVZ1Cashless + +sumOfPVZ2Cashless - +sumOfPVZ3Cashless;
+        +sumOfPVZ -
+        +sumOfPVZ1Cashless +
+        +sumOfPVZ2Cashless -
+        +sumOfPVZ3Cashless;
       break;
     default:
-      allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
+      allSum.value =
+        +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
       break;
   }
 }
 
-let companies = ref(["W/O/Я start", "Darom.pro", "Сортировка", "Доставка", "Чаевые"]);
+let companies = ref([
+  "W/O/Я start",
+  "Darom.pro",
+  "Сортировка",
+  "Доставка",
+  "Чаевые",
+]);
 
 function formatNumber(number: number) {
   let numberString = Math.ceil(number).toString();
@@ -312,7 +337,8 @@ function returnTotal(sum: number) {
   arrayOfExpenditure.value = filteredRows.value?.filter(
     (row: IAdvanceReport) =>
       row.typeOfExpenditure === "Вывод дивидендов" &&
-      (!startingDate.value || new Date(row.date) >= new Date(newStartingDate)) &&
+      (!startingDate.value ||
+        new Date(row.date) >= new Date(newStartingDate)) &&
       (!endDate.value || new Date(row.date) <= new Date(newEndDate)) &&
       (!type.value || row.type === type.value)
   );
@@ -325,21 +351,36 @@ function returnTotal(sum: number) {
 const selectedTypeOfExpenditure = ref<Array<string>>([]);
 
 const uniqueTypeOfExpenditure = computed(() => {
-  return storeAdvanceReports.getUniqueNonEmptyValues(rows.value, "typeOfExpenditure");
+  return storeAdvanceReports.getUniqueNonEmptyValues(
+    rows.value,
+    "typeOfExpenditure"
+  );
 });
 
 function clearFields() {
   selectedTypeOfExpenditure.value = [];
-  startingDate.value = ""
-  endDate.value = ""
+  startingDate.value = "";
+  endDate.value = "";
   month.value = new Date().getMonth() + 1;
-  selected.value.start = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  selected.value.end = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+  selected.value.start = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1
+  );
+  selected.value.end = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() + 1,
+    0
+  );
   filterRows();
 }
 
-let watchSelectedValueStart = ref(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
-let watchSelectedValueEnd = ref(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0))
+let watchSelectedValueStart = ref(
+  new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+);
+let watchSelectedValueEnd = ref(
+  new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
+);
 let monthSelected = ref(new Date().getMonth() + 1);
 let typeSelected = ref("");
 const watchSelectedTypeOfExpenditure = ref<Array<string>>([]);
@@ -359,41 +400,55 @@ const filterRows = async () => {
   });
 };
 
-import { sub, format, isSameDay, type Duration } from 'date-fns'
+import { sub, format, isSameDay, type Duration } from "date-fns";
 
 const ranges = [
-  { label: 'Текущий месяц', duration: { month: 'current' } },
-  { label: 'Сегодня', duration: { days: 0 } },
-  { label: 'Последние 7 дней', duration: { days: 7 } },
-  { label: 'Последние 14 дней', duration: { days: 14 } },
-  { label: 'Последние 30 дней', duration: { days: 30 } },
-  { label: 'Последние 3 месяца', duration: { months: 3 } },
-  { label: 'Последние 6 месяцев', duration: { months: 6 } },
-  { label: 'Последний год', duration: { years: 1 } }
-]
+  { label: "Текущий месяц", duration: { month: "current" } },
+  { label: "Сегодня", duration: { days: 0 } },
+  { label: "Последние 7 дней", duration: { days: 7 } },
+  { label: "Последние 14 дней", duration: { days: 14 } },
+  { label: "Последние 30 дней", duration: { days: 30 } },
+  { label: "Последние 3 месяца", duration: { months: 3 } },
+  { label: "Последние 6 месяцев", duration: { months: 6 } },
+  { label: "Последний год", duration: { years: 1 } },
+];
 
 const selected = ref({
   start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-  end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-})
+  end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+});
 
 function isRangeSelected(duration: Duration) {
-  if (duration.month === 'current') {
-    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-    const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-    return isSameDay(selected.value.start, startOfMonth) && isSameDay(selected.value.end, endOfMonth)
+  if (duration.month === "current") {
+    const startOfMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      1
+    );
+    const endOfMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      0
+    );
+    return (
+      isSameDay(selected.value.start, startOfMonth) &&
+      isSameDay(selected.value.end, endOfMonth)
+    );
   }
-  return isSameDay(selected.value.start, sub(new Date(), duration)) && isSameDay(selected.value.end, new Date())
+  return (
+    isSameDay(selected.value.start, sub(new Date(), duration)) &&
+    isSameDay(selected.value.end, new Date())
+  );
 }
 
 function selectRange(duration: Duration) {
-  if (duration.month === 'current') {
+  if (duration.month === "current") {
     selected.value = {
       start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-      end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-    }
+      end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+    };
   } else {
-    selected.value = { start: sub(new Date(), duration), end: new Date() }
+    selected.value = { start: sub(new Date(), duration), end: new Date() };
   }
 }
 </script>
@@ -426,7 +481,9 @@ function selectRange(duration: Duration) {
                 class="duration-200 flex items-center justify-between max-lg:flex-col max-lg:space-y-5 max-lg:items-start"
               >
                 <div class="w-full">
-                  <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+                  <div
+                    class="flex items-start space-y-2 flex-col mt-5 text-center"
+                  >
                     <h1>Статья расхода</h1>
                     <VueMultiselect
                       class=""
@@ -483,7 +540,10 @@ function selectRange(duration: Duration) {
                     </div>
                   </div>
                 </div>
-                <UPopover class="block max-sm:hidden" :popper="{ placement: 'auto' }">
+                <UPopover
+                  class="block max-sm:hidden"
+                  :popper="{ placement: 'auto' }"
+                >
                   <UButton
                     :overlay="true"
                     type="button"
@@ -556,28 +616,38 @@ function selectRange(duration: Duration) {
                         />
                       </div>
 
-                      <DatePickerSingleMonth v-model="selected" @close="close" />
+                      <DatePickerSingleMonth
+                        v-model="selected"
+                        @close="close"
+                      />
                     </div>
                   </template>
                 </UPopover>
               </div>
 
               <div class="flex justify-end gap-3 mt-3">
-                <UIMainButton @click="filterRows(), (showAllFilters = !showAllFilters)"
+                <UIMainButton
+                  @click="filterRows(), (showAllFilters = !showAllFilters)"
                   >Принять</UIMainButton
                 >
-                <UIActionButton @click="clearFields">Очистить фильтры</UIActionButton>
+                <UIActionButton @click="clearFields"
+                  >Очистить фильтры</UIActionButton
+                >
               </div>
             </div>
           </div>
 
-          <div class="flex justify-end my-3" v-if="user.role === 'ADMIN'">
-            <h1
+          <div
+            class="flex justify-end"
+            v-if="user.role === 'ADMIN' && user.username !== 'Горцуева'"
+          >
+            <div
+              v-if="user.role === 'ADMIN'"
+              class="bg-secondary-color cursor-pointer hover:opacity-50 duration-200 rounded-full pt-1.5 px-1.5 text-white"
               @click="router.push('/advance-report')"
-              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200 cursor-pointer"
             >
-              Перейти к авансовому отчету
-            </h1>
+              <Icon name="oui:ml-create-advanced-job" size="24" />
+            </div>
           </div>
 
           <h1 class="text-xl font-bold mt-10">

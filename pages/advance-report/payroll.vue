@@ -206,14 +206,18 @@ const options = [
       <NuxtLayout name="admin">
         <div class="bg-[#f8f9fd] px-5 pt-10 max-sm:px-1 pb-5">
           <div
-            class="flex items-center justify-between gap-3 max-sm:items-start max-sm:flex-col"
+            class="flex items-center justify-between gap-3 max-sm:items-start"
           >
             <UIActionButton @click="openModal">Создать запись</UIActionButton>
-            <NuxtLink
-              to="/advance-report/employees"
-              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200 max-sm:text-sm"
-              >Перейти к сотрудникам</NuxtLink
+            <div
+              class="bg-secondary-color cursor-pointer hover:opacity-50 duration-200 rounded-full pt-1.5 px-1.5 text-white"
+              @click="router.push('/advance-report/employees')"
             >
+              <Icon
+                name="gridicons:multiple-users"
+                size="24"
+              />
+            </div>
           </div>
 
           <PayrollTable

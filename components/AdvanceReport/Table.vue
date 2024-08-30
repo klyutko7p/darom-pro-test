@@ -54,9 +54,31 @@ let monthNames: any = ref({
 });
 
 const totalRows = computed(() => Math.ceil(props.rows?.length));
+
 onMounted(() => {
+  const storedMonthData = loadFromLocalStorage("monthData");
+  if (storedMonthData !== null) {
+    month.value = storedMonthData;
+  }
   updateCurrentPageData();
 });
+
+function saveToLocalStorage(key: string, value: any) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function loadFromLocalStorage(key: string) {
+  const storedValue = localStorage.getItem(key);
+  return storedValue ? JSON.parse(storedValue) : null;
+}
+
+function saveFiltersToLocalStorage() {
+  saveToLocalStorage("monthData", month.value);
+}
+
+function clearLocalStorage() {
+  localStorage.clear();
+}
 
 let returnRows = ref<Array<IAdvanceReport>>();
 
@@ -85,6 +107,7 @@ function updateCurrentPageData() {
 
 watch([props.rows, totalRows, props.user], updateCurrentPageData);
 watch([isDateFilter], updateCurrentPageData);
+watch(month, saveFiltersToLocalStorage);
 
 function saveIsDateFilterToCookie(value: boolean) {
   Cookies.set("isDateFilter", JSON.stringify(value));
@@ -210,7 +233,7 @@ function exportToExcel() {
             >
             <div
               @click="openModal(row)"
-              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1  mx-auto"
             >
               <Icon
                 class="text-green-500"

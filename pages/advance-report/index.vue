@@ -1076,6 +1076,7 @@ function handleFilteredRows(filteredRowsData: IAdvanceReport[]) {
   filteredRows.value = filteredRowsData;
 }
 
+let linkPhoto = ref("");
 async function handleFileChange(fileList: FileList) {
   isLoading.value = true;
   const selectedFile = fileList[0];
@@ -1083,10 +1084,12 @@ async function handleFileChange(fileList: FileList) {
     .from("image")
     .upload(`img-${selectedFile.name}`, selectedFile);
   rowData.value.supportingDocuments = selectedFile.name;
+  linkPhoto.value = `https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/image/img-${selectedFile.name}`;
   if (data) {
-    console.log(data);
+    toast.success("Фото успешно загружено");
   } else {
-    console.log(error);
+    toast.error("Произошла ошибка");
+    rowData.value.supportingDocuments = "";
   }
   isLoading.value = false;
 }
@@ -1280,15 +1283,18 @@ const typeOfOptions = [
           </div>
 
           <div
-            class="flex justify-end my-3"
+            class="flex justify-end"
             v-if="user.role === 'ADMIN' && user.username !== 'Горцуева'"
           >
-            <h1
+            <div
+              class="bg-secondary-color cursor-pointer hover:opacity-50 duration-200 rounded-full pt-1.5 px-1.5 text-white"
               @click="router.push('/advance-report/summary-tables')"
-              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200 cursor-pointer"
             >
-              Перейти к сводным таблицам
-            </h1>
+              <Icon
+                name="material-symbols:table-view"
+                size="24"
+              />
+            </div>
           </div>
 
           <div>
@@ -1658,6 +1664,7 @@ const typeOfOptions = [
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Подтверждающий документ</label>
                 <UInput
+                  v-if="!rowData.supportingDocuments"
                   :disabled="
                     rowData.typeOfExpenditure ===
                       'Списание кредитной задолженности торговой империи' ||
@@ -1672,6 +1679,17 @@ const typeOfOptions = [
                   size="sm"
                   icon="i-heroicons-folder"
                 />
+                <div
+                  v-else
+                  class="flex items-center gap-3 relative w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 file:font-medium file:text-gray-500 dark:file:text-gray-400 file:bg-transparent file:border-0 file:p-0 file:outline-none text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                >
+                  <Icon
+                    name="icon-park-solid:folder-success"
+                    size="24"
+                    class="text-green-500"
+                  />
+                  <h1>Файл успешно загружен.</h1>
+                </div>
               </div>
 
               <div
@@ -1698,11 +1716,15 @@ const typeOfOptions = [
               <UISaveModalButton @click="updateRow"
                 >Сохранить
               </UISaveModalButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3" v-else>
               <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
           </template>
         </UINewModalEdit>
@@ -1823,7 +1845,7 @@ const typeOfOptions = [
             </div>
           </template>
           <template v-slot:footer>
-            <div class="flex items-center justify-center gap-3 mt-10">
+            <div class="flex items-center justify-center gap-3">
               <UISaveModalButton @click="createRow">Создать</UISaveModalButton>
               <UIExitModalButton @click="closeModalAdmin"
                 >Отменить</UIExitModalButton
@@ -1951,7 +1973,7 @@ const typeOfOptions = [
             </div>
           </template>
           <template v-slot:footer>
-            <div class="flex items-center justify-center gap-3 mt-10">
+            <div class="flex items-center justify-center gap-3">
               <UISaveModalButton @click="createRow">Создать</UISaveModalButton>
               <UIExitModalButton @click="closeModalAdminOOO"
                 >Отменить</UIExitModalButton
@@ -2195,6 +2217,7 @@ const typeOfOptions = [
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Подтверждающий документ</label>
                 <UInput
+                  v-if="!rowData.supportingDocuments"
                   :disabled="
                     rowData.typeOfExpenditure ===
                       'Списание кредитной задолженности торговой империи' ||
@@ -2209,6 +2232,17 @@ const typeOfOptions = [
                   size="sm"
                   icon="i-heroicons-folder"
                 />
+                <div
+                  v-else
+                  class="flex items-center gap-3 relative w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 file:font-medium file:text-gray-500 dark:file:text-gray-400 file:bg-transparent file:border-0 file:p-0 file:outline-none text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                >
+                  <Icon
+                    name="icon-park-solid:folder-success"
+                    size="24"
+                    class="text-green-500"
+                  />
+                  <h1>Файл успешно загружен.</h1>
+                </div>
               </div>
 
               <div
@@ -2235,11 +2269,15 @@ const typeOfOptions = [
               <UISaveModalButton @click="updateRow"
                 >Сохранить
               </UISaveModalButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3" v-else>
               <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
           </template>
         </UINewModalEdit>
@@ -2302,7 +2340,7 @@ const typeOfOptions = [
             </div>
           </template>
           <template v-slot:footer>
-            <div class="flex items-center justify-center gap-3 mt-10">
+            <div class="flex items-center justify-center gap-3">
               <UISaveModalButton @click="createRow">Создать</UISaveModalButton>
               <UIExitModalButton @click="closeModalYM"
                 >Отменить

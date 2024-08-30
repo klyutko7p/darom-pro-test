@@ -134,15 +134,24 @@ watch(isOpen, (newValue) => {
       <NuxtLayout name="admin">
         <div class="bg-[#f8f9fd] px-5 pt-10 max-sm:px-1 pb-5">
           <div
-            class="flex items-center justify-between max-sm:flex-col max-sm:items-start gap-3"
+            class="flex items-center justify-between max-sm:items-start gap-3"
           >
             <UIMainButton @click="openModal">Создать сотрудника</UIMainButton>
-            <NuxtLink
-              to="/advance-report/payroll"
-              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200 max-sm:px-5 max-sm:text-sm"
-              >Перейти к расчёту ЗП</NuxtLink
+            <div
+            class="flex justify-end"
+          >
+            <div
+              class="bg-secondary-color cursor-pointer hover:opacity-50 duration-200 rounded-full pt-1.5 px-1.5 text-white"
+              @click="router.push('/advance-report/payroll')"
             >
+              <Icon
+                name="material-symbols:gpay"
+                size="24"
+              />
+            </div>
           </div>
+          </div>
+
 
           <EmployeeTable
             :rows="rows"

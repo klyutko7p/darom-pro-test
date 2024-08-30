@@ -813,7 +813,7 @@ async function checkPaymentStatus(qrcId: string) {
           >
           <div
               @click="openModal(row)"
-              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1  mx-auto"
             >
               <Icon
                 class="text-green-500"
