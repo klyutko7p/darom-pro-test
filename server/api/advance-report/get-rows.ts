@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
                     date: 'desc',
                 },
                 {
-                    id: 'desc'
+                    created_at: 'desc'
                 }
             ]
         });

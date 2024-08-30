@@ -11,4 +11,5 @@ interface IAdvanceReport {
     type: string;
     createdUser: string;
     received: Date | number | string | null;
+    created_at: Date | number;
 }
