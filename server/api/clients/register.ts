@@ -20,6 +20,9 @@ export default defineEventHandler(async (event) => {
         password: hashPassword,
         fio: client.fio,
         role: "CLIENT",
+        isPersonalDataProcessingPolicyAgreed:
+          client.isPersonalDataProcessingPolicyAgreed,
+        isPrivacyPolicyAgreed: client.isPrivacyPolicyAgreed,
       },
     });
   } catch (error) {

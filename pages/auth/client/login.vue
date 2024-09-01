@@ -165,7 +165,8 @@ watch(() => phoneNumber.value, validationPhoneNumber);
 function validationPhoneNumberData() {
   phoneNumberData.value = phoneNumberData.value.replace(/[^0-9+]/g, "");
   if (!phoneNumberData.value.startsWith("+7")) {
-    phoneNumberData.value = "+7" + phoneNumberData.value.replace(/^(\+?7|8)?/, "");
+    phoneNumberData.value =
+      "+7" + phoneNumberData.value.replace(/^(\+?7|8)?/, "");
   }
 }
 
@@ -215,20 +216,27 @@ const padWithZero = (num: number): string => {
   return num < 10 ? `0${num}` : num.toString();
 };
 
-const formattedBlockDuration = computed(() => formatDuration(blockDuration.value));
+const formattedBlockDuration = computed(() =>
+  formatDuration(blockDuration.value)
+);
 </script>
 
 <template>
   <Head>
     <Title>Авторизация клиента</Title>
   </Head>
-  <div v-if="!isLoading" class="h-screen flex items-center justify-center max-sm:block">
+  <div
+    v-if="!isLoading"
+    class="h-screen flex items-center justify-center max-sm:block"
+  >
     <div
       class="px-10 py-20 h-full max-sm:py-32 max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50 max-w-[430px] max-sm:max-w-[2000px]"
     >
       <div class="">
         <div class="flex items-center justify-center">
-          <h1 class="text-center text-secondary-color text-6xl max-sm:text-5xl font-bold">
+          <h1
+            class="text-center text-secondary-color text-6xl max-sm:text-5xl font-bold"
+          >
             DAROM.PRO
           </h1>
         </div>
@@ -242,7 +250,9 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
       <div class="mt-10 max-sm:px-3">
         <form class="space-y-6" @submit.prevent="signIn">
           <div>
-            <label for="phone" class="block text-sm font-medium leading-6 text-gray-900"
+            <label
+              for="phone"
+              class="block text-sm font-medium leading-6 text-gray-900"
               >Телефон (формат +7XXXXXXXXXX)</label
             >
             <div class="mt-2">
@@ -296,20 +306,27 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
               >здесь</span
             >
           </h1>
-          <div class="mt-2 flex gap-2 items-center justify-start">
-            <input
-              v-model="isForeignDevice"
-              id="isForeignDevice"
-              name="isForeignDevice"
-              type="checkbox"
-            />
-            <label for="isForeignDevice">Чужое устройство</label>
+          <div class="flex items-center gap-3 p-3">
+            <div>
+              <input
+                class="h-3 w-3 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
+                v-model="isForeignDevice"
+                id="isForeignDevice"
+                name="isForeignDevice"
+                type="checkbox"
+              />
+            </div>
+            <label for="isForeignDevice" class="italic text-sm"
+              >Чужое устройство</label
+            >
           </div>
           <div v-if="message !== ''">
             <h1 class="text-red-700 text-center">{{ message }}</h1>
           </div>
           <div class="flex items-center justify-center">
-            <UIMainButton class="w-full max-sm:max-w-[400px]">Войти</UIMainButton>
+            <UIMainButton class="w-full max-sm:max-w-[400px]"
+              >Войти</UIMainButton
+            >
           </div>
           <div class="text-center underline text-secondary-color font-bold">
             <NuxtLink to="/auth/register">Или зарегистрируйтесь</NuxtLink>
@@ -327,7 +344,9 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
           <div class="border-b-2 p-5 flex items-center gap-24 justify-between">
             <p class="font-medium text-2xl">Подтверждение номера телефона</p>
             <Icon
-              @click="isShowFirstConfirmationModal = !isShowFirstConfirmationModal"
+              @click="
+                isShowFirstConfirmationModal = !isShowFirstConfirmationModal
+              "
               class="hover:text-hover-color duration-200 cursor-pointer"
               name="material-symbols:cancel-rounded"
               size="24"
@@ -335,8 +354,8 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
           </div>
           <div class="px-10 py-5">
             <p class="text-xl text-center">
-              Введите свой телефон в текстовое поле снизу и нажмите кнопку "Отправить
-              код".
+              Введите свой телефон в текстовое поле снизу и нажмите кнопку
+              "Отправить код".
             </p>
             <div class="flex justify-center mt-5">
               <input
@@ -368,7 +387,9 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
           <div class="border-b-2 p-5 flex items-center gap-24 justify-between">
             <p class="font-medium text-2xl">Подтверждение номера телефона</p>
             <Icon
-              @click="isShowSecondConfirmationModal = !isShowSecondConfirmationModal"
+              @click="
+                isShowSecondConfirmationModal = !isShowSecondConfirmationModal
+              "
               class="hover:text-hover-color duration-200 cursor-pointer"
               name="material-symbols:cancel-rounded"
               size="24"
@@ -376,7 +397,8 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
           </div>
           <div class="px-10 py-5">
             <p class="text-xl text-center">
-              Введите код в текстовое поле снизу, который придёт на Ваш номер телефона.
+              Введите код в текстовое поле снизу, который придёт на Ваш номер
+              телефона.
             </p>
             <div class="flex justify-center mt-5">
               <input
@@ -399,7 +421,8 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
       </div>
     </div>
 
-    <div v-if="isShowThirdConfirmationModal"
+    <div
+      v-if="isShowThirdConfirmationModal"
       class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-65 z-[200]"
     >
       <div class="flex items-center justify-center h-screen">
@@ -407,7 +430,9 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
           <div class="border-b-2 p-5 flex items-center gap-24 justify-between">
             <p class="font-medium text-2xl">Статус пароля</p>
             <Icon
-              @click="isShowThirdConfirmationModal = !isShowThirdConfirmationModal"
+              @click="
+                isShowThirdConfirmationModal = !isShowThirdConfirmationModal
+              "
               class="hover:text-hover-color duration-200 cursor-pointer"
               name="material-symbols:cancel-rounded"
               size="24"

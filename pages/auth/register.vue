@@ -11,10 +11,10 @@ const fio = ref("");
 const password = ref("");
 const repeatPassword = ref("");
 const message = ref("");
-const refValue = route.query.ref ? route.query.ref : "";
-const queryValue = route.query.q ? route.query.q : "";
+const refValue = route.query.ref ? (route.query.ref as string) : "";
+const queryValue = route.query.q ? (route.query.q as string) : "";
 const phoneNumberValue = route.query.phone
-  ? storeClients.decryptPhoneNumber(route.query.phone)
+  ? storeClients.decryptPhoneNumber(route.query.phone as string)
   : "";
 
 function generateRandomFiveDigitNumber(): string {
@@ -136,6 +136,9 @@ const blockForFifteenMinutes = () => {
   }, 1000);
 };
 
+let isPersonalDataProcessingPolicyAgreed = ref(false);
+let isPrivacyPolicyAgreed = ref(false);
+
 async function confirmationRegistration() {
   isLoading.value = true;
   await storeClients.register({
@@ -145,10 +148,16 @@ async function confirmationRegistration() {
     fio: fio.value,
     role: "CLIENT",
     created_at: new Date(),
+    isPersonalDataProcessingPolicyAgreed:
+      isPersonalDataProcessingPolicyAgreed.value,
+    isPrivacyPolicyAgreed: isPrivacyPolicyAgreed.value,
   });
 
   if (storeClients.compareReferralLinkNumber(queryValue, refValue)) {
-    await storeClients.createReferralClient(phoneNumberData.value, phoneNumberValue);
+    await storeClients.createReferralClient(
+      phoneNumberData.value,
+      phoneNumberValue
+    );
   }
   isLoading.value = false;
 }
@@ -181,7 +190,8 @@ onMounted(async () => {
 
   const blockState = localStorage.getItem("blockState");
   if (blockState) {
-    const { blockDuration: savedBlockDuration, blockEndTime } = JSON.parse(blockState);
+    const { blockDuration: savedBlockDuration, blockEndTime } =
+      JSON.parse(blockState);
     const remainingTime = Math.ceil((blockEndTime - Date.now()) / 1000);
     if (remainingTime > 0) {
       blockDuration.value = remainingTime;
@@ -204,7 +214,8 @@ watch(() => phoneNumberData.value, validationPhoneNumber);
 function validationPhoneNumber() {
   phoneNumberData.value = phoneNumberData.value.replace(/[^0-9+]/g, "");
   if (!phoneNumberData.value.startsWith("+7")) {
-    phoneNumberData.value = "+7" + phoneNumberData.value.replace(/^(\+?7|8)?/, "");
+    phoneNumberData.value =
+      "+7" + phoneNumberData.value.replace(/^(\+?7|8)?/, "");
   }
 }
 
@@ -233,20 +244,32 @@ const padWithZero = (num: number): string => {
   return num < 10 ? `0${num}` : num.toString();
 };
 
-const formattedBlockDuration = computed(() => formatDuration(blockDuration.value));
+const formattedBlockDuration = computed(() =>
+  formatDuration(blockDuration.value)
+);
 </script>
 
 <template>
   <Head>
     <Title>Регистрация</Title>
   </Head>
-  <div v-if="!isLoading" class="h-screen flex items-center justify-center max-sm:block">
+  <div
+    v-if="!isLoading"
+    class="h-screen flex items-center justify-center max-sm:block"
+  >
     <div
-      class="px-10 h-full py-40 max-sm:py-32 max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50"
+      class="px-10 relative h-full py-32 max-sm:py-32 max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50"
     >
+      <div
+        class="absolute top-10 right-4 text-center underline text-secondary-color font-bold mt-5"
+      >
+        <NuxtLink to="/auth/client/login">Или войдите</NuxtLink>
+      </div>
       <div class="">
         <div class="flex items-center justify-center">
-          <h1 class="text-center text-secondary-color text-6xl max-sm:text-5xl font-bold">
+          <h1
+            class="text-center text-secondary-color text-6xl max-sm:text-5xl font-bold"
+          >
             DAROM.PRO
           </h1>
         </div>
@@ -260,7 +283,9 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
       <div class="mt-10 max-sm:px-3">
         <form class="space-y-10" @submit.prevent="register">
           <div>
-            <label for="phone" class="block text-sm font-medium leading-6 text-gray-900"
+            <label
+              for="phone"
+              class="block text-sm font-medium leading-6 text-gray-900"
               >Телефон (формат +7XXXXXXXXXX)</label
             >
             <div class="mt-2">
@@ -326,19 +351,61 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
               />
             </div>
           </div>
+          <div class="max-w-[350px] max-sm:w-full max-sm:max-w-none space-y-3">
+            <div class="flex items-start gap-3 p-2">
+              <div>
+                <input
+                  class="h-3 w-3 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
+                  type="checkbox"
+                  required
+                  v-model="isPersonalDataProcessingPolicyAgreed"
+                />
+              </div>
+              <label class="italic text-sm"
+                >Подтверждаю, что я ознакомлен и согласен с условиями
+                <a
+                  class="underline text-secondary-color duration-200 cursor-pointer hover:opacity-50"
+                  href="#"
+                  >Политики обработки персональных данных</a
+                ></label
+              >
+            </div>
+
+            <div class="flex items-start gap-3 p-2">
+              <div>
+                <input
+                  class="h-3 w-3 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
+                  type="checkbox"
+                  required
+                  v-model="isPrivacyPolicyAgreed"
+                />
+              </div>
+              <label class="italic text-sm"
+                >Подтверждаю, что я ознакомлен и согласен с условиями
+                <a
+                  class="underline text-secondary-color duration-200 cursor-pointer hover:opacity-50"
+                  href="#"
+                  >Политики конфиденциальности</a
+                ></label
+              >
+            </div>
+          </div>
           <div v-if="message !== ''">
             <h1 class="text-red-700">{{ message }}</h1>
           </div>
-          <div class="flex items-center justify-center">
-            <UIMainButton class="w-full max-sm:max-w-[400px]" :disabled="isButtonDisabled || isBlocked"
-              >Зарегистрироваться</UIMainButton
-            >
+          <div class="space-y-3">
+            <div class="flex items-center justify-center">
+              <UIMainButton
+                class="w-full max-sm:max-w-[400px]"
+                :disabled="isButtonDisabled || isBlocked"
+                >Зарегистрироваться</UIMainButton
+              >
+            </div>
+            <h1 class="text-center font-bold text-red-500">
+              {{ errorTextValidation }}
+            </h1>
           </div>
-          <h1 class="text-center font-bold text-red-500">{{ errorTextValidation }}</h1>
         </form>
-        <div class="text-center underline text-secondary-color font-bold mt-5">
-          <NuxtLink to="/auth/client/login">Или войдите</NuxtLink>
-        </div>
       </div>
     </div>
 
@@ -359,7 +426,8 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
           </div>
           <div class="px-10 py-5">
             <p class="text-xl text-center">
-              Введите код в текстовое поле снизу, который придёт на Ваш номер телефона.
+              Введите код в текстовое поле снизу, который придёт на Ваш номер
+              телефона.
             </p>
             <div class="flex justify-center mt-5">
               <input
@@ -370,7 +438,9 @@ const formattedBlockDuration = computed(() => formatDuration(blockDuration.value
               />
             </div>
             <div class="flex justify-center items-center gap-3 mt-5">
-              <UIMainButton :disabled="isButtonDisabled || isBlocked" @click="register"
+              <UIMainButton
+                :disabled="isButtonDisabled || isBlocked"
+                @click="register"
                 >Отправить код ещё раз</UIMainButton
               >
               {{ formattedBlockDuration }}

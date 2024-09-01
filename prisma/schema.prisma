@@ -290,13 +290,17 @@ model Payroll {
 }
 
 model Client {
-  id          Int      @id @default(autoincrement())
-  fio         String?
-  role        Role     @default(CLIENT)
-  password    String
-  phoneNumber String   @unique()
-  balance     Int?
-  created_at  DateTime @default(now())
+  id                                          Int      @id @default(autoincrement())
+  fio                                         String?
+  role                                        Role     @default(CLIENT)
+  password                                    String
+  phoneNumber                                 String   @unique()
+  balance                                     Int?
+  created_at                                  DateTime @default(now())
+  isPersonalDataProcessingPolicyAgreed        Boolean  
+  isPrivacyPolicyAgreed                       Boolean  
+  dateOfPersonalDataProcessingPolicyAgreement DateTime @default(now())
+  dateOfPrivacyPolicyAgreement                DateTime @default(now())
 }
 
 model ClientReferral {

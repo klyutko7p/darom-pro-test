@@ -8,4 +8,8 @@ interface Client {
     role: string;
     balance: number;
     created_at: Date | string;
+    isPersonalDataProcessingPolicyAgreed: boolean;
+    isPrivacyPolicyAgreed: boolean;
+    dateOfPersonalDataProcessingPolicyAgreement: Date | string;
+    dateOfPrivacyPolicyAgreement: Date | string;
 }
