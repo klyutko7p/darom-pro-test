@@ -9,8 +9,8 @@ interface IDelivery {
     amountFromClient3: number;
     dispatchPVZ: string;
     orderPVZ: string;
-    sorted: Date | number | string | null;
-    paid: Date | number | string | null;
+    sorted: Date | string;
+    paid: Date | string;
     profit3: string;
     additionally: string;
     deleted: Date | string | null;

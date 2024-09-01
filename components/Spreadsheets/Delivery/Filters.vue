@@ -1,4 +1,16 @@
 <script setup lang="ts">
+import VueMultiselect from "vue-multiselect";
+import { vAutoAnimate } from "@formkit/auto-animate";
+import {
+  formatRelative,
+  subDays,
+  sub,
+  format,
+  isSameDay,
+  type Duration,
+} from "date-fns";
+import ru from "date-fns/locale/ru";
+
 const props = defineProps({
   rows: { type: Array as PropType<IDelivery[]>, required: true },
   user: { type: Object as PropType<User> },
@@ -8,13 +20,13 @@ const storeRansom = useRansomStore();
 
 let showFilters = ref(false);
 
-const selectedName = ref<string | null>(null);
-const selectedNameOfAction = ref<string | null>(null);
-const selectedFromName = ref<string | null>(null);
-const selectedPurchaseOfGoods = ref<number | null>(null);
-const selectedDispatchPVZ = ref<string | null>(null);
-const selectedOrderPVZ = ref<string | null>(null);
-const selectedAdditionally = ref<string | null>(null);
+const selectedName = ref<Array<string>>([]);
+const selectedNameOfAction = ref<Array<string>>([]);
+const selectedFromName = ref<Array<string>>([]);
+const selectedPurchaseOfGoods = ref<Array<number>>([]);
+const selectedDispatchPVZ = ref<Array<string>>([]);
+const selectedOrderPVZ = ref<Array<string>>([]);
+const selectedAdditionally = ref<Array<string>>([]);
 const startingDate = ref<Date | string | null>(null);
 const endDate = ref<Date | string | null>(null);
 const startingDate2 = ref<Date | string | null>(null);
@@ -52,46 +64,111 @@ const filteredRows = ref<Array<IDelivery>>();
 
 const emit = defineEmits(["filtered-rows"]);
 
+const ranges = [
+  { label: "Текущий месяц", duration: { month: "current" } },
+  { label: "Сегодня", duration: { days: 0 } },
+  { label: "Последние 7 дней", duration: { days: 7 } },
+  { label: "Последние 14 дней", duration: { days: 14 } },
+  { label: "Последние 30 дней", duration: { days: 30 } },
+  { label: "Последние 3 месяца", duration: { months: 3 } },
+  { label: "Последние 6 месяцев", duration: { months: 6 } },
+  { label: "Последний год", duration: { years: 1 } },
+];
+
+const selected = ref({
+  start: new Date(new Date().getFullYear(), 0, 1),
+  end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+});
+
+function isRangeSelected(duration: Duration) {
+  if (duration.month === "current") {
+    const startOfMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      1
+    );
+    const endOfMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      0
+    );
+    return (
+      isSameDay(selected.value.start, startOfMonth) &&
+      isSameDay(selected.value.end, endOfMonth)
+    );
+  }
+  return (
+    isSameDay(selected.value.start, sub(new Date(), duration)) &&
+    isSameDay(selected.value.end, new Date())
+  );
+}
+
+function selectRange(duration: Duration) {
+  if (duration.month === "current") {
+    selected.value = {
+      start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+      end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+    };
+  } else {
+    selected.value = { start: sub(new Date(), duration), end: new Date() };
+  }
+}
+
 const filterRows = () => {
+  let newStartingDate = new Date(selected.value.start);
+  newStartingDate.setHours(0);
+  newStartingDate.setMinutes(0);
+  newStartingDate.setSeconds(0);
+  newStartingDate.setMilliseconds(0);
+
+  let newEndDate = new Date(selected.value.end);
+  newEndDate.setHours(23);
+  newEndDate.setMinutes(59);
+  newEndDate.setSeconds(59);
+  newEndDate.setMilliseconds(0);
+
   filteredRows.value = props.rows.slice();
   filteredRows.value = props.rows.filter((row) => {
     return (
-      (!selectedFromName.value || row.fromName === selectedFromName.value) &&
-      (!selectedNameOfAction.value ||
-        row.nameOfAction === selectedNameOfAction.value) &&
-      (!selectedName.value || row.name === selectedName.value) &&
-      (!selectedPurchaseOfGoods.value ||
-        row.purchaseOfGoods == selectedPurchaseOfGoods.value) &&
-      (!selectedDispatchPVZ.value ||
-        row.dispatchPVZ === selectedDispatchPVZ.value) &&
-      (!selectedOrderPVZ.value || row.orderPVZ === selectedOrderPVZ.value) &&
-      (!selectedAdditionally.value ||
-        row.additionally === selectedAdditionally.value) &&
-      (!startingDate.value ||
-        new Date(row.paid) >= new Date(startingDate.value)) &&
-      (!endDate.value || new Date(row.paid) <= new Date(endDate.value)) &&
-      (!startingDate2.value ||
-        new Date(row.sorted) >= new Date(startingDate2.value)) &&
-      (!endDate2.value || new Date(row.sorted) <= new Date(endDate2.value))
+      (!selectedName.value.length || selectedName.value.includes(row.name)) &&
+      (!selectedNameOfAction.value.length ||
+        selectedNameOfAction.value.includes(row.nameOfAction)) &&
+      (!selectedFromName.value.length ||
+        selectedFromName.value.includes(row.fromName)) &&
+      (!selectedPurchaseOfGoods.value.length ||
+        selectedPurchaseOfGoods.value.includes(row.purchaseOfGoods)) &&
+      (!selectedDispatchPVZ.value.length ||
+        selectedDispatchPVZ.value.includes(row.dispatchPVZ)) &&
+      (!selectedOrderPVZ.value.length ||
+        selectedOrderPVZ.value.includes(row.orderPVZ)) &&
+      (!selectedAdditionally.value.length ||
+        selectedAdditionally.value.includes(row.additionally)) &&
+      (!selected.value.start ||
+        new Date(row.sorted) >= new Date(newStartingDate)) &&
+      (!selected.value.end || new Date(row.sorted) <= new Date(newEndDate))
     );
   });
   emit("filtered-rows", filteredRows.value);
 };
 
+const currentDate = new Date();
 function clearFields() {
-  selectedAdditionally.value = "";
-  selectedNameOfAction.value = "";
-  selectedDispatchPVZ.value = "";
-  selectedOrderPVZ.value = "";
-  selectedFromName.value = "";
-  selectedName.value = "";
-  selectedAdditionally.value = "";
-  selectedPurchaseOfGoods.value = "";
+  selectedAdditionally.value = [];
+  selectedNameOfAction.value = [];
+  selectedDispatchPVZ.value = [];
+  selectedOrderPVZ.value = [];
+  selectedFromName.value = [];
+  selectedName.value = [];
+  selectedAdditionally.value = [];
+  selectedPurchaseOfGoods.value = [];
   startingDate.value = "";
   endDate.value = "";
   startingDate2.value = "";
   endDate2.value = "";
+  selected.value.start = new Date(new Date().getFullYear(), 0, 1),
+  selected.value.end = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
   filterRows();
+  clearLocalStorage();
 }
 
 watch(
@@ -107,6 +184,7 @@ watch(
     endDate,
     startingDate2,
     endDate2,
+    selected,
   ],
   filterRows
 );
@@ -137,13 +215,13 @@ function saveFiltersToLocalStorage() {
 
 function clearLocalStorage() {
   localStorage.clear();
-  selectedName.value = null;
-  selectedFromName.value = null;
-  selectedNameOfAction.value = null;
-  selectedDispatchPVZ.value = null;
-  selectedOrderPVZ.value = null;
-  selectedAdditionally.value = null;
-  selectedPurchaseOfGoods.value = null;
+  selectedName.value = [];
+  selectedFromName.value = [];
+  selectedNameOfAction.value = [];
+  selectedDispatchPVZ.value = [];
+  selectedOrderPVZ.value = [];
+  selectedAdditionally.value = [];
+  selectedPurchaseOfGoods.value = [];
   startingDate.value = null;
   endDate.value = null;
   startingDate2.value = null;
@@ -209,14 +287,45 @@ onMounted(() => {
   if (storedEndDate2 !== null) {
     endDate2.value = storedEndDate2;
   }
+
+  filterRows();
 });
 
 let dateFilter = ref("paid");
+
+const selectedArrays = [
+  selectedName,
+  selectedFromName,
+  selectedNameOfAction,
+  selectedDispatchPVZ,
+  selectedOrderPVZ,
+  selectedAdditionally,
+  selectedPurchaseOfGoods,
+];
+
+// const nonEmptyCount = computed(() => {
+//   let count = 0;
+//   selectedArrays.forEach(selectedArray => {
+//     selectedArray.value.forEach(element => {
+//       if (element !== undefined && element !== null && element !== "") {
+//         count++;
+//       }
+//     });
+//   });
+
+//   if (startingDate.value) {
+//     count++;
+//   } else if (endDate.value) {
+//     count++;
+//   }
+
+//   return count;
+// });
 </script>
 
 <template>
-  <div>
-    <div class="flex items-center gap-3">
+  <div v-auto-animate class="">
+    <div class="flex items-center gap-3 mt-5 max-xl:mt-0">
       <h1 class="text-xl font-bold">Фильтры</h1>
       <Icon
         @click="showFilters = !showFilters"
@@ -224,181 +333,185 @@ let dateFilter = ref("paid");
         name="material-symbols:settings-rounded"
         size="24"
       />
+      <!-- <h1
+        class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full"
+      >
+        {{ nonEmptyCount }}
+      </h1> -->
     </div>
+
     <div
       v-if="showFilters"
-      class="border-2 border-gray-300 p-3 mt-3 border-dashed"
+      class="border-2 bg-white border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
     >
-      <div class="grid grid-cols-2 max-xl:grid-cols-2 max-md:grid-cols-1">
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>Имя:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+      <div
+        class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5"
+      >
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Имя</h1>
+          <VueMultiselect
             v-model="selectedName"
-            list="uniqueNames"
+            :options="uniqueNames"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите ПВЗ"
           />
-          <datalist id="uniqueNames" class="">
-            <option v-for="value in uniqueNames" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>Телефон:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Телефон</h1>
+          <VueMultiselect
             v-model="selectedFromName"
-            list="uniqueFromNames"
+            :options="uniqueFromNames"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите ПВЗ"
           />
-          <datalist id="uniqueFromNames" class="">
-            <option v-for="value in uniqueFromNames" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>Название:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Название</h1>
+          <VueMultiselect
             v-model="selectedNameOfAction"
-            list="uniqueNameOfAction"
+            :options="uniqueNameOfAction"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите ПВЗ"
           />
-          <datalist id="uniqueNameOfAction" class="">
-            <option v-for="value in uniqueNameOfAction" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>Стоимость выкупа:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Стоимость выкупа</h1>
+          <VueMultiselect
             v-model="selectedPurchaseOfGoods"
-            list="uniquePurchaseOfGoods"
+            :options="uniquePurchaseOfGoods"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите ПВЗ"
           />
-          <datalist id="uniquePurchaseOfGoods" class="">
-            <option v-for="value in uniquePurchaseOfGoods" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>ПВЗ:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>ПВЗ</h1>
+          <VueMultiselect
             v-model="selectedDispatchPVZ"
-            list="uniquePVZ"
+            :options="uniquePVZ"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите ПВЗ"
           />
-          <datalist id="uniquePVZ" class="">
-            <option v-for="value in uniquePVZ" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>СЦ:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>СЦ</h1>
+          <VueMultiselect
             v-model="selectedOrderPVZ"
-            list="uniqueOrderPVZ"
+            :options="uniqueOrderPVZ"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите ПВЗ"
           />
-          <datalist id="uniqueOrderPVZ" class="">
-            <option v-for="value in uniqueOrderPVZ" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>Дополнительно:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Дополнительно</h1>
+          <VueMultiselect
             v-model="selectedAdditionally"
-            list="uniqueAdditionally"
+            :options="uniqueAdditionally"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите ПВЗ"
           />
-          <datalist id="uniqueAdditionally" class="">
-            <option v-for="value in uniqueAdditionally" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
       </div>
-      <div v-if="user?.role !== 'SORTIROVKA'">
-        <div class="mt-10">
-          <div>
-            <select
-              v-model="dateFilter"
-              class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3"
+      <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+        <UPopover
+          :popper="{ placement: 'auto' }"
+          class="block max-sm:hidden my-5 max-w-[220px]"
+        >
+          <UButton
+            type="button"
+            icon="i-heroicons-calendar-days-20-solid"
+            color="orange"
+          >
+            {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
+            {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
+          </UButton>
+
+          <template #panel="{ close }">
+            <div
+              class="flex items-center sm:divide-x divide-gray-200 dark:divide-gray-800"
             >
-              <option value="paid" selected>Дата оплаты</option>
-              <option value="sorted">Дата сортировки</option>
-            </select>
-          </div>
-        </div>
-        <div class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5">
-          <div class="flex items-center gap-3 mr-5" v-if="dateFilter === 'paid'">
-            <h1 class="max-sm:mr-3">С</h1>
-            <input
-              class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="date"
-              placeholder="ДД.ММ.ГГГГ"
-              onchange="this.className=(this.value!=''?'has-value':'')"
-              v-model="startingDate"
-            />
-          </div>
-          <div
-            class="flex items-center gap-3 max-sm:mb-7"
-            v-if="dateFilter === 'paid'"
+              <div class="hidden sm:flex flex-col py-4">
+                <UButton
+                  v-for="(range, index) in ranges"
+                  :key="index"
+                  :label="range.label"
+                  color="white"
+                  variant="ghost"
+                  class="rounded-none px-6"
+                  :class="[
+                    isRangeSelected(range.duration)
+                      ? 'bg-gray-100 dark:bg-gray-800'
+                      : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                  ]"
+                  truncate
+                  @click="selectRange(range.duration)"
+                />
+              </div>
+
+              <DatePicker v-model="selected" @close="close" />
+            </div>
+          </template>
+        </UPopover>
+        <UPopover
+          :overlay="true"
+          :popper="{ placement: 'auto' }"
+          class="hidden max-sm:block mx-auto max-w-[220px] my-5"
+        >
+          <UButton
+            type="button"
+            icon="i-heroicons-calendar-days-20-solid"
+            color="orange"
           >
-            <h1>По</h1>
-            <input
-              class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="date"
-              placeholder="ДД.ММ.ГГГГ"
-              onchange="this.className=(this.value!=''?'has-value':'')"
-              v-model="endDate"
-            />
-          </div>
-          <div class="flex items-center gap-3 mr-5" v-if="dateFilter === 'sorted'">
-            <h1 class="max-sm:mr-3">С</h1>
-            <input
-              class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="date"
-              placeholder="ДД.ММ.ГГГГ"
-              onchange="this.className=(this.value!=''?'has-value':'')"
-              v-model="startingDate2"
-            />
-          </div>
-          <div
-            class="flex items-center gap-3 max-sm:mb-7"
-            v-if="dateFilter === 'sorted'"
-          >
-            <h1>По</h1>
-            <input
-              class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-              type="date"
-              placeholder="ДД.ММ.ГГГГ"
-              onchange="this.className=(this.value!=''?'has-value':'')"
-              v-model="endDate2"
-            />
-          </div>
-        </div>
-        <div class="flex justify-end gap-3 mt-3">
-          <UIMainButton
-            @click="(showFilters = false), saveFiltersToLocalStorage()"
-            >Принять</UIMainButton
-          >
-          <UIMainButton @click="clearFields(), clearLocalStorage()"
-            >Очистить фильтры</UIMainButton
-          >
-        </div>
+            {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
+            {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
+          </UButton>
+
+          <template #panel="{ close }">
+            <div
+              class="flex items-center sm:divide-x divide-gray-200 dark:divide-gray-800"
+            >
+              <div class="hidden sm:flex flex-col py-4">
+                <UButton
+                  v-for="(range, index) in ranges"
+                  :key="index"
+                  :label="range.label"
+                  color="white"
+                  variant="ghost"
+                  class="rounded-none px-6"
+                  :class="[
+                    isRangeSelected(range.duration)
+                      ? 'bg-gray-100 dark:bg-gray-800'
+                      : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                  ]"
+                  truncate
+                  @click="selectRange(range.duration)"
+                />
+              </div>
+
+              <DatePickerSingleMonth v-model="selected" @close="close" />
+            </div>
+          </template>
+        </UPopover>
+      </div>
+      <div class="flex justify-end gap-3 mt-3 mb-5">
+        <UIMainButton
+          @click="
+            filterRows(),
+              saveFiltersToLocalStorage(),
+              (showFilters = !showFilters)
+          "
+          >Принять</UIMainButton
+        >
+        <UIActionButton @click="clearFields">Очистить фильтры</UIActionButton>
       </div>
     </div>
   </div>
 </template>
+
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>

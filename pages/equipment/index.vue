@@ -318,7 +318,7 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
                   <label for="nameOfEquipment">Название</label>
                   <textarea
                     required
-                    class="block w-full ring-1 ring-gray-200 focus:ring-[1px] focus:ring-orange-400 bg-transparent rounded-md py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none border-[1px] border-orange-400"
+                    class="block w-full ring-1 ring-gray-200 focus:ring-[2px] focus:ring-orange-400 bg-transparent rounded-md py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none border-[1px] border-orange-400"
                     v-model="equipmentRowData.nameOfEquipment"
                     type="text"
                   />
@@ -444,7 +444,7 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
                   <label for="nameOfEquipment">Название</label>
                   <textarea
                     required
-                    class="block w-full ring-1 ring-gray-200 focus:ring-[1px] focus:ring-orange-400 bg-transparent rounded-md py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none border-[1px] border-orange-400"
+                    class="block w-full ring-1 ring-gray-200 focus:ring-[2px] focus:ring-orange-400 bg-transparent rounded-md py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none border-[1px] border-orange-400"
                     v-model="equipmentRowData.nameOfEquipment"
                     type="text"
                   />

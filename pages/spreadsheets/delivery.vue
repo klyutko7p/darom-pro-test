@@ -15,9 +15,9 @@ let isLoading = ref(false);
 
 let user = ref({} as User);
 
-let rows = ref<Array<IDelivery>>();
-let pvz = ref<Array<PVZ>>();
-let sortingCenters = ref<Array<SortingCenter>>();
+let rows = ref<Array<IDelivery>>([]);
+let pvz = ref<Array<PVZ>>([]);
+let sortingCenters = ref<Array<SortingCenter>>([]);
 
 let rowData = ref({} as IDelivery);
 
@@ -44,102 +44,98 @@ function closeModal() {
   rowData.value = {} as IDelivery;
 }
 
-async function updateDeliveryRow(obj: any) {
+type Operation = () => Promise<void>;
+
+async function handleRowOperation(operation: Operation) {
   isLoading.value = true;
-  let answer = confirm("Вы точно хотите изменить статус доставки?");
-  if (answer)
+
+  try {
+    await operation();
+    filteredRows.value = await storeRansom.getRansomRows("Delivery");
+    rows.value = filteredRows.value;
+
+    if (rows.value) {
+      handleFilteredRows(rows.value);
+    }
+  } catch (error) {
+    toast.error(`Ошибка при выполнении операции: ${error}`);
+  } finally {
+    closeModal();
+    isLoading.value = false;
+  }
+}
+
+async function confirmAndExecute(operation: Operation) {
+  const userConfirmed = confirm("Вы точно хотите продолжить?");
+  if (!userConfirmed) {
+    isLoading.value = false;
+    return;
+  }
+
+  isLoading.value = true;
+
+  try {
+    await operation();
+    filteredRows.value = await storeRansom.getRansomRows("Delivery");
+    rows.value = filteredRows.value;
+
+    if (rows.value) {
+      handleFilteredRows(rows.value);
+    }
+  } catch (error) {
+    toast.error(`Ошибка при выполнении операции: ${error}`);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+async function updateDeliveryRow(obj: any) {
+  await confirmAndExecute(async () => {
     await storeRansom.updateDeliveryStatus(
       obj.row,
       obj.flag,
       "Delivery",
       user.value.username
     );
-  filteredRows.value = await storeRansom.getRansomRows("Delivery");
-  rows.value = filteredRows.value;
-  if (rows.value) {
-    handleFilteredRows(rows.value);
-  }
-  isLoading.value = false;
+  });
 }
 
 async function updateDeliveryRows(obj: any) {
-  isLoading.value = true;
-  let answer = confirm("Вы точно хотите изменить статус доставки?");
-  if (answer)
+  await confirmAndExecute(async () => {
     await storeRansom.updateDeliveryRowsStatus(
       obj.idArray,
       obj.flag,
       "Delivery",
       user.value.username
     );
-  filteredRows.value = await storeRansom.getRansomRows("Delivery");
-  rows.value = filteredRows.value;
-  if (rows.value) {
-    handleFilteredRows(rows.value);
-  }
-  isLoading.value = false;
+  });
 }
 
 async function deleteRow(id: number) {
-  isLoading.value = true;
-  let answer = confirm("Вы точно хотите удалить данную строку?");
-  if (answer) await storeRansom.deleteRansomRow(id, "Delivery");
-  filteredRows.value = await storeRansom.getRansomRows("Delivery");
-  rows.value = filteredRows.value;
-  if (rows.value) {
-    handleFilteredRows(rows.value);
-  }
-  isLoading.value = false;
+  await confirmAndExecute(async () => {
+    await storeRansom.deleteRansomRow(id, "Delivery");
+  });
 }
 
 async function deleteSelectedRows(idArray: number[]) {
-  isLoading.value = true;
-  let answer = confirm("Вы точно хотите удалить данные строки?");
-  if (answer) await storeRansom.deleteRansomSelectedRows(idArray, "Delivery");
-  filteredRows.value = await storeRansom.getRansomRows("Delivery");
-  rows.value = filteredRows.value;
-  if (rows.value) {
-    handleFilteredRows(rows.value);
-  }
-  isLoading.value = false;
+  await confirmAndExecute(async () => {
+    await storeRansom.deleteRansomSelectedRows(idArray, "Delivery");
+  });
 }
 
 async function updateRow() {
-  isLoading.value = true;
-  await storeRansom.updateRansomRow(rowData.value, user.value.username, "Delivery");
-  filteredRows.value = await storeRansom.getRansomRows("Delivery");
-  rows.value = filteredRows.value;
-  closeModal();
-  if (rows.value) {
-    handleFilteredRows(rows.value);
-  }
-  isLoading.value = false;
+  await handleRowOperation(() =>
+    storeRansom.updateRansomRow(rowData.value, user.value.username, "Delivery")
+  );
 }
 
 async function createRow() {
-  isLoading.value = true;
-  await storeRansom.createRansomRow(rowData.value, user.value.username, "Delivery");
-  filteredRows.value = await storeRansom.getRansomRows("Delivery");
-  rows.value = filteredRows.value;
-  closeModal();
-  if (rows.value) {
-    handleFilteredRows(rows.value);
-  }
-  isLoading.value = false;
+  await handleRowOperation(() =>
+    storeRansom.createRansomRow(rowData.value, user.value.username, "Delivery")
+  );
 }
 
-async function createCopyRow(id: number) {
-  isLoading.value = true;
-  await storeRansom.createCopyRow(id, "Delivery");
-  filteredRows.value = await storeRansom.getRansomRows("Delivery");
-  rows.value = filteredRows.value;
-  if (rows.value) {
-    handleFilteredRows(rows.value);
-  }
-  isLoading.value = false;
-}
-
-const filteredRows = ref<Array<IDelivery>>();
+const filteredRows = ref<Array<IDelivery>>([]);
 
 function handleFilteredRows(filteredRowsData: IDelivery[]) {
   filteredRows.value = filteredRowsData;
@@ -147,43 +143,57 @@ function handleFilteredRows(filteredRowsData: IDelivery[]) {
 
 async function deleteIssuedRows() {
   isLoading.value = true;
-  await storeRansom.deleteIssuedRows("Delivery");
-  filteredRows.value = await storeRansom.getRansomRows("Delivery");
-  rows.value = filteredRows.value;
-  isLoading.value = false;
+  try {
+    await storeRansom.deleteIssuedRows("Delivery");
+    filteredRows.value = await storeRansom.getRansomRows("Delivery");
+    rows.value = filteredRows.value;
+  } catch (error) {
+    console.error("Ошибка при удалении строк:", error);
+  } finally {
+    isLoading.value = false;
+  }
 }
 
-function deleteIssuedRowsTimer() {
+function isWithinDeleteTime() {
   const currentTime = new Date();
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
-  if (
+
+  return (
     (currentHour === 22 && currentMinute >= 0) ||
-    (currentHour === 23 && currentMinute >= 0) ||
-    (currentHour === 0 && currentMinute >= 0) ||
+    currentHour === 23 ||
+    currentHour === 0 ||
     (currentHour === 1 && currentMinute <= 59)
-  ) {
+  );
+}
+
+function deleteIssuedRowsTimer() {
+  if (isWithinDeleteTime()) {
     deleteIssuedRows();
   }
 }
 
 onMounted(async () => {
   isLoading.value = true;
-  user.value = await storeUsers.getUser();
-  rows.value = await storeRansom.getRansomRows("Delivery");
-  if (rows.value) {
-    handleFilteredRows(rows.value);
-  }
 
-  deleteIssuedRowsTimer();
+  try {
+    user.value = await storeUsers.getUser();
+    rows.value = await storeRansom.getRansomRows("Delivery");
 
-  isLoading.value = false;
+    if (rows.value) {
+      handleFilteredRows(rows.value);
+    }
+    deleteIssuedRowsTimer();
+    pvz.value = await storePVZ.getPVZ();
+    sortingCenters.value = await storeSortingCenters.getSortingCenters();
 
-  pvz.value = await storePVZ.getPVZ();
-  sortingCenters.value = await storeSortingCenters.getSortingCenters();
-
-  if (!token || user.value.dataDelivery === "NONE") {
-    router.push("/auth/login");
+    if (!token || user.value.dataDelivery === "NONE") {
+      router.push("/auth/login");
+    }
+  } catch (error) {
+    console.error("Ошибка при загрузке данных:", error);
+  } finally {
+    isLoading.value = false;
   }
 });
 
@@ -198,34 +208,44 @@ let isAutoName = ref(true);
 let isAutoFromName = ref(true);
 
 function getNameFromName() {
-  if (rowData.value.fromName.trim().length === 4) {
-    let phoneNum = rowData.value.fromName.trim().toString().slice(-4);
-    let row = rows.value?.filter((row) =>
-      row.fromName ? row.fromName.slice(-4) === phoneNum : ""
+  const { fromName } = rowData.value;
+  const trimmedFromName = fromName.trim();
+
+  if (trimmedFromName.length === 4) {
+    const phoneNum = trimmedFromName.slice(-4);
+    const matchingRows = rows.value?.filter(
+      (row) => row.fromName?.slice(-4) === phoneNum
     );
 
-    if (row && row.length > 0) {
-      if (row.some((r) => r.fromName !== row[0].fromName)) {
+    if (matchingRows?.length > 0) {
+      const uniqueNames = new Set(matchingRows.map((r) => r.fromName));
+
+      if (uniqueNames.size > 1) {
         toast.warning("Было найдено несколько номеров. Впишите полный номер");
       } else {
-        rowData.value.fromName = row[0].fromName;
+        rowData.value.fromName = matchingRows[0].fromName;
       }
     }
   }
 
-  if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
-    let rowCell = rows.value?.filter((row) => row.fromName === rowData.value.fromName);
+  if (trimmedFromName.length === 12 && isAutoFromName.value) {
+    const rowCell = rows.value?.find((row) => row.fromName === trimmedFromName);
+
     if (rowCell) {
-      rowData.value.name = rowCell[0].name;
+      rowData.value.name = rowCell.name;
     }
   }
 }
 
 function getFromNameFromName() {
-  if (rowData.value.name.trim() && isAutoName.value === true) {
-    let rowFromName = rows.value?.filter((row) => row.name === rowData.value.name);
+  const { name } = rowData.value;
+  const { value: isAuto } = isAutoName;
+
+  if (name.trim() && isAuto) {
+    const rowFromName = rows.value?.find((row) => row.name === name);
+
     if (rowFromName) {
-      rowData.value.fromName = rowFromName[0].fromName;
+      rowData.value.fromName = rowFromName.fromName;
     }
   }
 }
@@ -237,20 +257,14 @@ function getFromNameFromName() {
   </Head>
   <div>
     <div v-if="user.role === 'ADMIN'">
-      <NuxtLayout name="admin">
-        <div v-if="!isLoading" class="mt-5">
-          <div
-            class="flex justify-end"
-            v-if="user.username === 'Директор'"
-          >
+      <NuxtLayout name="table-admin">
+        <div v-if="!isLoading" class="bg-[#f8f9fd] pt-5 px-5">
+          <div class="flex justify-end" v-if="user.username === 'Директор'">
             <div
               class="bg-secondary-color cursor-pointer hover:opacity-50 duration-200 rounded-full pt-1.5 px-1.5 text-white"
               @click="router.push('/summary-tables/delivery')"
             >
-              <Icon
-                name="material-symbols:table-chart-view"
-                size="24"
-              />
+              <Icon name="material-symbols:table-chart-view" size="24" />
             </div>
           </div>
           <div>
@@ -279,7 +293,6 @@ function getFromNameFromName() {
             @open-modal="openModal"
             @delete-selected-rows="deleteSelectedRows"
             @update-delivery-rows="updateDeliveryRows"
-            @create-copy-row="createCopyRow"
           />
 
           <UIModal v-show="isOpen" @close-modal="closeModal">
@@ -333,7 +346,8 @@ function getFromNameFromName() {
               <div
                 class="grid grid-cols-2 mb-5"
                 v-if="
-                  (user.purchaseOfGoods === 'READ' || user.purchaseOfGoods === 'WRITE') &&
+                  (user.purchaseOfGoods === 'READ' ||
+                    user.purchaseOfGoods === 'WRITE') &&
                   !rowData.id
                 "
               >
@@ -364,7 +378,10 @@ function getFromNameFromName() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.percentClient3 === 'READ' || user.percentClient3 === 'WRITE'"
+                v-if="
+                  user.percentClient3 === 'READ' ||
+                  user.percentClient3 === 'WRITE'
+                "
               >
                 <label for="percentClient1">Процент с клиента</label>
                 <input
@@ -379,7 +396,8 @@ function getFromNameFromName() {
               <div
                 class="grid grid-cols-2 mb-5"
                 v-if="
-                  (user.purchaseOfGoods === 'READ' || user.purchaseOfGoods === 'WRITE') &&
+                  (user.purchaseOfGoods === 'READ' ||
+                    user.purchaseOfGoods === 'WRITE') &&
                   !rowData.id
                 "
               >
@@ -398,7 +416,8 @@ function getFromNameFromName() {
               <div
                 class="grid grid-cols-2 mb-5"
                 v-if="
-                  (user.percentClient3 === 'READ' || user.percentClient3 === 'WRITE') &&
+                  (user.percentClient3 === 'READ' ||
+                    user.percentClient3 === 'WRITE') &&
                   !rowData.id
                 "
               >
@@ -414,7 +433,9 @@ function getFromNameFromName() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.dispatchPVZ3 === 'READ' || user.dispatchPVZ3 === 'WRITE'"
+                v-if="
+                  user.dispatchPVZ3 === 'READ' || user.dispatchPVZ3 === 'WRITE'
+                "
               >
                 <label for="dispatchPVZ1">Отправка в ПВЗ</label>
                 <select
@@ -475,7 +496,10 @@ function getFromNameFromName() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.additionally3 === 'READ' || user.additionally3 === 'WRITE'"
+                v-if="
+                  user.additionally3 === 'READ' ||
+                  user.additionally3 === 'WRITE'
+                "
               >
                 <label for="additionally1">Дополнительно</label>
                 <select
@@ -491,9 +515,14 @@ function getFromNameFromName() {
               </div>
             </div>
 
-            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
+            <div
+              class="flex items-center justify-center gap-3 mt-10"
+              v-if="rowData.id"
+            >
               <UIMainButton @click="updateRow">Сохранить </UIMainButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
               <UIMainButton
@@ -501,11 +530,13 @@ function getFromNameFromName() {
                 @click="createRow"
                 >Создать
               </UIMainButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
           </UIModal>
         </div>
-        <div v-else>
+        <div v-else class="w-screen flex items-center justify-center">
           <UISpinner />
         </div>
       </NuxtLayout>
@@ -539,7 +570,6 @@ function getFromNameFromName() {
             @open-modal="openModal"
             @delete-selected-rows="deleteSelectedRows"
             @update-delivery-rows="updateDeliveryRows"
-            @create-copy-row="createCopyRow"
           />
 
           <UIModal v-show="isOpen" @close-modal="closeModal">
@@ -592,7 +622,10 @@ function getFromNameFromName() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.purchaseOfGoods === 'READ' || user.purchaseOfGoods === 'WRITE'"
+                v-if="
+                  user.purchaseOfGoods === 'READ' ||
+                  user.purchaseOfGoods === 'WRITE'
+                "
               >
                 <label for="purchaseOfGoods"
                   >Стоимость товаров <br />
@@ -608,7 +641,10 @@ function getFromNameFromName() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.percentClient3 === 'READ' || user.percentClient3 === 'WRITE'"
+                v-if="
+                  user.percentClient3 === 'READ' ||
+                  user.percentClient3 === 'WRITE'
+                "
               >
                 <label for="percentClient1">Процент с клиента</label>
                 <input
@@ -622,7 +658,10 @@ function getFromNameFromName() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.purchaseOfGoods === 'READ' || user.purchaseOfGoods === 'WRITE'"
+                v-if="
+                  user.purchaseOfGoods === 'READ' ||
+                  user.purchaseOfGoods === 'WRITE'
+                "
               >
                 <label for="purchaseOfGoods"
                   >Стоимость товаров <br />
@@ -638,7 +677,10 @@ function getFromNameFromName() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.percentClient3 === 'READ' || user.percentClient3 === 'WRITE'"
+                v-if="
+                  user.percentClient3 === 'READ' ||
+                  user.percentClient3 === 'WRITE'
+                "
               >
                 <label for="percentClient1">Процент с клиента</label>
                 <input
@@ -652,7 +694,9 @@ function getFromNameFromName() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.dispatchPVZ3 === 'READ' || user.dispatchPVZ3 === 'WRITE'"
+                v-if="
+                  user.dispatchPVZ3 === 'READ' || user.dispatchPVZ3 === 'WRITE'
+                "
               >
                 <label for="dispatchPVZ1">Отправка в ПВЗ</label>
                 <select
@@ -686,9 +730,14 @@ function getFromNameFromName() {
               </div>
             </div>
 
-            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
+            <div
+              class="flex items-center justify-center gap-3 mt-10"
+              v-if="rowData.id"
+            >
               <UIMainButton @click="updateRow">Сохранить </UIMainButton>
-              <UIExitModalButton @click="closeModal">Отменить</UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить</UIExitModalButton
+              >
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
               <UIMainButton
@@ -696,7 +745,9 @@ function getFromNameFromName() {
                 @click="createRow"
                 >Создать
               </UIMainButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
           </UIModal>
         </div>
