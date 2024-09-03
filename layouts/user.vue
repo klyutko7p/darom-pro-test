@@ -1,5 +1,6 @@
 <template>
   <NuxtPwaManifest />
+  <NuxtLoadingIndicator />
   <div class="flex">
     <SidebarUser />
     <div class="mx-auto container px-3 mt-10">

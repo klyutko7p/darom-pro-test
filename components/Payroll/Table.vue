@@ -74,6 +74,11 @@ let monthNames: any = ref({
 });
 const totalRows = computed(() => Math.ceil(props.rows?.length));
 onMounted(() => {
+  const storedMonthData = loadFromLocalStorage("monthDataPayroll");
+  if (storedMonthData !== null) {
+    month.value = storedMonthData;
+  }
+
   updateCurrentPageData();
 });
 
@@ -266,9 +271,23 @@ const filterRowsCompanyAndPVZ = () => {
     return rowDate.getMonth() + 1 === +month.value;
   });
 };
+function saveToLocalStorage(key: string, value: any) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+
+function loadFromLocalStorage(key: string) {
+  const storedValue = localStorage.getItem(key);
+  return storedValue ? JSON.parse(storedValue) : null;
+}
+
+function saveFiltersToLocalStorage() {
+  saveToLocalStorage("monthDataPayroll", month.value);
+}
 
 watch([props.rows, totalRows, props.user], updateCurrentPageData);
 watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
+watch(month, saveFiltersToLocalStorage);
 </script>
 <template>
   <div class="my-10 flex items-center gap-5">

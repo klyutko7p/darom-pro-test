@@ -71,7 +71,9 @@ async function createReport(object: any) {
     fullname: employee.fullname,
     phone: employee.phone,
     bank: employee.bank,
-    paymentPerShift: +(employee.paymentPerShift / employee.hoursPerShift).toFixed(2),
+    paymentPerShift: +(
+      employee.paymentPerShift / employee.hoursPerShift
+    ).toFixed(2),
     advance: 0,
     hours: 0,
     deductions: 0,
@@ -191,9 +193,19 @@ watch(isOpen, (newValue) => {
 const options = [
   { value: "", label: "Пусто" },
   { value: "Нам должны", label: "Нам должны" },
-  { value: "Расчёт уволенных сотрудников", label: "Расчёт уволенных сотрудников" },
+  {
+    value: "Расчёт уволенных сотрудников",
+    label: "Расчёт уволенных сотрудников",
+  },
   { value: "Оплачено", label: "Оплачено" },
 ];
+function clearLocalStorage() {
+  localStorage.clear();
+}
+
+onUnmounted(() => {
+  clearLocalStorage();
+});
 </script>
 
 <template>
@@ -213,10 +225,7 @@ const options = [
               class="bg-secondary-color cursor-pointer hover:opacity-50 duration-200 rounded-full pt-1.5 px-1.5 text-white"
               @click="router.push('/advance-report/employees')"
             >
-              <Icon
-                name="gridicons:multiple-users"
-                size="24"
-              />
+              <Icon name="gridicons:multiple-users" size="24" />
             </div>
           </div>
 
@@ -245,7 +254,11 @@ const options = [
               <div class="text-black">
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">ПВЗ</label>
-                  <USelectMenu class="w-full" v-model="rowData.PVZ" :options="pvz" />
+                  <USelectMenu
+                    class="w-full"
+                    v-model="rowData.PVZ"
+                    :options="pvz"
+                  />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
@@ -265,7 +278,9 @@ const options = [
                     value-attribute="id"
                     option-attribute="fullname"
                     :options="
-                      employees.sort((a, b) => a.fullname.localeCompare(b.fullname))
+                      employees.sort((a, b) =>
+                        a.fullname.localeCompare(b.fullname)
+                      )
                     "
                     @change="autoInfoByFullname"
                   />
@@ -278,22 +293,38 @@ const options = [
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">Банк</label>
-                  <USelectMenu class="w-full" v-model="rowData.bank" :options="banks" />
+                  <USelectMenu
+                    class="w-full"
+                    v-model="rowData.bank"
+                    :options="banks"
+                  />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Аванс</label>
-                  <UInput class="w-full" v-model="rowData.advance" type="number" />
+                  <UInput
+                    class="w-full"
+                    v-model="rowData.advance"
+                    type="number"
+                  />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Кол-во часов всего</label>
-                  <UInput class="w-full" v-model="rowData.hours" type="number" />
+                  <UInput
+                    class="w-full"
+                    v-model="rowData.hours"
+                    type="number"
+                  />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Удержания</label>
-                  <UInput class="w-full" v-model="rowData.deductions" type="number" />
+                  <UInput
+                    class="w-full"
+                    v-model="rowData.deductions"
+                    type="number"
+                  />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
@@ -318,13 +349,24 @@ const options = [
               </div>
             </template>
             <template v-slot:footer>
-              <div class="flex items-center justify-center gap-3" v-if="rowData.id">
-                <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
-                <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <div
+                class="flex items-center justify-center gap-3"
+                v-if="rowData.id"
+              >
+                <UISaveModalButton @click="updateRow"
+                  >Сохранить
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
               </div>
               <div class="flex items-center justify-center gap-3" v-else>
-                <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
-                <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+                <UISaveModalButton @click="createRow"
+                  >Создать
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
               </div>
             </template>
           </UINewModalEdit>

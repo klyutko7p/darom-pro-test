@@ -76,10 +76,6 @@ function saveFiltersToLocalStorage() {
   saveToLocalStorage("monthData", month.value);
 }
 
-function clearLocalStorage() {
-  localStorage.clear();
-}
-
 let returnRows = ref<Array<IAdvanceReport>>();
 
 import Cookies from "js-cookie";

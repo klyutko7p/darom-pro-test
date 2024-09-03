@@ -1,5 +1,6 @@
 <template>
     <NuxtPwaManifest />
+    <NuxtLoadingIndicator />
     <div class="flex">
       <SidebarUser  />
       <div class="px-10 mt-10">
