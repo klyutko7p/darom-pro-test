@@ -542,8 +542,16 @@ function getFromNameFromName() {
       </NuxtLayout>
     </div>
     <div v-else>
-      <NuxtLayout name="user">
-        <div v-if="!isLoading" class="mt-14">
+      <NuxtLayout name="table-user">
+        <div v-if="!isLoading" class="bg-[#f8f9fd] pt-5 px-5">
+          <div class="flex justify-end" v-if="user.username === 'Директор'">
+            <div
+              class="bg-secondary-color cursor-pointer hover:opacity-50 duration-200 rounded-full pt-1.5 px-1.5 text-white"
+              @click="router.push('/summary-tables/delivery')"
+            >
+              <Icon name="material-symbols:table-chart-view" size="24" />
+            </div>
+          </div>
           <div>
             <SpreadsheetsDeliveryFilters
               v-if="rows"
@@ -623,13 +631,27 @@ function getFromNameFromName() {
               <div
                 class="grid grid-cols-2 mb-5"
                 v-if="
-                  user.purchaseOfGoods === 'READ' ||
-                  user.purchaseOfGoods === 'WRITE'
+                  (user.purchaseOfGoods === 'READ' ||
+                    user.purchaseOfGoods === 'WRITE') &&
+                  !rowData.id
                 "
               >
                 <label for="purchaseOfGoods"
                   >Стоимость товаров <br />
                   сортировки</label
+                >
+                <input
+                  :disabled="user.purchaseOfGoods === 'READ'"
+                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  v-model="rowData.purchaseOfGoods"
+                  type="text"
+                />
+              </div>
+
+              <div class="grid grid-cols-2 mb-5" v-else>
+                <label for="purchaseOfGoods"
+                  >Cтоимость выкупа <br />
+                  товара</label
                 >
                 <input
                   :disabled="user.purchaseOfGoods === 'READ'"
@@ -659,8 +681,9 @@ function getFromNameFromName() {
               <div
                 class="grid grid-cols-2 mb-5"
                 v-if="
-                  user.purchaseOfGoods === 'READ' ||
-                  user.purchaseOfGoods === 'WRITE'
+                  (user.purchaseOfGoods === 'READ' ||
+                    user.purchaseOfGoods === 'WRITE') &&
+                  !rowData.id
                 "
               >
                 <label for="purchaseOfGoods"
@@ -678,8 +701,9 @@ function getFromNameFromName() {
               <div
                 class="grid grid-cols-2 mb-5"
                 v-if="
-                  user.percentClient3 === 'READ' ||
-                  user.percentClient3 === 'WRITE'
+                  (user.percentClient3 === 'READ' ||
+                    user.percentClient3 === 'WRITE') &&
+                  !rowData.id
                 "
               >
                 <label for="percentClient1">Процент с клиента</label>
@@ -728,6 +752,52 @@ function getFromNameFromName() {
                   </option>
                 </select>
               </div>
+
+              <div
+                class="grid grid-cols-2 mb-5"
+                v-if="user.sorted === 'READ' || user.sorted === 'WRITE'"
+              >
+                <label for="deliveredSC1">Отсортировано</label>
+                <input
+                  :disabled="user.sorted === 'READ'"
+                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  v-model="rowData.sorted"
+                  type="datetime-local"
+                />
+              </div>
+
+              <div
+                class="grid grid-cols-2 mb-5"
+                v-if="user.paid === 'READ' || user.paid === 'WRITE'"
+              >
+                <label for="deliveredPVZ1">Оплачено</label>
+                <input
+                  :disabled="user.paid === 'READ'"
+                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  v-model="rowData.paid"
+                  type="datetime-local"
+                />
+              </div>
+
+              <div
+                class="grid grid-cols-2 mb-5"
+                v-if="
+                  user.additionally3 === 'READ' ||
+                  user.additionally3 === 'WRITE'
+                "
+              >
+                <label for="additionally1">Дополнительно</label>
+                <select
+                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
+                  v-model="rowData.additionally"
+                  :disabled="user.additionally3 === 'READ'"
+                >
+                  <option value="">Отменить</option>
+                  <option value="Оплачено онлайн">Оплачено онлайн</option>
+                  <option value="Отказ клиент">Отказ клиент</option>
+                  <option value="Отказ брак">Отказ брак</option>
+                </select>
+              </div>
             </div>
 
             <div
@@ -736,8 +806,8 @@ function getFromNameFromName() {
             >
               <UIMainButton @click="updateRow">Сохранить </UIMainButton>
               <UIExitModalButton @click="closeModal"
-                >Отменить</UIExitModalButton
-              >
+                >Отменить
+              </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
               <UIMainButton
@@ -751,7 +821,7 @@ function getFromNameFromName() {
             </div>
           </UIModal>
         </div>
-        <div v-else>
+        <div v-else class="w-screen flex items-center justify-center">
           <UISpinner />
         </div>
       </NuxtLayout>

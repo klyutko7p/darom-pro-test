@@ -271,7 +271,7 @@ const items = [
         <thead
           class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
         >
-        <tr>
+        <tr class="h-[30px]">
             <th
               scope="col"
               class="border-[1px] px-3"
@@ -446,7 +446,7 @@ const items = [
           <div id="left"></div>
           <tr
             :class="{ 'bg-orange-100': isChecked(row.id) }"
-            class="border-b text-center text-sm"
+            class="border-b text-center text-sm h-[30px]"
             v-for="row in returnRows"
           >
             <td

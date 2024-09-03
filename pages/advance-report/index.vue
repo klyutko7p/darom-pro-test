@@ -99,10 +99,10 @@ let allSum = ref(0);
 let allSum2 = ref(0);
 let sumOfReject = ref(200);
 
-let copyArrayOurRansom = ref<Array<IOurRansom>>();
-let copyArrayClientRansom = ref<Array<IClientRansom>>();
-let ourRansomRows = ref<Array<IOurRansom>>();
-let clientRansomRows = ref<Array<IClientRansom>>();
+let copyArrayOurRansom = ref<Array<IOurRansom>>([]);
+let copyArrayClientRansom = ref<Array<IClientRansom>>([]);
+let ourRansomRows = ref<Array<IOurRansom>>([]);
+let clientRansomRows = ref<Array<IClientRansom>>([]);
 
 function getAllSumDirector() {
   copyArrayOurRansom.value = ourRansomRows.value?.filter(
