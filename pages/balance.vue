@@ -1416,7 +1416,7 @@ function getProfitRowsSum() {
     if (selectedPVZ.value === "ППВЗ_5") {
       allSumProfit.value += 9413;
     } else if (selectedPVZ.value === "ПВЗ_1") {
-      allSumProfit.value += 1574;
+      allSumProfit.value += 2125;
     }
   }
 }
