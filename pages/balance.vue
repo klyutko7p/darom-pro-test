@@ -3008,8 +3008,6 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                     :disabled="rowData.id > 0"
                     class="w-full"
                     v-model="rowData.pvz"
-                    value-attribute="name"
-                    option-attribute="name"
                     :options="user.PVZ"
                   />
                 </div>
