@@ -579,9 +579,9 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-  async function getRansomRowsById(id: number, flag: string) {
+  async function getRansomRowById(id: number, flag: string) {
     try {
-      let { data }: any = await useFetch("/api/ransom/get-rows-by-id", {
+      let { data }: any = await useFetch("/api/ransom/get-row-by-id", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -977,7 +977,7 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsByFromName,
     getSumOfRejection,
     updateSumOfRejection,
-    getRansomRowsById,
+    getRansomRowById,
     getRansomRowsWithDeleted,
     getRansomRowsRefunds,
     getRansomRowsForUpdateCells,

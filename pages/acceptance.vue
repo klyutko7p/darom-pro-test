@@ -8,23 +8,38 @@ const toast = useToast();
 const storeUsers = useUsersStore();
 const storeRansom = useRansomStore();
 const storeClients = useClientsStore();
+
 const router = useRouter();
 
-let user = ref({} as User);
-let clients = ref<Array<Client>>([]);
+const user = ref<User>({} as User);
+const clients = ref<Client[]>([]);
+const isLoading = ref(false);
+const isScanActive = ref(false);
+const scanStringItem = ref("");
+const scannedLink = ref("");
+const arrayOfRows = ref<IOurRansom[]>([]);
+const rowData = ref<IOurRansom | null>(null);
+const myInput = ref<HTMLInputElement | null>(null);
+const selectedPVZ = ref(Cookies.get("selectedPVZ") || "");
+let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
 const token = Cookies.get("token");
-let isLoading = ref(false);
 
 onMounted(async () => {
   if (!token) {
-    router.push("/auth/login");
+    return router.push("/auth/login");
   }
 
   isLoading.value = true;
-  user.value = await storeUsers.getUser();
-  isLoading.value = false;
-  clients.value = await storeClients.getClients();
-  focusInput();
+  try {
+    user.value = await storeUsers.getUser();
+    clients.value = await storeClients.getClients();
+  } catch (error) {
+    toast.error("Failed to fetch user or clients data.");
+  } finally {
+    isLoading.value = false;
+    focusInput();
+  }
 });
 
 definePageMeta({
@@ -32,34 +47,43 @@ definePageMeta({
   name: "Приёмка",
 });
 
-let isScanActive = ref(false);
-
-let scanStringItem = ref("");
-let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-async function updateDeliveryRow(row: any, flag: any) {
-  await storeRansom.updateDeliveryStatus(row, flag, "OurRansom", user.value.username);
+function focusInput() {
+  isScanActive.value = true;
+  myInput.value?.focus();
 }
 
-function updatePage() {
-  location.reload();
+function formatPhoneNumber(phoneNumber: string) {
+  const digitsOnly = phoneNumber.replace(/\D/g, "");
+  if (digitsOnly.length < 11) {
+    return "Неправильный формат номера телефона";
+  }
+  return `+7${"*".repeat(digitsOnly.length - 5)}${digitsOnly.slice(-4)}`;
 }
 
-async function acceptItem(row: any) {
-  if (
-    user.value.role === "PVZ" ||
-    user.value.role === "ADMINISTRATOR" ||
-    user.value.role === "PPVZ" ||
-    user.value.role === "ADMIN"
-  ) {
-    if (
-      user.value.PVZ.includes(row.dispatchPVZ) &&
-      user.value.PVZ.includes(selectedPVZ.value) &&
-      row.dispatchPVZ === selectedPVZ.value
-    ) {
+function convertToURL(inputString: string): number {
+  const parts = inputString.split(/[/.]/);
+  return Number(parts[parts.length - 1]) || 0;
+}
+
+async function updateDeliveryRow(row: IOurRansom, flag: string) {
+  try {
+    await storeRansom.updateDeliveryStatus(row, flag, "OurRansom", user.value?.username || "");
+  } catch (error) {
+    toast.error("Error updating delivery status.");
+  }
+}
+
+async function acceptItem(row: IOurRansom) {
+  if (!user.value) return toast.error("User data is not available.");
+  
+  const { role, PVZ } = user.value;
+
+  if (["PVZ", "ADMINISTRATOR", "PPVZ", "ADMIN"].includes(role)) {
+    if (PVZ.includes(row.dispatchPVZ) && PVZ.includes(selectedPVZ.value) && row.dispatchPVZ === selectedPVZ.value) {
       if (row.deliveredPVZ === null && row.deliveredSC !== null) {
         await updateDeliveryRow(row, "PVZ");
-        if (clients.value.find((client) => client.phoneNumber === row.fromName)) {
+        const client = clients.value.find(client => client.phoneNumber === row.fromName);
+        if (client) {
           await storeClients.sendMessageToClient(
             "Статус заказа: Darom.pro",
             "Уважаемый клиент, Ваш заказ готов к получению.",
@@ -67,37 +91,10 @@ async function acceptItem(row: any) {
           );
         }
         toast.success("Товар принят на ПВЗ!");
-        if (
-          user.value.username === "Гриценко" ||
-          user.value.username === "Коростелева" ||
-          user.value.username === "Гарник"
-        ) {
-          setTimeout(() => {
-            updatePage();
-          }, 3000);
-        }
       } else if (row.deliveredPVZ !== null) {
         toast.warning("Товар принят ранее!");
-        if (
-          user.value.username === "Гриценко" ||
-          user.value.username === "Коростелева" ||
-          user.value.username === "Гарник"
-        ) {
-          setTimeout(() => {
-            updatePage();
-          }, 3000);
-        }
       } else if (row.deliveredSC === null) {
         toast.warning("Товар неотсортирован!");
-        if (
-          user.value.username === "Гриценко" ||
-          user.value.username === "Коростелева" ||
-          user.value.username === "Гарник"
-        ) {
-          setTimeout(() => {
-            updatePage();
-          }, 3000);
-        }
       } else {
         toast.error("Неизвестная ошибка!");
       }
@@ -109,81 +106,48 @@ async function acceptItem(row: any) {
   }
 }
 
-let arrayOfRows = ref<Array<IOurRansom | IClientRansom | IDelivery>>([]);
+async function scanItem() {
+  if (timeoutId) clearTimeout(timeoutId);
 
-let scannedLink = ref("");
-
-function scanItem() {
-  if (timeoutId !== null) {
-    clearTimeout(timeoutId);
-  }
   timeoutId = setTimeout(async () => {
-    scannedLink.value = scanStringItem.value.trim();
-    scannedLink.value = convertToURL(scannedLink.value) || "";
-    console.log(scannedLink);
-    console.log(scanStringItem);
-    scanStringItem.value = "";
-    console.log(scannedLink);
-
-    if (scannedLink.value) {
-      let rowData = await storeRansom.getRansomRowsById(+scannedLink.value, "OurRansom");
-      await acceptItem(rowData);
-      arrayOfRows.value.push(rowData);
+    const trimmedScanString = scanStringItem.value.trim();
+    if (!trimmedScanString) {
+      console.warn("Сканированная строка пуста.");
+      return;
     }
 
-    scannedLink.value = "";
-    console.log(scannedLink);
+    scannedLink.value = trimmedScanString;
+    const idRow = convertToURL(scannedLink.value);
+    scanStringItem.value = "";
+
+    try {
+      rowData.value = await storeRansom.getRansomRowById(idRow, "OurRansom");
+      if (rowData.value) {
+        await acceptItem(rowData.value);
+        arrayOfRows.value.push(rowData.value);
+        console.log("Полученные данные:", rowData.value);
+      } else {
+        console.warn("Данные не найдены для idRow:", idRow);
+      }
+    } catch (error) {
+      console.error("Ошибка при обработке данных:", error);
+    } finally {
+      scannedLink.value = "";
+      rowData.value = null;
+    }
   }, 1700);
+
   focusInput();
 }
 
-function convertToURL(inputString: string): string | undefined {
-  if (inputString.includes("/")) {
-    const parts = inputString.split("/");
-    const entryID = parts[parts.length - 1];
-    return entryID;
-  } else if (inputString.includes(".")) {
-    const parts = inputString.split(".");
-    const entryID = parts[parts.length - 1];
-    return entryID;
-  }
-
-  return undefined;
-}
-
-const myInput = ref(null);
-
-function focusInput() {
-  isScanActive.value = true;
-  myInput.value.focus();
-}
-
-function formatPhoneNumber(phoneNumber: string) {
-  if (!phoneNumber) {
-    return "Номер телефона не указан";
-  }
-
-  const digitsOnly = phoneNumber.replace(/\D/g, "");
-
-  if (digitsOnly.length < 11) {
-    return "Неправильный формат номера телефона";
-  }
-
-  const maskedPhoneNumber =
-    "+7" + "*".repeat(digitsOnly.length - 5) + digitsOnly.slice(-4);
-
-  return maskedPhoneNumber;
-}
-
-const selectedPVZ = ref(Cookies.get("selectedPVZ") || "");
-
-const updateCookies = () => {
+function updateCookies() {
   Cookies.set("selectedPVZ", selectedPVZ.value, { expires: 7 });
-  console.log(selectedPVZ.value);
-};
+}
 
-watch(selectedPVZ, (newValue) => {
-  Cookies.set("selectedPVZ", newValue, { expires: 7 });
+watch(selectedPVZ, updateCookies);
+
+watch(scanStringItem, (newValue) => {
+  if (newValue) scanItem();
 });
 </script>
 
