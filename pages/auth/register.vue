@@ -212,7 +212,7 @@ onMounted(async () => {
 watch(() => phoneNumberData.value, validationPhoneNumber);
 
 function validationPhoneNumber() {
-  phoneNumberData.value = phoneNumberData.value.replace(/[^0-9+]/g, "");
+  phoneNumberData.value = phoneNumberData.value.replace(/[^0-9]/g, "");
   if (!phoneNumberData.value.startsWith("+7")) {
     phoneNumberData.value =
       "+7" + phoneNumberData.value.replace(/^(\+?7|8)?/, "");

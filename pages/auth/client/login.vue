@@ -163,7 +163,7 @@ function generateRandomPassword(length: number) {
 watch(() => phoneNumber.value, validationPhoneNumber);
 
 function validationPhoneNumberData() {
-  phoneNumberData.value = phoneNumberData.value.replace(/[^0-9+]/g, "");
+  phoneNumberData.value = phoneNumberData.value.replace(/[^0-9]/g, "");
   if (!phoneNumberData.value.startsWith("+7")) {
     phoneNumberData.value =
       "+7" + phoneNumberData.value.replace(/^(\+?7|8)?/, "");
@@ -171,7 +171,7 @@ function validationPhoneNumberData() {
 }
 
 function validationPhoneNumber() {
-  phoneNumber.value = phoneNumber.value.replace(/[^0-9+]/g, "");
+  phoneNumber.value = phoneNumber.value.replace(/[^0-9]/g, "");
   if (!phoneNumber.value.startsWith("+7")) {
     phoneNumber.value = "+7" + phoneNumber.value.replace(/^(\+?7|8)?/, "");
   }
