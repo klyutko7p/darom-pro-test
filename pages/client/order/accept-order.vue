@@ -281,17 +281,6 @@ function deleteItemFromOrder(productName: number) {
   }
 }
 
-function handlePaste() {
-  const urlPattern = /(https?:\/\/[^\s]+)/g;
-  const match = urlToItem.value.match(urlPattern);
-
-  if (match) {
-    urlToItem.value = match[0];
-  } else {
-    urlToItem.value = "";
-  }
-}
-
 const coordinates = ref([47.98958366983051, 37.8955255423278]);
 const controls = ["geolocationControl", "zoomControl", "typeSelector"];
 
@@ -388,7 +377,6 @@ function changeAddress(coordinates: Array<number>) {
           </h1>
           <input
             v-model="urlToItem"
-            @input="handlePaste"
             type="text"
             class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 focus:ring-2 w-full focus:ring-yellow-600 sm:text-sm sm:leading-6"
           />
