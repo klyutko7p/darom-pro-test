@@ -201,7 +201,7 @@ function scanItem() {
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertToURL(scannedLink);
-    let rowData = await storeRansom.getRansomRowsById(
+    let rowData = await storeRansom.getRansomRowById(
       +scannedLink,
       "OurRansom"
     );
