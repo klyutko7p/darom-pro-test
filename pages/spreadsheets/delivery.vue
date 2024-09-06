@@ -224,13 +224,14 @@ function getNameFromName() {
         toast.warning("Было найдено несколько номеров. Впишите полный номер");
       } else {
         rowData.value.fromName = matchingRows[0].fromName;
+        rowData.value.name = matchingRows[0].name;
       }
     }
   }
 
+
   if (trimmedFromName.length === 12 && isAutoFromName.value) {
     const rowCell = rows.value?.find((row) => row.fromName === trimmedFromName);
-
     if (rowCell) {
       rowData.value.name = rowCell.name;
     }
