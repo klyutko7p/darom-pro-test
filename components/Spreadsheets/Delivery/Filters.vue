@@ -142,14 +142,16 @@ const filterRows = () => {
       (!selectedOrderPVZ.value.length ||
         selectedOrderPVZ.value.includes(row.orderPVZ)) &&
       (!selectedAdditionally.value.length ||
-        selectedAdditionally.value.includes(row.additionally)) &&
-      (!selected.value.start ||
-        new Date(row.sorted) >= new Date(newStartingDate)) &&
-      (!selected.value.end || new Date(row.sorted) <= new Date(newEndDate))
+        selectedAdditionally.value.includes(row.additionally)) 
     );
   });
   emit("filtered-rows", filteredRows.value);
 };
+
+// &&
+//       (!selected.value.start ||
+//         new Date(row.sorted) >= new Date(newStartingDate)) &&
+//       (!selected.value.end || new Date(row.sorted) <= new Date(newEndDate))
 
 const currentDate = new Date();
 function clearFields() {

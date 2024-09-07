@@ -6,18 +6,70 @@ const router = useRouter();
 const coordinates = ref([47.98958366983051, 37.8955255423278]);
 const controls = ["geolocationControl", "zoomControl", "typeSelector"];
 
-let selectedAddress = ref([47.98958366983051, 37.8955255423278]);
+const addressItems = ref([
+  {
+    id: 1,
+    address: [47.98958366983051, 37.8955255423278],
+    text: "г. Донецк, Буденовский р-н, Заперевальная, ул. Антропова 16",
+  },
+  {
+    id: 2,
+    address: [47.945142, 37.960908],
+    text: "г. Донецк, ул. Нартова, 1",
+  },
+  {
+    id: 3,
+    address: [47.955462, 37.964951],
+    text: "г. Донецк, ул. Палладина, 20",
+  },
+  {
+    id: 4,
+    address: [47.946192, 37.90365],
+    text: "г. Донецк, ул. Дудинская, д. 4, кв7",
+  },
+  {
+    id: 5,
+    address: [47.974937, 37.837714],
+    text: "г. Донецк, ул. Жебелева, д. 7",
+  },
+]);
+
+let selectedAddress = ref(addressItems.value[0].address);
+
 function changeAddress(arrayCoordinates: Array<number>) {
   coordinates.value = arrayCoordinates;
+  selectedAddress.value = addressItems.value.find(
+    (item) => item.address[0] === arrayCoordinates[0]
+  )?.address;
   zoomValue.value = 9;
 }
 
 let markers = [
-  [47.98958366983051, 37.8955255423278],
-  [47.945142, 37.960908],
-  [47.955462, 37.964951],
-  [47.946192, 37.90365],
-  [47.974937, 37.837714],
+  {
+    id: 1,
+    coords: [47.98958366983051, 37.8955255423278],
+    commentary: "Вход «ремонт обуви». Нет примерочной",
+  },
+  {
+    id: 2,
+    coords: [47.945142, 37.960908],
+    commentary: "Возле магазина «Добрый». Есть примерочная",
+  },
+  {
+    id: 3,
+    coords: [47.955462, 37.964951],
+    commentary: "Есть примерочная",
+  },
+  {
+    id: 4,
+    coords: [47.946192, 37.90365],
+    commentary: "",
+  },
+  {
+    id: 5,
+    coords: [47.974937, 37.837714],
+    commentary: "",
+  },
 ];
 
 let zoomValue = ref(10);
@@ -49,31 +101,44 @@ const items = [
   <NuxtLayout name="main-page">
     <div class="bg-main-page">
       <div class="py-5 max-md:px-5 mx-auto container" v-cloak>
-        <div class="flex items-center justify-between gap-5">
+        <div class="flex items-center justify-end gap-5 max-sm:justify-center">
           <UIMainButton @click="router.push('/auth/client/login')"
-            >Вход клиента</UIMainButton
+            >сделать заказ</UIMainButton
           >
-          <UIMainButton @click="router.push('/auth/login')">Вход сотрудника</UIMainButton>
         </div>
-        <div class="flex items-center justify-center flex-col">
-          <h1 class="text-secondary-color font-bold text-8xl max-lg:text-6xl mt-3">
+        <div class="flex items-center justify-center flex-col space-y-5">
+          <h1
+            class="text-secondary-color font-bold text-8xl max-lg:text-6xl mt-3"
+          >
             DAROM.pro
           </h1>
-          <h1 class="text-secondary-color font-bold uppercase mt-3 max-md:text-center">
-            Доставка из интернет-магазинов WILDBERRIES, OZON, ЯНДЕКС МАРКЕТ И ДР.
+          <h1
+            class="text-secondary-color font-bold uppercase mt-3 max-md:text-center"
+          >
+            Доставка из интернет-магазинов WILDBERRIES, OZON, ЯНДЕКС МАРКЕТ И
+            ДР.
           </h1>
           <h1 class="text-xl mt-5 max-md:text-center">
-            по всем вопросам и для оформления заказа звоните:
+            По всем вопросам и для оформления заказа звоните:
           </h1>
           <h1 class="text-xl max-[500px]:mt-3 text-center">
-            <a
-              class="underline text-secondary-color hover:opacity-50 duration-200 mr-2"
-              href="tel:+79496124760"
-            >
-              +7(949)612-47-60
-            </a>
+            <div>
+              <a
+                class="text-secondary-color underline underline-offset-2 font-bold px-5 rounded-xl hover:opacity-50 duration-200 mr-2"
+                href="tel:+79496124760"
+              >
+                +7 (949) 612-47-60
+              </a>
+            </div>
             <br class="hidden max-[500px]:block" />
-            Telegram, WhatsApp
+            <div class="mt-5 space-x-5">
+              <a class="hover:opacity-50 duration-200" href="tel:+79496124760">
+                <Icon name="logos:telegram" size="32" />
+              </a>
+              <a class="hover:opacity-50 duration-200" href="tel:+79496124760">
+                <Icon name="logos:whatsapp-icon" size="32" />
+              </a>
+            </div>
           </h1>
         </div>
         <div
@@ -87,7 +152,9 @@ const items = [
             <h1 class="text-center text-xl hidden max-[500px]:block">
               Кликай и присоединяйся к нам!
             </h1>
-            <div class="flex items-center gap-10 mt-6 max-[500px]:justify-center">
+            <div
+              class="flex items-center gap-10 mt-6 max-[500px]:justify-center"
+            >
               <div class="flex flex-col items-center">
                 <img
                   class="max-w-[160px] max-[500px]:hidden"
@@ -121,48 +188,15 @@ const items = [
           <div class="max-md:w-full w-[770px]">
             <div class="flex mb-3 items-center gap-3 text-xl">
               <h1>Выберите адрес</h1>
-              <Icon
-                @click="isHiddenMenu = !isHiddenMenu"
-                class="hover:text-secondary-color duration-200 cursor-pointer"
-                name="material-symbols:arrow-downward"
-              />
             </div>
-
-            <div v-if="!isHiddenMenu">
-              <ul class="gap-3 flex flex-col text-sm">
-                <li
-                  class="border-2 border-secondary-color p-3 hover:bg-secondary-color hover:text-white duration-200 cursor-pointer"
-                  @click="changeAddress([47.98958366983051, 37.8955255423278])"
-                >
-                  г. Донецк, Буденовский р-н, Заперевальная, ул. Антропова 16, вход
-                  "ремонт обуви" (нет примерочной)
-                </li>
-                <li
-                  class="border-2 border-secondary-color p-3 hover:bg-secondary-color hover:text-white duration-200 cursor-pointer"
-                  @click="changeAddress([47.945142, 37.960908])"
-                >
-                  г. Донецк, ул. Нартова, 1. Возле магазина "Добрый" (есть примерочная)
-                </li>
-                <li
-                  class="border-2 border-secondary-color p-3 hover:bg-secondary-color hover:text-white duration-200 cursor-pointer"
-                  @click="changeAddress([47.955462, 37.964951])"
-                >
-                  г. Донецк, ул. Палладина, 20. (есть примерочная)
-                </li>
-                <li
-                  class="border-2 border-secondary-color p-3 hover:bg-secondary-color hover:text-white duration-200 cursor-pointer"
-                  @click="changeAddress([47.946192, 37.90365])"
-                >
-                  г. Донецк, ул. Дудинская, д. 4, кв7
-                </li>
-                <li
-                  class="border-2 border-secondary-color p-3 hover:bg-secondary-color hover:text-white duration-200 cursor-pointer"
-                  @click="changeAddress([47.974937, 37.837714])"
-                >
-                  г. Донецк, ул. Жебелева, д. 7
-                </li>
-              </ul>
-            </div>
+            <UInputMenu
+              @change="changeAddress"
+              :options="addressItems"
+              v-model="selectedAddress"
+              size="xl"
+              option-attribute="text"
+              value-attribute="address"
+            />
             <ClientOnly>
               <YandexMap
                 class="w-[770px] max-md:w-full"
@@ -174,9 +208,13 @@ const items = [
               >
                 <YandexMarker
                   v-for="marker in markers"
-                  :coordinates="marker"
-                  :marker-id="marker"
+                  :coordinates="marker.coords"
+                  @click="changeAddress(marker.coords)"
+                  :marker-id="marker.id"
                 >
+                  <template #component>
+                    <CustomBalloonMainPage :commentary="marker.commentary" />
+                  </template>
                 </YandexMarker>
               </YandexMap>
             </ClientOnly>
@@ -185,6 +223,11 @@ const items = [
         <div class="flex items-center justify-center mt-24 max-lg:m-0">
           <UIMainButton @click="openModal">ИНФОРМАЦИЯ</UIMainButton>
         </div>
+      </div>
+      <div class="flex justify-end mr-5 py-10">
+        <UIMainButton @click="router.push('/auth/login')"
+          >Вход исполнителя</UIMainButton
+        >
       </div>
     </div>
 
@@ -205,30 +248,39 @@ const items = [
 
           <template #payment>
             <div class="text-gray-900 dark:text-white text-left px-3">
-              <img src="../assets/images/tochka-bank.png" class="w-auto h-8 mx-auto" />
+              <img
+                src="../assets/images/tochka-bank.png"
+                class="w-auto h-8 mx-auto"
+              />
 
               <p
-                class="text-sm grid grid-cols-2 border-b-2 pb-3 text-gray-500 dark:text-gray-400 mt-3"
+                class="text-sm grid grid-cols-2 max-sm:grid-cols-1 border-b-2 pb-3 text-gray-500 dark:text-gray-400 mt-3"
               >
                 <span class="font-bold"> Услуги: </span>
-                <span class="text-right">Доставка товаров</span>
+                <span class="text-right max-sm:text-left"
+                  >Доставка товаров</span
+                >
               </p>
               <p
-                class="text-sm grid grid-cols-2 border-b-2 pb-3 text-gray-500 dark:text-gray-400 mt-3"
+                class="text-sm grid grid-cols-2 max-sm:grid-cols-1 border-b-2 pb-3 text-gray-500 dark:text-gray-400 mt-3"
               >
                 <span class="font-bold"> Условия: </span>
-                <span class="text-right">
-                  Мы осуществляем сбор заказов клиента в другом городе, а затем доставку
-                  товаров в указанный клиентом населенный пункт
+                <span class="text-right max-sm:text-left">
+                  Мы осуществляем сбор заказов клиента в другом городе, а затем
+                  доставку товаров в указанный клиентом населенный пункт
                 </span>
               </p>
               <p
-                class="text-sm grid grid-cols-2 border-b-2 pb-3 text-gray-500 dark:text-gray-400 mt-3"
+                class="text-sm grid grid-cols-2 max-sm:grid-cols-1 border-b-2 pb-3 text-gray-500 dark:text-gray-400 mt-3"
               >
                 <span class="font-bold"> Стоимость: </span>
-                <span class="text-right">Рассчитывается индивидуально </span>
+                <span class="text-right max-sm:text-left"
+                  >Рассчитывается индивидуально
+                </span>
               </p>
-              <p class="text-sm text-center text-gray-500 dark:text-gray-400 mt-10">
+              <p
+                class="text-sm text-center text-gray-500 dark:text-gray-400 mt-10"
+              >
                 Просмотреть
                 <a
                   class="font-bold underline text-secondary-color duration-200 cursor-pointer hover:opacity-50"
@@ -243,3 +295,17 @@ const items = [
     </UINewModalEditNoPadding>
   </NuxtLayout>
 </template>
+
+<style>
+.yandex-balloon {
+  width: 150px;
+  height: 100px;
+}
+
+@media (max-width: 640px) {
+  .yandex-balloon {
+    width: 100%;
+    height: 50px;
+  }
+}
+</style>

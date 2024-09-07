@@ -118,8 +118,7 @@ a {
 }
 
 .modal-container-body {
-  height: 450px;
-  padding: 10px 32px 10px;
+  padding: 10px 10px 10px;
   overflow-y: auto;
 }
 
