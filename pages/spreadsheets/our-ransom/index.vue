@@ -92,11 +92,19 @@ async function deleteSelectedRows(idArray: number[]) {
 async function updateRow() {
   isLoading.value = true;
 
-  await storeRansom.updateRansomRow(rowData.value, user.value.username, "OurRansom");
+  await storeRansom.updateRansomRow(
+    rowData.value,
+    user.value.username,
+    "OurRansom"
+  );
   filteredRows.value = await storeRansom.getRansomRowsOurRansom();
 
   if (cellData.value) {
-    await storeCells.updateCell(cellData.value, "Занято", rowData.value.fromName);
+    await storeCells.updateCell(
+      cellData.value,
+      "Занято",
+      rowData.value.fromName
+    );
   }
 
   closeModal();
@@ -110,11 +118,19 @@ async function updateRow() {
 async function createRow() {
   isLoading.value = true;
 
-  await storeRansom.createRansomRow(rowData.value, user.value.username, "OurRansom");
+  await storeRansom.createRansomRow(
+    rowData.value,
+    user.value.username,
+    "OurRansom"
+  );
   filteredRows.value = await storeRansom.getRansomRowsOurRansom();
 
   if (cellData.value) {
-    await storeCells.updateCell(cellData.value, "Занято", rowData.value.fromName);
+    await storeCells.updateCell(
+      cellData.value,
+      "Занято",
+      rowData.value.fromName
+    );
   }
 
   closeModal();
@@ -138,15 +154,25 @@ const filteredRows = ref<Array<IOurRansom>>();
 function handleFilteredRows(filteredRowsData: IOurRansom[]) {
   if (user.value.visiblePVZ === "ВСЕ" && user.value.visibleSC === "ВСЕ") {
     filteredRows.value = filteredRowsData;
-  } else if (user.value.visiblePVZ === "ВСЕ" && user.value.visibleSC !== "ВСЕ") {
+  } else if (
+    user.value.visiblePVZ === "ВСЕ" &&
+    user.value.visibleSC !== "ВСЕ"
+  ) {
     filteredRows.value = filteredRowsData.filter(
       (row) => row.orderPVZ === user.value.visibleSC && row.deliveredSC !== null
     );
-  } else if (user.value.visiblePVZ !== "ВСЕ" && user.value.visibleSC === "ВСЕ") {
+  } else if (
+    user.value.visiblePVZ !== "ВСЕ" &&
+    user.value.visibleSC === "ВСЕ"
+  ) {
     filteredRows.value = filteredRowsData.filter(
-      (row) => user.value.PVZ.includes(row.dispatchPVZ) && row.deliveredSC !== null
+      (row) =>
+        user.value.PVZ.includes(row.dispatchPVZ) && row.deliveredSC !== null
     );
-  } else if (user.value.visiblePVZ !== "ВСЕ" && user.value.visibleSC !== "ВСЕ") {
+  } else if (
+    user.value.visiblePVZ !== "ВСЕ" &&
+    user.value.visibleSC !== "ВСЕ"
+  ) {
     filteredRows.value = filteredRowsData.filter(
       (row) =>
         user.value.PVZ.includes(row.dispatchPVZ) &&
@@ -157,7 +183,9 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
 
   if (filteredRows.value) {
     if (user.value.role === "SORTIROVKA") {
-      filteredRows.value = filteredRows.value.filter((row) => row.deliveredPVZ === null);
+      filteredRows.value = filteredRows.value.filter(
+        (row) => row.deliveredPVZ === null
+      );
     } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {
       let today = new Date().toLocaleDateString("ru-RU", {
         day: "2-digit",
@@ -238,7 +266,8 @@ onMounted(async () => {
 });
 
 async function updateCells() {
-  let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
+  let rowsWithDeleted =
+    await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
   await storeCells.updateCellsStatus(rowsWithDeleted);
   cells.value = await storeCells.getCells();
   cells.value = cells.value?.filter((cell) => cell.PVZ !== "НаДом");
@@ -278,30 +307,41 @@ async function getCellFromName() {
 
   if (rowData.value.fromName.trim().length === 12 && isAutoPVZ.value === true) {
     let row = originallyRows.value?.filter(
-      (row) => row.fromName === rowData.value.fromName && !row.cell.includes("-")
+      (row) =>
+        row.fromName === rowData.value.fromName && !row.cell.includes("-")
     );
     if (row && row.length > 0) {
       if (row.some((r) => r.dispatchPVZ !== row[0].dispatchPVZ)) {
-        toast.warning("У клиента есть товары на разных ПВЗ! Выберите ПВЗ самостоятельно");
+        toast.warning(
+          "У клиента есть товары на разных ПВЗ! Выберите ПВЗ самостоятельно"
+        );
       } else {
         rowData.value.dispatchPVZ = row[0].dispatchPVZ;
       }
     }
   }
 
-  if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
+  if (
+    rowData.value.fromName.trim().length === 12 &&
+    isAutoFromName.value === true
+  ) {
     let row = originallyRows.value?.filter(
       (row) =>
         row.fromName === rowData.value.fromName &&
         row.dispatchPVZ === rowData.value.dispatchPVZ &&
-        (row.deliveredPVZ === null || row.deliveredSC === null || row.issued === null) &&
+        (row.deliveredPVZ === null ||
+          row.deliveredSC === null ||
+          row.issued === null) &&
         !row.cell.includes("-")
     );
 
     if (row && row.length > 0) {
-      const unoccupiedCellsAndPVZ = cells.value?.sort((a, b) => a.name - b.name);
+      const unoccupiedCellsAndPVZ = cells.value?.sort(
+        (a, b) => a.name - b.name
+      );
       const freeCell = unoccupiedCellsAndPVZ?.find(
-        (cell) => cell.PVZ === rowData.value.dispatchPVZ && cell.status === "Свободно"
+        (cell) =>
+          cell.PVZ === rowData.value.dispatchPVZ && cell.status === "Свободно"
       );
 
       const targetCell = row[0].cell;
@@ -343,18 +383,26 @@ async function getCellFromName() {
 }
 
 async function changePVZ() {
-  if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
+  if (
+    rowData.value.fromName.trim().length === 12 &&
+    isAutoFromName.value === true
+  ) {
     let row = originallyRows.value?.filter(
       (row) =>
         row.fromName === rowData.value.fromName &&
         row.dispatchPVZ === rowData.value.dispatchPVZ &&
-        (row.deliveredPVZ === null || row.deliveredSC === null || row.issued === null) &&
+        (row.deliveredPVZ === null ||
+          row.deliveredSC === null ||
+          row.issued === null) &&
         !row.cell.includes("-")
     );
     if (row && row.length > 0) {
-      const unoccupiedCellsAndPVZ = cells.value?.sort((a, b) => a.name - b.name);
+      const unoccupiedCellsAndPVZ = cells.value?.sort(
+        (a, b) => a.name - b.name
+      );
       const freeCell = unoccupiedCellsAndPVZ?.find(
-        (cell) => cell.PVZ === rowData.value.dispatchPVZ && cell.status === "Свободно"
+        (cell) =>
+          cell.PVZ === rowData.value.dispatchPVZ && cell.status === "Свободно"
       );
 
       const targetCell = row[0].cell;
@@ -438,7 +486,8 @@ async function updateCellStatusFull() {
 
   // console.log(result);
   isLoading.value = true;
-  let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
+  let rowsWithDeleted =
+    await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
   await storeCells.updateCellsStatusWithNoSpeed(rowsWithDeleted);
   toast.success("Обновление ячеек прошло успешно!");
   isLoading.value = false;
@@ -526,7 +575,9 @@ async function parsingPage() {
     if (rowData.value.productLink.length > 20) {
       if (rowData.value.productLink.includes("wildberries")) {
         isLoading.value = true;
-        let itemInfo = await storeClients.fetchSiteWB(rowData.value.productLink);
+        let itemInfo = await storeClients.fetchSiteWB(
+          rowData.value.productLink
+        );
         if (itemInfo.error === "fetch failed") {
           toast.error("Извините, мы не можем сейчас обработать данные.");
           isLoading.value = false;
@@ -539,7 +590,9 @@ async function parsingPage() {
         }
         rowData.value.productName = itemInfo[0].imt_name;
 
-        let priceInfoPromise = storeClients.fetchSitePrice(rowData.value.productLink);
+        let priceInfoPromise = storeClients.fetchSitePrice(
+          rowData.value.productLink
+        );
         let timeoutPromise = new Promise((resolve, reject) => {
           setTimeout(() => {
             reject(new Error("Request timeout"));
@@ -547,7 +600,10 @@ async function parsingPage() {
         });
 
         try {
-          let priceInfo = await Promise.race([priceInfoPromise, timeoutPromise]);
+          let priceInfo = await Promise.race([
+            priceInfoPromise,
+            timeoutPromise,
+          ]);
           rowData.value.productName = itemInfo[0].imt_name;
 
           if (priceInfo.message) {
@@ -572,13 +628,17 @@ async function parsingPage() {
         isLoading.value = false;
       } else if (rowData.value.productLink.includes("ozon")) {
         isLoading.value = true;
-        let jsonString = await storeClients.fetchSiteOZ(rowData.value.productLink);
+        let jsonString = await storeClients.fetchSiteOZ(
+          rowData.value.productLink
+        );
         if (jsonString.pageInfo.pageTypeTracking === "error") {
           toast.error("Извините, произошла ошибка. Проверьте ссылку на товар!");
           isLoading.value = false;
           return;
         }
-        rowData.value.productName = JSON.parse(jsonString.seo.script[0].innerHTML).name;
+        rowData.value.productName = JSON.parse(
+          jsonString.seo.script[0].innerHTML
+        ).name;
         rowData.value.priceSite = JSON.parse(
           jsonString.seo.script[0].innerHTML
         ).offers.price;
@@ -618,11 +678,16 @@ async function handlePaste() {
         <div class="bg-white w-[500px] p-10 rounded-xl text-center">
           <h1 class="text-lg">При оплате онлайн сумма увеличится на 2%!</h1>
           <h1 class="text-2xl font-bold">
-            ИТОГОВАЯ СУММА: {{ Math.ceil(updatedPriceTwoPercent / 10) * 10 }} руб
+            ИТОГОВАЯ СУММА:
+            {{ Math.ceil(updatedPriceTwoPercent / 10) * 10 }} руб
           </h1>
           <div class="flex gap-5 mt-5 items-center justify-center">
-            <UIActionButton @click="isOpenOnlineStatus = false">Отменить</UIActionButton>
-            <UIExitModalButton @click="updateOnlineMoneyRowsStatus">Принять</UIExitModalButton>
+            <UIActionButton @click="isOpenOnlineStatus = false"
+              >Отменить</UIActionButton
+            >
+            <UIExitModalButton @click="updateOnlineMoneyRowsStatus"
+              >Принять</UIExitModalButton
+            >
           </div>
         </div>
       </div>
@@ -638,15 +703,16 @@ async function handlePaste() {
               :user="user"
             />
             <div
-              class="mt-5 flex items-center gap-3"
+              class="mt-5 flex items-center gap-3 max-sm:flex-col max-sm:items-start"
               v-if="user.dataOurRansom === 'WRITE'"
             >
               <UIMainButton
+                class="max-sm:w-full"
                 v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
                 @click="openModal"
                 >Создать новую запись</UIMainButton
               >
-              <UIMainButton @click="updateCellStatusFull"
+              <UIMainButton class="max-sm:w-full" @click="updateCellStatusFull"
                 >Обновить статус ячеек</UIMainButton
               >
             </div>
@@ -676,7 +742,9 @@ async function handlePaste() {
                 class="grid grid-cols-2 mb-5"
                 v-if="user.fromName1 === 'READ' || user.fromName1 === 'WRITE'"
               >
-                <label for="fromName" class="max-sm:text-sm">Телефон <sup>*</sup></label>
+                <label for="fromName" class="max-sm:text-sm"
+                  >Телефон <sup>*</sup></label
+                >
                 <div>
                   <input
                     :disabled="user.fromName1 === 'READ'"
@@ -694,9 +762,13 @@ async function handlePaste() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'"
+                v-if="
+                  user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'
+                "
               >
-                <label for="dispatchPVZ1" class="max-sm:text-sm">Отправка в ПВЗ</label>
+                <label for="dispatchPVZ1" class="max-sm:text-sm"
+                  >Отправка в ПВЗ</label
+                >
                 <div>
                   <select
                     class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -737,9 +809,13 @@ async function handlePaste() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.productLink1 === 'READ' || user.productLink1 === 'WRITE'"
+                v-if="
+                  user.productLink1 === 'READ' || user.productLink1 === 'WRITE'
+                "
               >
-                <label for="productLink1" class="max-sm:text-sm">Товар (ссылка)</label>
+                <label for="productLink1" class="max-sm:text-sm"
+                  >Товар (ссылка)</label
+                >
                 <div>
                   <input
                     :disabled="user.productLink1 === 'READ'"
@@ -749,16 +825,22 @@ async function handlePaste() {
                     type="text"
                   />
                   <div class="flex gap-3 items-center justify-center mt-2">
-                    <UIActionButton @click="parsingPage">Подтянуть данные</UIActionButton>
+                    <UIActionButton @click="parsingPage"
+                      >Подтянуть данные</UIActionButton
+                    >
                   </div>
                 </div>
               </div>
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.productName1 === 'READ' || user.productName1 === 'WRITE'"
+                v-if="
+                  user.productName1 === 'READ' || user.productName1 === 'WRITE'
+                "
               >
-                <label for="productName1" class="max-sm:text-sm">Название товара</label>
+                <label for="productName1" class="max-sm:text-sm"
+                  >Название товара</label
+                >
                 <input
                   :disabled="user.productName1 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -785,7 +867,9 @@ async function handlePaste() {
                 class="grid grid-cols-2 mb-5"
                 v-if="user.priceSite === 'READ' || user.priceSite === 'WRITE'"
               >
-                <label for="priceSite" class="max-sm:text-sm">Стоимость сайт</label>
+                <label for="priceSite" class="max-sm:text-sm"
+                  >Стоимость сайт</label
+                >
                 <input
                   :disabled="user.priceSite === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -796,9 +880,13 @@ async function handlePaste() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'"
+                v-if="
+                  user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'
+                "
               >
-                <label for="prepayment1" class="max-sm:text-sm">Предоплата</label>
+                <label for="prepayment1" class="max-sm:text-sm"
+                  >Предоплата</label
+                >
                 <input
                   :disabled="user.prepayment1 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -810,7 +898,10 @@ async function handlePaste() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.percentClient1 === 'READ' || user.percentClient1 === 'WRITE'"
+                v-if="
+                  user.percentClient1 === 'READ' ||
+                  user.percentClient1 === 'WRITE'
+                "
               >
                 <label for="percentClient1" class="max-sm:text-sm"
                   >Процент с клиента</label
@@ -826,7 +917,10 @@ async function handlePaste() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.deliveredKGT1 === 'READ' || user.deliveredKGT1 === 'WRITE'"
+                v-if="
+                  user.deliveredKGT1 === 'READ' ||
+                  user.deliveredKGT1 === 'WRITE'
+                "
               >
                 <label for="deliveredKGT1" class="max-sm:text-sm"
                   >Дополнительный доход</label
@@ -844,7 +938,9 @@ async function handlePaste() {
                 class="grid grid-cols-2 mb-5"
                 v-if="user.orderPVZ1 === 'READ' || user.orderPVZ1 === 'WRITE'"
               >
-                <label for="orderPVZ1" class="max-sm:text-sm">Заказано на СЦ</label>
+                <label for="orderPVZ1" class="max-sm:text-sm"
+                  >Заказано на СЦ</label
+                >
                 <select
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.orderPVZ"
@@ -861,9 +957,13 @@ async function handlePaste() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.orderAccount === 'READ' || user.orderAccount === 'WRITE'"
+                v-if="
+                  user.orderAccount === 'READ' || user.orderAccount === 'WRITE'
+                "
               >
-                <label for="orderAccount" class="max-sm:text-sm">Аккаунт заказа</label>
+                <label for="orderAccount" class="max-sm:text-sm"
+                  >Аккаунт заказа</label
+                >
                 <select
                   :disabled="user.orderAccount === 'READ'"
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
@@ -879,7 +979,9 @@ async function handlePaste() {
               </div>
 
               <div class="grid grid-cols-2 mb-5" v-if="!rowData.id">
-                <label for="quantity" class="max-sm:text-sm">Количество строк</label>
+                <label for="quantity" class="max-sm:text-sm"
+                  >Количество строк</label
+                >
                 <input
                   type="number"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -897,7 +999,10 @@ async function handlePaste() {
               <div v-if="showAddFields">
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.deliveredSC1 === 'READ' || user.deliveredSC1 === 'WRITE'"
+                  v-if="
+                    user.deliveredSC1 === 'READ' ||
+                    user.deliveredSC1 === 'WRITE'
+                  "
                 >
                   <label for="deliveredSC1" class="max-sm:text-sm"
                     >Доставлено на СЦ</label
@@ -912,7 +1017,10 @@ async function handlePaste() {
 
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'"
+                  v-if="
+                    user.deliveredPVZ1 === 'READ' ||
+                    user.deliveredPVZ1 === 'WRITE'
+                  "
                 >
                   <label for="deliveredPVZ1" class="max-sm:text-sm"
                     >Доставлено на ПВЗ</label
@@ -929,7 +1037,9 @@ async function handlePaste() {
                   class="grid grid-cols-2 mb-5"
                   v-if="user.issued1 === 'READ' || user.issued1 === 'WRITE'"
                 >
-                  <label for="issued1" class="max-sm:text-sm">Выдан клиенту</label>
+                  <label for="issued1" class="max-sm:text-sm"
+                    >Выдан клиенту</label
+                  >
                   <input
                     :disabled="user.issued1 === 'READ'"
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -941,9 +1051,14 @@ async function handlePaste() {
 
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'"
+                  v-if="
+                    user.additionally1 === 'READ' ||
+                    user.additionally1 === 'WRITE'
+                  "
                 >
-                  <label for="additionally1" class="max-sm:text-sm">Дополнительно</label>
+                  <label for="additionally1" class="max-sm:text-sm"
+                    >Дополнительно</label
+                  >
                   <select
                     class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                     v-model="rowData.additionally"
@@ -958,7 +1073,10 @@ async function handlePaste() {
               </div>
             </div>
 
-            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
+            <div
+              class="flex items-center justify-center gap-3 mt-10"
+              v-if="rowData.id"
+            >
               <UIMainButton @click="updateRow">Сохранить </UIMainButton>
               <UIMainButton @click="closeModal">Отменить </UIMainButton>
             </div>
@@ -1023,7 +1141,9 @@ async function handlePaste() {
                 class="grid grid-cols-2 mb-5"
                 v-if="user.fromName1 === 'READ' || user.fromName1 === 'WRITE'"
               >
-                <label for="fromName" class="max-sm:text-sm">Телефон <sup>*</sup></label>
+                <label for="fromName" class="max-sm:text-sm"
+                  >Телефон <sup>*</sup></label
+                >
                 <div>
                   <input
                     :disabled="user.fromName1 === 'READ'"
@@ -1041,9 +1161,13 @@ async function handlePaste() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'"
+                v-if="
+                  user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'
+                "
               >
-                <label for="dispatchPVZ1" class="max-sm:text-sm">Отправка в ПВЗ</label>
+                <label for="dispatchPVZ1" class="max-sm:text-sm"
+                  >Отправка в ПВЗ</label
+                >
                 <div>
                   <select
                     class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -1084,9 +1208,13 @@ async function handlePaste() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.productLink1 === 'READ' || user.productLink1 === 'WRITE'"
+                v-if="
+                  user.productLink1 === 'READ' || user.productLink1 === 'WRITE'
+                "
               >
-                <label for="productLink1" class="max-sm:text-sm">Товар (ссылка)</label>
+                <label for="productLink1" class="max-sm:text-sm"
+                  >Товар (ссылка)</label
+                >
                 <input
                   :disabled="user.productLink1 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -1097,9 +1225,13 @@ async function handlePaste() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.productName1 === 'READ' || user.productName1 === 'WRITE'"
+                v-if="
+                  user.productName1 === 'READ' || user.productName1 === 'WRITE'
+                "
               >
-                <label for="productName1" class="max-sm:text-sm">Название товара</label>
+                <label for="productName1" class="max-sm:text-sm"
+                  >Название товара</label
+                >
                 <input
                   :disabled="user.productName1 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -1126,7 +1258,9 @@ async function handlePaste() {
                 class="grid grid-cols-2 mb-5"
                 v-if="user.priceSite === 'READ' || user.priceSite === 'WRITE'"
               >
-                <label for="priceSite" class="max-sm:text-sm">Стоимость сайт</label>
+                <label for="priceSite" class="max-sm:text-sm"
+                  >Стоимость сайт</label
+                >
                 <input
                   :disabled="user.priceSite === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -1137,9 +1271,13 @@ async function handlePaste() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'"
+                v-if="
+                  user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'
+                "
               >
-                <label for="prepayment1" class="max-sm:text-sm">Предоплата</label>
+                <label for="prepayment1" class="max-sm:text-sm"
+                  >Предоплата</label
+                >
                 <input
                   :disabled="user.prepayment1 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -1151,7 +1289,10 @@ async function handlePaste() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.percentClient1 === 'READ' || user.percentClient1 === 'WRITE'"
+                v-if="
+                  user.percentClient1 === 'READ' ||
+                  user.percentClient1 === 'WRITE'
+                "
               >
                 <label for="percentClient1" class="max-sm:text-sm"
                   >Процент с клиента</label
@@ -1167,7 +1308,10 @@ async function handlePaste() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.deliveredKGT1 === 'READ' || user.deliveredKGT1 === 'WRITE'"
+                v-if="
+                  user.deliveredKGT1 === 'READ' ||
+                  user.deliveredKGT1 === 'WRITE'
+                "
               >
                 <label for="deliveredKGT1" class="max-sm:text-sm"
                   >Дополнительный доход</label
@@ -1185,7 +1329,9 @@ async function handlePaste() {
                 class="grid grid-cols-2 mb-5"
                 v-if="user.orderPVZ1 === 'READ' || user.orderPVZ1 === 'WRITE'"
               >
-                <label for="orderPVZ1" class="max-sm:text-sm">Заказано на СЦ</label>
+                <label for="orderPVZ1" class="max-sm:text-sm"
+                  >Заказано на СЦ</label
+                >
                 <select
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.orderPVZ"
@@ -1202,9 +1348,13 @@ async function handlePaste() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.orderAccount === 'READ' || user.orderAccount === 'WRITE'"
+                v-if="
+                  user.orderAccount === 'READ' || user.orderAccount === 'WRITE'
+                "
               >
-                <label for="orderAccount" class="max-sm:text-sm">Аккаунт заказа</label>
+                <label for="orderAccount" class="max-sm:text-sm"
+                  >Аккаунт заказа</label
+                >
                 <select
                   :disabled="user.orderAccount === 'READ'"
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
@@ -1220,7 +1370,9 @@ async function handlePaste() {
               </div>
 
               <div class="grid grid-cols-2 mb-5" v-if="!rowData.id">
-                <label for="quantity" class="max-sm:text-sm">Количество строк</label>
+                <label for="quantity" class="max-sm:text-sm"
+                  >Количество строк</label
+                >
                 <input
                   type="number"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -1238,7 +1390,10 @@ async function handlePaste() {
               <div v-if="showAddFields">
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.deliveredSC1 === 'READ' || user.deliveredSC1 === 'WRITE'"
+                  v-if="
+                    user.deliveredSC1 === 'READ' ||
+                    user.deliveredSC1 === 'WRITE'
+                  "
                 >
                   <label for="deliveredSC1" class="max-sm:text-sm"
                     >Доставлено на СЦ</label
@@ -1253,7 +1408,10 @@ async function handlePaste() {
 
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'"
+                  v-if="
+                    user.deliveredPVZ1 === 'READ' ||
+                    user.deliveredPVZ1 === 'WRITE'
+                  "
                 >
                   <label for="deliveredPVZ1" class="max-sm:text-sm"
                     >Доставлено на ПВЗ</label
@@ -1270,7 +1428,9 @@ async function handlePaste() {
                   class="grid grid-cols-2 mb-5"
                   v-if="user.issued1 === 'READ' || user.issued1 === 'WRITE'"
                 >
-                  <label for="issued1" class="max-sm:text-sm">Выдан клиенту</label>
+                  <label for="issued1" class="max-sm:text-sm"
+                    >Выдан клиенту</label
+                  >
                   <input
                     :disabled="user.issued1 === 'READ'"
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -1282,9 +1442,14 @@ async function handlePaste() {
 
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'"
+                  v-if="
+                    user.additionally1 === 'READ' ||
+                    user.additionally1 === 'WRITE'
+                  "
                 >
-                  <label for="additionally1" class="max-sm:text-sm">Дополнительно</label>
+                  <label for="additionally1" class="max-sm:text-sm"
+                    >Дополнительно</label
+                  >
                   <select
                     class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                     v-model="rowData.additionally"
@@ -1299,7 +1464,10 @@ async function handlePaste() {
               </div>
             </div>
 
-            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
+            <div
+              class="flex items-center justify-center gap-3 mt-10"
+              v-if="rowData.id"
+            >
               <UIMainButton @click="updateRow">Сохранить </UIMainButton>
               <UIMainButton @click="closeModal">Отменить </UIMainButton>
             </div>

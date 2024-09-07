@@ -505,7 +505,6 @@ const qrBodyInfo = ref<QRBodyInfo>({} as QRBodyInfo);
 const paymentStatusMessage = ref<string>("");
 
 async function openModalQR() {
-  // document.body.classList.add("no-scroll");
   isOpenModalQR.value = true;
   isLoading.value = true;
   qrBody.value = {} as QRBodyLink;
@@ -532,7 +531,6 @@ function closeModalQR() {
     clearInterval(intervalId.value);
     intervalId.value = null;
   }
-  // document.body.classList.remove("no-scroll");
 }
 
 function closeModalStatus() {
@@ -552,7 +550,7 @@ function closeModalAfterDelay() {
 }
 
 async function checkPaymentStatus(qrcId: string) {
-  const interval = 5000;
+  const interval = 3000;
 
   intervalId.value = setInterval(async () => {
     try {
@@ -590,6 +588,23 @@ async function checkPaymentStatus(qrcId: string) {
     }
   }, interval);
 }
+
+
+function lockScroll() {
+  document.body.classList.add("no-scroll");
+}
+
+function unlockScroll() {
+  document.body.classList.remove("no-scroll");
+}
+
+watch(isOpenModalQR, (newValue) => {
+  if (newValue) {
+    lockScroll();
+  } else {
+    unlockScroll();
+  }
+});
 </script>
 
 <template>
@@ -880,7 +895,7 @@ async function checkPaymentStatus(qrcId: string) {
       </h1>
     </div>
 
-    <div class="relative max-h-[610px] mt-5 mb-10 mr-5">
+    <div :class="{'overflow-x-auto max-h-[300px] overflow-y-auto': isOpenModalQR}"  class="relative mt-5 mb-10 mr-5">
       <div id="up"></div>
       <table
         id="theTable"

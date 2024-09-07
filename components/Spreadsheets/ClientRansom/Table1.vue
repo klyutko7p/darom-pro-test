@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { read, utils, writeFile } from "xlsx";
 import Cookies from "js-cookie";
+import { useToast } from "vue-toastification";
 const storeUsers = useUsersStore();
 const storeRansom = useRansomStore();
-
+const toast = useToast();
 const emit = defineEmits([
   "openModal",
   "deleteRow",
@@ -156,11 +157,11 @@ function updateCurrentPageData() {
       .slice(startIndex, endIndex);
   }
 
-  if (props.user.role === "RMANAGER") {
-    returnRows.value = props.rows?.filter(
-      (row) => row.dispatchPVZ && row.dispatchPVZ.includes(props.user.PVZ)
-    );
-  }
+  // if (props.user.role === "RMANAGER") {
+  //   returnRows.value = props.rows?.filter(
+  //     (row) => row.dispatchPVZ && row.dispatchPVZ.includes(props.user.PVZ)
+  //   );
+  // }
 
   let arrayOfProcessing = props.rows?.filter(
     (row) =>
@@ -264,7 +265,6 @@ const qrBodyInfo = ref<QRBodyInfo>({} as QRBodyInfo);
 const paymentStatusMessage = ref<string>("");
 
 async function openModalQR() {
-  // document.body.classList.add("no-scroll");
   isOpenModalQR.value = true;
   isLoading.value = true;
   qrBody.value = {} as QRBodyLink;
@@ -291,13 +291,12 @@ function closeModalQR() {
     clearInterval(intervalId.value);
     intervalId.value = null;
   }
-  // document.body.classList.remove("no-scroll");
 }
 
 function closeModalStatus() {
   isOpenModalStatus.value = false;
   if (paymentStatusMessage.value) {
-    updateDeliveryRows("additionally", getAllSum.value.toString());
+    updateDeliveryRows("additionally");
   }
 }
 
@@ -305,13 +304,13 @@ function closeModalAfterDelay() {
   setTimeout(() => {
     isOpenModalStatus.value = false;
     if (paymentStatusMessage.value) {
-      updateDeliveryRows("additionally", getAllSum.value.toString());
+      updateDeliveryRows("additionally");
     }
   }, 6000);
 }
 
 async function checkPaymentStatus(qrcId: string) {
-  const interval = 5000;
+  const interval = 3000;
 
   intervalId.value = setInterval(async () => {
     try {
@@ -349,928 +348,980 @@ async function checkPaymentStatus(qrcId: string) {
     }
   }, interval);
 }
+
+function lockScroll() {
+  document.body.classList.add("no-scroll");
+}
+
+function unlockScroll() {
+  document.body.classList.remove("no-scroll");
+}
+
+watch(isOpenModalQR, (newValue) => {
+  if (newValue) {
+    lockScroll();
+  } else {
+    unlockScroll();
+  }
+});
 </script>
 
 <template>
-  <div class="flex items-center justify-between max-lg:block mt-10">
-    <div>
-      <div
-        class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5"
-      >
-        <h1 class="text-xl" v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'">
-          Товаров в работе:
-          <span class="text-secondary-color font-bold">{{ totalRows }}</span>
-        </h1>
-        <h1 class="text-xl" v-if="user.role === 'PVZ' || user.role === 'PPVZ'">
-          Товаров к выдаче:
-          <span class="text-secondary-color font-bold">{{ totalRows }}</span>
-        </h1>
+  <div v-if="!isLoading">
+    <div class="flex items-center justify-between max-lg:block mt-10">
+      <div>
+        <div
+          class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5"
+        >
+          <h1
+            class="text-xl"
+            v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
+          >
+            Товаров в работе:
+            <span class="text-secondary-color font-bold">{{ totalRows }}</span>
+          </h1>
+          <h1
+            class="text-xl"
+            v-if="user.role === 'PVZ' || user.role === 'PPVZ'"
+          >
+            Товаров к выдаче:
+            <span class="text-secondary-color font-bold">{{ totalRows }}</span>
+          </h1>
+        </div>
+        <div
+          class="flex items-center gap-5"
+          v-if="
+            user.role === 'ADMIN' ||
+            user.role === 'ADMINISTRATOR' ||
+            user.role === 'RMANAGER'
+          "
+        >
+          <UIActionButton @click="toggleShowDeletedRows">
+            {{ showDeletedRows ? "Скрыть удаленное" : "Показать удаленное" }}
+          </UIActionButton>
+        </div>
       </div>
-      <div
-        class="flex items-center gap-5"
+      <div class="flex items-end max-lg:mt-5 max-lg:justify-between gap-20">
+        <div class="flex flex-col text-center" v-if="isVisiblePages">
+          <h1 class="text-base">Страница:</h1>
+          <h1 class="text-base mb-2">{{ currentPage }} из {{ totalPages }}</h1>
+          <div class="flex items-center justify-center gap-2">
+            <button
+              @click="prevPage(), updateCurrentPageData()"
+              :disabled="currentPage === 1"
+              class="disabled:opacity-40 disabled:cursor-not-allowed duration-150 bg-secondary-color flex items-center justify-center rounded-sm p-3"
+            >
+              <Icon
+                name="material-symbols:arrow-back-ios-new-rounded"
+                class="text-white"
+              />
+            </button>
+            <button
+              @click="nextPage(), updateCurrentPageData()"
+              :disabled="currentPage === totalPages"
+              class="disabled:opacity-40 disabled:cursor-not-allowed duration-150 bg-secondary-color flex items-center justify-center rounded-sm p-3"
+            >
+              <Icon
+                name="material-symbols:arrow-forward-ios-rounded"
+                class="text-white"
+              />
+            </button>
+          </div>
+        </div>
+        <UTooltip
+          text="Скачать EXCEL"
+          :shortcuts="['xlsx']"
+          :popper="{ placement: 'right' }"
+        >
+          <div
+            class="bg-secondary-color cursor-pointer border-2 border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
+            @click="exportToExcel"
+          >
+            <Icon class="duration-200" size="32" name="bi:filetype-xlsx" />
+          </div>
+        </UTooltip>
+      </div>
+    </div>
+
+    <div
+      class="fixed top-24 z-40 left-1/2 translate-x-[-50%] translate-y-[-50%]"
+      v-if="getAllSum > 0"
+    >
+      <h1
+        class="text-base text-center backdrop-blur-xl p-2 rounded-xl border-2 text-secondary-color font-bold"
+      >
+        К оплате: {{ getAllSum }} <br />
+        Количество товаров: {{ checkedRows.length }}
+      </h1>
+    </div>
+
+    <div
+      class="fixed z-40 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
+      v-if="
+        user.dataClientRansom === 'WRITE' &&
+        checkedRows.length > 0 &&
+        user.role !== 'PVZ' &&
+        user.role !== 'PPVZ'
+      "
+    >
+      <UIActionButton
         v-if="
           user.role === 'ADMIN' ||
           user.role === 'ADMINISTRATOR' ||
-          user.role === 'RMANAGER'
+          (user.role === 'RMANAGER' && user.dataOurRansom === 'WRITE')
         "
+        @click="deleteSelectedRows"
+        >Удалить выделенные записи</UIActionButton
       >
-        <UIActionButton @click="toggleShowDeletedRows">
-          {{ showDeletedRows ? "Скрыть удаленное" : "Показать удаленное" }}
-        </UIActionButton>
-      </div>
-    </div>
-    <div class="flex items-end max-lg:mt-5 max-lg:justify-between gap-20">
-      <div class="flex flex-col text-center" v-if="isVisiblePages">
-        <h1 class="text-base">Страница:</h1>
-        <h1 class="text-base mb-2">{{ currentPage }} из {{ totalPages }}</h1>
-        <div class="flex items-center justify-center gap-2">
-          <button
-            @click="prevPage(), updateCurrentPageData()"
-            :disabled="currentPage === 1"
-            class="disabled:opacity-40 disabled:cursor-not-allowed duration-150 bg-secondary-color flex items-center justify-center rounded-sm p-3"
+      <UIActionButton
+        v-if="
+          user.deliveredPVZ2 === 'WRITE' &&
+          showButtonPVZ &&
+          user.role === 'ADMIN'
+        "
+        @click="updateDeliveryRows('PVZ')"
+        >Доставить на пвз
+      </UIActionButton>
+      <UIActionButton
+        v-if="user.deliveredSC2 === 'WRITE' && showButtonSC"
+        @click="updateDeliveryRows('SC')"
+        >Доставить на сц
+      </UIActionButton>
+      <UIActionButton
+        v-if="user.issued2 === 'WRITE' && showButton"
+        @click="showOthersVariants = !showOthersVariants"
+      >
+        Выдать клиенту
+      </UIActionButton>
+      <div v-if="showOthersVariants" class="flex flex-col gap-3">
+        <UIActionButton2
+          v-if="user.additionally2 === 'WRITE'"
+          @click="updateDeliveryRows('additionally3')"
+          >Оплата наличными
+        </UIActionButton2>
+        <UIActionButton2
+          v-if="user.additionally2 === 'WRITE' && getAllSum > 0"
+          @click="openModalQR"
+          >Оплата онлайн (QR)
+        </UIActionButton2>
+        <UIActionButton2
+          v-if="user.additionally2 === 'WRITE'"
+          @click="showPayRejectClient = !showPayRejectClient"
+          >Отказ клиент
+        </UIActionButton2>
+        <div v-if="showPayRejectClient" class="flex flex-col gap-3">
+          <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"
+            >Отказ клиент онлайн</UIActionButton2
           >
-            <Icon
-              name="material-symbols:arrow-back-ios-new-rounded"
-              class="text-white"
-            />
-          </button>
-          <button
-            @click="nextPage(), updateCurrentPageData()"
-            :disabled="currentPage === totalPages"
-            class="disabled:opacity-40 disabled:cursor-not-allowed duration-150 bg-secondary-color flex items-center justify-center rounded-sm p-3"
+          <UIActionButton2 @click="updateDeliveryRows('additionally1-2')"
+            >Отказ клиент наличные</UIActionButton2
           >
-            <Icon
-              name="material-symbols:arrow-forward-ios-rounded"
-              class="text-white"
-            />
-          </button>
         </div>
+        <UIActionButton2
+          v-if="user.additionally2 === 'WRITE'"
+          @click="updateDeliveryRows('additionally2')"
+          >Отказ брак
+        </UIActionButton2>
       </div>
-      <UTooltip
-        text="Скачать EXCEL"
-        :shortcuts="['xlsx']"
-        :popper="{ placement: 'right' }"
-      >
-        <div
-          class="bg-secondary-color cursor-pointer border-2 border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
-          @click="exportToExcel"
-        >
-          <Icon class="duration-200" size="32" name="bi:filetype-xlsx" />
-        </div>
-      </UTooltip>
     </div>
-  </div>
 
-  <div
-    class="fixed top-24 z-40 left-1/2 translate-x-[-50%] translate-y-[-50%]"
-    v-if="getAllSum > 0"
-  >
-    <h1
-      class="text-base text-center backdrop-blur-xl p-2 rounded-xl border-2 text-secondary-color font-bold"
-    >
-      К оплате: {{ getAllSum }} <br />
-      Количество товаров: {{ checkedRows.length }}
-    </h1>
-  </div>
-
-  <div
-    class="fixed z-40 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
-    v-if="
-      user.dataClientRansom === 'WRITE' &&
-      checkedRows.length > 0 &&
-      user.role !== 'PVZ' &&
-      user.role !== 'PPVZ'
-    "
-  >
-    <UIActionButton
-      v-if="
-        user.role === 'ADMIN' ||
-        user.role === 'ADMINISTRATOR' ||
-        (user.role === 'RMANAGER' && user.dataOurRansom === 'WRITE')
-      "
-      @click="deleteSelectedRows"
-      >Удалить выделенные записи</UIActionButton
-    >
-    <UIActionButton
-      v-if="
-        user.deliveredPVZ2 === 'WRITE' && showButtonPVZ && user.role === 'ADMIN'
-      "
-      @click="updateDeliveryRows('PVZ')"
-      >Доставить на пвз
-    </UIActionButton>
-    <UIActionButton
-      v-if="user.deliveredSC2 === 'WRITE' && showButtonSC"
-      @click="updateDeliveryRows('SC')"
-      >Доставить на сц
-    </UIActionButton>
-    <UIActionButton
-      v-if="user.issued2 === 'WRITE' && showButton"
-      @click="showOthersVariants = !showOthersVariants"
-    >
-      Выдать клиенту
-    </UIActionButton>
-    <div v-if="showOthersVariants" class="flex flex-col gap-3">
-      <UIActionButton2
-        v-if="user.additionally2 === 'WRITE'"
-        @click="updateDeliveryRows('additionally3')"
-        >Оплата наличными
-      </UIActionButton2>
-      <UIActionButton2
-        v-if="user.additionally2 === 'WRITE' && getAllSum > 0"
-        @click="openModalQR"
-        >Оплата онлайн (QR)
-      </UIActionButton2>
-      <UIActionButton2
-        v-if="user.additionally2 === 'WRITE'"
-        @click="showPayRejectClient = !showPayRejectClient"
-        >Отказ клиент
-      </UIActionButton2>
-      <div v-if="showPayRejectClient" class="flex flex-col gap-3">
-        <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"
-          >Отказ клиент онлайн</UIActionButton2
-        >
-        <UIActionButton2 @click="updateDeliveryRows('additionally1-2')"
-          >Отказ клиент наличные</UIActionButton2
-        >
-      </div>
-      <UIActionButton2
-        v-if="user.additionally2 === 'WRITE'"
-        @click="updateDeliveryRows('additionally2')"
-        >Отказ брак
-      </UIActionButton2>
-    </div>
-  </div>
-
-  <div
-    class="fixed z-40 flex flex-col gap-3 top-44 left-1/2 translate-x-[-50%] translate-y-[-50%]"
-    v-if="
-      user.dataClientRansom === 'WRITE' &&
-      checkedRows.length > 0 &&
-      (user.role === 'PVZ' || user.role === 'PPVZ')
-    "
-  >
-    <UIActionButton
-      v-if="user.issued2 === 'WRITE' && showButton"
-      @click="showOthersVariants = !showOthersVariants"
-    >
-      Выдать клиенту
-    </UIActionButton>
-    <div v-if="showOthersVariants" class="flex flex-col gap-3">
-      <UIActionButton2
-        v-if="user.additionally2 === 'WRITE'"
-        @click="updateDeliveryRows('additionally3')"
-        >Оплата наличными
-      </UIActionButton2>
-      <UIActionButton2
-        v-if="user.additionally2 === 'WRITE' && getAllSum > 0"
-        @click="openModalQR"
-        >Оплата онлайн (QR)
-      </UIActionButton2>
-      <UIActionButton2
-        v-if="user.additionally2 === 'WRITE'"
-        @click="showPayRejectClient = !showPayRejectClient"
-        >Отказ клиент
-      </UIActionButton2>
-      <div v-if="showPayRejectClient" class="flex flex-col gap-3">
-        <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"
-          >Отказ клиент онлайн</UIActionButton2
-        >
-        <UIActionButton2 @click="updateDeliveryRows('additionally1-2')"
-          >Отказ клиент наличные</UIActionButton2
-        >
-      </div>
-      <UIActionButton2
-        v-if="user.additionally2 === 'WRITE'"
-        @click="updateDeliveryRows('additionally2')"
-        >Отказ брак
-      </UIActionButton2>
-    </div>
-  </div>
-
-  <div class="py-3 flex max-sm:flex-col gap-5 max-sm:w-full">
-    <span
-      v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
-      class="bg-yellow-400 px-5 py-3 text-white font-bold rounded-full border-yellow-400 border-2 hover:bg-transparent hover:text-black duration-200 cursor-pointer"
-      @click="changeProcessingRows(), showProcessingRows()"
-    >
-      Ждут обработку {{ processingRows?.length }} товаров
-    </span>
-  </div>
-
-  <div class="relative max-h-[610px] mt-5 mb-10 mr-5">
-    <div id="up"></div>
-    <table
-      id="theTable"
-      class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
-      v-if="totalRows > 0"
-    >
-      <thead
-        class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center bg-gray-50"
-      >
-        <tr>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.dataClientRansom === 'WRITE'"
-          >
-            Выделение
-          </th>
-          <th
-            scope="col"
-            class="exclude-row border-2 text-[10px]"
-            v-if="
-              (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
-              user.role === 'SORTIROVKA' ||
-              user.username === 'Волошина'
-            "
-          >
-            изменение
-          </th>
-          <th scope="col" class="border-2 px-3">id</th>
-          <th scope="col" class="border-2 px-3">Штрих-код</th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.clientLink2 === 'READ' || user.clientLink2 === 'WRITE'"
-          >
-            ссылка для клиента
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.cell2 === 'READ' || user.cell2 === 'WRITE'"
-          >
-            ячейка
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.fromName2 === 'READ' || user.fromName2 === 'WRITE'"
-          >
-            телефон
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.productLink2 === 'READ' || user.productLink2 === 'WRITE'"
-          >
-            маркетплейс
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.productName2 === 'READ' || user.productName2 === 'WRITE'"
-          >
-            количество товаров
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.priceProgram === 'READ' || user.priceProgram === 'WRITE'"
-          >
-            стоимость выкупа товара
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.prepayment2 === 'READ' || user.prepayment2 === 'WRITE'"
-          >
-            предоплата
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="
-              user.percentClient2 === 'READ' || user.percentClient2 === 'WRITE'
-            "
-          >
-            процент с клиента (%)
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="
-              user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'
-            "
-          >
-            дополнительный доход
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="
-              user.amountFromClient2 === 'READ' ||
-              user.amountFromClient2 === 'WRITE'
-            "
-          >
-            сумма с клиента
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.dispatchPVZ2 === 'READ' || user.dispatchPVZ2 === 'WRITE'"
-          >
-            отправка в пвз
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.orderPVZ2 === 'READ' || user.orderPVZ2 === 'WRITE'"
-          >
-            заказано на сц
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.deliveredSC2 === 'READ' || user.deliveredSC2 === 'WRITE'"
-          >
-            доставлено на сц
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="
-              user.deliveredPVZ2 === 'READ' || user.deliveredPVZ2 === 'WRITE'
-            "
-          >
-            доставлено на пвз
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.issued2 === 'READ' || user.issued2 === 'WRITE'"
-          >
-            выдан клиенту
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="
-              user.additionally2 === 'READ' || user.additionally2 === 'WRITE'
-            "
-          >
-            дополнительно
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="user.profit2 === 'READ' || user.profit2 === 'WRITE'"
-          >
-            прибыль (доход)
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            создан (время)
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            изменен (время)
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            удален (время)
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            создан
-          </th>
-          <th
-            scope="col"
-            class="border-2"
-            v-if="
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            изменен
-          </th>
-          <th
-            scope="col"
-            class="exclude-row border-2"
-            v-if="user.dataClientRansom === 'WRITE' && user.role === 'ADMIN'"
-          >
-            удаление
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <div id="left"></div>
-        <tr
-          :class="{
-            'bg-orange-100': isChecked(row.id),
-            'bg-red-300': isExpired(row),
-          }"
-          class="border-b text-center text-sm"
-          v-for="row in returnRows"
-        >
-          <td
-            v-if="user.dataClientRansom === 'WRITE'"
-            class="border-2 text-secondary-color"
-          >
-            <input
-              type="checkbox"
-              :value="row.id"
-              :checked="isChecked(row.id)"
-              @change="handleCheckboxChange(row)"
-            />
-          </td>
-          <td
-            class="border-2"
-            v-if="
-              (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
-              user.role === 'SORTIROVKA' ||
-              user.username === 'Волошина'
-            "
-          >
-          <div
-              @click="openModal(row)"
-              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1  mx-auto"
-            >
-              <Icon
-                class="text-green-500"
-                name="ic:baseline-mode-edit"
-                size="18"
-              />
-            </div>
-          </td>
-          <th
-            scope="row"
-            class="border-2 font-medium underline text-secondary-color whitespace-nowrap"
-          >
-            <NuxtLink
-              v-if="
-                user.role !== 'PVZ' &&
-                user.role !== 'ADMINISTRATOR' &&
-                user.role !== 'RMANAGER' &&
-                user.role !== 'PPVZ'
-              "
-              class="cursor-pointer hover:text-orange-200 duration-200"
-              :to="`/spreadsheets/record/2/${row.id}`"
-            >
-              {{ row.id }}
-            </NuxtLink>
-            <h1 v-else>{{ row.id }}</h1>
-          </th>
-          <td
-            scope="row"
-            class="border-2 font-medium underline text-secondary-color whitespace-nowrap"
-          >
-            <a
-              target="_blank"
-              class="text-secondary-color hover:opacity-60 duration-200 font-bold"
-              v-if="row.img && row.img.length > 2"
-              :href="`https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/image/img-${row.img}`"
-            >
-              Фото
-            </a>
-          </td>
-          <td
-            class="px-3 py-4 border-2 underline text-secondary-color whitespace-nowrap uppercase overflow-hidden max-w-[50px]"
-            v-if="user.clientLink2 === 'READ' || user.clientLink2 === 'WRITE'"
-          >
-            <NuxtLink
-              target="_blank"
-              class="cursor-pointer hover:text-orange-200 duration-200"
-              :to="`/spreadsheets/order/${row.clientLink2}`"
-            >
-              {{ row.clientLink2 }}
-            </NuxtLink>
-          </td>
-          <td
-            v-if="user.cell2 === 'READ' || user.cell2 === 'WRITE'"
-            class="border-2"
-          >
-            {{ row.cell }}
-          </td>
-          <td
-            v-if="user.fromName2 === 'READ' || user.fromName2 === 'WRITE'"
-            class="py-4 border-2 text-secondary-color underline"
-          >
-            <NuxtLink
-              v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
-              class="cursor-pointer hover:text-orange-200 duration-200"
-              :to="`/phone/${row.fromName}`"
-            >
-              {{ row.fromName }}
-            </NuxtLink>
-          </td>
-          <td
-            class="border-2 whitespace-nowrap overflow-hidden max-w-[30px]"
-            v-if="user.productLink2 === 'READ' || user.productLink2 === 'WRITE'"
-          >
-            {{ row.productLink }}
-          </td>
-          <td
-            class="border-2"
-            v-if="user.productName2 === 'READ' || user.productName2 === 'WRITE'"
-          >
-            {{ row.productName }}
-          </td>
-          <td
-            class="border-2"
-            v-if="user.priceProgram === 'READ' || user.priceProgram === 'WRITE'"
-          >
-            {{ row.priceProgram }}
-          </td>
-          <td
-            class="border-2"
-            v-if="user.prepayment2 === 'READ' || user.prepayment2 === 'WRITE'"
-          >
-            {{ row.prepayment }}
-          </td>
-          <td
-            class="border-2"
-            v-if="
-              user.percentClient2 === 'READ' || user.percentClient2 === 'WRITE'
-            "
-          >
-            {{ row.percentClient }}
-          </td>
-          <td
-            class="border-2"
-            v-if="
-              user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'
-            "
-          >
-            {{ row.deliveredKGT }}
-          </td>
-          <td
-            class="border-2"
-            v-if="
-              user.amountFromClient2 === 'READ' ||
-              user.amountFromClient2 === 'WRITE'
-            "
-          >
-            {{ row.amountFromClient2 }}
-          </td>
-          <td
-            class="border-2"
-            v-if="user.dispatchPVZ2 === 'READ' || user.dispatchPVZ2 === 'WRITE'"
-          >
-            {{ row.dispatchPVZ }}
-          </td>
-          <td
-            class="border-2"
-            v-if="user.orderPVZ2 === 'READ' || user.orderPVZ2 === 'WRITE'"
-          >
-            {{ row.orderPVZ }}
-          </td>
-          <td
-            class="border-2"
-            v-if="user.deliveredSC2 === 'READ' || user.deliveredSC2 === 'WRITE'"
-          >
-            <h1 class="font-bold text-green-500">
-              {{
-                row.deliveredSC
-                  ? storeUsers.getNormalizedDate(row.deliveredSC)
-                  : ""
-              }}
-            </h1>
-          </td>
-          <td
-            class="border-2"
-            v-if="
-              user.deliveredPVZ2 === 'READ' || user.deliveredPVZ2 === 'WRITE'
-            "
-          >
-            <h1 class="font-bold text-green-500">
-              {{
-                row.deliveredPVZ
-                  ? storeUsers.getNormalizedDate(row.deliveredPVZ)
-                  : ""
-              }}
-            </h1>
-          </td>
-          <td
-            class="border-2"
-            v-if="user.issued2 === 'READ' || user.issued2 === 'WRITE'"
-          >
-            <h1 class="font-bold text-green-500">
-              {{ row.issued ? storeUsers.getNormalizedDate(row.issued) : "" }}
-            </h1>
-          </td>
-          <td
-            class="border-2"
-            v-if="
-              user.additionally2 === 'READ' || user.additionally2 === 'WRITE'
-            "
-          >
-            {{ row.additionally ? row.additionally : "Пусто" }}
-          </td>
-
-          <td
-            class="border-2"
-            v-if="
-              (user.profit2 === 'READ' || user.profit2 === 'WRITE') &&
-              row.additionally !== 'Отказ клиент' &&
-              row.additionally !== 'Отказ клиент онлайн' &&
-              row.additionally !== 'Отказ клиент наличные' &&
-              row.additionally !== 'Отказ брак'
-            "
-          >
-            {{ row.profit2 }}
-          </td>
-          <td
-            class="border-2"
-            v-if="
-              (user.profit2 === 'READ' || user.profit2 === 'WRITE') &&
-              (row.additionally === 'Отказ клиент' ||
-                row.additionally === 'Отказ клиент онлайн' ||
-                row.additionally === 'Отказ клиент наличные' ||
-                row.additionally === 'Отказ брак')
-            "
-          >
-            {{ row.profit2 }}
-          </td>
-
-          <td
-            class="px-6 border-2"
-            v-if="
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            {{ storeUsers.getNormalizedDate(row.created_at) }}
-          </td>
-          <td
-            class="px-6 border-2"
-            v-if="
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            {{ storeUsers.getNormalizedDate(row.updated_at) }}
-          </td>
-          <td
-            class="px-6 border-2"
-            v-if="
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            {{ storeUsers.getNormalizedDate(row.deleted) }}
-          </td>
-          <td
-            class="px-6 border-2"
-            v-if="
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            {{ row.createdUser }}
-          </td>
-          <td
-            class="px-6 border-2"
-            v-if="
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            {{ row.updatedUser }}
-          </td>
-
-          <td
-            class="px-6 py-4 border-2"
-            v-if="
-              (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            <div
-              @click="deleteRow(row.id)"
-              class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
-            >
-              <Icon class="text-red-600" name="ic:round-delete" size="18" />
-            </div>
-          </td>
-          <div id="right"></div>
-        </tr>
-      </tbody>
-    </table>
     <div
-      v-else
-      class="flex items-center flex-col justify-center mt-10 text-2xl"
+      class="fixed z-40 flex flex-col gap-3 top-44 left-1/2 translate-x-[-50%] translate-y-[-50%]"
+      v-if="
+        user.dataClientRansom === 'WRITE' &&
+        checkedRows.length > 0 &&
+        (user.role === 'PVZ' || user.role === 'PPVZ')
+      "
     >
-      <Icon name="ion:ios-close-empty" size="100" class="text-red-500" />
-      <h1>Извините, записи по данным фильтрам не были найдены!</h1>
-      <h1>Попробуйте поставить другие фильтры или очистить их</h1>
-    </div>
-    <div id="down"></div>
-  </div>
-
-  <UINewModal
-    v-show="isOpenModalQR && isGeneratedQR"
-    @close-modal="closeModalQR"
-  >
-    <template v-slot:icon-header>
-      <Icon
-        size="24"
-        name="streamline:money-cash-bill-3-accounting-billing-payment-finance-cash-currency-money-bill"
-      />
-    </template>
-    <template v-slot:header>
-      <div class="custom-header">
-        <h1 v-if="paymentStatusMessage === 'NotStarted'">
-          Статус: <span class="text-secondary-color"> ОЖИДАНИЕ </span>
-        </h1>
-        <h1
-          v-if="
-            paymentStatusMessage === 'Received' ||
-            paymentStatusMessage === 'InProgress'
-          "
-        >
-          Статус: <span class="text-secondary-color"> ОБРАБОТКА </span>
-        </h1>
-        <h1 v-if="paymentStatusMessage === 'Accepted'">
-          Статус: <span class="text-green-500"> УСПЕШНО </span>
-        </h1>
-        <h1 v-if="paymentStatusMessage === 'Rejected'">
-          Статус: <span class="text-red-500"> ОТКЛОНЁН </span>
-        </h1>
-      </div>
-    </template>
-    <template v-slot:body>
-      <div>
-        <h1 class="text-left mb-3">
-          Сумма:
-          <span class="text-secondary-color font-bold">{{ getAllSum }} ₽</span>
-        </h1>
-        <div>
-          <CodeModalQR :value="qrBody.Data?.payload" />
+      <UIActionButton
+        v-if="user.issued2 === 'WRITE' && showButton"
+        @click="showOthersVariants = !showOthersVariants"
+      >
+        Выдать клиенту
+      </UIActionButton>
+      <div v-if="showOthersVariants" class="flex flex-col gap-3">
+        <UIActionButton2
+          v-if="user.additionally2 === 'WRITE'"
+          @click="updateDeliveryRows('additionally3')"
+          >Оплата наличными
+        </UIActionButton2>
+        <UIActionButton2
+          v-if="user.additionally2 === 'WRITE' && getAllSum > 0"
+          @click="openModalQR"
+          >Оплата онлайн (QR)
+        </UIActionButton2>
+        <UIActionButton2
+          v-if="user.additionally2 === 'WRITE'"
+          @click="showPayRejectClient = !showPayRejectClient"
+          >Отказ клиент
+        </UIActionButton2>
+        <div v-if="showPayRejectClient" class="flex flex-col gap-3">
+          <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"
+            >Отказ клиент онлайн</UIActionButton2
+          >
+          <UIActionButton2 @click="updateDeliveryRows('additionally1-2')"
+            >Отказ клиент наличные</UIActionButton2
+          >
         </div>
-        <div class="mt-3 max-w-[300px]">
-          <h1>Отсканируйте QR-код для оплаты</h1>
-          <UISpinnerQR />
-          <div class="text-left">
-            <h1>
-              Стоимость оплаты: <b>{{ qrBody.Data?.amount / 100 }} ₽ </b>
-            </h1>
-            <h1>
-              Дата и время создания:
-              <b
-                >{{
-                  storeUsers.getNormalizedDate(qrBody.Data?.createdAt)
+        <UIActionButton2
+          v-if="user.additionally2 === 'WRITE'"
+          @click="updateDeliveryRows('additionally2')"
+          >Отказ брак
+        </UIActionButton2>
+      </div>
+    </div>
+
+    <div class="py-3 flex max-sm:flex-col gap-5 max-sm:w-full">
+      <span
+        v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
+        class="bg-yellow-400 px-5 py-3 text-white font-bold rounded-full border-yellow-400 border-2 hover:bg-transparent hover:text-black duration-200 cursor-pointer"
+        @click="changeProcessingRows(), showProcessingRows()"
+      >
+        Ждут обработку {{ processingRows?.length }} товаров
+      </span>
+    </div>
+
+    <div :class="{'overflow-x-auto max-h-[300px] overflow-y-auto': isOpenModalQR}" class="relative mt-5 mb-10 mr-5">
+      <div id="up"></div>
+      <table
+        id="theTable"
+        class="w-full border-x-2 border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+        v-if="totalRows > 0"
+      >
+        <thead
+          class="text-xs sticky top-0 z-30 text-gray-700 uppercase text-center bg-gray-50"
+        >
+          <tr>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="user.dataClientRansom === 'WRITE'"
+            >
+              Выделение
+            </th>
+            <th
+              scope="col"
+              class="exclude-row border-2 text-[10px]"
+              v-if="
+                (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
+                user.role === 'SORTIROVKA' ||
+                user.username === 'Волошина'
+              "
+            >
+              изменение
+            </th>
+            <th scope="col" class="border-2 px-3">id</th>
+            <th scope="col" class="border-2 px-3">Штрих-код</th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="user.clientLink2 === 'READ' || user.clientLink2 === 'WRITE'"
+            >
+              ссылка для клиента
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="user.cell2 === 'READ' || user.cell2 === 'WRITE'"
+            >
+              ячейка
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="user.fromName2 === 'READ' || user.fromName2 === 'WRITE'"
+            >
+              телефон
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.productLink2 === 'READ' || user.productLink2 === 'WRITE'
+              "
+            >
+              маркетплейс
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.productName2 === 'READ' || user.productName2 === 'WRITE'
+              "
+            >
+              количество товаров
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.priceProgram === 'READ' || user.priceProgram === 'WRITE'
+              "
+            >
+              стоимость выкупа товара
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="user.prepayment2 === 'READ' || user.prepayment2 === 'WRITE'"
+            >
+              предоплата
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.percentClient2 === 'READ' ||
+                user.percentClient2 === 'WRITE'
+              "
+            >
+              процент с клиента (%)
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'
+              "
+            >
+              дополнительный доход
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.amountFromClient2 === 'READ' ||
+                user.amountFromClient2 === 'WRITE'
+              "
+            >
+              сумма с клиента
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.dispatchPVZ2 === 'READ' || user.dispatchPVZ2 === 'WRITE'
+              "
+            >
+              отправка в пвз
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="user.orderPVZ2 === 'READ' || user.orderPVZ2 === 'WRITE'"
+            >
+              заказано на сц
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.deliveredSC2 === 'READ' || user.deliveredSC2 === 'WRITE'
+              "
+            >
+              доставлено на сц
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.deliveredPVZ2 === 'READ' || user.deliveredPVZ2 === 'WRITE'
+              "
+            >
+              доставлено на пвз
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="user.issued2 === 'READ' || user.issued2 === 'WRITE'"
+            >
+              выдан клиенту
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.additionally2 === 'READ' || user.additionally2 === 'WRITE'
+              "
+            >
+              дополнительно
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="user.profit2 === 'READ' || user.profit2 === 'WRITE'"
+            >
+              прибыль (доход)
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              создан (время)
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              изменен (время)
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              удален (время)
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              создан
+            </th>
+            <th
+              scope="col"
+              class="border-2"
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              изменен
+            </th>
+            <th
+              scope="col"
+              class="exclude-row border-2"
+              v-if="user.dataClientRansom === 'WRITE' && user.role === 'ADMIN'"
+            >
+              удаление
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <div id="left"></div>
+          <tr
+            :class="{
+              'bg-orange-100': isChecked(row.id),
+              'bg-red-300': isExpired(row),
+            }"
+            class="border-b text-center text-sm"
+            v-for="row in returnRows"
+          >
+            <td
+              v-if="user.dataClientRansom === 'WRITE'"
+              class="border-2 text-secondary-color"
+            >
+              <input
+                type="checkbox"
+                :value="row.id"
+                :checked="isChecked(row.id)"
+                @change="handleCheckboxChange(row)"
+              />
+            </td>
+            <td
+              class="border-2"
+              v-if="
+                (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
+                user.role === 'SORTIROVKA' ||
+                user.username === 'Волошина'
+              "
+            >
+              <div
+                @click="openModal(row)"
+                class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+              >
+                <Icon
+                  class="text-green-500"
+                  name="ic:baseline-mode-edit"
+                  size="18"
+                />
+              </div>
+            </td>
+            <th
+              scope="row"
+              class="border-2 font-medium underline text-secondary-color whitespace-nowrap"
+            >
+              <NuxtLink
+                v-if="
+                  user.role !== 'PVZ' &&
+                  user.role !== 'ADMINISTRATOR' &&
+                  user.role !== 'RMANAGER' &&
+                  user.role !== 'PPVZ'
+                "
+                class="cursor-pointer hover:text-orange-200 duration-200"
+                :to="`/spreadsheets/record/2/${row.id}`"
+              >
+                {{ row.id }}
+              </NuxtLink>
+              <h1 v-else>{{ row.id }}</h1>
+            </th>
+            <td
+              scope="row"
+              class="border-2 font-medium underline text-secondary-color whitespace-nowrap"
+            >
+              <a
+                target="_blank"
+                class="text-secondary-color hover:opacity-60 duration-200 font-bold"
+                v-if="row.img && row.img.length > 2"
+                :href="`https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/image/img-${row.img}`"
+              >
+                Фото
+              </a>
+            </td>
+            <td
+              class="px-3 py-4 border-2 underline text-secondary-color whitespace-nowrap uppercase overflow-hidden max-w-[50px]"
+              v-if="user.clientLink2 === 'READ' || user.clientLink2 === 'WRITE'"
+            >
+              <NuxtLink
+                target="_blank"
+                class="cursor-pointer hover:text-orange-200 duration-200"
+                :to="`/spreadsheets/order/${row.clientLink2}`"
+              >
+                {{ row.clientLink2 }}
+              </NuxtLink>
+            </td>
+            <td
+              v-if="user.cell2 === 'READ' || user.cell2 === 'WRITE'"
+              class="border-2"
+            >
+              {{ row.cell }}
+            </td>
+            <td
+              v-if="user.fromName2 === 'READ' || user.fromName2 === 'WRITE'"
+              class="py-4 border-2 text-secondary-color underline"
+            >
+              <NuxtLink
+                v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
+                class="cursor-pointer hover:text-orange-200 duration-200"
+                :to="`/phone/${row.fromName}`"
+              >
+                {{ row.fromName }}
+              </NuxtLink>
+            </td>
+            <td
+              class="border-2 whitespace-nowrap overflow-hidden max-w-[30px]"
+              v-if="
+                user.productLink2 === 'READ' || user.productLink2 === 'WRITE'
+              "
+            >
+              {{ row.productLink }}
+            </td>
+            <td
+              class="border-2"
+              v-if="
+                user.productName2 === 'READ' || user.productName2 === 'WRITE'
+              "
+            >
+              {{ row.productName }}
+            </td>
+            <td
+              class="border-2"
+              v-if="
+                user.priceProgram === 'READ' || user.priceProgram === 'WRITE'
+              "
+            >
+              {{ row.priceProgram }}
+            </td>
+            <td
+              class="border-2"
+              v-if="user.prepayment2 === 'READ' || user.prepayment2 === 'WRITE'"
+            >
+              {{ row.prepayment }}
+            </td>
+            <td
+              class="border-2"
+              v-if="
+                user.percentClient2 === 'READ' ||
+                user.percentClient2 === 'WRITE'
+              "
+            >
+              {{ row.percentClient }}
+            </td>
+            <td
+              class="border-2"
+              v-if="
+                user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'
+              "
+            >
+              {{ row.deliveredKGT }}
+            </td>
+            <td
+              class="border-2"
+              v-if="
+                user.amountFromClient2 === 'READ' ||
+                user.amountFromClient2 === 'WRITE'
+              "
+            >
+              {{ row.amountFromClient2 }}
+            </td>
+            <td
+              class="border-2"
+              v-if="
+                user.dispatchPVZ2 === 'READ' || user.dispatchPVZ2 === 'WRITE'
+              "
+            >
+              {{ row.dispatchPVZ }}
+            </td>
+            <td
+              class="border-2"
+              v-if="user.orderPVZ2 === 'READ' || user.orderPVZ2 === 'WRITE'"
+            >
+              {{ row.orderPVZ }}
+            </td>
+            <td
+              class="border-2"
+              v-if="
+                user.deliveredSC2 === 'READ' || user.deliveredSC2 === 'WRITE'
+              "
+            >
+              <h1 class="font-bold text-green-500">
+                {{
+                  row.deliveredSC
+                    ? storeUsers.getNormalizedDate(row.deliveredSC)
+                    : ""
                 }}
-                (МСК)
-              </b>
-            </h1>
-            <h1>
-              Уникальный идентификатор QR-кода: <b>{{ qrBody.Data?.qrcId }} </b>
-            </h1>
-            <h1>
-              Источник создания QR-кода: <b>{{ qrBody.Data?.sourceName }} </b>
-            </h1>
-            <h1>
-              Комментарий:
-              <b>
-                {{ qrBody.Data?.paymentPurpose }}
-              </b>
-            </h1>
+              </h1>
+            </td>
+            <td
+              class="border-2"
+              v-if="
+                user.deliveredPVZ2 === 'READ' || user.deliveredPVZ2 === 'WRITE'
+              "
+            >
+              <h1 class="font-bold text-green-500">
+                {{
+                  row.deliveredPVZ
+                    ? storeUsers.getNormalizedDate(row.deliveredPVZ)
+                    : ""
+                }}
+              </h1>
+            </td>
+            <td
+              class="border-2"
+              v-if="user.issued2 === 'READ' || user.issued2 === 'WRITE'"
+            >
+              <h1 class="font-bold text-green-500">
+                {{ row.issued ? storeUsers.getNormalizedDate(row.issued) : "" }}
+              </h1>
+            </td>
+            <td
+              class="border-2"
+              v-if="
+                user.additionally2 === 'READ' || user.additionally2 === 'WRITE'
+              "
+            >
+              {{ row.additionally ? row.additionally : "Пусто" }}
+            </td>
+
+            <td
+              class="border-2"
+              v-if="
+                (user.profit2 === 'READ' || user.profit2 === 'WRITE') &&
+                row.additionally !== 'Отказ клиент' &&
+                row.additionally !== 'Отказ клиент онлайн' &&
+                row.additionally !== 'Отказ клиент наличные' &&
+                row.additionally !== 'Отказ брак'
+              "
+            >
+              {{ row.profit2 }}
+            </td>
+            <td
+              class="border-2"
+              v-if="
+                (user.profit2 === 'READ' || user.profit2 === 'WRITE') &&
+                (row.additionally === 'Отказ клиент' ||
+                  row.additionally === 'Отказ клиент онлайн' ||
+                  row.additionally === 'Отказ клиент наличные' ||
+                  row.additionally === 'Отказ брак')
+              "
+            >
+              {{ row.profit2 }}
+            </td>
+
+            <td
+              class="px-6 border-2"
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              {{ storeUsers.getNormalizedDate(row.created_at) }}
+            </td>
+            <td
+              class="px-6 border-2"
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              {{ storeUsers.getNormalizedDate(row.updated_at) }}
+            </td>
+            <td
+              class="px-6 border-2"
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              {{ storeUsers.getNormalizedDate(row.deleted) }}
+            </td>
+            <td
+              class="px-6 border-2"
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              {{ row.createdUser }}
+            </td>
+            <td
+              class="px-6 border-2"
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              {{ row.updatedUser }}
+            </td>
+
+            <td
+              class="px-6 py-4 border-2"
+              v-if="
+                (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              <div
+                @click="deleteRow(row.id)"
+                class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+              >
+                <Icon class="text-red-600" name="ic:round-delete" size="18" />
+              </div>
+            </td>
+            <div id="right"></div>
+          </tr>
+        </tbody>
+      </table>
+      <div
+        v-else
+        class="flex items-center flex-col justify-center mt-10 text-2xl"
+      >
+        <Icon name="ion:ios-close-empty" size="100" class="text-red-500" />
+        <h1>Извините, записи по данным фильтрам не были найдены!</h1>
+        <h1>Попробуйте поставить другие фильтры или очистить их</h1>
+      </div>
+      <div id="down"></div>
+    </div>
+
+    <UINewModal
+      v-show="isOpenModalQR && isGeneratedQR"
+      @close-modal="closeModalQR"
+    >
+      <template v-slot:icon-header>
+        <Icon
+          size="24"
+          name="streamline:money-cash-bill-3-accounting-billing-payment-finance-cash-currency-money-bill"
+        />
+      </template>
+      <template v-slot:header>
+        <div class="custom-header">
+          <h1 v-if="paymentStatusMessage === 'NotStarted'">
+            Статус: <span class="text-secondary-color"> ОЖИДАНИЕ </span>
+          </h1>
+          <h1
+            v-if="
+              paymentStatusMessage === 'Received' ||
+              paymentStatusMessage === 'InProgress'
+            "
+          >
+            Статус: <span class="text-secondary-color"> ОБРАБОТКА </span>
+          </h1>
+          <h1 v-if="paymentStatusMessage === 'Accepted'">
+            Статус: <span class="text-green-500"> УСПЕШНО </span>
+          </h1>
+          <h1 v-if="paymentStatusMessage === 'Rejected'">
+            Статус: <span class="text-red-500"> ОТКЛОНЁН </span>
+          </h1>
+        </div>
+      </template>
+      <template v-slot:body>
+        <div>
+          <h1 class="text-left mb-3">
+            Сумма:
+            <span class="text-secondary-color font-bold"
+              >{{ getAllSum }} ₽</span
+            >
+          </h1>
+          <div>
+            <CodeModalQR :value="qrBody.Data?.payload" />
+          </div>
+          <div class="mt-3 max-w-[300px]">
+            <h1>Отсканируйте QR-код для оплаты</h1>
+            <UISpinnerQR />
+            <div class="text-left">
+              <h1>
+                Стоимость оплаты: <b>{{ qrBody.Data?.amount / 100 }} ₽ </b>
+              </h1>
+              <h1>
+                Дата и время создания:
+                <b
+                  >{{ storeUsers.getNormalizedDate(qrBody.Data?.createdAt) }}
+                  (МСК)
+                </b>
+              </h1>
+              <h1>
+                Уникальный идентификатор QR-кода:
+                <b>{{ qrBody.Data?.qrcId }} </b>
+              </h1>
+              <h1>
+                Источник создания QR-кода: <b>{{ qrBody.Data?.sourceName }} </b>
+              </h1>
+              <h1>
+                Комментарий:
+                <b>
+                  {{ qrBody.Data?.paymentPurpose }}
+                </b>
+              </h1>
+            </div>
           </div>
         </div>
-      </div>
-    </template>
-    <template v-slot:footer>
-      <UIExitModalButton @click="closeModalQR">Отменить</UIExitModalButton>
-    </template>
-  </UINewModal>
+      </template>
+      <template v-slot:footer>
+        <UIExitModalButton @click="closeModalQR">Отменить</UIExitModalButton>
+      </template>
+    </UINewModal>
 
-  <UINewModal v-show="isOpenModalStatus" @close-modal="closeModalStatus">
-    <template v-slot:icon-header>
-      <Icon size="24" name="uil:transaction" />
-    </template>
-    <template v-slot:header>
-      <div class="custom-header">
-        <h1 v-if="paymentStatusMessage === 'Accepted'">
-          Статус: <span class="text-green-500"> УСПЕШНО </span>
-        </h1>
-        <h1 v-if="paymentStatusMessage === 'Rejected'">
-          Статус: <span class="text-red-500"> ОТКЛОНЁН </span>
-        </h1>
-      </div>
-    </template>
-    <template v-slot:body>
-      <div v-if="paymentStatusMessage === 'Accepted'">
-        <div class="animate-pulse max-w-[300px] mx-auto">
-          <svg
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 130.2 130.2"
-          >
-            <circle
-              class="path circle"
-              fill="none"
-              stroke="#60b504"
-              stroke-width="6"
-              stroke-miterlimit="10"
-              cx="65.1"
-              cy="65.1"
-              r="62.1"
-            />
-            <polyline
-              class="path check"
-              fill="none"
-              stroke="#60b504"
-              stroke-width="6"
-              stroke-linecap="round"
-              stroke-miterlimit="10"
-              points="100.2,40.2 51.5,88.8 29.8,67.5 "
-            />
-          </svg>
+    <UINewModal v-show="isOpenModalStatus" @close-modal="closeModalStatus">
+      <template v-slot:icon-header>
+        <Icon size="24" name="uil:transaction" />
+      </template>
+      <template v-slot:header>
+        <div class="custom-header">
+          <h1 v-if="paymentStatusMessage === 'Accepted'">
+            Статус: <span class="text-green-500"> УСПЕШНО </span>
+          </h1>
+          <h1 v-if="paymentStatusMessage === 'Rejected'">
+            Статус: <span class="text-red-500"> ОТКЛОНЁН </span>
+          </h1>
         </div>
-        <div class="mt-10 font-semibold text-lg">
-          <h1>Операция прошла успешно!</h1>
-          <h1>Окно закроется автоматически через 5 секунд...</h1>
+      </template>
+      <template v-slot:body>
+        <div v-if="paymentStatusMessage === 'Accepted'">
+          <div class="animate-pulse max-w-[300px] mx-auto">
+            <svg
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 130.2 130.2"
+            >
+              <circle
+                class="path circle"
+                fill="none"
+                stroke="#60b504"
+                stroke-width="6"
+                stroke-miterlimit="10"
+                cx="65.1"
+                cy="65.1"
+                r="62.1"
+              />
+              <polyline
+                class="path check"
+                fill="none"
+                stroke="#60b504"
+                stroke-width="6"
+                stroke-linecap="round"
+                stroke-miterlimit="10"
+                points="100.2,40.2 51.5,88.8 29.8,67.5 "
+              />
+            </svg>
+          </div>
+          <div class="mt-10 font-semibold text-lg">
+            <h1>Операция прошла успешно!</h1>
+            <h1>Окно закроется автоматически через 5 секунд...</h1>
+          </div>
         </div>
-      </div>
-      <div v-if="paymentStatusMessage === 'Rejected'">
-        <div class="animate-pulse max-w-[300px] mx-auto">
-          <svg
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 130.2 130.2"
-          >
-            <circle
-              class="path circle"
-              fill="none"
-              stroke="#D06079"
-              stroke-width="6"
-              stroke-miterlimit="10"
-              cx="65.1"
-              cy="65.1"
-              r="62.1"
-            />
-            <line
-              class="path line"
-              fill="none"
-              stroke="#D06079"
-              stroke-width="6"
-              stroke-linecap="round"
-              stroke-miterlimit="10"
-              x1="34.4"
-              y1="37.9"
-              x2="95.8"
-              y2="92.3"
-            />
-            <line
-              class="path line"
-              fill="none"
-              stroke="#D06079"
-              stroke-width="6"
-              stroke-linecap="round"
-              stroke-miterlimit="10"
-              x1="95.8"
-              y1="38"
-              x2="34.4"
-              y2="92.2"
-            />
-          </svg>
+        <div v-if="paymentStatusMessage === 'Rejected'">
+          <div class="animate-pulse max-w-[300px] mx-auto">
+            <svg
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 130.2 130.2"
+            >
+              <circle
+                class="path circle"
+                fill="none"
+                stroke="#D06079"
+                stroke-width="6"
+                stroke-miterlimit="10"
+                cx="65.1"
+                cy="65.1"
+                r="62.1"
+              />
+              <line
+                class="path line"
+                fill="none"
+                stroke="#D06079"
+                stroke-width="6"
+                stroke-linecap="round"
+                stroke-miterlimit="10"
+                x1="34.4"
+                y1="37.9"
+                x2="95.8"
+                y2="92.3"
+              />
+              <line
+                class="path line"
+                fill="none"
+                stroke="#D06079"
+                stroke-width="6"
+                stroke-linecap="round"
+                stroke-miterlimit="10"
+                x1="95.8"
+                y1="38"
+                x2="34.4"
+                y2="92.2"
+              />
+            </svg>
+          </div>
+          <div class="mt-10 font-semibold text-lg">
+            <h1>Операция была отклонена!</h1>
+            <h1>Окно закроется автоматически через 5 секунд...</h1>
+          </div>
         </div>
-        <div class="mt-10 font-semibold text-lg">
-          <h1>Операция была отклонена!</h1>
-          <h1>Окно закроется автоматически через 5 секунд...</h1>
-        </div>
-      </div>
-    </template>
-    <template v-slot:footer>
-      <UIExitModalButton @click="closeModalStatus">ЗАКРЫТЬ</UIExitModalButton>
-    </template>
-  </UINewModal>
+      </template>
+      <template v-slot:footer>
+        <UIExitModalButton @click="closeModalStatus">ЗАКРЫТЬ</UIExitModalButton>
+      </template>
+    </UINewModal>
+  </div>
+  <div v-else>
+    <UISpinner />
+  </div>
 </template>
 
 <style scoped>

@@ -48,14 +48,16 @@ function closeModal() {
 
 async function updateDeliveryRow(obj: any) {
   let answer = confirm("Вы точно хотите изменить статус доставки?");
-  if (answer)
-    await storeRansom.updateDeliveryStatus(
-      obj.row,
-      obj.flag,
-      "ClientRansom",
-      user.value.username
-    );
+  if (answer) isLoading.value = true;
+  await storeRansom.updateDeliveryStatus(
+    obj.row,
+    obj.flag,
+    "ClientRansom",
+    user.value.username
+  );
   filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
+  rows.value = filteredRows.value;
+  isLoading.value = false;
 }
 
 async function updateDeliveryRows(obj: any) {
@@ -91,28 +93,52 @@ async function updateDeliveryRows(obj: any) {
 
 async function deleteRow(id: number) {
   let answer = confirm("Вы точно хотите удалить данную строку?");
-  if (answer) await storeRansom.deleteRansomRow(id, "ClientRansom");
-  filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
+  if (answer) {
+    isLoading.value = true;
+    await storeRansom.deleteRansomRow(id, "ClientRansom");
+    filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
+    rows.value = filteredRows.value;
+    isLoading.value = false;
+  }
 }
 
 async function deleteSelectedRows(idArray: number[]) {
   let answer = confirm(
     `Вы точно хотите удалить данные строки? Количество записей: ${idArray.length}`
   );
-  if (answer) await storeRansom.deleteRansomSelectedRows(idArray, "ClientRansom");
-  filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
+  if (answer) {
+    isLoading.value = true;
+    await storeRansom.deleteRansomSelectedRows(idArray, "ClientRansom");
+    filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
+    rows.value = filteredRows.value;
+    isLoading.value = false;
+  }
 }
 
 async function updateRow() {
-  await storeRansom.updateRansomRow(rowData.value, user.value.username, "ClientRansom");
-  await closeModal();
+  isLoading.value = true;
+  await storeRansom.updateRansomRow(
+    rowData.value,
+    user.value.username,
+    "ClientRansom"
+  );
+  closeModal();
   filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
+  rows.value = filteredRows.value;
+  isLoading.value = false;
 }
 
 async function createRow() {
-  await storeRansom.createRansomRow(rowData.value, user.value.username, "ClientRansom");
-  await closeModal();
+  isLoading.value = true;
+  await storeRansom.createRansomRow(
+    rowData.value,
+    user.value.username,
+    "ClientRansom"
+  );
+  closeModal();
   filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
+  rows.value = filteredRows.value;
+  isLoading.value = true;
 }
 
 async function createCopyRow(id: number) {
@@ -144,15 +170,26 @@ const filteredRows = ref<Array<IClientRansom>>();
 function handleFilteredRows(filteredRowsData: IClientRansom[]) {
   if (user.value.visiblePVZ === "ВСЕ" && user.value.visibleSC === "ВСЕ") {
     filteredRows.value = filteredRowsData;
-  } else if (user.value.visiblePVZ === "ВСЕ" && user.value.visibleSC !== "ВСЕ") {
+  } else if (
+    user.value.visiblePVZ === "ВСЕ" &&
+    user.value.visibleSC !== "ВСЕ"
+  ) {
     filteredRows.value = filteredRowsData.filter(
       (row) => row.orderPVZ === user.value.visibleSC && row.deliveredSC !== null
     );
-  } else if (user.value.visiblePVZ !== "ВСЕ" && user.value.visibleSC === "ВСЕ") {
+  } else if (
+    user.value.visiblePVZ !== "ВСЕ" &&
+    user.value.visibleSC === "ВСЕ"
+  ) {
     filteredRows.value = filteredRowsData.filter(
-      (row) => user.value.visiblePVZ.includes(row.dispatchPVZ) && row.deliveredSC !== null
+      (row) =>
+        user.value.visiblePVZ.includes(row.dispatchPVZ) &&
+        row.deliveredSC !== null
     );
-  } else if (user.value.visiblePVZ !== "ВСЕ" && user.value.visibleSC !== "ВСЕ") {
+  } else if (
+    user.value.visiblePVZ !== "ВСЕ" &&
+    user.value.visibleSC !== "ВСЕ"
+  ) {
     filteredRows.value = filteredRowsData.filter(
       (row) =>
         user.value.visiblePVZ.includes(row.dispatchPVZ) &&
@@ -163,7 +200,9 @@ function handleFilteredRows(filteredRowsData: IClientRansom[]) {
 
   if (filteredRows.value) {
     if (user.value.role === "SORTIROVKA") {
-      filteredRows.value = filteredRows.value.filter((row) => row.deliveredPVZ === null);
+      filteredRows.value = filteredRows.value.filter(
+        (row) => row.deliveredPVZ === null
+      );
     } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {
       let today = new Date().toLocaleDateString("ru-RU", {
         day: "2-digit",
@@ -210,7 +249,6 @@ onMounted(async () => {
   marketplaces.value = await storeMarketplaces.getMarketplaces();
 });
 
-
 definePageMeta({
   layout: false,
   name: "Все товары: Выкуп Клиента",
@@ -223,8 +261,13 @@ let isAutoCell = ref(true);
 let isAutoFromName = ref(true);
 
 function getCellFromName() {
-  if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
-    let rowCell = rows.value?.filter((row) => row.fromName === rowData.value.fromName);
+  if (
+    rowData.value.fromName.trim().length === 12 &&
+    isAutoFromName.value === true
+  ) {
+    let rowCell = rows.value?.filter(
+      (row) => row.fromName === rowData.value.fromName
+    );
     if (rowCell) {
       rowData.value.cell = rowCell[0].cell;
     }
@@ -233,7 +276,9 @@ function getCellFromName() {
 
 function getFromNameFromCell() {
   if (rowData.value.cell.trim() && isAutoCell.value === true) {
-    let rowFromName = rows.value?.filter((row) => row.cell === rowData.value.cell);
+    let rowFromName = rows.value?.filter(
+      (row) => row.cell === rowData.value.cell
+    );
     if (rowFromName) {
       rowData.value.fromName = rowFromName[0].fromName;
     }
@@ -310,7 +355,9 @@ function getFromNameFromCell() {
                 class="grid grid-cols-2 mb-5"
                 v-if="user.fromName2 === 'READ' || user.fromName2 === 'WRITE'"
               >
-                <label for="fromName" class="max-sm:text-sm">Телефон <sup>*</sup></label>
+                <label for="fromName" class="max-sm:text-sm"
+                  >Телефон <sup>*</sup></label
+                >
                 <div>
                   <input
                     :disabled="user.fromName2 === 'READ'"
@@ -328,16 +375,23 @@ function getFromNameFromCell() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.productLink2 === 'READ' || user.productLink2 === 'WRITE'"
+                v-if="
+                  user.productLink2 === 'READ' || user.productLink2 === 'WRITE'
+                "
               >
-                <label for="productLink1" class="max-sm:text-sm">Маркетплейс</label>
+                <label for="productLink1" class="max-sm:text-sm"
+                  >Маркетплейс</label
+                >
                 <select
                   :disabled="user.productLink2 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                   v-model="rowData.productLink"
                 >
                   <option value="">Пусто</option>
-                  <option v-for="marketplace in marketplaces" :value="marketplace.name">
+                  <option
+                    v-for="marketplace in marketplaces"
+                    :value="marketplace.name"
+                  >
                     {{ marketplace.name }}
                   </option>
                 </select>
@@ -345,7 +399,9 @@ function getFromNameFromCell() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.productName2 === 'READ' || user.productName2 === 'WRITE'"
+                v-if="
+                  user.productName2 === 'READ' || user.productName2 === 'WRITE'
+                "
               >
                 <label for="productName1" class="max-sm:text-sm"
                   >Количество товаров</label
@@ -360,7 +416,9 @@ function getFromNameFromCell() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.priceProgram === 'READ' || user.priceProgram === 'WRITE'"
+                v-if="
+                  user.priceProgram === 'READ' || user.priceProgram === 'WRITE'
+                "
               >
                 <label for="priceProgram" class="max-sm:text-sm"
                   >Стоимость выкупа <br />
@@ -376,9 +434,13 @@ function getFromNameFromCell() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.prepayment2 === 'READ' || user.prepayment2 === 'WRITE'"
+                v-if="
+                  user.prepayment2 === 'READ' || user.prepayment2 === 'WRITE'
+                "
               >
-                <label for="prepayment1" class="max-sm:text-sm">Предоплата</label>
+                <label for="prepayment1" class="max-sm:text-sm"
+                  >Предоплата</label
+                >
                 <input
                   :disabled="user.prepayment2 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
@@ -390,7 +452,10 @@ function getFromNameFromCell() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.percentClient2 === 'READ' || user.percentClient2 === 'WRITE'"
+                v-if="
+                  user.percentClient2 === 'READ' ||
+                  user.percentClient2 === 'WRITE'
+                "
               >
                 <label for="percentClient1" class="max-sm:text-sm"
                   >Процент с клиента</label
@@ -406,7 +471,10 @@ function getFromNameFromCell() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'"
+                v-if="
+                  user.deliveredKGT2 === 'READ' ||
+                  user.deliveredKGT2 === 'WRITE'
+                "
               >
                 <label for="deliveredKGT1" class="max-sm:text-sm"
                   >Дополнительный доход</label
@@ -422,9 +490,13 @@ function getFromNameFromCell() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.dispatchPVZ2 === 'READ' || user.dispatchPVZ2 === 'WRITE'"
+                v-if="
+                  user.dispatchPVZ2 === 'READ' || user.dispatchPVZ2 === 'WRITE'
+                "
               >
-                <label for="dispatchPVZ1" class="max-sm:text-sm">Отправка в ПВЗ</label>
+                <label for="dispatchPVZ1" class="max-sm:text-sm"
+                  >Отправка в ПВЗ</label
+                >
                 <select
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.dispatchPVZ"
@@ -440,7 +512,9 @@ function getFromNameFromCell() {
                 class="grid grid-cols-2 mb-5"
                 v-if="user.orderPVZ2 === 'READ' || user.orderPVZ2 === 'WRITE'"
               >
-                <label for="orderPVZ1" class="max-sm:text-sm">Заказано на СЦ</label>
+                <label for="orderPVZ1" class="max-sm:text-sm"
+                  >Заказано на СЦ</label
+                >
                 <select
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.orderPVZ"
@@ -464,7 +538,10 @@ function getFromNameFromCell() {
               <div v-if="showAddFields">
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.deliveredSC1 === 'READ' || user.deliveredSC1 === 'WRITE'"
+                  v-if="
+                    user.deliveredSC1 === 'READ' ||
+                    user.deliveredSC1 === 'WRITE'
+                  "
                 >
                   <label for="deliveredSC1" class="max-sm:text-sm"
                     >Доставлено на СЦ</label
@@ -479,7 +556,10 @@ function getFromNameFromCell() {
 
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'"
+                  v-if="
+                    user.deliveredPVZ1 === 'READ' ||
+                    user.deliveredPVZ1 === 'WRITE'
+                  "
                 >
                   <label for="deliveredPVZ1" class="max-sm:text-sm"
                     >Доставлено на ПВЗ</label
@@ -496,7 +576,9 @@ function getFromNameFromCell() {
                   class="grid grid-cols-2 mb-5"
                   v-if="user.issued1 === 'READ' || user.issued1 === 'WRITE'"
                 >
-                  <label for="issued1" class="max-sm:text-sm">Выдан клиенту</label>
+                  <label for="issued1" class="max-sm:text-sm"
+                    >Выдан клиенту</label
+                  >
                   <input
                     :disabled="user.issued1 === 'READ'"
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
@@ -507,9 +589,14 @@ function getFromNameFromCell() {
 
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'"
+                  v-if="
+                    user.additionally1 === 'READ' ||
+                    user.additionally1 === 'WRITE'
+                  "
                 >
-                  <label for="additionally1" class="max-sm:text-sm">Дополнительно</label>
+                  <label for="additionally1" class="max-sm:text-sm"
+                    >Дополнительно</label
+                  >
                   <select
                     class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                     v-model="rowData.additionally"
@@ -524,9 +611,14 @@ function getFromNameFromCell() {
               </div>
             </div>
 
-            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
+            <div
+              class="flex items-center justify-center gap-3 mt-10"
+              v-if="rowData.id"
+            >
               <UIMainButton @click="updateRow">Сохранить </UIMainButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
               <UIMainButton
@@ -534,7 +626,9 @@ function getFromNameFromCell() {
                 @click="createRow"
                 >Создать
               </UIMainButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
           </UIModal>
         </div>
@@ -608,7 +702,9 @@ function getFromNameFromCell() {
                 class="grid grid-cols-2 mb-5"
                 v-if="user.fromName2 === 'READ' || user.fromName2 === 'WRITE'"
               >
-                <label for="fromName" class="max-sm:text-sm">Телефон <sup>*</sup></label>
+                <label for="fromName" class="max-sm:text-sm"
+                  >Телефон <sup>*</sup></label
+                >
                 <div>
                   <input
                     :disabled="user.fromName2 === 'READ'"
@@ -626,16 +722,23 @@ function getFromNameFromCell() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.productLink2 === 'READ' || user.productLink2 === 'WRITE'"
+                v-if="
+                  user.productLink2 === 'READ' || user.productLink2 === 'WRITE'
+                "
               >
-                <label for="productLink1" class="max-sm:text-sm">Маркетплейс</label>
+                <label for="productLink1" class="max-sm:text-sm"
+                  >Маркетплейс</label
+                >
                 <select
                   :disabled="user.productLink2 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                   v-model="rowData.productLink"
                 >
                   <option value="">Пусто</option>
-                  <option v-for="marketplace in marketplaces" :value="marketplace.name">
+                  <option
+                    v-for="marketplace in marketplaces"
+                    :value="marketplace.name"
+                  >
                     {{ marketplace.name }}
                   </option>
                 </select>
@@ -643,7 +746,9 @@ function getFromNameFromCell() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.productName2 === 'READ' || user.productName2 === 'WRITE'"
+                v-if="
+                  user.productName2 === 'READ' || user.productName2 === 'WRITE'
+                "
               >
                 <label for="productName1" class="max-sm:text-sm"
                   >Количество товаров</label
@@ -658,7 +763,9 @@ function getFromNameFromCell() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.priceProgram === 'READ' || user.priceProgram === 'WRITE'"
+                v-if="
+                  user.priceProgram === 'READ' || user.priceProgram === 'WRITE'
+                "
               >
                 <label for="priceProgram" class="max-sm:text-sm"
                   >Стоимость выкупа <br />
@@ -674,9 +781,13 @@ function getFromNameFromCell() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.prepayment2 === 'READ' || user.prepayment2 === 'WRITE'"
+                v-if="
+                  user.prepayment2 === 'READ' || user.prepayment2 === 'WRITE'
+                "
               >
-                <label for="prepayment1" class="max-sm:text-sm">Предоплата</label>
+                <label for="prepayment1" class="max-sm:text-sm"
+                  >Предоплата</label
+                >
                 <input
                   :disabled="user.prepayment2 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
@@ -688,7 +799,10 @@ function getFromNameFromCell() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.percentClient2 === 'READ' || user.percentClient2 === 'WRITE'"
+                v-if="
+                  user.percentClient2 === 'READ' ||
+                  user.percentClient2 === 'WRITE'
+                "
               >
                 <label for="percentClient1" class="max-sm:text-sm"
                   >Процент с клиента</label
@@ -704,7 +818,10 @@ function getFromNameFromCell() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'"
+                v-if="
+                  user.deliveredKGT2 === 'READ' ||
+                  user.deliveredKGT2 === 'WRITE'
+                "
               >
                 <label for="deliveredKGT1" class="max-sm:text-sm"
                   >Дополнительный доход</label
@@ -720,9 +837,13 @@ function getFromNameFromCell() {
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.dispatchPVZ2 === 'READ' || user.dispatchPVZ2 === 'WRITE'"
+                v-if="
+                  user.dispatchPVZ2 === 'READ' || user.dispatchPVZ2 === 'WRITE'
+                "
               >
-                <label for="dispatchPVZ1" class="max-sm:text-sm">Отправка в ПВЗ</label>
+                <label for="dispatchPVZ1" class="max-sm:text-sm"
+                  >Отправка в ПВЗ</label
+                >
                 <select
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.dispatchPVZ"
@@ -738,7 +859,9 @@ function getFromNameFromCell() {
                 class="grid grid-cols-2 mb-5"
                 v-if="user.orderPVZ2 === 'READ' || user.orderPVZ2 === 'WRITE'"
               >
-                <label for="orderPVZ1" class="max-sm:text-sm">Заказано на СЦ</label>
+                <label for="orderPVZ1" class="max-sm:text-sm"
+                  >Заказано на СЦ</label
+                >
                 <select
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.orderPVZ"
@@ -762,7 +885,10 @@ function getFromNameFromCell() {
               <div v-if="showAddFields">
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.deliveredSC1 === 'READ' || user.deliveredSC1 === 'WRITE'"
+                  v-if="
+                    user.deliveredSC1 === 'READ' ||
+                    user.deliveredSC1 === 'WRITE'
+                  "
                 >
                   <label for="deliveredSC1" class="max-sm:text-sm"
                     >Доставлено на СЦ</label
@@ -777,7 +903,10 @@ function getFromNameFromCell() {
 
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'"
+                  v-if="
+                    user.deliveredPVZ1 === 'READ' ||
+                    user.deliveredPVZ1 === 'WRITE'
+                  "
                 >
                   <label for="deliveredPVZ1" class="max-sm:text-sm"
                     >Доставлено на ПВЗ</label
@@ -794,7 +923,9 @@ function getFromNameFromCell() {
                   class="grid grid-cols-2 mb-5"
                   v-if="user.issued1 === 'READ' || user.issued1 === 'WRITE'"
                 >
-                  <label for="issued1" class="max-sm:text-sm">Выдан клиенту</label>
+                  <label for="issued1" class="max-sm:text-sm"
+                    >Выдан клиенту</label
+                  >
                   <input
                     :disabled="user.issued1 === 'READ'"
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
@@ -805,9 +936,14 @@ function getFromNameFromCell() {
 
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'"
+                  v-if="
+                    user.additionally1 === 'READ' ||
+                    user.additionally1 === 'WRITE'
+                  "
                 >
-                  <label for="additionally1" class="max-sm:text-sm">Дополнительно</label>
+                  <label for="additionally1" class="max-sm:text-sm"
+                    >Дополнительно</label
+                  >
                   <select
                     class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                     v-model="rowData.additionally"
@@ -822,9 +958,14 @@ function getFromNameFromCell() {
               </div>
             </div>
 
-            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
+            <div
+              class="flex items-center justify-center gap-3 mt-10"
+              v-if="rowData.id"
+            >
               <UIMainButton @click="updateRow">Сохранить </UIMainButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
               <UIMainButton
@@ -832,7 +973,9 @@ function getFromNameFromCell() {
                 @click="createRow"
                 >Создать
               </UIMainButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
           </UIModal>
         </div>
