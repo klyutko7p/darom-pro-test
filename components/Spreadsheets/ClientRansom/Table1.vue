@@ -364,6 +364,15 @@ watch(isOpenModalQR, (newValue) => {
     unlockScroll();
   }
 });
+
+async function writeClipboardText(text: any) {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast.success("Вы успешно скопировали ссылку");
+  } catch (error: any) {
+    console.error(error.message);
+  }
+}
 </script>
 
 <template>
@@ -1172,11 +1181,17 @@ watch(isOpenModalQR, (newValue) => {
       </template>
       <template v-slot:body>
         <div>
-          <h1 class="text-left mb-3">
+          <h1 class="text-left mb-1">
             Сумма:
             <span class="text-secondary-color font-bold"
               >{{ getAllSum }} ₽</span
             >
+          </h1>
+          <h1
+            @click="writeClipboardText(qrBody.Data?.payload)"
+            class="text-left mb-3 duration-200 font-bold underline text-secondary-color cursor-pointer hover:opacity-50"
+          >
+            СКОПИРОВАТЬ ССЫЛКУ
           </h1>
           <div>
             <CodeModalQR :value="qrBody.Data?.payload" />

@@ -201,10 +201,7 @@ function scanItem() {
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertToURL(scannedLink);
-    let rowData = await storeRansom.getRansomRowById(
-      +scannedLink,
-      "OurRansom"
-    );
+    let rowData = await storeRansom.getRansomRowById(+scannedLink, "OurRansom");
     handleCheckboxChange(rowData);
     scanStringItem.value = "";
   }, 1000);
@@ -589,7 +586,6 @@ async function checkPaymentStatus(qrcId: string) {
   }, interval);
 }
 
-
 function lockScroll() {
   document.body.classList.add("no-scroll");
 }
@@ -605,6 +601,15 @@ watch(isOpenModalQR, (newValue) => {
     unlockScroll();
   }
 });
+
+async function writeClipboardText(text: any) {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast.success("Вы успешно скопировали ссылку");
+  } catch (error: any) {
+    console.error(error.message);
+  }
+}
 </script>
 
 <template>
@@ -895,7 +900,12 @@ watch(isOpenModalQR, (newValue) => {
       </h1>
     </div>
 
-    <div :class="{'overflow-x-auto max-h-[300px] overflow-y-auto': isOpenModalQR}"  class="relative mt-5 mb-10 mr-5">
+    <div
+      :class="{
+        'overflow-x-auto max-h-[300px] overflow-y-auto': isOpenModalQR,
+      }"
+      class="relative mt-5 mb-10 mr-5"
+    >
       <div id="up"></div>
       <table
         id="theTable"
@@ -1551,11 +1561,17 @@ watch(isOpenModalQR, (newValue) => {
       </template>
       <template v-slot:body>
         <div>
-          <h1 class="text-left mb-3">
+          <h1 class="text-left mb-1">
             Сумма:
             <span class="text-secondary-color font-bold"
               >{{ getAllSum }} ₽</span
             >
+          </h1>
+          <h1
+            @click="writeClipboardText(qrBody.Data?.payload)"
+            class="text-left mb-3 duration-200 font-bold underline text-secondary-color cursor-pointer hover:opacity-50"
+          >
+            СКОПИРОВАТЬ ССЫЛКУ
           </h1>
           <div>
             <CodeModalQR :value="qrBody.Data?.payload" />
@@ -1570,9 +1586,7 @@ watch(isOpenModalQR, (newValue) => {
               <h1>
                 Дата и время создания:
                 <b
-                  >{{
-                    storeUsers.getNormalizedDate(qrBody.Data?.createdAt)
-                  }}
+                  >{{ storeUsers.getNormalizedDate(qrBody.Data?.createdAt) }}
                   (МСК)
                 </b>
               </h1>

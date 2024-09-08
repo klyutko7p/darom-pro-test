@@ -37,19 +37,19 @@ const addressItems = ref([
 let selectedAddress = ref();
 
 let counter = ref(0);
-function changeAddress(arrayCoordinates: Array<number>) {
+async function changeAddress(arrayCoordinates: Array<number>) {
   if (!counter.value) {
-    coordinates.value = arrayCoordinates;
-    selectedAddress.value = addressItems.value.find(
-      (item) => item.address[0] === arrayCoordinates[0]
-    )?.address;
     zoomValue.value = 12;
-  } else {
     coordinates.value = arrayCoordinates;
     selectedAddress.value = addressItems.value.find(
       (item) => item.address[0] === arrayCoordinates[0]
     )?.address;
-    zoomValue.value = 18;
+  } else {
+    zoomValue.value = 12;
+    coordinates.value = arrayCoordinates;
+    selectedAddress.value = addressItems.value.find(
+      (item) => item.address[0] === arrayCoordinates[0]
+    )?.address;
   }
   counter.value++;
 }
