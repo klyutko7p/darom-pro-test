@@ -34,14 +34,14 @@ const addressItems = ref([
   },
 ]);
 
-let selectedAddress = ref(addressItems.value[0].address);
+let selectedAddress = ref();
 
 function changeAddress(arrayCoordinates: Array<number>) {
   coordinates.value = arrayCoordinates;
   selectedAddress.value = addressItems.value.find(
     (item) => item.address[0] === arrayCoordinates[0]
   )?.address;
-  zoomValue.value = 9;
+  zoomValue.value = 18;
 }
 
 let markers = [
@@ -101,11 +101,6 @@ const items = [
   <NuxtLayout name="main-page">
     <div class="bg-main-page">
       <div class="py-5 max-md:px-5 mx-auto container" v-cloak>
-        <div class="flex items-center justify-end gap-5 max-sm:justify-center">
-          <UIMainButton @click="router.push('/auth/client/login')"
-            >сделать заказ</UIMainButton
-          >
-        </div>
         <div class="flex items-center justify-center flex-col space-y-5">
           <h1
             class="text-secondary-color font-bold text-8xl max-lg:text-6xl mt-3"
@@ -132,14 +127,25 @@ const items = [
             </div>
             <br class="hidden max-[500px]:block" />
             <div class="mt-5 space-x-5">
-              <a class="hover:opacity-50 duration-200" href="tel:+79496124760">
+              <a
+                class="hover:opacity-50 duration-200"
+                href="https://t.me/Svetlana_Darompro"
+              >
                 <Icon name="logos:telegram" size="32" />
               </a>
-              <a class="hover:opacity-50 duration-200" href="tel:+79496124760">
+              <a
+                class="hover:opacity-50 duration-200"
+                href="https://wa.me/79496124760"
+              >
                 <Icon name="logos:whatsapp-icon" size="32" />
               </a>
             </div>
           </h1>
+        </div>
+        <div class="flex items-center justify-center gap-5 mt-5">
+          <UIMainButton @click="router.push('/auth/client/login')"
+            >сделать заказ</UIMainButton
+          >
         </div>
         <div
           class="flex items-center justify-between mt-24 max-xl:flex-col-reverse max-xl:gap-10 max-xl:mt-10"

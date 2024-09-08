@@ -30,11 +30,13 @@ export const useClientsStore = defineStore("clients", () => {
         },
         body: JSON.stringify({ client }),
       });
-      if (data.value === undefined) {
-        router.push("/auth/client/login");
-        toast.success(
-          "Вы успешно зарегистрированы! Введите данные, чтобы войти."
-        );
+      if (
+        data.value &&
+        "success" in data.value &&
+        data.value.success
+      ) {
+        toast.success("Вы успешно зарегистрированы!");
+        return data.value.success;
       } else {
         toast.error(
           "Произошла ошибка при создании аккаунта! Номер уже зарегистрирован!"

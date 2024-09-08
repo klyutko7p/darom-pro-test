@@ -59,7 +59,7 @@ let showPassword = ref(false)
               >Имя пользователя</label
             >
             <div class="mt-2">
-              <input
+              <UInput
                 v-model="username"
                 id="username"
                 name="username"
@@ -67,7 +67,6 @@ let showPassword = ref(false)
                 autocomplete="username"
                 required
                 placeholder="Введите имя пользователя"
-                class="block w-full ring-1 ring-gray-200 focus:ring-2 focus:ring-yellow-600 bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none"
               />
             </div>
           </div>
@@ -81,7 +80,7 @@ let showPassword = ref(false)
               >
             </div>
             <div class="mt-2 relative">
-              <input
+              <UInput
                 v-model="password"
                 id="password"
                 name="password"
@@ -89,7 +88,6 @@ let showPassword = ref(false)
                 autocomplete="current-password"
                 required
                 placeholder="******"
-                class="block w-full ring-1 ring-gray-200 focus:ring-2 focus:ring-yellow-600 bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none"
               />
               <Icon
                 @click="showPassword = !showPassword"
@@ -116,15 +114,6 @@ let showPassword = ref(false)
         class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
         @click="router.push('/')"
         >На главную</UIMainButton
-      >
-    </div>
-    <div
-      class="absolute top-3 right-2 flex flex-col text-center text-secondary-color font-bold gap-3"
-    >
-      <UIMainButton
-        class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
-        @click="router.push('/auth/client/login')"
-        >Вход клиента</UIMainButton
       >
     </div>
   </div>

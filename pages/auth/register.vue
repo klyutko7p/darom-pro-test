@@ -141,7 +141,7 @@ let isPrivacyPolicyAgreed = ref(false);
 
 async function confirmationRegistration() {
   isLoading.value = true;
-  await storeClients.register({
+  let statusRegistration = await storeClients.register({
     id: 0,
     phoneNumber: phoneNumberData.value,
     password: password.value,
@@ -152,6 +152,10 @@ async function confirmationRegistration() {
       isPersonalDataProcessingPolicyAgreed.value,
     isPrivacyPolicyAgreed: isPrivacyPolicyAgreed.value,
   });
+
+  if (statusRegistration) {
+    await storeClients.signIn(phoneNumberData.value, password.value, false);
+  }
 
   if (storeClients.compareReferralLinkNumber(queryValue, refValue)) {
     await storeClients.createReferralClient(
@@ -216,6 +220,10 @@ function validationPhoneNumber() {
   if (!phoneNumberData.value.startsWith("+7")) {
     phoneNumberData.value =
       "+7" + phoneNumberData.value.replace(/^(\+?7|8)?/, "");
+  }
+
+  if (phoneNumberData.value.length > 12) {
+    phoneNumberData.value = phoneNumberData.value.slice(0, 12);
   }
 }
 
@@ -297,8 +305,8 @@ const formattedBlockDuration = computed(() =>
                 autocomplete="phone"
                 required
                 placeholder="+7XXXXXXXXXX"
-                class="block w-full ring-1 ring-gray-200 focus:ring-2 focus:ring-yellow-600 bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none"
                 @input="validationPhoneNumber"
+                class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
               />
             </div>
           </div>
@@ -312,7 +320,7 @@ const formattedBlockDuration = computed(() =>
               >
             </div>
             <div class="mt-2 relative">
-              <input
+              <UInput
                 v-model="password"
                 id="password"
                 name="password"
@@ -320,7 +328,6 @@ const formattedBlockDuration = computed(() =>
                 autocomplete="current-password"
                 required
                 placeholder="******"
-                class="block w-full ring-1 ring-gray-200 focus:ring-2 focus:ring-yellow-600 bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none"
               />
               <Icon
                 @click="showPassword = !showPassword"
@@ -339,15 +346,11 @@ const formattedBlockDuration = computed(() =>
               >
             </div>
             <div class="mt-2">
-              <input
+              <UInput
                 v-model="repeatPassword"
-                id="repeat-password"
-                name="repeat-password"
                 :type="showPassword ? 'text' : 'password'"
-                autocomplete="current-password"
                 required
                 placeholder="******"
-                class="block w-full ring-1 ring-gray-200 focus:ring-2 focus:ring-yellow-600 bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none"
               />
             </div>
           </div>
@@ -409,46 +412,37 @@ const formattedBlockDuration = computed(() =>
       </div>
     </div>
 
-    <div
-      v-if="isShowConfirmationModal"
-      class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-65 z-[200]"
-    >
-      <div class="flex items-center justify-center h-screen">
-        <div class="bg-white rounded-2xl max-w-[550px]">
-          <div class="border-b-2 p-5 flex items-center gap-24 justify-between">
-            <p class="font-medium text-2xl">Подтверждение номера телефона</p>
-            <Icon
-              @click="isShowConfirmationModal = !isShowConfirmationModal"
-              class="hover:text-hover-color duration-200 cursor-pointer"
-              name="material-symbols:cancel-rounded"
-              size="24"
-            />
-          </div>
-          <div class="px-10 py-5">
-            <p class="text-xl text-center">
-              Введите код в текстовое поле снизу, который придёт на Ваш номер
-              телефона.
-            </p>
-            <div class="flex justify-center mt-5">
-              <input
-                class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
-                type="text"
-                @input="isValidateConfirmationCode"
-                v-model="confirmationCode"
-              />
-            </div>
-            <div class="flex justify-center items-center gap-3 mt-5">
-              <UIMainButton
-                :disabled="isButtonDisabled || isBlocked"
-                @click="register"
-                >Отправить код ещё раз</UIMainButton
-              >
-              {{ formattedBlockDuration }}
+    <UINewModalEdit v-if="isShowConfirmationModal" @close-modal="isShowConfirmationModal = !isShowConfirmationModal">
+      <template v-slot:icon-header> </template>
+      <template v-slot:header>Подтверждение</template>
+      <template v-slot:body>
+        <div class="flex items-center justify-center pt-5">
+          <div class="rounded-2xl space-y-5">
+            <div class="space-y-5">
+              <p class="text-center">
+                Введите код в текстовое поле снизу, который придёт на Ваш номер
+                телефона.
+              </p>
+              <div class="flex justify-center">
+                <UInput
+                  type="text"
+                  @input="isValidateConfirmationCode"
+                  v-model="confirmationCode"
+                />
+              </div>
+              <div class="flex justify-center flex-col items-center gap-3">
+                <UIMainButton
+                  :disabled="isButtonDisabled || isBlocked"
+                  @click="register"
+                  >Отправить код ещё раз</UIMainButton
+                >
+                {{ formattedBlockDuration }}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </template>
+    </UINewModalEdit>
 
     <div
       class="absolute top-3 left-2 flex flex-col text-center text-secondary-color font-bold gap-3"
@@ -457,15 +451,6 @@ const formattedBlockDuration = computed(() =>
         class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
         @click="router.push('/')"
         >На главную</UIMainButton
-      >
-    </div>
-    <div
-      class="absolute top-3 right-2 flex flex-col text-center text-secondary-color font-bold gap-3"
-    >
-      <UIMainButton
-        class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
-        @click="router.push('/auth/login')"
-        >Вход сотрудника</UIMainButton
       >
     </div>
   </div>

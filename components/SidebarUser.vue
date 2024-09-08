@@ -1,15 +1,16 @@
 <script lang="ts" setup>
 import { useUsersStore } from "../stores/users";
+import { vAutoAnimate } from "@formkit/auto-animate";
 
 const router = useRouter();
 const route = useRoute();
 const storeUsers = useUsersStore();
-const storeBalance = useBalanceStore();
-const storeAdvanceReports = useAdvanceReports();
 let user = ref({} as User);
 let isOpen = ref(false);
-let requests = ref<Array<IBalance>>();
-let requests2 = ref<Array<IAdvanceReport>>();
+const storeBalance = useBalanceStore();
+const storeAdvanceReports = useAdvanceReports();
+let requestsBalance = ref<Array<IBalance>>([]);
+let requestsAdvanceReport = ref<Array<IAdvanceReport>>([]);
 
 function signOut() {
   storeUsers.signOut();
@@ -18,6 +19,14 @@ function signOut() {
 function editMenu() {
   isOpen.value = !isOpen.value;
 }
+
+function reloadPage() {
+  location.reload();
+}
+
+let quantityRequiredARRows = ref(0);
+let quantityRequiredARRowsAdmin = ref(0);
+let quantityRequiredBalanceRows = ref(0);
 
 onMounted(async () => {
   try {
@@ -28,8 +37,29 @@ onMounted(async () => {
     ]);
 
     user.value = userResult;
-    requests.value = balanceResult;
-    requests2.value = advanceResult;
+    requestsBalance.value = balanceResult;
+    requestsAdvanceReport.value = advanceResult;
+
+    quantityRequiredARRows.value = requestsAdvanceReport.value.filter(
+      (row) =>
+        !row.received &&
+        row.issuedUser === user.value.username &&
+        row.notation !== "Пополнение баланса"
+    ).length;
+    quantityRequiredARRowsAdmin.value = requestsAdvanceReport.value.filter(
+      (row) =>
+        !row.received &&
+        (row.issuedUser === user.value.username ||
+          row.issuedUser === "Директор (С)") &&
+        row.notation !== "Пополнение баланса"
+    ).length;
+    quantityRequiredBalanceRows.value = requestsBalance.value.filter(
+      (row) =>
+        row.issued &&
+        !row.received &&
+        (row.receivedUser2 === user.value.username ||
+          row.receivedUser2 === "Нет")
+    ).length;
   } catch (error) {
     console.error("Ошибка:", error);
   }
@@ -53,465 +83,58 @@ function formatPhoneNumber(phoneNumber: string) {
 }
 </script>
 <template>
-  <div
-    class="fixed z-50 backdrop-blur-2xl w-full h-screen flex flex-col bg-clip-border rounded-r-xl bg-white text-gray-700 max-w-[16rem] p-4 shadow-xl shadow-blue-gray-900/5 max-xl:hidden overflow-y-auto"
+  <SidebarAside
+    :user="user"
+    @sign-out="signOut"
+    @edit-menu="editMenu"
+    v-auto-animate
     v-if="isOpen"
+  />
+
+  <div
+    class="fixed bg-gradient-to-tr from-white via-white to-yellow-100 bg-image m-auto top-0 bottom-0 left-0 right-0 z-[200] hidden max-md:block overflow-auto"
+    v-if="
+      isOpen &&
+      (route.fullPath.includes('+') ||
+        route.fullPath === '/spreadsheets/our-ransom' ||
+        route.fullPath === '/spreadsheets/client-ransom' ||
+        route.fullPath === '/spreadsheets/delivery' ||
+        route.fullPath === '/equipment' ||
+        route.fullPath === '/advance-report/summary-tables')
+    "
   >
-    <div class="p-4 flex justify-between items-center">
-      <h1 class="font-bold text-xl text-secondary-color">DAROM.PRO</h1>
-      <Icon
-        @click="editMenu"
-        name="ion:ios-arrow-back"
-        size="20"
-        class="hover:text-orange-300 duration-200 cursor-pointer"
+    <nav class="gap-1 p-2 text-2xl font-sans mt-10 font-normal text-black">
+      <SidebarAsideMobile
+        :user="user"
+        @sign-out="signOut"
+        @edit-menu="editMenu"
+        v-auto-animate
+        v-if="isOpen"
       />
-    </div>
-    <nav
-      class="flex flex-col gap-1 min-w-[240px] p-2 font-sans text-base font-normal text-gray-700 overflow-y-auto"
-    >
-      <div
-        role="button"
-        @click="router.push('/spreadsheets/our-ransom/info')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-orange-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-        v-if="user.dataOurRansom === 'READ' || user.dataOurRansom === 'WRITE'"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="mage:bag-a" size="20" />
-        </div>
-        <h1>Наш Выкуп</h1>
-      </div>
-      <div
-        role="button"
-        tabindex="0"
-        @click="router.push('/spreadsheets/client-ransom/info')"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-        v-if="
-          (user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE') &&
-          user.role !== 'SORTIROVKA' &&
-          user.username !== 'Волошина'
-        "
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols:lock-person-outline" size="20" />
-        </div>
-        <h1>Выкуп Клиента</h1>
-      </div>
-      <div
-        role="button"
-        tabindex="0"
-        @click="router.push('/spreadsheets/client-ransom')"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-        v-if="
-          (user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE') &&
-          (user.role === 'SORTIROVKA' || user.username === 'Волошина')
-        "
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols:lock-person-outline" size="20" />
-        </div>
-        <h1>Выкуп Клиента</h1>
-      </div>
-      <div
-        v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
-          user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ' ||
-          user.role === 'PPVZ'
-        "
-        role="button"
-        @click="router.push('/spreadsheets/refunds')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="hugeicons:delivery-return-01" size="20" />
-        </div>
-        <h1>Возвраты</h1>
-      </div>
-      <div
-        v-if="
-          user.username === 'Волошина' ||
-          user.username === 'Шарафаненко' ||
-          user.username === 'Шведова' ||
-          user.username === 'Директор' ||
-          user.username === 'Горцуева'
-        "
-        role="button"
-        @click="router.push('/equipment')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols:rule-settings" size="20" />
-        </div>
-        <h1>Оборудование ПВЗ</h1>
-      </div>
-      <div
-        v-if="
-          (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
-          user.role === 'DRIVER' ||
-          user.role === 'ADMINISTRATOR' ||
-          user.role === 'OFFICE' ||
-          user.role === 'COURIER' ||
-          user.username === 'Волошина' ||
-          user.role === 'RMANAGER' ||
-          user.username === 'КассаЯМ'
-        "
-        role="button"
-        @click="router.push('/advance-report')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="oui:ml-create-advanced-job" size="20" />
-        </div>
-        <h1>Авансовый отчёт</h1>
-        <Icon
-          v-if="
-            requests2?.filter(
-              (row) =>
-                row.received === null &&
-                row.issuedUser === user.username &&
-                row.notation !== 'Пополнение баланса'
-            ).length > 0
-          "
-          name="pepicons-print:exclamation"
-          size="24"
-          class="text-red-700"
-        />
-      </div>
-      <div
-        v-if="
-          user.dataDelivery === 'READ' ||
-          (user.dataDelivery === 'WRITE' &&
-            user.role !== 'ADMINISTRATOR' &&
-            user.role !== 'RMANAGER')
-        "
-        role="button"
-        @click="router.push('/spreadsheets/delivery')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="carbon:delivery" size="20" />
-        </div>
-        <h1>Доставка и сортировка</h1>
-      </div>
-      <div
-        v-if="
-          user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ' ||
-          user.role === 'PPVZ' ||
-          user.role === 'RMANAGER'
-        "
-        role="button"
-        @click="router.push('/acceptance')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="mdi:qrcode-scan" size="20" />
-        </div>
-        <h1>Приёмка</h1>
-      </div>
-      <div
-        v-if="
-          (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
-          user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ' ||
-          user.role === 'COURIER' ||
-          user.role === 'PPVZ' ||
-          user.role === 'RMANAGER'
-        "
-        role="button"
-        @click="router.push('/balance')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols-light:account-balance-wallet-outline" size="20" />
-        </div>
-        <h1>Баланс</h1>
-        <Icon
-          v-if="
-            requests?.filter((row) => row.pvz === user.visiblePVZ && row.issued === null)
-              .length > 0
-          "
-          name="pepicons-print:exclamation"
-          size="24"
-          class="text-red-700"
-        />
-      </div>
-      <div
-        v-if="
-          user.role === 'RMANAGER' ||
-          user.role === 'ADMIN' ||
-          user.role === 'ADMINISTRATOR'
-        "
-        role="button"
-        @click="router.push('/map')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols:add-location-outline" size="20" />
-        </div>
-        <h1>Карта</h1>
-      </div>
-      <div
-        role="button"
-        tabindex="0"
-        @click="signOut()"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-orange-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            aria-hidden="true"
-            class="h-5 w-5"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M12 2.25a.75.75 0 01.75.75v9a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM6.166 5.106a.75.75 0 010 1.06 8.25 8.25 0 1011.668 0 .75.75 0 111.06-1.06c3.808 3.807 3.808 9.98 0 13.788-3.807 3.808-9.98 3.808-13.788 0-3.808-3.807-3.808-9.98 0-13.788a.75.75 0 011.06 0z"
-              clip-rule="evenodd"
-            ></path>
-          </svg>
-        </div>
-        Выйти
-      </div>
     </nav>
   </div>
 
   <div
-    class="absolute bg-gradient-to-tr from-white via-white to-yellow-100 bg-image top-0 bottom-0 left-0 right-0 z-50 hidden max-xl:flex items-center justify-center bg-white"
-    v-if="isOpen"
+    class="fixed w-screen h-screen bg-gray-50 top-0 bottom-0 z-[200] hidden max-md:flex items-start overflow-auto"
+    v-if="
+      isOpen &&
+      !route.fullPath.includes('+') &&
+      route.fullPath !== '/spreadsheets/our-ransom' &&
+      route.fullPath !== '/spreadsheets/client-ransom' &&
+      route.fullPath !== '/spreadsheets/delivery' &&
+      route.fullPath !== '/advance-report/summary-tables'
+    "
   >
-    <Icon
-      name="material-symbols:cancel-rounded"
-      class="absolute duration-200 cursor-pointer hover:text-orange-400 top-2 right-4"
-      size="40"
-      @click="editMenu"
-    />
     <nav
-      class="flex flex-col gap-1 min-w-[240px] p-2 font-sans text-base font-normal text-gray-700"
+      class="flex flex-col pt-24 text-lg space-y-1 w-full gap-1 h-screen font-sans font-normal text-black"
     >
-      <h1 class="text-center font-bold text-3xl text-secondary-color mb-5">DAROM.PRO</h1>
-      <div
-        role="button"
-        @click="router.push('/spreadsheets/our-ransom/info')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-orange-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-        v-if="user.dataOurRansom === 'READ' || user.dataOurRansom === 'WRITE'"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="mage:bag-a" size="20" />
-        </div>
-        <h1>Наш Выкуп</h1>
-      </div>
-      <div
-        role="button"
-        tabindex="0"
-        @click="router.push('/spreadsheets/client-ransom/info')"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-        v-if="
-          (user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE') &&
-          user.role !== 'SORTIROVKA' &&
-          user.username !== 'Волошина'
-        "
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols:lock-person-outline" size="20" />
-        </div>
-        <h1>Выкуп Клиента</h1>
-      </div>
-      <div
-        role="button"
-        tabindex="0"
-        @click="router.push('/spreadsheets/client-ransom')"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-        v-if="
-          (user.dataClientRansom === 'READ' || user.dataClientRansom === 'WRITE') &&
-          (user.role === 'SORTIROVKA' || user.username === 'Волошина')
-        "
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols:lock-person-outline" size="20" />
-        </div>
-        <h1>Выкуп Клиента</h1>
-      </div>
-      <div
-        v-if="
-          (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
-          user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ' ||
-          user.role === 'PPVZ'
-        "
-        role="button"
-        @click="router.push('/spreadsheets/refunds')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="hugeicons:delivery-return-01" size="20" />
-        </div>
-        <h1>Возвраты</h1>
-      </div>
-      <div
-        v-if="
-          user.username === 'Волошина' ||
-          user.username === 'Шарафаненко' ||
-          user.username === 'Шведова' ||
-          user.username === 'Директор' ||
-          user.username === 'Горцуева'
-        "
-        role="button"
-        @click="router.push('/equipment')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols:rule-settings" size="20" />
-        </div>
-        <h1>Оборудование ПВЗ</h1>
-      </div>
-      <div
-        v-if="
-          (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
-          user.role === 'DRIVER' ||
-          user.role === 'ADMINISTRATOR' ||
-          user.role === 'OFFICE' ||
-          user.role === 'COURIER' ||
-          user.username === 'Волошина' ||
-          user.role === 'RMANAGER' ||
-          user.username === 'КассаЯМ'
-        "
-        role="button"
-        @click="router.push('/advance-report')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="oui:ml-create-advanced-job" size="20" />
-        </div>
-        <h1>Авансовый отчёт</h1>
-        <Icon
-          v-if="
-            requests2?.filter(
-              (row) =>
-                row.received === null &&
-                row.issuedUser === user.username &&
-                row.notation !== 'Пополнение баланса'
-            ).length > 0
-          "
-          name="pepicons-print:exclamation"
-          size="24"
-          class="text-red-700"
-        />
-      </div>
-      <div
-        v-if="
-          user.dataDelivery === 'READ' ||
-          (user.dataDelivery === 'WRITE' &&
-            user.role !== 'ADMINISTRATOR' &&
-            user.role !== 'RMANAGER')
-        "
-        role="button"
-        @click="router.push('/spreadsheets/delivery')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="carbon:delivery" size="20" />
-        </div>
-        <h1>Доставка и сортировка</h1>
-      </div>
-      <div
-        v-if="
-          user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ' ||
-          user.role === 'PPVZ' ||
-          user.role === 'RMANAGER'
-        "
-        role="button"
-        @click="router.push('/acceptance')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="mdi:qrcode-scan" size="20" />
-        </div>
-        <h1>Приёмка</h1>
-      </div>
-      <div
-        v-if="
-          (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
-          user.role === 'ADMINISTRATOR' ||
-          user.role === 'PVZ' ||
-          user.role === 'COURIER' ||
-          user.role === 'PPVZ' ||
-          user.role === 'RMANAGER'
-        "
-        role="button"
-        @click="router.push('/balance')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols-light:account-balance-wallet-outline" size="20" />
-        </div>
-        <h1>Баланс</h1>
-        <Icon
-          v-if="
-            requests?.filter((row) => row.pvz === user.visiblePVZ && row.issued === null)
-              .length > 0
-          "
-          name="pepicons-print:exclamation"
-          size="24"
-          class="text-red-700"
-        />
-      </div>
-      <div
-        v-if="
-          user.role === 'RMANAGER' ||
-          user.role === 'ADMIN' ||
-          user.role === 'ADMINISTRATOR'
-        "
-        role="button"
-        @click="router.push('/map')"
-        tabindex="0"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <Icon name="material-symbols:add-location-outline" size="20" />
-        </div>
-        <h1>Карта</h1>
-      </div>
-      <div
-        role="button"
-        tabindex="0"
-        @click="signOut()"
-        class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-orange-50 hover:bg-opacity-80 focus:bg-orange-50 focus:bg-opacity-80 active:bg-orange-50 active:bg-opacity-80 hover:text-orange-900 focus:text-orange-900 active:text-orange-900 outline-none"
-      >
-        <div class="grid place-items-center mr-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            aria-hidden="true"
-            class="h-5 w-5"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M12 2.25a.75.75 0 01.75.75v9a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM6.166 5.106a.75.75 0 010 1.06 8.25 8.25 0 1011.668 0 .75.75 0 111.06-1.06c3.808 3.807 3.808 9.98 0 13.788-3.807 3.808-9.98 3.808-13.788 0-3.808-3.807-3.808-9.98 0-13.788a.75.75 0 011.06 0z"
-              clip-rule="evenodd"
-            ></path>
-          </svg>
-        </div>
-        Выйти
-      </div>
+      <SidebarAsideMobileNormal
+        :user="user"
+        @sign-out="signOut"
+        @edit-menu="editMenu"
+        v-auto-animate
+        v-if="isOpen"
+      />
     </nav>
   </div>
 
@@ -521,7 +144,10 @@ function formatPhoneNumber(phoneNumber: string) {
       absolute:
         route.fullPath.includes('+') ||
         route.fullPath === '/spreadsheets/our-ransom' ||
-        route.fullPath === '/spreadsheets/client-ransom',
+        route.fullPath === '/spreadsheets/client-ransom' ||
+        route.fullPath === '/spreadsheets/delivery' ||
+        route.fullPath === '/equipment' ||
+        route.fullPath === '/advance-report/payroll',
     }"
     class="py-1 px-3 fixed z-40 max-xl:right-0 flex items-center max-sm:gap-3 justify-between duration-200 w-full bg-gradient-to-br from-purple-700 to-orange-400 backdrop-blur-2xl text-white"
   >
@@ -533,32 +159,34 @@ function formatPhoneNumber(phoneNumber: string) {
         class="hover:opacity-50 duration-200 cursor-pointer"
       />
       <Icon
-        v-if="
-          requests?.filter((row) => row.pvz === user.visiblePVZ && row.issued === null)
-            .length > 0
-        "
+        v-if="quantityRequiredBalanceRows"
+        name="pepicons-print:exclamation"
+        size="24"
+        class="text-red-700"
+      />
+      <Icon
+        v-if="user.username !== 'Директор' && quantityRequiredARRows"
         name="pepicons-print:exclamation"
         size="40"
         class="text-red-700"
       />
       <Icon
-        v-if="
-          requests2?.filter(
-            (row) =>
-              row.received === null &&
-              row.issuedUser === user.username &&
-              row.notation !== 'Пополнение баланса'
-          ).length > 0
-        "
+        v-if="user.username === 'Директор' && quantityRequiredARRowsAdmin"
         name="pepicons-print:exclamation"
         size="40"
         class="text-red-700"
       />
-      <h1 class="font-medium">{{ user.username }}</h1>
+      <h1 class="font-medium" v-if="user.username !== 'Директор'">
+        {{ user.username }}
+      </h1>
+      <h1 class="font-medium" v-if="user.username === 'Директор'">Император</h1>
     </div>
     <h1
       class="text-lg font-medium max-sm:text-sm"
-      v-if="route.meta.name === 'Товары из' && route.fullPath.includes('/our-ransom')"
+      v-if="
+        route.meta.name === 'Товары из' &&
+        route.fullPath.includes('/our-ransom')
+      "
     >
       {{ route.meta.name }} {{ route.params.pvz }} (Наш Выкуп)
     </h1>
@@ -580,7 +208,8 @@ function formatPhoneNumber(phoneNumber: string) {
         route.params.fromName
       "
     >
-      Товары по телефону: {{ formatPhoneNumber(route.params.fromName) }} (Выкуп Клиента)
+      Товары по телефону:
+      {{ formatPhoneNumber(route.params.fromName as string) }} (Выкуп Клиента)
     </h1>
     <h1
       class="text-lg font-medium max-sm:text-sm"
@@ -590,16 +219,25 @@ function formatPhoneNumber(phoneNumber: string) {
         route.params.fromName
       "
     >
-      Товары по телефону: {{ formatPhoneNumber(route.params.fromName) }} (Наш Выкуп)
+      Товары по телефону:
+      {{ formatPhoneNumber(route.params.fromName as string) }} (Наш Выкуп)
     </h1>
     <h1 class="text-lg font-medium max-sm:text-sm" v-else>
       {{ route.meta.name }}
     </h1>
-    <Icon
-      @click="router.go(-1)"
-      name="ion:ios-arrow-back"
-      size="32"
-      class="cursor-pointer hover:opacity-50 duration-200"
-    />
+    <div class="flex gap-1">
+      <Icon
+        @click="reloadPage"
+        name="material-symbols:refresh-rounded"
+        size="32"
+        class="cursor-pointer hover:opacity-50 duration-200"
+      />
+      <Icon
+        @click="router.go(-1)"
+        name="ion:ios-arrow-back"
+        size="32"
+        class="cursor-pointer hover:opacity-50 duration-200"
+      />
+    </div>
   </div>
 </template>

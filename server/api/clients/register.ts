@@ -25,6 +25,8 @@ export default defineEventHandler(async (event) => {
         isPrivacyPolicyAgreed: client.isPrivacyPolicyAgreed,
       },
     });
+
+    return { success: true };
   } catch (error) {
     console.error(error);
     return error;

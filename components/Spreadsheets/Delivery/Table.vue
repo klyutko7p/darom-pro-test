@@ -88,7 +88,6 @@ const handleCheckboxChange = (row: IDelivery): void => {
       paid: row.paid,
       sorted: row.sorted,
     });
-    isOpen.value = true;
   }
   getAllSum.value = allSum.value
     .filter((obj) => obj.paid === null)
@@ -167,7 +166,6 @@ function handleCheckboxChangeAll() {
       .reduce((sum, obj) => sum + obj.amount, 0);
     showButtonPaid.value = allSum.value.every((obj) => obj.paid === null);
     showButtonSorted.value = allSum.value.every((obj) => obj.sorted === null);
-    isOpen.value = true;
   } else {
     checkedRows.value = [];
     allSum.value = [];
@@ -181,7 +179,7 @@ const items = [
   {
     label: "Изменить состояние",
     icon: "mdi:state-machine",
-    defaultOpen: false,
+    defaultOpen: true,
     slot: "getting-started",
   },
 ];
@@ -271,7 +269,7 @@ const items = [
         <thead
           class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
         >
-        <tr class="h-[30px]">
+          <tr class="h-[30px]">
             <th
               scope="col"
               class="border-[1px] px-3"
@@ -659,6 +657,12 @@ const items = [
         </tbody>
       </table>
       <div id="down"></div>
+    </div>
+
+    <div v-if="checkedRows.length"
+      class="absolute z-40 top-44 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
+    >
+      <UButton class="font-bold" @click="isOpen = true">ПОКАЗАТЬ ДОСТУПНЫЕ ФУНКЦИИ</UButton>
     </div>
   </div>
 

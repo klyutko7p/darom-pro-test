@@ -168,12 +168,20 @@ function validationPhoneNumberData() {
     phoneNumberData.value =
       "+7" + phoneNumberData.value.replace(/^(\+?7|8)?/, "");
   }
+
+  if (phoneNumberData.value.length > 12) {
+    phoneNumberData.value = phoneNumberData.value.slice(0, 12);
+  }
 }
 
 function validationPhoneNumber() {
   phoneNumber.value = phoneNumber.value.replace(/[^0-9]/g, "");
   if (!phoneNumber.value.startsWith("+7")) {
     phoneNumber.value = "+7" + phoneNumber.value.replace(/^(\+?7|8)?/, "");
+  }
+
+  if (phoneNumber.value.length > 12) {
+    phoneNumber.value = phoneNumber.value.slice(0, 12);
   }
 }
 
@@ -264,8 +272,8 @@ const formattedBlockDuration = computed(() =>
                 autocomplete="phone"
                 required
                 placeholder="+7XXXXXXXXXX"
-                class="block w-full ring-1 ring-gray-200 focus:ring-2 focus:ring-yellow-600 bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none"
                 @input="validationPhoneNumber"
+                class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
               />
             </div>
           </div>
@@ -279,7 +287,7 @@ const formattedBlockDuration = computed(() =>
               >
             </div>
             <div class="mt-2 relative">
-              <input
+              <UInput
                 v-model="password"
                 id="password"
                 name="password"
@@ -287,7 +295,6 @@ const formattedBlockDuration = computed(() =>
                 autocomplete="current-password"
                 required
                 placeholder="******"
-                class="block w-full ring-1 ring-gray-200 focus:ring-2 focus:ring-yellow-600 bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none"
               />
               <Icon
                 @click="showPassword = !showPassword"
@@ -335,123 +342,110 @@ const formattedBlockDuration = computed(() =>
       </div>
     </div>
 
-    <div
+    <UINewModalEdit
       v-if="isShowFirstConfirmationModal"
-      class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-65 z-[200]"
+      @close-modal="
+        isShowFirstConfirmationModal = !isShowFirstConfirmationModal
+      "
     >
-      <div class="flex items-center justify-center h-screen">
-        <div class="bg-white rounded-2xl max-w-[550px]">
-          <div class="border-b-2 p-5 flex items-center gap-24 justify-between">
-            <p class="font-medium text-2xl">Подтверждение номера телефона</p>
-            <Icon
-              @click="
-                isShowFirstConfirmationModal = !isShowFirstConfirmationModal
-              "
-              class="hover:text-hover-color duration-200 cursor-pointer"
-              name="material-symbols:cancel-rounded"
-              size="24"
-            />
-          </div>
-          <div class="px-10 py-5">
-            <p class="text-xl text-center">
-              Введите свой телефон в текстовое поле снизу и нажмите кнопку
-              "Отправить код".
-            </p>
-            <div class="flex justify-center mt-5">
-              <input
-                @input="validationPhoneNumberData"
-                v-model="phoneNumberData"
-                id="phoneNumber"
-                name="phoneNumber"
-                type="text"
-                autocomplete="phoneNumber"
-                required
-                placeholder="+7XXXXXXXXXX"
-                class="block w-full max-w-[150px] ring-1 ring-gray-200 focus:ring-2 focus:ring-yellow-600 bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm placeholder:text-gray-400 sm:text-sm sm:leading-6 outline-none"
-              />
-            </div>
-            <div class="flex justify-center items-center gap-3 mt-5">
-              <UIMainButton @click="validatePhone">Отправить код</UIMainButton>
+      <template v-slot:icon-header> </template>
+      <template v-slot:header>Подтверждение</template>
+      <template v-slot:body>
+        <div class="flex items-center justify-center pt-5">
+          <div class="bg-white rounded-2xl">
+            <div class="space-y-5">
+              <p class="text-center">
+                Введите свой телефон в текстовое поле снизу и нажмите кнопку
+                "Отправить код".
+              </p>
+              <div class="flex justify-center mt-5">
+                <input
+                  @input="validationPhoneNumberData"
+                  v-model="phoneNumberData"
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  type="text"
+                  autocomplete="phoneNumber"
+                  required
+                  placeholder="+7XXXXXXXXXX"
+                  class="relative block disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                />
+              </div>
+              <div class="flex justify-center items-center gap-3 mt-5">
+                <UIMainButton @click="validatePhone"
+                  >Отправить код</UIMainButton
+                >
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </template>
+    </UINewModalEdit>
 
-    <div
+    <UINewModalEdit
       v-if="isShowSecondConfirmationModal"
-      class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-65 z-[200]"
+      @close-modal="
+        isShowSecondConfirmationModal = !isShowSecondConfirmationModal
+      "
     >
-      <div class="flex items-center justify-center h-screen">
-        <div class="bg-white rounded-2xl max-w-[550px]">
-          <div class="border-b-2 p-5 flex items-center gap-24 justify-between">
-            <p class="font-medium text-2xl">Подтверждение номера телефона</p>
-            <Icon
-              @click="
-                isShowSecondConfirmationModal = !isShowSecondConfirmationModal
-              "
-              class="hover:text-hover-color duration-200 cursor-pointer"
-              name="material-symbols:cancel-rounded"
-              size="24"
-            />
-          </div>
-          <div class="px-10 py-5">
-            <p class="text-xl text-center">
-              Введите код в текстовое поле снизу, который придёт на Ваш номер
-              телефона.
-            </p>
-            <div class="flex justify-center mt-5">
-              <input
-                class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
-                type="text"
-                @input="isValidateConfirmationCode"
-                v-model="confirmationCode"
-              />
-            </div>
-            <div class="flex justify-center items-center gap-3 mt-5">
-              <UIMainButton
-                :disabled="isButtonDisabled || isBlocked"
-                @click="validatePhone"
-                >Отправить код ещё раз</UIMainButton
-              >
-              {{ formattedBlockDuration }}
+      <template v-slot:icon-header> </template>
+      <template v-slot:header>Подтверждение</template>
+      <template v-slot:body>
+        <div class="flex items-center justify-center pt-5">
+          <div class="bg-white rounded-2xl">
+            <div class="space-y-5">
+              <p class="text-left">
+                Введите код в текстовое поле снизу, который придёт на Ваш номер
+                телефона.
+              </p>
+              <div class="flex justify-center mt-5">
+                <input
+                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+                  type="text"
+                  @input="isValidateConfirmationCode"
+                  v-model="confirmationCode"
+                />
+              </div>
+              <div class="flex justify-center items-center gap-3 mt-5">
+                <UIMainButton
+                  :disabled="isButtonDisabled || isBlocked"
+                  @click="validatePhone"
+                  >Отправить код ещё раз</UIMainButton
+                >
+                {{ formattedBlockDuration }}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </template>
+    </UINewModalEdit>
 
-    <div
+    <UINewModalEdit
       v-if="isShowThirdConfirmationModal"
-      class="fixed top-0 bottom-0 left-0 right-0 bg-black bg-opacity-65 z-[200]"
+      @close-modal="
+        isShowThirdConfirmationModal = !isShowThirdConfirmationModal
+      "
     >
-      <div class="flex items-center justify-center h-screen">
-        <div class="bg-white rounded-2xl max-w-[550px]">
-          <div class="border-b-2 p-5 flex items-center gap-24 justify-between">
-            <p class="font-medium text-2xl">Статус пароля</p>
-            <Icon
-              @click="
-                isShowThirdConfirmationModal = !isShowThirdConfirmationModal
-              "
-              class="hover:text-hover-color duration-200 cursor-pointer"
-              name="material-symbols:cancel-rounded"
-              size="24"
-            />
-          </div>
-          <div class="px-10 py-5">
-            <p class="text-xl mb-5">
-              Ваш пароль успешно был сброшен. <br />
-              Ваш пароль теперь:
-              <span class="font-bold"> {{ newPassword }} </span>
-            </p>
-            <p class="text-xl">
-              Обязательно запомните этот пароль и никому его не сообщайте! После
-              авторизации Вы можете его сменить.
-            </p>
+      <template v-slot:icon-header> </template>
+      <template v-slot:header>Статус пароля</template>
+      <template v-slot:body>
+        <div class="flex items-center justify-center pt-5">
+          <div class="bg-white rounded-2xl max-w-[550px]">
+            <div class="space-y-5 text-left">
+              <p class="mb-5 space-y-3">
+                Ваш пароль успешно был сброшен. <br />
+                Ваш пароль теперь:
+                <span class="font-bold"> {{ newPassword }} </span>
+              </p>
+              <p class="text-left">
+                Обязательно запомните этот пароль и никому его не сообщайте!
+                После авторизации Вы можете его сменить.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </template>
+    </UINewModalEdit>
 
     <div
       class="absolute top-3 left-2 flex flex-col text-center text-secondary-color font-bold gap-3"
@@ -460,15 +454,6 @@ const formattedBlockDuration = computed(() =>
         class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
         @click="router.push('/')"
         >На главную</UIMainButton
-      >
-    </div>
-    <div
-      class="absolute top-3 right-2 flex flex-col text-center text-secondary-color font-bold gap-3"
-    >
-      <UIMainButton
-        class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
-        @click="router.push('/auth/login')"
-        >Вход сотрудника</UIMainButton
       >
     </div>
   </div>
