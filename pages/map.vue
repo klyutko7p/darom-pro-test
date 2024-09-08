@@ -108,7 +108,7 @@ definePageMeta({
               v-if="true"
               :coordinates="coordinates"
               :controls="controls"
-              :zoom="18"
+              :zoom="12"
               @click="getCoords"
             >
               <YandexMarker
@@ -181,7 +181,7 @@ definePageMeta({
               v-if="true"
               :coordinates="coordinates"
               :controls="controls"
-              :zoom="18"
+              :zoom="12"
               @click="getCoords"
             >
               <YandexMarker
@@ -248,7 +248,7 @@ definePageMeta({
 
 <style>
 .yandex-balloon {
-  height: 150px;
+  height: 120px;
   width: 200px;
 }
 </style>

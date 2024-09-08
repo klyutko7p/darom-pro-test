@@ -99,7 +99,7 @@ function showSettingsList() {
       class="h-full py-4 overflow-y-auto bg-gray-50 shadow-2xl dark:bg-gray-800"
     >
       <div
-        class="flex items-center px-3 justify-between mb-3 pb-2 border-b-2 border-black"
+        class="flex items-center px-3 justify-between mb-3 pb-2 border-b-[1px] border-black"
       >
         <h5
           class="text-3xl text-secondary-color font-bold uppercase dark:text-gray-400"

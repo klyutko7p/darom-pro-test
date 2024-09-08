@@ -3,7 +3,7 @@ import { YandexMap } from "vue-yandex-maps";
 
 const router = useRouter();
 
-const coordinates = ref([47.98958366983051, 37.8955255423278]);
+const coordinates = ref([47.971605, 37.860323]);
 const controls = ["geolocationControl", "zoomControl", "typeSelector"];
 
 const addressItems = ref([
@@ -36,12 +36,22 @@ const addressItems = ref([
 
 let selectedAddress = ref();
 
+let counter = ref(0);
 function changeAddress(arrayCoordinates: Array<number>) {
-  coordinates.value = arrayCoordinates;
-  selectedAddress.value = addressItems.value.find(
-    (item) => item.address[0] === arrayCoordinates[0]
-  )?.address;
-  zoomValue.value = 18;
+  if (!counter.value) {
+    coordinates.value = arrayCoordinates;
+    selectedAddress.value = addressItems.value.find(
+      (item) => item.address[0] === arrayCoordinates[0]
+    )?.address;
+    zoomValue.value = 12;
+  } else {
+    coordinates.value = arrayCoordinates;
+    selectedAddress.value = addressItems.value.find(
+      (item) => item.address[0] === arrayCoordinates[0]
+    )?.address;
+    zoomValue.value = 18;
+  }
+  counter.value++;
 }
 
 let markers = [
@@ -72,7 +82,7 @@ let markers = [
   },
 ];
 
-let zoomValue = ref(10);
+let zoomValue = ref(12);
 let isHiddenMenu = ref(true);
 let isShowModal = ref(false);
 
