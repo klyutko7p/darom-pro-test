@@ -154,7 +154,7 @@ const items = [
         </div>
         <div class="flex items-center justify-center gap-5 mt-5">
           <UIMainButton @click="router.push('/auth/client/login')"
-            >сделать заказ</UIMainButton
+            >оформить заказ</UIMainButton
           >
         </div>
         <div
