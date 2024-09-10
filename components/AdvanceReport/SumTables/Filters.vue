@@ -32,10 +32,18 @@ const selectedTypeOfExpenditure = ref<Array<string>>([]);
 const selectedType = ref<Array<string>>(["Нал", "Безнал"]);
 
 const uniqueTypeOfExpenditure = computed(() => {
-  return storeAdvanceReports.getUniqueNonEmptyValues(
+  let array = storeAdvanceReports.getUniqueNonEmptyValues(
     props.rows,
     "typeOfExpenditure"
   );
+  let newArray = array.map((string) => {
+    if (string === "Расходники для ПВ��") {
+      return "Расходники для ПВЗ";
+    }
+    return string;
+  });
+  newArray = new Set(newArray)
+  return Array.from(newArray);
 });
 
 const uniqueType = ref(["Нал", "Безнал"]);
@@ -45,7 +53,7 @@ function clearFields() {
   selectedType.value = ["Нал", "Безнал"];
   startingDate.value = "";
   endDate.value = "";
-  selected.value.start = new Date(new Date().getFullYear() - 1, 0, 1);
+  selected.value.start = new Date(new Date().getFullYear(), 0, 1);
   selected.value.end = new Date();
   filterRows();
 }
@@ -89,7 +97,7 @@ const ranges = [
 ];
 
 const selected = ref<SelectedDateRange>({
-  start: new Date(new Date().getFullYear() - 1, 0, 1),
+  start: new Date(new Date().getFullYear(), 0, 1),
   end: new Date(),
 });
 

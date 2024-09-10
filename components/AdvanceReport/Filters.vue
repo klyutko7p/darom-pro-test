@@ -43,7 +43,7 @@ const ranges = [
 ];
 
 const selected = ref<SelectedDateRange>({
-  start: new Date(new Date().getFullYear() - 1, 0, 1),
+  start: new Date(new Date().getFullYear(), 0, 1),
   end: new Date(),
 });
 
@@ -126,7 +126,15 @@ const startingDate2 = ref<Date | string | null>(null);
 const endDate2 = ref<Date | string | null>(null);
 
 const uniquePVZ = computed(() => {
-  return storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "PVZ");
+  let array = storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "PVZ");
+  let newArray = array.map((string) => {
+    if (string === "Алексеевк��") {
+      return "Алексеевка";
+    }
+    return string;
+  });
+  newArray = new Set(newArray)
+  return Array.from(newArray);
 });
 
 const uniqueExpenditure = computed(() => {
@@ -134,10 +142,18 @@ const uniqueExpenditure = computed(() => {
 });
 
 const uniqueTypeOfExpenditure = computed(() => {
-  return storeAdvanceReports.getUniqueNonEmptyValues(
+  let array = storeAdvanceReports.getUniqueNonEmptyValues(
     props.rows,
     "typeOfExpenditure"
   );
+  let newArray = array.map((string) => {
+    if (string === "Расходники для ПВ��") {
+      return "Расходники для ПВЗ";
+    }
+    return string;
+  });
+  newArray = new Set(newArray)
+  return Array.from(newArray);
 });
 
 const uniqueNotation = computed(() => {
@@ -223,7 +239,7 @@ function clearFields() {
   endDate.value = "";
   startingDate2.value = "";
   endDate2.value = "";
-  selected.value.start = new Date(new Date().getFullYear() - 1, 0, 1);
+  selected.value.start = new Date(new Date().getFullYear(), 0, 1);
   selected.value.end = new Date();
   filterRows();
   showFilters.value = false;

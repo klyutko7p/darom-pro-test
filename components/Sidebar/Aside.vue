@@ -378,7 +378,7 @@ function showSettingsList() {
                   (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
                   user.role === 'ADMINISTRATOR' ||
                   user.role === 'PVZ' ||
-                  user.role === 'PPVZ'
+                  user.role === 'PPVZ' 
                 "
               >
                 <Icon
