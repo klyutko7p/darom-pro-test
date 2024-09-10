@@ -178,8 +178,9 @@ model Balance {
 }
 
 model BalanceOnline {
-  id  Int     @id @default(autoincrement())
-  sum String?
+  id         Int       @id @default(autoincrement())
+  sum        String?
+  created_at DateTime? @default(now())
 }
 
 model BalanceDelivery {
@@ -297,8 +298,8 @@ model Client {
   phoneNumber                                 String   @unique()
   balance                                     Int?
   created_at                                  DateTime @default(now())
-  isPersonalDataProcessingPolicyAgreed        Boolean  
-  isPrivacyPolicyAgreed                       Boolean  
+  isPersonalDataProcessingPolicyAgreed        Boolean
+  isPrivacyPolicyAgreed                       Boolean
   dateOfPersonalDataProcessingPolicyAgreement DateTime @default(now())
   dateOfPrivacyPolicyAgreement                DateTime @default(now())
 }

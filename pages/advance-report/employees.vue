@@ -10,6 +10,9 @@ let user = ref({} as User);
 let rows = ref<Array<IEmployee>>();
 const token = Cookies.get("token");
 let isLoading = ref(false);
+const pvz = ref<Array<string>>([]);
+const companies = ref<Array<string>>([]);
+const banks = ref<Array<string>>([]);
 
 onMounted(async () => {
   if (!token) {
@@ -17,6 +20,9 @@ onMounted(async () => {
   }
 
   isLoading.value = true;
+  pvz.value = storeEmployees.getPVZ();
+  companies.value = storeEmployees.getCompanies();
+  banks.value = storeEmployees.getBanks();
   user.value = await storeUsers.getUser();
   const employees = await storeEmployees.getEmployees();
   rows.value = employees!;
@@ -71,42 +77,6 @@ async function deleteRow(id: number) {
   isLoading.value = false;
 }
 
-let pvz = ref([
-  "Ряженое",
-  "Алексеевка",
-  "Латоново",
-  "Надежда",
-  "Александровка",
-  "Новониколаевка",
-  "Политотдельское",
-  "Мещерино",
-  "Коломенское ЯМ",
-  "Коломенское WB",
-  "Бессоново",
-  "Новоандриановка",
-  "ПВЗ_1",
-  "ПВЗ_2",
-  "ПВЗ_3",
-  "ПВЗ_4",
-  "ППВЗ_5",
-  "ППВЗ_7",
-  "Офис",
-  "НаДом",
-]);
-
-let companies = ref(["W/O/Я start", "Darom.pro", "Сортировка", "Доставка"]);
-
-let banks = ref([
-  "тинькофф",
-  "сбер",
-  "почтабанк",
-  "озон",
-  "яндекс банк",
-  "альфа банк",
-  "центр инвест",
-  "ВТБ",
-]);
-
 function lockScroll() {
   document.body.classList.add("no-scroll");
 }
@@ -131,27 +101,21 @@ watch(isOpen, (newValue) => {
 
   <div v-if="!isLoading">
     <div v-if="token && user.role === 'ADMIN'">
-      <NuxtLayout name="admin">
-        <div class="bg-[#f8f9fd] px-5 pt-10 max-sm:px-1 pb-5">
+      <NuxtLayout name="table-admin-no-pad">
+        <div class="bg-[#f8f9fd] px-16 w-screen pt-10 max-sm:px-5 pb-5">
           <div
             class="flex items-center justify-between max-sm:items-start gap-3"
           >
             <UIMainButton @click="openModal">Создать сотрудника</UIMainButton>
-            <div
-            class="flex justify-end"
-          >
-            <div
-              class="bg-secondary-color cursor-pointer hover:opacity-50 duration-200 rounded-full pt-1.5 px-1.5 text-white"
-              @click="router.push('/advance-report/payroll')"
-            >
-              <Icon
-                name="material-symbols:gpay"
-                size="24"
-              />
+            <div class="flex justify-end">
+              <div
+                class="bg-secondary-color cursor-pointer hover:opacity-50 duration-200 rounded-full pt-1.5 px-1.5 text-white"
+                @click="router.push('/advance-report/payroll')"
+              >
+                <Icon name="material-symbols:gpay" size="24" />
+              </div>
             </div>
           </div>
-          </div>
-
 
           <EmployeeTable
             :rows="rows"
@@ -175,7 +139,11 @@ watch(isOpen, (newValue) => {
             <div class="text-black">
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="dispatchPVZ1">ПВЗ</label>
-                <USelectMenu class="w-full" v-model="rowData.PVZ" :options="pvz" />
+                <USelectMenu
+                  class="w-full"
+                  v-model="rowData.PVZ"
+                  :options="pvz"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
@@ -199,28 +167,49 @@ watch(isOpen, (newValue) => {
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="dispatchPVZ1">Банк</label>
-                <USelectMenu class="w-full" v-model="rowData.bank" :options="banks" />
+                <USelectMenu
+                  class="w-full"
+                  v-model="rowData.bank"
+                  :options="banks"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Оплата в смену</label>
-                <UInput class="w-full" v-model="rowData.paymentPerShift" type="number" />
+                <UInput
+                  class="w-full"
+                  v-model="rowData.paymentPerShift"
+                  type="number"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Часов в смене</label>
-                <UInput class="w-full" v-model="rowData.hoursPerShift" type="number" />
+                <UInput
+                  class="w-full"
+                  v-model="rowData.hoursPerShift"
+                  type="number"
+                />
               </div>
             </div>
           </template>
           <template v-slot:footer>
-            <div class="flex items-center justify-center gap-3" v-if="rowData.id">
-              <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+            <div
+              class="flex items-center justify-center gap-3"
+              v-if="rowData.id"
+            >
+              <UISaveModalButton @click="updateRow"
+                >Сохранить
+              </UISaveModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3" v-else>
               <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
           </template>
         </UINewModalEdit>

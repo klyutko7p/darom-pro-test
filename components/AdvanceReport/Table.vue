@@ -22,152 +22,97 @@ const props = defineProps({
   rows: { type: Array as PropType<IAdvanceReport[]> },
 });
 
-function filterRows(monthData: number) {
-  month.value = monthData;
-  updateCurrentPageData();
-}
-
-let month = ref(new Date().getMonth() + 1);
-
-const filteredRows = ref(
-  props.rows?.filter((row: IAdvanceReport) => {
-    let rowDate: Date = new Date(row.date);
-    return rowDate.getMonth() + 1 === month.value;
-  })
+const filteredRows = ref(props.rows);
+const perPage = ref(100);
+const currentPage = ref(1);
+const totalPages = computed(() =>
+  Math.ceil((props.rows?.length || 0) / perPage.value)
 );
-
-let showFilters = ref(false);
-let months = ref([3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2]);
-let monthNames: any = ref({
-  3: "Март",
-  4: "Апрель",
-  5: "Май",
-  6: "Июнь",
-  7: "Июль",
-  8: "Август",
-  9: "Сентябрь",
-  10: "Октябрь",
-  11: "Ноябрь",
-  12: "Декабрь",
-  1: "Январь",
-  2: "Февраль",
-});
-
-const totalRows = computed(() => Math.ceil(props.rows?.length));
+const totalRows = computed(() => Math.ceil(props.rows?.length || 0));
 
 onMounted(() => {
-  const storedMonthData = loadFromLocalStorage("monthData");
-  if (storedMonthData !== null) {
-    month.value = storedMonthData;
-  }
   updateCurrentPageData();
 });
-
-function saveToLocalStorage(key: string, value: any) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
-
-function loadFromLocalStorage(key: string) {
-  const storedValue = localStorage.getItem(key);
-  return storedValue ? JSON.parse(storedValue) : null;
-}
-
-function saveFiltersToLocalStorage() {
-  saveToLocalStorage("monthData", month.value);
-}
 
 let returnRows = ref<Array<IAdvanceReport>>();
 
-import Cookies from "js-cookie";
-
-const isDateFilterCookie = Cookies.get("isDateFilter");
-
-let isDateFilter = ref(
-  isDateFilterCookie !== undefined ? JSON.parse(isDateFilterCookie) : true
-);
-
 function updateCurrentPageData() {
-  if (isDateFilter.value) {
-    saveIsDateFilterToCookie(true);
-    returnRows.value = props.rows;
-    filteredRows.value = returnRows.value?.filter((row: IAdvanceReport) => {
-      let rowDate: Date = new Date(row.date);
-      return rowDate.getMonth() + 1 === +month.value;
-    });
-  } else {
-    saveIsDateFilterToCookie(false);
-    returnRows.value = props.rows;
-    filteredRows.value = returnRows.value;
-  }
+  const startIndex = (currentPage.value - 1) * perPage.value;
+  const endIndex = startIndex + perPage.value;
+
+  returnRows.value = props.rows?.slice(startIndex, endIndex);
+  filteredRows.value = returnRows.value;
 }
 
 watch([props.rows, totalRows, props.user], updateCurrentPageData);
-watch([isDateFilter], updateCurrentPageData);
-watch(month, saveFiltersToLocalStorage);
-
-function saveIsDateFilterToCookie(value: boolean) {
-  Cookies.set("isDateFilter", JSON.stringify(value));
-}
 
 function exportToExcel() {
   let table = document.querySelector("#theTable");
   let wb = utils.table_to_book(table);
   writeFile(wb, "авансовый_отчет.xlsx");
 }
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+};
+let isVisiblePages = ref(true);
 </script>
 <template>
   <div
-    class="flex items-center justify-between mt-10 max-sm:flex-col max-sm:items-start max-sm:gap-3"
+    class="flex items-end justify-between mt-5"
   >
-    <div
-      class="flex items-center max-sm:items-center max-sm:justify-between max-[400px]:flex-col max-[400px]:items-start gap-5"
-    >
-      <span
-        class="border-[1px] bg-white py-1 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white duration-200 rounded-full"
-        @click="showFilters = !showFilters"
-        >2024</span
-      >
-      <div
-        v-if="showFilters"
-        class="flex items-center w-full justify-between max-sm:items-start"
-      >
-        <select
-          class="py-1 px-2 border-[1px] rounded-lg text-base border-secondary-color bg-secondary-color text-white font-bold"
-          v-model="month"
-          @change="filterRows(month)"
+    <div class="flex flex-col text-center" v-if="isVisiblePages">
+      <h1 class="text-sm">Страница:</h1>
+      <h1 class="text-sm mb-2">{{ currentPage }} из {{ totalPages }}</h1>
+      <div class="flex items-center justify-center gap-2">
+        <button
+          @click="prevPage(), updateCurrentPageData()"
+          :disabled="currentPage === 1"
+          class="disabled:opacity-40 disabled:cursor-not-allowed duration-150 bg-secondary-color flex items-center justify-center rounded-sm p-3"
         >
-          <option
-            v-for="(monthName, monthNumber) in monthNames"
-            :value="monthNumber"
-          >
-            {{ monthName }}
-          </option>
-        </select>
-        <div class="ml-2 space-x-2">
-          <input type="checkbox" v-model="isDateFilter" />
-          <label for="" class="text-sm">Данные за 1 месяц?</label>
-        </div>
+          <Icon
+            name="material-symbols:arrow-back-ios-new-rounded"
+            size="10"
+            class="text-white"
+          />
+        </button>
+        <button
+          @click="nextPage(), updateCurrentPageData()"
+          :disabled="currentPage === totalPages"
+          class="disabled:opacity-40 disabled:cursor-not-allowed duration-150 bg-secondary-color flex items-center justify-center rounded-sm p-3"
+        >
+          <Icon
+            name="material-symbols:arrow-forward-ios-rounded"
+            size="10"
+            class="text-white"
+          />
+        </button>
       </div>
     </div>
-    <div class="max-sm:flex max-sm:justify-end max-sm:w-full">
-      <UTooltip
-        text="Скачать EXCEL"
-        :shortcuts="['xlsx']"
-        :popper="{ placement: 'right' }"
+    <UTooltip
+      text="Скачать EXCEL"
+      :shortcuts="['xlsx']"
+      :popper="{ placement: 'right' }"
+    >
+      <div
+        class="bg-secondary-color cursor-pointer border-2 border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
+        @click="exportToExcel"
       >
-        <div
-          class="bg-secondary-color cursor-pointer border-[1px] border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
-          @click="exportToExcel"
-        >
-          <Icon class="duration-200" size="32" name="bi:filetype-xlsx" />
-        </div>
-      </UTooltip>
-    </div>
+        <Icon class="duration-200" size="32" name="bi:filetype-xlsx" />
+      </div>
+    </UTooltip>
   </div>
 
   <div
     class="relative max-h-[410px] bg-white overflow-y-auto mt-5 mb-10"
-    v-if="filteredRows?.length > 0"
   >
     <table
       id="theTable"
@@ -227,16 +172,16 @@ function exportToExcel() {
               @click="openModal(row)"
               class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
             >
-            <div
-              @click="openModal(row)"
-              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1  mx-auto"
-            >
-              <Icon
-                class="text-green-500"
-                name="ic:baseline-mode-edit"
-                size="18"
-              />
-            </div>
+              <div
+                @click="openModal(row)"
+                class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+              >
+                <Icon
+                  class="text-green-500"
+                  name="ic:baseline-mode-edit"
+                  size="18"
+                />
+              </div>
             </div>
           </td>
           <th scope="row" class="border-[1px] px-2">
@@ -320,12 +265,6 @@ function exportToExcel() {
         </tr>
       </tbody>
     </table>
-  </div>
-  <div v-else class="mt-10 mb-10 flex flex-col justify-center items-center">
-    <h1 class="text-4xl text-center mb-5">😞</h1>
-    <h1 class="text-2xl font-medium text-center">
-      Извините, документы не были найдены!
-    </h1>
   </div>
 </template>
 

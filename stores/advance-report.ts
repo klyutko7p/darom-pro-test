@@ -5,6 +5,31 @@ const toast = useToast();
 
 export const useAdvanceReports = defineStore("advance-reports", () => {
   let cachedAdvanceReportRows: IAdvanceReport[] | null = null;
+  let pvz: string[] = [
+    "Ряженое",
+    "Алексеевка",
+    "Латоново",
+    "Надежда",
+    "Александровка",
+    "Новониколаевка",
+    "Политотдельское",
+    "Мещерино",
+    "Коломенское ЯМ",
+    "Коломенское WB",
+    "Бессоново",
+    "ПВЗ_1",
+    "ПВЗ_2",
+    "ПВЗ_3",
+    "ПВЗ_4",
+    "ППВЗ_5",
+    "ППВЗ_7",
+    "Офис",
+    "НаДом",
+  ];
+
+  function getPVZ() {
+    return pvz;
+  }
 
   async function createAdvanceReport(row: IAdvanceReport, username: string) {
     try {
@@ -187,5 +212,6 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
     getUniqueNonEmptyValues,
     createAdvanceReports,
     deleteRow,
+    getPVZ,
   };
 });

@@ -34,20 +34,20 @@ onMounted(async () => {
     requestsBalance.value = balanceResult;
     requestsAdvanceReport.value = advanceResult;
 
-    quantityRequiredARRows.value = requestsAdvanceReport.value.filter(
+    quantityRequiredARRows.value = requestsAdvanceReport.value?.filter(
       (row) =>
         !row.received &&
         row.issuedUser === props.user.username &&
         row.notation !== "Пополнение баланса"
     ).length;
-    quantityRequiredARRowsAdmin.value = requestsAdvanceReport.value.filter(
+    quantityRequiredARRowsAdmin.value = requestsAdvanceReport.value?.filter(
       (row) =>
         !row.received &&
         (row.issuedUser === props.user.username ||
           row.issuedUser === "Директор (С)") &&
         row.notation !== "Пополнение баланса"
     ).length;
-    quantityRequiredBalanceRows.value = requestsBalance.value.filter(
+    quantityRequiredBalanceRows.value = requestsBalance.value?.filter(
       (row) =>
         row.issued &&
         !row.received &&
@@ -139,7 +139,7 @@ function showSettingsList() {
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             @click="showFinancesList"
             v-if="
-              user.role !== 'SORTIROVKA' && !user.username.includes('Светлана')
+              user.role !== 'SORTIROVKA' && user.username !== 'Светлана1' && user.username !== 'Светлана2'
             "
           >
             <Icon
@@ -182,7 +182,7 @@ function showSettingsList() {
               (user.dataDelivery === 'WRITE' &&
                 user.role !== 'ADMINISTRATOR' &&
                 user.role !== 'RMANAGER' &&
-                !user.username.includes('Светлана'))
+                user.username !== 'Светлана1' && user.username !== 'Светлана2')
             "
           >
             <Icon
@@ -259,7 +259,7 @@ function showSettingsList() {
             v-if="
               user.dataOurRansom === 'READ' ||
               (user.dataOurRansom === 'WRITE' &&
-                !user.username.includes('Светлана'))
+                user.username !== 'Светлана1' && user.username !== 'Светлана2')
             "
           >
             <Icon
@@ -295,7 +295,7 @@ function showSettingsList() {
             v-if="
               user.dataClientRansom === 'READ' ||
               (user.dataClientRansom === 'WRITE' &&
-                !user.username.includes('Светлана') &&
+                user.username !== 'Светлана1' && user.username !== 'Светлана2' &&
                 !user.username.includes('Горцуева'))
             "
           >
@@ -370,7 +370,7 @@ function showSettingsList() {
             @click="router.push('/balance')"
             v-if="
               (user.role === 'ADMIN' &&
-                !user.username.includes('Светлана') &&
+                user.username !== 'Светлана1' && user.username !== 'Светлана2' &&
                 !user.username.includes('Горцуева')) ||
               user.role === 'ADMINISTRATOR' ||
               user.role === 'PVZ' ||
@@ -398,7 +398,7 @@ function showSettingsList() {
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             @click="router.push('/advance-report')"
             v-if="
-              (user.role === 'ADMIN' && !user.username.includes('Светлана')) ||
+              (user.role === 'ADMIN' && user.username !== 'Светлана1' && user.username !== 'Светлана2') ||
               user.role === 'DRIVER' ||
               user.role === 'ADMINISTRATOR' ||
               user.role === 'OFFICE' ||
@@ -557,7 +557,7 @@ function showSettingsList() {
               (user.dataDelivery === 'WRITE' &&
                 user.role !== 'ADMINISTRATOR' &&
                 user.role !== 'RMANAGER' &&
-                !user.username.includes('Светлана'))
+                user.username !== 'Светлана1' && user.username !== 'Светлана2')
             "
           >
             <Icon

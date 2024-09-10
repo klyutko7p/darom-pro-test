@@ -5,42 +5,107 @@ const props = defineProps({
 });
 import VueMultiselect from "vue-multiselect";
 import { vAutoAnimate } from "@formkit/auto-animate";
-import { formatRelative, subDays, sub, format, isSameDay, type Duration } from 'date-fns'
-import ru from 'date-fns/locale/ru'
+import {
+  formatRelative,
+  subDays,
+  sub,
+  format,
+  isSameDay,
+  type Duration,
+} from "date-fns";
+import ru from "date-fns/locale/ru";
 
-const ranges = [
-  { label: 'Текущий месяц', duration: { month: 'current' } },
-  { label: 'Сегодня', duration: { days: 0 } },
-  { label: 'Последние 7 дней', duration: { days: 7 } },
-  { label: 'Последние 14 дней', duration: { days: 14 } },
-  { label: 'Последние 30 дней', duration: { days: 30 } },
-  { label: 'Последние 3 месяца', duration: { months: 3 } },
-  { label: 'Последние 6 месяцев', duration: { months: 6 } },
-  { label: 'Последний год', duration: { years: 1 } }
-]
-
-const selected = ref({
-  start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-  end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-})
-
-function isRangeSelected(duration: Duration) {
-  if (duration.month === 'current') {
-    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-    const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-    return isSameDay(selected.value.start, startOfMonth) && isSameDay(selected.value.end, endOfMonth)
-  }
-  return isSameDay(selected.value.start, sub(new Date(), duration)) && isSameDay(selected.value.end, new Date())
+interface DurationType {
+  month?: "current" | "0" | "1" | string;
+  years?: number;
 }
 
-function selectRange(duration: Duration) {
-  if (duration.month === 'current') {
+interface SelectedDateRange {
+  start: Date;
+  end: Date;
+}
+
+const ranges = [
+  { label: "Январь", duration: { month: "0" } },
+  { label: "Февраль", duration: { month: "1" } },
+  { label: "Март", duration: { month: "2" } },
+  { label: "Апрель", duration: { month: "3" } },
+  { label: "Май", duration: { month: "4" } },
+  { label: "Июнь", duration: { month: "5" } },
+  { label: "Июль", duration: { month: "6" } },
+  { label: "Август", duration: { month: "7" } },
+  { label: "Сентябрь", duration: { month: "8" } },
+  { label: "Октябрь", duration: { month: "9" } },
+  { label: "Ноябрь", duration: { month: "10" } },
+  { label: "Декабрь", duration: { month: "11" } },
+  { label: "Текущий месяц", duration: { month: "current" } },
+  { label: "Последний год", duration: { years: 1 } },
+];
+
+const selected = ref<SelectedDateRange>({
+  start: new Date(new Date().getFullYear() - 1, 0, 1),
+  end: new Date(),
+});
+
+function getMonthRange(year: number, month: number): SelectedDateRange {
+  const start = new Date(year, month, 1);
+  const end = new Date(year, month + 1, 0);
+  return { start, end };
+}
+
+function isRangeSelected(duration: DurationType): boolean {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+
+  if (duration.month === "current") {
+    const { start, end } = getMonthRange(currentYear, currentDate.getMonth());
+    return (
+      isSameDay(selected.value.start, start) &&
+      isSameDay(selected.value.end, end)
+    );
+  }
+
+  const month = parseInt(duration.month as string, 10);
+  if (!isNaN(month) && month >= 0 && month <= 11) {
+    const { start, end } = getMonthRange(currentYear, month);
+    return (
+      isSameDay(selected.value.start, start) &&
+      isSameDay(selected.value.end, end)
+    );
+  }
+
+  if (duration.years) {
+    const start = sub(currentDate, { years: duration.years });
+    return (
+      isSameDay(selected.value.start, start) &&
+      isSameDay(selected.value.end, currentDate)
+    );
+  }
+
+  return false;
+}
+
+function selectRange(duration: DurationType) {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+
+  if (duration.month === "current") {
+    selected.value = getMonthRange(currentYear, currentDate.getMonth());
+    return;
+  }
+
+  const month = parseInt(duration.month as string, 10);
+  if (!isNaN(month) && month >= 0 && month <= 11) {
+    selected.value = getMonthRange(currentYear, month);
+    return;
+  }
+
+  if (duration.years) {
     selected.value = {
-      start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-      end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-    }
-  } else {
-    selected.value = { start: sub(new Date(), duration), end: new Date() }
+      start: sub(currentDate, { years: duration.years }),
+      end: currentDate,
+    };
+    return;
   }
 }
 
@@ -69,7 +134,10 @@ const uniqueExpenditure = computed(() => {
 });
 
 const uniqueTypeOfExpenditure = computed(() => {
-  return storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "typeOfExpenditure");
+  return storeAdvanceReports.getUniqueNonEmptyValues(
+    props.rows,
+    "typeOfExpenditure"
+  );
 });
 
 const uniqueNotation = computed(() => {
@@ -122,17 +190,25 @@ const filterRows = () => {
         selectedExpenditure.value.includes(row.expenditure)) &&
       (!selectedTypeOfExpenditure.value.length ||
         selectedTypeOfExpenditure.value.includes(row.typeOfExpenditure)) &&
-      (!selectedNotation.value.length || selectedNotation.value.includes(row.notation)) &&
-      (!selectedCompany.value.length || selectedCompany.value.includes(row.company)) &&
+      (!selectedNotation.value.length ||
+        selectedNotation.value.includes(row.notation)) &&
+      (!selectedCompany.value.length ||
+        selectedCompany.value.includes(row.company)) &&
       (!selectedCreatedUser.value.length ||
         selectedCreatedUser.value.includes(row.createdUser)) &&
-      (!selected.value.start || new Date(row.date) >= new Date(newStartingDate)) &&
+      (!selected.value.start ||
+        new Date(row.date) >= new Date(newStartingDate)) &&
       (!selected.value.end || new Date(row.date) <= new Date(newEndDate)) &&
-      (!startingDate2.value || new Date(row.received) >= new Date(newStartingDate2)) &&
+      (!startingDate2.value ||
+        new Date(row.received) >= new Date(newStartingDate2)) &&
       (!endDate2.value || new Date(row.received) <= new Date(newEndDate2))
     );
   });
-  emit("filtered-rows", filteredRows.value);
+  emit("filtered-rows", [
+    filteredRows.value,
+    selected.value,
+  ]);
+  showFilters.value = false;
 };
 
 function clearFields() {
@@ -147,28 +223,28 @@ function clearFields() {
   endDate.value = "";
   startingDate2.value = "";
   endDate2.value = "";
-  selected.value.start = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  selected.value.end = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+  selected.value.start = new Date(new Date().getFullYear() - 1, 0, 1);
+  selected.value.end = new Date();
   filterRows();
+  showFilters.value = false;
 }
 
-watch(
-  [
-    selectedPVZ,
-    selectedExpenditure,
-    selectedTypeOfExpenditure,
-    selectedType,
-    selectedCompany,
-    selectedCreatedUser,
-    selectedNotation,
-    startingDate,
-    endDate,
-    startingDate2,
-    endDate2,
-    selected,
-  ],
-  filterRows
-);
+// watch(
+//   [
+//     selectedPVZ,
+//     selectedExpenditure,
+//     selectedTypeOfExpenditure,
+//     selectedType,
+//     selectedCompany,
+//     selectedCreatedUser,
+//     selectedNotation,
+//     startingDate,
+//     endDate,
+//     startingDate2,
+//     endDate2,
+//   ],
+//   filterRows
+// );
 
 const selectedArrays = [
   selectedPVZ,
@@ -180,11 +256,10 @@ const selectedArrays = [
   selectedNotation,
 ];
 
-
 const nonEmptyCount = computed(() => {
   let count = 0;
-  selectedArrays.forEach(selectedArray => {
-    selectedArray.value.forEach(element => {
+  selectedArrays.forEach((selectedArray) => {
+    selectedArray.value.forEach((element) => {
       if (element !== undefined && element !== null && element !== "") {
         count++;
       }
@@ -217,7 +292,10 @@ function loadFromLocalStorage(key: string) {
 
 function saveFiltersToLocalStorage() {
   saveToLocalStorage("selectedPVZAR", selectedPVZ.value);
-  saveToLocalStorage("selectedTypeOfExpenditureAR", selectedTypeOfExpenditure.value);
+  saveToLocalStorage(
+    "selectedTypeOfExpenditureAR",
+    selectedTypeOfExpenditure.value
+  );
   saveToLocalStorage("selectedExpenditureAR", selectedExpenditure.value);
   saveToLocalStorage("selectedTypeAR", selectedType.value);
   saveToLocalStorage("selectedCompanyAR", selectedCompany.value);
@@ -251,12 +329,16 @@ onMounted(() => {
     selectedPVZ.value = storedSelectedPVZ;
   }
 
-  const storedSelectedTypeOfExpenditure = loadFromLocalStorage("selectedTypeOfExpenditureAR");
+  const storedSelectedTypeOfExpenditure = loadFromLocalStorage(
+    "selectedTypeOfExpenditureAR"
+  );
   if (storedSelectedTypeOfExpenditure !== null) {
     selectedTypeOfExpenditure.value = storedSelectedTypeOfExpenditure;
   }
 
-  const storedSelectedExpenditure = loadFromLocalStorage("selectedExpenditureAR");
+  const storedSelectedExpenditure = loadFromLocalStorage(
+    "selectedExpenditureAR"
+  );
   if (storedSelectedExpenditure !== null) {
     selectedExpenditure.value = storedSelectedExpenditure;
   }
@@ -271,7 +353,9 @@ onMounted(() => {
     selectedCompany.value = storedSelectedCompany;
   }
 
-  const storedSelectedCreatedUser = loadFromLocalStorage("selectedCreatedUserAR");
+  const storedSelectedCreatedUser = loadFromLocalStorage(
+    "selectedCreatedUserAR"
+  );
   if (storedSelectedCreatedUser !== null) {
     selectedCreatedUser.value = storedSelectedCreatedUser;
   }
@@ -305,6 +389,8 @@ onMounted(() => {
   if (storedEndDate2 !== null) {
     endDate2.value = storedEndDate2;
   }
+
+  filterRows();
 });
 </script>
 
@@ -318,7 +404,9 @@ onMounted(() => {
         name="material-symbols:settings-rounded"
         size="24"
       />
-      <h1 class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full">
+      <h1
+        class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full"
+      >
         {{ nonEmptyCount }}
       </h1>
     </div>
@@ -327,7 +415,9 @@ onMounted(() => {
       v-if="showFilters"
       class="border-2 bg-white border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
     >
-      <div class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5">
+      <div
+        class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5"
+      >
         <div class="flex items-start space-y-2 flex-col mt-5 text-center">
           <h1>Компания</h1>
           <VueMultiselect
@@ -399,73 +489,87 @@ onMounted(() => {
           />
         </div>
       </div>
-      <UPopover
-        :popper="{ placement: 'auto' }"
-        class="block max-sm:hidden my-5 max-w-[220px]"
-      >
-        <UButton type="button" icon="i-heroicons-calendar-days-20-solid" color="orange">
-          {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
-          {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
-        </UButton>
 
-        <template #panel="{ close }">
-          <div class="flex items-center sm:divide-x divide-gray-200 dark:divide-gray-800">
-            <div class="hidden sm:flex flex-col py-4">
-              <UButton
-                v-for="(range, index) in ranges"
-                :key="index"
-                :label="range.label"
-                color="white"
-                variant="ghost"
-                class="rounded-none px-6"
-                :class="[
-                  isRangeSelected(range.duration)
-                    ? 'bg-gray-100 dark:bg-gray-800'
-                    : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
-                ]"
-                truncate
-                @click="selectRange(range.duration)"
-              />
+      <div v-auto-animate class="my-10 flex items-center justify-center gap-5">
+        <UPopover class="block max-sm:hidden" :popper="{ placement: 'bottom' }">
+          <UButton
+            type="button"
+            icon="i-heroicons-calendar-days-20-solid"
+            color="orange"
+          >
+            {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
+            {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
+          </UButton>
+
+          <template #panel="{ close }">
+            <div
+              class="flex items-center flex-col sm:divide-x divide-gray-200 dark:divide-gray-800"
+            >
+              <DatePickerSingleMonth v-model="selected" @close="close" />
+
+              <div class="grid grid-cols-2">
+                <UButton
+                  v-for="(range, index) in ranges"
+                  :key="index"
+                  :label="range.label"
+                  color="white"
+                  variant="ghost"
+                  class="rounded-none px-2"
+                  :class="[
+                    isRangeSelected(range.duration)
+                      ? 'bg-gray-100 dark:bg-gray-800'
+                      : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                  ]"
+                  truncate
+                  @click="selectRange(range.duration)"
+                />
+              </div>
             </div>
+          </template>
+        </UPopover>
 
-            <DatePicker v-model="selected" @close="close" />
-          </div>
-        </template>
-      </UPopover>
-      <UPopover
-        :overlay="true"
-        :popper="{ placement: 'auto' }"
-        class="hidden max-sm:block mx-auto max-w-[220px] my-5"
-      >
-        <UButton type="button" icon="i-heroicons-calendar-days-20-solid" color="orange">
-          {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
-          {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
-        </UButton>
+        <UPopover
+          class="hidden max-sm:block"
+          :overlay="true"
+          :popper="{ placement: 'bottom' }"
+        >
+          <UButton
+            type="button"
+            icon="i-heroicons-calendar-days-20-solid"
+            color="orange"
+          >
+            {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
+            {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
+          </UButton>
 
-        <template #panel="{ close }">
-          <div class="flex items-center sm:divide-x divide-gray-200 dark:divide-gray-800">
-            <div class="hidden sm:flex flex-col py-4">
-              <UButton
-                v-for="(range, index) in ranges"
-                :key="index"
-                :label="range.label"
-                color="white"
-                variant="ghost"
-                class="rounded-none px-6"
-                :class="[
-                  isRangeSelected(range.duration)
-                    ? 'bg-gray-100 dark:bg-gray-800'
-                    : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
-                ]"
-                truncate
-                @click="selectRange(range.duration)"
-              />
+          <template #panel="{ close }">
+            <div
+              class="flex items-center flex-col sm:divide-x divide-gray-200 dark:divide-gray-800"
+            >
+              <DatePickerSingleMonth v-model="selected" @close="close" />
+
+              <div class="grid grid-cols-2 px-2 py-2">
+                <UButton
+                  v-for="(range, index) in ranges"
+                  :key="index"
+                  :label="range.label"
+                  color="white"
+                  variant="ghost"
+                  class="rounded-none"
+                  :class="[
+                    isRangeSelected(range.duration)
+                      ? 'bg-gray-100 dark:bg-gray-800'
+                      : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                  ]"
+                  truncate
+                  @click="selectRange(range.duration)"
+                />
+              </div>
             </div>
+          </template>
+        </UPopover>
+      </div>
 
-            <DatePickerSingleMonth v-model="selected" @close="close" />
-          </div>
-        </template>
-      </UPopover>
       <div class="flex justify-end gap-3 mt-3 mb-5">
         <UIMainButton @click="saveFiltersToLocalStorage(), filterRows()"
           >Принять</UIMainButton

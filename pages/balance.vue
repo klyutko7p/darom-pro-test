@@ -29,53 +29,97 @@ let rowsDelivery = ref<Array<IBalanceDelivery>>();
 let sumOfReject = ref<any>();
 let rowsWithProfitRows = ref();
 
+interface DurationType {
+  month?: "current" | "0" | "1" | string;
+  years?: number;
+}
+
+interface SelectedDateRange {
+  start: Date;
+  end: Date;
+}
+
 const ranges = [
+  { label: "Январь", duration: { month: "0" } },
+  { label: "Февраль", duration: { month: "1" } },
+  { label: "Март", duration: { month: "2" } },
+  { label: "Апрель", duration: { month: "3" } },
+  { label: "Май", duration: { month: "4" } },
+  { label: "Июнь", duration: { month: "5" } },
+  { label: "Июль", duration: { month: "6" } },
+  { label: "Август", duration: { month: "7" } },
+  { label: "Сентябрь", duration: { month: "8" } },
+  { label: "Октябрь", duration: { month: "9" } },
+  { label: "Ноябрь", duration: { month: "10" } },
+  { label: "Декабрь", duration: { month: "11" } },
   { label: "Текущий месяц", duration: { month: "current" } },
-  { label: "Сегодня", duration: { days: 0 } },
-  { label: "Последние 7 дней", duration: { days: 7 } },
-  { label: "Последние 14 дней", duration: { days: 14 } },
-  { label: "Последние 30 дней", duration: { days: 30 } },
-  { label: "Последние 3 месяца", duration: { months: 3 } },
-  { label: "Последние 6 месяцев", duration: { months: 6 } },
   { label: "Последний год", duration: { years: 1 } },
 ];
 
-const selected = ref({
-  start: new Date(new Date().getFullYear(), 0, 1),
-  end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+const selected = ref<SelectedDateRange>({
+  start: new Date(new Date().getFullYear() - 1, 0, 1),
+  end: new Date(),
 });
 
-function isRangeSelected(duration: Duration) {
-  if (duration.month === "current") {
-    const startOfMonth = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth(),
-      1
-    );
-    const endOfMonth = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth() + 1,
-      0
-    );
-    return (
-      isSameDay(selected.value.start, startOfMonth) &&
-      isSameDay(selected.value.end, endOfMonth)
-    );
-  }
-  return (
-    isSameDay(selected.value.start, sub(new Date(), duration)) &&
-    isSameDay(selected.value.end, new Date())
-  );
+function getMonthRange(year: number, month: number): SelectedDateRange {
+  const start = new Date(year, month, 1);
+  const end = new Date(year, month + 1, 0);
+  return { start, end };
 }
 
-function selectRange(duration: Duration) {
+function isRangeSelected(duration: DurationType): boolean {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+
   if (duration.month === "current") {
+    const { start, end } = getMonthRange(currentYear, currentDate.getMonth());
+    return (
+      isSameDay(selected.value.start, start) &&
+      isSameDay(selected.value.end, end)
+    );
+  }
+
+  const month = parseInt(duration.month as string, 10);
+  if (!isNaN(month) && month >= 0 && month <= 11) {
+    const { start, end } = getMonthRange(currentYear, month);
+    return (
+      isSameDay(selected.value.start, start) &&
+      isSameDay(selected.value.end, end)
+    );
+  }
+
+  if (duration.years) {
+    const start = sub(currentDate, { years: duration.years });
+    return (
+      isSameDay(selected.value.start, start) &&
+      isSameDay(selected.value.end, currentDate)
+    );
+  }
+
+  return false;
+}
+
+function selectRange(duration: DurationType) {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+
+  if (duration.month === "current") {
+    selected.value = getMonthRange(currentYear, currentDate.getMonth());
+    return;
+  }
+
+  const month = parseInt(duration.month as string, 10);
+  if (!isNaN(month) && month >= 0 && month <= 11) {
+    selected.value = getMonthRange(currentYear, month);
+    return;
+  }
+
+  if (duration.years) {
     selected.value = {
-      start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-      end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+      start: sub(currentDate, { years: duration.years }),
+      end: currentDate,
     };
-  } else {
-    selected.value = { start: sub(new Date(), duration), end: new Date() };
+    return;
   }
 }
 
@@ -2050,221 +2094,237 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
               v-if="showFilters"
               class="border-2 bg-white border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
             >
-              <div
-                class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5"
-              >
-                <div
-                  class="flex items-start space-y-2 flex-col mt-5 text-center"
-                >
-                  <h1>Показать для ПВЗ</h1>
-                  <select
-                    v-if="
-                      user.role !== 'PVZ' &&
-                      user.role !== 'COURIER' &&
-                      user.role !== 'PPVZ' &&
-                      user.role !== 'RMANAGER'
-                    "
-                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
-                    v-model="selectedPVZ"
+              <div class="flex items-center flex-col w-full gap-x-5">
+                <div class="w-full">
+                  <div
+                    class="flex items-start space-y-2 flex-col mt-5 text-center"
                   >
-                    <option value="Все ПВЗ" selected>Все ПВЗ</option>
-                    <option v-for="pvzValue in pvz">
-                      {{ pvzValue.name }}
-                    </option>
-                  </select>
-                  <select
-                    v-else-if="user.role === 'RMANAGER'"
-                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
-                    v-model="selectedPVZ"
+                    <h1>Показать для ПВЗ</h1>
+                    <select
+                      v-if="
+                        user.role !== 'PVZ' &&
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
+                      "
+                      class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
+                      v-model="selectedPVZ"
+                    >
+                      <option value="Все ПВЗ" selected>Все ПВЗ</option>
+                      <option v-for="pvzValue in pvz">
+                        {{ pvzValue.name }}
+                      </option>
+                    </select>
+                    <select
+                      v-else-if="user.role === 'RMANAGER'"
+                      class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
+                      v-model="selectedPVZ"
+                    >
+                      <option value="Все ППВЗ" selected>Все ППВЗ</option>
+                      <option v-for="pvzValue in user.PVZ">
+                        {{ pvzValue }}
+                      </option>
+                    </select>
+                    <select
+                      v-else
+                      class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
+                      v-model="selectedPVZ"
+                    >
+                      <option v-for="pvzValue in user.PVZ">
+                        {{ pvzValue }}
+                      </option>
+                    </select>
+                  </div>
+                  <div
+                    class="flex items-start space-y-2 flex-col mt-5 text-center"
                   >
-                    <option value="Все ППВЗ" selected>Все ППВЗ</option>
-                    <option v-for="pvzValue in user.PVZ">
-                      {{ pvzValue }}
-                    </option>
-                  </select>
-                  <select
-                    v-else
-                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
-                    v-model="selectedPVZ"
-                  >
-                    <option v-for="pvzValue in user.PVZ">
-                      {{ pvzValue }}
-                    </option>
-                  </select>
+                    <h1>Тип транзакции</h1>
+                    <select
+                      class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
+                      v-model="selectedTypeOfTransaction"
+                    >
+                      <option
+                        v-if="
+                          user.role !== 'ADMINISTRATOR' &&
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ' &&
+                          user.role !== 'RMANAGER'
+                        "
+                        value="Доход"
+                      >
+                        Доход DP (продажа)
+                      </option>
+                      <option
+                        v-if="
+                          user.role !== 'ADMINISTRATOR' &&
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ' &&
+                          user.role !== 'RMANAGER'
+                        "
+                        value="Доставка"
+                      >
+                        Доход D&S
+                      </option>
+                      <option value="Баланс наличные">
+                        Баланс наличные DP
+                      </option>
+                      <option
+                        v-if="
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ'
+                        "
+                        value="Баланс безнал"
+                      >
+                        Баланс онлайн DP
+                      </option>
+                      <option
+                        v-if="
+                          user.role !== 'ADMINISTRATOR' &&
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ' &&
+                          user.role !== 'RMANAGER'
+                        "
+                        value="Заказано"
+                      >
+                        Сумма товаров в заказе (до выдачи)
+                      </option>
+                      <option
+                        v-if="
+                          user.role !== 'ADMINISTRATOR' &&
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ' &&
+                          user.role !== 'RMANAGER'
+                        "
+                        value="Заказано1"
+                      >
+                        Сумма проданных товаров наличные
+                      </option>
+                      <option
+                        v-if="
+                          user.role !== 'ADMINISTRATOR' &&
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ' &&
+                          user.role !== 'RMANAGER'
+                        "
+                        value="Заказано2"
+                      >
+                        Сумма проданных товаров онлайн
+                      </option>
+                      <option
+                        v-if="
+                          user.role !== 'ADMINISTRATOR' &&
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ' &&
+                          user.role !== 'RMANAGER'
+                        "
+                        value="Заказано3"
+                      >
+                        Сумма заказанных товаров
+                      </option>
+                    </select>
+                  </div>
                 </div>
+
                 <div
-                  class="flex items-start space-y-2 flex-col mt-5 text-center"
+                  v-auto-animate
+                  class="my-10 flex items-center justify-center gap-5"
                 >
-                  <h1>Тип транзакции</h1>
-                  <select
-                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
-                    v-model="selectedTypeOfTransaction"
+                  <UPopover
+                    class="block max-sm:hidden"
+                    :popper="{ placement: 'bottom' }"
                   >
-                    <option
-                      v-if="
-                        user.role !== 'ADMINISTRATOR' &&
-                        user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ' &&
-                        user.role !== 'RMANAGER'
-                      "
-                      value="Доход"
+                    <UButton
+                      type="button"
+                      icon="i-heroicons-calendar-days-20-solid"
+                      color="orange"
                     >
-                      Доход DP (продажа)
-                    </option>
-                    <option
-                      v-if="
-                        user.role !== 'ADMINISTRATOR' &&
-                        user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ' &&
-                        user.role !== 'RMANAGER'
-                      "
-                      value="Доставка"
+                      {{ format(selected.start, "dd MMM yyy", { locale: ru }) }}
+                      —
+                      {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
+                    </UButton>
+
+                    <template #panel="{ close }">
+                      <div
+                        class="flex items-center flex-col sm:divide-x divide-gray-200 dark:divide-gray-800"
+                      >
+                        <DatePickerSingleMonth
+                          v-model="selected"
+                          @close="close"
+                        />
+
+                        <div class="grid grid-cols-2">
+                          <UButton
+                            v-for="(range, index) in ranges"
+                            :key="index"
+                            :label="range.label"
+                            color="white"
+                            variant="ghost"
+                            class="rounded-none px-2"
+                            :class="[
+                              isRangeSelected(range.duration)
+                                ? 'bg-gray-100 dark:bg-gray-800'
+                                : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                            ]"
+                            truncate
+                            @click="selectRange(range.duration)"
+                          />
+                        </div>
+                      </div>
+                    </template>
+                  </UPopover>
+
+                  <UPopover
+                    class="hidden max-sm:block"
+                    :overlay="true"
+                    :popper="{ placement: 'bottom' }"
+                  >
+                    <UButton
+                      type="button"
+                      icon="i-heroicons-calendar-days-20-solid"
+                      color="orange"
                     >
-                      Доход D&S
-                    </option>
-                    <option value="Баланс наличные">Баланс наличные DP</option>
-                    <option
-                      v-if="
-                        user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ'
-                      "
-                      value="Баланс безнал"
-                    >
-                      Баланс онлайн DP
-                    </option>
-                    <option
-                      v-if="
-                        user.role !== 'ADMINISTRATOR' &&
-                        user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ' &&
-                        user.role !== 'RMANAGER'
-                      "
-                      value="Заказано"
-                    >
-                      Сумма товаров в заказе
-                    </option>
-                    <option
-                      v-if="
-                        user.role !== 'ADMINISTRATOR' &&
-                        user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ' &&
-                        user.role !== 'RMANAGER'
-                      "
-                      value="Заказано1"
-                    >
-                      Сумма проданных товаров наличные
-                    </option>
-                    <option
-                      v-if="
-                        user.role !== 'ADMINISTRATOR' &&
-                        user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ' &&
-                        user.role !== 'RMANAGER'
-                      "
-                      value="Заказано2"
-                    >
-                      Сумма проданных товаров онлайн
-                    </option>
-                    <option
-                      v-if="
-                        user.role !== 'ADMINISTRATOR' &&
-                        user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ' &&
-                        user.role !== 'RMANAGER'
-                      "
-                      value="Заказано3"
-                    >
-                      Сумма заказанных товаров
-                    </option>
-                  </select>
+                      {{ format(selected.start, "dd MMM yyy", { locale: ru }) }}
+                      —
+                      {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
+                    </UButton>
+
+                    <template #panel="{ close }">
+                      <div
+                        class="flex items-center flex-col sm:divide-x divide-gray-200 dark:divide-gray-800"
+                      >
+                        <DatePickerSingleMonth
+                          v-model="selected"
+                          @close="close"
+                        />
+
+                        <div class="grid grid-cols-2 px-2 py-2">
+                          <UButton
+                            v-for="(range, index) in ranges"
+                            :key="index"
+                            :label="range.label"
+                            color="white"
+                            variant="ghost"
+                            class="rounded-none"
+                            :class="[
+                              isRangeSelected(range.duration)
+                                ? 'bg-gray-100 dark:bg-gray-800'
+                                : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                            ]"
+                            truncate
+                            @click="selectRange(range.duration)"
+                          />
+                        </div>
+                      </div>
+                    </template>
+                  </UPopover>
                 </div>
-                <UPopover
-                  :popper="{ placement: 'auto' }"
-                  class="block max-sm:hidden my-5 max-w-[220px]"
-                >
-                  <UButton
-                    icon="i-heroicons-calendar-days-20-solid"
-                    color="orange"
-                  >
-                    {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
-                    {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
-                  </UButton>
-
-                  <template #panel="{ close }">
-                    <div
-                      class="flex items-center sm:divide-x divide-gray-200 dark:divide-gray-800"
-                    >
-                      <div class="hidden sm:flex flex-col py-4">
-                        <UButton
-                          v-for="(range, index) in ranges"
-                          :key="index"
-                          :label="range.label"
-                          color="white"
-                          variant="ghost"
-                          class="rounded-none px-6"
-                          :class="[
-                            isRangeSelected(range.duration)
-                              ? 'bg-gray-100 dark:bg-gray-800'
-                              : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
-                          ]"
-                          truncate
-                          @click="selectRange(range.duration)"
-                        />
-                      </div>
-
-                      <DatePicker v-model="selected" @close="close" />
-                    </div>
-                  </template>
-                </UPopover>
-                <UPopover
-                  :overlay="true"
-                  :popper="{ placement: 'auto' }"
-                  class="hidden max-sm:block mx-auto max-w-[220px] my-5"
-                >
-                  <UButton
-                    icon="i-heroicons-calendar-days-20-solid"
-                    color="orange"
-                  >
-                    {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
-                    {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
-                  </UButton>
-
-                  <template #panel="{ close }">
-                    <div
-                      class="flex items-center sm:divide-x divide-gray-200 dark:divide-gray-800"
-                    >
-                      <div class="hidden sm:flex flex-col py-4">
-                        <UButton
-                          v-for="(range, index) in ranges"
-                          :key="index"
-                          :label="range.label"
-                          color="white"
-                          variant="ghost"
-                          class="rounded-none px-6"
-                          :class="[
-                            isRangeSelected(range.duration)
-                              ? 'bg-gray-100 dark:bg-gray-800'
-                              : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
-                          ]"
-                          truncate
-                          @click="selectRange(range.duration)"
-                        />
-                      </div>
-
-                      <DatePickerSingleMonth
-                        v-model="selected"
-                        @close="close"
-                      />
-                    </div>
-                  </template>
-                </UPopover>
               </div>
               <div class="flex justify-end mb-3">
                 <UIActionButton @click="clearFields"
@@ -2485,8 +2545,9 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
               class="border-2 bg-white border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
             >
               <div
-                class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5"
+                class="flex items-center flex-col w-full gap-x-5"
               >
+              <div class="w-full">
                 <div
                   class="flex items-start space-y-2 flex-col mt-5 text-center"
                 >
@@ -2579,7 +2640,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                       "
                       value="Заказано"
                     >
-                      Сумма товаров в заказе
+                      Сумма товаров в заказе (до выдачи)
                     </option>
                     <option
                       v-if="
@@ -2619,86 +2680,100 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                     </option>
                   </select>
                 </div>
-                <UPopover
-                  :popper="{ placement: 'auto' }"
-                  class="block max-sm:hidden my-5 max-w-[220px]"
+              </div>
+                <div
+                  v-auto-animate
+                  class="my-10 flex items-center justify-center gap-5"
                 >
-                  <UButton
-                    icon="i-heroicons-calendar-days-20-solid"
-                    color="orange"
+                  <UPopover
+                    class="block max-sm:hidden"
+                    :popper="{ placement: 'bottom' }"
                   >
-                    {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
-                    {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
-                  </UButton>
-
-                  <template #panel="{ close }">
-                    <div
-                      class="flex items-center sm:divide-x divide-gray-200 dark:divide-gray-800"
+                    <UButton
+                      type="button"
+                      icon="i-heroicons-calendar-days-20-solid"
+                      color="orange"
                     >
-                      <div class="hidden sm:flex flex-col py-4">
-                        <UButton
-                          v-for="(range, index) in ranges"
-                          :key="index"
-                          :label="range.label"
-                          color="white"
-                          variant="ghost"
-                          class="rounded-none px-6"
-                          :class="[
-                            isRangeSelected(range.duration)
-                              ? 'bg-gray-100 dark:bg-gray-800'
-                              : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
-                          ]"
-                          truncate
-                          @click="selectRange(range.duration)"
-                        />
-                      </div>
+                      {{ format(selected.start, "dd MMM yyy", { locale: ru }) }}
+                      —
+                      {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
+                    </UButton>
 
-                      <DatePicker v-model="selected" @close="close" />
-                    </div>
-                  </template>
-                </UPopover>
-                <UPopover
-                  :overlay="true"
-                  :popper="{ placement: 'auto' }"
-                  class="hidden max-sm:block mx-auto max-w-[220px] my-5"
-                >
-                  <UButton
-                    icon="i-heroicons-calendar-days-20-solid"
-                    color="orange"
+                    <template #panel="{ close }">
+                      <div
+                        class="flex items-center flex-col sm:divide-x divide-gray-200 dark:divide-gray-800"
+                      >
+                        <DatePickerSingleMonth
+                          v-model="selected"
+                          @close="close"
+                        />
+
+                        <div class="grid grid-cols-2">
+                          <UButton
+                            v-for="(range, index) in ranges"
+                            :key="index"
+                            :label="range.label"
+                            color="white"
+                            variant="ghost"
+                            class="rounded-none px-2"
+                            :class="[
+                              isRangeSelected(range.duration)
+                                ? 'bg-gray-100 dark:bg-gray-800'
+                                : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                            ]"
+                            truncate
+                            @click="selectRange(range.duration)"
+                          />
+                        </div>
+                      </div>
+                    </template>
+                  </UPopover>
+
+                  <UPopover
+                    class="hidden max-sm:block"
+                    :overlay="true"
+                    :popper="{ placement: 'bottom' }"
                   >
-                    {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
-                    {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
-                  </UButton>
-
-                  <template #panel="{ close }">
-                    <div
-                      class="flex items-center sm:divide-x divide-gray-200 dark:divide-gray-800"
+                    <UButton
+                      type="button"
+                      icon="i-heroicons-calendar-days-20-solid"
+                      color="orange"
                     >
-                      <div class="hidden sm:flex flex-col py-4">
-                        <UButton
-                          v-for="(range, index) in ranges"
-                          :key="index"
-                          :label="range.label"
-                          color="white"
-                          variant="ghost"
-                          class="rounded-none px-6"
-                          :class="[
-                            isRangeSelected(range.duration)
-                              ? 'bg-gray-100 dark:bg-gray-800'
-                              : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
-                          ]"
-                          truncate
-                          @click="selectRange(range.duration)"
-                        />
-                      </div>
+                      {{ format(selected.start, "dd MMM yyy", { locale: ru }) }}
+                      —
+                      {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
+                    </UButton>
 
-                      <DatePickerSingleMonth
-                        v-model="selected"
-                        @close="close"
-                      />
-                    </div>
-                  </template>
-                </UPopover>
+                    <template #panel="{ close }">
+                      <div
+                        class="flex items-center flex-col sm:divide-x divide-gray-200 dark:divide-gray-800"
+                      >
+                        <DatePickerSingleMonth
+                          v-model="selected"
+                          @close="close"
+                        />
+
+                        <div class="grid grid-cols-2 px-2 py-2">
+                          <UButton
+                            v-for="(range, index) in ranges"
+                            :key="index"
+                            :label="range.label"
+                            color="white"
+                            variant="ghost"
+                            class="rounded-none"
+                            :class="[
+                              isRangeSelected(range.duration)
+                                ? 'bg-gray-100 dark:bg-gray-800'
+                                : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+                            ]"
+                            truncate
+                            @click="selectRange(range.duration)"
+                          />
+                        </div>
+                      </div>
+                    </template>
+                  </UPopover>
+                </div>
               </div>
               <div class="flex justify-end mb-3">
                 <UIActionButton @click="clearFields"

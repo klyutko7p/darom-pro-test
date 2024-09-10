@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
+const storeUsers = useUsersStore()
 
 defineProps({
   rows: { type: Array as PropType<IBalanceOnline[]> },
@@ -15,12 +16,18 @@ defineProps({
           <th scope="col" class="border-[1px]">
             Сумма
           </th>
+          <th scope="col" class="border-[1px]">
+            Дата создания
+          </th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="row in rows" class="text-center">
           <th scope="row" class="border-[1px]">
             {{ row.sum }}
+          </th>
+          <th scope="row" class="border-[1px]">
+            {{ storeUsers.getNormalizedDateWithoutTime(row.created_at) }}
           </th>
         </tr>
       </tbody>

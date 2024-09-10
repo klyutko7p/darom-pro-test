@@ -6,6 +6,60 @@ const toast = useToast();
 export const useEmployeesStore = defineStore("employees", () => {
   let cachedEmployeesRows: IEmployee[] | null = null;
 
+  let pvz: string[] = [
+    "Ряженое",
+    "Алексеевка",
+    "Латоново",
+    "Надежда",
+    "Александровка",
+    "Новониколаевка",
+    "Политотдельское",
+    "Мещерино",
+    "Коломенское ЯМ",
+    "Коломенское WB",
+    "Бессоново",
+    "Новоандриановка",
+    "ПВЗ_1",
+    "ПВЗ_2",
+    "ПВЗ_3",
+    "ПВЗ_4",
+    "ППВЗ_5",
+    "ППВЗ_7",
+    "Офис",
+    "НаДом",
+  ];
+
+  let companies: string[] = [
+    "W/O/Я start",
+    "Darom.pro",
+    "Сортировка",
+    "Доставка",
+  ];
+
+  let banks: string[] = [
+    "тинькофф",
+    "сбер",
+    "почтабанк",
+    "озон",
+    "яндекс банк",
+    "альфа банк",
+    "центр инвест",
+    "ВТБ",
+    "БКС банк",
+  ];
+
+  function getPVZ() {
+    return pvz;
+  }
+
+  function getCompanies() {
+    return companies;
+  }
+
+  function getBanks() {
+    return banks;
+  }
+
   async function createEmployee(row: IEmployee) {
     try {
       let data = await useFetch("/api/employee/create-row", {
@@ -98,5 +152,5 @@ export const useEmployeesStore = defineStore("employees", () => {
     }
   }
 
-  return { updateEmployee, getEmployees, createEmployee, deleteEmployee };
+  return { getPVZ, getCompanies, getBanks, updateEmployee, getEmployees, createEmployee, deleteEmployee };
 });

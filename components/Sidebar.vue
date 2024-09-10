@@ -40,20 +40,20 @@ onMounted(async () => {
     requestsBalance.value = balanceResult;
     requestsAdvanceReport.value = advanceResult;
 
-    quantityRequiredARRows.value = requestsAdvanceReport.value.filter(
+    quantityRequiredARRows.value = requestsAdvanceReport.value?.filter(
       (row) =>
         !row.received &&
         row.issuedUser === user.value.username &&
         row.notation !== "Пополнение баланса"
     ).length;
-    quantityRequiredARRowsAdmin.value = requestsAdvanceReport.value.filter(
+    quantityRequiredARRowsAdmin.value = requestsAdvanceReport.value?.filter(
       (row) =>
         !row.received &&
         (row.issuedUser === user.value.username ||
           row.issuedUser === "Директор (С)") &&
         row.notation !== "Пополнение баланса"
     ).length;
-    quantityRequiredBalanceRows.value = requestsBalance.value.filter(
+    quantityRequiredBalanceRows.value = requestsBalance.value?.filter(
       (row) =>
         row.issued &&
         !row.received &&

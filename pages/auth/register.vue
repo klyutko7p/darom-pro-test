@@ -266,10 +266,10 @@ const formattedBlockDuration = computed(() =>
     class="h-screen flex items-center justify-center max-sm:block"
   >
     <div
-      class="px-10 relative h-full py-32 max-sm:py-32 max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50"
+      class="px-10 relative h-full py-20 max-sm:py-20 max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50"
     >
       <div
-        class="absolute top-10 right-4 text-center underline text-secondary-color font-bold mt-5"
+        class="absolute top-4 right-4 text-center underline text-secondary-color font-bold mt-5"
       >
         <NuxtLink to="/auth/client/login">Или войдите</NuxtLink>
       </div>
@@ -288,7 +288,7 @@ const formattedBlockDuration = computed(() =>
         </h2>
       </div>
 
-      <div class="mt-10 max-sm:px-3">
+      <div class="mt-5 max-sm:px-3">
         <form class="space-y-10" @submit.prevent="register">
           <div>
             <label

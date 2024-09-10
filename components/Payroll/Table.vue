@@ -90,6 +90,8 @@ function updateCurrentPageData() {
     let rowDate: Date = new Date(row.date);
     return rowDate.getMonth() + 1 === +month.value;
   });
+
+  filterRowsCompanyAndPVZ();
 }
 
 let arrayWithModifiedRows = ref<Array<IPayroll>>([]);

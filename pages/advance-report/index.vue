@@ -65,8 +65,16 @@ onMounted(async () => {
       );
     }
 
-    if (rows.value) {
-      handleFilteredRows(rows.value);
+    if (rows.value && user.value.username === "Директор") {
+      handleFilteredRows([rows.value, selected.value]);
+    } else {
+      handleFilteredRows([
+        rows.value,
+        {
+          start: new Date(new Date().getFullYear() - 1, 0, 1),
+          end: new Date(),
+        },
+      ]);
     }
 
     if (user.value.role === "ADMIN") {
@@ -817,6 +825,18 @@ async function createRow() {
     }
     filteredRows.value = rows.value;
 
+    if (rows.value && user.value.username === "Директор") {
+      handleFilteredRows([rows.value, selected.value]);
+    } else {
+      handleFilteredRows([
+        rows.value,
+        {
+          start: new Date(new Date().getFullYear() - 1, 0, 1),
+          end: new Date(),
+        },
+      ]);
+    }
+
     closeModal();
     closeModalYM();
     closeModalAdmin();
@@ -910,6 +930,18 @@ async function updateRow() {
   }
   filteredRows.value = rows.value;
 
+  if (rows.value && user.value.username === "Директор") {
+      handleFilteredRows([rows.value, selected.value]);
+    } else {
+      handleFilteredRows([
+        rows.value,
+        {
+          start: new Date(new Date().getFullYear() - 1, 0, 1),
+          end: new Date(),
+        },
+      ]);
+    }
+
   getSumCreditCash();
   getSumCreditOnline();
   getSumCreditBalance();
@@ -933,6 +965,18 @@ async function updateDeliveryRow(row: any) {
     rows.value = rows.value;
   }
   filteredRows.value = rows.value;
+
+  if (rows.value && user.value.username === "Директор") {
+      handleFilteredRows([rows.value, selected.value]);
+    } else {
+      handleFilteredRows([
+        rows.value,
+        {
+          start: new Date(new Date().getFullYear() - 1, 0, 1),
+          end: new Date(),
+        },
+      ]);
+    }
 
   getSumCreditCash();
   getSumCreditOnline();
@@ -966,6 +1010,18 @@ async function deleteRow(id: any) {
       rows.value = rows.value;
     }
     filteredRows.value = rows.value;
+
+    if (rows.value && user.value.username === "Директор") {
+      handleFilteredRows([rows.value, selected.value]);
+    } else {
+      handleFilteredRows([
+        rows.value,
+        {
+          start: new Date(new Date().getFullYear() - 1, 0, 1),
+          end: new Date(),
+        },
+      ]);
+    }
 
     getSumCreditCash();
     getSumCreditOnline();
@@ -1071,9 +1127,31 @@ function getAllSumFromEmployees() {
   return totalSum;
 }
 
+interface SelectedDateRange {
+  start: Date;
+  end: Date;
+}
+const selected = ref<SelectedDateRange>({
+  start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  end: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0),
+});
+
 const filteredRows = ref<Array<IAdvanceReport>>();
-function handleFilteredRows(filteredRowsData: IAdvanceReport[]) {
-  filteredRows.value = filteredRowsData;
+
+function handleFilteredRows(obj: any) {
+  filteredRows.value = obj[0];
+  selected.value = obj[1];
+
+  const newStartingDate = new Date(selected.value.start).setHours(0, 0, 0, 0);
+  const newEndDate = new Date(selected.value.end).setHours(23, 59, 59, 999);
+
+  filteredRows.value = filteredRows.value?.filter((row: IAdvanceReport) => {
+    const rowDate = new Date(row.date).getTime();
+    return (
+      (!selected.value.start || rowDate >= newStartingDate) &&
+      (!selected.value.end || rowDate <= newEndDate)
+    );
+  });
 }
 
 let linkPhoto = ref("");
@@ -1096,7 +1174,6 @@ async function handleFileChange(fileList: FileList) {
 
 let selectedUser = ref("");
 let showBalanceEmployees = ref(false);
-let month = ref((new Date().getMonth() + 1).toString().padStart(2, "0"));
 
 let isShowCreditBalanceCash = ref(false);
 let isShowCreditBalanceOnline = ref(false);
@@ -1194,8 +1271,8 @@ const typeOfOptions = [
 
   <div v-if="!isLoading">
     <div v-if="token && user.role === 'ADMIN'">
-      <NuxtLayout name="admin">
-        <div class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5">
+      <NuxtLayout name="table-admin-no-pad">
+        <div class="bg-[#f8f9fd] px-16 w-screen pt-10 max-sm:px-5 pb-5">
           <AdvanceReportFilters
             v-if="rows"
             @filtered-rows="handleFilteredRows"
@@ -1279,21 +1356,6 @@ const typeOfOptions = [
                   {{ formatNumber(sumCreditBalanceDebt) }} ₽
                 </h1>
               </div>
-            </div>
-          </div>
-
-          <div
-            class="flex justify-end"
-            v-if="user.role === 'ADMIN' && user.username !== 'Горцуева'"
-          >
-            <div
-              class="bg-secondary-color cursor-pointer hover:opacity-50 duration-200 rounded-full pt-1.5 px-1.5 text-white"
-              @click="router.push('/advance-report/summary-tables')"
-            >
-              <Icon
-                name="material-symbols:table-view"
-                size="24"
-              />
             </div>
           </div>
 
@@ -1415,7 +1477,7 @@ const typeOfOptions = [
                 class="w-full max-sm:max-w-[400px] mx-auto"
                 @click="openModal(rowData, 'CASH')"
               >
-                Создание авансового документа (нал)
+                Создание аван. документа (нал)
               </UIMainButton>
               <div class="max-sm:hidden">
                 <Icon
@@ -1431,10 +1493,10 @@ const typeOfOptions = [
               v-if="user.username === 'Директор'"
             >
               <UIMainButton
-                class="w-full max-sm:max-w-[400px] mx-auto"
+                class="w-full max-sm:max-w-[400px] mx-auto max-sm:text-sm"
                 @click="openModal(rowData, 'ONLINE')"
               >
-                Создание авансового документа (безнал)
+                Создание аван. документа (безнал)
               </UIMainButton>
               <div class="max-sm:hidden">
                 <Icon
@@ -1498,9 +1560,7 @@ const typeOfOptions = [
             <div class="custom-header" v-if="rowData.id">
               Изменение: <b> {{ rowData.id }}</b>
             </div>
-            <div class="custom-header" v-else>
-              Создание авансового документа
-            </div>
+            <div class="custom-header" v-else>Создание аван. документа</div>
           </template>
           <template v-slot:body>
             <div class="text-black">
@@ -1985,8 +2045,8 @@ const typeOfOptions = [
     </div>
 
     <div v-else>
-      <NuxtLayout name="user">
-        <div class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5">
+      <NuxtLayout name="table-user-no-pad">
+        <div class="bg-[#f8f9fd] px-16 w-screen pt-10 max-sm:px-5 pb-5">
           <div>
             <div
               class="text-center text-2xl my-5 flex items-center justify-center flex-col gap-3"
@@ -2017,7 +2077,7 @@ const typeOfOptions = [
                 class="w-full max-sm:max-w-[400px] mx-auto"
                 @click="openModal(rowData, 'CASH')"
               >
-                Создание авансового документа (нал)
+                Создание аван. документа (нал)
               </UIMainButton>
               <div class="max-sm:hidden">
                 <Icon
@@ -2051,9 +2111,7 @@ const typeOfOptions = [
             <div class="custom-header" v-if="rowData.id">
               Изменение: <b> {{ rowData.id }}</b>
             </div>
-            <div class="custom-header" v-else>
-              Создание авансового документа
-            </div>
+            <div class="custom-header" v-else>Создание аван. документа</div>
           </template>
           <template v-slot:body>
             <div class="text-black">
