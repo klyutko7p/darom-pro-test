@@ -330,13 +330,13 @@ async function checkPaymentStatus(qrcId: string) {
           toast.success("Операция завершена успешно!");
           closeModalQR();
           isOpenModalStatus.value = true;
-          closeModalAfterDelay();
+          closeModalStatus();
           clearInterval(intervalId.value);
         } else if (status === "Rejected") {
           toast.error("Операция отклонена!");
           closeModalQR();
           isOpenModalStatus.value = true;
-          closeModalAfterDelay();
+          closeModalStatus();
           clearInterval(intervalId.value);
         }
       } else {

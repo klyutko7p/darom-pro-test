@@ -46,6 +46,7 @@ export const useEmployeesStore = defineStore("employees", () => {
     "центр инвест",
     "ВТБ",
     "БКС банк",
+    "Райфайзен",
   ];
 
   function getPVZ() {
