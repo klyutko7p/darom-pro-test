@@ -155,7 +155,7 @@ function formatPhoneNumber(phoneNumber: string) {
       <Icon
         @click="editMenu"
         size="40"
-        name="material-symbols-light:menu"
+        name="i-ic-round-menu"
         class="hover:opacity-50 duration-200 cursor-pointer"
       />
       <Icon

@@ -310,7 +310,7 @@ function changeAddress(coordinates: Array<number>) {
     address.value = "ПВЗ_4";
   } else if (coordinates[0] === 47.955462 && coordinates[1] === 37.964951) {
     address.value = "ПВЗ_3";
-  } else if ((coordinates[0] === 47.946192, 37.90365 && coordinates[1] === 37.90365)) {
+  } else if ((coordinates[0] === 47.946192 && coordinates[1] === 37.90365)) {
     address.value = "ППВЗ_5";
   } else if (coordinates[0] === 47.974937 && coordinates[1] === 37.837714) {
     address.value = "ППВЗ_7";

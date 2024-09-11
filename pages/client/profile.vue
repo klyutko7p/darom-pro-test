@@ -186,9 +186,9 @@ let newPasswordRepeat = ref("");
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">
-      <div class="py-5">
-        <h1 class="text-2xl mt-5 text-center">Изменить личные данные пользователя</h1>
-        <div class="mt-10 shadow-2xl p-10 border-2 border-dashed border-secondary-color">
+      <div class="py-5 flex mt-24 items-start justify-between gap-10 max-xl:flex-col max-xl:items-center">
+        <h1 class="text-2xl text-center">Изменить личные данные пользователя</h1>
+        <div class="shadow-2xl p-10 border-2 border-dashed border-secondary-color w-full max-w-[900px]">
           <div class="mb-5">
             <label for="phone" class="block text-sm font-medium leading-6 text-gray-900"
               >Телефон</label

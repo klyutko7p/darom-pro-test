@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
+import { vAutoAnimate } from "@formkit/auto-animate";
 
 const storeClients = useClientsStore();
 const storeRansom = useRansomStore();
 const router = useRouter();
+const route = useRoute();
 const toast = useToast();
+let pvzData = ref("");
 
 let user = ref({} as Client);
 const token = Cookies.get("token");
@@ -15,27 +18,35 @@ const storeCells = useCellsStore();
 let originallyRows = ref<Array<IOurRansom>>();
 let cells = ref<Array<Cell>>();
 let cellData = ref({} as Cell);
-
+let marketplaceData = route.query.marketplace;
 onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login");
   }
-
   isLoading.value = true;
   user.value = await storeClients.getClient();
   originallyRows.value = await storeRansom.getRansomRowsForModalClientRansom();
   cells.value = await storeCells.getCellsClient();
+  pvzData.value = Cookies.get("addressCookie") || "";
+  pvzData.value = pvzData.value.replace(/"/g, "");
   isLoading.value = false;
+  if (marketplaceData === "ozon") {
+    marketplace.value = "Ozon";
+  } else if (marketplaceData === "wb") {
+    marketplace.value = "Wildberries";
+  } else if (marketplaceData === "ym") {
+    marketplace.value = "Яндекс Маркет";
+  }
   await updateCells();
 });
 
 async function updateCells() {
-  let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
+  let rowsWithDeleted =
+    await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
   await storeCells.updateCellsStatusClient(rowsWithDeleted);
   cells.value = await storeCells.getCellsClient();
   cells.value = cells.value?.filter((cell) => cell.PVZ !== "НаДом");
 }
-
 
 definePageMeta({
   layout: "client",
@@ -62,49 +73,22 @@ let phoneNumbersWithoutPercent = ref<Array<string>>([
   "+79494690310",
 ]);
 
-async function handleFileChange(event) {
-  const selectedFile = event.target.files[0];
-  const randomDigits = Math.floor(10000 + Math.random() * 90000);
-  const { data, error } = await supabase.storage
-    .from("image")
-    .upload(`img-${randomDigits}-${selectedFile.name}`, selectedFile);
-  rowData.value.img = `${randomDigits}-${selectedFile.name}`;
-  rowData.value.fromName = user.value.phoneNumber;
-  rowData.value.productLink = marketplace.value;
-  rowData.value.dispatchPVZ = pvzData.value;
-  if (phoneNumbersWithoutPercent.value.includes(user.value.phoneNumber)) {
-    rowData.value.percentClient = 0;
-  }
-  getCellFromName();
-  if (data) {
-    isLoading.value = true;
-    await storeRansom.createRansomRow(
-      rowData.value,
-      user.value.phoneNumber,
-      "ClientRansom"
-    );
-    isShowModal.value = true;
-    isLoading.value = false;
-    if (cellData.value) {
-      await storeCells.updateCellClient(cellData.value, "Занято", rowData.value.fromName);
-    }
-  } else {
-    console.log(error);
-  }
-}
-
 async function getCellFromName() {
   if (rowData.value.fromName.trim().length === 12) {
     let row = originallyRows.value?.filter(
       (row) =>
         row.fromName === rowData.value.fromName &&
         row.dispatchPVZ === pvzData.value &&
-        (row.deliveredPVZ === null || row.deliveredSC === null || row.issued === null) &&
+        (row.deliveredPVZ === null ||
+          row.deliveredSC === null ||
+          row.issued === null) &&
         !row.cell.includes("-")
     );
 
     if (row && row.length > 0) {
-      const unoccupiedCellsAndPVZ = cells.value?.sort((a, b) => a.name - b.name);
+      const unoccupiedCellsAndPVZ = cells.value?.sort(
+        (a, b) => a.name - b.name
+      );
       const freeCell = unoccupiedCellsAndPVZ?.find(
         (cell) => cell.PVZ === pvzData.value && cell.status === "Свободно"
       );
@@ -134,7 +118,9 @@ async function getCellFromName() {
       const unoccupiedCellsAndPVZ = cells.value
         ?.filter((cell) => cell.status === "Свободно")
         .sort((a, b) => a.name - b.name);
-      const freeCell = unoccupiedCellsAndPVZ?.find((cell) => cell.PVZ === pvzData.value);
+      const freeCell = unoccupiedCellsAndPVZ?.find(
+        (cell) => cell.PVZ === pvzData.value
+      );
       if (freeCell) {
         rowData.value.cell = freeCell.name;
         cellData.value = freeCell;
@@ -150,8 +136,151 @@ const hours = currentTime.getHours();
 const minutes = currentTime.getMinutes();
 
 const isDisabled = hours >= 18 && hours < 24 && minutes >= 1;
-let pvzData = ref("");
 let isShowModal = ref(false);
+
+const isOpenFirstModal = ref(true);
+const isOpenSecondModal = ref(false);
+const isOpenThirdModal = ref(false);
+const isOpenLastModal = ref(false);
+
+function showFirstModal() {
+  isOpenFirstModal.value = true;
+  isOpenSecondModal.value = false;
+}
+
+function showSecondModal() {
+  isOpenFirstModal.value = false;
+  isOpenSecondModal.value = true;
+  isOpenThirdModal.value = false;
+}
+
+function showThirdModal() {
+  isOpenSecondModal.value = false;
+  isOpenThirdModal.value = true;
+  isOpenLastModal.value = false;
+}
+function showLastModal() {
+  isOpenThirdModal.value = false;
+  isOpenLastModal.value = true;
+}
+
+let fileQRPhoto = ref({} as any);
+
+function clearQRPhoto() {
+  rowData.value.img = "";
+  fileQRPhoto.value = {};
+}
+
+const randomDigits = Math.floor(10000 + Math.random() * 90000);
+
+async function handleFile(bucketName: string, file: any) {
+  const { data, error } = await supabase.storage
+    .from(bucketName)
+    .upload(`img-${rowData.value.img}`, file);
+}
+
+function uploadQRFile(e: Event) {
+  handleFileUpload(e);
+}
+
+function handleFileUpload(e: any) {
+  let fileName = e[0].name;
+  rowData.value.img = `${randomDigits}-${fileName}`;
+  fileQRPhoto.value = e[0];
+}
+
+let isOpen = ref(true);
+
+const people = [
+  {
+    pvz: "ПВЗ_1",
+    name: "г. Донецк, ул. Антропова 16",
+  },
+  {
+    pvz: "ПВЗ_3",
+    name: "г. Донецк, ул. Палладина, 20",
+  },
+  {
+    pvz: "ПВЗ_4",
+    name: "г. Донецк, ул. Нартова, 1",
+  },
+  {
+    pvz: "ППВЗ_5",
+    name: "г. Донецк, ул. Дудинская, д. 4, кв. 7",
+  },
+  {
+    pvz: "ППВЗ_7",
+    name: "г. Донецк, ул. Жебелева, д. 7",
+  },
+];
+
+const marketplaces = [
+  {
+    marketplace: "Ozon",
+    name: "OZON",
+  },
+  {
+    marketplace: "Wildberries",
+    name: "WILDBERRIES",
+  },
+  {
+    marketplace: "Яндекс Маркет",
+    name: "ЯНДЕКС МАРКЕТ",
+  },
+  {
+    marketplace: "СДЕК",
+    name: "СДЕК",
+  },
+  {
+    marketplace: "Почта",
+    name: "ПОЧТА",
+  },
+  {
+    marketplace: "DNS",
+    name: "DNS",
+  },
+];
+
+async function submitForm() {
+  try {
+    rowData.value.fromName = user.value.phoneNumber;
+    rowData.value.productLink = marketplace.value;
+    rowData.value.dispatchPVZ = pvzData.value;
+    if (phoneNumbersWithoutPercent.value.includes(user.value.phoneNumber)) {
+      rowData.value.percentClient = 0;
+    }
+    getCellFromName();
+
+    isLoading.value = true;
+
+    const filePromises = [handleFile("image", fileQRPhoto.value)];
+
+    await Promise.all(filePromises);
+
+    await storeRansom.createRansomRow(
+      rowData.value,
+      user.value.phoneNumber,
+      "ClientRansom"
+    );
+    isOpen.value = false;
+    isShowModal.value = true;
+    if (cellData.value) {
+      await storeCells.updateCellClient(
+        cellData.value,
+        "Занято",
+        rowData.value.fromName
+      );
+    }
+
+    setTimeout(() => {
+      router.push("/client/main");
+    }, 5000);
+  } catch (error) {
+    console.error("Error while creating employee or handling files:", error);
+  } finally {
+    isLoading.value = false;
+  }
+}
 </script>
 
 <template>
@@ -160,90 +289,282 @@ let isShowModal = ref(false);
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">
-      <div class="flex items-center justify-center flex-col pt-24">
-        <h1 class="mb-10 text-xl text-center">
-          Чтобы мы получили ваш заказ,
-          <span class="italic font-bold">
-            он должен быть оформлен на адрес Ростовская область, Матвеево-Курганский
-            район, с. Ряженое, ул Ленина 6*</span
-          >
-        </h1>
-        <h1 class="text-2xl mb-3">Выберите маркетплейс</h1>
-        <select
-          class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 text-lg w-full focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3"
-          v-model="marketplace"
+      <UModal
+        :ui="{
+          container: 'flex items-center justify-center text-center',
+        }"
+        v-auto-animate
+        v-model="isOpen"
+        prevent-close
+      >
+        <UCard
+          v-auto-animate
+          :ui="{
+            ring: '',
+            divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+          }"
         >
-          <option class="text-lg" value="Ozon">Ozon</option>
-          <option class="text-lg" value="Wildberries">Wildberries</option>
-          <option class="text-lg" value="Яндекс Маркет">Яндекс Маркет</option>
-          <option class="text-lg" value="СДЕК">СДЕК</option>
-          <option class="text-lg" value="Почта">Почта</option>
-          <option class="text-lg" value="DNS">DNS</option>
-        </select>
-        <h1 class="text-2xl mb-3 mt-10">Выберите пункт выдачи заказов</h1>
-        <select
-          class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 text-lg w-full focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3"
-          v-model="pvzData"
-        >
-          <option class="text-lg" value="ПВЗ_1">г. Донецк, ул. Антропова 16</option>
-          <option class="text-lg" value="ПВЗ_3">г. Донецк, ул. Палладина 20</option>
-          <option class="text-lg" value="ПВЗ_4">г. Донецк, ул. Нартова, 1.</option>
-          <option class="text-lg" value="ППВЗ_5">
-            г. Донецк, ул Дудинская, д. 4, кв7
-          </option>
-          <option class="text-lg" value="ППВЗ_7">
-            г. Донецк, ул Жебелева, д. 7
-          </option>
-        </select>
-        <div
-          v-if="marketplace !== '' && pvzData !== ''"
-          class="flex items-center flex-col"
-        >
-          <h1 class="text-2xl mb-5 mt-10 text-center">Прикрепите скриншот Штрих-кода</h1>
-          <input
-            class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 max-w-[200px] focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-            @change="handleFileChange"
-            :disabled="isDisabled"
-            type="file"
-          />
-          <h1 class="text-base mt-10 mb-1 text-secondary-color font-bold">
-            *штрих-код обновляется каждые 24 часа
-          </h1>
-          <h1 class="text-base text-secondary-color text-center font-bold">
-            **прикрепить скриншот можно с 00:00 до 18:00 ежедневно
-          </h1>
-        </div>
-      </div>
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3
+                class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+              >
+                Заполните информацию
+              </h3>
+            </div>
+          </template>
+
+          <div v-auto-animate="{ easing: 'ease-out' }">
+            <div class="h-[120px]" v-if="isOpenFirstModal" v-auto-animate>
+              <label>Интернет-магазин</label>
+              <USelectMenu
+                value-attribute="marketplace"
+                option-attribute="name"
+                v-model="marketplace"
+                :options="marketplaces"
+                class="mt-3"
+              />
+              <div class="mt-5 flex justify-end gap-3" v-auto-animate>
+                <UButton
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                  @click="router.push('/client/main')"
+                />
+                <UButton
+                  @click="showSecondModal()"
+                  class="font-bold"
+                  label="ДАЛЕЕ"
+                  color="primary"
+                  v-if="marketplace"
+                >
+                  <template #trailing>
+                    <UIcon
+                      name="i-heroicons-arrow-right-20-solid"
+                      class="w-5 h-5"
+                    />
+                  </template>
+                </UButton>
+              </div>
+            </div>
+
+            <div class="h-[120px]" v-if="isOpenSecondModal" v-auto-animate>
+              <label>Пункт выдачи заказов</label>
+              <USelectMenu
+                value-attribute="pvz"
+                option-attribute="name"
+                v-model="pvzData"
+                :options="people"
+                class="mt-3"
+              />
+              <div class="mt-5 flex justify-end gap-3" v-auto-animate>
+                <UButton
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  @click="showFirstModal()"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                />
+                <UButton
+                  v-if="pvzData"
+                  @click="showThirdModal()"
+                  class="font-bold"
+                  label="ДАЛЕЕ"
+                  color="primary"
+                >
+                  <template #trailing>
+                    <UIcon
+                      name="i-heroicons-arrow-right-20-solid"
+                      class="w-5 h-5"
+                    />
+                  </template>
+                </UButton>
+              </div>
+            </div>
+
+            <div v-if="isOpenThirdModal" v-auto-animate>
+              <label>Прикрепите скриншот Штрих-кода*</label>
+              <div v-if="!rowData.img" class="h-[44px]">
+                <UInput
+                  @change="uploadQRFile"
+                  class="w-full mt-3"
+                  type="file"
+                  color="gray"
+                  variant="outline"
+                  size="sm"
+                  icon="i-heroicons-folder"
+                  accept="image/*"
+                />
+              </div>
+              <div
+                v-else
+                class="flex items-center justify-between gap-3 relative w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 file:font-medium file:text-gray-500 dark:file:text-gray-400 file:bg-transparent file:border-0 file:p-0 file:outline-none text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 mt-3"
+              >
+                <div class="flex items-center gap-3">
+                  <Icon
+                    name="icon-park-solid:folder-success"
+                    size="24"
+                    class="text-green-500"
+                  />
+                  <h1>Файл загружен</h1>
+                </div>
+                <div class="flex justify-end">
+                  <UButton
+                    v-if="rowData.img"
+                    @click="clearQRPhoto"
+                    class="font-bold"
+                    size="xs"
+                    color="red"
+                  >
+                    <template #trailing>
+                      <UIcon
+                        name="bitcoin-icons:cross-filled"
+                        class="w-4 h-4"
+                      />
+                    </template>
+                  </UButton>
+                </div>
+              </div>
+              <h1 class="text-sm italic text-center mt-2">
+                *штрих-код обновляется каждые 24 часа
+              </h1>
+              <div class="mt-5 flex justify-end gap-3" v-auto-animate>
+                <UButton
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  @click="showSecondModal()"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                />
+                <UButton
+                  v-if="rowData.img"
+                  @click="showLastModal()"
+                  class="font-bold"
+                  label="ДАЛЕЕ"
+                  color="primary"
+                >
+                  <template #trailing>
+                    <UIcon
+                      name="i-heroicons-arrow-right-20-solid"
+                      class="w-5 h-5"
+                    />
+                  </template>
+                </UButton>
+              </div>
+            </div>
+
+            <div v-if="isOpenLastModal" v-auto-animate>
+              <div class="space-y-3 my-5">
+                <h1
+                  class="grid grid-cols-2 border-b-[1px] pb-2 border-secondary-color"
+                >
+                  Интернет-магазин <span> {{ marketplace }}</span>
+                </h1>
+              </div>
+              <div class="space-y-3 my-5">
+                <h1
+                  class="grid grid-cols-2 border-b-[1px] pb-2 border-secondary-color"
+                >
+                  Пункт выдачи
+                  <span>
+                    {{ people.find((row) => row.pvz === pvzData)?.name }}</span
+                  >
+                </h1>
+              </div>
+              <div class="space-y-3 my-5">
+                <h1
+                  class="grid grid-cols-2 border-b-[1px] pb-2 border-secondary-color"
+                >
+                  Штрих-код <span> {{ rowData.img }}</span>
+                </h1>
+              </div>
+              <h1 class="text-sm text-center">
+                Чтобы мы получили ваш заказ, он должен быть оформлен на адрес:
+                <br />
+                <span class="italic font-bold">
+                  Ростовская область, Матвеево-Курганский район, <br />
+                  с. Ряженое, ул Ленина 6*</span
+                >
+              </h1>
+              <div class="mt-5 flex justify-end gap-3" v-auto-animate>
+                <UButton
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  @click="showThirdModal()"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                />
+                <UButton
+                  @click="submitForm()"
+                  class="font-bold"
+                  label="ОТПРАВИТЬ"
+                  color="primary"
+                >
+                  <template #trailing>
+                    <UIcon
+                      name="i-heroicons-arrow-right-20-solid"
+                      class="w-5 h-5"
+                    />
+                  </template>
+                </UButton>
+              </div>
+            </div>
+          </div>
+        </UCard>
+      </UModal>
       <div
         v-auto-animate
         v-if="isShowModal"
         class="fixed top-0 bottom-0 left-0 bg-black bg-opacity-70 right-0 z-[100]"
       >
-        <div class="flex items-center justify-center h-screen text-black font-bold">
+        <div
+          class="flex items-center justify-center h-screen text-black font-semibold"
+        >
           <div
             class="bg-white relative p-10 max-sm:p-3 rounded-lg flex items-center flex-col gap-3"
           >
-            <div class="absolute top-0 right-0">
+            <div class="absolute top-4 right-4">
               <Icon
                 name="material-symbols:cancel-rounded"
-                size="40"
+                size="32"
                 class="cursor-pointer hover:text-secondary-color duration-200"
                 @click="isShowModal = !isShowModal"
               />
             </div>
             <h1
-              class="text-2xl text-center border-b-2 border-black w-full mb-3 max-sm:text-xl py-3 max-sm:mt-5"
+              class="text-xl text-center border-b-2 border-black w-full mb-3 max-sm:text-xl py-3 max-sm:mt-5"
             >
               Ваш заказ успешно оформлен!
             </h1>
             <div class="flex items-center gap-3 max-sm:flex-col">
-              <h1 class="text-xl max-sm:text-lg max-sm:text-center">Информация о статусе заказа в</h1>
+              <h1 class="text-xl max-sm:text-lg max-sm:text-center">
+                Информация о статусе заказа в
+              </h1>
               <UIMainButton
                 class="max-sm:w-full"
                 @click="router.push('/client/my-orders')"
               >
                 Мои заказы
               </UIMainButton>
+            </div>
+            <div class="flex items-center gap-3 max-sm:flex-col">
+              <h1 class="text-xl max-sm:text-lg max-sm:text-center">
+                Ориентировочное время доставки:
+                <span class="text-secondary-color font-bold"> 2 дня</span>
+              </h1>
             </div>
           </div>
         </div>

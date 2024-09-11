@@ -30,11 +30,7 @@ export const useClientsStore = defineStore("clients", () => {
         },
         body: JSON.stringify({ client }),
       });
-      if (
-        data.value &&
-        "success" in data.value &&
-        data.value.success
-      ) {
+      if (data.value && "success" in data.value && data.value.success) {
         toast.success("Вы успешно зарегистрированы!");
         return data.value.success;
       } else {
@@ -441,13 +437,16 @@ export const useClientsStore = defineStore("clients", () => {
 
   async function createTokenDevice(phoneNumber: string, token: string) {
     try {
-      let { data } = await useFetch("/api/client-devices/create-token", {
+      let data = await useFetch("/api/client-devices/create-token", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ phoneNumber, token }),
       });
+      if (data.data.value === undefined) {
+        toast.success("Вы успешно подключили уведомления на этом устройстве");
+      }
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

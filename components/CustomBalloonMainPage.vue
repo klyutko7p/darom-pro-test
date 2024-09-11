@@ -6,6 +6,6 @@ const props = defineProps({
 
 <template>
   <div>
-    <h1 class="font-bold text-base">{{ commentary }}</h1>
+    <h1 class="font-semibold text-sm">{{ commentary }}</h1>
   </div>
 </template>
