@@ -17,19 +17,24 @@ let isLoading = ref(false);
 let originallyRows = ref<Array<IOurRansom>>();
 let cells = ref<Array<Cell>>();
 let cellData = ref({} as Cell);
+const addressCookie = ref(Cookies.get("addressCookie") || "");
 
 onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login");
   }
 
+  if (addressCookie.value) {
+    address.value = addressCookie.value.replace(/"/g, "");
+  } else {
+    router.push("/client/order/independently/ozon?accept=true");
+  }
   isLoading.value = true;
-  user.value = await storeClients.getClient();
+  user.value = storeClients.getClient();
   isLoading.value = false;
   originallyRows.value = await storeRansom.getRansomRowsForModalOurRansom();
   cells.value = await storeCells.getCells();
 });
-
 
 definePageMeta({
   layout: "client",
@@ -46,87 +51,88 @@ let urlToImg = ref("");
 let priceSite = ref(0);
 let description = ref("");
 
-async function parsingPage() {
-  if (urlToItem.value !== "") {
-    if (urlToItem.value.length > 20) {
-      if (urlToItem.value.includes("wildberries") && marketplace.value === "WB") {
-        isLoading.value = true;
-        let itemInfo = await storeClients.fetchSiteWB(urlToItem.value);
-        if (itemInfo.error === "fetch failed") {
-          toast.error("Извините, мы не можем сейчас обработать данные.");
-          isLoading.value = false;
-          return;
-        }
-        if (!itemInfo[0]) {
-          toast.error("Извините, мы не можем обработать название товара.");
-          isLoading.value = false;
-          return;
-        }
-        productName.value = itemInfo[0].imt_name;
-        description.value = itemInfo[0].description;
+const handleError = (message: string) => {
+  toast.error(message);
+  isLoading.value = false;
+};
 
-        let priceInfoPromise = storeClients.fetchSitePrice(urlToItem.value);
-        let timeoutPromise = new Promise((resolve, reject) => {
-          setTimeout(() => {
-            reject(new Error("Request timeout"));
-          }, 10000);
-        });
+const fetchPriceInfo = async (url: string) => {
+  const priceInfoPromise = storeClients.fetchSitePrice(url);
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    setTimeout(() => reject(new Error("Request timeout")), 10000);
+  });
 
-        try {
-          let priceInfo = await Promise.race([priceInfoPromise, timeoutPromise]);
-          productName.value = itemInfo[0].imt_name;
-          description.value = itemInfo[0].description;
+  try {
+    const priceInfo = await Promise.race([priceInfoPromise, timeoutPromise]);
+    if (priceInfo.message) {
+      priceSite.value = parseFloat(
+        priceInfo.message.split(" ")[0] + priceInfo.message.split(" ")[1]
+      );
+    } else {
+      handleError(
+        "Извините, мы не можем обработать товар. Возможно, Вы не выбрали размер или товара нет в наличии!"
+      );
+    }
+  } catch {
+    handleError(
+      "Извините, мы не можем обработать товар. Возможно, Вы не выбрали размер или товара нет в наличии!"
+    );
+  }
+};
 
-          if (priceInfo.message) {
-            priceSite.value = parseFloat(
-              priceInfo.message.split(" ")[0] + priceInfo.message.split(" ")[1]
-            );
-          } else {
-            toast.error(
-              "Извините, мы не можем обработать товар. Возможно, Вы не выбрали размер или товара нет в наличии!"
-            );
-            isLoading.value = false;
-            return;
-          }
-        } catch (error) {
-          toast.error(
-            "Извините, мы не можем обработать товар. Возможно, Вы не выбрали размер или товара нет в наличии!"
-          );
-          isLoading.value = false;
-          return;
-        }
+const parsingPage = async () => {
+  if (!urlToItem.value) {
+    handleError("Добавьте ссылку товара для его добавления!");
+    return;
+  }
 
-        urlToImg.value = itemInfo[2];
-        toast.success("Вы успешно добавили товар!");
-        isLoading.value = false;
-      } else if (urlToItem.value.includes("ozon") && marketplace.value === "OZ") {
-        isLoading.value = true;
-        let jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
-        if (jsonString.pageInfo.pageTypeTracking === "error") {
-          toast.error("Извините, произошла ошибка. Проверьте ссылку на товар!");
-          isLoading.value = false;
-          return;
-        }
-        console.log(jsonString);
-        console.log(JSON.parse(jsonString.seo.script[0].innerHTML));
-        productName.value = JSON.parse(jsonString.seo.script[0].innerHTML).name;
-        description.value = JSON.parse(jsonString.seo.script[0].innerHTML).description;
-        priceSite.value = JSON.parse(jsonString.seo.script[0].innerHTML).offers.price;
-        urlToImg.value = JSON.parse(jsonString.seo.script[0].innerHTML).image;
-        isLoading.value = false;
-      } else if (marketplace.value === "YM") {
-        let info = await storeClients.fetchSiteYM(urlToItem.value);
-        console.log(info);
+  if (urlToItem.value.length <= 20) {
+    handleError("Ссылка на товар недействительна!");
+    return;
+  }
+
+  isLoading.value = true;
+
+  try {
+    if (urlToItem.value.includes("wildberries") && marketplace.value === "WB") {
+      const itemInfo = await storeClients.fetchSiteWB(urlToItem.value);
+      if (itemInfo.error === "fetch failed" || !itemInfo[0]) {
+        handleError("Извините, мы не можем сейчас обработать данные.");
+        return;
       }
 
-      createItem();
-    } else {
-      toast.error("Ссылка на товар недействительна!");
+      productName.value = itemInfo[0].imt_name;
+      description.value = itemInfo[0].description;
+      await fetchPriceInfo(urlToItem.value);
+      urlToImg.value = itemInfo[2];
+      toast.success("Вы успешно добавили товар!");
+    } else if (urlToItem.value.includes("ozon") && marketplace.value === "OZ") {
+      const jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
+      if (jsonString.pageInfo.pageTypeTracking === "error") {
+        handleError("Извините, произошла ошибка. Проверьте ссылку на товар!");
+        return;
+      }
+
+      const parsedData = JSON.parse(jsonString.seo.script[0].innerHTML);
+      productName.value = parsedData.name;
+      description.value = parsedData.description;
+      priceSite.value = parsedData.offers.price;
+      urlToImg.value = parsedData.image;
+    } else if (marketplace.value === "YM") {
+      const info = await storeClients.fetchSiteYM(urlToItem.value);
+      console.log(info);
     }
-  } else {
-    toast.error("Добавьте ссылку товара для его добавления!");
+
+    createItem();
+  } catch (error) {
+    console.error(error);
+    handleError(
+      "Произошла непредвиденная ошибка. Пожалуйста, попробуйте еще раз позже."
+    );
+  } finally {
+    isLoading.value = false;
   }
-}
+};
 
 let item = ref({
   dispatchPVZ: "",
@@ -152,47 +158,76 @@ let phoneNumbersWithoutPercent = ref<Array<string>>([
   "+79494690310",
 ]);
 
-async function createItem() {
-  item.value = {
-    dispatchPVZ: address.value,
-    fromName: user.value.phoneNumber,
-    productName: productName.value,
-    productLink: urlToItem.value,
-    priceSite: +priceSite.value,
-    quantity: quantityOfItem.value,
-    img: urlToImg.value,
-    percentClient: 10,
-    description: description.value,
-    cell: "",
-    marketplace: marketplace.value,
-  };
-  if (phoneNumbersWithoutPercent.value.includes(user.value.phoneNumber)) {
-    item.value.percentClient = 0;
+const updateCellStatus = async () => {
+  try {
+    if (cellData.value) {
+      await storeCells.updateCell(
+        cellData.value,
+        "Занято",
+        user.value.phoneNumber
+      );
+    }
+  } catch (error) {
+    console.error("Failed to update cell status:", error);
+    toast.error("Не удалось обновить статус ячейки.");
   }
-  items.value.push(item.value);
-  getCellFromName();
-  if (cellData.value) {
-    await storeCells.updateCell(cellData.value, "Занято", user.value.phoneNumber);
-  }
-  console.log(item.value);
+};
+
+const resetItemInputs = () => {
   urlToItem.value = "";
   quantityOfItem.value = 1;
   productName.value = "";
   urlToImg.value = "";
   priceSite.value = 0;
-}
+};
+
+const createItem = async () => {
+  try {
+    const { phoneNumber } = user.value;
+    const isDiscountApplicable =
+      !phoneNumbersWithoutPercent.value.includes(phoneNumber);
+
+    item.value = {
+      dispatchPVZ: address.value,
+      fromName: phoneNumber,
+      productName: productName.value,
+      productLink: urlToItem.value,
+      priceSite: +priceSite.value,
+      quantity: quantityOfItem.value,
+      img: urlToImg.value,
+      percentClient: isDiscountApplicable ? 10 : 0,
+      description: description.value,
+      cell: "",
+      marketplace: marketplace.value,
+    };
+
+    items.value.push(item.value);
+
+    getCellFromName();
+    await updateCellStatus();
+  } catch (error) {
+    console.error("Failed to create item:", error);
+    toast.error("Ошибка при создании товара.");
+  } finally {
+    resetItemInputs();
+  }
+};
 
 async function createOrder() {
   if (items.value.length > 0) {
     isLoading.value = true;
 
     for (const item of items.value) {
-      console.log(item);
-      await storeRansom.createRansomRow(item, user.value.phoneNumber, "OurRansom");
+      await storeRansom.createRansomRow(
+        item,
+        user.value.phoneNumber,
+        "OurRansom"
+      );
     }
 
     items.value = [];
     isShowModal.value = true;
+    isOpen.value = false;
     isLoading.value = false;
   } else {
     toast.error("Вы должны добавить хотя бы один товар!");
@@ -220,14 +255,19 @@ async function getCellFromName() {
       (row) =>
         row.fromName === item.value.fromName &&
         row.dispatchPVZ === item.value.dispatchPVZ &&
-        (row.deliveredPVZ === null || row.deliveredSC === null || row.issued === null) &&
+        (row.deliveredPVZ === null ||
+          row.deliveredSC === null ||
+          row.issued === null) &&
         !row.cell.includes("-")
     );
 
     if (row && row.length > 0) {
-      const unoccupiedCellsAndPVZ = cells.value?.sort((a, b) => a.name - b.name);
+      const unoccupiedCellsAndPVZ = cells.value?.sort(
+        (a, b) => a.name - b.name
+      );
       const freeCell = unoccupiedCellsAndPVZ?.find(
-        (cell) => cell.PVZ === item.value.dispatchPVZ && cell.status === "Свободно"
+        (cell) =>
+          cell.PVZ === item.value.dispatchPVZ && cell.status === "Свободно"
       );
 
       const targetCell = row[0].cell;
@@ -274,47 +314,102 @@ let marketplace = ref("");
 function deleteItemFromOrder(productName: number) {
   let answer = confirm("Вы уверены что хотите удалить данный товар из заказа?");
   if (answer) {
-    const index = items.value.findIndex((item: any) => item.productName === productName);
+    const index = items.value.findIndex(
+      (item: any) => item.productName === productName
+    );
     if (index !== -1) {
       items.value.splice(index, 1);
     }
   }
 }
+const isOpenFirstModal = ref(true);
+const isOpenSecondModal = ref(false);
+const isOpenThirdModal = ref(false);
+const isOpenFourModal = ref(false);
+const isOpenLastModal = ref(false);
 
-const coordinates = ref([47.98958366983051, 37.8955255423278]);
-const controls = ["geolocationControl", "zoomControl", "typeSelector"];
-
-let isOpenMap = ref(false);
-
-function openMap() {
-  isOpenMap.value = true;
+function showFirstModal() {
+  isOpenFirstModal.value = true;
+  isOpenSecondModal.value = false;
+  isOpenLastModal.value = false;
 }
 
-function closeMap() {
-  isOpenMap.value = false;
+function showSecondModal() {
+  isOpenFirstModal.value = false;
+  isOpenSecondModal.value = true;
+  isOpenThirdModal.value = false;
 }
 
-let markers = [
-  [47.98958366983051, 37.8955255423278],
-  [47.945142, 37.960908],
-  [47.955462, 37.964951],
-  [47.946192, 37.90365],
-  [47.960663, 37.883761],
-  [47.974937, 37.837714],
+function showThirdModal() {
+  isOpenSecondModal.value = false;
+  isOpenThirdModal.value = true;
+  isOpenFourModal.value = false;
+}
+
+function showFourModal() {
+  isOpenThirdModal.value = false;
+  isOpenFourModal.value = true;
+  isOpenLastModal.value = false;
+}
+
+function showLastModal() {
+  isOpenFourModal.value = false;
+  isOpenLastModal.value = true;
+}
+let isOpen = ref(true);
+
+const people = [
+  {
+    pvz: "ПВЗ_1",
+    name: "г. Донецк, ул. Антропова 16",
+  },
+  {
+    pvz: "ПВЗ_3",
+    name: "г. Донецк, ул. Палладина, 20",
+  },
+  {
+    pvz: "ПВЗ_4",
+    name: "г. Донецк, ул. Нартова, 1",
+  },
+  {
+    pvz: "ППВЗ_5",
+    name: "г. Донецк, ул. Дудинская, д. 4, кв. 7",
+  },
+  {
+    pvz: "ППВЗ_7",
+    name: "г. Донецк, ул. Жебелева, д. 7",
+  },
 ];
 
-function changeAddress(coordinates: Array<number>) {
-  if (coordinates[0] === 47.98958366983051 && coordinates[1] === 37.8955255423278) {
-    address.value = "ПВЗ_1";
-  } else if (coordinates[0] === 47.945142 && coordinates[1] === 37.960908) {
-    address.value = "ПВЗ_4";
-  } else if (coordinates[0] === 47.955462 && coordinates[1] === 37.964951) {
-    address.value = "ПВЗ_3";
-  } else if ((coordinates[0] === 47.946192 && coordinates[1] === 37.90365)) {
-    address.value = "ППВЗ_5";
-  } else if (coordinates[0] === 47.974937 && coordinates[1] === 37.837714) {
-    address.value = "ППВЗ_7";
+const marketplaces = [
+  {
+    marketplace: "OZ",
+    name: "OZON",
+  },
+  {
+    marketplace: "WB",
+    name: "WILDBERRIES",
+  },
+  // {
+  //   marketplace: "Яндекс Маркет",
+  //   name: "ЯНДЕКС МАРКЕТ",
+  // },
+];
+
+async function submitForm() {
+  try {
+    await createOrder();
+  } catch (error) {
+    console.error("Error while creating employee or handling files:", error);
+  } finally {
+    isLoading.value = false;
   }
+}
+
+function pasteToTextArea() {
+  navigator.clipboard.readText().then((text) => {
+    urlToItem.value = text;
+  });
 }
 </script>
 
@@ -324,181 +419,398 @@ function changeAddress(coordinates: Array<number>) {
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">
-      <div class="py-10">
-        <div class="flex items-center gap-5 max-sm:flex-col max-sm:items-start">
-          <h1 class="text-xl font-bold">Выберите пункт выдачи для получения товара:</h1>
-          <UIMainButton v-if="!isOpenMap" @click="openMap">ВЫБРАТЬ НА КАРТЕ</UIMainButton>
-          <UIMainButton v-if="isOpenMap" @click="closeMap">ЗАКРЫТЬ КАРТУ</UIMainButton>
-        </div>
-        <ClientOnly>
-          <YandexMap
-            class="w-full max-md:w-full"
-            style="height: 500px; margin-top: 20px"
-            v-if="isOpenMap"
-            :coordinates="coordinates"
-            :controls="controls"
-            :zoom="12"
-          >
-            <YandexMarker
-              v-for="marker in markers"
-              :coordinates="marker"
-              :marker-id="marker"
-              @click="changeAddress(marker)"
-            >
-            </YandexMarker>
-          </YandexMap>
-        </ClientOnly>
-        <select
-          class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 text-lg w-full focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3"
-          v-model="address"
+      <UModal
+        :ui="{
+          container: 'flex items-center justify-center text-center',
+        }"
+        v-auto-animate
+        v-model="isOpen"
+        prevent-close
+      >
+        <UCard
+          v-auto-animate
+          :ui="{
+            ring: '',
+            divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+          }"
         >
-          <option class="text-lg" value="ПВЗ_1">г. Донецк, ул. Антропова 16</option>
-          <option class="text-lg" value="ПВЗ_3">г. Донецк, ул. Палладина 20</option>
-          <option class="text-lg" value="ПВЗ_4">г. Донецк, ул. Нартова, 1</option>
-          <option class="text-lg" value="ППВЗ_5">
-            г. Донецк, ул Дудинская, д. 4, кв7
-          </option>
-          <option class="text-lg" value="ППВЗ_7">
-            г. Донецк, ул Жебелева, д. 7
-          </option>
-        </select>
-        <h1 class="text-xl font-bold mt-3">Выберите маркетплейс:</h1>
-        <select
-          class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 text-lg w-full focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400 mb-3"
-          v-model="marketplace"
-        >
-          <option class="text-lg" value="WB">Wildberries</option>
-          <option class="text-lg" value="OZ">Ozon</option>
-        </select>
-        <div v-if="address && marketplace" class="mt-5">
-          <h1 class="text-lg font-bold">
-            Вставьте ссылку на товар (предварительно выбрав верный размер и цвет на
-            сайте):
-          </h1>
-          <input
-            v-model="urlToItem"
-            type="text"
-            class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 focus:ring-2 w-full focus:ring-yellow-600 sm:text-sm sm:leading-6"
-          />
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3
+                class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+              >
+                Заполните информацию
+              </h3>
+            </div>
+          </template>
 
-          <h1 class="text-lg font-bold mt-5">Укажите количество товаров для заказа:</h1>
-          <input
-            v-model="quantityOfItem"
-            type="number"
-            class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 mt-5 focus:ring-2 w-full focus:ring-yellow-600 sm:text-sm sm:leading-6"
-          />
+          <div v-auto-animate="{ easing: 'ease-out' }">
+            <div class="h-[120px]" v-if="isOpenFirstModal" v-auto-animate>
+              <label>Интернет-магазин</label>
+              <USelectMenu
+                value-attribute="marketplace"
+                option-attribute="name"
+                v-model="marketplace"
+                :options="marketplaces"
+                class="mt-3"
+              />
+              <div class="mt-5 flex justify-end gap-3" v-auto-animate>
+                <UButton
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                  @click="router.push('/client/main')"
+                />
+                <UButton
+                  @click="showSecondModal()"
+                  class="font-bold"
+                  label="ДАЛЕЕ"
+                  color="primary"
+                  v-if="marketplace"
+                >
+                  <template #trailing>
+                    <UIcon
+                      name="i-heroicons-arrow-right-20-solid"
+                      class="w-5 h-5"
+                    />
+                  </template>
+                </UButton>
+              </div>
+            </div>
 
-          <div class="flex items-center gap-5 mt-5 max-sm:flex-col">
-            <UIMainButton class="max-sm:w-full" @click="parsingPage"
-              >Добавить товар</UIMainButton
-            >
-            <UIMainButton class="max-sm:w-full" @click="createOrder"
-              >Отправить заказ</UIMainButton
-            >
-          </div>
-        </div>
+            <div class="h-[120px]" v-if="isOpenSecondModal" v-auto-animate>
+              <label>Пункт выдачи заказов</label>
+              <USelectMenu
+                value-attribute="pvz"
+                option-attribute="name"
+                v-model="address"
+                :options="people"
+                class="mt-3"
+              />
+              <div class="mt-5 flex justify-end gap-3" v-auto-animate>
+                <UButton
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  @click="showFirstModal()"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                />
+                <UButton
+                  v-if="address"
+                  @click="showThirdModal()"
+                  class="font-bold"
+                  label="ДАЛЕЕ"
+                  color="primary"
+                >
+                  <template #trailing>
+                    <UIcon
+                      name="i-heroicons-arrow-right-20-solid"
+                      class="w-5 h-5"
+                    />
+                  </template>
+                </UButton>
+              </div>
+            </div>
 
-        <div v-if="items.length > 0" class="mt-10">
-          <h1 class="text-2xl font-bold mb-1 max-sm:text-xl">
-            Количество товаров – {{ items.length }}
-          </h1>
-          <h1 class="text-2xl font-bold mb-10 max-sm:text-xl">
-            Стоимость товаров –
-            {{ items.reduce((ac, item) => ac + item.priceSite, 0) }} ₽
-          </h1>
-          <div
-            v-auto-animate
-            v-for="item in items.slice().reverse()"
-            class="border-b-2 mb-10 shadow-2xl border-black flex items-start justify-between max-md:max-w-[400px] max-md:items-center max-md:justify-center max-md:mx-auto"
-          >
-            <img
-              class="max-w-[410px] h-full rounded-l-2xl px-3 max-md:hidden border-r-2 border-black"
-              :src="item.img"
-              alt=""
-            />
-            <div class="px-5 py-3 max-md:p-0 w-full">
-              <div class="">
-                <div class="flex items-center justify-center mb-5">
-                  <img
-                    class="w-full h-full max-w-[400px] rounded-t-2xl hidden max-md:block border-b-2 border-black"
-                    :src="item.img"
-                    alt=""
-                  />
-                </div>
-                <div class="max-md:px-5 max-md:py-1">
-                  <Icon
-                    @click="deleteItemFromOrder(item.productName)"
-                    name="material-symbols:delete-outline"
-                    size="40"
-                    class="text-red-500 absolute top-2 right-2 hover:opacity-50 duration-200 bg-white rounded-full px-1 cursor-pointer"
-                  />
-                  <img
-                    src="https://grampus-studio.ru/wp-content/uploads/2023/04/free-png.ru-419.png"
-                    alt=""
-                    class="absolute max-w-[300px] top-0 right-0 left-0 bottom-0 m-auto opacity-5"
-                    v-if="item.marketplace === 'WB'"
-                  />
-                  <img
-                    src="https://brandlab.ozon.ru/images/tild3631-3032-4235-b439-396661643432__icon_circle.png"
-                    alt=""
-                    class="absolute max-w-[300px] top-0 right-0 left-0 bottom-0 m-auto opacity-5"
-                    v-if="item.marketplace === 'OZ'"
-                  />
-                  <div class="max-md:text-center">
-                    <a
-                      :href="item.productLink"
-                      target="_blank"
-                      class="font-bold text-2xl max-sm:text-xl cursor-pointer text-secondary-color underline"
-                      >{{ item.productName }}</a
+            <div v-if="isOpenThirdModal" v-auto-animate>
+              <div>
+                <label>Вставьте ссылку на товар</label>
+              </div>
+              <label class="text-sm italic"
+                >предварительно выбрав верный размер и цвет на сайте</label
+              >
+              <div class="h-[44px]">
+                <UInput
+                  v-model="urlToItem"
+                  class="w-full mt-3"
+                  color="gray"
+                  disabled
+                  variant="outline"
+                  size="sm"
+                  icon="i-ph-package-bold"
+                />
+              </div>
+              <div class="flex items-center justify-center mb-10">
+                <UButton
+                  size="2xs"
+                  class="font-bold"
+                  icon="i-material-symbols-add-link"
+                  @click="pasteToTextArea"
+                >
+                  ВСТАВИТЬ
+                </UButton>
+              </div>
+
+              <div class="mt-5 flex justify-end gap-3" v-auto-animate>
+                <UButton
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  @click="showSecondModal()"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                />
+                <UButton
+                  v-if="urlToItem"
+                  @click="showFourModal()"
+                  class="font-bold"
+                  label="ДАЛЕЕ"
+                  color="primary"
+                >
+                  <template #trailing>
+                    <UIcon
+                      name="i-heroicons-arrow-right-20-solid"
+                      class="w-5 h-5"
+                    />
+                  </template>
+                </UButton>
+              </div>
+            </div>
+
+            <div v-if="isOpenFourModal" v-auto-animate>
+              <label>Укажите количество товаров для заказа</label>
+              <div class="h-[44px]">
+                <UInput
+                  v-model="quantityOfItem"
+                  class="w-full mt-3"
+                  type="number"
+                  color="gray"
+                  variant="outline"
+                  size="sm"
+                  icon="i-ic-round-numbers"
+                />
+              </div>
+              <div class="mt-5 flex justify-end gap-3" v-auto-animate>
+                <UButton
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  @click="showThirdModal()"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                />
+                <UButton
+                  v-if="quantityOfItem"
+                  @click="showLastModal(), parsingPage()"
+                  class="font-bold"
+                  label="ДОБАВИТЬ ТОВАР"
+                  color="primary"
+                >
+                  <template #trailing>
+                    <UIcon
+                      name="i-heroicons-arrow-right-20-solid"
+                      class="w-5 h-5"
+                    />
+                  </template>
+                </UButton>
+              </div>
+            </div>
+
+            <div v-if="isOpenLastModal" v-auto-animate>
+              <div v-if="items.length > 0">
+                <h1 class="font-semibold">
+                  Количество товаров:
+                  <span class="text-secondary-color font-bold"
+                    >{{ items.length }} шт.</span
+                  >
+                </h1>
+                <h1 class="font-semibold">
+                  Стоимость товаров:
+                  <span class="text-secondary-color font-bold"
+                    >{{
+                      items.reduce((ac, item) => ac + item.priceSite, 0)
+                    }}
+                    ₽</span
+                  >
+                </h1>
+                <div
+                  class="bg-gray-100 rounded-md p-5 max-sm:py-16 mt-5 max-sm:px-2 flex flex-col gap-5 max-sm:gap-7 max-h-[400px] overflow-y-auto"
+                >
+                  <div
+                    v-auto-animate
+                    v-for="item in items.slice().reverse()"
+                    class=""
+                  >
+                    <div
+                      class="bg-white relative rounded-xl max-sm:hidden shadow-xl p-5 text-center flex items-center justify-between"
                     >
+                      <div class="absolute bottom-0 right-32">
+                        <img
+                          v-if="item.marketplace === 'O'"
+                          src="@/assets/images/ozon-bg.png"
+                          class="max-w-[100px] mb-3 opacity-20"
+                          alt=""
+                        />
+                        <img
+                          v-if="item.marketplace === 'WB'"
+                          src="@/assets/images/wb.png"
+                          class="max-w-[130px] opacity-20"
+                          alt=""
+                        />
+                        <img
+                          v-if="item.marketplace === 'YM'"
+                          src="@/assets/images/ym.png"
+                          class="max-w-[130px] opacity-20"
+                          alt=""
+                        />
+                      </div>
+                      <div class="flex items-center gap-5">
+                        <img
+                          class="rounded-full aspect-square object-cover w-16 h-16"
+                          :src="item.img"
+                        />
+                        <div class="flex flex-col items-start">
+                          <a
+                            :href="item.productLink"
+                            target="_blank"
+                            class="font-bold cursor-pointer text-secondary-color underline line-clamp-1 hover:line-clamp-none max-w-[180px] text-left"
+                          >
+                            {{ item.productName }}
+                          </a>
+                          <h1 class="font-medium text-sm italic">
+                            {{ item.quantity }} шт.
+                          </h1>
+                        </div>
+                      </div>
+                      <h1 class="font-medium">{{ item.priceSite }} ₽</h1>
+                      <Icon
+                        @click="deleteItemFromOrder(item.productName)"
+                        name="i-material-symbols-delete-rounded"
+                        size="24"
+                        class="text-red-500 hover:opacity-50 duration-200 cursor-pointer"
+                      />
+                    </div>
+                    <div
+                      class="bg-white relative rounded-xl w-full max-sm:flex hidden shadow-xl pr-5 text-center items-center justify-between"
+                    >
+                      <div class="absolute bottom-0 right-20">
+                        <img
+                          v-if="item.marketplace === 'O'"
+                          src="@/assets/images/ozon-bg.png"
+                          class="max-w-[100px] mb-3 opacity-5"
+                          alt=""
+                        />
+                        <img
+                          v-if="item.marketplace === 'WB'"
+                          src="@/assets/images/wb.png"
+                          class="max-w-[130px] opacity-5"
+                          alt=""
+                        />
+                        <img
+                          v-if="item.marketplace === 'YM'"
+                          src="@/assets/images/ym.png"
+                          class="max-w-[130px] opacity-5"
+                          alt=""
+                        />
+                      </div>
+                      <div class="flex items-center gap-5">
+                        <div
+                          @click="deleteItemFromOrder(item.productName)"
+                          class="bg-red-500 hover:opacity-50 duration-200 cursor-pointer text-white h-[100px] rounded-l-xl flex items-center px-1 hover:px-5"
+                        >
+                          <Icon
+                            name="i-material-symbols-delete-rounded"
+                            size="24"
+                          />
+                        </div>
+                        <div class="flex items-center gap-5">
+                          <div class="flex flex-col items-start">
+                            <a
+                              :href="item.productLink"
+                              target="_blank"
+                              class="font-bold cursor-pointer text-secondary-color underline line-clamp-1 hover:line-clamp-4 text-left"
+                            >
+                              {{ item.productName }}
+                            </a>
+                            <h1 class="font-medium text-sm italic">
+                              {{ item.quantity }} шт.
+                            </h1>
+                            <h1 class="font-medium">{{ item.priceSite }} ₽</h1>
+                          </div>
+                        </div>
+                      </div>
+                      <img
+                        class="rounded-full aspect-square object-cover w-16 h-16"
+                        :src="item.img"
+                      />
+                    </div>
                   </div>
-                  <h1 class="font-medium text-xl mt-3">
-                    Цена на сайте: {{ item.priceSite }} ₽
-                  </h1>
-                  <h1 class="font-medium text-lg max-[330px]:text-base mb-4">
-                    Количество: {{ item.quantity }}
-                  </h1>
                 </div>
+              </div>
+              <div
+                class="mt-5 flex justify-end gap-3 max-[440px]:flex-col"
+                v-auto-animate
+              >
+                <UButton
+                  icon="i-mdi-package-variant-closed-plus"
+                  size="sm"
+                  @click="showFirstModal()"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="ДОБАВИТЬ ЕЩЁ ТОВАР"
+                  :trailing="false"
+                />
+                <UButton
+                  @click="submitForm()"
+                  class="font-bold"
+                  label="ОТПРАВИТЬ ЗАКАЗ"
+                  color="primary"
+                  icon="i-material-symbols-order-approve"
+                >
+                </UButton>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </UCard>
+      </UModal>
 
       <div
         v-auto-animate
         v-if="isShowModal"
         class="fixed top-0 bottom-0 left-0 bg-black bg-opacity-70 right-0 z-[100]"
       >
-        <div class="flex items-center justify-center h-screen text-black font-bold">
+        <div
+          class="flex items-center justify-center h-screen text-black font-semibold"
+        >
           <div
-            class="bg-white relative p-10 max-sm:p-5 rounded-lg flex items-center flex-col gap-3"
+            class="bg-white relative p-10 max-sm:p-3 rounded-lg flex items-center flex-col gap-3"
           >
-            <div class="absolute top-0 right-0">
+            <div class="absolute top-4 right-4 max-sm:top-2 max-sm:right-2">
               <Icon
                 name="material-symbols:cancel-rounded"
-                size="40"
+                size="32"
                 class="cursor-pointer hover:text-secondary-color duration-200"
                 @click="isShowModal = !isShowModal"
               />
             </div>
-            <h1 class="text-2xl text-center border-b-2 border-black w-full py-3 mb-5">
+            <h1
+              class="text-2xl text-center text-green-500 font-bold uppercase border-b-2 border-black w-full mb-3 max-sm:text-xl py-3 max-sm:mt-5"
+            >
               Ваш заказ успешно оформлен!
             </h1>
-            <div class="flex items-center flex-col gap-3">
-              <h1 class="text-xl max-sm:text-center">Информация о статусе заказа в</h1>
-              <UIMainButton class="w-full" @click="router.push('/client/my-orders')">
-                Мои заказы
-              </UIMainButton>
-            </div>
-            <div class="mt-5">
-              <h1 class="text-base font-medium">
-                * цена на момент обработки вашего заказа может быть изменена маркетплейсом
+            <div class="flex items-center gap-3 max-sm:flex-col">
+              <h1 class="text-xl max-sm:text-lg max-sm:text-center">
+                Информация о статусе заказа в
               </h1>
-              <h1 class="text-base font-medium">
-                ** при заказе товаров OZON GLOBAL и WB доставка из-за рубежа, с Вами
-                свяжется менеджер для внесения предоплаты
-              </h1>
+              <UButton
+                @click="router.push('/client/my-orders')"
+                class="font-bold"
+                icon="i-material-symbols-shopping-cart"
+                size="xl"
+                >МОИ ЗАКАЗЫ</UButton
+              >
             </div>
           </div>
         </div>

@@ -97,7 +97,7 @@ function showSettingsList() {
       </h5>
       <div
         @click="editMenu"
-        class="hover:bg-orange-100 absolute left-60 cursor-pointer duration-200 hover:text-secondary-color pt-2 px-1.5 rounded-xl"
+        class="hover:bg-orange-100 z-[200] absolute left-60 cursor-pointer duration-200 hover:text-secondary-color pt-2 px-1.5 rounded-xl"
       >
         <Icon name="material-symbols:close-small-outline-rounded" size="24" />
       </div>

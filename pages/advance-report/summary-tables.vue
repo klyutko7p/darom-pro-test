@@ -72,7 +72,7 @@ onMounted(async () => {
   }
 
   if (rows.value) {
-    handleFilteredRows([rows.value, selected.value, ["Нал", "Безнал"]]);
+    handleFilteredRows([rows.value, selected.value, ["Нал", "Безнал"], []]);
   }
 
   ourRansomRows.value = rowsOurRansom.value;
@@ -291,11 +291,12 @@ function formatNumber(number: number) {
 }
 
 const filteredRows = ref<Array<IAdvanceReport>>([]);
-
+let selectedTypeOfExpenditure = ref<Array<string>>([]);
 function handleFilteredRows(obj: any) {
   filteredRows.value = obj[0];
   selected.value = obj[1];
   selectedType.value = obj[2];
+  selectedTypeOfExpenditure.value = obj[3];
 }
 
 const selected = ref<SelectedDateRange>();
@@ -304,7 +305,6 @@ const selectedType = ref<Array<string>>([]);
 
 const startingDate = ref<Date | string | null>(null);
 const endDate = ref<Date | string | null>(null);
-
 
 let type = ref("");
 
@@ -351,7 +351,6 @@ function returnTotal(sum: number) {
       <NuxtLayout name="table-admin-no-pad">
         <div class="px-5 w-screen pt-5 max-sm:px-1 pb-5">
           <div v-auto-animate>
-
             <AdvanceReportSumTablesFilters
               @filtered-rows="handleFilteredRows"
               :rows="rows"
@@ -381,6 +380,7 @@ function returnTotal(sum: number) {
                 :company="company"
                 :selected="selected"
                 :type="selectedType"
+                :selected-type-of-expenditure="selectedTypeOfExpenditure"
               />
             </div>
           </div>
@@ -401,6 +401,7 @@ function returnTotal(sum: number) {
                 :selected="selected"
                 :type="selectedType"
                 @return-total="returnTotal"
+                :selected-type-of-expenditure="selectedTypeOfExpenditure"
               />
             </div>
           </div>

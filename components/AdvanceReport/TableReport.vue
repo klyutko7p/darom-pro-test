@@ -18,6 +18,10 @@ const props = defineProps({
   company: { type: String, required: true },
   selected: { type: Object as PropType<SelectedDateRange>, required: true },
   type: { type: Array as PropType<string[]>, required: true },
+  selectedTypeOfExpenditure: {
+    type: Array as PropType<string[]>,
+    required: true,
+  },
 });
 
 const emit = defineEmits(["returnTotal"]);
@@ -148,23 +152,25 @@ function updateCurrentPageData() {
     }
   });
 
-  rowsBalanceArr.value?.forEach((row) => {
-    if (!isNaN(receiptsByPVZ[row.pvz])) {
-      receiptsByPVZ[row.pvz] += parseFloat(row.sum);
-    }
-  });
+  if (!props.selectedTypeOfExpenditure.length) {
+    rowsBalanceArr.value?.forEach((row) => {
+      if (!isNaN(receiptsByPVZ[row.pvz])) {
+        receiptsByPVZ[row.pvz] += parseFloat(row.sum);
+      }
+    });
 
-  rowsOnlineArr.value?.forEach((row) => {
-    if (!isNaN(receiptsByPVZ[row.dispatchPVZ])) {
-      receiptsByPVZ[row.dispatchPVZ] += calculateValue(row);
-    }
-  });
+    rowsOnlineArr.value?.forEach((row) => {
+      if (!isNaN(receiptsByPVZ[row.dispatchPVZ])) {
+        receiptsByPVZ[row.dispatchPVZ] += calculateValue(row);
+      }
+    });
 
-  rowsDeliveryArr.value.forEach((row) => {
-    if (!isNaN(receiptsByPVZ[row.orderPVZ])) {
-      receiptsByPVZ[row.orderPVZ] += row.amountFromClient3;
-    }
-  });
+    rowsDeliveryArr.value.forEach((row) => {
+      if (!isNaN(receiptsByPVZ[row.orderPVZ])) {
+        receiptsByPVZ[row.orderPVZ] += row.amountFromClient3;
+      }
+    });
+  }
 
   pvz.value.forEach((pvzName: string) => {
     const difference = receiptsByPVZ[pvzName] - expenditureByPVZ[pvzName];
@@ -182,7 +188,6 @@ function updateCurrentPageData() {
   Object.keys(differenceByPVZ).forEach((pvzName: string) => {
     sumOfArray3.value += differenceByPVZ[pvzName];
   });
-
 }
 
 function calculateValue(curValue: any) {
@@ -351,7 +356,6 @@ function clearTotalSums() {
 
 watch([props.rows, totalRows, filteredRows.value], clearTotalSums);
 watch([props.rows, totalRows, filteredRows.value], updateCurrentPageData);
-
 
 function exportToExcel() {
   let table = document.querySelector("#theTable");

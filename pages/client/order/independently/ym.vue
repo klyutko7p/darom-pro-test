@@ -64,9 +64,9 @@ function showModal() {
               size="xl"
               color="yellow"
               variant="solid"
-              class="font-semibold duration-200 w-full max-w-[600px]"
+              class="font-semibold text-left duration-200 w-full max-w-[500px]"
               :trailing="false"
-              >Подтвердите адрес пункта заказа интернет-магазина</UButton
+              >Нажмите тут для подтверждения адреса пункта заказа интернет-заказа</UButton
             >
             <h1 class="text-6xl my-16">ИЛИ</h1>
             <UButton
@@ -76,7 +76,7 @@ function showModal() {
               size="xl"
               color="yellow"
               variant="solid"
-              class="font-semibold duration-200 w-full max-w-[600px]"
+              class="font-semibold duration-200 w-full max-w-[500px]"
               :trailing="false"
               >Пропустить</UButton
             >

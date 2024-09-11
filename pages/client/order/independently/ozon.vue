@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
-import { useToast } from 'vue-toastification';
+import { useToast } from "vue-toastification";
 
-const toast = useToast()
+const toast = useToast();
 const router = useRouter();
 const route = useRoute();
 
@@ -36,8 +36,12 @@ function saveAddress(address: string) {
   selectedPVZClient.value = address;
 
   if (route.query.change === "true") {
-    toast.success("Вы успешно сменили адрес пункта выдачи!")
+    toast.success("Вы успешно сменили адрес пункта выдачи!");
     router.push("/client/main");
+  }
+
+  if (route.query.accept === "true") {
+    router.push("/client/order/accept-order");
   }
 }
 
@@ -69,9 +73,9 @@ function skipWindow() {
               size="xl"
               color="blue"
               variant="solid"
-              class="font-semibold duration-200 w-full max-w-[600px]"
+              class="font-semibold duration-200 w-full max-w-[500px]"
               :trailing="false"
-              >Подтвердите адрес пункта заказа интернет-магазина</UButton
+              >Нажмите тут для подтверждения адреса пункта заказа интернет-заказа</UButton
             >
             <h1 class="text-6xl my-16">ИЛИ</h1>
             <UButton
@@ -81,14 +85,14 @@ function skipWindow() {
               size="xl"
               color="blue"
               variant="solid"
-              class="font-semibold duration-200 w-full max-w-[600px]"
+              class="font-semibold duration-200 w-full max-w-[500px]"
               :trailing="false"
               >Пропустить</UButton
             >
             <div class="flex items-center gap-3 mt-7">
               <div>
                 <input
-                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 checked:ring-[2px] focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white ring-[2px] ring-secondary-color bg-transparent checked:ring-[#005df6] text-[#005df6] ring-[#005df6] focus-visible:ring-[#005df6] focus:ring-[#005df6]"
+                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 checked:ring-[2px] focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white ring-[2px] bg-transparent checked:ring-[#005df6] text-[#005df6] ring-[#005df6] focus-visible:ring-[#005df6] focus:ring-[#005df6]"
                   v-model="isNotAskingOzon"
                   id="isNotAskingOzon"
                   name="isNotAskingOzon"
@@ -100,14 +104,6 @@ function skipWindow() {
               >
             </div>
           </div>
-
-          <!-- <li class="mb-3 text-xl max-md:text-lg max-sm:text-base">
-              При заказе выберите для доставки наш адрес: <br />
-              <span class="italic font-bold"
-                >Ростовская обл, Матвеево-Курганский р-н, с. Ряженое, ул. Ленина
-                6</span
-              >
-            </li> -->
         </div>
         <div v-else>
           <IndependentlyMap :marketplace="'OZON'" @save-address="saveAddress" />

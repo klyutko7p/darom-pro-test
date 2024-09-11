@@ -75,6 +75,7 @@ const filterRows = async () => {
     filteredRows.value,
     selected.value,
     selectedType.value,
+    selectedTypeOfExpenditure.value,
   ]);
   showFilters.value = false;
 };

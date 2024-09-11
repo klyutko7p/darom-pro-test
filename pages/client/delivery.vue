@@ -536,7 +536,7 @@ async function submitForm() {
           <div
             class="bg-white relative p-10 max-sm:p-3 rounded-lg flex items-center flex-col gap-3"
           >
-            <div class="absolute top-4 right-4">
+            <div class="absolute top-4 right-4 max-sm:top-2 max-sm:right-2">
               <Icon
                 name="material-symbols:cancel-rounded"
                 size="32"
@@ -545,7 +545,7 @@ async function submitForm() {
               />
             </div>
             <h1
-              class="text-xl text-center border-b-2 border-black w-full mb-3 max-sm:text-xl py-3 max-sm:mt-5"
+              class="text-2xl text-center text-green-500 font-bold uppercase border-b-2 border-black w-full mb-3 max-sm:text-xl py-3 max-sm:mt-5"
             >
               Ваш заказ успешно оформлен!
             </h1>
@@ -553,12 +553,13 @@ async function submitForm() {
               <h1 class="text-xl max-sm:text-lg max-sm:text-center">
                 Информация о статусе заказа в
               </h1>
-              <UIMainButton
-                class="max-sm:w-full"
+              <UButton
                 @click="router.push('/client/my-orders')"
+                class="font-bold"
+                icon="i-material-symbols-shopping-cart"
+                size="xl"
+                >МОИ ЗАКАЗЫ</UButton
               >
-                Мои заказы
-              </UIMainButton>
             </div>
             <div class="flex items-center gap-3 max-sm:flex-col">
               <h1 class="text-xl max-sm:text-lg max-sm:text-center">

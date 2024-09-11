@@ -46,7 +46,7 @@ definePageMeta({
         >
           <img
             src="@/assets/images/wb.png"
-            class="max-w-[470px] max-sm:max-w-[300px] z-[200]"
+            class="max-w-[470px] max-sm:max-w-[300px] z-[10]"
             alt=""
           />
         </div>

@@ -90,7 +90,7 @@ function showSettingsList() {
 <template>
   <div
     @click="editMenu"
-    class="hover:bg-orange-100 absolute top-2 right-4 cursor-pointer duration-200 hover:text-secondary-color pt-2 px-1.5 rounded-xl"
+    class="hover:bg-orange-100 z-[200] absolute top-2 right-4 cursor-pointer duration-200 hover:text-secondary-color pt-2 px-1.5 rounded-xl"
   >
     <Icon name="material-symbols:close-small-outline-rounded" size="60" />
   </div>
