@@ -111,7 +111,7 @@ function showModal() {
           <div class="text-left px-3 pt-10 pb-10">
             <div>
               <h1 class="text-lg text-center mb-5">
-                При заказе выберите для доставки наш адрес
+                При заказе на Яндекс Маркете выберите пункт выдачи по этому адресу
               </h1>
               <h1 class="italic text-sm font-bold bg-gray-100 p-3">
                 Ростовская обл, Матвеево-Курганский <br />

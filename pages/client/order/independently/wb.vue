@@ -66,7 +66,8 @@ function showModal() {
               variant="solid"
               class="font-semibold text-left duration-200 w-full max-w-[500px]"
               :trailing="false"
-              >Нажмите тут для подтверждения адреса пункта заказа интернет-заказа</UButton
+              >Нажмите тут для подтверждения адреса пункта заказа
+              интернет-заказа</UButton
             >
             <h1 class="text-6xl my-16">ИЛИ</h1>
             <UButton
@@ -111,7 +112,7 @@ function showModal() {
           <div class="text-left px-3 pt-10 pb-10">
             <div>
               <h1 class="text-lg text-center mb-5">
-                При заказе выберите для доставки наш адрес
+                При заказе на WILDBERRIES выберите пункт выдачи по этому адресу
               </h1>
               <h1 class="italic text-sm font-bold bg-gray-100 p-3">
                 Ростовская обл, Матвеево-Курганский <br />
