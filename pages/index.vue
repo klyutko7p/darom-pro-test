@@ -104,12 +104,18 @@ const items = [
     slot: "payment",
   },
 ];
+
+useSeoMeta({
+  title: "DAROM.PRO",
+  ogTitle: "DAROM.PRO",
+  description:
+    "Доставка из интернет-магазинов WILDBERRIES, OZON, ЯНДЕКС МАРКЕТ И ДР. По всем вопросам и для оформления заказа звоните: +7(949)612-47-60",
+  ogDescription:
+    "Доставка из интернет-магазинов WILDBERRIES, OZON, ЯНДЕКС МАРКЕТ И ДР. По всем вопросам и для оформления заказа звоните: +7(949)612-47-60",
+});
 </script>
 
 <template>
-  <Head>
-    <Title>DAROM.pro</Title>
-  </Head>
   <NuxtLayout name="main-page">
     <div class="bg-main-page">
       <div class="py-5 max-md:px-5 mx-auto container" v-cloak>

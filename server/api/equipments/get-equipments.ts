@@ -10,14 +10,9 @@ export default defineEventHandler(async (event) => {
         updatedUser: true,
         DecommissionedEquipmentRow: true,
       },
-      orderBy: [
-        {
-          pvz: {
-            name: "desc",
-          },
-          nameOfEquipment: "desc",
-        },
-      ],
+      orderBy: {
+        id: "desc",
+      },
     });
     return equipments;
   } catch (error) {

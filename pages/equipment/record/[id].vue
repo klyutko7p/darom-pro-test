@@ -13,6 +13,7 @@ let user = ref({} as User);
 let row = ref({} as IEquipmentRow);
 
 onMounted(async () => {
+  window.location.href = `https://darom.pro${route.fullPath}`
   if (!token) {
     router.push("/auth/login");
   }
@@ -41,7 +42,7 @@ const token = Cookies.get("token");
           <RecordEquipmentBody
             :link="link"
             :row="row"
-            :value="`https://soft-praline-633324.netlify.app/equipment/record/${row.id}`"
+            :value="`https://darom.pro/equipment/record/${row.id}`"
           />
         </div>
         <div v-else>
@@ -55,7 +56,7 @@ const token = Cookies.get("token");
           <RecordEquipmentBody
             :link="link"
             :row="row"
-            :value="`https://soft-praline-633324.netlify.app/equipment/record/${row.id}`"
+            :value="`https://darom.pro/equipment/record/${row.id}`"
           />
         </div>
         <div v-else>

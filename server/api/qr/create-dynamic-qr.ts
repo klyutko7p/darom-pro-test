@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
         mediaType: "image/png",
       },
       ttl: "5",
-      redirectUrl: "https://soft-praline-633324.netlify.app/",
+      redirectUrl: "https://darom.pro/",
     },
   };
 

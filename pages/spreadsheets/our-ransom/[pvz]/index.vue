@@ -125,7 +125,7 @@ function scanItem() {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertUrl(scannedLink);
     window.location.href =
-      "https://soft-praline-633324.netlify.app/spreadsheets/our-ransom/ПВЗ" + scannedLink;
+      "https://darom.pro/spreadsheets/our-ransom/ПВЗ" + scannedLink;
     scanStringItem.value = "";
   }, 500);
 }

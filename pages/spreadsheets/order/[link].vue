@@ -39,7 +39,6 @@ function getAmountToBePaid(flag: string): number {
       switch (flag) {
         case "NONE1":
           if (!value.issued && value.deleted === null) {
-            console.log(roundFunction(value.amountFromClient1));
             amountToPaid += roundFunction(value.amountFromClient1);
           }
           break;
@@ -137,6 +136,7 @@ let cell = ref("");
 const token = Cookies.get("token");
 
 onMounted(async () => {
+  window.location.href = `https://darom.pro${route.fullPath}`
   isLoading.value = true;
   user.value = await storeUsers.getUser();
 

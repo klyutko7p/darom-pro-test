@@ -18,6 +18,7 @@ async function updateDeliveryRow(obj: any) {
 }
 
 onMounted(async () => {
+  window.location.href = `https://darom.pro${route.fullPath}`
   if (!token) {
     router.push("/auth/login");
   }
@@ -44,7 +45,7 @@ const token = Cookies.get("token");
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="mt-5" v-if="!isLoading">
-          <RecordBody :link="link" :user="user" :row="row" :value="`https://soft-praline-633324.netlify.app/spreadsheets/record/3/${row.id}`" @update-delivery-row="updateDeliveryRow" />
+          <RecordBody :link="link" :user="user" :row="row" :value="`https://darom.pro/spreadsheets/record/3/${row.id}`" @update-delivery-row="updateDeliveryRow" />
         </div>
         <div v-else>
           <UISpinner />
@@ -54,7 +55,7 @@ const token = Cookies.get("token");
     <div v-else>
       <NuxtLayout name="user">
         <div class="mt-5" v-if="!isLoading">
-          <RecordBody :link="link" :user="user" :row="row" :value="`https://soft-praline-633324.netlify.app/spreadsheets/record/3/${row.id}`" @update-delivery-row="updateDeliveryRow" />
+          <RecordBody :link="link" :user="user" :row="row" :value="`https://darom.pro/spreadsheets/record/3/${row.id}`" @update-delivery-row="updateDeliveryRow" />
         </div>
         <div v-else>
           <UISpinner />
