@@ -29,15 +29,25 @@ const filteredRows = ref<Array<IOurRansom>>();
 function handleFilteredRows(filteredRowsData: IOurRansom[]) {
   if (user.value.visiblePVZ === "ВСЕ" && user.value.visibleSC === "ВСЕ") {
     filteredRows.value = filteredRowsData;
-  } else if (user.value.visiblePVZ === "ВСЕ" && user.value.visibleSC !== "ВСЕ") {
+  } else if (
+    user.value.visiblePVZ === "ВСЕ" &&
+    user.value.visibleSC !== "ВСЕ"
+  ) {
     filteredRows.value = filteredRowsData.filter(
       (row) => row.orderPVZ === user.value.visibleSC && row.deliveredSC !== null
     );
-  } else if (user.value.visiblePVZ !== "ВСЕ" && user.value.visibleSC === "ВСЕ") {
+  } else if (
+    user.value.visiblePVZ !== "ВСЕ" &&
+    user.value.visibleSC === "ВСЕ"
+  ) {
     filteredRows.value = filteredRowsData.filter(
-      (row) => user.value.PVZ.includes(row.dispatchPVZ) && row.deliveredSC !== null
+      (row) =>
+        user.value.PVZ.includes(row.dispatchPVZ) && row.deliveredSC !== null
     );
-  } else if (user.value.visiblePVZ !== "ВСЕ" && user.value.visibleSC !== "ВСЕ") {
+  } else if (
+    user.value.visiblePVZ !== "ВСЕ" &&
+    user.value.visibleSC !== "ВСЕ"
+  ) {
     filteredRows.value = filteredRowsData.filter(
       (row) =>
         user.value.PVZ.includes(row.dispatchPVZ) &&
@@ -48,7 +58,9 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
 
   if (filteredRows.value) {
     if (user.value.role === "SORTIROVKA") {
-      filteredRows.value = filteredRows.value.filter((row) => row.deliveredPVZ === null);
+      filteredRows.value = filteredRows.value.filter(
+        (row) => row.deliveredPVZ === null
+      );
     } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {
       let today = new Date().toLocaleDateString("ru-RU", {
         day: "2-digit",
@@ -68,7 +80,9 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
     } else if (user.value.role === "COURIER") {
       filteredRows.value = filteredRows.value.filter(
         (row) =>
-          row.deliveredSC !== null && row.deliveredPVZ !== null && row.issued === null
+          row.deliveredSC !== null &&
+          row.deliveredPVZ !== null &&
+          row.issued === null
       );
     }
   }
@@ -124,8 +138,9 @@ function scanItem() {
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertUrl(scannedLink);
-    // window.location.href =
-    //   "https://darom.pro/spreadsheets/our-ransom/ПВЗ" + scannedLink;
+    if (window.location.href.includes("soft-praline-633324.netlify.app")) {
+      window.location.href = "https://darom.pro/spreadsheets/our-ransom/ПВЗ" + scannedLink;
+    }
     scanStringItem.value = "";
   }, 500);
 }

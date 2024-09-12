@@ -136,7 +136,10 @@ let cell = ref("");
 const token = Cookies.get("token");
 
 onMounted(async () => {
-  // window.location.href = `https://darom.pro${route.fullPath}`
+  if (window.location.href.includes("soft-praline-633324.netlify.app")) {
+    window.location.href = `https://darom.pro${route.fullPath}`;
+  }
+  
   isLoading.value = true;
   user.value = await storeUsers.getUser();
 

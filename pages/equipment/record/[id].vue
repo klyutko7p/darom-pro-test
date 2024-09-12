@@ -13,7 +13,10 @@ let user = ref({} as User);
 let row = ref({} as IEquipmentRow);
 
 onMounted(async () => {
-  // window.location.href = `https://darom.pro${route.fullPath}`
+  if (window.location.href.includes("soft-praline-633324.netlify.app")) {
+    window.location.href = `https://darom.pro${route.fullPath}`;
+  }
+  
   if (!token) {
     router.push("/auth/login");
   }
