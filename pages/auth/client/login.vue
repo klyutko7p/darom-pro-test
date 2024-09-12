@@ -239,9 +239,6 @@ useSeoMeta({
 </script>
 
 <template>
-  <Head>
-    <Title>Авторизация клиента</Title>
-  </Head>
   <div
     v-if="!isLoading"
     class="h-screen flex items-center justify-center max-sm:block"

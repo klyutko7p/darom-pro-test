@@ -267,9 +267,6 @@ useSeoMeta({
 </script>
 
 <template>
-  <Head>
-    <Title>Регистрация</Title>
-  </Head>
   <div
     v-if="!isLoading"
     class="h-screen flex items-center justify-center max-sm:block"
