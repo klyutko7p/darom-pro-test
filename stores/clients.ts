@@ -381,6 +381,23 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  async function acceptDocs(client: Client) {
+    try {
+      let { data } = await useFetch("/api/clients/accept-docs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ client }),
+      });
+      toast.success("Вы успешно подтвердили доступ!");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function resetPassword(phoneNumber: string, newPassword: string) {
     try {
       let { data } = await useFetch("/api/clients/reset-password", {
@@ -481,5 +498,6 @@ export const useClientsStore = defineStore("clients", () => {
     updateBalance,
     sendMessage,
     resetPassword,
+    acceptDocs
   };
 });

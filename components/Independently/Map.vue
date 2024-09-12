@@ -227,7 +227,7 @@ watch([searchQuery], searchRows);
 
     <div
       v-if="isOpenList"
-      class="max-md:absolute max-md:bg-[#00000018] max-md:top-0 max-md:left-0 max-md:z-[10] max-md:h-screen max-md:w-screen max-md:flex max-md:items-center max-md:justify-center max-md:mt-5"
+      class="max-md:fixed max-md:top-8 max-md:left-0 max-md:z-[10] max-md:py-5 max-md:w-screen max-md:flex max-md:items-center max-md:justify-center max-md:mt-5"
     >
       <div
         :class="{
@@ -264,7 +264,7 @@ watch([searchQuery], searchRows);
         <div
           v-for="marker in markers"
           :key="marker.id"
-          class="mb-5 flex items-start gap-5"
+          class="mb-3 flex items-start gap-5"
         >
           <div>
             <input
@@ -286,12 +286,12 @@ watch([searchQuery], searchRows);
             <h1 class="font-semibold text-sm leading-4 my-1">
               {{ marker.address }}
             </h1>
-            <h1 class="text-sm text-gray-400 font-semibold">
+            <h1 class="text-sm text-gray-400 font-semibold leading-4">
               {{ marker.commentary }}
             </h1>
           </div>
         </div>
-        <div class="flex items-center justify-center max-md:mt-10">
+        <div class="flex items-center justify-center mt-10 max-md:mt-5">
           <UButton
             v-if="address && marketplace === 'OZON'"
             class="duration-200 font-semibold"

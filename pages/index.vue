@@ -1,10 +1,23 @@
 <script lang="ts" setup>
 import { YandexMap } from "vue-yandex-maps";
+import Cookies from "js-cookie";
 
 const router = useRouter();
 
 const coordinates = ref([47.971605, 37.860323]);
 const controls = ["geolocationControl", "zoomControl", "typeSelector"];
+
+const storeClients = useClientsStore()
+
+const token = Cookies.get("token");
+let user = ref({} as User);
+onMounted(async () => {
+  user.value = await storeClients.getClient();
+
+  if (token && user.value.role === "CLIENT") {
+    router.push("/auth/client/login");
+  } 
+})
 
 const addressItems = ref([
   {

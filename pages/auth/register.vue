@@ -374,7 +374,7 @@ useSeoMeta({
                 >Подтверждаю, что я ознакомлен и согласен с условиями
                 <a
                   class="underline text-secondary-color duration-200 cursor-pointer hover:opacity-50"
-                  href="#"
+                  href="https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/files/docx/public_info_dp.docx"
                   >Политики обработки персональных данных</a
                 ></label
               >
@@ -393,7 +393,7 @@ useSeoMeta({
                 >Подтверждаю, что я ознакомлен и согласен с условиями
                 <a
                   class="underline text-secondary-color duration-200 cursor-pointer hover:opacity-50"
-                  href="#"
+                  href="https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/files/docx/policy_conf_dp.docx"
                   >Политики конфиденциальности</a
                 ></label
               >
@@ -418,7 +418,10 @@ useSeoMeta({
       </div>
     </div>
 
-    <UINewModalEdit v-if="isShowConfirmationModal" @close-modal="isShowConfirmationModal = !isShowConfirmationModal">
+    <UINewModalEdit
+      v-if="isShowConfirmationModal"
+      @close-modal="isShowConfirmationModal = !isShowConfirmationModal"
+    >
       <template v-slot:icon-header> </template>
       <template v-slot:header>Подтверждение</template>
       <template v-slot:body>

@@ -23,6 +23,23 @@ onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login");
   }
+
+  const storedFileName = localStorage.getItem("fileName");
+  if (storedFileName) {
+    localStorage.removeItem("fileName");
+  }
+
+  const storedMarketplace = localStorage.getItem("marketplace");
+  if (storedMarketplace) {
+    marketplace.value = JSON.parse(storedMarketplace);
+  }
+
+  if (route.query.qr === "true") {
+    isOpenFirstModal.value = false;
+    isOpenSecondModal.value = false;
+    showThirdModal();
+  }
+
   isLoading.value = true;
   user.value = await storeClients.getClient();
   originallyRows.value = await storeRansom.getRansomRowsForModalClientRansom();
@@ -169,6 +186,8 @@ let fileQRPhoto = ref({} as any);
 function clearQRPhoto() {
   rowData.value.img = "";
   fileQRPhoto.value = {};
+  localStorage.removeItem("fileName");
+  localStorage.removeItem("marketplace");
 }
 
 const randomDigits = Math.floor(10000 + Math.random() * 90000);
@@ -187,6 +206,8 @@ function handleFileUpload(e: any) {
   let fileName = e[0].name;
   rowData.value.img = `${randomDigits}-${fileName}`;
   fileQRPhoto.value = e[0];
+  localStorage.setItem("fileName", JSON.stringify(rowData.value.img));
+  localStorage.setItem("marketplace", JSON.stringify(marketplace.value));
 }
 
 let isOpen = ref(true);
@@ -271,6 +292,9 @@ async function submitForm() {
         rowData.value.fromName
       );
     }
+
+    localStorage.removeItem("fileName");
+    localStorage.removeItem("marketplace");
 
     setTimeout(() => {
       router.push("/client/main");

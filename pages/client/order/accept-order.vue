@@ -9,6 +9,7 @@ const storeClients = useClientsStore();
 const storeRansom = useRansomStore();
 const storeCells = useCellsStore();
 const router = useRouter();
+const route = useRoute();
 
 let user = ref({} as Client);
 const token = Cookies.get("token");
@@ -20,6 +21,15 @@ let cellData = ref({} as Cell);
 const addressCookie = ref(Cookies.get("addressCookie") || "");
 
 onMounted(async () => {
+  const storedItems = localStorage.getItem("cardItems");
+  if (storedItems) {
+    items.value = JSON.parse(storedItems);
+  }
+  if (route.query.card === "true") {
+    isOpenFirstModal.value = false;
+    showLastModal();
+  }
+
   if (!token) {
     router.push("/auth/client/login");
   }
@@ -29,6 +39,7 @@ onMounted(async () => {
   } else {
     router.push("/client/order/independently/ozon?accept=true");
   }
+
   isLoading.value = true;
   user.value = storeClients.getClient();
   isLoading.value = false;
@@ -94,6 +105,7 @@ const parsingPage = async () => {
       const itemInfo = await storeClients.fetchSiteWB(urlToItem.value);
       if (itemInfo.error === "fetch failed" || !itemInfo[0]) {
         handleError("Извините, мы не можем сейчас обработать данные.");
+        urlToItem.value = "";
         return;
       }
 
@@ -214,6 +226,7 @@ const createItem = async () => {
     };
 
     items.value.push(item.value);
+    localStorage.setItem("cardItems", JSON.stringify(items.value));
 
     getCellFromName();
     await updateCellStatus();
@@ -238,6 +251,7 @@ async function createOrder() {
     }
 
     items.value = [];
+    localStorage.removeItem("cardItems");
     isShowModal.value = true;
     isOpen.value = false;
     isLoading.value = false;
@@ -333,6 +347,7 @@ function deleteItemFromOrder(productName: number) {
       items.value.splice(index, 1);
     }
   }
+  localStorage.setItem("cardItems", JSON.stringify(items.value));
 }
 const isOpenFirstModal = ref(true);
 const isOpenSecondModal = ref(false);
@@ -353,12 +368,14 @@ function showSecondModal() {
 }
 
 function showThirdModal() {
+  isOpenFirstModal.value = false;
   isOpenSecondModal.value = false;
   isOpenThirdModal.value = true;
   isOpenFourModal.value = false;
 }
 
 function showFourModal() {
+  isOpenFirstModal.value = false;
   isOpenThirdModal.value = false;
   isOpenFourModal.value = true;
   isOpenLastModal.value = false;
@@ -482,7 +499,21 @@ function pasteToTextArea() {
                   class="font-bold"
                   label="ДАЛЕЕ"
                   color="primary"
-                  v-if="marketplace"
+                  v-if="marketplace && !items.length"
+                >
+                  <template #trailing>
+                    <UIcon
+                      name="i-heroicons-arrow-right-20-solid"
+                      class="w-5 h-5"
+                    />
+                  </template>
+                </UButton>
+                <UButton
+                  @click="showThirdModal()"
+                  class="font-bold"
+                  label="ДАЛЕЕ"
+                  color="primary"
+                  v-if="marketplace && items.length"
                 >
                   <template #trailing>
                     <UIcon
@@ -549,7 +580,7 @@ function pasteToTextArea() {
                   icon="i-ph-package-bold"
                 />
               </div>
-              <div class="flex items-center justify-center mb-10">
+              <div class="flex items-center justify-center mb-5">
                 <UButton
                   size="2xs"
                   class="font-bold"
@@ -560,8 +591,20 @@ function pasteToTextArea() {
                 </UButton>
               </div>
 
-              <div class="mt-5 flex justify-end gap-3" v-auto-animate>
+              <div class="flex justify-end gap-3" v-auto-animate>
                 <UButton
+                  v-if="!items.length"
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  @click="showSecondModal()"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                />
+                <UButton
+                  v-if="items.length"
                   icon="i-heroicons-arrow-left-20-solid"
                   size="sm"
                   @click="showSecondModal()"
@@ -649,11 +692,7 @@ function pasteToTextArea() {
                 <div
                   class="bg-gray-100 rounded-md p-5 max-sm:py-16 mt-5 max-sm:px-2 flex flex-col gap-5 max-sm:gap-7 max-h-[400px] overflow-y-auto"
                 >
-                  <div
-                    v-auto-animate
-                    v-for="item in items.slice().reverse()"
-                    class=""
-                  >
+                  <div v-auto-animate v-for="item in items.slice().reverse()">
                     <div
                       class="bg-white relative rounded-xl max-sm:hidden shadow-xl p-5 text-center flex items-center justify-between"
                     >
@@ -678,7 +717,7 @@ function pasteToTextArea() {
                         />
                       </div>
                       <div class="flex items-center gap-5">
-                        <img 
+                        <img
                           class="rounded-full aspect-square object-cover w-16 h-16"
                           :src="item.img"
                         />
@@ -752,13 +791,18 @@ function pasteToTextArea() {
                           </div>
                         </div>
                       </div>
-                      <img 
+                      <img
                         class="rounded-full aspect-square object-cover w-16 h-16"
                         :src="item.img"
                       />
                     </div>
                   </div>
                 </div>
+              </div>
+              <div v-else>
+                <h1 class="text-center py-5 text-xl">
+                  Корзина пуста! Добавьте товары в заказ.
+                </h1>
               </div>
               <div
                 class="mt-5 flex justify-end gap-3 max-[440px]:flex-col"
@@ -775,6 +819,7 @@ function pasteToTextArea() {
                   :trailing="false"
                 />
                 <UButton
+                  v-if="items.length > 0"
                   @click="submitForm()"
                   class="font-bold"
                   label="ОТПРАВИТЬ ЗАКАЗ"
