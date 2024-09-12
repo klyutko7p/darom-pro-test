@@ -1146,7 +1146,7 @@ function handleFilteredRows(obj: any) {
   const newEndDate = new Date(selected.value.end).setHours(23, 59, 59, 999);
 
   filteredRows.value = filteredRows.value?.filter((row: IAdvanceReport) => {
-    const rowDate = new Date(row.date).getTime();
+    const rowDate = new Date(row.created_at).getTime();
     return (
       (!selected.value.start || rowDate >= newStartingDate) &&
       (!selected.value.end || rowDate <= newEndDate)

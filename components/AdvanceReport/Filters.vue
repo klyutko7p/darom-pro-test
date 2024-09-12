@@ -185,18 +185,6 @@ const filterRows = () => {
   newEndDate.setSeconds(59);
   newEndDate.setMilliseconds(0);
 
-  let newStartingDate2 = new Date(startingDate2.value);
-  newStartingDate2.setHours(0);
-  newStartingDate2.setMinutes(0);
-  newStartingDate2.setSeconds(0);
-  newStartingDate2.setMilliseconds(0);
-
-  let newEndDate2 = new Date(endDate2.value);
-  newEndDate2.setHours(23);
-  newEndDate2.setMinutes(59);
-  newEndDate2.setSeconds(59);
-  newEndDate2.setMilliseconds(0);
-
   filteredRows.value = props.rows.slice();
   filteredRows.value = props.rows.filter((row) => {
     return (
@@ -213,11 +201,8 @@ const filterRows = () => {
       (!selectedCreatedUser.value.length ||
         selectedCreatedUser.value.includes(row.createdUser)) &&
       (!selected.value.start ||
-        new Date(row.date) >= new Date(newStartingDate)) &&
-      (!selected.value.end || new Date(row.date) <= new Date(newEndDate)) &&
-      (!startingDate2.value ||
-        new Date(row.received) >= new Date(newStartingDate2)) &&
-      (!endDate2.value || new Date(row.received) <= new Date(newEndDate2))
+        new Date(row.created_at) >= new Date(newStartingDate)) &&
+      (!selected.value.end || new Date(row.created_at) <= new Date(newEndDate))
     );
   });
   emit("filtered-rows", [
