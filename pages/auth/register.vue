@@ -255,6 +255,15 @@ const padWithZero = (num: number): string => {
 const formattedBlockDuration = computed(() =>
   formatDuration(blockDuration.value)
 );
+
+useSeoMeta({
+  title: "Регистрация клиента DAROM.PRO",
+  ogTitle: "Регистрация клиента DAROM.PRO",
+  description:
+    "Получите доступ к заказу из любых интернет-магазинов и свой личный кабинет клиента!",
+  ogDescription:
+    "Получите доступ к заказу из любых интернет-магазинов и свой личный кабинет клиента!",
+});
 </script>
 
 <template>

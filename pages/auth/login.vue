@@ -36,6 +36,7 @@ let showPassword = ref(false)
 <template>
   <Head>
     <Title>Авторизация</Title>
+    <meta name="robots" content="none, noarchive" />
   </Head>
   <div v-if="!isLoading" class="h-screen flex items-center justify-center max-sm:block">
     <div
