@@ -394,10 +394,10 @@ const people = [
 ];
 
 const marketplaces = [
-  {
-    marketplace: "OZ",
-    name: "OZON",
-  },
+  // {
+  //   marketplace: "OZ",
+  //   name: "OZON",
+  // },
   {
     marketplace: "WB",
     name: "WILDBERRIES",
@@ -533,7 +533,7 @@ function pasteToTextArea() {
 
             <div v-if="isOpenThirdModal" v-auto-animate>
               <div>
-                <label>Вставьте ссылку на товар</label>
+                <label>Скопируйте ссылку на товар</label>
               </div>
               <label class="text-sm italic"
                 >предварительно выбрав верный размер и цвет на сайте</label

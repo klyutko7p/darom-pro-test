@@ -1024,6 +1024,7 @@ function getAllSum() {
       } else if (selectedPVZ.value === "ПВЗ_1") {
         allSum.value -= 2330;
       }
+      console.log(sum1.value + sum2.value);
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (selectedPVZ.value === "Все ПВЗ") {

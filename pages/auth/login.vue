@@ -12,7 +12,7 @@ let isLoading = ref(false);
 
 async function signIn() {
   isLoading.value = true;
-  message.value = await storeUsers.signIn(username.value, password.value);
+  message.value = await storeUsers.signIn(username.value.trim(), password.value.trim());
   isLoading.value = false;
 }
 
