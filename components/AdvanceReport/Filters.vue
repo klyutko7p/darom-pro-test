@@ -201,8 +201,8 @@ const filterRows = () => {
       (!selectedCreatedUser.value.length ||
         selectedCreatedUser.value.includes(row.createdUser)) &&
       (!selected.value.start ||
-        new Date(row.created_at) >= new Date(newStartingDate)) &&
-      (!selected.value.end || new Date(row.created_at) <= new Date(newEndDate))
+        new Date(row.date) >= new Date(newStartingDate)) &&
+      (!selected.value.end || new Date(row.date) <= new Date(newEndDate))
     );
   });
   emit("filtered-rows", [
