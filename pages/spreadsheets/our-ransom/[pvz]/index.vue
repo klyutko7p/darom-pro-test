@@ -124,8 +124,8 @@ function scanItem() {
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertUrl(scannedLink);
-    window.location.href =
-      "https://darom.pro/spreadsheets/our-ransom/ПВЗ" + scannedLink;
+    // window.location.href =
+    //   "https://darom.pro/spreadsheets/our-ransom/ПВЗ" + scannedLink;
     scanStringItem.value = "";
   }, 500);
 }

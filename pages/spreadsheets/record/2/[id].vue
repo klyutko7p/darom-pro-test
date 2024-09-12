@@ -18,7 +18,7 @@ async function updateDeliveryRow(obj: any) {
 }
 
 onMounted(async () => {
-  window.location.href = `https://darom.pro${route.fullPath}`
+  // window.location.href = `https://darom.pro${route.fullPath}`
   if (!token) {
     router.push("/auth/login");
   }

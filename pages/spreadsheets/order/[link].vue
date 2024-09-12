@@ -136,7 +136,7 @@ let cell = ref("");
 const token = Cookies.get("token");
 
 onMounted(async () => {
-  window.location.href = `https://darom.pro${route.fullPath}`
+  // window.location.href = `https://darom.pro${route.fullPath}`
   isLoading.value = true;
   user.value = await storeUsers.getUser();
 

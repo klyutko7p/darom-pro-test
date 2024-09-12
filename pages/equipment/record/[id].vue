@@ -13,7 +13,7 @@ let user = ref({} as User);
 let row = ref({} as IEquipmentRow);
 
 onMounted(async () => {
-  window.location.href = `https://darom.pro${route.fullPath}`
+  // window.location.href = `https://darom.pro${route.fullPath}`
   if (!token) {
     router.push("/auth/login");
   }
