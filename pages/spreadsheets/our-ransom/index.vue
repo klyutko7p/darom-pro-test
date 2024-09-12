@@ -569,6 +569,11 @@ let isOpenOnlineStatus = ref(false);
 
 const storeClients = useClientsStore();
 
+const handleError = (message: string) => {
+  toast.error(message);
+  isLoading.value = false;
+};
+
 let isActiveParsing = ref(false);
 async function parsingPage() {
   if (rowData.value.productLink) {
@@ -578,52 +583,32 @@ async function parsingPage() {
         let itemInfo = await storeClients.fetchSiteWB(
           rowData.value.productLink
         );
-        if (itemInfo.error === "fetch failed") {
-          toast.error("Извините, мы не можем сейчас обработать данные.");
-          isLoading.value = false;
+
+        if (itemInfo.error === "fetch failed" || !itemInfo[0]) {
+          handleError("Извините, мы не можем сейчас обработать данные.");
           return;
         }
-        if (!itemInfo[0]) {
-          toast.error("Извините, мы не можем обработать название товара.");
-          isLoading.value = false;
-          return;
-        }
-        rowData.value.productName = itemInfo[0].imt_name;
 
-        let priceInfoPromise = storeClients.fetchSitePrice(
-          rowData.value.productLink
-        );
-        let timeoutPromise = new Promise((resolve, reject) => {
-          setTimeout(() => {
-            reject(new Error("Request timeout"));
-          }, 10000);
-        });
-
-        try {
-          let priceInfo = await Promise.race([
-            priceInfoPromise,
-            timeoutPromise,
-          ]);
-          rowData.value.productName = itemInfo[0].imt_name;
-
-          if (priceInfo.message) {
-            rowData.value.priceSite = parseFloat(
-              priceInfo.message.split(" ")[0] + priceInfo.message.split(" ")[1]
-            );
-          } else {
-            toast.error(
-              "Извините, мы не можем обработать товар. Возможно, Вы не выбрали размер или товара нет в наличии!"
-            );
-            isLoading.value = false;
-            return;
-          }
-        } catch (error) {
-          toast.error(
-            "Извините, мы не можем обработать товар. Возможно, Вы не выбрали размер или товара нет в наличии!"
+        rowData.value.productName = itemInfo[0].data.products[0].name;
+        if (rowData.value.productLink.includes("size")) {
+          let sizeString = rowData.value.productLink.split("size=")[1];
+          rowData.value.priceSite = itemInfo[2].data.products[0].sizes.filter(
+            (size: any) => size.optionId == sizeString
+          )[0].price.product;
+          rowData.value.priceSite = Number(
+            rowData.value.priceSite
+              .toString()
+              .substring(0, rowData.value.priceSite.toString().length - 2)
           );
-          isLoading.value = false;
-          return;
+        } else {
+          rowData.value.priceSite = itemInfo[2].data.products[0].sizes[0].price.product;
+          rowData.value.priceSite = Number(
+            rowData.value.priceSite
+              .toString()
+              .substring(0, rowData.value.priceSite.toString().length - 2)
+          );
         }
+
         toast.success("Данные успешно подвязаны!");
         isLoading.value = false;
       } else if (rowData.value.productLink.includes("ozon")) {
