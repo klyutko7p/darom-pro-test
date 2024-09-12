@@ -64,14 +64,16 @@ export default defineEventHandler(async (event) => {
       basketNumber = getBasketNumber(firstFourDigits);
     }
 
-    let url = `https://basket-${basketNumber}.wbbasket.ru/vol${firstFourDigits}/part${firstSixDigits}/${number}/info/ru/card.json`;
+    let url = `https://card.wb.ru/cards/v2/detail?appType=1&curr=rub&dest=-2264011&nm=${number}`;
     let url2 = `https://basket-${basketNumber}.wbbasket.ru/vol${firstFourDigits}/part${firstSixDigits}/${number}/info/price-history.json`;
     let url3 = `https://basket-${basketNumber}.wbbasket.ru/vol${firstFourDigits}/part${firstSixDigits}/${number}/images/big/1.webp`;
+    let url4 = `https://card.wb.ru/cards/v2/detail?appType=1&curr=rub&dest=-2264011&nm=${number}`;
 
     let clients = await fetch(url).then((response) => response.json());
-    let clients2 = await fetch(url2).then((response) => response.json());
+    // let clients2 = await fetch(url2).then((response) => response.json());
     let clients3 = url3;
-    return [clients, clients2, clients3];
+    let clients4 = await fetch(url4).then((response) => response.json());
+    return [clients, clients3, clients4];
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };

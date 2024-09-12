@@ -69,14 +69,10 @@ const fetchPriceInfo = async (url: string) => {
         priceInfo.message.split(" ")[0] + priceInfo.message.split(" ")[1]
       );
     } else {
-      handleError(
-        "Извините, мы не можем обработать товар. Возможно, Вы не выбрали размер или товара нет в наличии!"
-      );
+      handleError("Извините, мы не можем обработать цену товара.");
     }
   } catch {
-    handleError(
-      "Извините, мы не можем обработать товар. Возможно, Вы не выбрали размер или товара нет в наличии!"
-    );
+    handleError("Извините, мы не можем обработать цену товара.");
   }
 };
 
@@ -101,15 +97,31 @@ const parsingPage = async () => {
         return;
       }
 
-      productName.value = itemInfo[0].imt_name;
-      description.value = itemInfo[0].description;
-      await fetchPriceInfo(urlToItem.value);
-      urlToImg.value = itemInfo[2];
+      productName.value = itemInfo[0].data.products[0].name;
+      urlToImg.value = itemInfo[1];
+      if (urlToItem.value.includes("size")) {
+        let sizeString = urlToItem.value.split("size=")[1];
+        priceSite.value = itemInfo[2].data.products[0].sizes.filter(
+          (size: any) => size.optionId == sizeString
+        )[0].price.product;
+        priceSite.value = Number(
+          priceSite.value
+            .toString()
+            .substring(0, priceSite.value.toString().length - 2)
+        );
+      } else {
+        priceSite.value = itemInfo[2].data.products[0].sizes[0].price.product;
+        priceSite.value = Number(
+          priceSite.value
+            .toString()
+            .substring(0, priceSite.value.toString().length - 2)
+        );
+      }
       toast.success("Вы успешно добавили товар!");
     } else if (urlToItem.value.includes("ozon") && marketplace.value === "OZ") {
       const jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
       if (jsonString.pageInfo.pageTypeTracking === "error") {
-        handleError("Извините, произошла ошибка. Проверьте ссылку на товар!");
+        handleError("Извините, произошла ошибка.");
         return;
       }
 
@@ -666,7 +678,7 @@ function pasteToTextArea() {
                         />
                       </div>
                       <div class="flex items-center gap-5">
-                        <img
+                        <img 
                           class="rounded-full aspect-square object-cover w-16 h-16"
                           :src="item.img"
                         />
@@ -740,7 +752,7 @@ function pasteToTextArea() {
                           </div>
                         </div>
                       </div>
-                      <img
+                      <img 
                         class="rounded-full aspect-square object-cover w-16 h-16"
                         :src="item.img"
                       />
