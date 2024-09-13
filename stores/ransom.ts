@@ -986,7 +986,15 @@ export const useRansomStore = defineStore("ransom", () => {
     selectedOrderAccount: string[],
     selectedNotation: string[],
     selectedAdditionally: string[],
-    selectedPriceSite: string[]
+    selectedPriceSite: string[],
+    startDate: Date | string,
+    endDate: Date | string,
+    startDate2: Date | string,
+    endDate2: Date | string,
+    startDate3: Date | string,
+    endDate3: Date | string,
+    startDate4: Date | string,
+    endDate4: Date | string
   ) {
     try {
       let response = await fetch("/api/ransom/get-rows-filters", {
@@ -1004,6 +1012,14 @@ export const useRansomStore = defineStore("ransom", () => {
           selectedNotation,
           selectedAdditionally,
           selectedPriceSite,
+          startDate,
+          endDate,
+          startDate2,
+          endDate2,
+          startDate3,
+          endDate3,
+          startDate4,
+          endDate4,
         }),
       });
 

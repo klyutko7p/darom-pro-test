@@ -13,6 +13,14 @@ interface IRequestBody {
   selectedNotation: string[];
   selectedAdditionally: string[];
   selectedPriceSite: string[];
+  startDate: Date | string;
+  endDate: Date | string;
+  startDate2: Date | string;
+  endDate2: Date | string;
+  startDate3: Date | string;
+  endDate3: Date | string;
+  startDate4: Date | string;
+  endDate4: Date | string;
 }
 
 export default defineEventHandler(async (event) => {
@@ -27,12 +35,19 @@ export default defineEventHandler(async (event) => {
       selectedNotation,
       selectedAdditionally,
       selectedPriceSite,
+      startDate,
+      endDate,
+      startDate2,
+      endDate2,
+      startDate3,
+      endDate3,
+      startDate4,
+      endDate4,
     } = await readBody<IRequestBody>(event);
 
-    let query = `SELECT * FROM "OurRansom" WHERE 1=1`;
+    let query = `SELECT "additionally", "amountFromClient1", "clientLink1", "cell", "createdUser", "created_at", "deleted", "id", "deliveredKGT", "deliveredPVZ", "deliveredSC", "dispatchPVZ", "orderPVZ", "fromName", "issued", "notation", "orderAccount", "percentClient", "prepayment", "priceSite", "productLink", "productName", "profit1","updatedUser", "updated_at" FROM "OurRansom" WHERE 1=1`;
     const params: any[] = [];
 
-    // Добавляем условия только для непустых массивов
     if (selectedCell.length > 0) {
       query += ` AND "cell" = ANY($${params.length + 1})`;
       params.push(selectedCell);
@@ -70,7 +85,50 @@ export default defineEventHandler(async (event) => {
       params.push(selectedPriceSite);
     }
 
-    // Выполнение запроса с параметрами
+    if (startDate) {
+      query += ` AND "issued" >= CAST($${params.length + 1} AS timestamp)`;
+      params.push(startDate);
+    }
+
+    if (endDate) {
+      query += ` AND "issued" <= CAST($${params.length + 1} AS timestamp)`;
+      params.push(endDate);
+    }
+
+    if (startDate2) {
+      query += ` AND "deliveredSC" >= CAST($${params.length + 1} AS timestamp)`;
+      params.push(startDate);
+    }
+
+    if (endDate2) {
+      query += ` AND "deliveredSC" <= CAST($${params.length + 1} AS timestamp)`;
+      params.push(endDate);
+    }
+
+    if (startDate3) {
+      query += ` AND "created_at" >= CAST($${params.length + 1} AS timestamp)`;
+      params.push(startDate);
+    }
+
+    if (endDate3) {
+      query += ` AND "created_at" <= CAST($${params.length + 1} AS timestamp)`;
+      params.push(endDate);
+    }
+
+    if (startDate4) {
+      query += ` AND "deliveredPVZ" >= CAST($${
+        params.length + 1
+      } AS timestamp)`;
+      params.push(startDate);
+    }
+
+    if (endDate4) {
+      query += ` AND "deliveredPVZ" <= CAST($${
+        params.length + 1
+      } AS timestamp)`;
+      params.push(endDate);
+    }
+
     const records = await prisma.$queryRawUnsafe(query, ...params);
 
     const packed = msgpack.encode(records);

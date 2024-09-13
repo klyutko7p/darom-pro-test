@@ -22,15 +22,14 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
     user.value.visibleSC !== "ВСЕ"
   ) {
     filteredRows.value = filteredRowsData.filter(
-      (row) => row.orderPVZ === user.value.visibleSC && row.deliveredSC !== null
+      (row) => row.orderPVZ === user.value.visibleSC
     );
   } else if (
     user.value.visiblePVZ !== "ВСЕ" &&
     user.value.visibleSC === "ВСЕ"
   ) {
-    filteredRows.value = filteredRowsData.filter(
-      (row) =>
-        user.value.PVZ.includes(row.dispatchPVZ) && row.deliveredSC !== null
+    filteredRows.value = filteredRowsData.filter((row) =>
+      user.value.PVZ.includes(row.dispatchPVZ)
     );
   } else if (
     user.value.visiblePVZ !== "ВСЕ" &&
@@ -39,32 +38,15 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
     filteredRows.value = filteredRowsData.filter(
       (row) =>
         user.value.PVZ.includes(row.dispatchPVZ) &&
-        row.orderPVZ === user.value.visibleSC &&
-        row.deliveredSC !== null
+        row.orderPVZ === user.value.visibleSC
     );
   }
 
   if (filteredRows.value) {
     if (user.value.role === "SORTIROVKA") {
-      filteredRows.value = filteredRows.value.filter(
-        (row) => row.deliveredPVZ === null
-      );
+      filteredRows.value = filteredRows.value;
     } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {
-      let today = new Date().toLocaleDateString("ru-RU", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "2-digit",
-      });
-      filteredRows.value = filteredRows.value.filter(
-        (row) =>
-          row.deliveredSC !== null &&
-          (new Date(row.issued).toLocaleDateString("ru-RU", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "2-digit",
-          }) === today ||
-            row.issued === null)
-      );
+      filteredRows.value = filteredRows.value;
     }
   }
 }
@@ -85,6 +67,9 @@ onMounted(async () => {
   if (!token || user.value.dataOurRansom === "NONE") {
     router.push("/auth/login");
   }
+  user.value = await storeUsers.getUser();
+
+  isLoading.value = true;
 
   const [
     orderAccounts,
@@ -118,11 +103,93 @@ onMounted(async () => {
   uniqueAdditionally.value = additionally;
   uniquePriceSite.value = priceSite;
 
-  isLoading.value = true;
-  user.value = await storeUsers.getUser();
-  isLoading.value = false;
+  if (uniqueOrderAccounts.value) {
+    uniqueOrderAccounts.value = Array.from(
+      new Set(
+        uniqueOrderAccounts.value
+          .filter((item) => item && !item.includes("��"))
+          .map((item) => item.trim())
+          .sort((a, b) => a.localeCompare(b))
+      )
+    );
+  }
 
-  originallyRows.value = await storeRansom.getRansomRowsForModalOurRansom();
+  if (uniqueNotation.value) {
+    uniqueNotation.value = Array.from(
+      new Set(
+        uniqueNotation.value
+          .filter((item) => item && !item.includes("��"))
+          .map((item) => item.trim())
+          .sort((a, b) => a.localeCompare(b))
+      )
+    );
+  }
+
+  if (uniqueOrderPVZ.value) {
+    uniqueOrderPVZ.value = Array.from(
+      new Set(
+        uniqueOrderPVZ.value
+          .filter((item) => item && !item.includes("��"))
+          .map((item) => item.trim())
+          .sort((a, b) => a.localeCompare(b))
+      )
+    );
+  }
+
+  if (uniquePVZ.value) {
+    uniquePVZ.value = Array.from(
+      new Set(
+        uniquePVZ.value
+          .filter((item) => item && !item.includes("��"))
+          .map((item) => item.trim())
+          .sort((a, b) => a.localeCompare(b))
+      )
+    );
+  }
+
+  if (uniqueCells.value) {
+    uniqueCells.value = Array.from(
+      new Set(
+        uniqueCells.value
+          .filter((item) => item && !item.includes("��"))
+          .map((item) => item.trim())
+      )
+    );
+  }
+
+  if (uniqueFromNames.value) {
+    uniqueFromNames.value = Array.from(
+      new Set(
+        uniqueFromNames.value
+          .filter((item) => item && !item.includes("��"))
+          .map((item) => item.trim())
+      )
+    );
+  }
+
+  if (uniqueProductNames.value) {
+    uniqueProductNames.value = Array.from(
+      new Set(
+        uniqueProductNames.value
+          .filter((item) => item && !item.includes("��"))
+          .map((item) => item.trim())
+          .sort((a, b) => a.localeCompare(b))
+      )
+    );
+  }
+
+  if (uniqueAdditionally.value) {
+    uniqueAdditionally.value = Array.from(
+      new Set(
+        uniqueAdditionally.value
+          .filter((item) => item && !item.includes("��"))
+          .map((item) => item.trim())
+          .sort((a, b) => a.localeCompare(b))
+      )
+    );
+  }
+
+  isLoading.value = false;
 });
 
 definePageMeta({
@@ -131,24 +198,6 @@ definePageMeta({
 });
 
 const token = Cookies.get("token");
-
-async function updateDeliveryRows(obj: any) {
-  if (obj.flag !== "additionally") {
-    let answer = confirm(
-      `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
-    );
-    if (answer) {
-      isLoading.value = true;
-      await storeRansom.updateDeliveryRowsStatus(
-        obj.idArray,
-        obj.flag,
-        "OurRansom",
-        user.value.username
-      );
-      isLoading.value = false;
-    }
-  }
-}
 </script>
 
 <template>
@@ -157,7 +206,7 @@ async function updateDeliveryRows(obj: any) {
   </Head>
   <div>
     <div v-if="user.role === 'ADMIN'">
-      <NuxtLayout name="admin">
+      <NuxtLayout name="table-admin-no-pad">
         <div v-if="!isLoading" class="mt-3">
           <div>
             <SpreadsheetsAllDataFilters
@@ -177,24 +226,33 @@ async function updateDeliveryRows(obj: any) {
 
           <SpreadsheetsAllDataTable :rows="filteredRows" :user="user" />
         </div>
-        <div v-else>
+        <div class="w-screen" v-else>
           <UISpinner />
         </div>
       </NuxtLayout>
     </div>
     <div v-else>
-      <NuxtLayout name="user">
+      <NuxtLayout name="table-user-no-pad">
         <div v-if="!isLoading" class="mt-3">
           <div>
             <SpreadsheetsAllDataFilters
               @filtered-rows="handleFilteredRows"
+              :uniqueOrderAccounts="uniqueOrderAccounts"
+              :uniqueNotation="uniqueNotation"
+              :uniqueOrderPVZ="uniqueOrderPVZ"
+              :uniquePVZ="uniquePVZ"
+              :uniqueCells="uniqueCells"
+              :uniqueFromNames="uniqueFromNames"
+              :uniqueProductNames="uniqueProductNames"
+              :uniqueAdditionally="uniqueAdditionally"
+              :uniquePriceSite="uniquePriceSite"
               :user="user"
             />
           </div>
 
           <SpreadsheetsAllDataTable :rows="filteredRows" :user="user" />
         </div>
-        <div v-else>
+        <div class="w-screen" v-else>
           <UISpinner />
         </div>
       </NuxtLayout>

@@ -2,7 +2,7 @@
 import type { PropType } from "vue";
 import VueMultiselect from "vue-multiselect";
 const props = defineProps({
-  user: { type: Object as PropType<User> },
+  user: { type: Object as PropType<User>, required: true },
   uniqueOrderAccounts: { type: Array as PropType<string[]>, required: true },
   uniqueNotation: { type: Array as PropType<string[]>, required: true },
   uniqueOrderPVZ: { type: Array as PropType<string[]>, required: true },
@@ -17,7 +17,7 @@ const props = defineProps({
 const storeRansom = useRansomStore();
 
 let showFilters = ref(false);
-
+let isLoading = ref(false);
 let rows = ref<Array<IOurRansom>>([]);
 
 const selectedCell = ref<Array<string>>([]);
@@ -144,53 +144,85 @@ const filteredRows = ref<Array<IOurRansom>>();
 const emit = defineEmits(["filtered-rows"]);
 
 const filterRows = async () => {
-  //   let newStartingDate = new Date(startingDate.value);
-  //   newStartingDate.setHours(0);
-  //   newStartingDate.setMinutes(0);
-  //   newStartingDate.setSeconds(0);
-  //   newStartingDate.setMilliseconds(0);
+  let newStartingDate = new Date(startingDate.value);
+  newStartingDate.setHours(0);
+  newStartingDate.setMinutes(0);
+  newStartingDate.setSeconds(0);
+  newStartingDate.setMilliseconds(0);
 
-  //   let newEndDate = new Date(endDate.value);
-  //   newEndDate.setHours(23);
-  //   newEndDate.setMinutes(59);
-  //   newEndDate.setSeconds(59);
-  //   newEndDate.setMilliseconds(0);
+  if (newStartingDate.getFullYear() <= 2023) {
+    newStartingDate = "";
+  }
 
-  //   let newStartingDate2 = new Date(startingDate2.value);
-  //   newStartingDate2.setHours(0);
-  //   newStartingDate2.setMinutes(0);
-  //   newStartingDate2.setSeconds(0);
-  //   newStartingDate2.setMilliseconds(0);
+  let newEndDate = new Date(endDate.value);
+  newEndDate.setHours(23);
+  newEndDate.setMinutes(59);
+  newEndDate.setSeconds(59);
+  newEndDate.setMilliseconds(0);
 
-  //   let newEndDate2 = new Date(endDate2.value);
-  //   newEndDate2.setHours(23);
-  //   newEndDate2.setMinutes(59);
-  //   newEndDate2.setSeconds(59);
-  //   newEndDate2.setMilliseconds(0);
+  if (newEndDate.getFullYear() <= 2023) {
+    newEndDate = "";
+  }
 
-  //   let newStartingDate3 = new Date(startingDate3.value);
-  //   newStartingDate3.setHours(0);
-  //   newStartingDate3.setMinutes(0);
-  //   newStartingDate3.setSeconds(0);
-  //   newStartingDate3.setMilliseconds(0);
+  let newStartingDate2 = new Date(startingDate2.value);
+  newStartingDate2.setHours(0);
+  newStartingDate2.setMinutes(0);
+  newStartingDate2.setSeconds(0);
+  newStartingDate2.setMilliseconds(0);
 
-  //   let newEndDate3 = new Date(endDate3.value);
-  //   newEndDate3.setHours(23);
-  //   newEndDate3.setMinutes(59);
-  //   newEndDate3.setSeconds(59);
-  //   newEndDate3.setMilliseconds(0);
+  if (newStartingDate2.getFullYear() <= 2023) {
+    newStartingDate2 = "";
+  }
 
-  //   let newStartingDate4 = new Date(startingDate4.value);
-  //   newStartingDate4.setHours(0);
-  //   newStartingDate4.setMinutes(0);
-  //   newStartingDate4.setSeconds(0);
-  //   newStartingDate4.setMilliseconds(0);
+  let newEndDate2 = new Date(endDate2.value);
+  newEndDate2.setHours(23);
+  newEndDate2.setMinutes(59);
+  newEndDate2.setSeconds(59);
+  newEndDate2.setMilliseconds(0);
 
-  //   let newEndDate4 = new Date(endDate4.value);
-  //   newEndDate4.setHours(23);
-  //   newEndDate4.setMinutes(59);
-  //   newEndDate4.setSeconds(59);
-  //   newEndDate4.setMilliseconds(0);
+  if (newEndDate2.getFullYear() <= 2023) {
+    newEndDate2 = "";
+  }
+
+  let newStartingDate3 = new Date(startingDate3.value);
+  newStartingDate3.setHours(0);
+  newStartingDate3.setMinutes(0);
+  newStartingDate3.setSeconds(0);
+  newStartingDate3.setMilliseconds(0);
+
+  if (newStartingDate3.getFullYear() <= 2023) {
+    newStartingDate3 = "";
+  }
+
+  let newEndDate3 = new Date(endDate3.value);
+  newEndDate3.setHours(23);
+  newEndDate3.setMinutes(59);
+  newEndDate3.setSeconds(59);
+  newEndDate3.setMilliseconds(0);
+
+  if (newEndDate3.getFullYear() <= 2023) {
+    newEndDate3 = "";
+  }
+
+  let newStartingDate4 = new Date(startingDate4.value);
+  newStartingDate4.setHours(0);
+  newStartingDate4.setMinutes(0);
+  newStartingDate4.setSeconds(0);
+  newStartingDate4.setMilliseconds(0);
+
+  if (newStartingDate4.getFullYear() <= 2023) {
+    newStartingDate4 = "";
+  }
+
+  let newEndDate4 = new Date(endDate4.value);
+  newEndDate4.setHours(23);
+  newEndDate4.setMinutes(59);
+  newEndDate4.setSeconds(59);
+  newEndDate4.setMilliseconds(0);
+
+  if (newEndDate4.getFullYear() <= 2023) {
+    newEndDate4 = "";
+  }
 
   //   filteredRows.value = rows.value.slice();
   //   filteredRows.value = rows.value.filter((row) => {
@@ -226,6 +258,7 @@ const filterRows = async () => {
   //       (!endDate4.value || new Date(row.deliveredPVZ) <= new Date(newEndDate4))
   //     );
   //   });
+  isLoading.value = true;
   filteredRows.value = await storeRansom.getRowsFilters(
     selectedCell.value,
     selectedFromName.value,
@@ -235,8 +268,17 @@ const filterRows = async () => {
     selectedOrderAccount.value,
     selectedNotation.value,
     selectedAdditionally.value,
-    selectedPriceSite.value
+    selectedPriceSite.value,
+    newStartingDate,
+    newEndDate,
+    newStartingDate2,
+    newEndDate2,
+    newStartingDate3,
+    newEndDate3,
+    newStartingDate4,
+    newEndDate4
   );
+  isLoading.value = false;
   emit("filtered-rows", filteredRows.value);
 };
 
@@ -258,7 +300,6 @@ function clearFields() {
   endDate3.value = "";
   startingDate4.value = "";
   endDate4.value = "";
-  filterRows();
 }
 
 const selectedArrays = [
@@ -351,7 +392,7 @@ let dateFilter = ref("issued");
 </script>
 
 <template>
-  <div>
+  <div class="w-screen px-10 mt-10" v-if="!isLoading">
     <div class="flex items-center gap-3 mt-14 max-xl:mt-0">
       <h1 class="text-xl font-bold">Фильтры</h1>
       <Icon
@@ -383,7 +424,10 @@ let dateFilter = ref("issued");
             placeholder="Выберите Ячейка"
           />
         </div>
-        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+        <div
+          v-if="user.fromName1 === 'READ' || user.fromName1 === 'WRITE'"
+          class="flex items-start space-y-2 flex-col mt-5 text-center"
+        >
           <h1>Телефон</h1>
           <VueMultiselect
             v-model="selectedFromName"
@@ -393,7 +437,10 @@ let dateFilter = ref("issued");
             placeholder="Выберите Телефон"
           />
         </div>
-        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+        <div
+          v-if="user.productName1 === 'READ' || user.productName1 === 'WRITE'"
+          class="flex items-start space-y-2 flex-col mt-5 text-center"
+        >
           <h1>Название товара</h1>
           <VueMultiselect
             v-model="selectedProductName"
@@ -403,7 +450,10 @@ let dateFilter = ref("issued");
             placeholder="Выберите Название"
           />
         </div>
-        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+        <div
+          v-if="user.priceSite === 'READ' || user.priceSite === 'WRITE'"
+          class="flex items-start space-y-2 flex-col mt-5 text-center"
+        >
           <h1>Стоимость сайт</h1>
           <VueMultiselect
             v-model="selectedPriceSite"
@@ -423,7 +473,10 @@ let dateFilter = ref("issued");
             placeholder="Выберите ПВЗ"
           />
         </div>
-        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+        <div
+          v-if="user.orderPVZ1 === 'READ' || user.orderPVZ1 === 'WRITE'"
+          class="flex items-start space-y-2 flex-col mt-5 text-center"
+        >
           <h1>СЦ</h1>
           <VueMultiselect
             v-model="selectedOrderPVZ"
@@ -433,7 +486,10 @@ let dateFilter = ref("issued");
             placeholder="Выберите ПВЗ"
           />
         </div>
-        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+        <div
+          v-if="user.orderAccount === 'READ' || user.orderAccount === 'WRITE'"
+          class="flex items-start space-y-2 flex-col mt-5 text-center"
+        >
           <h1>Аккаунт</h1>
           <VueMultiselect
             v-model="selectedOrderAccount"
@@ -443,7 +499,10 @@ let dateFilter = ref("issued");
             placeholder="Выберите Аккаунт"
           />
         </div>
-        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+        <div
+          v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'"
+          class="flex items-start space-y-2 flex-col mt-5 text-center"
+        >
           <h1>Дополнительно</h1>
           <VueMultiselect
             v-model="selectedAdditionally"
@@ -453,7 +512,10 @@ let dateFilter = ref("issued");
             placeholder="Выберите Дополнительно"
           />
         </div>
-        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+        <div
+          v-if="user.notation1 === 'READ' || user.notation1 === 'WRITE'"
+          class="flex items-start space-y-2 flex-col mt-5 text-center"
+        >
           <h1>Примечание</h1>
           <VueMultiselect
             v-model="selectedNotation"
@@ -596,6 +658,9 @@ let dateFilter = ref("issued");
         >
       </div>
     </div>
+  </div>
+  <div class="w-screen" v-else>
+    <UISpinner />
   </div>
 </template>
 
