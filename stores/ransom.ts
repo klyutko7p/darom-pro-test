@@ -957,10 +957,72 @@ export const useRansomStore = defineStore("ransom", () => {
     return Array.from(uniqueNonEmptyValues);
   };
 
+  async function getUniqueNonEmptyValuesQuery(fieldName: string) {
+    try {
+      let response = await fetch("/api/ransom/get-unique-values", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+        body: JSON.stringify({ fieldName }),
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRowsFilters(
+    selectedCell: string[],
+    selectedFromName: string[],
+    selectedProductName: string[],
+    selectedDispatchPVZ: string[],
+    selectedOrderPVZ: string[],
+    selectedOrderAccount: string[],
+    selectedNotation: string[],
+    selectedAdditionally: string[],
+    selectedPriceSite: string[]
+  ) {
+    try {
+      let response = await fetch("/api/ransom/get-rows-filters", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+        body: JSON.stringify({
+          selectedCell,
+          selectedFromName,
+          selectedProductName,
+          selectedDispatchPVZ,
+          selectedOrderPVZ,
+          selectedOrderAccount,
+          selectedNotation,
+          selectedAdditionally,
+          selectedPriceSite,
+        }),
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   return {
+    getRowsFilters,
     getRansomRowsForBalanceOurRansomPartOne,
     getRansomRowsForBalanceOurRansomPartTwo,
     getRansomRowsForBalanceOurRansomPartThree,
+    getUniqueNonEmptyValuesQuery,
     createRansomRow,
     getRansomRows,
     updateRansomRow,

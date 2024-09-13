@@ -66,7 +66,13 @@ onMounted(async () => {
     }
 
     if (rows.value && user.value.username === "Директор") {
-      handleFilteredRows([rows.value, selected.value]);
+      handleFilteredRows([
+        rows.value,
+        {
+          start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+          end: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0),
+        },
+      ]);
     } else {
       handleFilteredRows([
         rows.value,
@@ -826,7 +832,13 @@ async function createRow() {
     filteredRows.value = rows.value;
 
     if (rows.value && user.value.username === "Директор") {
-      handleFilteredRows([rows.value, selected.value]);
+      handleFilteredRows([
+        rows.value,
+        {
+          start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+          end: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0),
+        },
+      ]);
     } else {
       handleFilteredRows([
         rows.value,
@@ -931,16 +943,22 @@ async function updateRow() {
   filteredRows.value = rows.value;
 
   if (rows.value && user.value.username === "Директор") {
-      handleFilteredRows([rows.value, selected.value]);
-    } else {
-      handleFilteredRows([
-        rows.value,
-        {
-          start: new Date(new Date().getFullYear() - 1, 0, 1),
-          end: new Date(),
-        },
-      ]);
-    }
+    handleFilteredRows([
+      rows.value,
+      {
+        start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+        end: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0),
+      },
+    ]);
+  } else {
+    handleFilteredRows([
+      rows.value,
+      {
+        start: new Date(new Date().getFullYear() - 1, 0, 1),
+        end: new Date(),
+      },
+    ]);
+  }
 
   getSumCreditCash();
   getSumCreditOnline();
@@ -967,16 +985,22 @@ async function updateDeliveryRow(row: any) {
   filteredRows.value = rows.value;
 
   if (rows.value && user.value.username === "Директор") {
-      handleFilteredRows([rows.value, selected.value]);
-    } else {
-      handleFilteredRows([
-        rows.value,
-        {
-          start: new Date(new Date().getFullYear() - 1, 0, 1),
-          end: new Date(),
-        },
-      ]);
-    }
+    handleFilteredRows([
+      rows.value,
+      {
+        start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+        end: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0),
+      },
+    ]);
+  } else {
+    handleFilteredRows([
+      rows.value,
+      {
+        start: new Date(new Date().getFullYear() - 1, 0, 1),
+        end: new Date(),
+      },
+    ]);
+  }
 
   getSumCreditCash();
   getSumCreditOnline();
@@ -1012,7 +1036,13 @@ async function deleteRow(id: any) {
     filteredRows.value = rows.value;
 
     if (rows.value && user.value.username === "Директор") {
-      handleFilteredRows([rows.value, selected.value]);
+      handleFilteredRows([
+        rows.value,
+        {
+          start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+          end: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0),
+        },
+      ]);
     } else {
       handleFilteredRows([
         rows.value,
