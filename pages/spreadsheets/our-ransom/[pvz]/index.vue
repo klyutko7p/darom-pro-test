@@ -130,6 +130,36 @@ function focusInput() {
   isScanActive.value = true;
 }
 
+const isShowDeletedData = ref(false)
+async function showDeletedData() {
+  isLoading.value = true;
+  rows.value = await storeRansom.getDeletedRansomRowsByPVZ(
+    pvzString,
+    "OurRansom"
+  );
+
+  if (rows.value) {
+    handleFilteredRows(rows.value);
+  }
+
+  isShowDeletedData.value = true;
+  isLoading.value = false;
+}
+
+async function showData() {
+  isLoading.value = true;
+  rows.value = await storeRansom.getRansomRowsByPVZ(
+    pvzString,
+    "OurRansom"
+  );
+
+  if (rows.value) {
+    handleFilteredRows(rows.value);
+  }
+  isShowDeletedData.value = false;
+  isLoading.value = false;
+}
+
 function scanItem() {
   if (timeoutId !== null) {
     clearTimeout(timeoutId);
@@ -139,7 +169,8 @@ function scanItem() {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertUrl(scannedLink);
     if (window.location.href.includes("soft-praline-633324.netlify.app")) {
-      window.location.href = "https://darom.pro/spreadsheets/our-ransom/ПВЗ" + scannedLink;
+      window.location.href =
+        "https://darom.pro/spreadsheets/our-ransom/ПВЗ" + scannedLink;
     }
     scanStringItem.value = "";
   }, 500);
@@ -168,6 +199,26 @@ function convertUrl(url: string): string {
               v-model="scanStringItem"
               @input="scanItem"
             />
+          </div>
+          <div class="flex items-center gap-5 mt-10">
+            <div
+              v-if="!isShowDeletedData"
+              v-auto-animate
+              @click="showDeletedData"
+              class="flex items-center gap-2 w-[220px] bg-green-100 text-green-500 px-2 py-1 font-bold cursor-pointer duration-200 hover:opacity-50 rounded-xl"
+            >
+              <Icon name="fluent:eye-show-16-filled" size="24" />
+              <h1>Показать удаленное</h1>
+            </div>
+            <div
+              v-if="isShowDeletedData"
+              v-auto-animate
+              @click="showData"
+              class="flex items-center gap-2 w-[220px] bg-red-100 text-red-500 px-2 py-1 font-bold cursor-pointer duration-200 hover:opacity-50 rounded-xl"
+            >
+              <Icon name="fluent:eye-hide-20-filled" size="24" />
+              <h1>Скрыть удаленное</h1>
+            </div>
           </div>
           <SpreadsheetsOurRansomTable
             :rows="filteredRows"

@@ -356,6 +356,26 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  async function getDeletedRansomRowsByPVZ(PVZ: string | string[], flag: string) {
+    try {
+      let response = await fetch("/api/ransom/get-rows-by-pvz-deleted", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+        body: JSON.stringify({ PVZ: PVZ, flag: flag }),
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function getRansomRowsForModalOurRansom() {
     try {
       let response = await fetch("/api/ransom/get-rows-for-modal-or", {
@@ -1068,5 +1088,6 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsWithPVZOurRansom,
     getRansomRowsOurRansom,
     getRansomRowsForAdvanceReportOurRansom,
+    getDeletedRansomRowsByPVZ,
   };
 });
