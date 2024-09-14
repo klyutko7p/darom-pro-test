@@ -131,15 +131,11 @@ const parsingPage = async () => {
       }
       toast.success("Вы успешно добавили товар!");
     } else if (urlToItem.value.includes("ozon") && marketplace.value === "OZ") {
-      const jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
-      if (jsonString.pageInfo.pageTypeTracking === "error") {
-        handleError("Извините, произошла ошибка.");
-        return;
-      }
-
-      const parsedData = JSON.parse(jsonString.seo.script[0].innerHTML);
+      let productId = urlToItem.value.split('/')[4]
+      const jsonString = await storeClients.fetchSiteOZ(productId);
+      const jsonMessage = JSON.parse(jsonString.message)
+      const parsedData = JSON.parse(jsonMessage.seo.script[0].innerHTML);
       productName.value = parsedData.name;
-      description.value = parsedData.description;
       priceSite.value = parsedData.offers.price;
       urlToImg.value = parsedData.image;
     } else if (marketplace.value === "YM") {
@@ -148,11 +144,6 @@ const parsingPage = async () => {
     }
 
     createItem();
-  } catch (error) {
-    console.error(error);
-    handleError(
-      "Произошла непредвиденная ошибка. Пожалуйста, попробуйте еще раз позже."
-    );
   } finally {
     isLoading.value = false;
   }
@@ -411,10 +402,10 @@ const people = [
 ];
 
 const marketplaces = [
-  // {
-  //   marketplace: "OZ",
-  //   name: "OZON",
-  // },
+  {
+    marketplace: "OZ",
+    name: "OZON",
+  },
   {
     marketplace: "WB",
     name: "WILDBERRIES",
@@ -698,7 +689,7 @@ function pasteToTextArea() {
                     >
                       <div class="absolute bottom-0 right-32">
                         <img
-                          v-if="item.marketplace === 'O'"
+                          v-if="item.marketplace === 'OZ'"
                           src="@/assets/images/ozon-bg.png"
                           class="max-w-[100px] mb-3 opacity-20"
                           alt=""

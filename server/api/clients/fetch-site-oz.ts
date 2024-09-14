@@ -7,19 +7,25 @@ const prisma = new PrismaClient();
 export default defineEventHandler(async (event) => {
   try {
     const { link } = await readBody<IRequestBody>(event);
-    let productId = link.split("/");
+    const requestData = {
+      url: "https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=/product/" + link,
+    };
 
-    let apiUrl =
-      "https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=/product/" +
-      1528937241;
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    };
 
-    let queryJson = await fetch(apiUrl, {
-      method: "GET",
-    })
-      .then((response) => response.json())
-      .catch((error) => console.error("Error:", error));
+    const response = await fetch(
+      "https://telegram-bot-oz-f14d7a525ec1.herokuapp.com/post_endpoint",
+      options
+    );
+    const data = await response.json();
 
-    return queryJson;
+    return data;
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };
