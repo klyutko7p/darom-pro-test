@@ -138,6 +138,7 @@ const parsingPage = async () => {
       productName.value = parsedData.name;
       priceSite.value = parsedData.offers.price;
       urlToImg.value = parsedData.image;
+      toast.success("Вы успешно добавили товар!");
     } else if (marketplace.value === "YM") {
       const info = await storeClients.fetchSiteYM(urlToItem.value);
       console.log(info);

@@ -601,7 +601,8 @@ async function parsingPage() {
               .substring(0, rowData.value.priceSite.toString().length - 2)
           );
         } else {
-          rowData.value.priceSite = itemInfo[2].data.products[0].sizes[0].price.product;
+          rowData.value.priceSite =
+            itemInfo[2].data.products[0].sizes[0].price.product;
           rowData.value.priceSite = Number(
             rowData.value.priceSite
               .toString()
@@ -613,20 +614,12 @@ async function parsingPage() {
         isLoading.value = false;
       } else if (rowData.value.productLink.includes("ozon")) {
         isLoading.value = true;
-        let jsonString = await storeClients.fetchSiteOZ(
-          rowData.value.productLink
-        );
-        if (jsonString.pageInfo.pageTypeTracking === "error") {
-          toast.error("Извините, произошла ошибка. Проверьте ссылку на товар!");
-          isLoading.value = false;
-          return;
-        }
-        rowData.value.productName = JSON.parse(
-          jsonString.seo.script[0].innerHTML
-        ).name;
-        rowData.value.priceSite = JSON.parse(
-          jsonString.seo.script[0].innerHTML
-        ).offers.price;
+        let productId = rowData.value.productLink.split("/")[4];
+        const jsonString = await storeClients.fetchSiteOZ(productId);
+        const jsonMessage = JSON.parse(jsonString.message);
+        const parsedData = JSON.parse(jsonMessage.seo.script[0].innerHTML);
+        rowData.value.productName = parsedData.name;
+        rowData.value.priceSite = parsedData.offers.price;
         toast.success("Данные успешно подвязаны!");
         isLoading.value = false;
       }
