@@ -18,7 +18,7 @@ let isLoading = ref(false);
 let originallyRows = ref<Array<IOurRansom>>();
 let cells = ref<Array<Cell>>();
 let cellData = ref({} as Cell);
-const addressCookie = ref(Cookies.get("addressCookie") || "");
+const addressData = ref(localStorage.getItem("addressData") || "");
 
 onMounted(async () => {
   const storedItems = localStorage.getItem("cardItems");
@@ -34,8 +34,8 @@ onMounted(async () => {
     router.push("/auth/client/login");
   }
 
-  if (addressCookie.value) {
-    address.value = addressCookie.value.replace(/"/g, "");
+  if (addressData.value) {
+    address.value = addressData.value.replace(/"/g, "");
   } else {
     router.push("/client/order/independently/ozon?accept=true");
   }

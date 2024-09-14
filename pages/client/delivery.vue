@@ -44,7 +44,7 @@ onMounted(async () => {
   user.value = await storeClients.getClient();
   originallyRows.value = await storeRansom.getRansomRowsForModalClientRansom();
   cells.value = await storeCells.getCellsClient();
-  pvzData.value = Cookies.get("addressCookie") || "";
+  pvzData.value = localStorage.getItem("addressData") || "";
   pvzData.value = pvzData.value.replace(/"/g, "");
   isLoading.value = false;
   if (marketplaceData === "ozon") {

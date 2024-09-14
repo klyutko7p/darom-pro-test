@@ -26,6 +26,7 @@ const emit = defineEmits([
   "updateDeliveryRows",
   "createCopyRow",
   "showDeletedRows",
+  "clearRow",
 ]);
 
 async function updateDeliveryRows(flag: string, allSumData: string = "0") {
@@ -87,6 +88,10 @@ function createCopyRow() {
 
 function deleteRow(id: number) {
   emit("deleteRow", id);
+}
+
+function clearRow(id: number) {
+  emit("clearRow", id);
 }
 
 function deleteSelectedRows() {
@@ -1154,6 +1159,15 @@ async function writeClipboardText(text: any) {
             >
               удаление
             </th>
+            <th
+              scope="col"
+              class="exclude-row px-6 py-3 border-2"
+              v-if="
+                user.username === 'Директор' || user.username === 'Горцуева'
+              "
+            >
+              очистить
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -1519,6 +1533,24 @@ async function writeClipboardText(text: any) {
                 class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
               >
                 <Icon class="text-red-600" name="ic:round-delete" size="18" />
+              </div>
+            </td>
+
+            <td
+              class="px-6 py-4 border-2"
+              v-if="
+                user.username === 'Директор' || user.username === 'Горцуева'
+              "
+            >
+              <div
+                @click="clearRow(row.id)"
+                class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+              >
+                <Icon
+                  class="text-red-600"
+                  name="i-ic-baseline-close"
+                  size="18"
+                />
               </div>
             </td>
             <div id="right"></div>

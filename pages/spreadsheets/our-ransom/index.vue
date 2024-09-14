@@ -76,6 +76,17 @@ async function deleteRow(id: number) {
   }
 }
 
+async function clearRow(id: number) {
+  let answer = confirm("Вы точно хотите очистить данную строку?");
+  if (answer) {
+    isLoading.value = true;
+    await storeRansom.clearRansomRow(id, "OurRansom");
+    filteredRows.value = await storeRansom.getRansomRowsOurRansom();
+    rows.value = filteredRows.value;
+    isLoading.value = false;
+  }
+}
+
 async function deleteSelectedRows(idArray: number[]) {
   let answer = confirm(
     `Вы точно хотите удалить данные строки? Количество записей: ${idArray.length}`
@@ -641,6 +652,14 @@ async function handlePaste() {
     rowData.value.productLink = "";
   }
 }
+
+function watchQuantity() {
+  if (rowData.value.quantity > 50) {
+    rowData.value.quantity = 50;
+  } else if (rowData.value.quantity < 1) {
+    rowData.value.quantity = 1;
+  }
+}
 </script>
 
 <template>
@@ -701,6 +720,7 @@ async function handlePaste() {
             :rows="filteredRows"
             :user="user"
             @delete-row="deleteRow"
+            @clear-row="clearRow"
             @open-modal="openModal"
             @delete-selected-rows="deleteSelectedRows"
             @update-delivery-rows="updateDeliveryRows"
@@ -964,7 +984,9 @@ async function handlePaste() {
                   type="number"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
                   min="1"
+                  max="50"
                   v-model="rowData.quantity"
+                  @input="watchQuantity"
                 />
               </div>
 
@@ -1100,6 +1122,7 @@ async function handlePaste() {
             :rows="filteredRows"
             :user="user"
             @delete-row="deleteRow"
+            @clear-row="clearRow"
             @open-modal="openModal"
             @delete-selected-rows="deleteSelectedRows"
             @update-delivery-rows="updateDeliveryRows"
@@ -1355,7 +1378,9 @@ async function handlePaste() {
                   type="number"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
                   min="1"
+                  max="50"
                   v-model="rowData.quantity"
+                  @input="watchQuantity"
                 />
               </div>
 

@@ -43,7 +43,7 @@ definePageMeta({
                 >Самостоятельно заказать в интернет-магазине</UIMainButton
               >
               <UIMainButton class="w-full" @click="router.push('order/accept-order')"
-                >Заказать через администратора</UIMainButton
+                >Заказать через личный кабинет</UIMainButton
               >
               <UIMainButton class="w-full" @click="router.push('/client/main')"
                 >Назад</UIMainButton

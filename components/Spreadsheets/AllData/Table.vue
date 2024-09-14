@@ -8,7 +8,7 @@ const props = defineProps({
   rows: { type: Array as PropType<IOurRansom[]>, required: true },
 });
 
-const showDeletedRows = ref(false);
+const showDeletedRows = ref(true);
 const perPage = ref(100);
 const currentPage = ref(1);
 const totalPages = computed(() =>
@@ -78,7 +78,7 @@ const nextPage = () => {
 </script>
 
 <template>
-  <div class="flex items-start flex-col max-lg:block mt-10 mb-5 px-10">
+  <div class="flex items-start flex-col max-lg:block mt-10 mb-5 px-10 max-sm:px-5">
     <div>
       <div
         class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5"

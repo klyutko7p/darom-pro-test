@@ -194,7 +194,7 @@ onMounted(async () => {
 
 definePageMeta({
   layout: false,
-  name: "Все данные: Наш Выкуп",
+  name: "Все данные",
 });
 
 const token = Cookies.get("token");

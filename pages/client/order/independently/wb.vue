@@ -5,13 +5,13 @@ const router = useRouter();
 const token = Cookies.get("token");
 let isLoading = ref(false);
 const selectedPVZClient = ref("");
-const address = ref(Cookies.get("addressCookie") || "");
+const address = ref(localStorage.getItem("addressData") || "");
 
 onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login");
   }
-  let isNotAsking = Cookies.get("isNotAskingWB");
+  let isNotAsking = localStorage.getItem("isNotAskingWB");
   if (isNotAsking) {
     router.push("/client/delivery?marketplace=wb");
   }
@@ -26,17 +26,13 @@ let isNotAskingWB = ref(false);
 const cookieExpires = 7 * 365 * 100;
 
 function saveAddress(address: string) {
-  Cookies.set("addressCookie", JSON.stringify(address), {
-    expires: cookieExpires,
-  });
+  localStorage.setItem("addressData", JSON.stringify(address));
   selectedPVZClient.value = address;
 }
 
 function skipWindow() {
   if (isNotAskingWB.value) {
-    Cookies.set("isNotAskingWB", JSON.stringify(true), {
-      expires: cookieExpires,
-    });
+    localStorage.setItem("isNotAskingWB", JSON.stringify(true));
   }
 
   router.push("/client/delivery?marketplace=wb");
@@ -57,7 +53,7 @@ function showModal() {
     <div v-if="token">
       <div>
         <div v-if="selectedPVZClient">
-          <div class="flex items-center justify-center flex-col py-56">
+          <div class="flex items-center justify-center flex-col h-screen">
             <UButton
               icon="i-mdi-package-variant-closed-plus"
               @click="showModal"
@@ -67,19 +63,7 @@ function showModal() {
               class="font-semibold text-left duration-200 w-full max-w-[500px]"
               :trailing="false"
               >Нажмите тут для подтверждения адреса пункта заказа
-              интернет-заказа</UButton
-            >
-            <h1 class="text-6xl my-16">ИЛИ</h1>
-            <UButton
-              @click="skipWindow"
-              target="_blank"
-              icon="i-solar-skip-next-bold"
-              size="xl"
-              color="pink"
-              variant="solid"
-              class="font-semibold duration-200 w-full max-w-[500px]"
-              :trailing="false"
-              >Пропустить</UButton
+              интернет-магазина</UButton
             >
             <div class="flex items-center gap-3 mt-7">
               <div>
@@ -121,7 +105,7 @@ function showModal() {
             </div>
             <div class="flex items-center justify-center">
               <UButton
-                @click="router.push('/client/delivery?marketplace=wb')"
+                @click="skipWindow()"
                 icon="i-octicon-tracked-by-closed-completed-16"
                 size="lg"
                 color="pink"

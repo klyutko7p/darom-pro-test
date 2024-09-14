@@ -392,7 +392,7 @@ let dateFilter = ref("issued");
 </script>
 
 <template>
-  <div class="w-screen px-10 mt-10" v-if="!isLoading">
+  <div class="w-screen px-10 max-sm:px-5 mt-10" v-if="!isLoading">
     <div class="flex items-center gap-3 mt-14 max-xl:mt-0">
       <h1 class="text-xl font-bold">Фильтры</h1>
       <Icon
@@ -483,7 +483,7 @@ let dateFilter = ref("issued");
             :options="uniqueOrderPVZ"
             :multiple="true"
             :close-on-select="true"
-            placeholder="Выберите ПВЗ"
+            placeholder="Выберите СЦ"
           />
         </div>
         <div

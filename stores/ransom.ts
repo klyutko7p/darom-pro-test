@@ -866,6 +866,28 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  async function clearRansomRow(id: number, flag: string) {
+    try {
+      let data = await useFetch("/api/ransom/clear-row", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id, flag}),
+      });
+      if (data.data.value === undefined) {
+        toast.success("Запись успешно очищена!");
+      } else {
+        console.log(data.data.value);
+        toast.error("Произошла ошибка");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function deleteIssuedRows(flag: string) {
     try {
       let data = await useFetch("/api/ransom/delete-issued-rows", {
@@ -1089,5 +1111,6 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsOurRansom,
     getRansomRowsForAdvanceReportOurRansom,
     getDeletedRansomRowsByPVZ,
+    clearRansomRow,
   };
 });

@@ -38,7 +38,7 @@ onMounted(async () => {
     isShowModal.value = true;
   }
 
-  pvzData.value = Cookies.get("addressCookie") || "";
+  pvzData.value = localStorage.getItem("addressData") || "";
   pvzData.value = pvzData.value.replace(/"/g, "");
 
   isLoading.value = true;
@@ -124,10 +124,10 @@ const pvzs = [
 ];
 
 function clearCookies() {
-  Cookies.remove("addressCookie");
-  Cookies.remove("isNotAskingOzon");
-  Cookies.remove("isNotAskingWB");
-  Cookies.remove("isNotAskingYM");
+  localStorage.removeItem("addressData");
+  localStorage.removeItem("isNotAskingOzon");
+  localStorage.removeItem("isNotAskingWB");
+  localStorage.removeItem("isNotAskingYM");
   router.push("/client/order/independently/ozon?change=true");
 }
 </script>

@@ -8,11 +8,11 @@ onMounted(async () => {
   selectedPVZClient.value = address.value;
 
   if (props.marketplace === "OZON") {
-    address.value = Cookies.get("addressCookie") || "";
+    address.value = localStorage.getItem("addressData") || "";
   } else if (props.marketplace === "WB") {
-    address.value = Cookies.get("addressCookie") || "";
+    address.value = localStorage.getItem("addressData") || "";
   } else if (props.marketplace === "YM") {
-    address.value = Cookies.get("addressCookie") || "";
+    address.value = localStorage.getItem("addressData") || "";
   }
 });
 
