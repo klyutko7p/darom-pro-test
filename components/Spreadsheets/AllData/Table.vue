@@ -52,7 +52,9 @@ function updateCurrentPageData() {
   if (showDeletedRows.value) {
     returnRows.value = props.rows.slice(startIndex, endIndex);
   } else {
-    returnRows.value = props.rows.filter((row) => !row.deleted).slice(startIndex, endIndex);
+    returnRows.value = props.rows
+      .filter((row) => !row.deleted)
+      .slice(startIndex, endIndex);
   }
 }
 
@@ -78,7 +80,9 @@ const nextPage = () => {
 </script>
 
 <template>
-  <div class="flex items-start flex-col max-lg:block mt-10 mb-5 px-10 max-sm:px-5">
+  <div
+    class="flex items-start flex-col max-lg:block mt-10 mb-5 px-10 max-sm:px-5"
+  >
     <div>
       <div
         class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5"
@@ -136,26 +140,6 @@ const nextPage = () => {
           <Icon class="duration-200" size="32" name="bi:filetype-xlsx" />
         </div>
       </UTooltip>
-    </div>
-    <div class="flex items-center gap-5 mt-10">
-      <div
-        v-if="!showDeletedRows"
-        v-auto-animate
-        @click="toggleShowDeletedRows"
-        class="flex items-center gap-2 w-[220px] bg-green-100 text-green-500 px-2 py-1 font-bold cursor-pointer duration-200 hover:opacity-50 rounded-xl"
-      >
-        <Icon name="fluent:eye-show-16-filled" size="24" />
-        <h1>Показать удаленное</h1>
-      </div>
-      <div
-        v-if="showDeletedRows"
-        v-auto-animate
-        @click="toggleShowDeletedRows"
-        class="flex items-center gap-2 w-[220px] bg-red-100 text-red-500 px-2 py-1 font-bold cursor-pointer duration-200 hover:opacity-50 rounded-xl"
-      >
-        <Icon name="fluent:eye-hide-20-filled" size="24" />
-        <h1>Скрыть удаленное</h1>
-      </div>
     </div>
   </div>
   <div v-if="returnRows.length" class="px-10">
@@ -708,9 +692,7 @@ const nextPage = () => {
 
   <div v-else>
     <NuxtLayout name="default">
-      <h1 class="text-2xl text-center mt-20">
-        Таблица в данный момент пуста
-      </h1>
+      <h1 class="text-2xl text-center mt-20">Таблица в данный момент пуста</h1>
     </NuxtLayout>
   </div>
 </template>
