@@ -101,7 +101,6 @@ export const useUsersStore = defineStore("users", () => {
   async function signOut() {
     const cookies = Object.keys(Cookies.get());
     cookies.forEach((cookie) => Cookies.remove(cookie));
-    localStorage.clear();
     userData = {} as User;
     router.push("/auth/login");
   }

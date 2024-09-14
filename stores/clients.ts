@@ -162,7 +162,6 @@ export const useClientsStore = defineStore("clients", () => {
   async function signOut() {
     const cookies = Object.keys(Cookies.get());
     cookies.forEach((cookie) => Cookies.remove(cookie));
-    localStorage.clear();
     userData = {} as Client;
     router.push("/auth/client/login");
   }
