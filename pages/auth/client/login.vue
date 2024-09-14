@@ -229,8 +229,8 @@ const formattedBlockDuration = computed(() =>
 );
 
 useSeoMeta({
-  title: "Авторизация клиента DAROM.PRO",
-  ogTitle: "Авторизация клиента DAROM.PRO",
+  title: "DAROM.PRO — Авторизация клиента",
+  ogTitle: "DAROM.PRO — Авторизация клиента",
   description:
     "Получите доступ к заказу из любых интернет-магазинов и свой личный кабинет клиента!",
   ogDescription:

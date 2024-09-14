@@ -119,8 +119,8 @@ const items = [
 ];
 
 useSeoMeta({
-  title: "DAROM.PRO",
-  ogTitle: "DAROM.PRO",
+  title: "DAROM.PRO — Доставка товаров",
+  ogTitle: "DAROM.PRO — Доставка товаров",
   description:
     "Доставка из интернет-магазинов WILDBERRIES, OZON, ЯНДЕКС МАРКЕТ И ДР. По всем вопросам и для оформления заказа звоните: +7(949)612-47-60",
   ogDescription:

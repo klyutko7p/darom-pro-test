@@ -130,11 +130,20 @@ function clearCookies() {
   localStorage.removeItem("isNotAskingYM");
   router.push("/client/order/independently/ozon?change=true");
 }
+
+useSeoMeta({
+  title: "DAROM.PRO — Личный кабинет",
+  ogTitle: "DAROM.PRO — Личный кабинет",
+  description:
+    "Авторизуйтесь и получите доступ к заказу из любых интернет-магазинов!",
+  ogDescription:
+    "Авторизуйтесь и получите доступ к заказу из любых интернет-магазинов!",
+});
 </script>
 
 <template>
   <Head>
-    <Title>Главная страница</Title>
+    <Title>Личный кабинет</Title>
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">
