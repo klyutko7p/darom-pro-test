@@ -372,7 +372,7 @@ function showModal(isShow: boolean) {
                 >
               </h1>
             </div>
-            <div class="flex items-center justify-between mt-7">
+            <div v-if="!link.startsWith('3')" class="flex items-center justify-between mt-7">
               <div
                 class="flex items-center max-sm:flex-col-reverse max-sm:justify-center gap-3 mt-3 bg-gray-50 p-3 shadow-inner rounded-xl"
               >

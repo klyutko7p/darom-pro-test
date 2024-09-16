@@ -361,6 +361,8 @@ function updateCurrentPageData() {
   }
 
   if (searchingQuery.value !== "") {
+    searchingQuery.value = searchingQuery.value
+      .replace(/\./g, "");
     returnRows.value = props.rows?.filter(
       (row) =>
         row.productName &&

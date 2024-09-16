@@ -195,10 +195,13 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
   if (filteredRows.value) {
     if (user.value.role === "SORTIROVKA") {
       const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
       filteredRows.value = filteredRows.value.filter((row) => {
-        const createdAt = new Date(row.created_at); 
+        const createdAt = new Date(row.created_at);
+        createdAt.setHours(0, 0, 0, 0); 
         const timeDiff = today - createdAt; 
-        const daysDiff = timeDiff / (1000 * 60 * 60 * 24); 
+        const daysDiff = timeDiff / (1000 * 60 * 60 * 24);
         return row.deliveredPVZ === null && daysDiff >= 2 && !row.deliveredSC;
       });
     } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {

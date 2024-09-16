@@ -219,14 +219,14 @@ watch([props.isShowModalValue], openModalEmit);
           <th
             scope="col"
             class="border-[1px] whitespace-nowrap px-2"
-            v-if="link?.startsWith('2') && rows.some((row) => row.deliveredSC)"
+            v-if="link?.startsWith('2')"
           >
             стоимость товаров
           </th>
           <th
             scope="col"
             class="border-[1px] whitespace-nowrap px-2"
-            v-if="link?.startsWith('1') && rows.some((row) => row.deliveredSC)"
+            v-if="link?.startsWith('1')"
           >
             стоимость товара
           </th>
@@ -323,13 +323,12 @@ watch([props.isShowModalValue], openModalEmit);
               (row.amountFromClient1 ||
                 row.amountFromClient1 === null ||
                 row.amountFromClient1 === 0) &&
-              !isDateGreaterThanReference(row.created_at) &&
-              rows.some((row) => row.deliveredSC)
+              !isDateGreaterThanReference(row.created_at) 
             "
             class="border-[1px]"
           >
             {{
-              row.deliveredSC ? Math.ceil(row.amountFromClient1 / 10) * 10 : ""
+              Math.ceil(row.amountFromClient1 / 10) * 10
             }}
           </td>
           <td
@@ -337,26 +336,24 @@ watch([props.isShowModalValue], openModalEmit);
               (row.amountFromClient1 ||
                 row.amountFromClient1 === null ||
                 row.amountFromClient1 === 0) &&
-              isDateGreaterThanReference(row.created_at) &&
-              rows.some((row) => row.deliveredSC)
+              isDateGreaterThanReference(row.created_at) 
             "
             class="border-[1px]"
           >
             {{
-              row.deliveredSC ? roundToNearestTen(row.amountFromClient1) : ""
+              roundToNearestTen(row.amountFromClient1)
             }}
           </td>
           <td
             v-if="
               (row.amountFromClient2 ||
                 row.amountFromClient2 === null ||
-                row.amountFromClient2 === 0) &&
-              rows.some((row) => row.deliveredSC)
+                row.amountFromClient2 === 0) 
             "
             class="border-[1px]"
           >
             {{
-              row.deliveredSC ? Math.ceil(row.amountFromClient2 / 10) * 10 : ""
+              Math.ceil(row.amountFromClient2 / 10) * 10
             }}
           </td>
           <td v-if="link?.startsWith('3')" class="border-[1px]">

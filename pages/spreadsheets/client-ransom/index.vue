@@ -138,7 +138,7 @@ async function createRow() {
   closeModal();
   filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
   rows.value = filteredRows.value;
-  isLoading.value = true;
+  isLoading.value = false;
 }
 
 async function createCopyRow(id: number) {
