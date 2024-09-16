@@ -159,7 +159,8 @@ function handleCheckboxChangeAll() {
     <div class="flex items-end justify-between mb-5">
       <div>
         <h1 class="text-xl max-sm:text-lg font-bold mb-3">
-          Строк в таблице: <span class="text-secondary-color">{{ totalRows }} шт.</span>
+          Строк в таблице:
+          <span class="text-secondary-color">{{ totalRows }} шт.</span>
         </h1>
       </div>
       <div class="flex items-end max-lg:mt-5 max-lg:justify-between gap-20">
@@ -379,7 +380,10 @@ function handleCheckboxChangeAll() {
                     {{ row.state }}
                   </h1>
                 </td>
-                <td v-if="row.state === 'Требуется ремонт'" class="border-[1px]">
+                <td
+                  v-if="row.state === 'Требуется ремонт'"
+                  class="border-[1px]"
+                >
                   <h1 class="mx-auto text-yellow-500">
                     {{ row.state }}
                   </h1>
@@ -401,6 +405,7 @@ function handleCheckboxChangeAll() {
               user.role === 'ADMINISTRATOR' ||
               user.username === 'Волошина' ||
               user.username === 'Шарафаненко' ||
+              user.username === 'Миллер' ||
               user.username === 'Горцуева' ||
               user.username === 'Директор' ||
               user.username === 'Власенкова'
@@ -436,6 +441,7 @@ function handleCheckboxChangeAll() {
               user.role === 'ADMINISTRATOR' ||
               user.username === 'Волошина' ||
               user.username === 'Шарафаненко' ||
+              user.username === 'Миллер' ||
               user.username === 'Горцуева' ||
               user.username === 'Директор' ||
               user.username === 'Власенкова'

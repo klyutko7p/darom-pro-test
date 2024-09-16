@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
+import { useToast } from "vue-toastification";
 const router = useRouter();
+
+const toast = useToast();
 
 const token = Cookies.get("token");
 let isLoading = ref(false);
 const selectedPVZClient = ref("");
-const address = ref(localStorage.getItem("addressData") || "");
+const address = ref("");
 
 onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login");
   }
+  address.value = localStorage.getItem("addressData") || "";
   let isNotAsking = localStorage.getItem("isNotAskingWB");
   if (isNotAsking) {
     router.push("/client/delivery?marketplace=wb");
@@ -42,6 +46,15 @@ let isShowModal = ref(false);
 
 function showModal() {
   isShowModal.value = true;
+}
+
+async function writeClipboardText(text: any) {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast.success("Вы успешно скопировали адрес");
+  } catch (error: any) {
+    console.error(error.message);
+  }
 }
 </script>
 
@@ -96,12 +109,37 @@ function showModal() {
           <div class="text-left px-3 pt-10 pb-10">
             <div>
               <h1 class="text-lg text-center mb-5">
-                При заказе на WILDBERRIES выберите пункт выдачи по этому адресу
+                При заказе на
+                <a
+                  class="underline font-bold text-[#ec208b]"
+                  target="_blank"
+                  href="https://www.wildberries.ru/"
+                  >WILDBERRIES</a
+                >
+                выберите пункт выдачи по этому адресу
               </h1>
-              <h1 class="italic text-sm font-bold bg-gray-100 p-3">
-                Ростовская обл, Матвеево-Курганский <br />
-                р-н, с. Ряженое, ул. Ленина 6
-              </h1>
+              <div
+                class="bg-gray-100 p-3 flex items-center justify-center flex-col"
+              >
+                <h1 class="italic text-sm font-bold">
+                  Ростовская обл, Матвеево-Курганский <br />
+                  р-н, с. Ряженое, ул. Ленина 6
+                </h1>
+                <UButton
+                  @click="
+                    writeClipboardText(
+                      'Ростовская обл, Матвеево-Курганский р-н, с. Ряженое, ул. Ленина 6'
+                    )
+                  "
+                  icon="i-material-symbols-content-copy"
+                  size="sm"
+                  color="pink"
+                  variant="solid"
+                  class="font-semibold duration-200 mt-3"
+                  :trailing="false"
+                  >Скопировать адрес</UButton
+                >
+              </div>
             </div>
             <div class="flex items-center justify-center">
               <UButton

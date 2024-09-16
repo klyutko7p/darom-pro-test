@@ -14,8 +14,10 @@ let rows = ref<Array<any>>([]);
 let copyRowsOurRansom = ref<Array<IOurRansom>>();
 let copyRowsClientRansom = ref<Array<IClientRansom>>();
 
-  function getAmountToBePaid(flag: string): number {
+function getAmountToBePaid(flag: string): number {
   let amountToPaid = 0;
+
+  let copyRows = rows.value.filter((row) => row.deliveredSC);
 
   const shouldRound = (value: any) => {
     const createdDate = new Date(value.created_at);
@@ -25,14 +27,16 @@ let copyRowsClientRansom = ref<Array<IClientRansom>>();
 
   const roundOrCeil = (num: number) => {
     const lastDigit = num % 10;
-    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
+    return lastDigit >= 5
+      ? Math.ceil(num / 10) * 10
+      : Math.floor(num / 10) * 10;
   };
 
   const ceilMath = (num: number) => {
-    return Math.ceil(num / 10) * 10
+    return Math.ceil(num / 10) * 10;
   };
 
-  rows.value.forEach((value: any) => {
+  copyRows.forEach((value: any) => {
     if (value.created_at) {
       const roundFunction = shouldRound(value) ? roundOrCeil : ceilMath;
       switch (flag) {
@@ -145,7 +149,7 @@ function getNumber(phoneNumberData: string) {
 }
 
 definePageMeta({
-  layout: "client",
+  layout: "client-no-pad",
 });
 
 function roundToNearestTen(num: number): number {
@@ -159,6 +163,11 @@ function roundToNearestTen(num: number): number {
 
 const token = Cookies.get("token");
 let value = ref("");
+
+let isShowModalValue = ref(false);
+function showModal(isShow: boolean) {
+  isShowModalValue.value = isShow;
+}
 </script>
 
 <template>
@@ -166,11 +175,11 @@ let value = ref("");
     <Title>Мои заказы</Title>
   </Head>
   <div v-if="!isLoading">
-    <div v-if="token" class="mt-10">
+    <div v-if="token" class="mt-10 w-screen px-10 max-sm:px-3">
       <div
-        class="flex items-center justify-between max-sm:flex-col-reverse max-sm:items-start"
+        class="flex items-center justify-between max-sm:flex-col-reverse max-sm:items-center"
       >
-        <div class="max-lg:p-3">
+        <div class="max-lg:p-3 w-full mt-5">
           <div class="mb-5 flex items-center gap-3">
             <h1 class="text-xl">
               Телефон: <span class="italic"> {{ user.phoneNumber }} </span>
@@ -180,10 +189,7 @@ let value = ref("");
           <h1 class="text-xl max-sm:text-base">
             Оставшаяся сумма к оплате:
             <span class="font-bold">
-              {{
-                getAmountToBePaid("NONE1") +
-                getAmountToBePaid("NONE2")
-              }}
+              {{ getAmountToBePaid("NONE1") + getAmountToBePaid("NONE2") }}
               руб.</span
             >
           </h1>
@@ -191,8 +197,7 @@ let value = ref("");
             Сумма к оплате на выдачу:
             <span class="font-bold"
               >{{
-                getAmountToBePaid("PVZ1") +
-                getAmountToBePaid("PVZ2")
+                getAmountToBePaid("PVZ1") + getAmountToBePaid("PVZ2")
               }}
               руб.</span
             >
@@ -211,20 +216,42 @@ let value = ref("");
             Показать полученные товары</UIMainButton
           >
         </div>
-        <div class="flex flex-col items-center gap-3 max-lg:items-start mt-3">
-          <CodeQR :value="value" class="max-w-[110px] max-h-[100px]" />
+        <div
+          class="flex items-center max-sm:flex-col-reverse max-sm:justify-center gap-3 mt-3 bg-gray-50 p-3 shadow-inner rounded-xl"
+        >
+          <h1 class="max-w-[240px] max-sm:text-center">
+            Покажите QR-код, чтобы получить заказ
+          </h1>
+          <CodeQR
+            :value="value"
+            class="max-w-[110px] max-h-[100px] max-sm:mx-auto"
+          />
         </div>
       </div>
 
-      <SpreadsheetsOrderTable :link="'1'" :rows="copyRowsOurRansom" :user="user" />
+      <SpreadsheetsOrderTable
+        :link="'1'"
+        :rows="copyRowsOurRansom"
+        :user="user"
+        @showModal="showModal"
+        :isShowModalValue="isShowModalValue"
+      />
       <div class="mt-16 mb-10">
-        <SpreadsheetsOrderTable :link="'2'" :rows="copyRowsClientRansom" :user="user" />
+        <SpreadsheetsOrderTable
+          :link="'2'"
+          :rows="copyRowsClientRansom"
+          :user="user"
+          @showModal="showModal"
+          :isShowModalValue="isShowModalValue"
+        />
       </div>
     </div>
   </div>
   <div v-else>
     <NuxtLayout name="default">
-      <UISpinner />
+      <div class="w-screen">
+        <UISpinner />
+      </div>
     </NuxtLayout>
   </div>
 </template>

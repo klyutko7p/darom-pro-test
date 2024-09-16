@@ -18,9 +18,13 @@ let isLoading = ref(false);
 let originallyRows = ref<Array<IOurRansom>>();
 let cells = ref<Array<Cell>>();
 let cellData = ref({} as Cell);
-const addressData = ref(localStorage.getItem("addressData") || "");
+const addressData = ref("");
 
 onMounted(async () => {
+  const addressItem = localStorage.getItem("addressData");
+  if (addressItem) {
+    addressData.value = JSON.parse(addressItem);
+  }
   const storedItems = localStorage.getItem("cardItems");
   if (storedItems) {
     items.value = JSON.parse(storedItems);
@@ -67,33 +71,13 @@ const handleError = (message: string) => {
   isLoading.value = false;
 };
 
-const fetchPriceInfo = async (url: string) => {
-  const priceInfoPromise = storeClients.fetchSitePrice(url);
-  const timeoutPromise = new Promise<never>((_, reject) => {
-    setTimeout(() => reject(new Error("Request timeout")), 10000);
-  });
-
-  try {
-    const priceInfo = await Promise.race([priceInfoPromise, timeoutPromise]);
-    if (priceInfo.message) {
-      priceSite.value = parseFloat(
-        priceInfo.message.split(" ")[0] + priceInfo.message.split(" ")[1]
-      );
-    } else {
-      handleError("Извините, мы не можем обработать цену товара.");
-    }
-  } catch {
-    handleError("Извините, мы не можем обработать цену товара.");
-  }
-};
-
 const parsingPage = async () => {
-  if (!urlToItem.value) {
+  if (!urlToItem.value && marketplace.value === "WB") {
     handleError("Добавьте ссылку товара для его добавления!");
     return;
   }
 
-  if (urlToItem.value.length <= 20) {
+  if (urlToItem.value.length <= 20 && marketplace.value === "WB") {
     handleError("Ссылка на товар недействительна!");
     return;
   }
@@ -102,6 +86,7 @@ const parsingPage = async () => {
 
   try {
     if (urlToItem.value.includes("wildberries") && marketplace.value === "WB") {
+      urlToItem.value = urlToItem.value.match(/https?:\/\/[^\s]+/)[0];
       const itemInfo = await storeClients.fetchSiteWB(urlToItem.value);
       if (itemInfo.error === "fetch failed" || !itemInfo[0]) {
         handleError("Извините, мы не можем сейчас обработать данные.");
@@ -130,14 +115,14 @@ const parsingPage = async () => {
         );
       }
       toast.success("Вы успешно добавили товар!");
-    } else if (urlToItem.value.includes("ozon") && marketplace.value === "OZ") {
-      let productId = urlToItem.value.split('/')[4]
-      const jsonString = await storeClients.fetchSiteOZ(productId);
-      const jsonMessage = JSON.parse(jsonString.message)
+    } else if (marketplace.value === "OZ") {
+      const jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
+      const jsonMessage = JSON.parse(jsonString.message);
       const parsedData = JSON.parse(jsonMessage.seo.script[0].innerHTML);
       productName.value = parsedData.name;
       priceSite.value = parsedData.offers.price;
       urlToImg.value = parsedData.image;
+      urlToItem.value = "https://www.ozon.ru/product/" + urlToItem.value;
       toast.success("Вы успешно добавили товар!");
     } else if (marketplace.value === "YM") {
       const info = await storeClients.fetchSiteYM(urlToItem.value);
@@ -350,13 +335,20 @@ const isOpenLastModal = ref(false);
 function showFirstModal() {
   isOpenFirstModal.value = true;
   isOpenSecondModal.value = false;
+  isOpenThirdModal.value = false;
   isOpenLastModal.value = false;
 }
 
 function showSecondModal() {
-  isOpenFirstModal.value = false;
-  isOpenSecondModal.value = true;
-  isOpenThirdModal.value = false;
+  if (address.value) {
+    isOpenFirstModal.value = false;
+    isOpenSecondModal.value = false;
+    isOpenThirdModal.value = true;
+  } else {
+    isOpenFirstModal.value = false;
+    isOpenSecondModal.value = true;
+    isOpenThirdModal.value = false;
+  }
 }
 
 function showThirdModal() {
@@ -364,6 +356,7 @@ function showThirdModal() {
   isOpenSecondModal.value = false;
   isOpenThirdModal.value = true;
   isOpenFourModal.value = false;
+  isOpenLastModal.value = false;
 }
 
 function showFourModal() {
@@ -374,6 +367,7 @@ function showFourModal() {
 }
 
 function showLastModal() {
+  isOpenThirdModal.value = false;
   isOpenFourModal.value = false;
   isOpenLastModal.value = true;
 }
@@ -458,9 +452,16 @@ function pasteToTextArea() {
           <template #header>
             <div class="flex items-center justify-between">
               <h3
+                v-if="!isOpenLastModal"
                 class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
               >
                 Заполните информацию
+              </h3>
+              <h3
+                v-if="isOpenLastModal"
+                class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+              >
+                Проверьте информацию
               </h3>
             </div>
           </template>
@@ -554,7 +555,89 @@ function pasteToTextArea() {
               </div>
             </div>
 
-            <div v-if="isOpenThirdModal" v-auto-animate>
+            <div v-if="isOpenThirdModal && marketplace === 'OZ'" v-auto-animate>
+              <div>
+                <label>Скопируйте артикул</label>
+              </div>
+              <label class="text-sm italic"
+                >предварительно выбрав верный размер и цвет на сайте</label
+              >
+              <div class="h-[44px]">
+                <UInput
+                  v-model="urlToItem"
+                  class="w-full mt-3"
+                  color="gray"
+                  variant="outline"
+                  size="sm"
+                  icon="i-ph-package-bold"
+                />
+              </div>
+              <div class="flex items-center justify-center mb-5">
+                <UButton
+                  size="2xs"
+                  class="font-bold"
+                  icon="i-material-symbols-add-link"
+                  @click="pasteToTextArea"
+                >
+                  ВСТАВИТЬ
+                </UButton>
+              </div>
+
+              <div class="flex justify-end gap-3" v-auto-animate>
+                <UButton
+                  v-if="!address"
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  @click="showSecondModal()"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                />
+                <UButton
+                  v-if="address"
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  @click="showFirstModal()"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                />
+                <UButton
+                  v-if="!urlToItem && items.length"
+                  @click="showLastModal()"
+                  class="font-bold"
+                  label="К ЗАКАЗУ"
+                  color="primary"
+                >
+                  <template #trailing>
+                    <UIcon
+                      name="i-heroicons-arrow-right-20-solid"
+                      class="w-5 h-5"
+                    />
+                  </template>
+                </UButton>
+                <UButton
+                  v-if="urlToItem"
+                  @click="showFourModal()"
+                  class="font-bold"
+                  label="ДАЛЕЕ"
+                  color="primary"
+                >
+                  <template #trailing>
+                    <UIcon
+                      name="i-heroicons-arrow-right-20-solid"
+                      class="w-5 h-5"
+                    />
+                  </template>
+                </UButton>
+              </div>
+            </div>
+
+            <div v-if="isOpenThirdModal && marketplace === 'WB'" v-auto-animate>
               <div>
                 <label>Скопируйте ссылку на товар</label>
               </div>
@@ -585,7 +668,7 @@ function pasteToTextArea() {
 
               <div class="flex justify-end gap-3" v-auto-animate>
                 <UButton
-                  v-if="!items.length"
+                  v-if="!address"
                   icon="i-heroicons-arrow-left-20-solid"
                   size="sm"
                   @click="showSecondModal()"
@@ -596,10 +679,10 @@ function pasteToTextArea() {
                   :trailing="false"
                 />
                 <UButton
-                  v-if="items.length"
+                  v-if="address"
                   icon="i-heroicons-arrow-left-20-solid"
                   size="sm"
-                  @click="showSecondModal()"
+                  @click="showFirstModal()"
                   class="font-bold"
                   color="primary"
                   variant="solid"
@@ -803,7 +886,7 @@ function pasteToTextArea() {
                 <UButton
                   icon="i-mdi-package-variant-closed-plus"
                   size="sm"
-                  @click="showFirstModal()"
+                  @click="showThirdModal()"
                   class="font-bold"
                   color="primary"
                   variant="solid"

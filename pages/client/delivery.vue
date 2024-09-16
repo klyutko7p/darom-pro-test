@@ -4,6 +4,7 @@ import { vAutoAnimate } from "@formkit/auto-animate";
 
 const storeClients = useClientsStore();
 const storeRansom = useRansomStore();
+const storeUsers = useUsersStore();
 const router = useRouter();
 const route = useRoute();
 const toast = useToast();
@@ -49,10 +50,19 @@ onMounted(async () => {
   isLoading.value = false;
   if (marketplaceData === "ozon") {
     marketplace.value = "Ozon";
+    isOpenFirstModal.value = false;
+    isOpenSecondModal.value = false;
+    showThirdModal();
   } else if (marketplaceData === "wb") {
     marketplace.value = "Wildberries";
+    isOpenFirstModal.value = false;
+    isOpenSecondModal.value = false;
+    showThirdModal();
   } else if (marketplaceData === "ym") {
     marketplace.value = "Яндекс Маркет";
+    isOpenFirstModal.value = false;
+    isOpenSecondModal.value = false;
+    showThirdModal();
   }
   await updateCells();
 });
@@ -163,15 +173,24 @@ const isOpenLastModal = ref(false);
 function showFirstModal() {
   isOpenFirstModal.value = true;
   isOpenSecondModal.value = false;
+  isOpenThirdModal.value = false;
+  isOpenLastModal.value = false;
 }
 
 function showSecondModal() {
-  isOpenFirstModal.value = false;
-  isOpenSecondModal.value = true;
-  isOpenThirdModal.value = false;
+  if (pvzData.value) {
+    isOpenFirstModal.value = false;
+    isOpenSecondModal.value = false;
+    isOpenThirdModal.value = true;
+  } else {
+    isOpenFirstModal.value = false;
+    isOpenSecondModal.value = true;
+    isOpenThirdModal.value = false;
+  }
 }
 
 function showThirdModal() {
+  isOpenFirstModal.value = false;
   isOpenSecondModal.value = false;
   isOpenThirdModal.value = true;
   isOpenLastModal.value = false;
@@ -248,18 +267,6 @@ const marketplaces = [
     marketplace: "Яндекс Маркет",
     name: "ЯНДЕКС МАРКЕТ",
   },
-  {
-    marketplace: "СДЕК",
-    name: "СДЕК",
-  },
-  {
-    marketplace: "Почта",
-    name: "ПОЧТА",
-  },
-  {
-    marketplace: "DNS",
-    name: "DNS",
-  },
 ];
 
 async function submitForm() {
@@ -292,13 +299,19 @@ async function submitForm() {
         rowData.value.fromName
       );
     }
+    
+    await storeUsers.sendMessageToEmployee(
+      "Выкуп Клиента: Darom.pro",
+      `Прикреплён новый штрих-код`,
+      "Волошина"
+    );
 
     localStorage.removeItem("fileName");
     localStorage.removeItem("marketplace");
 
     setTimeout(() => {
       router.push("/client/main");
-    }, 5000);
+    }, 3000);
   } catch (error) {
     console.error("Error while creating employee or handling files:", error);
   } finally {
@@ -331,9 +344,16 @@ async function submitForm() {
           <template #header>
             <div class="flex items-center justify-between">
               <h3
+                v-if="!isOpenLastModal"
                 class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
               >
                 Заполните информацию
+              </h3>
+              <h3
+                v-if="isOpenLastModal"
+                class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+              >
+                Проверьте информацию
               </h3>
             </div>
           </template>
@@ -461,9 +481,21 @@ async function submitForm() {
               </h1>
               <div class="mt-5 flex justify-end gap-3" v-auto-animate>
                 <UButton
+                  v-if="!pvzData"
                   icon="i-heroicons-arrow-left-20-solid"
                   size="sm"
                   @click="showSecondModal()"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                />
+                <UButton
+                  v-if="pvzData"
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  @click="showFirstModal()"
                   class="font-bold"
                   color="primary"
                   variant="solid"

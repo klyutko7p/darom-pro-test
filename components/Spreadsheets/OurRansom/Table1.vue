@@ -304,6 +304,7 @@ let returnRows = ref<Array<IOurRansom>>();
 let expiredRows = ref<Array<IOurRansom>>([]);
 let processingRows = ref<Array<IOurRansom>>([]);
 
+let searchingQuery = ref("");
 function updateCurrentPageData() {
   const startIndex = (currentPage.value - 1) * perPage.value;
   const endIndex = startIndex + perPage.value;
@@ -358,6 +359,34 @@ function updateCurrentPageData() {
     expiredRows.value = [];
     processingRows.value = [];
   }
+
+  if (searchingQuery.value !== "") {
+    returnRows.value = props.rows?.filter(
+      (row) =>
+        row.productName &&
+        row.productName
+          .toLowerCase()
+          .includes(searchingQuery.value.trim().toLowerCase()) &&
+        !row.deliveredPVZ &&
+        !row.deliveredSC
+    );
+    if (returnRows.value?.length === 0) {
+      returnRows.value = props.rows?.filter(
+        (row) =>
+          row.notation &&
+          row.notation
+            .toLowerCase()
+            .includes(searchingQuery.value.trim().toLowerCase()) &&
+          !row.deliveredPVZ &&
+          !row.deliveredSC
+      );
+    }
+    currentPage.value = 1;
+  } else {
+    returnRows.value = props.rows
+      ?.filter((row) => !row.deleted)
+      .slice(startIndex, endIndex);
+  }
 }
 
 function updateCurrentPageDataDeleted() {
@@ -380,7 +409,7 @@ function updateCurrentPageDataDeleted() {
 }
 
 watch(
-  [currentPage, totalRows, props.rows, returnRows.value],
+  [currentPage, totalRows, props.rows, returnRows.value, searchingQuery],
   updateCurrentPageData
 );
 
@@ -406,7 +435,7 @@ onMounted(async () => {
   showProcessingRows();
 
   if (props.user.role === "SORTIROVKA") {
-    perPage.value = totalRows.value;
+    perPage.value = 100;
     updateCurrentPageData();
   }
 
@@ -905,6 +934,27 @@ async function writeClipboardText(text: any) {
       </h1>
     </div>
 
+    <UInput
+      v-if="user.role === 'SORTIROVKA'"
+      v-model="searchingQuery"
+      name="searchingQuery"
+      placeholder="Поиск..."
+      class="max-w-[400px]"
+      icon="i-heroicons-magnifying-glass-20-solid"
+      autocomplete="off"
+      :ui="{ icon: { trailing: { pointer: '' } } }"
+    >
+      <template #trailing>
+        <UButton
+          v-show="searchingQuery !== ''"
+          color="gray"
+          variant="link"
+          icon="i-heroicons-x-mark-20-solid"
+          :padded="false"
+          @click="searchingQuery = ''"
+        />
+      </template>
+    </UInput>
     <div
       :class="{
         'overflow-x-auto max-h-[300px] overflow-y-auto': isOpenModalQR,
@@ -1065,7 +1115,9 @@ async function writeClipboardText(text: any) {
               scope="col"
               class="border-2"
               v-if="
-                user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'
+                (user.deliveredPVZ1 === 'READ' ||
+                  user.deliveredPVZ1 === 'WRITE') &&
+                user.role !== 'SORTIROVKA'
               "
             >
               доставлено на пвз
@@ -1369,7 +1421,9 @@ async function writeClipboardText(text: any) {
             <td
               class="border-2"
               v-if="
-                user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'
+                (user.deliveredPVZ1 === 'READ' ||
+                  user.deliveredPVZ1 === 'WRITE') &&
+                user.role !== 'SORTIROVKA'
               "
             >
               <h1 class="font-bold text-green-500">

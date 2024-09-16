@@ -17,6 +17,7 @@ onMounted(async () => {
   if (
     user.value.username === "Волошина" ||
     user.value.username === "Шарафаненко" ||
+    user.value.username === "Миллер" ||
     user.value.username === "Шведова" ||
     user.value.username === "Директор" ||
     user.value.username === "Горцуева"
@@ -83,7 +84,10 @@ function printPage() {
         >
           {{ row.id }}
         </h1>
-        <h1 v-if="row.pvz" class="text-6xl mt-2 text-center max-w-[500px] relative">
+        <h1
+          v-if="row.pvz"
+          class="text-6xl mt-2 text-center max-w-[500px] relative"
+        >
           {{ row.pvz.name }}
         </h1>
       </div>

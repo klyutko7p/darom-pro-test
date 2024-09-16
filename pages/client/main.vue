@@ -154,7 +154,7 @@ useSeoMeta({
           </div>
           <div class="flex flex-col gap-0">
             <span class="text-sm text-gray-400 font-semibold"
-              >Пункт выдачи</span
+              >Пункт выдачи заказов</span
             >
             <h1
               @click="clearCookies"

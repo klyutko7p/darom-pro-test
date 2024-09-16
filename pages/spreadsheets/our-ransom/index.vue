@@ -194,9 +194,13 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
 
   if (filteredRows.value) {
     if (user.value.role === "SORTIROVKA") {
-      filteredRows.value = filteredRows.value.filter(
-        (row) => row.deliveredPVZ === null
-      );
+      const today = new Date();
+      filteredRows.value = filteredRows.value.filter((row) => {
+        const createdAt = new Date(row.created_at); 
+        const timeDiff = today - createdAt; 
+        const daysDiff = timeDiff / (1000 * 60 * 60 * 24); 
+        return row.deliveredPVZ === null && daysDiff >= 2 && !row.deliveredSC;
+      });
     } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {
       let today = new Date().toLocaleDateString("ru-RU", {
         day: "2-digit",
@@ -263,7 +267,9 @@ onMounted(async () => {
   isLoading.value = false;
 
   originallyRows.value = await storeRansom.getRansomRowsForModalOurRansom();
-  await updateCells();
+  if (user.value.role !== "SORTIROVKA") {
+    await updateCells();
+  }
 
   const [pvzData, sortingCentersData, orderAccountsData] = await Promise.all([
     storePVZ.getPVZ(),
@@ -1116,7 +1122,6 @@ function watchQuantity() {
               </UIMainButton>
             </div>
           </div>
-
           <SpreadsheetsOurRansomTable1
             @update-delivery-row="updateDeliveryRow"
             :rows="filteredRows"

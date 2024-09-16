@@ -151,7 +151,10 @@ function showSettingsList() {
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
                 @click="showGoodsList"
                 v-if="
-                  user.username !== 'Шарафаненко' && user.username !== 'Косой' && user.username !== '+7'
+                  user.username !== 'Шарафаненко' &&
+                  user.username !== 'Миллер' &&
+                  user.username !== 'Косой' &&
+                  user.username !== '+7'
                 "
               >
                 <Icon
@@ -168,7 +171,8 @@ function showSettingsList() {
                 @click="showFinancesList"
                 v-if="
                   user.role !== 'SORTIROVKA' &&
-                  user.username !== 'Светлана1' && user.username !== 'Светлана2'
+                  user.username !== 'Светлана1' &&
+                  user.username !== 'Светлана2'
                 "
               >
                 <Icon
@@ -214,7 +218,8 @@ function showSettingsList() {
                   (user.dataDelivery === 'WRITE' &&
                     user.role !== 'ADMINISTRATOR' &&
                     user.role !== 'RMANAGER' &&
-                    user.username !== 'Светлана1' && user.username !== 'Светлана2')
+                    user.username !== 'Светлана1' &&
+                    user.username !== 'Светлана2')
                 "
               >
                 <Icon
@@ -234,6 +239,7 @@ function showSettingsList() {
                 v-if="
                   user.username === 'Волошина' ||
                   user.username === 'Шарафаненко' ||
+                  user.username === 'Миллер' ||
                   user.username === 'Шведова' ||
                   user.username === 'Директор' ||
                   user.username === 'Горцуева' ||
@@ -303,7 +309,8 @@ function showSettingsList() {
                 v-if="
                   user.dataOurRansom === 'READ' ||
                   (user.dataOurRansom === 'WRITE' &&
-                    user.username !== 'Светлана1' && user.username !== 'Светлана2')
+                    user.username !== 'Светлана1' &&
+                    user.username !== 'Светлана2')
                 "
               >
                 <Icon
@@ -339,7 +346,8 @@ function showSettingsList() {
                 v-if="
                   user.dataClientRansom === 'READ' ||
                   (user.dataClientRansom === 'WRITE' &&
-                    user.username !== 'Светлана1' && user.username !== 'Светлана2' &&
+                    user.username !== 'Светлана1' &&
+                    user.username !== 'Светлана2' &&
                     !user.username.includes('Горцуева'))
                 "
               >
@@ -378,7 +386,7 @@ function showSettingsList() {
                   (user.role === 'ADMIN' && user.username !== 'Светлана1') ||
                   user.role === 'ADMINISTRATOR' ||
                   user.role === 'PVZ' ||
-                  user.role === 'PPVZ' 
+                  user.role === 'PPVZ'
                 "
               >
                 <Icon
@@ -397,7 +405,7 @@ function showSettingsList() {
                   user.role === 'ADMIN' ||
                   user.role === 'ADMINISTRATOR' ||
                   user.role === 'PVZ' ||
-                  user.role === 'PPVZ' 
+                  user.role === 'PPVZ'
                 "
               >
                 <Icon
@@ -405,7 +413,9 @@ function showSettingsList() {
                   name="i-material-symbols-backup-table-rounded"
                   size="24"
                 />
-                <span class="flex-1 ms-3 whitespace-nowrap">Все данные: Наш Выкуп</span>
+                <span class="flex-1 ms-3 whitespace-nowrap"
+                  >Все данные: Наш Выкуп</span
+                >
               </div>
             </li>
           </ul>
@@ -432,7 +442,8 @@ function showSettingsList() {
                 @click="router.push('/balance')"
                 v-if="
                   (user.role === 'ADMIN' &&
-                    user.username !== 'Светлана1' && user.username !== 'Светлана2' &&
+                    user.username !== 'Светлана1' &&
+                    user.username !== 'Светлана2' &&
                     !user.username.includes('Горцуева')) ||
                   user.role === 'ADMINISTRATOR' ||
                   user.role === 'PVZ' ||
@@ -461,7 +472,8 @@ function showSettingsList() {
                 @click="router.push('/advance-report')"
                 v-if="
                   (user.role === 'ADMIN' &&
-                    user.username !== 'Светлана1' && user.username !== 'Светлана2') ||
+                    user.username !== 'Светлана1' &&
+                    user.username !== 'Светлана2') ||
                   user.role === 'DRIVER' ||
                   user.role === 'ADMINISTRATOR' ||
                   user.role === 'OFFICE' ||
@@ -549,6 +561,7 @@ function showSettingsList() {
                 v-if="
                   user.username === 'Волошина' ||
                   user.username === 'Шарафаненко' ||
+                  user.username === 'Миллер' ||
                   user.username === 'Шведова' ||
                   user.username === 'Директор' ||
                   user.username === 'Горцуева'
@@ -628,7 +641,8 @@ function showSettingsList() {
                   (user.dataDelivery === 'WRITE' &&
                     user.role !== 'ADMINISTRATOR' &&
                     user.role !== 'RMANAGER' &&
-                    user.username !== 'Светлана1' && user.username !== 'Светлана2')
+                    user.username !== 'Светлана1' &&
+                    user.username !== 'Светлана2')
                 "
               >
                 <Icon

@@ -26,7 +26,9 @@ function getAmountToBePaid(flag: string): number {
 
   const roundOrCeil = (num: number) => {
     const lastDigit = num % 10;
-    return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
+    return lastDigit >= 5
+      ? Math.ceil(num / 10) * 10
+      : Math.floor(num / 10) * 10;
   };
 
   const ceilMath = (num: number) => {
@@ -72,7 +74,9 @@ function getAmountToBePaid(flag: string): number {
 function getAmountFromMonthDelivery() {
   let amountToPaid = 0;
   const currentDate = new Date();
-  const thirtyDaysAgo = new Date(currentDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const thirtyDaysAgo = new Date(
+    currentDate.getTime() - 30 * 24 * 60 * 60 * 1000
+  );
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() + 1);
   if (typeof link === "string") {
     if (link.startsWith("3")) {
@@ -96,7 +100,9 @@ function getAmountFromMonthDelivery() {
 function getAmountFromMonthSorting() {
   let amountToPaid = 0;
   const currentDate = new Date();
-  const thirtyDaysAgo = new Date(currentDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const thirtyDaysAgo = new Date(
+    currentDate.getTime() - 30 * 24 * 60 * 60 * 1000
+  );
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() + 1);
   if (typeof link === "string") {
     if (link.startsWith("3")) {
@@ -122,7 +128,9 @@ let showReceivedItems = ref(true);
 
 function disableReceivedItems() {
   showReceivedItems.value = false;
-  copyRows.value = rows.value?.filter((value) => !value.issued && value.deleted === null);
+  copyRows.value = rows.value?.filter(
+    (value) => !value.issued && value.deleted === null
+  );
 }
 
 function enableReceivedItems() {
@@ -139,7 +147,7 @@ onMounted(async () => {
   if (window.location.href.includes("soft-praline-633324.netlify.app")) {
     window.location.href = `https://darom.pro${route.fullPath}`;
   }
-  
+
   isLoading.value = true;
   user.value = await storeUsers.getUser();
 
@@ -240,7 +248,9 @@ async function checkPaymentStatus(qrcId: string) {
 
   intervalId.value = setInterval(async () => {
     try {
-      let paymentData = (await storeQR.getPaymentStatusQR(qrcId)) as QRPaymentStatus;
+      let paymentData = (await storeQR.getPaymentStatusQR(
+        qrcId
+      )) as QRPaymentStatus;
 
       if (
         paymentData.Data &&
@@ -252,7 +262,7 @@ async function checkPaymentStatus(qrcId: string) {
 
         if (status === "Accepted") {
           toast.success("Оплата прошла успешно!");
-          await updateDeliveryRows()
+          await updateDeliveryRows();
           clearInterval(intervalId.value);
         } else if (status === "Rejected") {
           toast.error("Оплата была отклонена. Попробуйте ещё раз!");
@@ -273,6 +283,10 @@ async function checkPayment() {
 }
 
 let value = ref("");
+let isShowModalValue = ref(false);
+function showModal(isShow: boolean) {
+  isShowModalValue.value = isShow;
+}
 </script>
 
 <template>
@@ -281,78 +295,114 @@ let value = ref("");
   </Head>
   <div v-if="!isLoading">
     <div class="mt-5 max-lg:mt-0">
-      <div class="max-sm:px-3">
-        <div>
-          <h1 class="text-2xl overflow-auto">
-            Информация о заказе:
-            <span class="uppercase">{{ route.params.link }}</span>
-          </h1>
-          <div class="mb-5 flex items-center gap-3">
-            <h1 class="text-xl">
-              Телефон: <span class="italic"> {{ getNumber(phoneNumber) }} </span>
-            </h1>
-            <Icon name="material-symbols:contact-phone-rounded" size="24" />
-          </div>
-          <h1 class="text-xl" v-if="!link.startsWith('3') && !link.startsWith('2')">
-            Оставшаяся сумма к оплате:
-            <span class="font-bold"> {{ getAmountToBePaid("NONE1") }} руб.</span>
-          </h1>
-          <h1 class="text-xl" v-if="!link.startsWith('3') && !link.startsWith('1')">
-            Оставшаяся сумма к оплате:
-            <span class="font-bold"> {{ getAmountToBePaid("NONE2") }} руб.</span>
-          </h1>
-          <h1 class="text-xl" v-if="link.startsWith('3')">
-            Оставшаяся сумма к оплате:
-            <span class="font-bold">{{ getAmountToBePaid("NONE3") }} руб.</span>
-          </h1>
-          <div
-            v-if="link.startsWith('3') && getAmountToBePaid('NONE3') > 0"
-            class="flex items-center gap-5 mt-3 border-2 border-dashed border-black p-3 max-w-[450px]"
-          >
-            <CodeQR
-              :value="qrBody.Data?.payload"
-              class="max-w-[200px] max-h-[200px] mt-1"
-            />
-            <div class="text-center">
-              <h1 class="text-xl italic mb-1">
-                QR-код для оплаты <br />
-                за доставку
-              </h1>
-              <a
-                :href="qrBody.Data?.payload"
-                class="text-secondary-color underline font-bold"
-                >ССЫЛКА НА ОПЛАТУ</a
-              >
-            </div>
-          </div>
-          <h1 class="text-xl" v-if="!link.startsWith('3') && !link.startsWith('2')">
-            Сумма к оплате на выдачу:
-            <span class="font-bold">{{ getAmountToBePaid("PVZ1") }} руб.</span>
-          </h1>
-          <h1 class="text-xl" v-if="!link.startsWith('3') && !link.startsWith('1')">
-            Сумма к оплате на выдачу:
-            <span class="font-bold"
-              >{{ roundToNearestTen(getAmountToBePaid("PVZ2")) }} руб.</span
-            >
-          </h1>
-          <div class="flex items-center justify-between mt-7">
+      <div
+        class="flex items-center justify-between max-sm:flex-col-reverse max-sm:items-center mt-10 max-sm:mt-0 max-sm:px-5"
+      >
+        <div class="w-full">
+          <div class="flex items-center justify-between max-lg:flex-col-reverse max-lg:items-start max-lg:gap-5">
             <div>
-              <CodeQR :value="value" class="max-w-[110px] max-h-[100px]" />
+              <h1 class="text-2xl overflow-auto">Информация о заказе</h1>
+              <div class="mb-5 flex items-center gap-3">
+                <h1 class="text-xl">
+                  Телефон:
+                  <span class="italic"> {{ getNumber(phoneNumber) }} </span>
+                </h1>
+                <Icon name="material-symbols:contact-phone-rounded" size="24" />
+              </div>
+              <h1
+                class="text-xl"
+                v-if="!link.startsWith('3') && !link.startsWith('2')"
+              >
+                Оставшаяся сумма к оплате:
+                <span class="font-bold">
+                  {{ getAmountToBePaid("NONE1") }} руб.</span
+                >
+              </h1>
+              <h1
+                class="text-xl"
+                v-if="!link.startsWith('3') && !link.startsWith('1')"
+              >
+                Оставшаяся сумма к оплате:
+                <span class="font-bold">
+                  {{ getAmountToBePaid("NONE2") }} руб.</span
+                >
+              </h1>
+              <h1 class="text-xl" v-if="link.startsWith('3')">
+                Оставшаяся сумма к оплате:
+                <span class="font-bold"
+                  >{{ getAmountToBePaid("NONE3") }} руб.</span
+                >
+              </h1>
+              <div
+                v-if="link.startsWith('3') && getAmountToBePaid('NONE3') > 0"
+                class="flex items-center gap-5 mt-3 border-2 border-dashed border-black p-3 max-w-[450px]"
+              >
+                <CodeQR
+                  :value="qrBody.Data?.payload"
+                  class="max-w-[200px] max-h-[200px] mt-1"
+                />
+                <div class="text-center">
+                  <h1 class="text-xl italic mb-1">
+                    QR-код для оплаты <br />
+                    за доставку
+                  </h1>
+                  <a
+                    :href="qrBody.Data?.payload"
+                    class="text-secondary-color underline font-bold"
+                    >ССЫЛКА НА ОПЛАТУ</a
+                  >
+                </div>
+              </div>
+              <h1
+                class="text-xl"
+                v-if="!link.startsWith('3') && !link.startsWith('2')"
+              >
+                Сумма к оплате на выдачу:
+                <span class="font-bold"
+                  >{{ getAmountToBePaid("PVZ1") }} руб.</span
+                >
+              </h1>
+              <h1
+                class="text-xl"
+                v-if="!link.startsWith('3') && !link.startsWith('1')"
+              >
+                Сумма к оплате на выдачу:
+                <span class="font-bold"
+                  >{{ roundToNearestTen(getAmountToBePaid("PVZ2")) }} руб.</span
+                >
+              </h1>
             </div>
-            <div
-              class="text-xl max-sm:text-sm flex justify-end items-end flex-col gap-1"
-              v-if="link.startsWith('3')"
-            >
-              Сумма выкупа товаров за 30 дней
-              <br />
-              <h1>
-                Доставка =
-                <span class="font-bold">{{ getAmountFromMonthDelivery() }} руб.</span>
-              </h1>
-              <h1>
-                Сортировка =
-                <span class="font-bold">{{ getAmountFromMonthSorting() }} руб.</span>
-              </h1>
+            <div class="flex items-center justify-between mt-7">
+              <div
+                class="flex items-center max-sm:flex-col-reverse max-sm:justify-center gap-3 mt-3 bg-gray-50 p-3 shadow-inner rounded-xl"
+              >
+                <h1 class="max-w-[240px] max-sm:text-center">
+                  Покажите QR-код, чтобы получить заказ
+                </h1>
+                <CodeQR
+                  :value="value"
+                  class="max-w-[110px] max-h-[100px] max-sm:mx-auto"
+                />
+              </div>
+              <div
+                class="text-xl max-sm:text-sm flex justify-end items-end flex-col gap-1"
+                v-if="link.startsWith('3')"
+              >
+                Сумма выкупа товаров за 30 дней
+                <br />
+                <h1>
+                  Доставка =
+                  <span class="font-bold"
+                    >{{ getAmountFromMonthDelivery() }} руб.</span
+                  >
+                </h1>
+                <h1>
+                  Сортировка =
+                  <span class="font-bold"
+                    >{{ getAmountFromMonthSorting() }} руб.</span
+                  >
+                </h1>
+              </div>
             </div>
           </div>
           <UIMainButton
@@ -370,7 +420,13 @@ let value = ref("");
           >
         </div>
       </div>
-      <SpreadsheetsOrderTable :link="link" :rows="copyRows" :user="user" />
+      <SpreadsheetsOrderTable
+        @showModal="showModal"
+        :isShowModalValue="isShowModalValue"
+        :link="link"
+        :rows="copyRows"
+        :user="user"
+      />
     </div>
   </div>
   <div v-else>

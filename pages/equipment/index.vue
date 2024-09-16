@@ -24,19 +24,14 @@ onMounted(async () => {
   isLoading.value = true;
 
   try {
-    const [
-      currentUser,
-      equipmentStates,
-      equipments,
-      pvzList,
-      usersList,
-    ] = await Promise.all([
-      storeUsers.getUser(),
-      storeEquipments.getAllStateEquipments(),
-      storeEquipments.getEquipments(),
-      storePVZ.getAllPVZ(),
-      storeUsers.getUsers(),
-    ]);
+    const [currentUser, equipmentStates, equipments, pvzList, usersList] =
+      await Promise.all([
+        storeUsers.getUser(),
+        storeEquipments.getAllStateEquipments(),
+        storeEquipments.getEquipments(),
+        storePVZ.getAllPVZ(),
+        storeUsers.getUsers(),
+      ]);
 
     user.value = currentUser;
     allStateEquipments.value = equipmentStates;
@@ -128,7 +123,10 @@ const validationRules = [
 const storeFunctions = useFunctionsStore();
 
 async function createEquipmentRow() {
-  let isValid = storeFunctions.checkValidation(equipmentRowData.value, validationRules);
+  let isValid = storeFunctions.checkValidation(
+    equipmentRowData.value,
+    validationRules
+  );
   if (isValid) {
     isLoading.value = true;
     await storeEquipments.createEquipment(equipmentRowData.value);
@@ -142,7 +140,10 @@ async function createEquipmentRow() {
 }
 
 async function updateEquipmentRow() {
-  let isValid = storeFunctions.checkValidation(equipmentRowData.value, validationRules);
+  let isValid = storeFunctions.checkValidation(
+    equipmentRowData.value,
+    validationRules
+  );
   if (isValid) {
     isLoading.value = true;
     await storeEquipments.updateEquipment(equipmentRowData.value);
@@ -155,7 +156,11 @@ async function updateEquipmentRow() {
   }
 }
 
-async function notifyEmployees(subject: string, message: string, employees: string[]) {
+async function notifyEmployees(
+  subject: string,
+  message: string,
+  employees: string[]
+) {
   const filteredEmployees = employees.filter(
     (employee) => employee !== user.value.username
   );
@@ -182,7 +187,14 @@ async function updateStateRows(obj: any) {
     if (obj.flag === "RP") {
       const subject = "Статус оборудования: Darom.pro";
       const message = "У оборудования изменен статус на «Требуется ремонт»";
-      const employees = ["Директор", "Волошина", "Шарафаненко", "Шведова", "Горцуева"];
+      const employees = [
+        "Директор",
+        "Волошина",
+        "Шарафаненко",
+        "Миллер",
+        "Шведова",
+        "Горцуева",
+      ];
 
       await notifyEmployees(subject, message, employees);
     }
@@ -205,7 +217,11 @@ async function updatePVZRows(obj: any) {
   );
   if (answer) {
     isLoading.value = true;
-    await storeEquipments.updatePVZRows(obj.idArray, obj.transferPVZ, user.value.id);
+    await storeEquipments.updatePVZRows(
+      obj.idArray,
+      obj.transferPVZ,
+      user.value.id
+    );
     rows.value = await storeEquipments.getEquipments();
     if (rows.value) {
       handleFilteredRows(rows.value);
@@ -291,7 +307,10 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
 
           <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
             <template v-slot:icon-header>
-              <Icon size="24" name="material-symbols:perm-data-setting-outline-rounded" />
+              <Icon
+                size="24"
+                name="material-symbols:perm-data-setting-outline-rounded"
+              />
             </template>
             <template v-slot:header>
               <div class="custom-header" v-if="equipmentRowData.id">
@@ -342,16 +361,25 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
                 <UISaveModalButton @click="updateEquipmentRow"
                   >СОХРАНИТЬ</UISaveModalButton
                 >
-                <UIExitModalButton @click="closeModal">ЗАКРЫТЬ</UIExitModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >ЗАКРЫТЬ</UIExitModalButton
+                >
               </div>
               <div class="flex gap-3 items-center justify-center" v-else>
-                <UISaveModalButton @click="createEquipmentRow">СОЗДАТЬ</UISaveModalButton>
-                <UIExitModalButton @click="closeModal">ЗАКРЫТЬ</UIExitModalButton>
+                <UISaveModalButton @click="createEquipmentRow"
+                  >СОЗДАТЬ</UISaveModalButton
+                >
+                <UIExitModalButton @click="closeModal"
+                  >ЗАКРЫТЬ</UIExitModalButton
+                >
               </div>
             </template>
           </UINewModalEdit>
 
-          <UINewModalEdit v-show="isOpenModalReason" @close-modal="closeModalReason">
+          <UINewModalEdit
+            v-show="isOpenModalReason"
+            @close-modal="closeModalReason"
+          >
             <template v-slot:header>
               <div class="custom-header">
                 <h1>Списание оборудования</h1>
@@ -375,7 +403,9 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
                 <UISaveModalButton @click="updateDecommissionedRowsAccept"
                   >СПИСАТЬ</UISaveModalButton
                 >
-                <UIExitModalButton @click="closeModalReason">ЗАКРЫТЬ</UIExitModalButton>
+                <UIExitModalButton @click="closeModalReason"
+                  >ЗАКРЫТЬ</UIExitModalButton
+                >
               </div>
             </template>
           </UINewModalEdit>
@@ -417,7 +447,10 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
 
           <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
             <template v-slot:icon-header>
-              <Icon size="24" name="material-symbols:perm-data-setting-outline-rounded" />
+              <Icon
+                size="24"
+                name="material-symbols:perm-data-setting-outline-rounded"
+              />
             </template>
             <template v-slot:header>
               <div class="custom-header" v-if="equipmentRowData.id">
@@ -468,16 +501,25 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
                 <UISaveModalButton @click="updateEquipmentRow"
                   >СОХРАНИТЬ</UISaveModalButton
                 >
-                <UIExitModalButton @click="closeModal">ЗАКРЫТЬ</UIExitModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >ЗАКРЫТЬ</UIExitModalButton
+                >
               </div>
               <div class="flex gap-3 items-center justify-center" v-else>
-                <UISaveModalButton @click="createEquipmentRow">СОЗДАТЬ</UISaveModalButton>
-                <UIExitModalButton @click="closeModal">ЗАКРЫТЬ</UIExitModalButton>
+                <UISaveModalButton @click="createEquipmentRow"
+                  >СОЗДАТЬ</UISaveModalButton
+                >
+                <UIExitModalButton @click="closeModal"
+                  >ЗАКРЫТЬ</UIExitModalButton
+                >
               </div>
             </template>
           </UINewModalEdit>
 
-          <UINewModalEdit v-show="isOpenModalReason" @close-modal="closeModalReason">
+          <UINewModalEdit
+            v-show="isOpenModalReason"
+            @close-modal="closeModalReason"
+          >
             <template v-slot:header>
               <div class="custom-header">
                 <h1>Списание оборудования</h1>
@@ -501,7 +543,9 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
                 <UISaveModalButton @click="updateDecommissionedRowsAccept"
                   >СПИСАТЬ</UISaveModalButton
                 >
-                <UIExitModalButton @click="closeModalReason">ЗАКРЫТЬ</UIExitModalButton>
+                <UIExitModalButton @click="closeModalReason"
+                  >ЗАКРЫТЬ</UIExitModalButton
+                >
               </div>
             </template>
           </UINewModalEdit>
