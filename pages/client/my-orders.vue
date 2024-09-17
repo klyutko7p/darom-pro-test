@@ -168,6 +168,29 @@ let isShowModalValue = ref(false);
 function showModal(isShow: boolean) {
   isShowModalValue.value = isShow;
 }
+
+const pvzs = [
+  {
+    pvz: "ПВЗ_1",
+    name: "ул. Антропова 16",
+  },
+  {
+    pvz: "ПВЗ_3",
+    name: "ул. Палладина, 20",
+  },
+  {
+    pvz: "ПВЗ_4",
+    name: "ул. Нартова, 1",
+  },
+  {
+    pvz: "ППВЗ_5",
+    name: "ул. Дудинская, д. 4, кв. 7",
+  },
+  {
+    pvz: "ППВЗ_7",
+    name: "ул. Жебелева, д. 7",
+  },
+];
 </script>
 
 <template>
@@ -175,7 +198,7 @@ function showModal(isShow: boolean) {
     <Title>Мои заказы</Title>
   </Head>
   <div v-if="!isLoading">
-    <div v-if="token" class="mt-10 w-screen px-10 max-sm:px-3">
+    <div v-if="token" class="w-screen px-10 max-sm:px-3">
       <div
         class="flex items-center justify-between max-sm:flex-col-reverse max-sm:items-center"
       >
@@ -217,7 +240,7 @@ function showModal(isShow: boolean) {
           >
         </div>
         <div
-          class="flex items-center max-sm:flex-col-reverse max-sm:justify-center gap-3 mt-3 bg-gray-50 p-3 shadow-inner rounded-xl"
+          class="flex items-center max-sm:flex-col-reverse max-sm:justify-center gap-3 mt-3 bg-gray-50 p-3 shadow-xl border-[1px] rounded-xl"
         >
           <h1 class="max-w-[240px] max-sm:text-center">
             Покажите QR-код, чтобы получить заказ
@@ -229,21 +252,64 @@ function showModal(isShow: boolean) {
         </div>
       </div>
 
-      <SpreadsheetsOrderTable
-        :link="'1'"
-        :rows="copyRowsOurRansom"
-        :user="user"
-        @showModal="showModal"
-        :isShowModalValue="isShowModalValue"
-      />
-      <div class="mt-16 mb-10">
-        <SpreadsheetsOrderTable
-          :link="'2'"
-          :rows="copyRowsClientRansom"
-          :user="user"
-          @showModal="showModal"
-          :isShowModalValue="isShowModalValue"
-        />
+      <h1 class="mt-5 text-xl max-[330px]:text-lg">Оплата заказа при получении</h1>
+      <div v-for="pvz in pvzs" class="mt-5">
+        <div
+          class="border-[1px] shadow-xl rounded-lg bg-white max-sm:border-0 max-sm:shadow-none"
+          v-if="
+            copyRowsOurRansom?.filter((row) => row.dispatchPVZ === pvz.pvz)
+              .length
+          "
+        >
+          <div class="px-5 py-3 max-sm:px-0">
+            <div class="flex items-center mb-1 gap-3 text-gray-400">
+              <Icon name="i-heroicons-building-storefront-solid" size="24" />
+              <h1 class="text-sm font-semibold tracking-widest">
+                ПУНКТ ВЫДАЧИ ЗАКАЗОВ
+              </h1>
+            </div>
+            <h1>{{ pvz.name }}</h1>
+          </div>
+          <SpreadsheetsOrderTable
+            :link="'1'"
+            :rows="
+              copyRowsOurRansom?.filter((row) => row.dispatchPVZ === pvz.pvz)
+            "
+            :user="user"
+            @showModal="showModal"
+            :isShowModalValue="isShowModalValue"
+          />
+        </div>
+      </div>
+
+      <h1 class="mt-20 text-xl max-[330px]:text-lg">Самостоятельная оплата заказа</h1>
+      <div v-for="pvz in pvzs" class="mt-5">
+        <div
+          class="border-[1px] shadow-xl rounded-lg bg-white max-sm:border-0 max-sm:shadow-none"
+          v-if="
+            copyRowsClientRansom?.filter((row) => row.dispatchPVZ === pvz.pvz)
+              .length
+          "
+        >
+          <div class="px-5 py-3 max-sm:px-0">
+            <div class="flex items-center mb-1 gap-3 text-gray-400">
+              <Icon name="i-heroicons-building-storefront-solid" size="24" />
+              <h1 class="text-sm font-semibold tracking-widest">
+                ПУНКТ ВЫДАЧИ ЗАКАЗОВ
+              </h1>
+            </div>
+            <h1>{{ pvz.name }}</h1>
+          </div>
+          <SpreadsheetsOrderTable
+            :link="'2'"
+            :rows="
+              copyRowsClientRansom?.filter((row) => row.dispatchPVZ === pvz.pvz)
+            "
+            :user="user"
+            @showModal="showModal"
+            :isShowModalValue="isShowModalValue"
+          />
+        </div>
       </div>
     </div>
   </div>

@@ -2,7 +2,6 @@
 import type { PropType } from "vue";
 import { read, utils, writeFile } from "xlsx";
 import { vAutoAnimate } from "@formkit/auto-animate";
-
 const storeUsers = useUsersStore();
 
 const emit = defineEmits([
@@ -59,10 +58,11 @@ async function exportToExcel() {
 }
 
 interface RowData {
-  rowId: number;
+  id: number;
   amount: number;
   paid: Date | null | string | number;
   sorted: Date | null | string | number;
+  name: string;
 }
 
 const allSum: Ref<RowData[]> = ref([]);
@@ -79,14 +79,15 @@ const isChecked = (rowId: number): boolean => {
 const handleCheckboxChange = (row: IDelivery): void => {
   if (isChecked(row.id)) {
     checkedRows.value = checkedRows.value.filter((id) => id !== row.id);
-    allSum.value = allSum.value.filter((obj) => obj.rowId !== row.id);
+    allSum.value = allSum.value.filter((obj) => obj.id !== row.id);
   } else {
     checkedRows.value.push(row.id);
     allSum.value.push({
-      rowId: row.id,
+      id: row.id,
       amount: row.amountFromClient3,
       paid: row.paid,
       sorted: row.sorted,
+      name: row.name,
     });
   }
   getAllSum.value = allSum.value
@@ -155,7 +156,7 @@ function handleCheckboxChangeAll() {
     let arrayId = returnRows.value.map((row) => row.id);
     let arraySum = returnRows.value.map((row) => ({
       amount: row.amountFromClient3,
-      rowId: row.id,
+      id: row.id,
       paid: row.paid,
       sorted: row.sorted,
     }));
@@ -659,10 +660,13 @@ const items = [
       <div id="down"></div>
     </div>
 
-    <div v-if="checkedRows.length"
-      class="absolute z-40 top-44 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
+    <div
+      v-if="checkedRows.length"
+      class="absolute z-40 top-72 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
     >
-      <UButton class="font-bold" @click="isOpen = true">ПОКАЗАТЬ ДОСТУПНЫЕ ФУНКЦИИ</UButton>
+      <UButton class="font-bold" @click="isOpen = true"
+        >ПОКАЗАТЬ ДОСТУПНЫЕ ФУНКЦИИ</UButton
+      >
     </div>
   </div>
 
@@ -707,59 +711,10 @@ const items = [
             <tr>
               <th
                 scope="col"
-                class="border-[1px] py-1 px-3"
-                v-if="user.dataDelivery === 'WRITE'"
-              >
-                <input
-                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
-                  type="checkbox"
-                  v-model="isAllSelected"
-                  @change="handleCheckboxChangeAll()"
-                />
-              </th>
-              <th scope="col" class="border-[1px]">id</th>
-              <th
-                scope="col"
                 class="border-[1px]"
                 v-if="user.name3 === 'READ' || user.name3 === 'WRITE'"
               >
                 имя
-              </th>
-              <th
-                scope="col"
-                class="border-[1px]"
-                v-if="user.fromName3 === 'READ' || user.fromName3 === 'WRITE'"
-              >
-                телефон
-              </th>
-              <th
-                scope="col"
-                class="border-[1px]"
-                v-if="
-                  user.nameOfAction === 'READ' || user.nameOfAction === 'WRITE'
-                "
-              >
-                название
-              </th>
-              <th
-                scope="col"
-                class="border-[1px]"
-                v-if="
-                  user.purchaseOfGoods === 'READ' ||
-                  user.purchaseOfGoods === 'WRITE'
-                "
-              >
-                стоимость
-              </th>
-              <th
-                scope="col"
-                class="border-[1px]"
-                v-if="
-                  user.percentClient3 === 'READ' ||
-                  user.percentClient3 === 'WRITE'
-                "
-              >
-                %
               </th>
               <th
                 scope="col"
@@ -770,22 +725,6 @@ const items = [
                 "
               >
                 сумма
-              </th>
-              <th
-                scope="col"
-                class="border-[1px]"
-                v-if="
-                  user.dispatchPVZ3 === 'READ' || user.dispatchPVZ3 === 'WRITE'
-                "
-              >
-                ПВЗ
-              </th>
-              <th
-                scope="col"
-                class="border-[1px]"
-                v-if="user.orderPVZ3 === 'READ' || user.orderPVZ3 === 'WRITE'"
-              >
-                СЦ
               </th>
               <th
                 scope="col"
@@ -801,30 +740,6 @@ const items = [
               >
                 оплачено
               </th>
-              <th
-                scope="col"
-                class="border-[1px]"
-                v-if="
-                  user.additionally3 === 'READ' ||
-                  user.additionally3 === 'WRITE'
-                "
-              >
-                доп.
-              </th>
-              <th
-                scope="col"
-                class="border-[1px]"
-                v-if="user.profit3 === 'READ' || user.profit3 === 'WRITE'"
-              >
-                доход
-              </th>
-              <th
-                scope="col"
-                class="exclude-row border-[1px] px-1"
-                v-if="user.dataDelivery === 'WRITE' && user.role === 'ADMIN'"
-              >
-                удал.
-              </th>
             </tr>
           </thead>
           <tbody>
@@ -832,72 +747,13 @@ const items = [
             <tr
               :class="{ 'bg-orange-100': isChecked(row.id) }"
               class="border-b text-center text-sm"
-              v-for="row in returnRows"
+              v-for="row in allSum"
             >
               <td
-                v-if="user.dataDelivery === 'WRITE'"
-                class="border-[1px] underline text-secondary-color whitespace-nowrap uppercase overflow-hidden max-w-[200px]"
-              >
-                <input
-                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
-                  type="checkbox"
-                  :value="row.id"
-                  :checked="isChecked(row.id)"
-                  @change="handleCheckboxChange(row)"
-                />
-              </td>
-              <th scope="row" class="border-[1px]">
-                <NuxtLink
-                  target="_blank"
-                  class="cursor-pointer text-secondary-color hover:opacity-50 duration-200"
-                  :to="`/spreadsheets/record/3/${row.id}`"
-                >
-                  {{ row.id }}
-                </NuxtLink>
-              </th>
-              <td
                 v-if="user.name3 === 'READ' || user.name3 === 'WRITE'"
-                class="border-[1px] whitespace-nowrap"
+                class="border-[1px]"
               >
                 {{ row.name }}
-              </td>
-              <td
-                v-if="user.fromName3 === 'READ' || user.fromName3 === 'WRITE'"
-                class="border-[1px]"
-              >
-                <NuxtLink
-                  v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
-                  class="cursor-pointer font-bold text-secondary-color hover:opacity-50 duration-200"
-                  :to="`/phone/${row.fromName}`"
-                >
-                  {{ row.fromName }}
-                </NuxtLink>
-              </td>
-              <td
-                v-if="
-                  user.nameOfAction === 'READ' || user.nameOfAction === 'WRITE'
-                "
-                class="border-[1px]"
-              >
-                {{ row.nameOfAction }}
-              </td>
-              <td
-                class="border-[1px]"
-                v-if="
-                  user.purchaseOfGoods === 'READ' ||
-                  user.purchaseOfGoods === 'WRITE'
-                "
-              >
-                {{ row.purchaseOfGoods }}
-              </td>
-              <td
-                class="border-[1px]"
-                v-if="
-                  user.percentClient3 === 'READ' ||
-                  user.percentClient3 === 'WRITE'
-                "
-              >
-                {{ row.percentClient }}
               </td>
               <td
                 class="border-[1px]"
@@ -906,33 +762,12 @@ const items = [
                   user.amountFromClient3 === 'WRITE'
                 "
               >
-                {{ row.amountFromClient3 }}
-              </td>
-              <td
-                class="border-[1px]"
-                v-if="
-                  user.dispatchPVZ3 === 'READ' || user.dispatchPVZ3 === 'WRITE'
-                "
-              >
-                {{ row.dispatchPVZ }}
-              </td>
-              <td
-                class="border-[1px]"
-                v-if="user.orderPVZ3 === 'READ' || user.orderPVZ3 === 'WRITE'"
-              >
-                {{ row.orderPVZ }}
+                {{ row.amount }}
               </td>
               <td
                 class="border-[1px]"
                 v-if="user.sorted === 'READ' || user.sorted === 'WRITE'"
               >
-                <Icon
-                  @click="updateDeliveryRow(row, 'sorted')"
-                  v-if="!row.sorted && user.sorted === 'WRITE'"
-                  class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
-                  name="mdi:checkbox-multiple-marked-circle"
-                  size="32"
-                />
                 <h1 class="font-bold text-green-500">
                   {{
                     row.sorted ? storeUsers.getNormalizedDate(row.sorted) : ""
@@ -943,45 +778,9 @@ const items = [
                 class="border-[1px]"
                 v-if="user.paid === 'READ' || user.paid === 'WRITE'"
               >
-                <Icon
-                  @click="updateDeliveryRow(row, 'paid')"
-                  v-if="!row.paid && user.paid === 'WRITE'"
-                  class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
-                  name="mdi:checkbox-multiple-marked-circle"
-                  size="32"
-                />
                 <h1 class="font-bold text-green-500">
                   {{ row.paid ? storeUsers.getNormalizedDate(row.paid) : "" }}
                 </h1>
-              </td>
-              <td
-                class="border-[1px]"
-                v-if="
-                  user.additionally3 === 'READ' ||
-                  user.additionally3 === 'WRITE'
-                "
-              >
-                {{ row.additionally ? row.additionally : "–" }}
-              </td>
-              <td
-                class="border-[1px]"
-                v-if="
-                  user.profit3 === 'READ' ||
-                  (user.profit3 === 'WRITE' && user.username !== 'Волошина')
-                "
-              >
-                {{ row.profit3 }}
-              </td>
-              <td
-                class="border-[1px]"
-                v-if="user.dataDelivery === 'WRITE' && user.role === 'ADMIN'"
-              >
-                <div
-                  @click="deleteRow(row.id)"
-                  class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
-                >
-                  <Icon class="text-red-600" name="ic:round-delete" size="18" />
-                </div>
               </td>
               <div id="right"></div>
             </tr>

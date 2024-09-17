@@ -31,12 +31,12 @@ definePageMeta({
     <div v-if="token">
       <div>
         <div
-          class="bg-[#005df6] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200"
+          class="bg-[#0763f6cd] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200"
           @click="router.push('independently/ozon')"
         >
-          <img
-            src="@/assets/images/ozon.png"
-            class="max-w-[470px] max-sm:max-w-[300px]"
+        <img
+            src="@/assets/images/ozon-bg-1.png"
+            class="max-w-[170px] max-sm:max-w-[130px] shadow-2xl shadow-black rounded-full"
             alt=""
           />
         </div>

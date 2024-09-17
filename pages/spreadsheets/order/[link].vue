@@ -287,6 +287,29 @@ let isShowModalValue = ref(false);
 function showModal(isShow: boolean) {
   isShowModalValue.value = isShow;
 }
+
+const pvzs = [
+  {
+    pvz: "ПВЗ_1",
+    name: "ул. Антропова 16",
+  },
+  {
+    pvz: "ПВЗ_3",
+    name: "ул. Палладина, 20",
+  },
+  {
+    pvz: "ПВЗ_4",
+    name: "ул. Нартова, 1",
+  },
+  {
+    pvz: "ППВЗ_5",
+    name: "ул. Дудинская, д. 4, кв. 7",
+  },
+  {
+    pvz: "ППВЗ_7",
+    name: "ул. Жебелева, д. 7",
+  },
+];
 </script>
 
 <template>
@@ -296,10 +319,12 @@ function showModal(isShow: boolean) {
   <div v-if="!isLoading">
     <div class="mt-5 max-lg:mt-0">
       <div
-        class="flex items-center justify-between max-sm:flex-col-reverse max-sm:items-center mt-10 max-sm:mt-0 max-sm:px-5"
+        class="flex items-center justify-between max-sm:flex-col-reverse max-sm:items-center max-sm:mt-0 max-sm:px-5"
       >
         <div class="w-full">
-          <div class="flex items-center justify-between max-lg:flex-col-reverse max-lg:items-start max-lg:gap-5">
+          <div
+            class="flex items-center justify-between max-lg:flex-col-reverse max-lg:items-start max-lg:gap-5"
+          >
             <div>
               <h1 class="text-2xl overflow-auto">Информация о заказе</h1>
               <div class="mb-5 flex items-center gap-3">
@@ -310,7 +335,7 @@ function showModal(isShow: boolean) {
                 <Icon name="material-symbols:contact-phone-rounded" size="24" />
               </div>
               <h1
-                class="text-xl"
+                class="text-xl max-sm:text-base"
                 v-if="!link.startsWith('3') && !link.startsWith('2')"
               >
                 Оставшаяся сумма к оплате:
@@ -319,7 +344,7 @@ function showModal(isShow: boolean) {
                 >
               </h1>
               <h1
-                class="text-xl"
+                class="text-xl max-sm:text-base"
                 v-if="!link.startsWith('3') && !link.startsWith('1')"
               >
                 Оставшаяся сумма к оплате:
@@ -327,7 +352,7 @@ function showModal(isShow: boolean) {
                   {{ getAmountToBePaid("NONE2") }} руб.</span
                 >
               </h1>
-              <h1 class="text-xl" v-if="link.startsWith('3')">
+              <h1 class="text-xl max-sm:text-base" v-if="link.startsWith('3')">
                 Оставшаяся сумма к оплате:
                 <span class="font-bold"
                   >{{ getAmountToBePaid("NONE3") }} руб.</span
@@ -354,7 +379,7 @@ function showModal(isShow: boolean) {
                 </div>
               </div>
               <h1
-                class="text-xl"
+                class="text-xl max-sm:text-base"
                 v-if="!link.startsWith('3') && !link.startsWith('2')"
               >
                 Сумма к оплате на выдачу:
@@ -363,7 +388,7 @@ function showModal(isShow: boolean) {
                 >
               </h1>
               <h1
-                class="text-xl"
+                class="text-xl max-sm:text-base"
                 v-if="!link.startsWith('3') && !link.startsWith('1')"
               >
                 Сумма к оплате на выдачу:
@@ -372,7 +397,10 @@ function showModal(isShow: boolean) {
                 >
               </h1>
             </div>
-            <div v-if="!link.startsWith('3')" class="flex items-center justify-between mt-7">
+            <div
+              v-if="!link.startsWith('3')"
+              class="flex items-center justify-between mt-7"
+            >
               <div
                 class="flex items-center max-sm:flex-col-reverse max-sm:justify-center gap-3 mt-3 bg-gray-50 p-3 shadow-inner rounded-xl"
               >
@@ -420,13 +448,30 @@ function showModal(isShow: boolean) {
           >
         </div>
       </div>
-      <SpreadsheetsOrderTable
-        @showModal="showModal"
-        :isShowModalValue="isShowModalValue"
-        :link="link"
-        :rows="copyRows"
-        :user="user"
-      />
+
+      <div v-for="pvz in pvzs" class="mt-5">
+        <div
+          class="border-[1px] shadow-xl rounded-lg bg-white max-sm:border-0 max-sm:shadow-none"
+          v-if="copyRows?.filter((row) => row.dispatchPVZ === pvz.pvz).length"
+        >
+          <div class="px-5 py-3 max-sm:px-3">
+            <div class="flex items-center mb-1 gap-3 text-gray-400">
+              <Icon name="i-heroicons-building-storefront-solid" size="24" />
+              <h1 class="text-sm font-semibold tracking-widest">
+                ПУНКТ ВЫДАЧИ ЗАКАЗОВ
+              </h1>
+            </div>
+            <h1>{{ pvz.name }}</h1>
+          </div>
+          <SpreadsheetsOrderTable
+            :link="link"
+            :rows="copyRows?.filter((row) => row.dispatchPVZ === pvz.pvz)"
+            :user="user"
+            @showModal="showModal"
+            :isShowModalValue="isShowModalValue"
+          />
+        </div>
+      </div>
     </div>
   </div>
   <div v-else>

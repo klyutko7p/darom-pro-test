@@ -148,7 +148,7 @@ watch([props.isShowModalValue], openModalEmit);
   </h1>
   <div
     :class="{ 'overflow-x-hidden max-h-[100px]': isShowModalValue }"
-    class="relative mt-5 mb-10"
+    class="relative"
     v-if="rows"
   >
     <table
@@ -158,7 +158,7 @@ watch([props.isShowModalValue], openModalEmit);
       <thead
         class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
       >
-        <tr class="h-[30px]">
+        <tr class="h-[30px] max-sm:h-[50px]">
           <th scope="col" class="border-[1px]">номер</th>
           <th
             scope="col"
@@ -183,7 +183,7 @@ watch([props.isShowModalValue], openModalEmit);
           </th>
           <th
             scope="col"
-            class="border-[1px] whitespace-nowrap"
+            class="border-[1px]"
             v-if="link?.startsWith('1')"
           >
             ссылка товара
@@ -205,13 +205,6 @@ watch([props.isShowModalValue], openModalEmit);
           <th
             scope="col"
             class="border-[1px] whitespace-nowrap px-2"
-            v-if="link?.startsWith('1') || link?.startsWith('2')"
-          >
-            адрес доставки
-          </th>
-          <th
-            scope="col"
-            class="border-[1px] whitespace-nowrap px-2"
             v-if="link?.startsWith('2')"
           >
             количество товаров
@@ -227,14 +220,14 @@ watch([props.isShowModalValue], openModalEmit);
           </th>
           <th
             scope="col"
-            class="border-[1px] whitespace-nowrap px-2"
+            class="border-[1px]"
             v-if="link?.startsWith('2')"
           >
             стоимость товаров
           </th>
           <th
             scope="col"
-            class="border-[1px] whitespace-nowrap px-2"
+            class="border-[1px]"
             v-if="link?.startsWith('1')"
           >
             стоимость товара
@@ -255,7 +248,7 @@ watch([props.isShowModalValue], openModalEmit);
           <th scope="col" class="border-[1px]" v-if="link?.startsWith('3')">
             оплачено
           </th>
-          <th class="border-[1px] whitespace-nowrap px-2">Статус доставки</th>
+          <th class="border-[1px]">Статус доставки</th>
         </tr>
       </thead>
       <tbody>
@@ -296,30 +289,10 @@ watch([props.isShowModalValue], openModalEmit);
             {{ row.productLink }}
           </td>
           <td
-            v-if="link?.startsWith('2')"
-            class="border-[1px] whitespace-nowrap overflow-hidden px-3 max-w-[200px]"
-          >
-            {{
-              pvzs.find((pvz) => pvz.pvz === row.dispatchPVZ)?.name
-                ? pvzs.find((pvz) => pvz.pvz === row.dispatchPVZ)?.name
-                : "Не выбран"
-            }}
-          </td>
-          <td
             v-if="link?.startsWith('1') || link?.startsWith('2')"
             class="border-[1px] px-2 max-w-[220px]"
           >
             {{ row.productName }}
-          </td>
-          <td
-            v-if="link?.startsWith('1')"
-            class="border-[1px] whitespace-nowrap overflow-hidden px-3 max-w-[200px]"
-          >
-            {{
-              pvzs.find((pvz) => pvz.pvz === row.dispatchPVZ)?.name
-                ? pvzs.find((pvz) => pvz.pvz === row.dispatchPVZ)?.name
-                : "Не выбран"
-            }}
           </td>
           <td
             v-if="

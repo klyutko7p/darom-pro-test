@@ -52,6 +52,7 @@ async function writeClipboardText(text: any) {
   try {
     await navigator.clipboard.writeText(text);
     toast.success("Вы успешно скопировали адрес");
+    skipWindow()
   } catch (error: any) {
     console.error(error.message);
   }
@@ -131,6 +132,8 @@ async function writeClipboardText(text: any) {
                       'Ростовская обл, Матвеево-Курганский р-н, с. Ряженое, ул. Ленина 6'
                     )
                   "
+                  to="https://www.wildberries.ru/"
+                  target="_blank"
                   icon="i-material-symbols-content-copy"
                   size="sm"
                   color="pink"
