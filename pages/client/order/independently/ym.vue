@@ -103,19 +103,18 @@ async function writeClipboardText(text: any) {
         @close-modal="isShowModal = !isShowModal"
       >
         <template v-slot:icon-header> </template>
-        <template v-slot:header>Инструкция</template>
+        <template v-slot:header></template>
         <template v-slot:body>
           <div class="text-left px-3 pt-10 pb-10">
             <div>
               <h1 class="text-lg text-center mb-5">
-                При заказе на
+                Скопируйте адрес для заказа на
                 <a
                   class="underline font-bold text-[#f8cf02]"
                   target="_blank"
-                  href="https://www.wildberries.ru/"
+                  href="https://market.yandex.ru/"
                   >Яндекс Маркете</a
                 >
-                выберите пункт выдачи по этому адресу
               </h1>
               <div
                 class="bg-gray-100 p-3 flex items-center justify-center flex-col"
@@ -151,7 +150,7 @@ async function writeClipboardText(text: any) {
                 variant="solid"
                 class="font-semibold duration-200 mt-10"
                 :trailing="false"
-                >Сделано</UButton
+                >Готово</UButton
               >
             </div>
           </div>

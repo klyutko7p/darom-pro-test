@@ -191,6 +191,17 @@ const pvzs = [
     name: "ул. Жебелева, д. 7",
   },
 ];
+
+let isOpenQRModal = ref(false);
+function openQRModal() {
+  isOpenQRModal.value = true;
+  showModal(true)
+}
+
+function closeQRModal() {
+  isOpenQRModal.value = false;
+  showModal(false)
+}
 </script>
 
 <template>
@@ -240,7 +251,8 @@ const pvzs = [
           >
         </div>
         <div
-          class="flex items-center max-sm:flex-col-reverse max-sm:justify-center gap-3 mt-3 bg-gray-50 p-3 shadow-xl border-[1px] rounded-xl"
+          @click="openQRModal"
+          class="flex items-center max-sm:flex-col-reverse max-sm:justify-center gap-3 mt-3 bg-gray-50 p-3 shadow-xl border-[1px] rounded-xl hover:opacity-50 duration-200 cursor-pointer"
         >
           <h1 class="max-w-[240px] max-sm:text-center">
             Покажите QR-код, чтобы получить заказ
@@ -252,7 +264,7 @@ const pvzs = [
         </div>
       </div>
 
-      <h1 class="mt-5 text-xl max-[330px]:text-lg">Оплата заказа при получении</h1>
+      <h1 class="mt-5 text-xl max-[330px]:text-lg">Мои заказы</h1>
       <div v-for="pvz in pvzs" class="mt-5">
         <div
           class="border-[1px] shadow-xl rounded-lg bg-white max-sm:border-0 max-sm:shadow-none"
@@ -282,7 +294,7 @@ const pvzs = [
         </div>
       </div>
 
-      <h1 class="mt-20 text-xl max-[330px]:text-lg">Самостоятельная оплата заказа</h1>
+      <h1 class="mt-20 text-xl max-[330px]:text-lg">Мои доставки</h1>
       <div v-for="pvz in pvzs" class="mt-5">
         <div
           class="border-[1px] shadow-xl rounded-lg bg-white max-sm:border-0 max-sm:shadow-none"
@@ -311,6 +323,27 @@ const pvzs = [
           />
         </div>
       </div>
+
+      <UINewModalClient
+        v-show="isOpenQRModal"
+        @close-modal="closeQRModal"
+      >
+        <template v-slot:icon-header> </template>
+        <template v-slot:header></template>
+        <template v-slot:body>
+          <div
+            class="flex items-center flex-col-reverse justify-center gap-3 mt-3 bg-gray-50 p-3"
+          >
+            <h1 class="max-w-[240px] max-sm:text-center">
+              Покажите QR-код, чтобы получить заказ
+            </h1>
+            <CodeQR
+              :value="value"
+              class="max-w-[110px] max-h-[100px] max-sm:mx-auto"
+            />
+          </div>
+        </template>
+      </UINewModalClient>
     </div>
   </div>
   <div v-else>

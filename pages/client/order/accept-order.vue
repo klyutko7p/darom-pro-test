@@ -52,7 +52,7 @@ onMounted(async () => {
 });
 
 definePageMeta({
-  layout: "client",
+  layout: "client-no-pad",
 });
 
 let address = ref("");
@@ -426,6 +426,11 @@ function pasteToTextArea() {
     urlToItem.value = text;
   });
 }
+
+function changeMarketplace(marketplaceData: string) {
+  marketplace.value = marketplaceData;
+  showSecondModal();
+}
 </script>
 
 <template>
@@ -434,6 +439,38 @@ function pasteToTextArea() {
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">
+      <div v-if="isOpenFirstModal">
+        <div
+          class="bg-[#0763f6cd] w-screen flex items-center justify-center h-[430px] max-sm:h-[400px] cursor-pointer hover:opacity-70 duration-200"
+          @click="changeMarketplace('OZ')"
+        >
+          <img
+            src="@/assets/images/ozon-bg-1.png"
+            class="max-w-[170px] max-sm:max-w-[130px] shadow-2xl shadow-black rounded-full"
+            alt=""
+          />
+        </div>
+        <div
+          class="bg-gradient-to-r from-[#7c2570] via-[#bb3c95] to-[#ec208b] w-screen flex items-center justify-center h-[500px] max-sm:h-[400px] cursor-pointer hover:opacity-70 duration-200"
+          @click="changeMarketplace('WB')"
+        >
+          <img
+            src="@/assets/images/wb.png"
+            class="max-w-[470px] max-sm:max-w-[300px] z-[10]"
+            alt=""
+          />
+        </div>
+        <!-- <div
+          class="bg-[#f8cf02] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200"
+          @click="changeMarketplace('Яндекс Маркет')"
+        >
+          <img
+            src="@/assets/images/ym.png"
+            class="max-w-[470px] max-sm:max-w-[300px]"
+            alt=""
+          />
+        </div> -->
+      </div>
       <UModal
         :ui="{
           container: 'flex items-center justify-center text-center',
@@ -441,6 +478,7 @@ function pasteToTextArea() {
         v-auto-animate
         v-model="isOpen"
         prevent-close
+        v-if="!isOpenFirstModal"
       >
         <UCard
           v-auto-animate
@@ -467,57 +505,6 @@ function pasteToTextArea() {
           </template>
 
           <div v-auto-animate="{ easing: 'ease-out' }">
-            <div class="h-[120px]" v-if="isOpenFirstModal" v-auto-animate>
-              <label>Интернет-магазин</label>
-              <USelectMenu
-                value-attribute="marketplace"
-                option-attribute="name"
-                v-model="marketplace"
-                :options="marketplaces"
-                class="mt-3"
-              />
-              <div class="mt-5 flex justify-end gap-3" v-auto-animate>
-                <UButton
-                  icon="i-heroicons-arrow-left-20-solid"
-                  size="sm"
-                  class="font-bold"
-                  color="primary"
-                  variant="solid"
-                  label="НАЗАД"
-                  :trailing="false"
-                  @click="router.push('/client/main')"
-                />
-                <UButton
-                  @click="showSecondModal()"
-                  class="font-bold"
-                  label="ДАЛЕЕ"
-                  color="primary"
-                  v-if="marketplace && !items.length"
-                >
-                  <template #trailing>
-                    <UIcon
-                      name="i-heroicons-arrow-right-20-solid"
-                      class="w-5 h-5"
-                    />
-                  </template>
-                </UButton>
-                <UButton
-                  @click="showThirdModal()"
-                  class="font-bold"
-                  label="ДАЛЕЕ"
-                  color="primary"
-                  v-if="marketplace && items.length"
-                >
-                  <template #trailing>
-                    <UIcon
-                      name="i-heroicons-arrow-right-20-solid"
-                      class="w-5 h-5"
-                    />
-                  </template>
-                </UButton>
-              </div>
-            </div>
-
             <div class="h-[120px]" v-if="isOpenSecondModal" v-auto-animate>
               <label>Пункт выдачи заказов</label>
               <USelectMenu
@@ -689,6 +676,20 @@ function pasteToTextArea() {
                   label="НАЗАД"
                   :trailing="false"
                 />
+                <UButton
+                  v-if="!urlToItem && items.length"
+                  @click="showLastModal()"
+                  class="font-bold"
+                  label="К ЗАКАЗУ"
+                  color="primary"
+                >
+                  <template #trailing>
+                    <UIcon
+                      name="i-heroicons-arrow-right-20-solid"
+                      class="w-5 h-5"
+                    />
+                  </template>
+                </UButton>
                 <UButton
                   v-if="urlToItem"
                   @click="showFourModal()"
@@ -949,7 +950,7 @@ function pasteToTextArea() {
       </div>
     </div>
   </div>
-  <div v-else>
+  <div v-else class="w-screen">
     <NuxtLayout name="default">
       <UISpinner />
     </NuxtLayout>
