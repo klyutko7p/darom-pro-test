@@ -1010,8 +1010,8 @@ async function updateDeliveryRow(row: any) {
 }
 
 function clearLocalStorage() {
-  const addressData = localStorage.getItem("addressData"); 
-  localStorage.clear(); 
+  const addressData = localStorage.getItem("addressData");
+  localStorage.clear();
   if (addressData) {
     localStorage.setItem("addressData", addressData);
   }
@@ -1193,11 +1193,14 @@ let linkPhoto = ref("");
 async function handleFileChange(fileList: FileList) {
   isLoading.value = true;
   const selectedFile = fileList[0];
+  const randomDigits = Math.floor(10000 + Math.random() * 90000);
   const { data, error } = await supabase.storage
     .from("image")
-    .upload(`img-${selectedFile.name}`, selectedFile);
-  rowData.value.supportingDocuments = selectedFile.name;
-  linkPhoto.value = `https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/image/img-${selectedFile.name}`;
+    .upload(`img-${randomDigits + selectedFile.name}`, selectedFile);
+  rowData.value.supportingDocuments = randomDigits + selectedFile.name;
+  linkPhoto.value = `https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/image/img-${
+    randomDigits + selectedFile.name
+  }`;
   if (data) {
     toast.success("Фото успешно загружено");
   } else {
