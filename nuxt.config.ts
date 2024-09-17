@@ -170,6 +170,7 @@ export default defineNuxtConfig({
       description:
         "Лучший сервис для доставки товаров с Wildberries, Ozon, Яндекс Маркета и др.",
       theme_color: "#ff7d00",
+      background_color: "#000000",
       icons: [
         {
           src: "pwa-192x192.png",
