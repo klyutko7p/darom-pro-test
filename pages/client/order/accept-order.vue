@@ -246,7 +246,7 @@ async function getCellFromName() {
 
     if (row && row.length > 0) {
       if (row.some((r) => r.fromName !== row[0].fromName)) {
-        toast.warning("Было найдено несколько номеров. Впишите полный номер");
+        toast.warning("Было найдено несколько номеров");
       } else {
         item.value.fromName = row[0].fromName;
       }

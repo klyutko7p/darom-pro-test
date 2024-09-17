@@ -216,7 +216,11 @@ function saveFiltersToLocalStorage() {
 }
 
 function clearLocalStorage() {
-  localStorage.clear();
+  const addressData = localStorage.getItem("addressData"); 
+  localStorage.clear(); 
+  if (addressData) {
+    localStorage.setItem("addressData", addressData);
+  }
   selectedName.value = [];
   selectedFromName.value = [];
   selectedNameOfAction.value = [];

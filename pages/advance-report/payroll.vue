@@ -199,8 +199,13 @@ const options = [
   },
   { value: "Оплачено", label: "Оплачено" },
 ];
+
 function clearLocalStorage() {
-  localStorage.clear();
+  const addressData = localStorage.getItem("addressData"); 
+  localStorage.clear(); 
+  if (addressData) {
+    localStorage.setItem("addressData", addressData);
+  }
 }
 
 onUnmounted(() => {

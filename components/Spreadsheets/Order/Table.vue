@@ -159,38 +159,47 @@ watch([props.isShowModalValue], openModalEmit);
         class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
       >
         <tr class="h-[30px]">
+          <th scope="col" class="border-[1px]">номер</th>
           <th
             scope="col"
-            class="border-[1px] whitespace-nowrap px-2"
-            v-if="link?.startsWith('1') || link?.startsWith('2')"
-          >
-            оформление заказа
-          </th>
-          <th scope="col" class="border-[1px] px-2">номер</th>
-          <th
-            scope="col"
-            class="border-[1px] px-2"
+            class="border-[1px]"
             v-if="link?.startsWith('1') || link?.startsWith('2')"
           >
             ячейка
           </th>
-          <th scope="col" class="border-[1px] px-2" v-if="link?.startsWith('3')">
+          <th
+            scope="col"
+            class="border-[1px] px-2"
+            v-if="link?.startsWith('3')"
+          >
             имя
           </th>
-          <th scope="col" class="border-[1px] px-2" v-if="link?.startsWith('3')">
+          <th
+            scope="col"
+            class="border-[1px] px-2"
+            v-if="link?.startsWith('3')"
+          >
             название
           </th>
           <th
             scope="col"
-            class="border-[1px] px-2 whitespace-nowrap"
+            class="border-[1px] whitespace-nowrap"
             v-if="link?.startsWith('1')"
           >
             ссылка товара
           </th>
-          <th scope="col" class="border-[1px] px-20 whitespace-nowrap" v-if="link?.startsWith('1')">
+          <th
+            scope="col"
+            class="border-[1px] px-20 whitespace-nowrap"
+            v-if="link?.startsWith('1')"
+          >
             название товара
           </th>
-          <th scope="col" class="border-[1px] px-2" v-if="link?.startsWith('2')">
+          <th
+            scope="col"
+            class="border-[1px] px-2"
+            v-if="link?.startsWith('2')"
+          >
             маркетплейс
           </th>
           <th
@@ -256,12 +265,6 @@ watch([props.isShowModalValue], openModalEmit);
           v-for="(row, index) in rows"
           :key="index"
         >
-          <td
-            class="py-2 border-[1px]"
-            v-if="link?.startsWith('1') || link?.startsWith('2')"
-          >
-            {{ storeUsers.getNormalizedDate(row.created_at) }}
-          </td>
           <td class="border-[1px]">
             {{ index + 1 }}
           </td>
@@ -277,7 +280,7 @@ watch([props.isShowModalValue], openModalEmit);
           <td class="px-2 border-[1px]" v-if="link?.startsWith('3')">
             {{ row.nameOfAction }}
           </td>
-          <td v-if="link?.startsWith('1')" class="border-[1px] pr-3 pl-1">
+          <td v-if="link?.startsWith('1')" class="border-[1px] py-2 pr-3 pl-1">
             <NuxtLink
               target="_blank"
               class="cursor-pointer hover:opacity-50 duration-200 bg-secondary-color text-white rounded-sm px-2 py-1 font-bold"
@@ -323,38 +326,32 @@ watch([props.isShowModalValue], openModalEmit);
               (row.amountFromClient1 ||
                 row.amountFromClient1 === null ||
                 row.amountFromClient1 === 0) &&
-              !isDateGreaterThanReference(row.created_at) 
+              !isDateGreaterThanReference(row.created_at)
             "
             class="border-[1px]"
           >
-            {{
-              Math.ceil(row.amountFromClient1 / 10) * 10
-            }}
+            {{ Math.ceil(row.amountFromClient1 / 10) * 10 }}
           </td>
           <td
             v-if="
               (row.amountFromClient1 ||
                 row.amountFromClient1 === null ||
                 row.amountFromClient1 === 0) &&
-              isDateGreaterThanReference(row.created_at) 
+              isDateGreaterThanReference(row.created_at)
             "
             class="border-[1px]"
           >
-            {{
-              roundToNearestTen(row.amountFromClient1)
-            }}
+            {{ roundToNearestTen(row.amountFromClient1) }}
           </td>
           <td
             v-if="
-              (row.amountFromClient2 ||
-                row.amountFromClient2 === null ||
-                row.amountFromClient2 === 0) 
+              row.amountFromClient2 ||
+              row.amountFromClient2 === null ||
+              row.amountFromClient2 === 0
             "
             class="border-[1px]"
           >
-            {{
-              Math.ceil(row.amountFromClient2 / 10) * 10
-            }}
+            {{ Math.ceil(row.amountFromClient2 / 10) * 10 }}
           </td>
           <td v-if="link?.startsWith('3')" class="border-[1px]">
             {{ row.purchaseOfGoods }}
@@ -391,7 +388,15 @@ watch([props.isShowModalValue], openModalEmit);
             v-if="link?.startsWith('1') || link?.startsWith('2')"
           >
             <span
-              class="text-[12px] underline text-secondary-color font-semibold cursor-pointer hover:opacity-50 duration-200 whitespace-nowrap overflow-hidden px-3 max-w-[200px]"
+              :class="{
+                'text-secondary-color underline':
+                  getStatus(row) !== 'Товар доставлен на ПВЗ' &&
+                  getStatus(row) !== 'Товар выдан',
+                'text-green-500 underline':
+                  getStatus(row) === 'Товар доставлен на ПВЗ' ||
+                  getStatus(row) === 'Товар выдан',
+              }"
+              class="text-[14px] font-semibold cursor-pointer hover:opacity-50 duration-200 whitespace-nowrap overflow-hidden px-3 max-w-[200px]"
               @click="showRowStatus(row)"
             >
               {{ getStatus(row) }}
@@ -506,7 +511,7 @@ watch([props.isShowModalValue], openModalEmit);
           >
             <Icon name="i-line-md-uploading-loop" size="24" />
             <div class="flex items-start flex-col text-sm">
-              <h1 class="">Товар обрабатывается</h1>
+              <h1 class="">Заказ создан</h1>
               <h1>{{ storeUsers.getNormalizedDate(rowStatus.created_at) }}</h1>
             </div>
           </div>

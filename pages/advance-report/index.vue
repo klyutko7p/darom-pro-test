@@ -1010,7 +1010,11 @@ async function updateDeliveryRow(row: any) {
 }
 
 function clearLocalStorage() {
-  localStorage.clear();
+  const addressData = localStorage.getItem("addressData"); 
+  localStorage.clear(); 
+  if (addressData) {
+    localStorage.setItem("addressData", addressData);
+  }
 }
 
 onUnmounted(() => {

@@ -310,7 +310,11 @@ function saveFiltersToLocalStorage() {
 }
 
 function clearLocalStorage() {
-  localStorage.clear();
+  const addressData = localStorage.getItem("addressData"); 
+  localStorage.clear(); 
+  if (addressData) {
+    localStorage.setItem("addressData", addressData);
+  }
   selectedPVZ.value = [];
   selectedExpenditure.value = [];
   selectedTypeOfExpenditure.value = [];
