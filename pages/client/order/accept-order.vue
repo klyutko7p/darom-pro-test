@@ -636,7 +636,6 @@ function changeMarketplace(marketplaceData: string) {
                   v-model="urlToItem"
                   class="w-full mt-3"
                   color="gray"
-                  disabled
                   variant="outline"
                   size="sm"
                   icon="i-ph-package-bold"
