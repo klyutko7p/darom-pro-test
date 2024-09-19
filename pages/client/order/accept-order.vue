@@ -520,7 +520,7 @@ function changeMarketplace(marketplaceData: string) {
                     variant="solid"
                     class="font-semibold duration-200"
                     :trailing="false"
-                    >Понял</UButton
+                    >Понятно</UButton
                   >
                 </div>
               </div>
@@ -739,7 +739,12 @@ function changeMarketplace(marketplaceData: string) {
 
             <div v-if="isOpenThirdModal && marketplace === 'WB'" v-auto-animate>
               <div>
-                <label>Скопируйте ссылку на товар</label>
+                <label
+                  >Скопируйте
+                  <span class="text-red-500 font-semibold uppercase"
+                    >ссылку на товар</span
+                  >
+                </label>
               </div>
               <label class="text-sm italic"
                 >предварительно выбрав верный размер и цвет на сайте</label

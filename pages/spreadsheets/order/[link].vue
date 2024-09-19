@@ -449,7 +449,7 @@ const pvzs = [
         </div>
       </div>
 
-      <div v-for="pvz in pvzs" class="mt-5">
+      <div v-for="pvz in pvzs" class="mt-5" v-if="!link.startsWith('3')">
         <div
           class="border-[1px] shadow-xl rounded-lg bg-white max-sm:border-0 max-sm:shadow-none"
           v-if="copyRows?.filter((row) => row.dispatchPVZ === pvz.pvz).length"
@@ -471,6 +471,16 @@ const pvzs = [
             :isShowModalValue="isShowModalValue"
           />
         </div>
+      </div>
+
+      <div class="mt-5" v-if="link.startsWith('3')">
+        <SpreadsheetsOrderTable
+            :link="link"
+            :rows="copyRows"
+            :user="user"
+            @showModal="showModal"
+            :isShowModalValue="isShowModalValue"
+          />
       </div>
     </div>
   </div>
