@@ -463,8 +463,10 @@ async function parsePageByLink(itemData: IOurRansom) {
 
 async function submitForm() {
   try {
-    for (const item of items.value) {
-      await parsePageByLink(item);
+    if (route.query.card === "true") {
+      for (const item of items.value) {
+        await parsePageByLink(item);
+      }
     }
 
     await createOrder();
