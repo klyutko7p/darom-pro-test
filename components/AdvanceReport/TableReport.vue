@@ -365,7 +365,10 @@ function exportToExcel() {
 </script>
 <template>
   <div class="relative">
-    <div class="absolute top-[-65px] right-0">
+    <div
+      class="absolute top-[-65px] right-0 flex items-center gap-3"
+    >
+      <h1 class="text-sm italic">{{ company }}</h1>
       <UTooltip
         text="Скачать EXCEL"
         :shortcuts="['xlsx']"
