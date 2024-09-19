@@ -17,7 +17,7 @@ onMounted(async () => {
   }
   let isNotAsking = localStorage.getItem("isNotAskingOzon");
   if (isNotAsking) {
-    router.push("/client/delivery?marketplace=ozon");
+    router.push("/client/main");
   }
   selectedPVZClient.value = address.value;
 });

@@ -42,7 +42,7 @@ const uniqueTypeOfExpenditure = computed(() => {
     }
     return string;
   });
-  newArray = new Set(newArray)
+  newArray = new Set(newArray);
   return Array.from(newArray);
 });
 
@@ -58,6 +58,11 @@ function clearFields() {
   filterRows();
 }
 
+function setDateToStartOfDay(date: Date) {
+  date.setHours(0, 0, 1, 0);
+  return date;
+}
+
 const filterRows = async () => {
   filteredRows.value = props.rows?.slice();
   filteredRows.value = props.rows?.filter((row) => {
@@ -66,9 +71,11 @@ const filterRows = async () => {
         selectedTypeOfExpenditure.value.includes(row.typeOfExpenditure)) &&
       (!selectedType.value.length || selectedType.value.includes(row.type)) &&
       (!selected.value.start ||
-        new Date(row.date) >= new Date(selected.value.start)) &&
+        setDateToStartOfDay(new Date(row.date)) >=
+          setDateToStartOfDay(new Date(selected.value.start))) &&
       (!selected.value.end ||
-        new Date(row.date) <= new Date(selected.value.end))
+        setDateToStartOfDay(new Date(row.date)) <=
+          setDateToStartOfDay(new Date(selected.value.end)))
     );
   });
   emit("filtered-rows", [

@@ -8,6 +8,8 @@ function editMenu() {
 function signOut() {
   emits("signOut");
 }
+
+const router = useRouter();
 </script>
 <template>
   <div
@@ -19,7 +21,8 @@ function signOut() {
   <div v-auto-animate class="h-full overflow-y-auto">
     <div class="px-3 justify-between mb-10 pb-2">
       <h5
-        class="text-6xl max-[400px]:text-5xl text-center text-secondary-color font-bold uppercase dark:text-gray-400"
+        @click="router.push('/client/main'), editMenu()"
+        class="text-6xl  cursor-pointer  max-[400px]:text-5xl text-center text-secondary-color font-bold uppercase dark:text-gray-400"
       >
         DAROM.PRO
       </h5>

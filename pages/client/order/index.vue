@@ -44,7 +44,7 @@ definePageMeta({
                 class="w-full"
                 @click="router.push('order/independently')"
                 >заказать в интернет-магазине <br />
-                (озон, вб, ям и другие)</UIMainButton
+                (OZON, WB, ЯМ и другие)</UIMainButton
               >
               <UIMainButton
                 class="w-full"

@@ -29,7 +29,8 @@ let isShowInfo = ref(false);
           class="flex items-center px-3 justify-between mb-3 pb-2 border-b-[1px] border-black"
         >
           <h5
-            class="text-3xl text-secondary-color font-bold uppercase dark:text-gray-400"
+            @click="router.push('/client/main'), editMenu()"
+            class="text-3xl cursor-pointer text-secondary-color font-bold uppercase dark:text-gray-400"
           >
             DAROM.PRO
           </h5>
@@ -96,16 +97,17 @@ let isShowInfo = ref(false);
               <li>
                 <div
                   class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-                  @click="router.push('/client/order/accept-order?card=true'), editMenu()"
+                  @click="
+                    router.push('/client/order/accept-order?card=true'),
+                      editMenu()
+                  "
                 >
                   <Icon
                     class="text-gray-500 transition duration-75 group-hover:text-gray-900"
                     name="i-mdi-basket-check"
                     size="24"
                   />
-                  <span class="flex-1 ms-3 whitespace-nowrap"
-                    >Корзина</span
-                  >
+                  <span class="flex-1 ms-3 whitespace-nowrap">Корзина</span>
                 </div>
               </li>
               <li>

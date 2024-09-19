@@ -15,7 +15,7 @@ onMounted(async () => {
   address.value = localStorage.getItem("addressData") || "";
   let isNotAsking = localStorage.getItem("isNotAskingYM");
   if (isNotAsking) {
-    router.push("/client/delivery?marketplace=ym");
+    router.push("/client/main");
   }
   selectedPVZClient.value = address.value;
 });
