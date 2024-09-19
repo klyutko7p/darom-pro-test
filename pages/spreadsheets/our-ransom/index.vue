@@ -199,10 +199,17 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
 
       filteredRows.value = filteredRows.value.filter((row) => {
         const createdAt = new Date(row.created_at);
-        createdAt.setHours(0, 0, 0, 0); 
-        const timeDiff = today - createdAt; 
+        const deliveredSC = new Date(row.deliveredSC);
+        createdAt.setHours(0, 0, 0, 0);
+        deliveredSC.setHours(0, 0, 0, 0);
+        const timeDiff = today - createdAt;
         const daysDiff = timeDiff / (1000 * 60 * 60 * 24);
-        return row.deliveredPVZ === null && daysDiff >= 2 && !row.deliveredSC;
+        const deliveredSCTimeDif = deliveredSC - today;
+        return (
+          row.deliveredPVZ === null &&
+          daysDiff >= 2 &&
+          (deliveredSCTimeDif === 0 || !row.deliveredSC)
+        );
       });
     } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {
       let today = new Date().toLocaleDateString("ru-RU", {

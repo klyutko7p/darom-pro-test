@@ -360,28 +360,38 @@ function updateCurrentPageData() {
     processingRows.value = [];
   }
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   if (searchingQuery.value !== "") {
-    searchingQuery.value = searchingQuery.value
-      .replace(/\./g, "");
-    returnRows.value = props.rows?.filter(
-      (row) =>
+    searchingQuery.value = searchingQuery.value.replace(/\./g, "");
+    returnRows.value = props.rows?.filter((row) => {
+      const deliveredSC = new Date(row.deliveredSC);
+      deliveredSC.setHours(0, 0, 0, 0);
+      const deliveredSCTimeDif = deliveredSC - today;
+      return (
         row.productName &&
         row.productName
           .toLowerCase()
           .includes(searchingQuery.value.trim().toLowerCase()) &&
         !row.deliveredPVZ &&
-        !row.deliveredSC
-    );
+        (deliveredSCTimeDif === 0 || !row.deliveredSC)
+      );
+    });
     if (returnRows.value?.length === 0) {
-      returnRows.value = props.rows?.filter(
-        (row) =>
+      returnRows.value = props.rows?.filter((row) => {
+        const deliveredSC = new Date(row.deliveredSC);
+        deliveredSC.setHours(0, 0, 0, 0);
+        const deliveredSCTimeDif = deliveredSC - today;
+        return (
           row.notation &&
           row.notation
             .toLowerCase()
             .includes(searchingQuery.value.trim().toLowerCase()) &&
           !row.deliveredPVZ &&
-          !row.deliveredSC
-      );
+          (deliveredSCTimeDif === 0 || !row.deliveredSC)
+        );
+      });
     }
     currentPage.value = 1;
   } else {
