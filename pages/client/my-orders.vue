@@ -195,18 +195,18 @@ const pvzs = [
 let isOpenQRModal = ref(false);
 function openQRModal() {
   isOpenQRModal.value = true;
-  showModal(true)
+  showModal(true);
 }
 
 function closeQRModal() {
   isOpenQRModal.value = false;
-  showModal(false)
+  showModal(false);
 }
 </script>
 
 <template>
   <Head>
-    <Title>Мои заказы</Title>
+    <Title>Товары в пути</Title>
   </Head>
   <div v-if="!isLoading">
     <div v-if="token" class="w-screen px-10 max-sm:px-3">
@@ -264,7 +264,9 @@ function closeQRModal() {
         </div>
       </div>
 
-      <h1 class="mt-5 text-xl max-[330px]:text-lg">Мои заказы</h1>
+      <h1 class="mt-5 text-xl max-[330px]:text-lg">
+        Оформленные заказы через личный кабинет и администратора
+      </h1>
       <div v-for="pvz in pvzs" class="mt-5">
         <div
           class="border-[1px] shadow-xl rounded-lg bg-white max-sm:border-0 max-sm:shadow-none"
@@ -294,7 +296,10 @@ function closeQRModal() {
         </div>
       </div>
 
-      <h1 class="mt-20 text-xl max-[330px]:text-lg">Мои доставки</h1>
+      <h1 class="mt-20 text-xl max-[330px]:text-lg">
+        Оформленные заказы <br class="max-[380px]:block hidden" />
+        по штрих-коду (QR)
+      </h1>
       <div v-for="pvz in pvzs" class="mt-5">
         <div
           class="border-[1px] shadow-xl rounded-lg bg-white max-sm:border-0 max-sm:shadow-none"
@@ -324,10 +329,7 @@ function closeQRModal() {
         </div>
       </div>
 
-      <UINewModalClient
-        v-show="isOpenQRModal"
-        @close-modal="closeQRModal"
-      >
+      <UINewModalClient v-show="isOpenQRModal" @close-modal="closeQRModal">
         <template v-slot:icon-header> </template>
         <template v-slot:header></template>
         <template v-slot:body>
@@ -339,7 +341,7 @@ function closeQRModal() {
             </h1>
             <CodeQR
               :value="value"
-              class="max-w-[110px] max-h-[100px] max-sm:mx-auto"
+              class="max-w-[210px] max-h-[200px] max-sm:mx-auto"
             />
           </div>
         </template>

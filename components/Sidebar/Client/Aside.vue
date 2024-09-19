@@ -73,7 +73,8 @@ let isShowInfo = ref(false);
                     size="24"
                   />
                   <span class="flex-1 ms-3 whitespace-nowrap"
-                    >Доставить мой заказ</span
+                    >Оформить доставку заказа <br />
+                    по ШК (QR)</span
                   >
                 </div>
               </li>
@@ -87,7 +88,24 @@ let isShowInfo = ref(false);
                     name="i-material-symbols-shopping-cart"
                     size="24"
                   />
-                  <span class="flex-1 ms-3 whitespace-nowrap">Мои заказы</span>
+                  <span class="flex-1 ms-3 whitespace-nowrap"
+                    >Товары в пути</span
+                  >
+                </div>
+              </li>
+              <li>
+                <div
+                  class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
+                  @click="router.push('/client/order/accept-order?card=true'), editMenu()"
+                >
+                  <Icon
+                    class="text-gray-500 transition duration-75 group-hover:text-gray-900"
+                    name="i-mdi-basket-check"
+                    size="24"
+                  />
+                  <span class="flex-1 ms-3 whitespace-nowrap"
+                    >Корзина</span
+                  >
                 </div>
               </li>
               <li>

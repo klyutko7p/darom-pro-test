@@ -327,7 +327,7 @@ function changeMarketplace(marketplaceData: string) {
 
 <template>
   <Head>
-    <Title>Доставить мой заказ</Title>
+    <Title>Оформить доставку заказа по ШК (QR)</Title>
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">
@@ -623,10 +623,10 @@ function changeMarketplace(marketplaceData: string) {
               </h1>
               <UButton
                 @click="router.push('/client/my-orders')"
-                class="font-bold"
+                class="font-bold uppercase"
                 icon="i-material-symbols-shopping-cart"
                 size="xl"
-                >МОИ ЗАКАЗЫ</UButton
+                >Товары в пути</UButton
               >
             </div>
             <div class="flex items-center gap-3 max-sm:flex-col">

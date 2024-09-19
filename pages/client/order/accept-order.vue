@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
-import * as cheerio from "cheerio";
 import { useToast } from "vue-toastification";
 
 const toast = useToast();
@@ -30,6 +29,7 @@ onMounted(async () => {
     items.value = JSON.parse(storedItems);
   }
   if (route.query.card === "true") {
+    isOpenZeroModal.value = false;
     isOpenFirstModal.value = false;
     showLastModal();
   }
@@ -86,7 +86,6 @@ const parsingPage = async () => {
 
   try {
     if (urlToItem.value.includes("wildberries") && marketplace.value === "WB") {
-      urlToItem.value = urlToItem.value.match(/https?:\/\/[^\s]+/)[0];
       const itemInfo = await storeClients.fetchSiteWB(urlToItem.value);
       if (itemInfo.error === "fetch failed" || !itemInfo[0]) {
         handleError("Извините, мы не можем сейчас обработать данные.");
@@ -202,10 +201,11 @@ const createItem = async () => {
       marketplace: marketplace.value,
     };
 
+    getCellFromName();
+
     items.value.push(item.value);
     localStorage.setItem("cardItems", JSON.stringify(items.value));
 
-    getCellFromName();
     await updateCellStatus();
   } catch (error) {
     console.error("Failed to create item:", error);
@@ -326,11 +326,17 @@ function deleteItemFromOrder(productName: number) {
   }
   localStorage.setItem("cardItems", JSON.stringify(items.value));
 }
-const isOpenFirstModal = ref(true);
+const isOpenZeroModal = ref(true);
+const isOpenFirstModal = ref(false);
 const isOpenSecondModal = ref(false);
 const isOpenThirdModal = ref(false);
 const isOpenFourModal = ref(false);
 const isOpenLastModal = ref(false);
+
+function closeZeroModal() {
+  isOpenZeroModal.value = false;
+  isOpenFirstModal.value = true;
+}
 
 function showFirstModal() {
   isOpenFirstModal.value = true;
@@ -352,11 +358,20 @@ function showSecondModal() {
 }
 
 function showThirdModal() {
-  isOpenFirstModal.value = false;
-  isOpenSecondModal.value = false;
-  isOpenThirdModal.value = true;
-  isOpenFourModal.value = false;
-  isOpenLastModal.value = false;
+  if (route.query.card === "true") {
+    isOpenZeroModal.value = false;
+    isOpenFirstModal.value = true;
+    isOpenSecondModal.value = false;
+    isOpenThirdModal.value = false;
+    isOpenFourModal.value = false;
+    isOpenLastModal.value = false;
+  } else {
+    isOpenFirstModal.value = false;
+    isOpenSecondModal.value = false;
+    isOpenThirdModal.value = true;
+    isOpenFourModal.value = false;
+    isOpenLastModal.value = false;
+  }
 }
 
 function showFourModal() {
@@ -396,26 +411,66 @@ const people = [
   },
 ];
 
-const marketplaces = [
-  {
-    marketplace: "OZ",
-    name: "OZON",
-  },
-  {
-    marketplace: "WB",
-    name: "WILDBERRIES",
-  },
-  // {
-  //   marketplace: "Яндекс Маркет",
-  //   name: "ЯНДЕКС МАРКЕТ",
-  // },
-];
+async function parsePageByLink(itemData: IOurRansom) {
+  isLoading.value = true;
+
+  try {
+    if (itemData.productLink.includes("wildberries")) {
+      const itemInfo = await storeClients.fetchSiteWB(itemData.productLink);
+      if (itemInfo.error === "fetch failed" || !itemInfo[0]) {
+        handleError("Извините, мы не можем сейчас обработать данные.");
+        urlToItem.value = "";
+        return;
+      }
+
+      if (itemData.productLink.includes("size")) {
+        let sizeString = itemData.productLink.split("size=")[1];
+        itemData.priceSite = itemInfo[2].data.products[0].sizes.filter(
+          (size: any) => size.optionId == sizeString
+        )[0].price.product;
+        itemData.priceSite = Number(
+          itemData.priceSite
+            .toString()
+            .substring(0, itemData.priceSite.toString().length - 2)
+        );
+      } else {
+        itemData.priceSite =
+          itemInfo[2].data.products[0].sizes[0].price.product;
+        itemData.priceSite = Number(
+          itemData.priceSite
+            .toString()
+            .substring(0, itemData.priceSite.toString().length - 2)
+        );
+      }
+      toast.success("Цена успешно подтверждена");
+    } else if (itemData.productLink.includes("ozon")) {
+      let productId = itemData.productLink.split(
+        "https://www.ozon.ru/product/"
+      )[1];
+      const jsonString = await storeClients.fetchSiteOZ(productId);
+      const jsonMessage = JSON.parse(jsonString.message);
+      const parsedData = JSON.parse(jsonMessage.seo.script[0].innerHTML);
+      itemData.priceSite = +parsedData.offers.price;
+      toast.success("Цена успешно подтверждена");
+    } else if (marketplace.value === "YM") {
+      const info = await storeClients.fetchSiteYM(urlToItem.value);
+      console.log(info);
+    }
+  } finally {
+    isLoading.value = false;
+  }
+}
 
 async function submitForm() {
   try {
+    for (const item of items.value) {
+      await parsePageByLink(item);
+    }
+
     await createOrder();
   } catch (error) {
-    console.error("Error while creating employee or handling files:", error);
+    console.error("Ошибка при создании заказа или обработке данных:", error);
+    toast.error("Произошла ошибка при создании заказа");
   } finally {
     isLoading.value = false;
   }
@@ -424,6 +479,7 @@ async function submitForm() {
 function pasteToTextArea() {
   navigator.clipboard.readText().then((text) => {
     urlToItem.value = text;
+    urlToItem.value = urlToItem.value.match(/https?:\/\/[^\s]+/)[0];
   });
 }
 
@@ -439,6 +495,38 @@ function changeMarketplace(marketplaceData: string) {
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">
+      <div v-if="isOpenZeroModal">
+        <UINewModalEditNoPaddingSecond
+          v-show="isOpenZeroModal"
+          @close-modal="closeZeroModal"
+        >
+          <template v-slot:body>
+            <div class="flex items-center flex-col justify-center h-full gap-5">
+              <h1 class="font-semibold text-base max-sm:text-lg">
+                Заказать через личный кабинет
+                <span class="uppercase text-secondary-color">darom.pro</span>
+                можно <br />
+                из интернет-магазинов OZON и WILDBERRIES
+              </h1>
+              <div class="text-left px-3">
+                <div class="flex items-center justify-center">
+                  <UButton
+                    @click="closeZeroModal"
+                    icon="i-octicon-tracked-by-closed-completed-16"
+                    size="lg"
+                    color="orange"
+                    variant="solid"
+                    class="font-semibold duration-200"
+                    :trailing="false"
+                    >Понял</UButton
+                  >
+                </div>
+              </div>
+            </div>
+          </template>
+        </UINewModalEditNoPaddingSecond>
+      </div>
+
       <div v-if="isOpenFirstModal">
         <div
           class="bg-[#0763f6cd] w-screen flex items-center justify-center h-[430px] max-sm:h-[400px] cursor-pointer hover:opacity-70 duration-200"
@@ -478,7 +566,7 @@ function changeMarketplace(marketplaceData: string) {
         v-auto-animate
         v-model="isOpen"
         prevent-close
-        v-if="!isOpenFirstModal"
+        v-if="!isOpenFirstModal && !isOpenZeroModal"
       >
         <UCard
           v-auto-animate
@@ -501,6 +589,12 @@ function changeMarketplace(marketplaceData: string) {
               >
                 Проверьте информацию
               </h3>
+              <Icon
+                @click="router.push('/client/order')"
+                name="i-heroicons-x-mark-20-solid"
+                size="24"
+                class="cursor-pointer hover:text-secondary-color duration-200"
+              />
             </div>
           </template>
 
@@ -544,7 +638,12 @@ function changeMarketplace(marketplaceData: string) {
 
             <div v-if="isOpenThirdModal && marketplace === 'OZ'" v-auto-animate>
               <div>
-                <label>Скопируйте артикул</label>
+                <label
+                  >Скопируйте
+                  <span class="text-red-500 font-semibold uppercase"
+                    >артикул</span
+                  >
+                </label>
               </div>
               <label class="text-sm italic"
                 >предварительно выбрав верный размер и цвет на сайте</label
@@ -552,12 +651,24 @@ function changeMarketplace(marketplaceData: string) {
               <div class="h-[44px]">
                 <UInput
                   v-model="urlToItem"
-                  class="w-full mt-3"
-                  color="gray"
-                  variant="outline"
-                  size="sm"
+                  name="urlToItem"
+                  placeholder="Вставьте скопированный артикул товара"
                   icon="i-ph-package-bold"
-                />
+                  autocomplete="off"
+                  class="w-full mt-3"
+                  :ui="{ icon: { trailing: { pointer: '' } } }"
+                >
+                  <template #trailing>
+                    <UButton
+                      v-show="urlToItem !== ''"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      :padded="false"
+                      @click="urlToItem = ''"
+                    />
+                  </template>
+                </UInput>
               </div>
               <div class="flex items-center justify-center mb-5">
                 <UButton
@@ -634,12 +745,27 @@ function changeMarketplace(marketplaceData: string) {
               <div class="h-[44px]">
                 <UInput
                   v-model="urlToItem"
-                  class="w-full mt-3"
+                  name="urlToItem"
+                  icon="i-ph-package-bold"
+                  disabled
+                  placeholder="Вставьте скопированную ссылку на товар"
                   color="gray"
                   variant="outline"
-                  size="sm"
-                  icon="i-ph-package-bold"
-                />
+                  autocomplete="off"
+                  class="w-full mt-3"
+                  :ui="{ icon: { trailing: { pointer: '' } } }"
+                >
+                  <template #trailing>
+                    <UButton
+                      v-show="urlToItem !== ''"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      :padded="false"
+                      @click="urlToItem = ''"
+                    />
+                  </template>
+                </UInput>
               </div>
               <div class="flex items-center justify-center mb-5">
                 <UButton
@@ -879,10 +1005,17 @@ function changeMarketplace(marketplaceData: string) {
                   Корзина пуста! Добавьте товары в заказ.
                 </h1>
               </div>
-              <div
-                class="mt-5 flex justify-end gap-3 max-[440px]:flex-col"
-                v-auto-animate
-              >
+              <div class="mt-5 flex justify-end gap-3 flex-col" v-auto-animate>
+                <UButton
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  @click="showFirstModal()"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                />
                 <UButton
                   icon="i-mdi-package-variant-closed-plus"
                   size="sm"
@@ -938,10 +1071,10 @@ function changeMarketplace(marketplaceData: string) {
               </h1>
               <UButton
                 @click="router.push('/client/my-orders')"
-                class="font-bold"
+                class="font-bold uppercase"
                 icon="i-material-symbols-shopping-cart"
                 size="xl"
-                >МОИ ЗАКАЗЫ</UButton
+                >Товары в пути</UButton
               >
             </div>
           </div>

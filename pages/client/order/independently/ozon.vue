@@ -48,7 +48,8 @@ function skipWindow() {
     localStorage.setItem("isNotAskingOzon", JSON.stringify(true));
   }
 
-  router.push("/client/delivery?marketplace=ozon");
+  toast.success("Вы успешно назначили адрес!");
+  router.push("/client/main");
 }
 </script>
 
@@ -71,7 +72,8 @@ function skipWindow() {
               variant="solid"
               class="font-semibold duration-200 w-full max-w-[500px]"
               :trailing="false"
-              >Нажмите тут для подтверждения адреса пункта заказа интернет-заказа</UButton
+              >Нажмите тут для подтверждения адреса пункта заказа
+              интернет-заказа</UButton
             >
             <div class="flex items-center gap-3 mt-7">
               <div>

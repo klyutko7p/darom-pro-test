@@ -39,7 +39,8 @@ function skipWindow() {
     localStorage.setItem("isNotAskingWB", JSON.stringify(true));
   }
 
-  router.push("/client/delivery?marketplace=wb");
+  toast.success("Вы успешно назначили адрес!")
+  router.push("/client/main");
 }
 
 let isShowModal = ref(false);
@@ -51,7 +52,6 @@ function showModal() {
 async function writeClipboardText(text: any) {
   try {
     await navigator.clipboard.writeText(text);
-    toast.success("Вы успешно скопировали адрес");
     skipWindow()
   } catch (error: any) {
     console.error(error.message);
