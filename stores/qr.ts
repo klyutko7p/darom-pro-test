@@ -4,6 +4,7 @@ import { useToast } from "vue-toastification";
 const toast = useToast();
 
 export const useQRStore = defineStore("qr", () => {
+
   async function createQRCode(amount: number, notation: string) {
     try {
       let { data } = await useFetch("/api/qr/create-dynamic-qr", {
@@ -12,6 +13,23 @@ export const useQRStore = defineStore("qr", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ amount, notation }),
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function createStaticQRCode(notation: string) {
+    try {
+      let { data } = await useFetch("/api/qr/create-static-qr", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ notation }),
       });
       return data.value;
     } catch (error) {
@@ -55,5 +73,5 @@ export const useQRStore = defineStore("qr", () => {
     }
   }
 
-  return { createQRCode, getQRCode, getPaymentStatusQR };
+  return { createStaticQRCode, createQRCode, getQRCode, getPaymentStatusQR };
 });

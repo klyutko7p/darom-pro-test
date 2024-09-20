@@ -122,10 +122,19 @@ function updateCurrentPageData() {
       (!props.type || props.type.includes(row.type))
   );
 
+  let plusBalanceArr = [];
   if (props.company === "Darom.pro" || props.company === "Все") {
     rowsOnlineArr.value = props.rowsOurRansom.filter(
       (row: IOurRansom) =>
         row.issued !== null &&
+        (!props.selected.start ||
+          new Date(row.issued) >= new Date(newStartingDate)) &&
+        (!props.selected.end || new Date(row.issued) <= new Date(newEndDate))
+    );
+
+    plusBalanceArr = rowsBalanceArr.value?.filter(
+      (row: IBalance) =>
+        row.notation === "Вывод дохода" &&
         (!props.selected.start ||
           new Date(row.issued) >= new Date(newStartingDate)) &&
         (!props.selected.end || new Date(row.issued) <= new Date(newEndDate))
@@ -162,6 +171,12 @@ function updateCurrentPageData() {
     rowsOnlineArr.value?.forEach((row) => {
       if (!isNaN(receiptsByPVZ[row.dispatchPVZ])) {
         receiptsByPVZ[row.dispatchPVZ] += calculateValue(row);
+      }
+    });
+
+    plusBalanceArr?.forEach((row) => {
+      if (!isNaN(expenditureByPVZ[row.pvz])) {
+        expenditureByPVZ[row.pvz] += parseFloat(row.sum);
       }
     });
 
@@ -286,6 +301,18 @@ function getTotal() {
     (row: IOurRansom) => row.additionally !== "Отказ брак"
   );
 
+  let plusBalanceArr = [];
+
+  plusBalanceArr = rowsBalanceArr.value?.filter(
+    (row: IBalance) => row.notation === "Вывод дохода"
+  );
+
+  plusBalanceArr?.forEach((row) => {
+    if (!isNaN(expenditureByPVZ[row.pvz])) {
+      expenditureByPVZ[row.pvz] += parseFloat(row.sum);
+    }
+  });
+
   pvz.value.forEach((pvzName: string) => {
     expenditureByPVZTotal[pvzName] = 0;
   });
@@ -365,9 +392,7 @@ function exportToExcel() {
 </script>
 <template>
   <div class="relative">
-    <div
-      class="absolute top-[-65px] right-0 flex items-center gap-3"
-    >
+    <div class="absolute top-[-65px] right-0 flex items-center gap-3">
       <h1 class="text-sm italic">{{ company }}</h1>
       <UTooltip
         text="Скачать EXCEL"

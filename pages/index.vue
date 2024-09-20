@@ -126,6 +126,8 @@ useSeoMeta({
   ogDescription:
     "Доставка из интернет-магазинов WILDBERRIES, OZON, ЯНДЕКС МАРКЕТ И ДР. По всем вопросам и для оформления заказа звоните: +7(949)612-47-60",
 });
+
+// const storeQR = useQRStore()
 </script>
 
 <template>
@@ -133,6 +135,7 @@ useSeoMeta({
     <div class="bg-main-page">
       <div class="py-5 max-md:px-5 mx-auto container" v-cloak>
         <div class="flex items-center justify-center flex-col space-y-5">
+          <!-- <UButton @click="storeQR.createStaticQRCode('Онлайн оплата доставки')">Создать статику</UButton> -->
           <h1
             class="text-secondary-color font-bold text-8xl max-lg:text-6xl mt-3"
           >
