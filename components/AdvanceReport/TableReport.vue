@@ -162,7 +162,7 @@ function updateCurrentPageData() {
   });
 
   if (!props.selectedTypeOfExpenditure.length) {
-    rowsBalanceArr.value?.forEach((row) => {
+    rowsBalanceArr.value?.filter((row) => row.notation !== 'Вывод дохода').forEach((row) => {
       if (!isNaN(receiptsByPVZ[row.pvz])) {
         receiptsByPVZ[row.pvz] += parseFloat(row.sum);
       }
@@ -333,7 +333,7 @@ function getTotal() {
     }
   });
 
-  rowsBalanceArrTotal.value?.forEach((row) => {
+  rowsBalanceArrTotal.value?.filter((row) => row.notation !== 'Вывод дохода').forEach((row) => {
     if (!isNaN(receiptsByPVZTotal[row.pvz])) {
       receiptsByPVZTotal[row.pvz] += parseFloat(row.sum);
     }
