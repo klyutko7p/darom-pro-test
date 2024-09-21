@@ -1300,6 +1300,13 @@ const typeOfOptions = [
   { value: "Перевод с кредитного баланса нал", label: "С кредитного баланса" },
   { value: "Перевод с баланса безнал", label: "С баланса безнал" },
 ];
+
+const typeOfOptions2 = [
+  { value: "Новый кредит безнал", label: "Новый" },
+  { value: "Пополнение баланса", label: "Нет" },
+  { value: "Перевод с кредитного баланса безнал", label: "С кредитного баланса" },
+  { value: "Перевод с баланса нал", label: "С баланса нал" },
+];
 </script>
 
 <template>
@@ -2049,7 +2056,7 @@ const typeOfOptions = [
               <USelectMenu
                 class="w-full"
                 v-model="rowData.typeOfExpenditure"
-                :options="typeOfOptions"
+                :options="typeOfOptions2"
                 value-attribute="value"
                 id-attribute="label"
                 @change="checkStatus"

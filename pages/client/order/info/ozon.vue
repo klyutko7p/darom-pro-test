@@ -2,7 +2,9 @@
 import Cookies from "js-cookie";
 import { useToast } from "vue-toastification";
 const router = useRouter();
+
 const toast = useToast();
+
 const token = Cookies.get("token");
 let isLoading = ref(false);
 const selectedPVZClient = ref("");
@@ -13,7 +15,7 @@ onMounted(async () => {
     router.push("/auth/client/login");
   }
   address.value = localStorage.getItem("addressData") || "";
-  let isNotAsking = localStorage.getItem("isNotAskingYM");
+  let isNotAsking = localStorage.getItem("isNotAskingWB");
   if (isNotAsking) {
     router.push("/client/main?notification=false");
   }
@@ -24,7 +26,7 @@ definePageMeta({
   layout: "client",
 });
 
-let isNotAskingYM = ref(false);
+let isNotAskingWB = ref(false);
 const cookieExpires = 7 * 365 * 100;
 
 function saveAddress(address: string) {
@@ -33,12 +35,12 @@ function saveAddress(address: string) {
 }
 
 function skipWindow() {
-  if (isNotAskingYM.value) {
-    localStorage.setItem("isNotAskingYM", JSON.stringify(true));
+  if (isNotAskingWB.value) {
+    localStorage.setItem("isNotAskingWB", JSON.stringify(true));
   }
 
-  toast.success("Вы успешно назначили адрес!")
-  router.push("/client/main?notification=false");
+  toast.success("Вы успешно назначили адрес!");
+  router.push("/client/main?modal=wb");
 }
 
 let isShowModal = ref(false);
@@ -67,10 +69,10 @@ async function writeClipboardText(text: any) {
         <div v-if="selectedPVZClient">
           <div class="flex items-center justify-center flex-col h-screen">
             <UButton
-              @click="showModal"
               icon="i-mdi-package-variant-closed-plus"
+              @click="showModal"
               size="xl"
-              color="yellow"
+              color="pink"
               variant="solid"
               class="font-semibold text-left duration-200 w-full max-w-[500px]"
               :trailing="false"
@@ -80,21 +82,21 @@ async function writeClipboardText(text: any) {
             <div class="flex items-center gap-3 mt-7">
               <div>
                 <input
-                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 checked:ring-[2px] focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white ring-[2px] bg-transparent checked:ring-[#f8cf02] text-[#f8cf02] ring-[#f8cf02] focus-visible:ring-[#f8cf02] focus:ring-[#f8cf02]"
-                  v-model="isNotAskingYM"
-                  id="isNotAskingYM"
-                  name="isNotAskingYM"
+                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 checked:ring-[2px] focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white ring-[2px] bg-transparent checked:ring-[#ec208b] text-[#ec208b] ring-[#ec208b] focus-visible:ring-[#ec208b] focus:ring-[#ec208b]"
+                  v-model="isNotAskingWB"
+                  id="isNotAskingWB"
+                  name="isNotAskingWB"
                   type="checkbox"
                 />
               </div>
-              <label for="isNotAskingYM" class="italic text-base"
+              <label for="isNotAskingWB" class="italic text-base"
                 >Больше не спрашивать</label
               >
             </div>
           </div>
         </div>
         <div v-else>
-          <IndependentlyMap :marketplace="'YM'" @save-address="saveAddress" />
+          <IndependentlyMap :marketplace="'WB'" @save-address="saveAddress" />
         </div>
       </div>
 
@@ -103,19 +105,27 @@ async function writeClipboardText(text: any) {
         @close-modal="isShowModal = !isShowModal"
       >
         <template v-slot:icon-header> </template>
-        <template v-slot:header></template>
+        <template v-slot:header
+          ><UButton
+            @click="
+              writeClipboardText(
+                'Ростовская обл, Матвеево-Курганский р-н, Село Ряженое, Улица Ленина 6'
+              )
+            "
+            to="https://www.wildberries.ru/"
+            target="_blank"
+            icon="i-material-symbols-content-copy"
+            size="sm"
+            color="pink"
+            variant="solid"
+            class="font-semibold duration-200 mt-3"
+            :trailing="false"
+            >Скопировать адрес</UButton
+          ></template
+        >
         <template v-slot:body>
           <div class="text-left px-3 pt-10 pb-10">
             <div>
-              <h1 class="text-lg text-center mb-5">
-                Скопируйте адрес для заказа на
-                <a
-                  class="underline font-bold text-[#f8cf02]"
-                  target="_blank"
-                  href="https://market.yandex.ru/"
-                  >Яндекс Маркете</a
-                >
-              </h1>
               <div
                 class="bg-gray-100 p-3 flex items-center justify-center flex-col"
               >
@@ -123,22 +133,6 @@ async function writeClipboardText(text: any) {
                   Ростовская обл, Матвеево-Курганский <br />
                   р-н, Село Ряженое, Улица Ленина 6
                 </h1>
-                <UButton
-                  @click="
-                    writeClipboardText(
-                      'Ростовская обл, Матвеево-Курганский р-н, Село Ряженое, Улица Ленина 6'
-                    )
-                  "
-                  to="https://market.yandex.ru/"
-                  target="_blank"
-                  icon="i-material-symbols-content-copy"
-                  size="sm"
-                  color="yellow"
-                  variant="solid"
-                  class="font-semibold duration-200 mt-3"
-                  :trailing="false"
-                  >Скопировать адрес</UButton
-                >
               </div>
             </div>
             <div class="flex items-center justify-center">
@@ -146,7 +140,7 @@ async function writeClipboardText(text: any) {
                 @click="skipWindow()"
                 icon="i-octicon-tracked-by-closed-completed-16"
                 size="lg"
-                color="yellow"
+                color="pink"
                 variant="solid"
                 class="font-semibold duration-200 mt-10"
                 :trailing="false"

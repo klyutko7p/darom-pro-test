@@ -140,7 +140,6 @@ const pvzs = [
 ];
 
 function clearCookies() {
-  localStorage.removeItem("addressData");
   localStorage.removeItem("isNotAskingOzon");
   localStorage.removeItem("isNotAskingWB");
   localStorage.removeItem("isNotAskingYM");

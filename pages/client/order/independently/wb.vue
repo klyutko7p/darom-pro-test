@@ -123,12 +123,12 @@ async function writeClipboardText(text: any) {
               >
                 <h1 class="italic text-sm font-bold">
                   Ростовская обл, Матвеево-Курганский <br />
-                  р-н, с. Ряженое, ул. Ленина 6
+                  р-н, Село Ряженое, Улица Ленина 6
                 </h1>
                 <UButton
                   @click="
                     writeClipboardText(
-                      'Ростовская обл, Матвеево-Курганский р-н, с. Ряженое, ул. Ленина 6'
+                      'Ростовская обл, Матвеево-Курганский р-н, Село Ряженое, Улица Ленина 6'
                     )
                   "
                   to="https://www.wildberries.ru/"

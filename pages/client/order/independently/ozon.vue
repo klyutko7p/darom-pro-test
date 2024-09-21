@@ -9,12 +9,13 @@ const route = useRoute();
 const token = Cookies.get("token");
 let isLoading = ref(false);
 const selectedPVZClient = ref("");
-const address = ref(localStorage.getItem("addressData") || "");
+const address = ref("");
 
 onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login");
   }
+  address.value = localStorage.getItem("addressData") || "";
   let isNotAsking = localStorage.getItem("isNotAskingOzon");
   if (isNotAsking) {
     router.push("/client/main?notification=false");
@@ -60,7 +61,7 @@ function skipWindow() {
   <div v-if="!isLoading">
     <div v-if="token">
       <div>
-        <div v-if="selectedPVZClient">
+        <div v-if="selectedPVZClient && route.query.change !== 'true'">
           <div class="flex items-center justify-center flex-col h-screen">
             <UButton
               @click="skipWindow()"
