@@ -16,7 +16,9 @@ let showReceivedItems = ref(true);
 
 function disableReceivedItems() {
   showReceivedItems.value = false;
-  copyRows.value = rows.value?.filter((value) => !value.issued && value.deleted === null);
+  copyRows.value = rows.value?.filter(
+    (value) => !value.issued && value.deleted === null
+  );
 }
 
 function enableReceivedItems() {
@@ -45,6 +47,7 @@ onMounted(async () => {
   rows.value = [...rowsOurRansom.value, ...rowsClientRansom.value];
 
   if (rows.value) {
+    rows.value = rows.value.filter((row) => row.issued);
     copyRows.value = [...rows.value];
     phoneNumber.value = user.value.phoneNumber;
   }
@@ -77,12 +80,11 @@ const token = Cookies.get("token");
           <Icon name="material-symbols:contact-phone-rounded" size="24" />
         </div>
       </div>
-      <h1 class="font-bold text-3xl max-sm:text-2xl" v-if="rows.length > 0">
+      <h1 class="font-bold text-2xl max-sm:text-2xl" v-if="rows.length > 0">
         Список товаров
       </h1>
-      <h1 class="font-bold text-3xl max-sm:text-2xl text-center" v-else>
-        Список товаров пуст. <br />
-        Оформите сначала первый заказ!
+      <h1 class="font-bold text-2xl mt-10 max-sm:text-2xl text-center" v-else>
+        Список товаров пока пуст.
       </h1>
       <SpreadsheetsOrderGoods :rows="rows" :user="user" />
     </div>

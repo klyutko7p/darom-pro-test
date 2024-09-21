@@ -17,7 +17,7 @@ onMounted(async () => {
   }
   let isNotAsking = localStorage.getItem("isNotAskingOzon");
   if (isNotAsking) {
-    router.push("/client/main");
+    router.push("/client/main?notification=false");
   }
   selectedPVZClient.value = address.value;
 });
@@ -35,7 +35,7 @@ function saveAddress(address: string) {
 
   if (route.query.change === "true") {
     toast.success("Вы успешно сменили адрес пункта выдачи!");
-    router.push("/client/main");
+    router.push("/client/main?notification=false");
   }
 
   if (route.query.accept === "true") {
@@ -49,7 +49,7 @@ function skipWindow() {
   }
 
   toast.success("Вы успешно назначили адрес!");
-  router.push("/client/main");
+  router.push("/client/main?notification=false");
 }
 </script>
 
@@ -73,7 +73,7 @@ function skipWindow() {
               class="font-semibold duration-200 w-full max-w-[500px]"
               :trailing="false"
               >Нажмите тут для подтверждения адреса пункта заказа
-              интернет-заказа</UButton
+              интернет-магазина</UButton
             >
             <div class="flex items-center gap-3 mt-7">
               <div>

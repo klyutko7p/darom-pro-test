@@ -59,11 +59,11 @@ definePageMeta({
               >
                 <UIMainButton
                   class="w-full"
-                  @click="router.push('/client/main')"
+                  @click="router.push('/client/main?notification=false')"
                   >Заказать через администратора</UIMainButton
                 >
               </a>
-              <UIMainButton class="w-full" @click="router.push('/client/main')"
+              <UIMainButton class="w-full" @click="router.push('/client/main?notification=false')"
                 >Назад</UIMainButton
               >
             </div>

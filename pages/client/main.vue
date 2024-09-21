@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 
 const storeClients = useClientsStore();
 const router = useRouter();
+const route = useRoute();
 
 let client = ref({} as Client);
 let clientData = ref({} as Client);
@@ -10,6 +11,9 @@ const token = Cookies.get("token");
 let isLoading = ref(false);
 
 let pvzData = ref("");
+let isShowModalWB = ref(false);
+let isShowModalOZ = ref(false);
+let isShowModalYM = ref(false);
 let isShowModal = ref(false);
 let isShowModal2 = ref(false);
 let isShowModal3 = ref(false);
@@ -30,12 +34,24 @@ onMounted(async () => {
   }
 
   const storeFileName = localStorage.getItem("fileName");
-  if (storeFileName) {
+  if (storeFileName && route.query.notification !== "false") {
     isShowModal2.value = true;
   }
 
-  if (items.value.length) {
+  if (items.value.length && route.query.notification !== "false") {
     isShowModal.value = true;
+  }
+
+  if (route.query.modal === "wb") {
+    isShowModalWB.value = true;
+  }
+
+  if (route.query.modal === "oz") {
+    isShowModalWB.value = true;
+  }
+
+  if (route.query.modal === "ym") {
+    isShowModalWB.value = true;
   }
 
   pvzData.value = localStorage.getItem("addressData") || "";
@@ -204,6 +220,43 @@ useSeoMeta({
         />
       </div>
 
+      <!-- <div
+        v-auto-animate
+        v-if="isShowModalWB"
+        class="fixed top-0 bottom-0 left-0 bg-black bg-opacity-70 right-0 z-[100]"
+      >
+        <div
+          class="flex items-center justify-center h-screen text-black font-semibold"
+        >
+          <div
+            class="bg-white relative p-10 max-sm:p-3 rounded-lg flex items-center flex-col gap-3"
+          >
+            <div class="absolute top-4 right-4 max-sm:top-2 max-sm:right-2">
+              <Icon
+                name="material-symbols:cancel-rounded"
+                size="32"
+                class="cursor-pointer hover:text-secondary-color duration-200"
+                @click="isShowModalWB = !isShowModalWB"
+              />
+            </div>
+            <h1
+              class="text-lg max-w-[400px] text-center font-semibold w-full max-sm:text-xl py-3 max-sm:mt-5"
+            >
+              Когда Ваш заказ в приложении <span class="">WILDBERRIES</span> получит статус "ГОТОВ К ВЫДАЧЕ", прикрепите штрих-код заказа в
+            </h1>
+            <div class="flex items-center gap-3 max-sm:flex-col">
+              <UButton
+                @click="router.push('/client/order/accept-order?card=true')"
+                class="font-bold"
+                icon="i-mdi-truck-delivery"
+                size="xl"
+                >Оформить доставку заказа</UButton
+              >
+            </div>
+          </div>
+        </div>
+      </div> -->
+
       <div
         v-auto-animate
         v-if="isShowModal"
@@ -224,9 +277,10 @@ useSeoMeta({
               />
             </div>
             <h1
-              class="text-2xl text-center text-secondary-color font-bold w-full max-sm:text-xl py-3 max-sm:mt-5"
+              class="text-xl max-w-[500px] text-center text-secondary-color font-bold w-full max-sm:text-xl py-3 max-sm:mt-5"
             >
-              Вы не закончили с оформлением заказа
+              Вы не закончили с оформлением заказа. <br />
+              Количество товаров: {{ items.length }} шт.
             </h1>
             <div class="flex items-center gap-3 max-sm:flex-col">
               <UButton
@@ -261,9 +315,9 @@ useSeoMeta({
               />
             </div>
             <h1
-              class="text-2xl text-center text-secondary-color font-bold w-full max-sm:text-xl py-3 max-sm:mt-5"
+              class="text-xl max-w-[400px] text-center text-secondary-color font-bold w-full max-sm:text-xl py-3 max-sm:mt-5"
             >
-              Вы не закончили с оформлением заказа
+              Вы не закончили с оформлением заказа по штрих-коду
             </h1>
             <div class="flex items-center gap-3 max-sm:flex-col">
               <UButton

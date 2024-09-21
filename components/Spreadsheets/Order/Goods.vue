@@ -37,15 +37,15 @@ function roundToNearestTen(num: number): number {
   <div class="flex items-center gap-3 justify-around mt-10 flex-col" v-if="rows">
     <div
       v-for="row in rows.filter((row) => row.productName)"
-      class="border-2 border-secondary-color shadow-xl border-dashed py-16 px-10 w-full mb-5"
+      class="border-2 border-secondary-color shadow-xl border-dashed py-16 px-5 w-full mb-5"
     >
       <div v-if="row.amountFromClient1">
         <h1 class="text-xl mb-3 font-bold">{{ row.productName }}</h1>
         <h1 class="text-lg">
           <span v-if="shouldRound(row)">
-            Стоимость: {{ roundToNearestTen(row.amountFromClient1) }} ₽
+            Стоимость с доставкой: {{ roundToNearestTen(row.amountFromClient1) }} ₽
           </span>
-          <span v-else> Стоимость: {{ Math.ceil(row.amountFromClient1 / 10) * 10 }} ₽ </span>
+          <span v-else> Стоимость с доставкой: {{ Math.ceil(row.amountFromClient1 / 10) * 10 }} ₽ </span>
         </h1>
         <h1 class="text-lg">
           <a
@@ -62,7 +62,7 @@ function roundToNearestTen(num: number): number {
       <div v-else-if="row.amountFromClient2">
         <h1 class="text-xl mb-3 font-bold">Количество товаров: {{ row.productName }}</h1>
         <h1 class="text-xl">{{ row.productLink }}</h1>
-        <h1 class="text-lg">Стоимость: {{ row.amountFromClient2 }} ₽</h1>
+        <h1 class="text-lg">Стоимость с доставкой: {{ row.amountFromClient2 }} ₽</h1>
         <h1 v-if="row.issued" class="text-lg font-bold text-green-500">
           Дата выдачи: {{ storeUsers.getNormalizedDate(row.issued) }}
         </h1>

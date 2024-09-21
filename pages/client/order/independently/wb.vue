@@ -17,7 +17,7 @@ onMounted(async () => {
   address.value = localStorage.getItem("addressData") || "";
   let isNotAsking = localStorage.getItem("isNotAskingWB");
   if (isNotAsking) {
-    router.push("/client/main");
+    router.push("/client/main?notification=false");
   }
   selectedPVZClient.value = address.value;
 });
@@ -40,7 +40,7 @@ function skipWindow() {
   }
 
   toast.success("Вы успешно назначили адрес!")
-  router.push("/client/main");
+  router.push("/client/main?modal=wb");
 }
 
 let isShowModal = ref(false);

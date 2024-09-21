@@ -265,7 +265,7 @@ function closeQRModal() {
       </div>
 
       <h1 class="mt-5 text-xl max-[330px]:text-lg">
-        Оформленные заказы через личный кабинет и администратора
+        Оформленные заказы через личный кабинет DP и Администратора
       </h1>
       <div v-for="pvz in pvzs" class="mt-5">
         <div
@@ -297,7 +297,7 @@ function closeQRModal() {
       </div>
 
       <h1 class="mt-20 text-xl max-[330px]:text-lg">
-        Оформленные заказы <br class="max-[380px]:block hidden" />
+        Оформленные доставки заказов <br class="max-[380px]:block hidden" />
         по штрих-коду (QR)
       </h1>
       <div v-for="pvz in pvzs" class="mt-5">

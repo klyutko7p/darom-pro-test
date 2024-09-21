@@ -310,7 +310,7 @@ async function submitForm() {
     localStorage.removeItem("marketplace");
 
     setTimeout(() => {
-      router.push("/client/main");
+      router.push("/client/main?notification=false");
     }, 3000);
   } catch (error) {
     console.error("Error while creating employee or handling files:", error);
@@ -354,7 +354,7 @@ function changeMarketplace(marketplaceData: string) {
         </div>
         <div
           class="bg-[#f8cf02] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200"
-           @click="changeMarketplace('Яндекс Маркет')"
+          @click="changeMarketplace('Яндекс Маркет')"
         >
           <img
             src="@/assets/images/ym.png"
@@ -532,6 +532,14 @@ function changeMarketplace(marketplaceData: string) {
             </div>
 
             <div v-if="isOpenLastModal" v-auto-animate>
+              <h1 class="text-sm text-left">
+                Чтобы мы доставили ваш заказ, он должен быть оформлен на адрес:
+                <br />
+              </h1>
+              <h1 class="italic font-bold text-right">
+                Ростовская область, Матвеево-Курганский район, <br />
+                с. Ряженое, ул Ленина 6*
+              </h1>
               <div class="space-y-3 my-5">
                 <h1
                   class="grid grid-cols-2 border-b-[1px] pb-2 border-secondary-color"
@@ -553,17 +561,13 @@ function changeMarketplace(marketplaceData: string) {
                 <h1
                   class="grid grid-cols-2 border-b-[1px] pb-2 border-secondary-color"
                 >
-                  Штрих-код <span> {{ rowData.img }}</span>
+                  Штрих-код
+                  <span>
+                    {{ rowData.img ? "Прикреплён" : "Не прикреплён" }}</span
+                  >
                 </h1>
               </div>
-              <h1 class="text-sm text-center">
-                Чтобы мы получили ваш заказ, он должен быть оформлен на адрес:
-                <br />
-                <span class="italic font-bold">
-                  Ростовская область, Матвеево-Курганский район, <br />
-                  с. Ряженое, ул Ленина 6*</span
-                >
-              </h1>
+
               <div class="mt-5 flex justify-end gap-3" v-auto-animate>
                 <UButton
                   icon="i-heroicons-arrow-left-20-solid"

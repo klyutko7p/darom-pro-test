@@ -28,6 +28,15 @@ onMounted(async () => {
   if (storedItems) {
     items.value = JSON.parse(storedItems);
   }
+
+  const storedIsNotAskingAcceptOrder = localStorage.getItem(
+    "isNotAskingAcceptOrder"
+  );
+  if (JSON.parse(storedIsNotAskingAcceptOrder) === true) {
+    isOpenZeroModal.value = false;
+    isOpenFirstModal.value = true;
+  }
+
   if (route.query.card === "true") {
     isOpenZeroModal.value = false;
     isOpenFirstModal.value = false;
@@ -57,6 +66,7 @@ definePageMeta({
 
 let address = ref("");
 let urlToItem = ref("");
+let urlToItemArt = ref("");
 let quantityOfItem = ref(1);
 
 let items = ref<Array<any>>([]);
@@ -115,6 +125,15 @@ const parsingPage = async () => {
       }
       toast.success("Вы успешно добавили товар!");
     } else if (marketplace.value === "OZ") {
+      if (!urlToItemArt.value && urlToItem.value) {
+        const match = urlToItem.value.match(/\/product\/([^/?]+)/);
+        if (match) {
+          const productName = match[1];
+          urlToItem.value = productName;
+        }
+      } else if (urlToItemArt.value && !urlToItem.value) {
+        urlToItem.value = urlToItemArt.value;
+      }
       const jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
       const jsonMessage = JSON.parse(jsonString.message);
       const parsedData = JSON.parse(jsonMessage.seo.script[0].innerHTML);
@@ -336,6 +355,9 @@ const isOpenLastModal = ref(false);
 function closeZeroModal() {
   isOpenZeroModal.value = false;
   isOpenFirstModal.value = true;
+  if (isNotAskingAcceptOrder.value) {
+    localStorage.setItem("isNotAskingAcceptOrder", "true");
+  }
 }
 
 function showFirstModal() {
@@ -343,6 +365,10 @@ function showFirstModal() {
   isOpenSecondModal.value = false;
   isOpenThirdModal.value = false;
   isOpenLastModal.value = false;
+}
+
+function clearAddress() {
+  address.value = "";
 }
 
 function showSecondModal() {
@@ -354,6 +380,7 @@ function showSecondModal() {
     isOpenFirstModal.value = false;
     isOpenSecondModal.value = true;
     isOpenThirdModal.value = false;
+    isOpenLastModal.value = false;
   }
 }
 
@@ -481,14 +508,66 @@ async function submitForm() {
 function pasteToTextArea() {
   navigator.clipboard.readText().then((text) => {
     urlToItem.value = text;
-    urlToItem.value = urlToItem.value.match(/https?:\/\/[^\s]+/)[0];
+    text = text.replace(/[а-яА-ЯёЁ]/g, "");
+
+    let urlMatch = text.match(/https?:\/\/[^\s]+/);
+
+    if (urlMatch) {
+      urlToItem.value = urlMatch[0];
+    } else {
+      urlToItem.value = "";
+    }
   });
 }
-
+let isShowAcceptModal = ref(false);
 function changeMarketplace(marketplaceData: string) {
   marketplace.value = marketplaceData;
   showSecondModal();
 }
+
+function showAcceptModal() {
+  isShowAcceptModal.value = true;
+  isOpen.value = false;
+}
+
+function closeAcceptModal() {
+  isOpen.value = true;
+  isShowAcceptModal.value = false;
+}
+
+const pvzs = [
+  {
+    pvz: "ПВЗ_1",
+    name: "ул. Антропова 16",
+  },
+  {
+    pvz: "ПВЗ_3",
+    name: "ул. Палладина, 20",
+  },
+  {
+    pvz: "ПВЗ_4",
+    name: "ул. Нартова, 1",
+  },
+  {
+    pvz: "ППВЗ_5",
+    name: "ул. Дудинская, д. 4, кв. 7",
+  },
+  {
+    pvz: "ППВЗ_7",
+    name: "ул. Жебелева, д. 7",
+  },
+];
+
+function roundToNearestTen(num: number): number {
+  const lastDigit = num % 10;
+  if (lastDigit >= 5) {
+    return Math.ceil(num / 10) * 10;
+  } else {
+    return Math.floor(num / 10) * 10;
+  }
+}
+
+let isNotAskingAcceptOrder = ref(false);
 </script>
 
 <template>
@@ -510,6 +589,20 @@ function changeMarketplace(marketplaceData: string) {
                 можно <br />
                 из интернет-магазинов OZON и WILDBERRIES
               </h1>
+              <div class="flex items-center gap-3">
+                <div>
+                  <input
+                    class="h-3 w-3 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 checked:ring-[2px] focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white ring-[2px] bg-transparent checked:ring-secondary-color text-secondary-color ring-secondary-color focus-visible:ring-secondary-color focus:ring-secondary-color"
+                    v-model="isNotAskingAcceptOrder"
+                    id="isNotAskingAcceptOrder"
+                    name="isNotAskingAcceptOrder"
+                    type="checkbox"
+                  />
+                </div>
+                <label for="isNotAskingAcceptOrder" class="italic text-sm"
+                  >Больше не спрашивать</label
+                >
+              </div>
               <div class="text-left px-3">
                 <div class="flex items-center justify-center">
                   <UButton
@@ -592,7 +685,7 @@ function changeMarketplace(marketplaceData: string) {
                 Проверьте информацию
               </h3>
               <Icon
-                @click="router.push('/client/order')"
+                @click="router.push('/client/main?notification=false')"
                 name="i-heroicons-x-mark-20-solid"
                 size="24"
                 class="cursor-pointer hover:text-secondary-color duration-200"
@@ -639,7 +732,7 @@ function changeMarketplace(marketplaceData: string) {
             </div>
 
             <div v-if="isOpenThirdModal && marketplace === 'OZ'" v-auto-animate>
-              <div>
+              <div v-if="!urlToItem">
                 <label
                   >Скопируйте
                   <span class="text-red-500 font-semibold uppercase"
@@ -647,14 +740,42 @@ function changeMarketplace(marketplaceData: string) {
                   >
                 </label>
               </div>
-              <label class="text-sm italic"
-                >предварительно выбрав верный размер и цвет на сайте</label
-              >
-              <div class="h-[44px]">
+              <div v-if="!urlToItem" class="h-[44px]">
+                <UInput
+                  v-model="urlToItemArt"
+                  name="urlToItemArt"
+                  placeholder="Вставьте скопированный артикул товара"
+                  icon="i-ph-package-bold"
+                  autocomplete="off"
+                  class="w-full mt-3"
+                  :ui="{ icon: { trailing: { pointer: '' } } }"
+                >
+                  <template #trailing>
+                    <UButton
+                      v-show="urlToItemArt !== ''"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      :padded="false"
+                      @click="urlToItemArt = ''"
+                    />
+                  </template>
+                </UInput>
+              </div>
+              <h1 v-if="!urlToItemArt && !urlToItem" class="mb-3">ИЛИ</h1>
+              <div v-if="!urlToItemArt">
+                <label
+                  >Скопируйте
+                  <span class="text-red-500 font-semibold uppercase"
+                    >ссылку на товар с браузера</span
+                  >
+                </label>
+              </div>
+              <div v-if="!urlToItemArt" class="h-[44px]">
                 <UInput
                   v-model="urlToItem"
                   name="urlToItem"
-                  placeholder="Вставьте скопированный артикул товара"
+                  placeholder="Вставьте скопированную ссылку с браузера"
                   icon="i-ph-package-bold"
                   autocomplete="off"
                   class="w-full mt-3"
@@ -672,18 +793,10 @@ function changeMarketplace(marketplaceData: string) {
                   </template>
                 </UInput>
               </div>
-              <div class="flex items-center justify-center mb-5">
-                <UButton
-                  size="2xs"
-                  class="font-bold"
-                  icon="i-material-symbols-add-link"
-                  @click="pasteToTextArea"
-                >
-                  ВСТАВИТЬ
-                </UButton>
-              </div>
-
-              <div class="flex justify-end gap-3" v-auto-animate>
+              <label class="text-sm italic text-center"
+                >предварительно выбрав верный размер и цвет на сайте</label
+              >
+              <div class="flex justify-end gap-3 mt-5" v-auto-animate>
                 <UButton
                   v-if="!address"
                   icon="i-heroicons-arrow-left-20-solid"
@@ -721,7 +834,7 @@ function changeMarketplace(marketplaceData: string) {
                   </template>
                 </UButton>
                 <UButton
-                  v-if="urlToItem"
+                  v-if="urlToItem || urlToItemArt"
                   @click="showFourModal()"
                   class="font-bold"
                   label="ДАЛЕЕ"
@@ -754,7 +867,6 @@ function changeMarketplace(marketplaceData: string) {
                   v-model="urlToItem"
                   name="urlToItem"
                   icon="i-ph-package-bold"
-                  disabled
                   placeholder="Вставьте скопированную ссылку на товар"
                   color="gray"
                   variant="outline"
@@ -897,6 +1009,23 @@ function changeMarketplace(marketplaceData: string) {
                     ₽</span
                   >
                 </h1>
+                <h1 class="font-semibold">
+                  Стоимость с доставкой:
+                  <span class="text-secondary-color font-bold"
+                    >{{
+                      items.reduce(
+                        (ac, item) =>
+                          ac +
+                          roundToNearestTen(
+                            item.priceSite +
+                              (item.priceSite * item.percentClient) / 100
+                          ),
+                        0
+                      )
+                    }}
+                    ₽</span
+                  >
+                </h1>
                 <div
                   class="bg-gray-100 rounded-md p-5 max-sm:py-16 mt-5 max-sm:px-2 flex flex-col gap-5 max-sm:gap-7 max-h-[400px] overflow-y-auto"
                 >
@@ -942,7 +1071,17 @@ function changeMarketplace(marketplaceData: string) {
                           </h1>
                         </div>
                       </div>
-                      <h1 class="font-medium">{{ item.priceSite }} ₽</h1>
+                      <h1 class="font-medium">
+                        {{ item.priceSite }} ₽ <br />
+                        <span class="italic text-[11px]">
+                          ({{
+                            roundToNearestTen(
+                              item.priceSite + (item.priceSite * 10) / 100
+                            )
+                          }}
+                          ₽)
+                        </span>
+                      </h1>
                       <Icon
                         @click="deleteItemFromOrder(item.productName)"
                         name="i-material-symbols-delete-rounded"
@@ -955,7 +1094,7 @@ function changeMarketplace(marketplaceData: string) {
                     >
                       <div class="absolute bottom-0 right-20">
                         <img
-                          v-if="item.marketplace === 'O'"
+                          v-if="item.marketplace === 'OZ'"
                           src="@/assets/images/ozon-bg.png"
                           class="max-w-[100px] mb-3 opacity-5"
                           alt=""
@@ -984,23 +1123,35 @@ function changeMarketplace(marketplaceData: string) {
                           />
                         </div>
                         <div class="flex items-center gap-5">
-                          <div class="flex flex-col items-start">
+                          <div
+                            class="flex flex-col items-start max-[360px]:max-w-[120px]"
+                          >
                             <a
                               :href="item.productLink"
                               target="_blank"
-                              class="font-bold cursor-pointer text-secondary-color underline line-clamp-1 hover:line-clamp-4 text-left"
+                              class="font-bold max-sm:text-sm cursor-pointer text-secondary-color underline line-clamp-1 hover:line-clamp-4 text-left"
                             >
                               {{ item.productName }}
                             </a>
                             <h1 class="font-medium text-sm italic">
                               {{ item.quantity }} шт.
                             </h1>
-                            <h1 class="font-medium">{{ item.priceSite }} ₽</h1>
+                            <h1 class="font-medium">
+                              {{ item.priceSite }} ₽
+                              <span class="italic text-[11px]">
+                                ({{
+                                  roundToNearestTen(
+                                    item.priceSite + (item.priceSite * 10) / 100
+                                  )
+                                }}
+                                ₽)
+                              </span>
+                            </h1>
                           </div>
                         </div>
                       </div>
                       <img
-                        class="rounded-full aspect-square object-cover w-16 h-16"
+                        class="rounded-full aspect-square object-cover w-16 h-16 max-[360px]:w-10 max-[360px]:h-10"
                         :src="item.img"
                       />
                     </div>
@@ -1035,7 +1186,7 @@ function changeMarketplace(marketplaceData: string) {
                 />
                 <UButton
                   v-if="items.length > 0"
-                  @click="submitForm()"
+                  @click="showAcceptModal"
                   class="font-bold"
                   label="ОТПРАВИТЬ ЗАКАЗ"
                   color="primary"
@@ -1047,6 +1198,75 @@ function changeMarketplace(marketplaceData: string) {
           </div>
         </UCard>
       </UModal>
+
+      <div
+        v-auto-animate
+        v-if="isShowAcceptModal"
+        class="fixed top-0 bottom-0 left-0 bg-black bg-opacity-70 right-0 z-[100]"
+      >
+        <div
+          class="flex items-center justify-center h-screen text-black font-semibold"
+        >
+          <div
+            class="bg-white relative p-10 max-sm:p-10 rounded-lg flex items-center flex-col gap-1"
+          >
+            <div class="absolute top-4 right-4 max-sm:top-2 max-sm:right-2">
+              <Icon
+                name="material-symbols:cancel-rounded"
+                size="32"
+                class="cursor-pointer hover:text-secondary-color duration-200"
+                @click="closeAcceptModal()"
+              />
+            </div>
+            <h1
+              class="text-xl text-center font-semibold max-sm:text-xl mt-5 max-sm:mt-5"
+            >
+              Товары будут доставлены <br class="hidden max-sm:block" />
+              на
+              <span class="text-secondary-color font-bold">
+                {{
+                  pvzs.find((pvz) => pvz.pvz === addressData)?.name
+                    ? pvzs.find((pvz) => pvz.pvz === addressData)?.name
+                    : "Не выбран"
+                }}
+              </span>
+            </h1>
+            <h1 class="mb-3">
+              Стоимость с доставкой:
+              <span class="text-secondary-color font-bold"
+                >{{
+                  items.reduce(
+                    (ac, item) =>
+                      ac +
+                      roundToNearestTen(
+                        item.priceSite +
+                          (item.priceSite * item.percentClient) / 100
+                      ),
+                    0
+                  )
+                }}
+                ₽</span
+              >
+            </h1>
+            <div class="flex items-center gap-3 max-sm:flex-col">
+              <UButton
+                @click="closeAcceptModal(), clearAddress(), showSecondModal()"
+                class="font-bold uppercase max-sm:w-full"
+                icon="i-material-symbols-change-circle-rounded"
+                size="xl"
+                >Изменить</UButton
+              >
+              <UButton
+                @click="closeAcceptModal(), submitForm()"
+                class="font-bold uppercase max-sm:w-full"
+                icon="i-f7-checkmark-alt-circle-fill"
+                size="xl"
+                >Подтверждаю</UButton
+              >
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div
         v-auto-animate

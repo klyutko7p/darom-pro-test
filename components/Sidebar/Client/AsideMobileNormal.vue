@@ -21,7 +21,7 @@ const router = useRouter();
   <div v-auto-animate class="h-full overflow-y-auto">
     <div class="px-3 justify-between mb-10 pb-2">
       <h5
-        @click="router.push('/client/main'), editMenu()"
+        @click="router.push('/client/main?notification=false'), editMenu()"
         class="text-6xl  cursor-pointer  max-[400px]:text-5xl text-center text-secondary-color font-bold uppercase dark:text-gray-400"
       >
         DAROM.PRO
