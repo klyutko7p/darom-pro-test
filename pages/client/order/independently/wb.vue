@@ -17,7 +17,7 @@ onMounted(async () => {
   address.value = localStorage.getItem("addressData") || "";
   let isNotAsking = localStorage.getItem("isNotAskingWB");
   if (isNotAsking) {
-    router.push("/client/main?notification=false");
+    isNotAskingWB.value = true;
   }
   selectedPVZClient.value = address.value;
 });
@@ -35,12 +35,7 @@ function saveAddress(address: string) {
 }
 
 function skipWindow() {
-  if (isNotAskingWB.value) {
-    localStorage.setItem("isNotAskingWB", JSON.stringify(true));
-  }
-
-  toast.success("Вы успешно назначили адрес!")
-  router.push("/client/main?modal=wb");
+  router.push("/client/order/info/wb");
 }
 
 let isShowModal = ref(false);
@@ -52,9 +47,132 @@ function showModal() {
 async function writeClipboardText(text: any) {
   try {
     await navigator.clipboard.writeText(text);
-    skipWindow()
+    toast.success("Вы успешно скопировали адрес!");
   } catch (error: any) {
     console.error(error.message);
+  }
+}
+
+const items = [
+  {
+    label: "Компьютер",
+    icon: "i-material-symbols-desktop-windows",
+    defaultOpen: false,
+    slot: "desktop",
+  },
+  {
+    label: "iOS",
+    icon: "i-prime-apple",
+    defaultOpen: false,
+    slot: "ios",
+  },
+  {
+    label: "Android",
+    icon: "i-material-symbols-android",
+    defaultOpen: false,
+    slot: "android",
+  },
+];
+
+let imgUrl = ref("");
+let isOpenDesktop = ref(false);
+let isOpenIOS = ref(false);
+let isOpenAndroid = ref(false);
+
+function openDesktop(number: number) {
+  isShowModal.value = false;
+  isOpenDesktop.value = true;
+
+  if (number === 1) {
+    imgUrl.value = "1-desk.png";
+    return;
+  }
+  if (number === 2) {
+    imgUrl.value = "2-desk.png";
+    return;
+  }
+
+  if (number === 3) {
+    imgUrl.value = "3-desk.png";
+    return;
+  }
+
+  if (number === 4) {
+    imgUrl.value = "4-desk.png";
+    return;
+  }
+
+  if (number === 5) {
+    imgUrl.value = "5-desk.png";
+    return;
+  }
+}
+
+function openAndroid(number: number) {
+  isShowModal.value = false;
+  isOpenAndroid.value = true;
+
+  if (number === 1) {
+    imgUrl.value = "1-andr.png";
+    return;
+  }
+  if (number === 2) {
+    imgUrl.value = "2-andr.png";
+    return;
+  }
+
+  if (number === 3) {
+    imgUrl.value = "3-andr.png";
+    return;
+  }
+
+  if (number === 4) {
+    imgUrl.value = "4-andr.png";
+    return;
+  }
+
+  if (number === 5) {
+    imgUrl.value = "5-andr.png";
+    return;
+  }
+
+  if (number === 6) {
+    imgUrl.value = "6-andr.png";
+    return;
+  }
+}
+
+function openIOS(number: number) {
+  isShowModal.value = false;
+  isOpenIOS.value = true;
+
+  if (number === 1) {
+    imgUrl.value = "1-ios.png";
+    return;
+  }
+  if (number === 2) {
+    imgUrl.value = "2-ios.png";
+    return;
+  }
+
+  if (number === 3) {
+    imgUrl.value = "3-ios.png";
+    return;
+  }
+
+  if (number === 4) {
+    imgUrl.value = "4-ios.png";
+    return;
+  }
+
+  if (number === 5) {
+    imgUrl.value = "5-ios.png";
+    return;
+  }
+
+  if (number === 6) {
+    imgUrl.value = "6-ios.png";
+    return;
   }
 }
 </script>
@@ -67,7 +185,10 @@ async function writeClipboardText(text: any) {
     <div v-if="token">
       <div>
         <div v-if="selectedPVZClient">
-          <div class="flex items-center justify-center flex-col h-screen">
+          <div
+            v-if="!isNotAskingWB"
+            class="flex items-center justify-center flex-col h-screen"
+          >
             <UButton
               icon="i-mdi-package-variant-closed-plus"
               @click="showModal"
@@ -79,19 +200,27 @@ async function writeClipboardText(text: any) {
               >Нажмите тут для подтверждения адреса пункта заказа
               интернет-магазина</UButton
             >
-            <div class="flex items-center gap-3 mt-7">
-              <div>
-                <input
-                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 checked:ring-[2px] focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white ring-[2px] bg-transparent checked:ring-[#ec208b] text-[#ec208b] ring-[#ec208b] focus-visible:ring-[#ec208b] focus:ring-[#ec208b]"
-                  v-model="isNotAskingWB"
-                  id="isNotAskingWB"
-                  name="isNotAskingWB"
-                  type="checkbox"
-                />
+          </div>
+          <div class="h-screen flex items-center justify-center" v-else>
+            <div class="text-center">
+              <div class="max-w-[910px] mt-5">
+                <h1>
+                  Вам необязательно снова выбирать адрес, Вы можете сразу
+                  переходить в раздел: <br />
+                  <UButton
+                    @click="router.push('/client/delivery')"
+                    class="font-bold m-5 text-left"
+                    icon="i-mdi-truck-delivery"
+                    size="xl"
+                    color="pink"
+                    >Оформить доставку заказа <br class="hidden max-sm:block" />
+                    по ШК (QR)</UButton
+                  >
+                  <br />
+                  для оформления доставки на пункт выдачи заказов на территории
+                  ДНР
+                </h1>
               </div>
-              <label for="isNotAskingWB" class="italic text-base"
-                >Больше не спрашивать</label
-              >
             </div>
           </div>
         </div>
@@ -100,64 +229,358 @@ async function writeClipboardText(text: any) {
         </div>
       </div>
 
-      <UINewModalEditNoPadding
+      <UINewModalEditNoPaddingSecond
         v-show="isShowModal"
         @close-modal="isShowModal = !isShowModal"
       >
         <template v-slot:icon-header> </template>
-        <template v-slot:header></template>
+        <template v-slot:header
+          ><UButton
+            @click="writeClipboardText('Село Ряженое, Улица Ленина 6')"
+            target="_blank"
+            icon="i-material-symbols-content-copy"
+            size="sm"
+            color="pink"
+            variant="solid"
+            class="font-semibold duration-200 mt-3"
+            :trailing="false"
+            >Скопировать адрес</UButton
+          >
+        </template>
         <template v-slot:body>
-          <div class="text-left px-3 pt-10 pb-10">
+          <div class="text-left px-3 pb-10">
             <div>
-              <h1 class="text-lg text-center mb-5">
-                Скопируйте адрес для заказа на
-                <a
-                  class="underline font-bold text-[#ec208b]"
-                  target="_blank"
-                  href="https://www.wildberries.ru/"
-                  >WILDBERRIES</a
-                >
-              </h1>
               <div
-                class="bg-gray-100 p-3 flex items-center justify-center flex-col"
+                class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
               >
-                <h1 class="italic text-sm font-bold">
-                  Ростовская обл, Матвеево-Курганский <br />
-                  р-н, Село Ряженое, Улица Ленина 6
+                <h1 class="text-sm font-semibold">
+                  Село Ряженое, Улица Ленина 6
                 </h1>
+              </div>
+
+              <div class="flex justify-center">
                 <UButton
                   @click="
-                    writeClipboardText(
-                      'Ростовская обл, Матвеево-Курганский р-н, Село Ряженое, Улица Ленина 6'
-                    )
+                    writeClipboardText('Село Ряженое, Улица Ленина 6'),
+                      skipWindow()
                   "
                   to="https://www.wildberries.ru/"
                   target="_blank"
-                  icon="i-material-symbols-content-copy"
+                  icon="i-mdi-package-variant-closed-check"
                   size="sm"
                   color="pink"
                   variant="solid"
-                  class="font-semibold duration-200 mt-3"
+                  class="font-semibold text-left duration-200 w-full max-w-[500px] mt-3"
                   :trailing="false"
-                  >Скопировать адрес</UButton
+                  >Нажмите сюда, чтобы указать скопированный адрес для заказа
+                  товара на WILDBERRIES</UButton
                 >
               </div>
-            </div>
-            <div class="flex items-center justify-center">
-              <UButton
-                @click="skipWindow()"
-                icon="i-octicon-tracked-by-closed-completed-16"
-                size="lg"
-                color="pink"
-                variant="solid"
-                class="font-semibold duration-200 mt-10"
-                :trailing="false"
-                >Готово</UButton
-              >
+
+              <h1 class="mt-5 mb-3 italic text-sm">
+                Инструкция по выбору адреса заказа
+              </h1>
+              <UAccordion color="pink" :items="items">
+                <template #item="{ item }">
+                  <p
+                    class="italic text-gray-900 dark:text-white text-center font-semibold"
+                  >
+                    {{ item.description }}
+                  </p>
+                </template>
+
+                <template #desktop>
+                  <div
+                    class="text-gray-900 dark:text-white text-left bg-gray-50 px-3 py-1"
+                  >
+                    <div class="space-y-3">
+                      <h1 class="text-sm italic">1.</h1>
+                      <img
+                        src="/images/wb/1-desk.png"
+                        @click="openDesktop(1)"
+                        class="cursor-pointer"
+                        alt=""
+                      />
+
+                      <h1 class="text-sm italic">2.</h1>
+                      <img
+                        src="/images/wb/2-desk.png"
+                        @click="openDesktop(2)"
+                        class="cursor-pointer"
+                        alt=""
+                      />
+
+                      <h1 class="text-sm italic">3.</h1>
+                      <img
+                        src="/images/wb/3-desk.png"
+                        @click="openDesktop(3)"
+                        class="cursor-pointer"
+                        alt=""
+                      />
+
+                      <h1 class="text-sm italic">4.</h1>
+                      <img
+                        src="/images/wb/4-desk.png"
+                        @click="openDesktop(4)"
+                        class="cursor-pointer"
+                        alt=""
+                      />
+
+                      <h1 class="text-sm italic">5.</h1>
+                      <img
+                        src="/images/wb/5-desk.png"
+                        @click="openDesktop(5)"
+                        alt=""
+                        class="cursor-pointer"
+                      />
+                    </div>
+
+                    <UModal v-model="isOpenDesktop" fullscreen>
+                      <UCard
+                        :ui="{
+                          base: 'h-full flex flex-col',
+                          background: 'bg-gray-100',
+                          rounded: '',
+                          divide:
+                            'divide-y divide-gray-300 dark:divide-gray-800',
+                          body: {
+                            base: 'grow',
+                          },
+                        }"
+                      >
+                        <template #header>
+                          <div class="flex items-center justify-between">
+                            <h3
+                              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+                            >
+                              Компьютер
+                            </h3>
+                            <UButton
+                              color="gray"
+                              variant="ghost"
+                              icon="i-heroicons-x-mark-20-solid"
+                              class="-my-1"
+                              @click="
+                                (isOpenDesktop = false), (isShowModal = true)
+                              "
+                            />
+                          </div>
+                        </template>
+
+                        <div class="flex justify-center">
+                          <NuxtImg
+                            :src="'images/wb/' + imgUrl"
+                            class="w-full max-w-[1000px]"
+                            alt=""
+                          />
+                        </div>
+                      </UCard>
+                    </UModal>
+                  </div>
+                </template>
+
+                <template #ios>
+                  <div class="text-gray-900 dark:text-white text-left">
+                    <div
+                      class="text-gray-900 dark:text-white text-left bg-gray-50 px-3 py-1"
+                    >
+                      <div class="space-y-3">
+                        <h1 class="text-sm italic">1.</h1>
+                        <img
+                          src="/images/wb/1-ios.png"
+                          @click="openIOS(1)"
+                          class="cursor-pointer"
+                          alt=""
+                        />
+
+                        <h1 class="text-sm italic">2.</h1>
+                        <img
+                          src="/images/wb/2-ios.png"
+                          @click="openIOS(2)"
+                          class="cursor-pointer"
+                          alt=""
+                        />
+
+                        <h1 class="text-sm italic">3.</h1>
+                        <img
+                          src="/images/wb/3-ios.png"
+                          @click="openIOS(3)"
+                          class="cursor-pointer"
+                          alt=""
+                        />
+
+                        <h1 class="text-sm italic">4.</h1>
+                        <img
+                          src="/images/wb/4-ios.png"
+                          @click="openIOS(4)"
+                          class="cursor-pointer"
+                          alt=""
+                        />
+
+                        <h1 class="text-sm italic">5.</h1>
+                        <img
+                          src="/images/wb/5-ios.png"
+                          @click="openIOS(5)"
+                          alt=""
+                          class="cursor-pointer"
+                        />
+
+                        <h1 class="text-sm italic">6.</h1>
+                        <img
+                          src="/images/wb/6-ios.png"
+                          @click="openIOS(6)"
+                          alt=""
+                          class="cursor-pointer"
+                        />
+                      </div>
+
+                      <UModal v-model="isOpenIOS" fullscreen>
+                        <UCard
+                          :ui="{
+                            base: 'h-full flex flex-col',
+                            background: 'bg-gray-100',
+                            rounded: '',
+                            divide:
+                              'divide-y divide-gray-300 dark:divide-gray-800',
+                            body: {
+                              base: 'grow',
+                            },
+                          }"
+                        >
+                          <template #header>
+                            <div class="flex items-center justify-between">
+                              <h3
+                                class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+                              >
+                                IOS
+                              </h3>
+                              <UButton
+                                color="gray"
+                                variant="ghost"
+                                icon="i-heroicons-x-mark-20-solid"
+                                class="-my-1"
+                                @click="
+                                  (isOpenIOS = false), (isShowModal = true)
+                                "
+                              />
+                            </div>
+                          </template>
+
+                          <div class="flex justify-center">
+                            <NuxtImg
+                              :src="'images/wb/' + imgUrl"
+                              class="w-full max-w-[350px]"
+                              alt=""
+                            />
+                          </div>
+                        </UCard>
+                      </UModal>
+                    </div>
+                  </div>
+                </template>
+
+                <template #android>
+                  <div
+                    class="text-gray-900 dark:text-white text-left bg-gray-50 px-3 py-1"
+                  >
+                    <div class="space-y-3">
+                      <h1 class="text-sm italic">1.</h1>
+                      <img
+                        src="/images/wb/1-andr.png"
+                        @click="openAndroid(1)"
+                        class="cursor-pointer"
+                        alt=""
+                      />
+
+                      <h1 class="text-sm italic">2.</h1>
+                      <img
+                        src="/images/wb/2-andr.png"
+                        @click="openAndroid(2)"
+                        class="cursor-pointer"
+                        alt=""
+                      />
+
+                      <h1 class="text-sm italic">3.</h1>
+                      <img
+                        src="/images/wb/3-andr.png"
+                        @click="openAndroid(3)"
+                        class="cursor-pointer"
+                        alt=""
+                      />
+
+                      <h1 class="text-sm italic">4.</h1>
+                      <img
+                        src="/images/wb/4-andr.png"
+                        @click="openAndroid(4)"
+                        class="cursor-pointer"
+                        alt=""
+                      />
+
+                      <h1 class="text-sm italic">5.</h1>
+                      <img
+                        src="/images/wb/5-andr.png"
+                        @click="openAndroid(5)"
+                        alt=""
+                        class="cursor-pointer"
+                      />
+
+                      <h1 class="text-sm italic">6.</h1>
+                      <img
+                        src="/images/wb/6-andr.png"
+                        @click="openAndroid(6)"
+                        alt=""
+                        class="cursor-pointer"
+                      />
+                    </div>
+
+                    <UModal v-model="isOpenAndroid" fullscreen>
+                      <UCard
+                        :ui="{
+                          base: 'h-full flex flex-col',
+                          background: 'bg-gray-100',
+                          rounded: '',
+                          divide:
+                            'divide-y divide-gray-300 dark:divide-gray-800',
+                          body: {
+                            base: 'grow',
+                          },
+                        }"
+                      >
+                        <template #header>
+                          <div class="flex items-center justify-between">
+                            <h3
+                              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+                            >
+                              Android
+                            </h3>
+                            <UButton
+                              color="gray"
+                              variant="ghost"
+                              icon="i-heroicons-x-mark-20-solid"
+                              class="-my-1"
+                              @click="
+                                (isOpenAndroid = false), (isShowModal = true)
+                              "
+                            />
+                          </div>
+                        </template>
+
+                        <div class="flex justify-center">
+                          <NuxtImg
+                            :src="'images/wb/' + imgUrl"
+                            class="w-full max-w-[350px]"
+                            alt=""
+                          />
+                        </div>
+                      </UCard>
+                    </UModal>
+                  </div>
+                </template>
+              </UAccordion>
             </div>
           </div>
         </template>
-      </UINewModalEditNoPadding>
+      </UINewModalEditNoPaddingSecond>
     </div>
   </div>
   <div v-else>

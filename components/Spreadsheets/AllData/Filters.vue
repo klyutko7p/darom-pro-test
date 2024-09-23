@@ -143,86 +143,27 @@ const filteredRows = ref<Array<IOurRansom>>();
 
 const emit = defineEmits(["filtered-rows"]);
 
+function processDate(dateValue, isStartDate) {
+  let date = new Date(dateValue);
+
+  if (isStartDate) {
+    date.setHours(0, 0, 0, 0);
+  } else {
+    date.setHours(23, 59, 59, 999);
+  }
+
+  return date.getFullYear() <= 2023 ? null : date;
+}
+
 const filterRows = async () => {
-  let newStartingDate = new Date(startingDate.value);
-  newStartingDate.setHours(0);
-  newStartingDate.setMinutes(0);
-  newStartingDate.setSeconds(0);
-  newStartingDate.setMilliseconds(0);
-
-  if (newStartingDate.getFullYear() <= 2023) {
-    newStartingDate = "";
-  }
-
-  let newEndDate = new Date(endDate.value);
-  newEndDate.setHours(23);
-  newEndDate.setMinutes(59);
-  newEndDate.setSeconds(59);
-  newEndDate.setMilliseconds(0);
-
-  if (newEndDate.getFullYear() <= 2023) {
-    newEndDate = "";
-  }
-
-  let newStartingDate2 = new Date(startingDate2.value);
-  newStartingDate2.setHours(0);
-  newStartingDate2.setMinutes(0);
-  newStartingDate2.setSeconds(0);
-  newStartingDate2.setMilliseconds(0);
-
-  if (newStartingDate2.getFullYear() <= 2023) {
-    newStartingDate2 = "";
-  }
-
-  let newEndDate2 = new Date(endDate2.value);
-  newEndDate2.setHours(23);
-  newEndDate2.setMinutes(59);
-  newEndDate2.setSeconds(59);
-  newEndDate2.setMilliseconds(0);
-
-  if (newEndDate2.getFullYear() <= 2023) {
-    newEndDate2 = "";
-  }
-
-  let newStartingDate3 = new Date(startingDate3.value);
-  newStartingDate3.setHours(0);
-  newStartingDate3.setMinutes(0);
-  newStartingDate3.setSeconds(0);
-  newStartingDate3.setMilliseconds(0);
-
-  if (newStartingDate3.getFullYear() <= 2023) {
-    newStartingDate3 = "";
-  }
-
-  let newEndDate3 = new Date(endDate3.value);
-  newEndDate3.setHours(23);
-  newEndDate3.setMinutes(59);
-  newEndDate3.setSeconds(59);
-  newEndDate3.setMilliseconds(0);
-
-  if (newEndDate3.getFullYear() <= 2023) {
-    newEndDate3 = "";
-  }
-
-  let newStartingDate4 = new Date(startingDate4.value);
-  newStartingDate4.setHours(0);
-  newStartingDate4.setMinutes(0);
-  newStartingDate4.setSeconds(0);
-  newStartingDate4.setMilliseconds(0);
-
-  if (newStartingDate4.getFullYear() <= 2023) {
-    newStartingDate4 = "";
-  }
-
-  let newEndDate4 = new Date(endDate4.value);
-  newEndDate4.setHours(23);
-  newEndDate4.setMinutes(59);
-  newEndDate4.setSeconds(59);
-  newEndDate4.setMilliseconds(0);
-
-  if (newEndDate4.getFullYear() <= 2023) {
-    newEndDate4 = "";
-  }
+  let newStartingDate = processDate(startingDate.value, true);
+  let newEndDate = processDate(endDate.value, false);
+  let newStartingDate2 = processDate(startingDate2.value, true);
+  let newEndDate2 = processDate(endDate2.value, false);
+  let newStartingDate3 = processDate(startingDate3.value, true);
+  let newEndDate3 = processDate(endDate3.value, false);
+  let newStartingDate4 = processDate(startingDate4.value, true);
+  let newEndDate4 = processDate(endDate4.value, false);
 
   //   filteredRows.value = rows.value.slice();
   //   filteredRows.value = rows.value.filter((row) => {
@@ -368,8 +309,8 @@ function saveFiltersToLocalStorage() {
 }
 
 function clearLocalStorage() {
-  const addressData = localStorage.getItem("addressData"); 
-  localStorage.clear(); 
+  const addressData = localStorage.getItem("addressData");
+  localStorage.clear();
   if (addressData) {
     localStorage.setItem("addressData", addressData);
   }

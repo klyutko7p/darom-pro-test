@@ -16,9 +16,9 @@ onMounted(async () => {
     router.push("/auth/client/login");
   }
   address.value = localStorage.getItem("addressData") || "";
-  let isNotAsking = localStorage.getItem("isNotAskingOzon");
+  let isNotAsking = localStorage.getItem("isNotAskingOZ");
   if (isNotAsking) {
-    router.push("/client/main?notification=false");
+    isNotAskingOzon.value = true;
   }
   selectedPVZClient.value = address.value;
 });
@@ -46,11 +46,10 @@ function saveAddress(address: string) {
 
 function skipWindow() {
   if (isNotAskingOzon.value) {
-    localStorage.setItem("isNotAskingOzon", JSON.stringify(true));
+    localStorage.setItem("isNotAskingOZ", JSON.stringify(true));
   }
 
-  toast.success("Вы успешно назначили адрес!");
-  router.push("/client/main?notification=false");
+  router.push("/client/order/info/ozon");
 }
 </script>
 
@@ -62,7 +61,10 @@ function skipWindow() {
     <div v-if="token">
       <div>
         <div v-if="selectedPVZClient && route.query.change !== 'true'">
-          <div class="flex items-center justify-center flex-col h-screen">
+          <div
+            v-if="!isNotAskingOzon"
+            class="flex items-center justify-center flex-col h-screen"
+          >
             <UButton
               @click="skipWindow()"
               to="https://ozon.ru/point/443054"
@@ -76,19 +78,27 @@ function skipWindow() {
               >Нажмите тут для подтверждения адреса пункта заказа
               интернет-магазина</UButton
             >
-            <div class="flex items-center gap-3 mt-7">
-              <div>
-                <input
-                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 checked:ring-[2px] focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white ring-[2px] bg-transparent checked:ring-[#005df6] text-[#005df6] ring-[#005df6] focus-visible:ring-[#005df6] focus:ring-[#005df6]"
-                  v-model="isNotAskingOzon"
-                  id="isNotAskingOzon"
-                  name="isNotAskingOzon"
-                  type="checkbox"
-                />
+          </div>
+          <div class="h-screen flex items-center justify-center" v-else>
+            <div class="text-center">
+              <div class="max-w-[910px] mt-5">
+                <h1>
+                  Вам необязательно снова выбирать адрес, Вы можете сразу
+                  переходить в раздел: <br />
+                  <UButton
+                    @click="router.push('/client/delivery')"
+                    class="font-bold m-5 text-left"
+                    icon="i-mdi-truck-delivery"
+                    size="xl"
+                    color="blue"
+                    >Оформить доставку заказа <br class="hidden max-sm:block" />
+                    по ШК (QR)</UButton
+                  >
+                  <br />
+                  для оформления доставки на пункт выдачи заказов на территории
+                  ДНР
+                </h1>
               </div>
-              <label for="isNotAskingOzon" class="italic text-base"
-                >Больше не спрашивать</label
-              >
             </div>
           </div>
         </div>

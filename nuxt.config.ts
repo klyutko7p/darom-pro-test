@@ -21,29 +21,20 @@ export default defineNuxtConfig({
   //     ]
   //   }
   // },
-  modules: [
-    "@pinia/nuxt",
-    "nuxt-icon",
-    "@nuxtjs/supabase",
-    "@vite-pwa/nuxt",
-    "nuxt-swiper",
-    "@formkit/auto-animate/nuxt",
-    [
-      "nuxt-vuefire",
-      {
-        config: {
-          apiKey: "AIzaSyDXooTcaUHHUHe8Pwlmg8Ua3zwA0nWxuqw",
-          authDomain: "darom-pro-messages.firebaseapp.com",
-          projectId: "darom-pro-messages",
-          storageBucket: "darom-pro-messages.appspot.com",
-          messagingSenderId: "633883773284",
-          appId: "1:633883773284:web:5df79ceef6d300e236d271",
-          measurementId: "G-GC3VTLSR3S",
-        },
+  modules: ["@pinia/nuxt", "nuxt-icon", "@nuxtjs/supabase", "@vite-pwa/nuxt", "nuxt-swiper", "@formkit/auto-animate/nuxt", [
+    "nuxt-vuefire",
+    {
+      config: {
+        apiKey: "AIzaSyDXooTcaUHHUHe8Pwlmg8Ua3zwA0nWxuqw",
+        authDomain: "darom-pro-messages.firebaseapp.com",
+        projectId: "darom-pro-messages",
+        storageBucket: "darom-pro-messages.appspot.com",
+        messagingSenderId: "633883773284",
+        appId: "1:633883773284:web:5df79ceef6d300e236d271",
+        measurementId: "G-GC3VTLSR3S",
       },
-    ],
-    "@nuxt/ui",
-  ],
+    },
+  ], "@nuxt/ui", "@nuxt/image"],
   icon: {
     clientBundle: {
       icons: [

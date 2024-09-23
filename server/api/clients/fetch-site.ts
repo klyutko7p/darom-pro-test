@@ -48,8 +48,7 @@ const fetchWithDelay = async (url: any, delay: any) => {
 export default defineEventHandler(async (event) => {
   try {
     const { link } = await readBody<IRequestBody>(event);
-    let parts = link.split("/");
-    let number = parts[parts.length - 2];
+    let number = link;
     let firstSixDigits;
     let firstFourDigits;
     let basketNumber;

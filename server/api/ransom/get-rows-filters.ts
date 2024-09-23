@@ -97,36 +97,36 @@ export default defineEventHandler(async (event) => {
 
     if (startDate2) {
       query += ` AND "deliveredSC" >= CAST($${params.length + 1} AS timestamp)`;
-      params.push(startDate);
+      params.push(startDate2);
     }
 
     if (endDate2) {
       query += ` AND "deliveredSC" <= CAST($${params.length + 1} AS timestamp)`;
-      params.push(endDate);
+      params.push(endDate2);
     }
 
     if (startDate3) {
       query += ` AND "created_at" >= CAST($${params.length + 1} AS timestamp)`;
-      params.push(startDate);
+      params.push(startDate3);
     }
 
     if (endDate3) {
       query += ` AND "created_at" <= CAST($${params.length + 1} AS timestamp)`;
-      params.push(endDate);
+      params.push(endDate3);
     }
 
     if (startDate4) {
       query += ` AND "deliveredPVZ" >= CAST($${
         params.length + 1
       } AS timestamp)`;
-      params.push(startDate);
+      params.push(startDate4);
     }
 
     if (endDate4) {
       query += ` AND "deliveredPVZ" <= CAST($${
         params.length + 1
       } AS timestamp)`;
-      params.push(endDate);
+      params.push(endDate4);
     }
 
     const records = await prisma.$queryRawUnsafe(query, ...params);

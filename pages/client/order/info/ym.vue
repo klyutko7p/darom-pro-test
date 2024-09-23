@@ -7,149 +7,101 @@ const toast = useToast();
 
 const token = Cookies.get("token");
 let isLoading = ref(false);
-const selectedPVZClient = ref("");
-const address = ref("");
 
 onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login");
   }
-  address.value = localStorage.getItem("addressData") || "";
-  let isNotAsking = localStorage.getItem("isNotAskingWB");
-  if (isNotAsking) {
-    router.push("/client/main?notification=false");
-  }
-  selectedPVZClient.value = address.value;
 });
 
 definePageMeta({
   layout: "client",
 });
 
-let isNotAskingWB = ref(false);
-const cookieExpires = 7 * 365 * 100;
-
-function saveAddress(address: string) {
-  localStorage.setItem("addressData", JSON.stringify(address));
-  selectedPVZClient.value = address;
-}
-
 function skipWindow() {
-  if (isNotAskingWB.value) {
-    localStorage.setItem("isNotAskingWB", JSON.stringify(true));
-  }
-
-  toast.success("Вы успешно назначили адрес!");
-  router.push("/client/main?modal=wb");
-}
-
-let isShowModal = ref(false);
-
-function showModal() {
-  isShowModal.value = true;
-}
-
-async function writeClipboardText(text: any) {
-  try {
-    await navigator.clipboard.writeText(text);
-    skipWindow();
-  } catch (error: any) {
-    console.error(error.message);
-  }
+  localStorage.setItem("isNotAskingYM", JSON.stringify(true));
+  router.push("/client/main");
 }
 </script>
 
 <template>
   <Head>
-    <Title>Оформить заказ самостоятельно</Title>
+    <Title>Поздравляем!</Title>
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">
-      <div>
-        <div v-if="selectedPVZClient">
-          <div class="flex items-center justify-center flex-col h-screen">
-            <UButton
-              icon="i-mdi-package-variant-closed-plus"
-              @click="showModal"
-              size="xl"
-              color="pink"
-              variant="solid"
-              class="font-semibold text-left duration-200 w-full max-w-[500px]"
-              :trailing="false"
-              >Нажмите тут для подтверждения адреса пункта заказа
-              интернет-магазина</UButton
-            >
-            <div class="flex items-center gap-3 mt-7">
-              <div>
-                <input
-                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 checked:ring-[2px] focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white ring-[2px] bg-transparent checked:ring-[#ec208b] text-[#ec208b] ring-[#ec208b] focus-visible:ring-[#ec208b] focus:ring-[#ec208b]"
-                  v-model="isNotAskingWB"
-                  id="isNotAskingWB"
-                  name="isNotAskingWB"
-                  type="checkbox"
-                />
-              </div>
-              <label for="isNotAskingWB" class="italic text-base"
-                >Больше не спрашивать</label
-              >
+      <div class="h-screen flex items-center justify-center">
+        <div class="text-center">
+          <h1
+            class="text-6xl font-semibold max-sm:text-5xl text-[#f8cf02] max-[360px]:text-4xl mb-5 uppercase"
+          >
+            Поздравляем!
+          </h1>
+          <div class="flex items-center gap-5 max-lg:flex-col">
+            <div class="max-sm:hidden">
+              <Icon
+                name="i-material-symbols-desktop-windows"
+                size="32"
+                class="text-[#f8cf02]"
+              />
+              <NuxtImg
+                class="w-[300px] h-[90px] border-[1px] rounded-md"
+                src="/images/ym/final-ym-pc.jpg"
+              />
+            </div>
+            <div>
+              <Icon name="i-prime-apple" size="32" class="text-[#f8cf02]" />
+              <NuxtImg
+                class="w-[300px] h-[90px] border-[1px] rounded-md"
+                src="/images/ym/final-ym-ios.jpg"
+              />
+            </div>
+            <div>
+              <Icon
+                name="i-material-symbols-android"
+                size="32"
+                class="text-[#f8cf02]"
+              />
+              <NuxtImg
+                class="w-[300px] h-[90px] border-[1px] rounded-md"
+                src="/images/ym/final-ym-and.jpg"
+              />
             </div>
           </div>
-        </div>
-        <div v-else>
-          <IndependentlyMap :marketplace="'WB'" @save-address="saveAddress" />
+          <div class="max-w-[910px] mt-5">
+            <h1>
+              Если Вы верно указали адрес, то можете заказывать товар и после
+              уведомления о доставке по адресу:
+              <span class="text-[#f8cf02] font-semibold">
+                Ростовская область, Матвеево-Курганский район, Село Ряженое,
+                Улица Ленина 6
+              </span>
+              переходите в раздел: <br />
+              <UButton
+                @click="router.push('/client/delivery')"
+                class="font-bold m-5 text-left"
+                icon="i-mdi-truck-delivery"
+                size="xl"
+                color="yellow"
+                >Оформить доставку заказа <br class="hidden max-sm:block" />
+                по ШК (QR)</UButton
+              >
+              <br />
+              для оформления доставки на пункт выдачи заказов на территории ДНР
+            </h1>
+          </div>
+          <div class="mt-5">
+            <UButton
+              @click="skipWindow"
+              icon="i-line-md-circle-to-confirm-circle-transition"
+              size="xl"
+              color="yellow"
+              class="font-semibold"
+              >Подтвердить</UButton
+            >
+          </div>
         </div>
       </div>
-
-      <UINewModalEditNoPadding
-        v-show="isShowModal"
-        @close-modal="isShowModal = !isShowModal"
-      >
-        <template v-slot:icon-header> </template>
-        <template v-slot:header
-          ><UButton
-            @click="
-              writeClipboardText(
-                'Ростовская обл, Матвеево-Курганский р-н, Село Ряженое, Улица Ленина 6'
-              )
-            "
-            to="https://www.wildberries.ru/"
-            target="_blank"
-            icon="i-material-symbols-content-copy"
-            size="sm"
-            color="pink"
-            variant="solid"
-            class="font-semibold duration-200 mt-3"
-            :trailing="false"
-            >Скопировать адрес</UButton
-          ></template
-        >
-        <template v-slot:body>
-          <div class="text-left px-3 pt-10 pb-10">
-            <div>
-              <div
-                class="bg-gray-100 p-3 flex items-center justify-center flex-col"
-              >
-                <h1 class="italic text-sm font-bold">
-                  Ростовская обл, Матвеево-Курганский <br />
-                  р-н, Село Ряженое, Улица Ленина 6
-                </h1>
-              </div>
-            </div>
-            <div class="flex items-center justify-center">
-              <UButton
-                @click="skipWindow()"
-                icon="i-octicon-tracked-by-closed-completed-16"
-                size="lg"
-                color="pink"
-                variant="solid"
-                class="font-semibold duration-200 mt-10"
-                :trailing="false"
-                >Готово</UButton
-              >
-            </div>
-          </div>
-        </template>
-      </UINewModalEditNoPadding>
     </div>
   </div>
   <div v-else>

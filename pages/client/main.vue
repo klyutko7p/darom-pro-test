@@ -157,9 +157,6 @@ useSeoMeta({
 </script>
 
 <template>
-  <Head>
-    <Title>Личный кабинет</Title>
-  </Head>
   <div v-if="!isLoading">
     <div v-if="token">
       <div class="py-5">

@@ -96,7 +96,16 @@ const parsingPage = async () => {
 
   try {
     if (urlToItem.value.includes("wildberries") && marketplace.value === "WB") {
-      const itemInfo = await storeClients.fetchSiteWB(urlToItem.value);
+      const match = urlToItem.value.match(/\/catalog\/([^/?]+)/);
+      let productNameValue = "";
+      if (match) {
+        productNameValue = match[1];
+      } else {
+        toast.error("Мы не смогли определить артикул товара!");
+        return;
+      }
+
+      const itemInfo = await storeClients.fetchSiteWB(productNameValue);
       if (itemInfo.error === "fetch failed" || !itemInfo[0]) {
         handleError("Извините, мы не можем сейчас обработать данные.");
         urlToItem.value = "";
@@ -148,6 +157,7 @@ const parsingPage = async () => {
     }
 
     createItem();
+    urlToItem.value = "";
   } finally {
     isLoading.value = false;
   }
@@ -505,20 +515,6 @@ async function submitForm() {
   }
 }
 
-function pasteToTextArea() {
-  navigator.clipboard.readText().then((text) => {
-    urlToItem.value = text;
-    text = text.replace(/[а-яА-ЯёЁ]/g, "");
-
-    let urlMatch = text.match(/https?:\/\/[^\s]+/);
-
-    if (urlMatch) {
-      urlToItem.value = urlMatch[0];
-    } else {
-      urlToItem.value = "";
-    }
-  });
-}
 let isShowAcceptModal = ref(false);
 function changeMarketplace(marketplaceData: string) {
   marketplace.value = marketplaceData;
@@ -767,7 +763,7 @@ let isNotAskingAcceptOrder = ref(false);
                 <label
                   >Скопируйте
                   <span class="text-red-500 font-semibold uppercase"
-                    >ссылку на товар с браузера</span
+                    >ссылку на товар из браузера</span
                   >
                 </label>
               </div>
@@ -775,7 +771,7 @@ let isNotAskingAcceptOrder = ref(false);
                 <UInput
                   v-model="urlToItem"
                   name="urlToItem"
-                  placeholder="Вставьте скопированную ссылку с браузера"
+                  placeholder="Вставьте скопированную ссылку из браузера"
                   icon="i-ph-package-bold"
                   autocomplete="off"
                   class="w-full mt-3"
@@ -885,16 +881,6 @@ let isNotAskingAcceptOrder = ref(false);
                     />
                   </template>
                 </UInput>
-              </div>
-              <div class="flex items-center justify-center mb-5">
-                <UButton
-                  size="2xs"
-                  class="font-bold"
-                  icon="i-material-symbols-add-link"
-                  @click="pasteToTextArea"
-                >
-                  ВСТАВИТЬ
-                </UButton>
               </div>
 
               <div class="flex justify-end gap-3" v-auto-animate>
