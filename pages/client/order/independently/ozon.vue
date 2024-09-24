@@ -51,6 +51,10 @@ function skipWindow() {
 
   router.push("/client/order/info/ozon");
 }
+
+function clearValue() {
+  isNotAskingOzon.value = false;
+}
 </script>
 
 <template>
@@ -92,12 +96,20 @@ function skipWindow() {
                     size="xl"
                     color="blue"
                     >Оформить доставку заказа <br class="hidden max-sm:block" />
-                    по ШК (QR)</UButton
+                    по Штрих-коду (QR)</UButton
                   >
                   <br />
                   для оформления доставки на пункт выдачи заказов на территории
                   ДНР
                 </h1>
+                <UButton
+                  @click="clearValue"
+                  class="font-bold mt-24 text-left"
+                  icon="i-carbon-continue"
+                  size="xl"
+                  color="blue"
+                  >Всё равно продолжить</UButton
+                >
               </div>
             </div>
           </div>

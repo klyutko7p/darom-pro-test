@@ -18,6 +18,8 @@ onMounted(async () => {
   let isNotAsking = localStorage.getItem("isNotAskingWB");
   if (isNotAsking) {
     isNotAskingWB.value = true;
+  } else {
+    showModal();
   }
   selectedPVZClient.value = address.value;
 });
@@ -35,6 +37,7 @@ function saveAddress(address: string) {
 }
 
 function skipWindow() {
+  window.open("https://www.wildberries.ru/", "_blank");
   router.push("/client/order/info/wb");
 }
 
@@ -44,10 +47,12 @@ function showModal() {
   isShowModal.value = true;
 }
 
+let isClickedCounter = ref(0);
 async function writeClipboardText(text: any) {
   try {
     await navigator.clipboard.writeText(text);
     toast.success("Вы успешно скопировали адрес!");
+    isClickedCounter.value += 1;
   } catch (error: any) {
     console.error(error.message);
   }
@@ -175,6 +180,11 @@ function openIOS(number: number) {
     return;
   }
 }
+
+function clearValue() {
+  isNotAskingWB.value = false;
+  isShowModal.value = true;
+}
 </script>
 
 <template>
@@ -186,22 +196,9 @@ function openIOS(number: number) {
       <div>
         <div v-if="selectedPVZClient">
           <div
-            v-if="!isNotAskingWB"
-            class="flex items-center justify-center flex-col h-screen"
+            class="h-screen flex items-center justify-center"
+            v-if="isNotAskingWB"
           >
-            <UButton
-              icon="i-mdi-package-variant-closed-plus"
-              @click="showModal"
-              size="xl"
-              color="pink"
-              variant="solid"
-              class="font-semibold text-left duration-200 w-full max-w-[500px]"
-              :trailing="false"
-              >Нажмите тут для подтверждения адреса пункта заказа
-              интернет-магазина</UButton
-            >
-          </div>
-          <div class="h-screen flex items-center justify-center" v-else>
             <div class="text-center">
               <div class="max-w-[910px] mt-5">
                 <h1>
@@ -214,12 +211,20 @@ function openIOS(number: number) {
                     size="xl"
                     color="pink"
                     >Оформить доставку заказа <br class="hidden max-sm:block" />
-                    по ШК (QR)</UButton
+                    по Штрих-коду (QR)</UButton
                   >
                   <br />
                   для оформления доставки на пункт выдачи заказов на территории
                   ДНР
                 </h1>
+                <UButton
+                  @click="clearValue"
+                  class="font-bold mt-24 text-left"
+                  icon="i-carbon-continue"
+                  size="xl"
+                  color="pink"
+                  >Всё равно продолжить</UButton
+                >
               </div>
             </div>
           </div>
@@ -231,22 +236,10 @@ function openIOS(number: number) {
 
       <UINewModalEditNoPaddingSecond
         v-show="isShowModal"
-        @close-modal="isShowModal = !isShowModal"
+        @close-modal="router.push('/client/order/independently')"
       >
         <template v-slot:icon-header> </template>
-        <template v-slot:header
-          ><UButton
-            @click="writeClipboardText('Село Ряженое, Улица Ленина 6')"
-            target="_blank"
-            icon="i-material-symbols-content-copy"
-            size="sm"
-            color="pink"
-            variant="solid"
-            class="font-semibold duration-200 mt-3"
-            :trailing="false"
-            >Скопировать адрес</UButton
-          >
-        </template>
+        <template v-slot:header> Выбор адреса </template>
         <template v-slot:body>
           <div class="text-left px-3 pb-10">
             <div>
@@ -256,15 +249,26 @@ function openIOS(number: number) {
                 <h1 class="text-sm font-semibold">
                   Село Ряженое, Улица Ленина 6
                 </h1>
+                <UButton
+                  @click="writeClipboardText('Село Ряженое, Улица Ленина 6')"
+                  target="_blank"
+                  icon="i-material-symbols-content-copy"
+                  size="sm"
+                  color="pink"
+                  variant="solid"
+                  class="font-semibold duration-200 mt-3"
+                  :trailing="false"
+                  >Скопировать адрес</UButton
+                >
               </div>
 
               <div class="flex justify-center">
                 <UButton
+                  :disabled="isClickedCounter === 0"
                   @click="
                     writeClipboardText('Село Ряженое, Улица Ленина 6'),
                       skipWindow()
                   "
-                  to="https://www.wildberries.ru/"
                   target="_blank"
                   icon="i-mdi-package-variant-closed-check"
                   size="sm"

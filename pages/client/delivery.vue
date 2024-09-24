@@ -327,7 +327,7 @@ function changeMarketplace(marketplaceData: string) {
 
 <template>
   <Head>
-    <Title>Оформить доставку заказа по ШК (QR)</Title>
+    <Title>Оформить доставку заказа по Штрих-коду (QR)</Title>
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">

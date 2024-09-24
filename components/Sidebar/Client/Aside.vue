@@ -75,7 +75,7 @@ let isShowInfo = ref(false);
                   />
                   <span class="flex-1 ms-3 whitespace-nowrap"
                     >Оформить доставку заказа <br />
-                    по ШК (QR)</span
+                    по Штрих-коду (QR)</span
                   >
                 </div>
               </li>
