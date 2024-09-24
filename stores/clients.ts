@@ -253,6 +253,24 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  async function fetchSiteOZ2(link: string) {
+    console.log(link);
+    try {
+      let { data }: any = await useFetch("/api/clients/fetch-site-oz-2", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ link }),
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function fetchSiteYM(link: string) {
     try {
       let { data }: any = await useFetch("/api/clients/fetch-site-ym", {
@@ -497,6 +515,7 @@ export const useClientsStore = defineStore("clients", () => {
     updateBalance,
     sendMessage,
     resetPassword,
-    acceptDocs
+    acceptDocs,
+    fetchSiteOZ2,
   };
 });

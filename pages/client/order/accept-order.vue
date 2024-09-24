@@ -134,22 +134,33 @@ const parsingPage = async () => {
       }
       toast.success("Вы успешно добавили товар!");
     } else if (marketplace.value === "OZ") {
-      if (!urlToItemArt.value && urlToItem.value) {
-        const match = urlToItem.value.match(/\/product\/([^/?]+)/);
-        if (match) {
-          const productName = match[1];
-          urlToItem.value = productName;
+      if (urlToItem.value.includes("https://ozon.ru/t/")) {
+        const jsonString = await storeClients.fetchSiteOZ2(urlToItem.value);
+        const parsedTitle = jsonString.title;
+        const parsedPrice = jsonString.price;
+        const priceNumber = Number(parsedPrice.replace(/\s/g, '').replace('₽', ''));
+        const parsedLink = jsonString.link;
+        productName.value = parsedTitle;
+        priceSite.value = priceNumber;
+        urlToItem.value = parsedLink;
+      } else {
+        if (!urlToItemArt.value && urlToItem.value) {
+          const match = urlToItem.value.match(/\/product\/([^/?]+)/);
+          if (match) {
+            const productName = match[1];
+            urlToItem.value = productName;
+          }
+        } else if (urlToItemArt.value && !urlToItem.value) {
+          urlToItem.value = urlToItemArt.value;
         }
-      } else if (urlToItemArt.value && !urlToItem.value) {
-        urlToItem.value = urlToItemArt.value;
+        const jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
+        const jsonMessage = JSON.parse(jsonString.message);
+        const parsedData = JSON.parse(jsonMessage.seo.script[0].innerHTML);
+        productName.value = parsedData.name;
+        priceSite.value = parsedData.offers.price;
+        urlToImg.value = parsedData.image;
+        urlToItem.value = "https://www.ozon.ru/product/" + urlToItem.value;
       }
-      const jsonString = await storeClients.fetchSiteOZ(urlToItem.value);
-      const jsonMessage = JSON.parse(jsonString.message);
-      const parsedData = JSON.parse(jsonMessage.seo.script[0].innerHTML);
-      productName.value = parsedData.name;
-      priceSite.value = parsedData.offers.price;
-      urlToImg.value = parsedData.image;
-      urlToItem.value = "https://www.ozon.ru/product/" + urlToItem.value;
       toast.success("Вы успешно добавили товар!");
     } else if (marketplace.value === "YM") {
       const info = await storeClients.fetchSiteYM(urlToItem.value);
@@ -763,7 +774,7 @@ let isNotAskingAcceptOrder = ref(false);
                 <label
                   >Скопируйте
                   <span class="text-red-500 font-semibold uppercase"
-                    >ссылку на товар из браузера</span
+                    >ссылку на товар</span
                   >
                 </label>
               </div>
@@ -771,7 +782,7 @@ let isNotAskingAcceptOrder = ref(false);
                 <UInput
                   v-model="urlToItem"
                   name="urlToItem"
-                  placeholder="Вставьте скопированную ссылку из браузера"
+                  placeholder="Вставьте скопированную ссылку"
                   icon="i-ph-package-bold"
                   autocomplete="off"
                   class="w-full mt-3"
