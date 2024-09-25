@@ -780,7 +780,7 @@ let isNotAskingAcceptOrder = ref(false);
                 <label
                   >Скопируйте
                   <span class="text-red-500 font-semibold uppercase"
-                    >ссылку на товар</span
+                    >ссылку на товар из браузера</span
                   >
                 </label>
               </div>
@@ -788,7 +788,7 @@ let isNotAskingAcceptOrder = ref(false);
                 <UInput
                   v-model="urlToItem"
                   name="urlToItem"
-                  placeholder="Вставьте скопированную ссылку"
+                  placeholder="Вставьте скопированную ссылку из браузера"
                   icon="i-ph-package-bold"
                   autocomplete="off"
                   class="w-full mt-3"
