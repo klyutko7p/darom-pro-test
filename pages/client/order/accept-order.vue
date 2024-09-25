@@ -136,13 +136,19 @@ const parsingPage = async () => {
     } else if (marketplace.value === "OZ") {
       if (urlToItem.value.includes("https://ozon.ru/t/")) {
         const jsonString = await storeClients.fetchSiteOZ2(urlToItem.value);
-        const parsedTitle = jsonString.title;
-        const parsedPrice = jsonString.price;
-        const priceNumber = Number(parsedPrice.replace(/\s/g, '').replace('₽', ''));
         const parsedLink = jsonString.link;
-        productName.value = parsedTitle;
-        priceSite.value = priceNumber;
-        urlToItem.value = parsedLink;
+        const match = parsedLink.match(/\/product\/([^/?]+)/);
+        if (match) {
+          const productName = match[1];
+          urlToItem.value = productName;
+        }
+        const jsonString2 = await storeClients.fetchSiteOZ(urlToItem.value);
+        const jsonMessage = JSON.parse(jsonString2.message);
+        const parsedData = JSON.parse(jsonMessage.seo.script[0].innerHTML);
+        productName.value = parsedData.name;
+        priceSite.value = parsedData.offers.price;
+        urlToImg.value = parsedData.image;
+        urlToItem.value = "https://www.ozon.ru/product/" + urlToItem.value;
       } else {
         if (!urlToItemArt.value && urlToItem.value) {
           const match = urlToItem.value.match(/\/product\/([^/?]+)/);
