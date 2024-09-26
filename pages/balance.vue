@@ -1023,6 +1023,7 @@ function getAllSum() {
         allSum.value -= 2005;
       } else if (selectedPVZ.value === "ПВЗ_1") {
         allSum.value -= 2330;
+        allSum.value += 15000;
       }
       console.log(sum1.value + sum2.value);
     }
