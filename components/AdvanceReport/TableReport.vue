@@ -90,8 +90,11 @@ function updateCurrentPageData() {
     (row: IDelivery) =>
       row.paid !== null &&
       (!props.selected.start ||
-        new Date(row.paid) >= new Date(newStartingDate)) &&
-      (!props.selected.end || new Date(row.paid) <= new Date(newEndDate))
+        new Date(row.paid).setHours(0, 0, 0, 0) >=
+          new Date(newStartingDate).setHours(0, 0, 0, 0)) &&
+      (!props.selected.end ||
+        new Date(row.paid).setHours(23, 59, 59, 999) <=
+          new Date(newEndDate).setHours(23, 59, 59, 999))
   );
 
   arrayOfExpenditure.value = filteredRows.value?.filter(
@@ -108,8 +111,11 @@ function updateCurrentPageData() {
       row.typeOfExpenditure !== "Перевод с кредитного баланса" &&
       row.typeOfExpenditure !== "Вывод дивидендов" &&
       (!props.selected.start ||
-        new Date(row.date) >= new Date(newStartingDate)) &&
-      (!props.selected.end || new Date(row.date) <= new Date(newEndDate)) &&
+        new Date(row.date).setHours(0, 0, 0, 0) >=
+          new Date(newStartingDate).setHours(0, 0, 0, 0)) &&
+      (!props.selected.end ||
+        new Date(row.date).setHours(23, 59, 59, 999) <=
+          new Date(newEndDate).setHours(23, 59, 59, 999)) &&
       (!props.type || props.type.includes(row.type))
   );
 
@@ -117,8 +123,11 @@ function updateCurrentPageData() {
     (row: IAdvanceReport) =>
       row.typeOfExpenditure === "Пополнение баланса" &&
       (!props.selected.start ||
-        new Date(row.date) >= new Date(newStartingDate)) &&
-      (!props.selected.end || new Date(row.date) <= new Date(newEndDate)) &&
+        new Date(row.date).setHours(0, 0, 0, 0) >=
+          new Date(newStartingDate).setHours(0, 0, 0, 0)) &&
+      (!props.selected.end ||
+        new Date(row.date).setHours(23, 59, 59, 999) <=
+          new Date(newEndDate).setHours(23, 59, 59, 999)) &&
       (!props.type || props.type.includes(row.type))
   );
 
@@ -128,16 +137,22 @@ function updateCurrentPageData() {
       (row: IOurRansom) =>
         row.issued !== null &&
         (!props.selected.start ||
-          new Date(row.issued) >= new Date(newStartingDate)) &&
-        (!props.selected.end || new Date(row.issued) <= new Date(newEndDate))
+          new Date(row.issued).setHours(0, 0, 0, 0) >=
+            new Date(newStartingDate).setHours(0, 0, 0, 0)) &&
+        (!props.selected.end ||
+          new Date(row.issued).setHours(23, 59, 59, 999) <=
+            new Date(newEndDate).setHours(23, 59, 59, 999))
     );
 
     plusBalanceArr = rowsBalanceArr.value?.filter(
       (row: IBalance) =>
         row.notation === "Вывод дохода" &&
         (!props.selected.start ||
-          new Date(row.issued) >= new Date(newStartingDate)) &&
-        (!props.selected.end || new Date(row.issued) <= new Date(newEndDate))
+          new Date(row.issued).setHours(0, 0, 0, 0) >=
+            new Date(newStartingDate).setHours(0, 0, 0, 0)) &&
+        (!props.selected.end ||
+          new Date(row.issued).setHours(23, 59, 59, 999) <=
+            new Date(newEndDate).setHours(23, 59, 59, 999))
     );
   }
 
@@ -162,11 +177,13 @@ function updateCurrentPageData() {
   });
 
   if (!props.selectedTypeOfExpenditure.length) {
-    rowsBalanceArr.value?.filter((row) => row.notation !== 'Вывод дохода').forEach((row) => {
-      if (!isNaN(receiptsByPVZ[row.pvz])) {
-        receiptsByPVZ[row.pvz] += parseFloat(row.sum);
-      }
-    });
+    rowsBalanceArr.value
+      ?.filter((row) => row.notation !== "Вывод дохода")
+      .forEach((row) => {
+        if (!isNaN(receiptsByPVZ[row.pvz])) {
+          receiptsByPVZ[row.pvz] += parseFloat(row.sum);
+        }
+      });
 
     rowsOnlineArr.value?.forEach((row) => {
       if (!isNaN(receiptsByPVZ[row.dispatchPVZ])) {
@@ -333,11 +350,13 @@ function getTotal() {
     }
   });
 
-  rowsBalanceArrTotal.value?.filter((row) => row.notation !== 'Вывод дохода').forEach((row) => {
-    if (!isNaN(receiptsByPVZTotal[row.pvz])) {
-      receiptsByPVZTotal[row.pvz] += parseFloat(row.sum);
-    }
-  });
+  rowsBalanceArrTotal.value
+    ?.filter((row) => row.notation !== "Вывод дохода")
+    .forEach((row) => {
+      if (!isNaN(receiptsByPVZTotal[row.pvz])) {
+        receiptsByPVZTotal[row.pvz] += parseFloat(row.sum);
+      }
+    });
 
   rowsOnlineArrTotal.value?.forEach((row) => {
     if (!isNaN(receiptsByPVZTotal[row.dispatchPVZ])) {

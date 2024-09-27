@@ -133,7 +133,7 @@ const uniquePVZ = computed(() => {
     }
     return string;
   });
-  newArray = new Set(newArray)
+  newArray = new Set(newArray);
   return Array.from(newArray);
 });
 
@@ -152,7 +152,7 @@ const uniqueTypeOfExpenditure = computed(() => {
     }
     return string;
   });
-  newArray = new Set(newArray)
+  newArray = new Set(newArray);
   return Array.from(newArray);
 });
 
@@ -195,7 +195,11 @@ const filterRows = () => {
       (!selectedTypeOfExpenditure.value.length ||
         selectedTypeOfExpenditure.value.includes(row.typeOfExpenditure)) &&
       (!selectedNotation.value.length ||
-        selectedNotation.value.includes(row.notation)) &&
+        selectedNotation.value.some((notation) =>
+          row.notation
+            ? row.notation.toLowerCase().includes(notation.toLowerCase())
+            : row.notation
+        )) &&
       (!selectedCompany.value.length ||
         selectedCompany.value.includes(row.company)) &&
       (!selectedCreatedUser.value.length ||
@@ -205,10 +209,7 @@ const filterRows = () => {
       (!selected.value.end || new Date(row.date) <= new Date(newEndDate))
     );
   });
-  emit("filtered-rows", [
-    filteredRows.value,
-    selected.value,
-  ]);
+  emit("filtered-rows", [filteredRows.value, selected.value]);
   showFilters.value = false;
 };
 
@@ -310,8 +311,8 @@ function saveFiltersToLocalStorage() {
 }
 
 function clearLocalStorage() {
-  const addressData = localStorage.getItem("addressData"); 
-  localStorage.clear(); 
+  const addressData = localStorage.getItem("addressData");
+  localStorage.clear();
   if (addressData) {
     localStorage.setItem("addressData", addressData);
   }
