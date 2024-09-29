@@ -75,9 +75,11 @@ async function createReport(object: any) {
       employee.paymentPerShift / employee.hoursPerShift
     ).toFixed(2),
     advance: 0,
+    advanceFourssan: 0,
     hours: 0,
     deductions: 0,
     additionalPayment: 0,
+    salaryFourssan: 0,
     date: newDate,
   }));
 
@@ -306,6 +308,15 @@ onUnmounted(() => {
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="name">Аванс ФОССАН</label>
+                  <UInput
+                    class="w-full"
+                    v-model="rowData.advanceFourssan"
+                    type="number"
+                  />
+                </div>
+
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Аванс</label>
                   <UInput
                     class="w-full"
@@ -337,6 +348,15 @@ onUnmounted(() => {
                   <UInput
                     class="w-full"
                     v-model="rowData.additionalPayment"
+                    type="number"
+                  />
+                </div>
+
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="name">ЗП ФОССАН</label>
+                  <UInput
+                    class="w-full"
+                    v-model="rowData.salaryFourssan"
                     type="number"
                   />
                 </div>

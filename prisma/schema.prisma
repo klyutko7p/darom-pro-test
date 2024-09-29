@@ -283,9 +283,11 @@ model Payroll {
   bank              String?
   paymentPerShift   Float?
   advance           Float?
+  advanceFourssan   Float?
   hours             Float?
   deductions        Float?
   additionalPayment Float?
+  salaryFourssan    Float?
   date              DateTime?
   notation          String?
 }
@@ -296,12 +298,12 @@ model Client {
   role                                        Role     @default(CLIENT)
   password                                    String
   phoneNumber                                 String   @unique()
-  balance                                     Int?
   created_at                                  DateTime @default(now())
   isPersonalDataProcessingPolicyAgreed        Boolean
   isPrivacyPolicyAgreed                       Boolean
   dateOfPersonalDataProcessingPolicyAgreement DateTime @default(now())
   dateOfPrivacyPolicyAgreement                DateTime @default(now())
+  referedIDs                                  Int[]
 }
 
 model ClientReferral {

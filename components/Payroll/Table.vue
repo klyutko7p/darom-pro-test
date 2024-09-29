@@ -101,48 +101,62 @@ function getRowByIdFromInput(row: IPayroll) {
 }
 
 function getAllSumAdvance() {
-  return filteredRows.value?.reduce((acc, value) => acc + +value.advance, 0)
-    ? filteredRows.value?.reduce((acc, value) => acc + +value.advance, 0)
-    : 0;
+  return (
+    filteredRows.value?.reduce((acc, value) => {
+      return acc + (+value.advance || 0) + (+value.advanceFourssan || 0);
+    }, 0) || 0
+  );
 }
 
 function getAllSumZP() {
-  return filteredRows.value?.reduce((acc, value) => {
+  return filteredRows.value?.reduce((acc, row) => {
     const payment =
-      value.hours * value.paymentPerShift -
-      value.advance -
-      value.deductions +
-      value.additionalPayment;
+      row.hours * row.paymentPerShift -
+      row.advance -
+      row.advanceFourssan -
+      row.salaryFourssan -
+      row.deductions +
+      row.additionalPayment;
     return acc + payment;
   }, 0)
-    ? filteredRows.value?.reduce((acc, value) => {
+    ? filteredRows.value?.reduce((acc, row) => {
         const payment =
-          value.hours * value.paymentPerShift -
-          value.advance -
-          value.deductions +
-          value.additionalPayment;
+          row.hours * row.paymentPerShift -
+          row.advance -
+          row.advanceFourssan -
+          row.salaryFourssan -
+          row.deductions +
+          row.additionalPayment;
         return acc + payment;
       }, 0)
     : 0;
 }
 
 function getAllSumZPMonth() {
-  return filteredRows.value?.reduce((acc, value) => {
+  return filteredRows.value?.reduce((acc, row) => {
     const payment =
-      value.advance +
-      (value.hours * value.paymentPerShift -
-        value.advance -
-        value.deductions +
-        value.additionalPayment);
+      row.advance +
+      row.advanceFourssan +
+      row.salaryFourssan +
+      (row.hours * row.paymentPerShift -
+        row.advance -
+        row.advanceFourssan -
+        row.salaryFourssan -
+        row.deductions +
+        row.additionalPayment);
     return acc + payment;
   }, 0)
-    ? filteredRows.value?.reduce((acc, value) => {
+    ? filteredRows.value?.reduce((acc, row) => {
         const payment =
-          value.advance +
-          (value.hours * value.paymentPerShift -
-            value.advance -
-            value.deductions +
-            value.additionalPayment);
+          row.advance +
+          row.advanceFourssan +
+          row.salaryFourssan +
+          (row.hours * row.paymentPerShift -
+            row.advance -
+            row.advanceFourssan -
+            row.salaryFourssan -
+            row.deductions +
+            row.additionalPayment);
         return acc + payment;
       }, 0)
     : 0;
@@ -156,8 +170,9 @@ function exportToExcel() {
 
 async function createAdvanceReportAdvance() {
   let rows = filteredRows.value?.filter((row) => row.advance);
+  let rowsFourssan = filteredRows.value?.filter((row) => row.advanceFourssan);
 
-  let groupedRows = rows.reduce((acc, row) => {
+  let groupedRows = rows?.reduce((acc: any, row: any) => {
     const key = `${row.PVZ}_${row.company}`;
     if (!acc[key]) {
       acc[key] = {
@@ -176,7 +191,7 @@ async function createAdvanceReportAdvance() {
   const year = currentDate.getFullYear();
   const date = new Date();
 
-  let resultRows = Object.values(groupedRows).map((groupedRow) => ({
+  let resultRows = Object.values(groupedRows).map((groupedRow: any) => ({
     PVZ: groupedRow.PVZ,
     expenditure: Math.ceil(groupedRow.expenditureSum).toString(),
     typeOfExpenditure: "Оплата ФОТ",
@@ -187,9 +202,36 @@ async function createAdvanceReportAdvance() {
     issuedUser: "",
   }));
 
+  let groupedRowsFourssan = rowsFourssan?.reduce((acc: any, row: any) => {
+    const key = `${row.PVZ}_${row.company}`;
+    if (!acc[key]) {
+      acc[key] = {
+        PVZ: row.PVZ,
+        company: row.company,
+        expenditureSum: 0,
+      };
+    }
+    acc[key].expenditureSum += parseFloat(row.advanceFourssan);
+    return acc;
+  }, {});
+
+  let resultRowsFourssan = Object.values(groupedRowsFourssan).map(
+    (groupedRow: any) => ({
+      PVZ: groupedRow.PVZ,
+      expenditure: Math.ceil(groupedRow.expenditureSum).toString(),
+      typeOfExpenditure: "Оплата ФОТ",
+      company: groupedRow.company,
+      createdUser: "Директор",
+      type: "Безнал",
+      date: date,
+      issuedUser: "",
+    })
+  );
+
   let answer = confirm("Вы точно хотите создать отчет по авансу?");
   if (answer) {
     await storeAdvanceReport.createAdvanceReports(resultRows);
+    await storeAdvanceReport.createAdvanceReports(resultRowsFourssan);
   }
 }
 
@@ -198,12 +240,14 @@ async function createAdvanceReportZP() {
     return (
       row.hours * row.paymentPerShift -
       row.advance -
+      row.advanceFourssan -
+      row.salaryFourssan -
       row.deductions +
       row.additionalPayment
     );
   });
 
-  let groupedRows = rows.reduce((acc, row) => {
+  let groupedRows = rows?.reduce((acc: any, row: any) => {
     const key = `${row.PVZ}_${row.company}`;
     if (!acc[key]) {
       acc[key] = {
@@ -215,6 +259,8 @@ async function createAdvanceReportZP() {
     const expenditure =
       row.hours * row.paymentPerShift -
       row.advance -
+      row.advanceFourssan -
+      row.salaryFourssan -
       row.deductions +
       row.additionalPayment;
     acc[key].expenditureSum += expenditure;
@@ -231,7 +277,7 @@ async function createAdvanceReportZP() {
   date.setSeconds(0);
   date.setMilliseconds(0);
 
-  let resultRows = Object.values(groupedRows).map((groupedRow) => ({
+  let resultRows = Object.values(groupedRows).map((groupedRow: any) => ({
     PVZ: groupedRow.PVZ,
     expenditure: Math.ceil(groupedRow.expenditureSum).toString(),
     typeOfExpenditure: "Оплата ФОТ",
@@ -242,9 +288,41 @@ async function createAdvanceReportZP() {
     issuedUser: "",
   }));
 
+  let rowsFourssan = filteredRows.value?.filter((row) => {
+    return row.salaryFourssan;
+  });
+
+  let groupedRowsFourssan = rowsFourssan?.reduce((acc: any, row: any) => {
+    const key = `${row.PVZ}_${row.company}`;
+    if (!acc[key]) {
+      acc[key] = {
+        PVZ: row.PVZ,
+        company: row.company,
+        expenditureSum: 0,
+      };
+    }
+    const expenditure = row.salaryFourssan;
+    acc[key].expenditureSum += expenditure;
+    return acc;
+  }, {});
+
+  let resultRowsFourssan = Object.values(groupedRowsFourssan).map(
+    (groupedRow: any) => ({
+      PVZ: groupedRow.PVZ,
+      expenditure: Math.ceil(groupedRow.expenditureSum).toString(),
+      typeOfExpenditure: "Оплата ФОТ",
+      company: groupedRow.company,
+      createdUser: "Директор",
+      type: "Безнал",
+      date: date,
+      issuedUser: "",
+    })
+  );
+
   let answer = confirm("Вы точно хотите создать отчет по выплате ЗП?");
   if (answer) {
     await storeAdvanceReport.createAdvanceReports(resultRows);
+    await storeAdvanceReport.createAdvanceReports(resultRowsFourssan);
   }
 }
 
@@ -264,7 +342,8 @@ const filterRowsCompanyAndPVZ = () => {
   filteredRows.value = props.rows?.slice();
   filteredRows.value = props.rows?.filter((row) => {
     return (
-      (!selectedCompany.value.length || selectedCompany.value.includes(row.company)) &&
+      (!selectedCompany.value.length ||
+        selectedCompany.value.includes(row.company)) &&
       (!selectedPVZ.value.length || selectedPVZ.value.includes(row.PVZ))
     );
   });
@@ -276,7 +355,6 @@ const filterRowsCompanyAndPVZ = () => {
 function saveToLocalStorage(key: string, value: any) {
   localStorage.setItem(key, JSON.stringify(value));
 }
-
 
 function loadFromLocalStorage(key: string) {
   const storedValue = localStorage.getItem(key);
@@ -307,7 +385,10 @@ watch(month, saveFiltersToLocalStorage);
         v-model="month"
         @change="filterRows(month), getMonth()"
       >
-        <option v-for="(monthName, monthNumber) in monthNames" :value="monthNumber">
+        <option
+          v-for="(monthName, monthNumber) in monthNames"
+          :value="monthNumber"
+        >
           {{ monthName }}
         </option>
       </select>
@@ -319,7 +400,9 @@ watch(month, saveFiltersToLocalStorage);
   <div
     class="flex justify-between items-center mb-3 gap-3 max-sm:items-end max-sm:gap-5 max-sm:flex-col"
   >
-    <div class="flex items-center gap-3 max-sm:flex-col max-sm:w-full max-sm:items-start">
+    <div
+      class="flex items-center gap-3 max-sm:flex-col max-sm:w-full max-sm:items-start"
+    >
       <UIMainButton
         class="max-sm:w-full max-sm:max-w-[400px] mx-auto"
         @click="createAdvanceReportAdvance"
@@ -331,7 +414,11 @@ watch(month, saveFiltersToLocalStorage);
         >создать отчет по выплате зп</UIMainButton
       >
     </div>
-    <UTooltip text="Скачать EXCEL" :shortcuts="['xlsx']" :popper="{ placement: 'right' }">
+    <UTooltip
+      text="Скачать EXCEL"
+      :shortcuts="['xlsx']"
+      :popper="{ placement: 'right' }"
+    >
       <div
         class="bg-secondary-color cursor-pointer border-[1px] border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
         @click="exportToExcel"
@@ -349,16 +436,25 @@ watch(month, saveFiltersToLocalStorage);
       <div>
         <h1 class="font-medium text-xl">
           Выплачен аванс:
-          {{ typeof getAllSumAdvance() === "number" ? getAllSumAdvance().toFixed(0) : 0 }}
+          {{
+            typeof getAllSumAdvance() === "number"
+              ? getAllSumAdvance().toFixed(0)
+              : 0
+          }}
           ₽
         </h1>
         <h1 class="font-medium text-xl">
           ЗП к начислению:
-          {{ typeof getAllSumZP() === "number" ? getAllSumZP().toFixed(0) : 0 }} ₽
+          {{ typeof getAllSumZP() === "number" ? getAllSumZP().toFixed(0) : 0 }}
+          ₽
         </h1>
         <h1 class="font-medium text-xl">
           Итого начислено за месяц:
-          {{ typeof getAllSumZPMonth() === "number" ? getAllSumZPMonth().toFixed(0) : 0 }}
+          {{
+            typeof getAllSumZPMonth() === "number"
+              ? getAllSumZPMonth().toFixed(0)
+              : 0
+          }}
           ₽
         </h1>
       </div>
@@ -390,7 +486,10 @@ watch(month, saveFiltersToLocalStorage);
   </div>
 
   <div class="flex mb-3">
-    <UIActionButton @click="updateReport()" v-if="arrayWithModifiedRows.length > 0">
+    <UIActionButton
+      @click="updateReport()"
+      v-if="arrayWithModifiedRows.length > 0"
+    >
       Сохранить
     </UIActionButton>
   </div>
@@ -421,11 +520,13 @@ watch(month, saveFiltersToLocalStorage);
           <th scope="col" class="border-[1px]">ФИО</th>
           <th scope="col" class="border-[1px]">Телефон</th>
           <th scope="col" class="border-[1px]">Банк</th>
-          <th scope="col" class="border-[1px]">оплата в час</th>
+          <th scope="col" class="border-[1px] px-2">оплата в час</th>
+          <th scope="col" class="border-[1px]">Аванс ФОССАН</th>
           <th scope="col" class="border-[1px]">Аванс</th>
           <th scope="col" class="border-[1px]">Кол-во часов</th>
           <th scope="col" class="border-[1px]">Удержания</th>
           <th scope="col" class="border-[1px]">Доплата</th>
+          <th scope="col" class="border-[1px]">ЗП ФОССАН</th>
           <th scope="col" class="border-[1px]">ЗП к начислению</th>
           <th scope="col" class="border-[1px]">Итого начислено за месяц</th>
           <th scope="col" class="border-[1px]">Примечание</th>
@@ -438,7 +539,8 @@ watch(month, saveFiltersToLocalStorage);
           class="text-center"
           :class="{
             'bg-red-500 text-black': row.notation === 'Нам должны',
-            'bg-pink-900 text-white': row.notation === 'Расчёт уволенных сотрудников',
+            'bg-pink-900 text-white':
+              row.notation === 'Расчёт уволенных сотрудников',
             'bg-yellow-400 text-black': row.notation === 'Оплачено',
           }"
         >
@@ -447,7 +549,11 @@ watch(month, saveFiltersToLocalStorage);
               @click="openModal(row)"
               class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
             >
-              <Icon class="text-green-500" name="ic:baseline-mode-edit" size="18" />
+              <Icon
+                class="text-green-500"
+                name="ic:baseline-mode-edit"
+                size="18"
+              />
             </div>
           </td>
           <th scope="row" class="border-[1px]">
@@ -465,6 +571,15 @@ watch(month, saveFiltersToLocalStorage);
           </td>
           <td class="border-[1px]">
             {{ row.paymentPerShift ? row.paymentPerShift : 0 }} ₽
+          </td>
+          <td class="border-[1px]">
+            <UInput
+              class="w-[85px] mx-1 text-center bg-gray-100"
+              @input="getRowByIdFromInput(row)"
+              v-model="row.advanceFourssan"
+              type="number"
+            />
+            <span class="hidden">{{ row.advanceFourssan }} ₽</span>
           </td>
           <td class="border-[1px]">
             <UInput
@@ -502,20 +617,33 @@ watch(month, saveFiltersToLocalStorage);
             />
             <span class="hidden">{{ row.additionalPayment }} ₽</span>
           </td>
+          <td class="border-[1px]">
+            <UInput
+              class="w-[85px] mx-1 text-center bg-gray-100"
+              @input="getRowByIdFromInput(row)"
+              v-model="row.salaryFourssan"
+              type="number"
+            />
+            <span class="hidden">{{ row.salaryFourssan }} ₽</span>
+          </td>
           <td
             class="border-[1px]"
             v-if="
               row.hours !== '' &&
               row.paymentPerShift !== '' &&
               row.advance !== '' &&
+              row.advanceFourssan !== '' &&
               row.deductions !== '' &&
-              row.additionalPayment !== ''
+              row.additionalPayment !== '' &&
+              row.salaryFourssan !== ''
             "
           >
             {{
               (
                 row.hours * row.paymentPerShift -
                 row.advance -
+                row.advanceFourssan -
+                row.salaryFourssan -
                 row.deductions +
                 row.additionalPayment
               ).toFixed(0)
@@ -528,15 +656,21 @@ watch(month, saveFiltersToLocalStorage);
               row.hours !== '' &&
               row.paymentPerShift !== '' &&
               row.advance !== '' &&
+              row.advanceFourssan !== '' &&
               row.deductions !== '' &&
-              row.additionalPayment !== ''
+              row.additionalPayment !== '' &&
+              row.salaryFourssan !== ''
             "
           >
             {{
               (
                 row.advance +
+                row.advanceFourssan +
+                row.salaryFourssan +
                 (row.hours * row.paymentPerShift -
                   row.advance -
+                  row.advanceFourssan -
+                  row.salaryFourssan -
                   row.deductions +
                   row.additionalPayment)
               ).toFixed(0)

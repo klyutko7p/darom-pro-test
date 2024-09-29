@@ -34,9 +34,14 @@ function saveAddress(address: string) {
   localStorage.setItem("addressData", JSON.stringify(address));
   selectedPVZClient.value = address;
 
-  if (route.query.change === "true") {
+  if (route.query.change === "true" && route.query.card !== "true") {
     toast.success("Вы успешно сменили адрес пункта выдачи!");
     router.push("/client/main?notification=false");
+  }
+
+  if (route.query.change === "true" && route.query.card === "true") {
+    toast.success("Вы успешно сменили адрес пункта выдачи!");
+    router.push("/client/order/accept-order?card=true");
   }
 
   if (route.query.accept === "true") {

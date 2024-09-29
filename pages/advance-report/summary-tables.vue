@@ -312,32 +312,7 @@ let arrayOfExpenditure = ref<Array<IAdvanceReport>>();
 let sumOfArray3 = ref(0);
 
 function returnTotal(sum: number) {
-  let newStartingDate = new Date(startingDate.value);
-  newStartingDate.setHours(0);
-  newStartingDate.setMinutes(0);
-  newStartingDate.setSeconds(0);
-  newStartingDate.setMilliseconds(0);
-
-  let newEndDate = new Date(endDate.value);
-  newEndDate.setHours(23);
-  newEndDate.setMinutes(59);
-  newEndDate.setSeconds(59);
-  newEndDate.setMilliseconds(0);
-
   sumOfArray3.value = sum;
-
-  arrayOfExpenditure.value = filteredRows.value?.filter(
-    (row: IAdvanceReport) =>
-      row.typeOfExpenditure === "Вывод дивидендов" &&
-      (!startingDate.value ||
-        new Date(row.date) >= new Date(newStartingDate)) &&
-      (!endDate.value || new Date(row.date) <= new Date(newEndDate)) &&
-      (!type.value || row.type === type.value)
-  );
-
-  arrayOfExpenditure.value?.forEach((row) => {
-    sumOfArray3.value -= parseFloat(row.expenditure);
-  });
 }
 </script>
 

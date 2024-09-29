@@ -107,7 +107,7 @@ export const useClientsStore = defineStore("clients", () => {
       (+phoneNumber[10] + 10).toString();
     let hashedPhoneNumber = crypto.SHA256(splitPhoneNumber);
 
-    let referralLink = `https://darom.pro/auth/register?ref=${hashedPhoneNumber}&q=${splitPhoneNumber}&phone=${stringEncryptPhoneNumber}`;
+    let referralLink = `https://darom.pro/auth/register?hash=${hashedPhoneNumber}&q=${splitPhoneNumber}&phone=${stringEncryptPhoneNumber}`;
 
     return referralLink;
   }

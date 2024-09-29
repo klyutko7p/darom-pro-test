@@ -388,7 +388,7 @@ function getTotal() {
     sumOfArray3Total.value += differenceByPVZTotal[pvzName];
   });
 
-  emit("returnTotal", sumOfArray3Total.value);
+  returnTotal();
 }
 
 function clearTotalSums() {

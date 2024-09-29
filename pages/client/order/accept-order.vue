@@ -436,6 +436,7 @@ function showFourModal() {
 }
 
 function showLastModal() {
+  isOpenSecondModal.value = false;
   isOpenThirdModal.value = false;
   isOpenFourModal.value = false;
   isOpenLastModal.value = true;
@@ -707,7 +708,7 @@ let isNotAskingAcceptOrder = ref(false);
           </template>
 
           <div v-auto-animate="{ easing: 'ease-out' }">
-            <div class="h-[120px]" v-if="isOpenSecondModal" v-auto-animate>
+            <div v-if="isOpenSecondModal" v-auto-animate>
               <label>Пункт выдачи заказов</label>
               <USelectMenu
                 value-attribute="pvz"
@@ -716,11 +717,21 @@ let isNotAskingAcceptOrder = ref(false);
                 :options="people"
                 class="mt-3"
               />
+              <UButton
+                  icon="i-material-symbols-add-location"
+                  size="sm"
+                  @click="router.push('/client/order/independently/ozon?change=true&card=true')"
+                  class="font-bold mt-3"
+                  color="primary"
+                  variant="solid"
+                  label="Выбрать на карте"
+                  :trailing="false"
+                />
               <div class="mt-5 flex justify-end gap-3" v-auto-animate>
                 <UButton
                   icon="i-heroicons-arrow-left-20-solid"
                   size="sm"
-                  @click="showFirstModal()"
+                  @click="showLastModal()"
                   class="font-bold"
                   color="primary"
                   variant="solid"
@@ -1163,7 +1174,8 @@ let isNotAskingAcceptOrder = ref(false);
               </div>
               <div v-else>
                 <h1 class="text-center py-5 text-xl">
-                  Корзина пуста! Добавьте товары в заказ.
+                  Корзина пуста! <br />
+                  Добавьте товары в заказ.
                 </h1>
               </div>
               <div class="mt-5 flex justify-end gap-3 flex-col" v-auto-animate>

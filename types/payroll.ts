@@ -8,8 +8,10 @@ interface IPayroll {
     paymentPerShift: number;
     hours: number;
     advance: number;
+    advanceFourssan: number;
     deductions: number;
     additionalPayment: number;
-    notation: string | null;
+    salaryFourssan: number;
+    notation?: string;
     date: Date | number | string | null;
 }

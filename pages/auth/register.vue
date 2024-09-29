@@ -11,7 +11,7 @@ const fio = ref("");
 const password = ref("");
 const repeatPassword = ref("");
 const message = ref("");
-const refValue = route.query.ref ? (route.query.ref as string) : "";
+const refValue = route.query.hash ? (route.query.hash as string) : "";
 const queryValue = route.query.q ? (route.query.q as string) : "";
 const phoneNumberValue = route.query.phone
   ? storeClients.decryptPhoneNumber(route.query.phone as string)

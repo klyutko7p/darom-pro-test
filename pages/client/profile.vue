@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { ClientReferral } from "@prisma/client";
 import Cookies from "js-cookie";
 import { useToast } from "vue-toastification";
 const storeClients = useClientsStore();
+const storeUsers = useUsersStore();
 const router = useRouter();
 
 const toast = useToast();
 let user = ref({} as Client);
-let clientsReferred = ref<Array<Client[]>>([]);
+let clientsReferred = ref<Array<any>>([]);
 let ourRansomRows = ref<Array<IOurRansom[]>>([]);
 const token = Cookies.get("token");
 const storeRansom = useRansomStore();
@@ -23,13 +23,15 @@ onMounted(async () => {
   user.value = await storeClients.getClient();
   let userData = await storeClients.getClientById(user.value.id);
   user.value = userData;
-  clientsReferred.value = await storeClients.getClientsByReferrer(user.value.phoneNumber);
+  clientsReferred.value = await storeClients.getClientsByReferrer(
+    user.value.phoneNumber
+  );
+  await getAllPurchasePrice(clientsReferred.value);
   urlReferral.value = storeClients.createReferralLink(user.value.phoneNumber);
   phoneNumber.value = user.value.phoneNumber;
   fio.value = user.value.fio;
   isLoading.value = false;
 });
-
 
 const phoneNumber = ref("");
 const fio = ref();
@@ -39,6 +41,32 @@ const newPassword = ref("");
 definePageMeta({
   layout: "client",
 });
+
+async function getAllPurchasePrice(clientsReferred: any[]) {
+  for (const client of clientsReferred) {
+    const phoneNumber = client.referrer;
+
+    try {
+      const ransomRows = await storeRansom.getRansomRowsByFromNameWithoutCell(
+        phoneNumber,
+        "OurRansom"
+      );
+
+      client.ransomData = ransomRows;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+}
+
+function calculateTotalPrice(rows: any) {
+  return rows
+    .filter((row: any) => row.issued)
+    .reduce((total: any, row: any) => {
+      const price = typeof row.priceSite === "number" ? row.priceSite : 0;
+      return total + price;
+    }, 0);
+}
 
 let isShowChangePassword = ref(false);
 function showChangePassword() {
@@ -79,7 +107,8 @@ async function saveChanges() {
     }
 
     if (newPassword.value.trim().length < 6) {
-      errorTextValidation.value = "Новый пароль должен состоять хотя бы из 6 знаков!";
+      errorTextValidation.value =
+        "Новый пароль должен состоять хотя бы из 6 знаков!";
       return;
     }
 
@@ -88,7 +117,7 @@ async function saveChanges() {
       return;
     }
   } else {
-    isShowPasswordInput.value = true
+    isShowPasswordInput.value = true;
   }
 
   if (password.value.trim() === "") {
@@ -135,46 +164,18 @@ async function saveChanges() {
   isLoading.value = false;
 }
 
-// function copyToClipboard() {
-//   const el = document.createElement("textarea");
-//   el.value = urlReferral.value;
-//   el.setAttribute("readonly", "");
-//   el.style.position = "absolute";
-//   el.style.left = "-9999px";
-//   document.body.appendChild(el);
-//   el.select();
-//   document.execCommand("copy");
-//   document.body.removeChild(el);
-//   toast.success("Вы успешно скопировали ссылку!");
-// }
-
-// async function updateBalance() {
-//   let sum = 0;
-//   isLoading.value = true;
-//   for (const element of clientsReferred.value) {
-//     if (!element.isAccrued) {
-//       ourRansomRows.value = await storeRansom.getRansomRowsByFromNameWithoutCell(
-//         element.referrer,
-//         "OurRansom"
-//       );
-
-//       if (
-//         ourRansomRows.value.reduce((acc, row) => acc + row.amountFromClient1, 0) >= 3000
-//       ) {
-//         await storeClients.updateBalanceStatus(element.referrer);
-//         sum += 500;
-//       } else {
-//         console.log("Баланс никак не изменится!");
-//       }
-//     }
-//   }
-//   if (sum !== 0) {
-//     await storeClients.updateBalanceSum(user.value.id, user.value.balance + sum);
-//   }
-//   let userData = await storeClients.getClientById(user.value.id);
-//   user.value = userData;
-//   isLoading.value = false;
-// }
+function copyToClipboard() {
+  const el = document.createElement("textarea");
+  el.value = urlReferral.value;
+  el.setAttribute("readonly", "");
+  el.style.position = "absolute";
+  el.style.left = "-9999px";
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand("copy");
+  document.body.removeChild(el);
+  toast.success("Вы успешно скопировали ссылку!");
+}
 
 let showPassword = ref(false);
 let newPasswordRepeat = ref("");
@@ -186,11 +187,19 @@ let newPasswordRepeat = ref("");
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">
-      <div class="py-5 flex mt-24 items-start justify-between gap-10 max-xl:flex-col max-xl:items-center">
-        <h1 class="text-2xl text-center">Изменить личные данные пользователя</h1>
-        <div class="shadow-2xl p-10 border-2 border-dashed border-secondary-color w-full max-w-[900px]">
+      <div
+        class="py-5 flex mt-24 items-start justify-between gap-10 max-xl:flex-col max-xl:items-center"
+      >
+        <h1 class="text-2xl text-center">
+          Изменить личные данные пользователя
+        </h1>
+        <div
+          class="shadow-2xl p-10 border-2 border-dashed border-secondary-color w-full max-w-[900px]"
+        >
           <div class="mb-5">
-            <label for="phone" class="block text-sm font-medium leading-6 text-gray-900"
+            <label
+              for="phone"
+              class="block text-sm font-medium leading-6 text-gray-900"
               >Телефон</label
             >
             <input
@@ -201,7 +210,9 @@ let newPasswordRepeat = ref("");
             />
           </div>
           <div class="mb-5">
-            <label for="phone" class="block text-sm font-medium leading-6 text-gray-900"
+            <label
+              for="phone"
+              class="block text-sm font-medium leading-6 text-gray-900"
               >ФИО</label
             >
             <input
@@ -319,33 +330,67 @@ let newPasswordRepeat = ref("");
               />
             </div>
           </div>
-          <h1 class="text-center font-bold text-red-500 mb-5">{{ errorTextValidation }}</h1>
-          <div class="flex items-center justify-end gap-5 mt-10 max-sm:flex-col">
-            <UIMainButton class="max-sm:w-full" @click="showChangePassword">Поменять пароль</UIMainButton>
-            <UIMainButton class="max-sm:w-full" @click="saveChanges">Сохранить</UIMainButton>
+          <h1 class="text-center font-bold text-red-500 mb-5">
+            {{ errorTextValidation }}
+          </h1>
+          <div
+            class="flex items-center justify-end gap-5 mt-10 max-sm:flex-col"
+          >
+            <UIMainButton class="max-sm:w-full" @click="showChangePassword"
+              >Поменять пароль</UIMainButton
+            >
+            <UIMainButton class="max-sm:w-full" @click="saveChanges"
+              >Сохранить</UIMainButton
+            >
           </div>
         </div>
-        <!-- <div class="mb-5 mt-10">
-          <h1 class="text-xl">
-            Ваша реферальная ссылка:
-            <span
-              @click="copyToClipboard"
-              class="font-bold underline text-secondary-color cursor-pointer"
-            >
-              СКОПИРОВАТЬ</span
-            >
-          </h1>
-          <div class="mt-5">
-            <h1>
-              Количество пользователей, зарегистрированные по Вашей ссылке:
-              {{ clientsReferred.length }}
-            </h1>
-            <h1>Ваш баланс в данный момент: {{ user.balance ? user.balance : 0 }} ₽</h1>
-            <UIMainButton @click="updateBalance" class="mt-5"
-              >Обновить баланс</UIMainButton
-            >
+      </div>
+      <div class="mb-5 mt-24">
+        <h1 class="text-xl">
+          Ваша реферальная ссылка:
+          <span
+            @click="copyToClipboard"
+            class="font-bold underline text-secondary-color cursor-pointer"
+          >
+            СКОПИРОВАТЬ</span
+          >
+        </h1>
+        <div class="mt-5" v-if="clientsReferred.length">
+          <h1>Пользователи зарегистрированные по Вашей ссылке</h1>
+          <div class="w-full bg-gray-50 px-5 py-3 space-y-5 mt-3">
+            <div v-for="(client, index) in clientsReferred">
+              <ul
+                class="space-y-1 text-gray-500 list-inside dark:text-gray-400"
+              >
+                <li
+                  :class="{
+                    'bg-green-100':
+                      calculateTotalPrice(client.ransomData) >= 1000, 'bg-red-100':
+                      calculateTotalPrice(client.ransomData) < 1000,
+                  }"
+                  class="flex py-1.5 px-3 rounded-md items-center gap-5  w-full"
+                >
+                  <Icon
+                    name="i-ri-checkbox-circle-fill"
+                    size="24"
+                    class="text-green-500"
+                    v-if="calculateTotalPrice(client.ransomData) >= 10000"
+                  />
+                  <Icon
+                    name="i-ic-round-remove-circle"
+                    size="24"
+                    class="text-red-500"
+                    v-if="calculateTotalPrice(client.ransomData) < 10000"
+                  />
+                  <div class="flex items-center gap-1">
+                    <h1>{{ client.referrer }},</h1>
+                    <h1>{{ calculateTotalPrice(client.ransomData) }} ₽</h1>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
