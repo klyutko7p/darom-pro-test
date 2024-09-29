@@ -207,7 +207,7 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
         const deliveredSCTimeDif = deliveredSC - today;
         return (
           row.deliveredPVZ === null &&
-          daysDiff >= 2 &&
+          daysDiff >= 1 &&
           (deliveredSCTimeDif === 0 || !row.deliveredSC)
         );
       });
@@ -607,12 +607,19 @@ async function parsingPage() {
     if (rowData.value.productLink.length > 20) {
       if (rowData.value.productLink.includes("wildberries")) {
         isLoading.value = true;
-        let itemInfo = await storeClients.fetchSiteWB(
-          rowData.value.productLink
-        );
+        const match = rowData.value.productLink.match(/\/catalog\/([^/?]+)/);
+        let productNameValue = "";
+        if (match) {
+          productNameValue = match[1];
+        } else {
+          toast.error("Мы не смогли определить артикул товара!");
+          return;
+        }
 
+        const itemInfo = await storeClients.fetchSiteWB(productNameValue);
         if (itemInfo.error === "fetch failed" || !itemInfo[0]) {
           handleError("Извините, мы не можем сейчас обработать данные.");
+          rowData.value.productLink = "";
           return;
         }
 
@@ -628,15 +635,13 @@ async function parsingPage() {
               .substring(0, rowData.value.priceSite.toString().length - 2)
           );
         } else {
-          rowData.value.priceSite =
-            itemInfo[2].data.products[0].sizes[0].price.product;
+          rowData.value.priceSite = itemInfo[2].data.products[0].sizes[0].price.product;
           rowData.value.priceSite = Number(
             rowData.value.priceSite
               .toString()
               .substring(0, rowData.value.priceSite.toString().length - 2)
           );
         }
-
         toast.success("Данные успешно подвязаны!");
         isLoading.value = false;
       } else if (rowData.value.productLink.includes("ozon")) {

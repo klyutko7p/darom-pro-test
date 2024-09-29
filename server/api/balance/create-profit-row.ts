@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
         id: row.id,
         pvz: row.pvz,
         sum: row.sum,
+        reminder: row.reminder,
         issued: row.issued,
         received: row.received,
         notation: row.notation,
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
     });
   } catch (error) {
     if (error instanceof Error) {
-      console.error(error.message)
+      console.error(error.message);
       return { error: error.message };
     }
   }

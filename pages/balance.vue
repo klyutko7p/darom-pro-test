@@ -1596,13 +1596,13 @@ function formatNumber(number: number) {
   }
 
   let formattedString = "";
-  let remainder = numberString.length % 3;
+  let reminder = numberString.length % 3;
 
-  if (remainder !== 0) {
-    formattedString += numberString.slice(0, remainder) + " ";
+  if (reminder !== 0) {
+    formattedString += numberString.slice(0, reminder) + " ";
   }
 
-  for (let i = remainder; i < numberString.length; i += 3) {
+  for (let i = reminder; i < numberString.length; i += 3) {
     formattedString += numberString.slice(i, i + 3) + " ";
   }
 
@@ -1795,6 +1795,8 @@ async function createProfitRow() {
     toast.error("Вы не можете вывести такую сумму!");
   } else {
     isLoading.value = true;
+    rowData.value.reminder =
+      Math.ceil(allSumProfit.value) - +rowData.value.sum;
     await storeBalance.createBalanceProfitRow(rowData.value);
     rowsProfit.value = await storeBalance.getBalanceProfitRows();
     closeModalProfitRow();
@@ -2547,143 +2549,143 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
               v-if="showFilters"
               class="border-2 bg-white border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
             >
-              <div
-                class="flex items-center flex-col w-full gap-x-5"
-              >
-              <div class="w-full">
-                <div
-                  class="flex items-start space-y-2 flex-col mt-5 text-center"
-                >
-                  <h1>Показать для ПВЗ</h1>
-                  <select
-                    v-if="
-                      user.role !== 'PVZ' &&
-                      user.role !== 'COURIER' &&
-                      user.role !== 'PPVZ' &&
-                      user.role !== 'RMANAGER'
-                    "
-                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
-                    v-model="selectedPVZ"
+              <div class="flex items-center flex-col w-full gap-x-5">
+                <div class="w-full">
+                  <div
+                    class="flex items-start space-y-2 flex-col mt-5 text-center"
                   >
-                    <option value="Все ПВЗ" selected>Все ПВЗ</option>
-                    <option v-for="pvzValue in pvz">
-                      {{ pvzValue.name }}
-                    </option>
-                  </select>
-                  <select
-                    v-else-if="user.role === 'RMANAGER'"
-                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
-                    v-model="selectedPVZ"
+                    <h1>Показать для ПВЗ</h1>
+                    <select
+                      v-if="
+                        user.role !== 'PVZ' &&
+                        user.role !== 'COURIER' &&
+                        user.role !== 'PPVZ' &&
+                        user.role !== 'RMANAGER'
+                      "
+                      class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
+                      v-model="selectedPVZ"
+                    >
+                      <option value="Все ПВЗ" selected>Все ПВЗ</option>
+                      <option v-for="pvzValue in pvz">
+                        {{ pvzValue.name }}
+                      </option>
+                    </select>
+                    <select
+                      v-else-if="user.role === 'RMANAGER'"
+                      class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
+                      v-model="selectedPVZ"
+                    >
+                      <option value="Все ППВЗ" selected>Все ППВЗ</option>
+                      <option v-for="pvzValue in user.PVZ">
+                        {{ pvzValue }}
+                      </option>
+                    </select>
+                    <select
+                      v-else
+                      class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
+                      v-model="selectedPVZ"
+                    >
+                      <option v-for="pvzValue in user.PVZ">
+                        {{ pvzValue }}
+                      </option>
+                    </select>
+                  </div>
+                  <div
+                    class="flex items-start space-y-2 flex-col mt-5 text-center"
                   >
-                    <option value="Все ППВЗ" selected>Все ППВЗ</option>
-                    <option v-for="pvzValue in user.PVZ">
-                      {{ pvzValue }}
-                    </option>
-                  </select>
-                  <select
-                    v-else
-                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
-                    v-model="selectedPVZ"
-                  >
-                    <option v-for="pvzValue in user.PVZ">
-                      {{ pvzValue }}
-                    </option>
-                  </select>
+                    <h1>Тип транзакции</h1>
+                    <select
+                      class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
+                      v-model="selectedTypeOfTransaction"
+                    >
+                      <option
+                        v-if="
+                          user.role !== 'ADMINISTRATOR' &&
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ' &&
+                          user.role !== 'RMANAGER'
+                        "
+                        value="Доход"
+                      >
+                        Доход DP (продажа)
+                      </option>
+                      <option
+                        v-if="
+                          user.role !== 'ADMINISTRATOR' &&
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ' &&
+                          user.role !== 'RMANAGER'
+                        "
+                        value="Доставка"
+                      >
+                        Доход D&S
+                      </option>
+                      <option value="Баланс наличные">
+                        Баланс наличные DP
+                      </option>
+                      <option
+                        v-if="
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ'
+                        "
+                        value="Баланс безнал"
+                      >
+                        Баланс онлайн DP
+                      </option>
+                      <option
+                        v-if="
+                          user.role !== 'ADMINISTRATOR' &&
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ' &&
+                          user.role !== 'RMANAGER'
+                        "
+                        value="Заказано"
+                      >
+                        Сумма товаров в заказе (до выдачи)
+                      </option>
+                      <option
+                        v-if="
+                          user.role !== 'ADMINISTRATOR' &&
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ' &&
+                          user.role !== 'RMANAGER'
+                        "
+                        value="Заказано1"
+                      >
+                        Сумма проданных товаров наличные
+                      </option>
+                      <option
+                        v-if="
+                          user.role !== 'ADMINISTRATOR' &&
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ' &&
+                          user.role !== 'RMANAGER'
+                        "
+                        value="Заказано2"
+                      >
+                        Сумма проданных товаров онлайн
+                      </option>
+                      <option
+                        v-if="
+                          user.role !== 'ADMINISTRATOR' &&
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ' &&
+                          user.role !== 'RMANAGER'
+                        "
+                        value="Заказано3"
+                      >
+                        Сумма заказанных товаров
+                      </option>
+                    </select>
+                  </div>
                 </div>
-                <div
-                  class="flex items-start space-y-2 flex-col mt-5 text-center"
-                >
-                  <h1>Тип транзакции</h1>
-                  <select
-                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
-                    v-model="selectedTypeOfTransaction"
-                  >
-                    <option
-                      v-if="
-                        user.role !== 'ADMINISTRATOR' &&
-                        user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ' &&
-                        user.role !== 'RMANAGER'
-                      "
-                      value="Доход"
-                    >
-                      Доход DP (продажа)
-                    </option>
-                    <option
-                      v-if="
-                        user.role !== 'ADMINISTRATOR' &&
-                        user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ' &&
-                        user.role !== 'RMANAGER'
-                      "
-                      value="Доставка"
-                    >
-                      Доход D&S
-                    </option>
-                    <option value="Баланс наличные">Баланс наличные DP</option>
-                    <option
-                      v-if="
-                        user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ'
-                      "
-                      value="Баланс безнал"
-                    >
-                      Баланс онлайн DP
-                    </option>
-                    <option
-                      v-if="
-                        user.role !== 'ADMINISTRATOR' &&
-                        user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ' &&
-                        user.role !== 'RMANAGER'
-                      "
-                      value="Заказано"
-                    >
-                      Сумма товаров в заказе (до выдачи)
-                    </option>
-                    <option
-                      v-if="
-                        user.role !== 'ADMINISTRATOR' &&
-                        user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ' &&
-                        user.role !== 'RMANAGER'
-                      "
-                      value="Заказано1"
-                    >
-                      Сумма проданных товаров наличные
-                    </option>
-                    <option
-                      v-if="
-                        user.role !== 'ADMINISTRATOR' &&
-                        user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ' &&
-                        user.role !== 'RMANAGER'
-                      "
-                      value="Заказано2"
-                    >
-                      Сумма проданных товаров онлайн
-                    </option>
-                    <option
-                      v-if="
-                        user.role !== 'ADMINISTRATOR' &&
-                        user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
-                        user.role !== 'PPVZ' &&
-                        user.role !== 'RMANAGER'
-                      "
-                      value="Заказано3"
-                    >
-                      Сумма заказанных товаров
-                    </option>
-                  </select>
-                </div>
-              </div>
                 <div
                   v-auto-animate
                   class="my-10 flex items-center justify-center gap-5"

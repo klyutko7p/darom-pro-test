@@ -277,13 +277,13 @@ function formatNumber(number: number) {
   }
 
   let formattedString = "";
-  let remainder = numberString.length % 3;
+  let reminder = numberString.length % 3;
 
-  if (remainder !== 0) {
-    formattedString += numberString.slice(0, remainder) + " ";
+  if (reminder !== 0) {
+    formattedString += numberString.slice(0, reminder) + " ";
   }
 
-  for (let i = remainder; i < numberString.length; i += 3) {
+  for (let i = reminder; i < numberString.length; i += 3) {
     formattedString += numberString.slice(i, i + 3) + " ";
   }
 

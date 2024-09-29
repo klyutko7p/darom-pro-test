@@ -325,6 +325,7 @@ model ProfitPPVZ {
   id            Int       @id @default(autoincrement())
   pvz           String?
   sum           String?
+  reminder      Int?
   issued        DateTime?
   received      DateTime?
   createdUser   String?

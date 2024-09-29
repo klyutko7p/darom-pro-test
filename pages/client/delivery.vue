@@ -223,10 +223,14 @@ function uploadQRFile(e: Event) {
 
 function handleFileUpload(e: any) {
   let fileName = e[0].name;
-  rowData.value.img = `${randomDigits}-${fileName}`;
-  fileQRPhoto.value = e[0];
-  localStorage.setItem("fileName", JSON.stringify(rowData.value.img));
-  localStorage.setItem("marketplace", JSON.stringify(marketplace.value));
+  if (fileName.includes(".mp4") || fileName.includes(".mov")) {
+    toast.error("Вставьте скриншот, а не файл видео-формата!");
+  } else {
+    rowData.value.img = `${randomDigits}-${fileName}`;
+    fileQRPhoto.value = e[0];
+    localStorage.setItem("fileName", JSON.stringify(rowData.value.img));
+    localStorage.setItem("marketplace", JSON.stringify(marketplace.value));
+  }
 }
 
 let isOpen = ref(true);

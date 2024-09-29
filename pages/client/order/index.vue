@@ -39,18 +39,18 @@ definePageMeta({
             <h1 class="font-bold text-2xl mb-5 max-sm:text-lg">
               Выберите как оформить заказ
             </h1>
-            <div class="flex items-center gap-5 flex-col">
+            <div class="flex items-center gap-5 flex-col max-w-[500px]">
               <UIMainButton
                 class="w-full"
                 @click="router.push('order/independently')"
-                >заказать в интернет-магазине <br />
+                >Самостоятельно заказать с последующей доставкой в
+                интернет-магазине <br class="hidden max-sm:block" />
                 (OZON, WB, ЯМ и другие)</UIMainButton
               >
               <UIMainButton
                 class="w-full"
                 @click="router.push('order/accept-order')"
-                >Заказать через личный кабинет
-                DAROM.PRO</UIMainButton
+                >Заказать через личный кабинет DAROM.PRO</UIMainButton
               >
               <a
                 href="https://t.me/Svetlana_Darompro"
@@ -63,7 +63,9 @@ definePageMeta({
                   >Заказать через администратора</UIMainButton
                 >
               </a>
-              <UIMainButton class="w-full" @click="router.push('/client/main?notification=false')"
+              <UIMainButton
+                class="w-full"
+                @click="router.push('/client/main?notification=false')"
                 >Назад</UIMainButton
               >
             </div>
