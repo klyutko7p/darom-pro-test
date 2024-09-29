@@ -43,10 +43,11 @@ definePageMeta({
               <UIMainButton
                 class="w-full"
                 @click="router.push('order/independently')"
-                >Самостоятельно заказать с последующей доставкой в
-                интернет-магазине <br class="hidden max-sm:block" />
-                (OZON, WB, ЯМ и другие)</UIMainButton
-              >
+                >заказать Самостоятельно в интернет-магазине
+                <br />
+                (OZON, WB, ЯМ и другие) <br />
+                с последующей доставкой
+              </UIMainButton>
               <UIMainButton
                 class="w-full"
                 @click="router.push('order/accept-order')"
