@@ -121,6 +121,21 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  function compareReferralLinkNumberRefSystem(
+    phoneNumber: string,
+    refValue: string,
+    encryptPhoneNumber: string,
+    origPhoneNumber: string
+  ) {
+    let hashedPhoneNumber = crypto.SHA256(phoneNumber);
+    let decryptPhoneNumberValue = decryptPhoneNumber(encryptPhoneNumber);
+    if (hashedPhoneNumber.toString() === refValue && decryptPhoneNumberValue !== origPhoneNumber) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   async function createReferralClient(
     referrerPhone: string,
     referredPhone: string
@@ -191,6 +206,26 @@ export const useClientsStore = defineStore("clients", () => {
         },
         body: JSON.stringify({ id }),
       });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getClientsByReferred(phoneNumber: string) {
+    try {
+      let { data }: any = await useFetch(
+        "/api/clients/get-clients-by-referred",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ phoneNumber }),
+        }
+      );
       return data.value;
     } catch (error) {
       if (error instanceof Error) {
@@ -508,6 +543,7 @@ export const useClientsStore = defineStore("clients", () => {
     createReferralClient,
     decryptPhoneNumber,
     encryptPhoneNumber,
+    getClientsByReferred,
     getClientsByReferrer,
     updateBalanceStatus,
     updateBalanceSum,
@@ -517,5 +553,6 @@ export const useClientsStore = defineStore("clients", () => {
     resetPassword,
     acceptDocs,
     fetchSiteOZ2,
+    compareReferralLinkNumberRefSystem,
   };
 });

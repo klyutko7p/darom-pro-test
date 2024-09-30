@@ -554,10 +554,10 @@ async function openModalQR() {
   qrBodyInfo.value = {} as QRBodyInfo;
   qrBodyInfo.value = await storeQR.createQRCode(
     getAllSum.value,
-    "Онлайн оплата доставки"
+    `Онлайн оплата доставки, ${Date.now()}`
   );
-  await checkPaymentStatus(qrBodyInfo.value.Data.qrcId);
-  qrBody.value = await storeQR.getQRCode(qrBodyInfo.value.Data.qrcId);
+  await checkPaymentStatus(qrBodyInfo.value.Data.operationId);
+  qrBody.value = await storeQR.getPaymentStatusQR(qrBodyInfo.value.Data.operationId);
   isGeneratedQR.value = true;
   isLoading.value = false;
 }
@@ -592,30 +592,30 @@ function closeModalAfterDelay() {
   }, 6000);
 }
 
-async function checkPaymentStatus(qrcId: string) {
+async function checkPaymentStatus(operationId: string) {
   const interval = 3000;
 
   intervalId.value = setInterval(async () => {
     try {
       let paymentData = (await storeQR.getPaymentStatusQR(
-        qrcId
+        operationId
       )) as QRPaymentStatus;
 
       if (
         paymentData.Data &&
-        paymentData.Data.paymentList &&
-        paymentData.Data.paymentList.length > 0
+        paymentData.Data.Operation &&
+        paymentData.Data.Operation.length > 0
       ) {
-        const status = paymentData.Data.paymentList[0].status;
+        const status = paymentData.Data.Operation[0].status;
         paymentStatusMessage.value = status;
 
-        if (status === "Accepted") {
+        if (status === "APPROVED") {
           toast.success("Операция завершена успешно!");
           closeModalQR();
           isOpenModalStatus.value = true;
           closeModalStatus();
           clearInterval(intervalId.value);
-        } else if (status === "Rejected") {
+        } else if (status === "EXPIRED") {
           toast.error("Операция отклонена!");
           closeModalQR();
           isOpenModalStatus.value = true;
@@ -1638,7 +1638,7 @@ async function writeClipboardText(text: any) {
       </template>
       <template v-slot:header>
         <div class="custom-header">
-          <h1 v-if="paymentStatusMessage === 'NotStarted'">
+          <h1 v-if="paymentStatusMessage === 'CREATED'">
             Статус: <span class="text-secondary-color"> ОЖИДАНИЕ </span>
           </h1>
           <h1
@@ -1649,10 +1649,10 @@ async function writeClipboardText(text: any) {
           >
             Статус: <span class="text-secondary-color"> ОБРАБОТКА </span>
           </h1>
-          <h1 v-if="paymentStatusMessage === 'Accepted'">
+          <h1 v-if="paymentStatusMessage === 'APPROVED'">
             Статус: <span class="text-green-500"> УСПЕШНО </span>
           </h1>
-          <h1 v-if="paymentStatusMessage === 'Rejected'">
+          <h1 v-if="paymentStatusMessage === 'EXPIRED'">
             Статус: <span class="text-red-500"> ОТКЛОНЁН </span>
           </h1>
         </div>
@@ -1666,39 +1666,36 @@ async function writeClipboardText(text: any) {
             >
           </h1>
           <h1
-            @click="writeClipboardText(qrBody.Data?.payload)"
+            @click="writeClipboardText(qrBody.Data?.Operation[0]?.paymentLink)"
             class="text-left mb-3 duration-200 font-bold underline text-secondary-color cursor-pointer hover:opacity-50"
           >
             СКОПИРОВАТЬ ССЫЛКУ
           </h1>
           <div>
-            <CodeModalQR :value="qrBody.Data?.payload" />
+            <CodeModalQR :value="qrBody.Data?.Operation[0]?.paymentLink" />
           </div>
           <div class="mt-3 max-w-[300px]">
             <h1>Отсканируйте QR-код для оплаты</h1>
             <UISpinnerQR />
             <div class="text-left">
               <h1>
-                Стоимость оплаты: <b>{{ qrBody.Data?.amount / 100 }} ₽ </b>
+                Стоимость оплаты: <b>{{ qrBody.Data?.Operation[0]?.amount}} ₽ </b>
               </h1>
               <h1>
                 Дата и время создания:
                 <b
-                  >{{ storeUsers.getNormalizedDate(qrBody.Data?.createdAt) }}
+                  >{{ storeUsers.getNormalizedDate(qrBody.Data?.Operation[0]?.createdAt) }}
                   (МСК)
                 </b>
               </h1>
               <h1>
                 Уникальный идентификатор QR-кода:
-                <b>{{ qrBody.Data?.qrcId }} </b>
-              </h1>
-              <h1>
-                Источник создания QR-кода: <b>{{ qrBody.Data?.sourceName }} </b>
+                <b>{{ qrBody.Data?.Operation[0]?.operationId }} </b>
               </h1>
               <h1>
                 Комментарий:
                 <b>
-                  {{ qrBody.Data?.paymentPurpose }}
+                  {{ qrBody.Data?.Operation[0]?.purpose }}
                 </b>
               </h1>
             </div>

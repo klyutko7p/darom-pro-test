@@ -8,22 +8,15 @@ const runtimeConfig = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
   const { amount, notation } = await readBody<IRequestBody>(event);
-  const url = `https://enter.tochka.com/uapi/sbp/v1.0/qr-code/merchant/${runtimeConfig.merchantId}/${runtimeConfig.accountId}`;
+  const url = `https://enter.tochka.com/uapi/acquiring/v1.0/payments`;
 
   const payload = {
     Data: {
-      amount: amount * 100,
-      currency: "RUB",
-      paymentPurpose: notation,
-      qrcType: "02",
-      sourceName: `Darom.pro`,
-      imageParams: {
-        width: 200,
-        height: 200,
-        mediaType: "image/png",
-      },
-      ttl: "5",
+      customerCode: "300604366",
+      amount: amount,
+      purpose: notation,
       redirectUrl: "https://darom.pro/",
+      paymentMode: ["sbp"],
     },
   };
 

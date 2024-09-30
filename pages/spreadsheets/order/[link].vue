@@ -204,9 +204,11 @@ async function createModalQR() {
     let nameOfWholesaler = ransomRow[ransomRow.length - 1].name;
     qrBodyInfo.value = await storeQR.createQRCode(
       getAmountToBePaid("NONE3"),
-      `Онлайн оплата доставки, ${nameOfWholesaler}`
+      `Онлайн оплата доставки, ${nameOfWholesaler}, ${Date.now()}`
     );
-    qrBody.value = await storeQR.getQRCode(qrBodyInfo.value.Data.qrcId);
+    qrBody.value = await storeQR.getPaymentStatusQR(
+      qrBodyInfo.value.Data.operationId
+    );
   }
 }
 
@@ -243,28 +245,28 @@ async function updateDeliveryRows() {
   isLoading.value = false;
 }
 
-async function checkPaymentStatus(qrcId: string) {
-  const interval = 5000;
+async function checkPaymentStatus(operationId: string) {
+  const interval = 3000;
 
   intervalId.value = setInterval(async () => {
     try {
       let paymentData = (await storeQR.getPaymentStatusQR(
-        qrcId
+        operationId
       )) as QRPaymentStatus;
 
       if (
         paymentData.Data &&
-        paymentData.Data.paymentList &&
-        paymentData.Data.paymentList.length > 0
+        paymentData.Data.Operation &&
+        paymentData.Data.Operation.length > 0
       ) {
-        const status = paymentData.Data.paymentList[0].status;
+        const status = paymentData.Data.Operation[0].status;
         paymentStatusMessage.value = status;
 
-        if (status === "Accepted") {
+        if (status === "APPROVED") {
           toast.success("Оплата прошла успешно!");
           await updateDeliveryRows();
           clearInterval(intervalId.value);
-        } else if (status === "Rejected") {
+        } else if (status === "EXPIRED") {
           toast.error("Оплата была отклонена. Попробуйте ещё раз!");
           clearInterval(intervalId.value);
         }
@@ -279,7 +281,7 @@ async function checkPaymentStatus(qrcId: string) {
 }
 
 async function checkPayment() {
-  await checkPaymentStatus(qrBodyInfo.value.Data.qrcId);
+  await checkPaymentStatus(qrBodyInfo.value.Data.operationId);
 }
 
 let value = ref("");
@@ -367,7 +369,7 @@ const pvzs = [
                 class="flex items-center gap-5 mt-3 border-2 border-dashed border-black p-3 max-w-[450px]"
               >
                 <CodeQR
-                  :value="qrBody.Data?.payload"
+                  :value="qrBody.Data?.Operation[0]?.paymentLink"
                   class="max-w-[200px] max-h-[200px] mt-1"
                 />
                 <div class="text-center">
@@ -376,7 +378,7 @@ const pvzs = [
                     за доставку
                   </h1>
                   <a
-                    :href="qrBody.Data?.payload"
+                    :href="qrBody.Data?.Operation[0]?.paymentLink"
                     class="text-secondary-color underline font-bold"
                     >ССЫЛКА НА ОПЛАТУ</a
                   >
@@ -479,12 +481,12 @@ const pvzs = [
 
       <div class="mt-5" v-if="link.startsWith('3')">
         <SpreadsheetsOrderTable
-            :link="link"
-            :rows="copyRows"
-            :user="user"
-            @showModal="showModal"
-            :isShowModalValue="isShowModalValue"
-          />
+          :link="link"
+          :rows="copyRows"
+          :user="user"
+          @showModal="showModal"
+          :isShowModalValue="isShowModalValue"
+        />
       </div>
     </div>
   </div>

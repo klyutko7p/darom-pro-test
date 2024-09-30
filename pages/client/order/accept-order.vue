@@ -426,6 +426,8 @@ function showThirdModal() {
     isOpenFourModal.value = false;
     isOpenLastModal.value = false;
   }
+  urlToItem.value = "";
+  urlToItemArt.value = "";
 }
 
 function showFourModal() {
@@ -718,15 +720,19 @@ let isNotAskingAcceptOrder = ref(false);
                 class="mt-3"
               />
               <UButton
-                  icon="i-material-symbols-add-location"
-                  size="sm"
-                  @click="router.push('/client/order/independently/ozon?change=true&card=true')"
-                  class="font-bold mt-3"
-                  color="primary"
-                  variant="solid"
-                  label="Выбрать на карте"
-                  :trailing="false"
-                />
+                icon="i-material-symbols-add-location"
+                size="sm"
+                @click="
+                  router.push(
+                    '/client/order/independently/ozon?change=true&card=true'
+                  )
+                "
+                class="font-bold mt-3"
+                color="primary"
+                variant="solid"
+                label="Выбрать на карте"
+                :trailing="false"
+              />
               <div class="mt-5 flex justify-end gap-3" v-auto-animate>
                 <UButton
                   icon="i-heroicons-arrow-left-20-solid"
@@ -764,15 +770,23 @@ let isNotAskingAcceptOrder = ref(false);
                   >
                 </label>
               </div>
-              <div v-if="!urlToItem" class="h-[44px]">
+              <div v-if="!urlToItem" class="h-[44px] text-base">
                 <UInput
                   v-model="urlToItemArt"
                   name="urlToItemArt"
                   placeholder="Вставьте скопированный артикул товара"
                   icon="i-ph-package-bold"
                   autocomplete="off"
-                  class="w-full mt-3"
-                  :ui="{ icon: { trailing: { pointer: '' } } }"
+                  class="w-full mt-3 text-base"
+                  :ui="{
+                    icon: { trailing: { pointer: '' } },
+                    size: {
+                      md: 'text-base',
+                      sm: 'text-base',
+                      xs: 'text-base',
+                      '2xs': 'text-base',
+                    },
+                  }"
                 >
                   <template #trailing>
                     <UButton
@@ -803,7 +817,15 @@ let isNotAskingAcceptOrder = ref(false);
                   icon="i-ph-package-bold"
                   autocomplete="off"
                   class="w-full mt-3"
-                  :ui="{ icon: { trailing: { pointer: '' } } }"
+                  :ui="{
+                    icon: { trailing: { pointer: '' } },
+                    size: {
+                      md: 'text-base',
+                      sm: 'text-base',
+                      xs: 'text-base',
+                      '2xs': 'text-base',
+                    },
+                  }"
                 >
                   <template #trailing>
                     <UButton
@@ -896,7 +918,15 @@ let isNotAskingAcceptOrder = ref(false);
                   variant="outline"
                   autocomplete="off"
                   class="w-full mt-3"
-                  :ui="{ icon: { trailing: { pointer: '' } } }"
+                  :ui="{
+                    icon: { trailing: { pointer: '' } },
+                    size: {
+                      md: 'text-base',
+                      sm: 'text-base',
+                      xs: 'text-base',
+                      '2xs': 'text-base',
+                    },
+                  }"
                 >
                   <template #trailing>
                     <UButton
@@ -976,6 +1006,15 @@ let isNotAskingAcceptOrder = ref(false);
                   variant="outline"
                   size="sm"
                   icon="i-ic-round-numbers"
+                  :ui="{
+                    icon: { trailing: { pointer: '' } },
+                    size: {
+                      md: 'text-base',
+                      sm: 'text-base',
+                      xs: 'text-base',
+                      '2xs': 'text-base',
+                    },
+                  }"
                 />
               </div>
               <div class="mt-5 flex justify-end gap-3" v-auto-animate>

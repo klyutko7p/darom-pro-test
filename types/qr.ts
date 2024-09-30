@@ -18,7 +18,7 @@ interface QRBody {
 interface QRBodyInfo {
   Data: {
     payload: string;
-    qrcId: string;
+    operationId: string;
     imageParams: {
       width: number;
       height: number;
@@ -30,40 +30,33 @@ interface QRBodyInfo {
 
 interface QRBodyLink {
   Data: {
-    payload: string;
-    accountId: string;
-    status: string;
-    createdAt: string;
-    merchantId: string;
-    legalId: string;
-    qrcId: string;
-    amount: number;
-    commissionPercent: number;
-    currency: string;
-    paymentPurpose: string;
-    qrcType: string;
-    templateVersion: string;
-    sourceName: string;
-    ttl: string;
-    image: {
-      width: number;
-      height: number;
-      mediaType: string;
-      content: string;
-    };
-  },
+    Operation: [
+      {
+        customerCode: string;
+        taxSystemCode: string;
+        paymentType: string;
+        paymentId: string;
+        transactionId: string;
+        createdAt: string;
+        paymentMode: string;
+        redirectUrl: number;
+        failRedirectUrl: number;
+        purpose: string;
+        amount: number;
+        status: string;
+        operationId: string;
+        paymentLink: string;
+      }
+    ];
+  };
 }
 
 interface QRPaymentStatus {
   Data: {
-    paymentList: [
+    Operation: [
       {
-        qrcId: string,
-        code: string,
-        status: string,
-        message: string,
-        trxId: string,
+        status: string;
       }
-    ],
-  }
+    ];
+  };
 }

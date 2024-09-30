@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
 
     const clientsData = await prisma.clientReferral.findMany({
       where: {
-        referrer: phoneNumber,
+        referred: phoneNumber,
       },
     });
     return clientsData;

@@ -7,7 +7,7 @@ const runtimeConfig = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
   const { qrcId } = await readBody<IRequestBody>(event);
-  const url = `https://enter.tochka.com/uapi/sbp/v1.0/qr-codes/${qrcId}/payment-status`;
+  const url = `https://enter.tochka.com/uapi/acquiring/v1.0/payments/${qrcId}`;
   
 
   const headers = {

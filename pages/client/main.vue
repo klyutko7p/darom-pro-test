@@ -160,26 +160,35 @@ useSeoMeta({
   <div v-if="!isLoading">
     <div v-if="token">
       <div class="py-5">
-        <div class="flex items-center gap-3 mt-3">
-          <div class="bg-secondary-color text-white pt-2 rounded-full px-1.5">
-            <Icon name="i-material-symbols-package-2" size="32" />
+        <div class="flex items-center justify-between mt-3">
+          <div class="flex items-center gap-3">
+            <div class="bg-secondary-color text-white pt-2 rounded-full px-1.5">
+              <Icon name="i-material-symbols-package-2" size="32" />
+            </div>
+            <div class="flex flex-col gap-0">
+              <span class="text-sm text-gray-400 font-semibold"
+                >Пункт выдачи заказов</span
+              >
+              <h1
+                @click="clearCookies"
+                class="text-lg font-semibold cursor-pointer hover:text-secondary-color duration-200"
+              >
+                {{
+                  pvzs.find((pvz) => pvz.pvz === pvzData)?.name
+                    ? pvzs.find((pvz) => pvz.pvz === pvzData)?.name
+                    : "Не выбран"
+                }}
+              </h1>
+            </div>
           </div>
-          <div class="flex flex-col gap-0">
-            <span class="text-sm text-gray-400 font-semibold"
-              >Пункт выдачи заказов</span
-            >
-            <h1
-              @click="clearCookies"
-              class="text-lg font-semibold cursor-pointer hover:text-secondary-color duration-200"
-            >
-              {{
-                pvzs.find((pvz) => pvz.pvz === pvzData)?.name
-                  ? pvzs.find((pvz) => pvz.pvz === pvzData)?.name
-                  : "Не выбран"
-              }}
-            </h1>
-          </div>
+          <!-- <div
+            @click="router.push('/client/referral')"
+            class="cursor-pointer hover:animate-pulse bg-secondary-color text-white pt-2 pb-1 rounded-full px-2 animate-bounce"
+          >
+            <Icon name="i-streamline-gift-2-solid" size="32" />
+          </div> -->
         </div>
+
         <div class="mt-7 mb-1 flex items-center gap-3">
           <h1 v-if="client.fio" class="text-xl">
             Приветствуем, {{ client.fio }}!
