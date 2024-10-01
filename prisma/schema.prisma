@@ -293,17 +293,18 @@ model Payroll {
 }
 
 model Client {
-  id                                          Int      @id @default(autoincrement())
+  id                                          Int            @id @default(autoincrement())
   fio                                         String?
-  role                                        Role     @default(CLIENT)
+  role                                        Role           @default(CLIENT)
   password                                    String
-  phoneNumber                                 String   @unique()
-  created_at                                  DateTime @default(now())
+  phoneNumber                                 String         @unique()
+  created_at                                  DateTime       @default(now())
   isPersonalDataProcessingPolicyAgreed        Boolean
   isPrivacyPolicyAgreed                       Boolean
-  dateOfPersonalDataProcessingPolicyAgreement DateTime @default(now())
-  dateOfPrivacyPolicyAgreement                DateTime @default(now())
+  dateOfPersonalDataProcessingPolicyAgreement DateTime       @default(now())
+  dateOfPrivacyPolicyAgreement                DateTime       @default(now())
   referedIDs                                  Int[]
+  ClientTicket                                ClientTicket[]
 }
 
 model ClientReferral {
@@ -398,6 +399,14 @@ model DecommissionedEquipmentRow {
   equipmentRowId       Int
   equipmentRow         EquipmentRow @relation(fields: [equipmentRowId], references: [id])
   deleted              DateTime?
+}
+
+model ClientTicket {
+  id         Int      @id @default(autoincrement())
+  clientId   Int
+  client     Client   @relation(fields: [clientId], references: [id])
+  uniqueCode String
+  created_at DateTime @default(now())
 }
 
 enum Role {

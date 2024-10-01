@@ -23,11 +23,6 @@ onMounted(async () => {
   user.value = await storeClients.getClient();
   let userData = await storeClients.getClientById(user.value.id);
   user.value = userData;
-  clientsReferred.value = await storeClients.getClientsByReferrer(
-    user.value.phoneNumber
-  );
-  await getAllPurchasePrice(clientsReferred.value);
-  urlReferral.value = storeClients.createReferralLink(user.value.phoneNumber);
   phoneNumber.value = user.value.phoneNumber;
   fio.value = user.value.fio;
   isLoading.value = false;
@@ -41,32 +36,6 @@ const newPassword = ref("");
 definePageMeta({
   layout: "client",
 });
-
-async function getAllPurchasePrice(clientsReferred: any[]) {
-  for (const client of clientsReferred) {
-    const phoneNumber = client.referrer;
-
-    try {
-      const ransomRows = await storeRansom.getRansomRowsByFromNameWithoutCell(
-        phoneNumber,
-        "OurRansom"
-      );
-
-      client.ransomData = ransomRows;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-}
-
-function calculateTotalPrice(rows: any) {
-  return rows
-    .filter((row: any) => row.issued)
-    .reduce((total: any, row: any) => {
-      const price = typeof row.priceSite === "number" ? row.priceSite : 0;
-      return total + price;
-    }, 0);
-}
 
 let isShowChangePassword = ref(false);
 function showChangePassword() {
@@ -342,53 +311,6 @@ let newPasswordRepeat = ref("");
             <UIMainButton class="max-sm:w-full" @click="saveChanges"
               >Сохранить</UIMainButton
             >
-          </div>
-        </div>
-      </div>
-      <div class="mb-5 mt-24">
-        <h1 class="text-xl">
-          Ваша реферальная ссылка:
-          <span
-            @click="copyToClipboard"
-            class="font-bold underline text-secondary-color cursor-pointer"
-          >
-            СКОПИРОВАТЬ</span
-          >
-        </h1>
-        <div class="mt-5" v-if="clientsReferred.length">
-          <h1>Пользователи зарегистрированные по Вашей ссылке</h1>
-          <div class="w-full bg-gray-50 px-5 py-3 space-y-5 mt-3">
-            <div v-for="(client, index) in clientsReferred">
-              <ul
-                class="space-y-1 text-gray-500 list-inside dark:text-gray-400"
-              >
-                <li
-                  :class="{
-                    'bg-green-100':
-                      calculateTotalPrice(client.ransomData) >= 1000, 'bg-red-100':
-                      calculateTotalPrice(client.ransomData) < 1000,
-                  }"
-                  class="flex py-1.5 px-3 rounded-md items-center gap-5  w-full"
-                >
-                  <Icon
-                    name="i-ri-checkbox-circle-fill"
-                    size="24"
-                    class="text-green-500"
-                    v-if="calculateTotalPrice(client.ransomData) >= 10000"
-                  />
-                  <Icon
-                    name="i-ic-round-remove-circle"
-                    size="24"
-                    class="text-red-500"
-                    v-if="calculateTotalPrice(client.ransomData) < 10000"
-                  />
-                  <div class="flex items-center gap-1">
-                    <h1>{{ client.referrer }},</h1>
-                    <h1>{{ calculateTotalPrice(client.ransomData) }} ₽</h1>
-                  </div>
-                </li>
-              </ul>
-            </div>
           </div>
         </div>
       </div>

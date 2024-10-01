@@ -85,6 +85,12 @@ input {
   border: none;
 }
 
+@media (max-width: 768px) {
+  input {
+    font-size: 16px !important;
+  }
+}
+
 input:focus {
   border: var(--secondary-color);
 }
@@ -116,4 +122,3 @@ h1 {
   overflow: auto;
   position: relative;
 }
-

@@ -76,7 +76,7 @@ function skipWindow() {
               </span>
               переходите в раздел: <br />
               <UButton
-                @click="router.push('/client/delivery?marketplace=oz')"
+                @click="router.push('/client/delivery?marketplace=ozon')"
                 class="font-bold m-5 text-left"
                 icon="i-mdi-truck-delivery"
                 size="xl"

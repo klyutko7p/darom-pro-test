@@ -3,13 +3,14 @@ import Cookies from "js-cookie";
 import { client } from "process";
 import { useToast } from "vue-toastification";
 const storeClients = useClientsStore();
-const storeUsers = useUsersStore();
+const storeTickets = useTicketsStore();
 const router = useRouter();
 
 const toast = useToast();
 let user = ref({} as Client);
 let clientsReferred = ref<Array<any>>([]);
 let clientsReferrer = ref<Array<any>>([]);
+let clientTickets = ref<Array<Ticket>>([]);
 let ourRansomRows = ref<Array<IOurRansom[]>>([]);
 const token = Cookies.get("token");
 const storeRansom = useRansomStore();
@@ -25,6 +26,7 @@ onMounted(async () => {
   user.value = await storeClients.getClient();
   let userData = await storeClients.getClientById(user.value.id);
   user.value = userData;
+  clientTickets.value = await storeTickets.getClientTickets(user.value.id);
   clientsReferred.value = await storeClients.getClientsByReferred(
     user.value.phoneNumber
   );
@@ -110,6 +112,12 @@ const items = [
     defaultOpen: false,
     slot: "friends",
   },
+  {
+    label: "Мои билетики",
+    icon: "i-icon-park-solid-tickets-two",
+    defaultOpen: false,
+    slot: "tickets",
+  },
 ];
 
 let refLink = ref("");
@@ -144,6 +152,79 @@ async function updateRefStatus() {
 }
 
 let isShowInfo = ref(false);
+
+function formatPhoneNumber(phoneNumber: string) {
+  if (!phoneNumber) {
+    return "Номер телефона не указан";
+  }
+
+  const digitsOnly = phoneNumber.replace(/\D/g, "");
+
+  if (digitsOnly.length < 11) {
+    return "Неправильный формат номера телефона";
+  }
+
+  const maskedPhoneNumber =
+    "+7" + "*".repeat(digitsOnly.length - 5) + digitsOnly.slice(-4);
+
+  return maskedPhoneNumber;
+}
+
+function checkConditions() {
+  const conditions = [
+    { minClients: 5, ticketCount: 0 },
+    { minClients: 10, ticketCount: 1 },
+    { minClients: 15, ticketCount: 2 },
+    { minClients: 20, ticketCount: 3 },
+    { minClients: 25, ticketCount: 4 },
+    { minClients: 30, ticketCount: 5 },
+  ];
+
+  const qualifiedClientsCount = clientsReferred.value.filter(
+    (client) => calculateTotalPrice(client.ransomData) >= 1000
+  ).length;
+
+  return conditions.some(
+    (condition) =>
+      qualifiedClientsCount >= condition.minClients &&
+      clientTickets.value.length === condition.ticketCount
+  );
+}
+
+function generateRandomString(length = 10) {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters[randomIndex];
+  }
+
+  return `#${result}`;
+}
+
+async function getTicket() {
+  isLoading.value = true;
+  const uniqueCode = generateRandomString();
+  await storeTickets.createTicket(user.value.id, uniqueCode);
+  clientTickets.value = await storeTickets.getClientTickets(user.value.id);
+  isLoading.value = false;
+}
+
+let isShowTicket = ref(false);
+
+let ticket = ref({} as Ticket);
+
+function showTicketModal(ticketData: Ticket) {
+  ticket.value = ticketData;
+  isShowTicket.value = true;
+}
+
+function closeTicketModal() {
+  ticket.value = {} as Ticket;
+  isShowTicket.value = false;
+}
 </script>
 
 <template>
@@ -153,7 +234,13 @@ let isShowInfo = ref(false);
   <div v-if="!isLoading">
     <div v-if="token">
       <div class="mb-5 mt-24">
-        <div class="mb-5" v-if="!clientsReferrer.length">
+        <div
+          class="mb-5"
+          v-if="
+            !clientsReferrer.length &&
+            new Date(user.created_at) >= new Date('10.01.2024 00:00:01')
+          "
+        >
           <h1 class="mb-3">
             Вставьте скопированную реферальную ссылку от Вашего друга
           </h1>
@@ -166,14 +253,15 @@ let isShowInfo = ref(false);
         </div>
         <div class="mb-5" v-else-if="clientsReferrer.length">
           <h1 class="mb-3 italic text-green-500 font-semibold">
-            Вы привязаны к номеру: {{ clientsReferrer[0]?.referred }}
+            Вы привязаны к номеру:
+            {{ formatPhoneNumber(clientsReferrer[0]?.referred) }}
           </h1>
         </div>
         <h1 class="text-xl">
-          Ваша реферальная ссылка:
+          Ваша реферальная ссылка
           <UButton
             @click="copyToClipboard"
-            class="font-bold ml-3"
+            class="font-bold ml-3 max-lg:ml-0 max-lg:mt-3"
             icon="i-material-symbols-content-copy"
           >
             Нажмите тут, чтобы скопировать и отправить другу
@@ -183,7 +271,7 @@ let isShowInfo = ref(false);
           <UAccordion
             :ui="{
               default: {
-                class: 'text-lg',
+                class: 'text-lg mb-3',
               },
             }"
             color="orange"
@@ -241,7 +329,7 @@ let isShowInfo = ref(false);
                         v-if="calculateTotalPrice(client.ransomData) < 1000"
                       />
                       <div class="flex items-center gap-1">
-                        <h1>{{ client.referrer }},</h1>
+                        <h1>{{ formatPhoneNumber(client.referrer) }},</h1>
                         <h1>
                           {{
                             calculateTotalPrice(client.ransomData) >= 1000
@@ -256,9 +344,47 @@ let isShowInfo = ref(false);
                 </div>
               </div>
             </template>
+            <template #tickets>
+              <div class="w-full bg-gray-50 px-5 py-3 mt-3">
+                <div class="">
+                  <h1 class="text-center" v-if="clientTickets.length">
+                    Количество билетиков:
+                    <span class="text-lg text-secondary-color font-semibold">
+                      {{ clientTickets.length }} шт.</span
+                    >
+                  </h1>
+                  <ul
+                    v-if="clientTickets.length"
+                    class="space-y-1 text-gray-500 flex items-center justify-center max-sm:flex-col dark:text-gray-400"
+                  >
+                    <li
+                      v-for="(ticket, index) in clientTickets"
+                      class="flex py-1.5 px-3 rounded-md items-center gap-5"
+                    >
+                      <UButton
+                        @click="showTicketModal(ticket)"
+                        icon="i-mdi-ticket"
+                        class="font-semibold"
+                        size="xl"
+                        >{{ ticket.uniqueCode }}</UButton
+                      >
+                    </li>
+                  </ul>
+                  <h1 class="text-2xl text-center" v-else>В данный момент у Вас нет ни одного билетика!</h1>
+                </div>
+              </div>
+            </template>
           </UAccordion>
         </div>
-        <div class="flex items-center justify-center mt-5">
+        <div class="flex items-center justify-center mt-5 gap-3 max-sm:flex-col">
+          <UButton
+            v-if="checkConditions()"
+            @click="getTicket"
+            class="font-bold"
+            icon="i-mdi-ticket"
+            size="xl"
+            >ПОЛУЧИТЬ БИЛЕТИК</UButton
+          >
           <UButton
             @click="isShowInfo = true"
             class="font-bold"
@@ -323,6 +449,31 @@ let isShowInfo = ref(false);
         </div>
       </template>
     </UINewModalEditNoPadding>
+
+    <UINewModalEditNoPaddingSecond
+      v-show="isShowTicket"
+      @close-modal="closeTicketModal"
+    >
+      <template v-slot:icon-header> </template>
+      <template v-slot:header>Билетик - {{ ticket.id }}</template>
+      <template v-slot:body>
+        <div class="pt-24">
+          <div class="px-5 flex items-center justify-center flex-col">
+            <h1 class="text-4xl max-sm:text-3xl font-semibold text-secondary-color">
+              НОМЕР БИЛЕТА
+            </h1>
+            <h1
+              class="text-8xl text-white pr-3 pl-2 w-full mt-5 mb-5 font-semibold bg-secondary-color"
+            >
+              {{ ticket.id }}
+            </h1>
+            <h1 class="italic text-sm">
+              Уникальный код - {{ ticket.uniqueCode }}
+            </h1>
+          </div>
+        </div>
+      </template>
+    </UINewModalEditNoPaddingSecond>
   </div>
   <div v-else>
     <NuxtLayout name="default">

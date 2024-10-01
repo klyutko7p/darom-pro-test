@@ -780,12 +780,6 @@ let isNotAskingAcceptOrder = ref(false);
                   class="w-full mt-3 text-base"
                   :ui="{
                     icon: { trailing: { pointer: '' } },
-                    size: {
-                      md: 'text-base',
-                      sm: 'text-base',
-                      xs: 'text-base',
-                      '2xs': 'text-base',
-                    },
                   }"
                 >
                   <template #trailing>
@@ -819,12 +813,6 @@ let isNotAskingAcceptOrder = ref(false);
                   class="w-full mt-3"
                   :ui="{
                     icon: { trailing: { pointer: '' } },
-                    size: {
-                      md: 'text-base',
-                      sm: 'text-base',
-                      xs: 'text-base',
-                      '2xs': 'text-base',
-                    },
                   }"
                 >
                   <template #trailing>
@@ -908,7 +896,7 @@ let isNotAskingAcceptOrder = ref(false);
               <label class="text-sm italic"
                 >предварительно выбрав верный размер и цвет на сайте</label
               >
-              <div class="h-[44px]">
+              <div class="h-[44px] mb-2">
                 <UInput
                   v-model="urlToItem"
                   name="urlToItem"
@@ -920,12 +908,6 @@ let isNotAskingAcceptOrder = ref(false);
                   class="w-full mt-3"
                   :ui="{
                     icon: { trailing: { pointer: '' } },
-                    size: {
-                      md: 'text-base',
-                      sm: 'text-base',
-                      xs: 'text-base',
-                      '2xs': 'text-base',
-                    },
                   }"
                 >
                   <template #trailing>
@@ -1008,12 +990,6 @@ let isNotAskingAcceptOrder = ref(false);
                   icon="i-ic-round-numbers"
                   :ui="{
                     icon: { trailing: { pointer: '' } },
-                    size: {
-                      md: 'text-base',
-                      sm: 'text-base',
-                      xs: 'text-base',
-                      '2xs': 'text-base',
-                    },
                   }"
                 />
               </div>
