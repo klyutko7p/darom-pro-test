@@ -1304,7 +1304,10 @@ const typeOfOptions = [
 const typeOfOptions2 = [
   { value: "Новый кредит безнал", label: "Новый" },
   { value: "Пополнение баланса", label: "Нет" },
-  { value: "Перевод с кредитного баланса безнал", label: "С кредитного баланса" },
+  {
+    value: "Перевод с кредитного баланса безнал",
+    label: "С кредитного баланса",
+  },
   { value: "Перевод с баланса нал", label: "С баланса нал" },
 ];
 </script>
@@ -1633,37 +1636,19 @@ const typeOfOptions2 = [
                 v-if="user.role !== 'ADMIN'"
               >
                 <label for="name">Дата</label>
-                <UPopover
-                  v-if="rowData.date"
-                  class="w-full"
-                  :popper="{ placement: 'bottom-start' }"
-                >
-                  <UButton
-                    :overlay="true"
-                    type="button"
-                    icon="i-heroicons-calendar-days-20-solid"
-                    color="white"
-                    class="w-full"
-                    :disabled="
-                      rowData.typeOfExpenditure ===
-                        'Списание кредитной задолженности торговой империи' ||
-                      rowData.typeOfExpenditure ===
-                        'Списание балансовой задолженности торговой империи' ||
-                      rowData.typeOfExpenditure ===
-                        'Перевод в междубалансовый, кредитный баланс'
-                    "
-                  >
-                    {{ format(rowData.date, "dd MMM yyy", { locale: ru }) }}
-                  </UButton>
-
-                  <template #panel="{ close }">
-                    <DatePickerNotRange
-                      v-model="rowData.date"
-                      is-required
-                      @close="close"
-                    />
-                  </template>
-                </UPopover>
+                <input
+                  :disabled="
+                    rowData.typeOfExpenditure ===
+                      'Списание кредитной задолженности торговой империи' ||
+                    rowData.typeOfExpenditure ===
+                      'Списание балансовой задолженности торговой империи' ||
+                    rowData.typeOfExpenditure ===
+                      'Перевод в междубалансовый, кредитный баланс'
+                  "
+                  type="date"
+                  class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                  v-model="rowData.date"
+                />
               </div>
 
               <div
@@ -1671,37 +1656,19 @@ const typeOfOptions2 = [
                 v-if="user.role === 'ADMIN'"
               >
                 <label for="name">Дата</label>
-                <UPopover
-                  v-if="rowData.date"
-                  class="w-full"
-                  :popper="{ placement: 'bottom-start' }"
-                >
-                  <UButton
-                    :overlay="true"
-                    type="button"
-                    icon="i-heroicons-calendar-days-20-solid"
-                    color="white"
-                    class="w-full"
-                    :disabled="
-                      rowData.typeOfExpenditure ===
-                        'Списание кредитной задолженности торговой империи' ||
-                      rowData.typeOfExpenditure ===
-                        'Списание балансовой задолженности торговой империи' ||
-                      rowData.typeOfExpenditure ===
-                        'Перевод в междубалансовый, кредитный баланс'
-                    "
-                  >
-                    {{ format(rowData.date, "dd MMM yyy", { locale: ru }) }}
-                  </UButton>
-
-                  <template #panel="{ close }">
-                    <DatePickerNotRange
-                      v-model="rowData.date"
-                      is-required
-                      @close="close"
-                    />
-                  </template>
-                </UPopover>
+                <input
+                  :disabled="
+                    rowData.typeOfExpenditure ===
+                      'Списание кредитной задолженности торговой империи' ||
+                    rowData.typeOfExpenditure ===
+                      'Списание балансовой задолженности торговой империи' ||
+                    rowData.typeOfExpenditure ===
+                      'Перевод в междубалансовый, кредитный баланс'
+                  "
+                  type="date"
+                  class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                  v-model="rowData.date"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
@@ -1860,37 +1827,19 @@ const typeOfOptions2 = [
 
             <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="name">Дата</label>
-              <UPopover
-                v-if="rowData.date"
-                class="w-full"
-                :popper="{ placement: 'bottom-start' }"
-              >
-                <UButton
-                  :overlay="true"
-                  type="button"
-                  icon="i-heroicons-calendar-days-20-solid"
-                  color="white"
-                  class="w-full"
-                  :disabled="
-                    rowData.typeOfExpenditure ===
-                      'Списание кредитной задолженности торговой империи' ||
-                    rowData.typeOfExpenditure ===
-                      'Списание балансовой задолженности торговой империи' ||
-                    rowData.typeOfExpenditure ===
-                      'Перевод в междубалансовый, кредитный баланс'
-                  "
-                >
-                  {{ format(rowData.date, "dd MMM yyy", { locale: ru }) }}
-                </UButton>
-
-                <template #panel="{ close }">
-                  <DatePickerNotRange
-                    v-model="rowData.date"
-                    is-required
-                    @close="close"
-                  />
-                </template>
-              </UPopover>
+              <input
+                :disabled="
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание балансовой задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод в междубалансовый, кредитный баланс'
+                "
+                type="date"
+                class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                v-model="rowData.date"
+              />
             </div>
 
             <div class="flex flex-col items-start text-left gap-2 mb-5">
@@ -1988,37 +1937,19 @@ const typeOfOptions2 = [
 
             <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="name">Дата</label>
-              <UPopover
-                v-if="rowData.date"
-                class="w-full"
-                :popper="{ placement: 'bottom-start' }"
-              >
-                <UButton
-                  :overlay="true"
-                  type="button"
-                  icon="i-heroicons-calendar-days-20-solid"
-                  color="white"
-                  class="w-full"
-                  :disabled="
-                    rowData.typeOfExpenditure ===
-                      'Списание кредитной задолженности торговой империи' ||
-                    rowData.typeOfExpenditure ===
-                      'Списание балансовой задолженности торговой империи' ||
-                    rowData.typeOfExpenditure ===
-                      'Перевод в междубалансовый, кредитный баланс'
-                  "
-                >
-                  {{ format(rowData.date, "dd MMM yyy", { locale: ru }) }}
-                </UButton>
-
-                <template #panel="{ close }">
-                  <DatePickerNotRange
-                    v-model="rowData.date"
-                    is-required
-                    @close="close"
-                  />
-                </template>
-              </UPopover>
+              <input
+                :disabled="
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание балансовой задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод в междубалансовый, кредитный баланс'
+                "
+                type="date"
+                class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                v-model="rowData.date"
+              />
             </div>
 
             <div class="flex flex-col items-start text-left gap-2 mb-5">
@@ -2184,37 +2115,19 @@ const typeOfOptions2 = [
                 v-if="user.role !== 'ADMIN'"
               >
                 <label for="name">Дата</label>
-                <UPopover
-                  v-if="rowData.date"
-                  class="w-full"
-                  :popper="{ placement: 'bottom-start' }"
-                >
-                  <UButton
-                    :overlay="true"
-                    type="button"
-                    icon="i-heroicons-calendar-days-20-solid"
-                    color="white"
-                    class="w-full"
-                    :disabled="
-                      rowData.typeOfExpenditure ===
-                        'Списание кредитной задолженности торговой империи' ||
-                      rowData.typeOfExpenditure ===
-                        'Списание балансовой задолженности торговой империи' ||
-                      rowData.typeOfExpenditure ===
-                        'Перевод в междубалансовый, кредитный баланс'
-                    "
-                  >
-                    {{ format(rowData.date, "dd MMM yyy", { locale: ru }) }}
-                  </UButton>
-
-                  <template #panel="{ close }">
-                    <DatePickerNotRange
-                      v-model="rowData.date"
-                      is-required
-                      @close="close"
-                    />
-                  </template>
-                </UPopover>
+                <input
+                  :disabled="
+                    rowData.typeOfExpenditure ===
+                      'Списание кредитной задолженности торговой империи' ||
+                    rowData.typeOfExpenditure ===
+                      'Списание балансовой задолженности торговой империи' ||
+                    rowData.typeOfExpenditure ===
+                      'Перевод в междубалансовый, кредитный баланс'
+                  "
+                  type="date"
+                  class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                  v-model="rowData.date"
+                />
               </div>
 
               <div
@@ -2222,37 +2135,19 @@ const typeOfOptions2 = [
                 v-if="user.role === 'ADMIN'"
               >
                 <label for="name">Дата</label>
-                <UPopover
-                  v-if="rowData.date"
-                  class="w-full"
-                  :popper="{ placement: 'bottom-start' }"
-                >
-                  <UButton
-                    :overlay="true"
-                    type="button"
-                    icon="i-heroicons-calendar-days-20-solid"
-                    color="white"
-                    class="w-full"
-                    :disabled="
-                      rowData.typeOfExpenditure ===
-                        'Списание кредитной задолженности торговой империи' ||
-                      rowData.typeOfExpenditure ===
-                        'Списание балансовой задолженности торговой империи' ||
-                      rowData.typeOfExpenditure ===
-                        'Перевод в междубалансовый, кредитный баланс'
-                    "
-                  >
-                    {{ format(rowData.date, "dd MMM yyy", { locale: ru }) }}
-                  </UButton>
-
-                  <template #panel="{ close }">
-                    <DatePickerNotRange
-                      v-model="rowData.date"
-                      is-required
-                      @close="close"
-                    />
-                  </template>
-                </UPopover>
+                <input
+                  :disabled="
+                    rowData.typeOfExpenditure ===
+                      'Списание кредитной задолженности торговой империи' ||
+                    rowData.typeOfExpenditure ===
+                      'Списание балансовой задолженности торговой империи' ||
+                    rowData.typeOfExpenditure ===
+                      'Перевод в междубалансовый, кредитный баланс'
+                  "
+                  type="date"
+                  class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                  v-model="rowData.date"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
@@ -2409,37 +2304,19 @@ const typeOfOptions2 = [
 
             <div class="flex flex-col items-start text-left gap-2 mb-5">
               <label for="name">Дата</label>
-              <UPopover
-                v-if="rowData.date"
-                class="w-full"
-                :popper="{ placement: 'bottom-start' }"
-              >
-                <UButton
-                  :overlay="true"
-                  type="button"
-                  icon="i-heroicons-calendar-days-20-solid"
-                  color="white"
-                  class="w-full"
-                  :disabled="
-                    rowData.typeOfExpenditure ===
-                      'Списание кредитной задолженности торговой империи' ||
-                    rowData.typeOfExpenditure ===
-                      'Списание балансовой задолженности торговой империи' ||
-                    rowData.typeOfExpenditure ===
-                      'Перевод в междубалансовый, кредитный баланс'
-                  "
-                >
-                  {{ format(rowData.date, "dd MMM yyy", { locale: ru }) }}
-                </UButton>
-
-                <template #panel="{ close }">
-                  <DatePickerNotRange
-                    v-model="rowData.date"
-                    is-required
-                    @close="close"
-                  />
-                </template>
-              </UPopover>
+              <input
+                :disabled="
+                  rowData.typeOfExpenditure ===
+                    'Списание кредитной задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Списание балансовой задолженности торговой империи' ||
+                  rowData.typeOfExpenditure ===
+                    'Перевод в междубалансовый, кредитный баланс'
+                "
+                type="date"
+                class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                v-model="rowData.date"
+              />
             </div>
           </template>
           <template v-slot:footer>
