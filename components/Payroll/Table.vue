@@ -503,20 +503,9 @@ watch(month, saveFiltersToLocalStorage);
         class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
       >
         <tr>
-          <th
-            scope="col"
-            class="exclude-row h-[50px] px-3 border-[1px]"
-            v-if="
-              user.dataDelivery === 'WRITE' ||
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            изменение
-          </th>
-          <th scope="col" class="border-[1px]">ПВЗ</th>
-          <th scope="col" class="border-[1px]">Компания</th>
+          
+          <th scope="col" class="border-[1px] max-w-[65px]">ПВЗ</th>
+          <th scope="col" class="border-[1px] max-w-[55px] overflow-hidden">Компания</th>
           <th scope="col" class="border-[1px]">ФИО</th>
           <th scope="col" class="border-[1px]">Телефон</th>
           <th scope="col" class="border-[1px]">Банк</th>
@@ -530,6 +519,18 @@ watch(month, saveFiltersToLocalStorage);
           <th scope="col" class="border-[1px]">ЗП к начислению</th>
           <th scope="col" class="border-[1px]">Итого начислено за месяц</th>
           <th scope="col" class="border-[1px]">Примечание</th>
+          <th
+            scope="col"
+            class="exclude-row h-[50px] px-3 border-[1px]"
+            v-if="
+              user.dataDelivery === 'WRITE' ||
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
+          >
+            изменение
+          </th>
           <th scope="col" class="border-[1px]">удаление</th>
         </tr>
       </thead>
@@ -544,22 +545,11 @@ watch(month, saveFiltersToLocalStorage);
             'bg-yellow-400 text-black': row.notation === 'Оплачено',
           }"
         >
-          <td class="border-[1px]">
-            <div
-              @click="openModal(row)"
-              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
-            >
-              <Icon
-                class="text-green-500"
-                name="ic:baseline-mode-edit"
-                size="18"
-              />
-            </div>
-          </td>
-          <th scope="row" class="border-[1px]">
+          
+          <th scope="row" class="border-[1px] max-w-[65px] overflow-hidden">
             {{ row.PVZ }}
           </th>
-          <th scope="row" class="border-[1px]">
+          <th scope="row" class="border-[1px] max-w-[55px] overflow-hidden">
             {{ row.company }}
           </th>
           <td class="border-[1px]">{{ row.fullname }}</td>
@@ -679,6 +669,18 @@ watch(month, saveFiltersToLocalStorage);
           </td>
           <td class="border-[1px]" v-else>0 ₽</td>
           <td class="border-[1px]">{{ row.notation }}</td>
+          <td class="border-[1px]">
+            <div
+              @click="openModal(row)"
+              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
+            >
+              <Icon
+                class="text-green-500"
+                name="ic:baseline-mode-edit"
+                size="18"
+              />
+            </div>
+          </td>
           <td
             class="py-3 border-[1px]"
             v-if="

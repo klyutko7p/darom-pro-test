@@ -370,13 +370,17 @@ function closeTicketModal() {
                       >
                     </li>
                   </ul>
-                  <h1 class="text-2xl text-center" v-else>В данный момент у Вас нет ни одного билетика!</h1>
+                  <h1 class="text-2xl text-center" v-else>
+                    В данный момент у Вас нет ни одного билетика!
+                  </h1>
                 </div>
               </div>
             </template>
           </UAccordion>
         </div>
-        <div class="flex items-center justify-center mt-5 gap-3 max-sm:flex-col">
+        <div
+          class="flex items-center justify-center mt-5 gap-3 max-sm:flex-col"
+        >
           <UButton
             v-if="checkConditions()"
             @click="getTicket"
@@ -405,7 +409,12 @@ function closeTicketModal() {
       <template v-slot:body>
         <div>
           <Icon name="i-noto-v1-confetti-ball" size="40" />
-          <h1 class="text-2xl">Объявляем розыгрыш <span> IPHONE xx!</span></h1>
+          <h1 class="text-2xl">
+            Объявляем розыгрыш двух
+            <span class="text-secondary-color font-semibold">
+              APPLE IPHONE xx*!</span
+            >
+          </h1>
         </div>
         <div class="text-left px-3">
           <h1 class="text-base italic mb-1 mt-3">
@@ -435,16 +444,30 @@ function closeTicketModal() {
             </li>
             <li>
               Когда 5 Ваших друзей заберут
-              <span class="font-semibold">заказы*</span> Вы получите
-              <span class="font-semibold">билетик**</span>
+              <span class="font-semibold text-secondary-color">заказы**</span> Вы получите
+              <span class="font-semibold text-secondary-color">билетик***</span>
               для участия в розыгрыше
             </li>
+            <li>
+              Программа "рандомайзер" определит победителя случайным образом
+            </li>
           </ul>
+          <h1 class="mt-3 font-semibold text-secondary-color">
+            🎁 Второй IPHONE гарантировано получит участник, который пригласит
+            больше всех друзей
+          </h1>
           <h1 class="italic mt-3 text-sm font-semibold">
-            *от 1000р (учитываются только полученные товары).
+            *Модель айфона будет зависеть от общего количества приглашенных
+            пользователей: <br />
+            100 человек - <span class="uppercase font-bold text-secondary-color"> iphone 13 pro </span> <br />
+            200 человек - <span class="uppercase font-bold text-secondary-color"> iphone 14 pro </span> <br />
+            500 человек - <span class="uppercase font-bold text-secondary-color"> iphone 15 pro </span>
           </h1>
           <h1 class="italic mt-1 text-sm font-semibold">
-            ** за каждые 5 друзей.
+            **от 1000р (учитываются только полученные товары).
+          </h1>
+          <h1 class="italic mt-1 text-sm font-semibold">
+            *** за каждые 5 друзей.
           </h1>
         </div>
       </template>
@@ -459,7 +482,9 @@ function closeTicketModal() {
       <template v-slot:body>
         <div class="pt-24">
           <div class="px-5 flex items-center justify-center flex-col">
-            <h1 class="text-4xl max-sm:text-3xl font-semibold text-secondary-color">
+            <h1
+              class="text-4xl max-sm:text-3xl font-semibold text-secondary-color"
+            >
               НОМЕР БИЛЕТА
             </h1>
             <h1
