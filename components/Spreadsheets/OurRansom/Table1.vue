@@ -611,9 +611,7 @@ async function checkPaymentStatus(operationId: string) {
 
         if (status === "APPROVED") {
           toast.success("Операция завершена успешно!");
-          closeModalQR();
-          isOpenModalStatus.value = true;
-          closeModalStatus();
+          updateDeliveryRows("additionally", getAllSum.value.toString());
           clearInterval(intervalId.value);
         } else if (status === "EXPIRED") {
           toast.error("Операция отклонена!");
@@ -639,14 +637,6 @@ function lockScroll() {
 function unlockScroll() {
   document.body.classList.remove("no-scroll");
 }
-
-watch(isOpenModalQR, (newValue) => {
-  if (newValue) {
-    lockScroll();
-  } else {
-    unlockScroll();
-  }
-});
 
 async function writeClipboardText(text: any) {
   try {
@@ -1641,14 +1631,6 @@ async function writeClipboardText(text: any) {
           <h1 v-if="paymentStatusMessage === 'CREATED'">
             Статус: <span class="text-secondary-color"> ОЖИДАНИЕ </span>
           </h1>
-          <h1
-            v-if="
-              paymentStatusMessage === 'Received' ||
-              paymentStatusMessage === 'InProgress'
-            "
-          >
-            Статус: <span class="text-secondary-color"> ОБРАБОТКА </span>
-          </h1>
           <h1 v-if="paymentStatusMessage === 'APPROVED'">
             Статус: <span class="text-green-500"> УСПЕШНО </span>
           </h1>
@@ -1659,7 +1641,7 @@ async function writeClipboardText(text: any) {
       </template>
       <template v-slot:body>
         <div>
-          <h1 class="text-left mb-1">
+          <h1 class="text-center mb-1">
             Сумма:
             <span class="text-secondary-color font-bold"
               >{{ getAllSum }} ₽</span
@@ -1667,7 +1649,7 @@ async function writeClipboardText(text: any) {
           </h1>
           <h1
             @click="writeClipboardText(qrBody.Data?.Operation[0]?.paymentLink)"
-            class="text-left mb-3 duration-200 font-bold underline text-secondary-color cursor-pointer hover:opacity-50"
+            class="text-center mb-3 duration-200 font-bold underline text-secondary-color cursor-pointer hover:opacity-50"
           >
             СКОПИРОВАТЬ ССЫЛКУ
           </h1>
@@ -1676,8 +1658,7 @@ async function writeClipboardText(text: any) {
           </div>
           <div class="mt-3 max-w-[300px]">
             <h1>Отсканируйте QR-код для оплаты</h1>
-            <UISpinnerQR />
-            <div class="text-left">
+            <div class="text-left text-sm mt-10">
               <h1>
                 Стоимость оплаты: <b>{{ qrBody.Data?.Operation[0]?.amount}} ₽ </b>
               </h1>
@@ -1689,7 +1670,7 @@ async function writeClipboardText(text: any) {
                 </b>
               </h1>
               <h1>
-                Уникальный идентификатор QR-кода:
+                Уникальный идентификатор:
                 <b>{{ qrBody.Data?.Operation[0]?.operationId }} </b>
               </h1>
               <h1>

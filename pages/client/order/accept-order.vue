@@ -473,10 +473,19 @@ async function parsePageByLink(itemData: IOurRansom) {
 
   try {
     if (itemData.productLink.includes("wildberries")) {
-      const itemInfo = await storeClients.fetchSiteWB(itemData.productLink);
+      const match = itemData.productLink.match(/\/catalog\/([^/?]+)/);
+      let productNameValue = "";
+      if (match) {
+        productNameValue = match[1];
+      } else {
+        toast.error("Мы не смогли определить артикул товара!");
+        return;
+      }
+
+      const itemInfo = await storeClients.fetchSiteWB(productNameValue);
       if (itemInfo.error === "fetch failed" || !itemInfo[0]) {
         handleError("Извините, мы не можем сейчас обработать данные.");
-        urlToItem.value = "";
+        itemData.productLink = "";
         return;
       }
 
@@ -499,7 +508,7 @@ async function parsePageByLink(itemData: IOurRansom) {
             .substring(0, itemData.priceSite.toString().length - 2)
         );
       }
-      toast.success("Цена успешно подтверждена");
+      toast.success("Цена подтверждена!");
     } else if (itemData.productLink.includes("ozon")) {
       let productId = itemData.productLink.split(
         "https://www.ozon.ru/product/"
@@ -508,7 +517,7 @@ async function parsePageByLink(itemData: IOurRansom) {
       const jsonMessage = JSON.parse(jsonString.message);
       const parsedData = JSON.parse(jsonMessage.seo.script[0].innerHTML);
       itemData.priceSite = +parsedData.offers.price;
-      toast.success("Цена успешно подтверждена");
+      toast.success("Цена подтверждена!");
     } else if (marketplace.value === "YM") {
       const info = await storeClients.fetchSiteYM(urlToItem.value);
       console.log(info);
@@ -524,9 +533,10 @@ async function submitForm() {
       for (const item of items.value) {
         await parsePageByLink(item);
       }
+      showAcceptSecondModal();
+    } else {
+      await createOrder();
     }
-
-    await createOrder();
   } catch (error) {
     console.error("Ошибка при создании заказа или обработке данных:", error);
     toast.error("Произошла ошибка при создании заказа");
@@ -536,6 +546,7 @@ async function submitForm() {
 }
 
 let isShowAcceptModal = ref(false);
+let isShowAcceptSecondModal = ref(false);
 function changeMarketplace(marketplaceData: string) {
   marketplace.value = marketplaceData;
   showSecondModal();
@@ -549,6 +560,18 @@ function showAcceptModal() {
 function closeAcceptModal() {
   isOpen.value = true;
   isShowAcceptModal.value = false;
+}
+
+function showAcceptSecondModal() {
+  isShowAcceptSecondModal.value = true;
+  isOpen.value = false;
+  isShowAcceptModal.value = false;
+}
+
+function closeAcceptSecondModal() {
+  isOpen.value = true;
+  isShowAcceptModal.value = false;
+  isShowAcceptSecondModal.value = false;
 }
 
 const pvzs = [
@@ -1288,6 +1311,71 @@ let isNotAskingAcceptOrder = ref(false);
               >
               <UButton
                 @click="closeAcceptModal(), submitForm()"
+                class="font-bold uppercase max-sm:w-full"
+                icon="i-f7-checkmark-alt-circle-fill"
+                size="xl"
+                >Подтверждаю</UButton
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        v-auto-animate
+        v-if="isShowAcceptSecondModal"
+        class="fixed top-0 bottom-0 left-0 bg-black bg-opacity-70 right-0 z-[100]"
+      >
+        <div
+          class="flex items-center justify-center h-screen text-black font-semibold"
+        >
+          <div
+            class="bg-white relative p-10 max-sm:p-10 rounded-lg flex items-center flex-col gap-1"
+          >
+            <div class="absolute top-4 right-4 max-sm:top-2 max-sm:right-2">
+              <Icon
+                name="material-symbols:cancel-rounded"
+                size="32"
+                class="cursor-pointer hover:text-secondary-color duration-200"
+                @click="closeAcceptSecondModal()"
+              />
+            </div>
+            <h1
+              class="text-xl text-center font-semibold max-sm:text-xl mt-5 max-sm:mt-5"
+            >
+              Цены на товары обновились до последних значений.
+            </h1>
+            <h1 class="mb-3">
+              Стоимость с доставкой:
+              <span class="text-secondary-color font-bold"
+                >{{
+                  items.reduce(
+                    (ac, item) =>
+                      ac +
+                      roundToNearestTen(
+                        item.priceSite +
+                          (item.priceSite * item.percentClient) / 100
+                      ),
+                    0
+                  )
+                }}
+                ₽</span
+              >
+            </h1>
+            <div class="flex items-center gap-3 max-sm:flex-col">
+              <UButton
+                @click="
+                  closeAcceptModal(), closeAcceptSecondModal(), showLastModal()
+                "
+                class="font-bold uppercase max-sm:w-full"
+                icon="material-symbols:add-shopping-cart"
+                size="xl"
+                >К корзине</UButton
+              >
+              <UButton
+                @click="
+                  closeAcceptModal(), closeAcceptSecondModal(), createOrder()
+                "
                 class="font-bold uppercase max-sm:w-full"
                 icon="i-f7-checkmark-alt-circle-fill"
                 size="xl"
