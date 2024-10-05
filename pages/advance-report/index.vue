@@ -280,7 +280,7 @@ function getAllSumDirector() {
     ?.filter(
       (row) =>
         row.createdUser === "Директор" &&
-        row.issuedUser === "Директор" &&
+        (row.issuedUser === "Директор" || row.issuedUser === "Директор (С)") &&
         row.type === "Нал" &&
         row.typeOfExpenditure === "Перевод с баланса безнал"
     )
@@ -290,7 +290,7 @@ function getAllSumDirector() {
     ?.filter(
       (row) =>
         row.createdUser === "Директор" &&
-        row.issuedUser === "Директор" &&
+        (row.issuedUser === "Директор" || row.issuedUser === "Директор (С)") &&
         row.type === "Безнал" &&
         row.typeOfExpenditure === "Перевод с баланса нал"
     )

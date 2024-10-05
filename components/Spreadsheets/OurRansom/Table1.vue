@@ -622,9 +622,11 @@ async function checkPaymentStatus(operationId: string) {
         }
       } else {
         console.error("Статус платежа не найден или не существует.");
+        toast.error("Статус платежа не найден или не существует.");
       }
     } catch (error) {
       console.error("Ошибка при получении статуса платежа:", error);
+      toast.error("Ошибка при получении статуса платежа");
       clearInterval(intervalId.value);
     }
   }, interval);

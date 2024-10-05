@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
-import { useToast } from "vue-toastification";
 
 const storeUsers = useUsersStore();
 const storeTasks = useTasksStore();
 const router = useRouter();
 
-const toast = useToast();
 let user = ref({} as User);
 let rows = ref<Array<Task>>();
 const token = Cookies.get("token");
@@ -88,7 +86,9 @@ const date = ref(new Date());
   <div v-if="token && user.role === 'ADMIN'">
     <NuxtLayout name="admin">
       <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 pt-10 max-sm:px-1 pb-5">
-        <UIMainButton @click="openModal" class="mb-5">Создать задачу</UIMainButton>
+        <UIMainButton @click="openModal" class="mb-5"
+          >Создать задачу</UIMainButton
+        >
 
         <TaskTable
           :user="user"
@@ -179,13 +179,22 @@ const date = ref(new Date());
             </div>
           </template>
           <template v-slot:footer>
-            <div class="flex items-center justify-center gap-3" v-if="rowData.id">
-              <UISaveModalButton @click="updateRow">Сохранить </UISaveModalButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+            <div
+              class="flex items-center justify-center gap-3"
+              v-if="rowData.id"
+            >
+              <UISaveModalButton @click="updateRow"
+                >Сохранить
+              </UISaveModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3" v-else>
               <UISaveModalButton @click="createRow">Создать </UISaveModalButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
           </template>
         </UINewModalEdit>
@@ -200,7 +209,8 @@ const date = ref(new Date());
   <div v-else-if="user.role === 'USER'">
     <NuxtLayout name="user">
       <h1>
-        У вас недостаточно прав на просмотр этой информации. Обратитесь к администратору
+        У вас недостаточно прав на просмотр этой информации. Обратитесь к
+        администратору
       </h1>
     </NuxtLayout>
   </div>

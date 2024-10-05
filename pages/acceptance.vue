@@ -67,7 +67,12 @@ function convertToURL(inputString: string): number {
 
 async function updateDeliveryRow(row: IOurRansom, flag: string) {
   try {
-    await storeRansom.updateDeliveryStatus(row, flag, "OurRansom", user.value?.username || "");
+    await storeRansom.updateDeliveryStatus(
+      row,
+      flag,
+      "OurRansom",
+      user.value?.username || ""
+    );
   } catch (error) {
     toast.error("Error updating delivery status.");
   }
@@ -75,14 +80,20 @@ async function updateDeliveryRow(row: IOurRansom, flag: string) {
 
 async function acceptItem(row: IOurRansom) {
   if (!user.value) return toast.error("User data is not available.");
-  
+
   const { role, PVZ } = user.value;
 
   if (["PVZ", "ADMINISTRATOR", "PPVZ", "ADMIN"].includes(role)) {
-    if (PVZ.includes(row.dispatchPVZ) && PVZ.includes(selectedPVZ.value) && row.dispatchPVZ === selectedPVZ.value) {
+    if (
+      PVZ.includes(row.dispatchPVZ) &&
+      PVZ.includes(selectedPVZ.value) &&
+      row.dispatchPVZ === selectedPVZ.value
+    ) {
       if (row.deliveredPVZ === null && row.deliveredSC !== null) {
         await updateDeliveryRow(row, "PVZ");
-        const client = clients.value.find(client => client.phoneNumber === row.fromName);
+        const client = clients.value.find(
+          (client) => client.phoneNumber === row.fromName
+        );
         if (client) {
           await storeClients.sendMessageToClient(
             "Статус заказа: Darom.pro",
@@ -99,7 +110,9 @@ async function acceptItem(row: IOurRansom) {
         toast.error("Неизвестная ошибка!");
       }
     } else {
-      toast.error("У вас нет доступа к товарам данного ПВЗ или вы выбрали не то ПВЗ!");
+      toast.error(
+        "У вас нет доступа к товарам данного ПВЗ или вы выбрали не то ПВЗ!"
+      );
     }
   } else {
     toast.error("Отказано в доступе");
