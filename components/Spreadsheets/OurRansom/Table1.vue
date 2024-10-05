@@ -238,9 +238,9 @@ const handleCheckboxChange = (row: IOurRansom): void => {
     checkedRows.value.push(row.id);
     let amountData = 0;
     if (isDateGreaterThanReference(row.created_at)) {
-      amountData = roundToNearestTen(row.amountFromClient1);
+      amountData = +roundToNearestTen(+row.amountFromClient1);
     } else {
-      amountData = Math.ceil(row.amountFromClient1 / 10) * 10;
+      amountData = Math.ceil(+row.amountFromClient1 / 10) * 10;
     }
     allSum.value.push({
       rowId: row.id,
@@ -1374,7 +1374,7 @@ async function writeClipboardText(text: any) {
                 !isDateGreaterThanReference(row.created_at)
               "
             >
-              {{ Math.ceil(row.amountFromClient1 / 10) * 10 }}
+              {{ Math.ceil(+row.amountFromClient1 / 10) * 10 }}
             </td>
             <td
               class="border-2"
@@ -1384,7 +1384,7 @@ async function writeClipboardText(text: any) {
                 isDateGreaterThanReference(row.created_at)
               "
             >
-              {{ roundToNearestTen(row.amountFromClient1) }}
+              {{ +roundToNearestTen(+row.amountFromClient1) }}
             </td>
             <td
               class="px-2 py-4 border-2"

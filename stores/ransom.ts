@@ -111,45 +111,45 @@ export const useRansomStore = defineStore("ransom", () => {
 
         if (row.priceSite > row.prepayment) {
           row.amountFromClient1 = Math.ceil(
-            row.priceSite +
-              (row.priceSite * row.percentClient) / 100 -
-              row.prepayment
+            +row.priceSite +
+              (+row.priceSite * +row.percentClient) / 100 -
+              +row.prepayment
           );
           if (row.percentClient == 0) {
-            row.profit1 = row.deliveredKGT;
+            row.profit1 = +row.deliveredKGT;
           } else {
             row.profit1 =
-              row.amountFromClient1 - row.priceSite + row.deliveredKGT;
+              +row.amountFromClient1 - +row.priceSite + +row.deliveredKGT;
           }
         } else if (
           roundToNearestTen(
-            row.priceSite + (row.priceSite * row.percentClient) / 100
+            +row.priceSite + (+row.priceSite * +row.percentClient) / 100
           ) -
             row.prepayment !==
           0
         ) {
           row.amountFromClient1 = Math.ceil(
-            row.priceSite +
-              (row.priceSite * row.percentClient) / 100 -
-              row.prepayment
+            +row.priceSite +
+              (+row.priceSite * +row.percentClient) / 100 -
+              +row.prepayment
           );
           if (row.percentClient == 0) {
-            row.profit1 = row.deliveredKGT;
+            row.profit1 = +row.deliveredKGT;
           } else {
-            row.profit1 = row.prepayment - row.priceSite;
+            row.profit1 = +row.prepayment - +row.priceSite;
           }
         } else if (
           roundToNearestTen(
-            row.priceSite + (row.priceSite * row.percentClient) / 100
+            row.priceSite + (+row.priceSite * +row.percentClient) / 100
           ) -
             row.prepayment ===
           0
         ) {
           row.amountFromClient1 = 0;
           if (row.percentClient == 0) {
-            row.profit1 = row.deliveredKGT;
+            row.profit1 = +row.deliveredKGT;
           } else {
-            row.profit1 = row.prepayment - row.priceSite;
+            row.profit1 = +row.prepayment - +row.priceSite;
           }
         }
       } else if (flag === "ClientRansom") {
