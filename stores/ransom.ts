@@ -356,7 +356,10 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-  async function getDeletedRansomRowsByPVZ(PVZ: string | string[], flag: string) {
+  async function getDeletedRansomRowsByPVZ(
+    PVZ: string | string[],
+    flag: string
+  ) {
     try {
       let response = await fetch("/api/ransom/get-rows-by-pvz-deleted", {
         method: "POST",
@@ -873,7 +876,7 @@ export const useRansomStore = defineStore("ransom", () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id, flag}),
+        body: JSON.stringify({ id, flag }),
       });
       if (data.data.value === undefined) {
         toast.success("Запись успешно очищена!");
@@ -899,6 +902,27 @@ export const useRansomStore = defineStore("ransom", () => {
       });
       if (data.data.value === undefined) {
         toast.success("Записи успешно удалены!");
+      } else {
+        console.log(data.data.value);
+        toast.error("Произошла ошибка");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function deleteNotSortedRows() {
+    try {
+      let data = await useFetch("/api/ransom/delete-not-sorted-rows", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (data.data.value === undefined) {
+        toast.success("Необработанные записи успешно удалены!");
       } else {
         console.log(data.data.value);
         toast.error("Произошла ошибка");
@@ -1112,5 +1136,6 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsForAdvanceReportOurRansom,
     getDeletedRansomRowsByPVZ,
     clearRansomRow,
+    deleteNotSortedRows,
   };
 });

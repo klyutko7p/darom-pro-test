@@ -275,6 +275,7 @@ const marketplaces = [
 
 async function submitForm() {
   try {
+    rowData.value.orderPVZ = 'Ряженое';
     rowData.value.fromName = user.value.phoneNumber;
     rowData.value.productLink = marketplace.value;
     rowData.value.dispatchPVZ = pvzData.value;

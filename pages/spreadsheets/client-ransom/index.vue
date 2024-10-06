@@ -2,6 +2,7 @@
 import Cookies from "js-cookie";
 
 const storeUsers = useUsersStore();
+const storeClients = useClientsStore();
 const storeRansom = useRansomStore();
 const storePVZ = usePVZStore();
 const storeSortingCenters = useSortingCentersStore();
@@ -154,6 +155,37 @@ async function deleteIssuedRows() {
   isLoading.value = false;
 }
 
+async function deleteNotSortedRows() {
+  const twentyFourHoursAgo = new Date();
+  twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+
+  isLoading.value = true;
+  await storeRansom.deleteNotSortedRows();
+  const clientRows = rows.value?.filter(
+    (row) =>
+      !row.deleted &&
+      !row.deliveredSC &&
+      new Date(row.created_at) <= twentyFourHoursAgo
+  );
+
+  const uniqueFromNames = Array.from(
+    new Set(clientRows?.map((row) => row.fromName))
+  );
+
+  const promises = uniqueFromNames.map((fromName) =>
+    storeClients.sendMessageToClient(
+      "Статус заказа по штрих-коду: DAROM.PRO",
+      "Уважаемый клиент, Ваш штрих-код не актуален. Замените штрих-код для получения вашего заказа",
+      fromName
+    )
+  );
+
+  await Promise.all(promises);
+  filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
+  rows.value = filteredRows.value;
+  isLoading.value = false;
+}
+
 function deleteIssuedRowsTimer() {
   const currentTime = new Date();
   const currentHour = currentTime.getHours();
@@ -163,6 +195,7 @@ function deleteIssuedRowsTimer() {
     (currentHour === 23 && currentMinute <= 59)
   ) {
     deleteIssuedRows();
+    deleteNotSortedRows();
   }
 }
 
