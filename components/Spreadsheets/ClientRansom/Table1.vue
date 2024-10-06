@@ -621,7 +621,8 @@ async function writeClipboardText(text: any) {
               v-if="
                 (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
                 user.role === 'SORTIROVKA' ||
-                user.username === 'Волошина'
+                user.username === 'Волошина' ||
+                user.username === 'Шведова'
               "
             >
               изменение
@@ -827,7 +828,10 @@ async function writeClipboardText(text: any) {
             <th
               scope="col"
               class="exclude-row border-2"
-              v-if="user.dataClientRansom === 'WRITE' && user.role === 'ADMIN'"
+              v-if="
+                (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
+                user.username === 'Шведова'
+              "
             >
               удаление
             </th>
@@ -859,7 +863,8 @@ async function writeClipboardText(text: any) {
               v-if="
                 (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
                 user.role === 'SORTIROVKA' ||
-                user.username === 'Волошина'
+                user.username === 'Волошина' ||
+                user.username === 'Шведова'
               "
             >
               <div

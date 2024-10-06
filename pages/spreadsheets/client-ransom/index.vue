@@ -191,7 +191,7 @@ function deleteIssuedRowsTimer() {
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
   if (
-    (currentHour === 23 && currentMinute >= 0) ||
+    (currentHour === 21 && currentMinute >= 0) ||
     (currentHour === 23 && currentMinute <= 59)
   ) {
     deleteIssuedRows();
