@@ -17,6 +17,8 @@ onMounted(async () => {
   if (
     user.value.username === "Волошина" ||
     user.value.username === "Шарафаненко" ||
+    user.value.username === "Кулешов" ||
+    user.value.username === "Алиса" ||
     user.value.username === "Миллер" ||
     user.value.username === "Шведова" ||
     user.value.username === "Директор" ||

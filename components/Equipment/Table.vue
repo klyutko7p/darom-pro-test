@@ -405,6 +405,8 @@ function handleCheckboxChangeAll() {
               user.role === 'ADMINISTRATOR' ||
               user.username === 'Волошина' ||
               user.username === 'Шарафаненко' ||
+              user.username === 'Кулешов' ||
+              user.username === 'Алиса' ||
               user.username === 'Миллер' ||
               user.username === 'Горцуева' ||
               user.username === 'Директор' ||
@@ -441,6 +443,8 @@ function handleCheckboxChangeAll() {
               user.role === 'ADMINISTRATOR' ||
               user.username === 'Волошина' ||
               user.username === 'Шарафаненко' ||
+              user.username === 'Кулешов' ||
+              user.username === 'Алиса' ||
               user.username === 'Миллер' ||
               user.username === 'Горцуева' ||
               user.username === 'Директор' ||

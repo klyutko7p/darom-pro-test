@@ -126,6 +126,8 @@ function showSettingsList() {
             @click="showGoodsList"
             v-if="
               user.username !== 'Шарафаненко' &&
+              user.username !== 'Кулешов' &&
+              user.username !== 'Алиса' &&
               user.username !== 'Миллер' &&
               user.username !== 'Косой' &&
               user.username !== '+7'
@@ -515,6 +517,8 @@ function showSettingsList() {
             v-if="
               user.username === 'Волошина' ||
               user.username === 'Шарафаненко' ||
+              user.username === 'Кулешов' ||
+              user.username === 'Алиса' ||
               user.username === 'Миллер' ||
               user.username === 'Шведова' ||
               user.username === 'Директор' ||
