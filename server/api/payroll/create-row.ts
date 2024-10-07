@@ -19,6 +19,8 @@ export default defineEventHandler(async (event) => {
         bank: row.bank,
         paymentPerShift: +row.paymentPerShift,
         advance: +row.advance,
+        advanceFourssan: +row.advanceFourssan,
+        salaryFourssan: +row.salaryFourssan,
         hours: +row.hours,
         deductions: +row.deductions,
         additionalPayment: +row.additionalPayment,
@@ -28,7 +30,7 @@ export default defineEventHandler(async (event) => {
     });
   } catch (error) {
     if (error instanceof Error) {
-      console.error(error.message)
+      console.error(error.message);
       return { error: error.message };
     }
   }

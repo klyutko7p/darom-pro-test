@@ -18,6 +18,8 @@ export default defineEventHandler(async (event) => {
                 bank: payroll.bank,
                 paymentPerShift: payroll.paymentPerShift,
                 advance: payroll.advance,
+                advanceFourssan: +payroll.advanceFourssan,
+                salaryFourssan: +payroll.salaryFourssan,
                 hours: payroll.hours,
                 deductions: payroll.deductions,
                 additionalPayment: payroll.additionalPayment,
