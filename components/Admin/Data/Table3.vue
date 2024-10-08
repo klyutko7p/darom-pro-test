@@ -17,77 +17,55 @@ const sortedRows = props.rows.slice().sort((a: any, b: any) => {
   const numB = parseInt(b.name);
   return numA - numB;
 });
+
+const columns = [
+  {
+    key: "name",
+    label: "Название",
+  },
+  {
+    key: "PVZ",
+    label: "ПВЗ",
+  },
+  {
+    key: "status",
+    label: "Статус",
+  },
+  {
+    key: "fromName",
+    label: "Занято",
+  },
+];
 </script>
 
 <template>
-  <div class="relative overflow-x-auto overflow-y-auto mt-5">
-    <table
-      id="theTable"
-      class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
-    >
-      <thead
-        class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
+  <UTable
+    class="w-full text-center bg-white border-[1px] rounded-md"
+    :ui="{ td: { base: '' }, th: {base: 'text-center'}, default: { checkbox: { color: 'gray' as any } } }"
+    :rows="rows"
+    :columns="columns"
+  >
+    <template #name-data="{ row }">
+      <span>{{ row.name }}</span>
+    </template>
+
+    <template #pvz-data="{ row }">
+      <span>{{ row.pvz }}</span>
+    </template>
+
+    <template #status-data="{ row }">
+      <span v-if="row.status === 'Занято'" class="text-red-500 font-semibold">{{
+        row.status
+      }}</span>
+      <span
+        v-if="row.status === 'Свободно'"
+        class="text-green-500 font-semibold"
+        >{{ row.status }}</span
       >
-        <tr>
-          <th scope="col" class="px-6 py-3 border-[1px]" v-for="field in fields">
-            {{ field }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="bg-white text-center" v-for="row in sortedRows">
-          <th
-            scope="row"
-            class="py-1 border-[1px] font-medium text-gray-900 whitespace-nowrap"
-          >
-            {{ row.name }}
-          </th>
-          <th
-            scope="row"
-            class="py-1 border-[1px] font-medium text-gray-900 whitespace-nowrap"
-          >
-            {{ row.PVZ }}
-          </th>
-          <th
-            scope="row"
-            class="py-3 border-[1px] font-medium text-gray-900 whitespace-nowrap"
-            v-if="row.status === 'Занято'"
-          >
-            <h1
-              class="bg-red-100 text-red-500 mx-auto rounded-full max-w-[120px]"
-            >
-              Занято
-            </h1>
-          </th>
-          <th
-            scope="row"
-            class="py-3 border-[1px] font-medium text-gray-900 whitespace-nowrap"
-            v-if="row.status === 'Свободно'"
-          >
-            <h1
-              class="bg-green-100 text-green-500 mx-auto rounded-full max-w-[120px]"
-            >
-              Свободно
-            </h1>
-          </th>
-          <th
-            scope="row"
-            class="py-1 border-[1px] font-medium text-gray-900 whitespace-nowrap"
-          >
-            {{ row.fromName }}
-          </th>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    </template>
+
+    <template #fromName-data="{ row }">
+      <span>{{ row.fromName }}</span>
+    </template>
+  </UTable>
 </template>
-
-<style scoped>
-.hidden-row {
-  display: none !important;
-}
-
-tr:nth-child(even) {
-  background-color: #f2f2f2; /* Цвет для четных строк */
-}
-</style>

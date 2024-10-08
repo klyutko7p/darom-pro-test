@@ -14,12 +14,12 @@ function createData() {
 </script>
 
 <template>
-  <div class="mt-10">
-    <h1 class="text-xl mb-2">
+  <div class="mt-10 px-3">
+    <h1 class="text-lg mb-2">
       Добавить {{ title }}
       <Icon class="text-yellow-400" name="material-symbols:add" size="24" />
     </h1>
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 max-sm:flex-col max-sm:items-start">
       <div class="flex flex-col gap-1">
         <label for="username">Название</label>
         <UInput

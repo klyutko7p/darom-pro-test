@@ -86,10 +86,10 @@ watch(isOpen, (newValue) => {
   </Head>
 
   <div v-if="token && user.role === 'ADMIN'">
-    <NuxtLayout name="admin">
+    <NuxtLayout name="table-admin-no-pad">
       <div
         v-if="!isLoading"
-        class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5 space-y-1"
+        class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5 w-screen"
       >
         <AdminDataTable2
           :fields="fields"
@@ -143,7 +143,7 @@ watch(isOpen, (newValue) => {
         </UINewModalEdit>
       </div>
 
-      <div v-else>
+      <div class="w-screen" v-else>
         <UISpinner />
       </div>
     </NuxtLayout>

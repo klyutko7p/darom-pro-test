@@ -137,7 +137,7 @@ useSeoMeta({
           <h1
             class="text-secondary-color font-bold text-8xl max-lg:text-6xl mt-3"
           >
-            DAROM.pro
+            DAROM.PRO
           </h1>
           <h1
             class="text-secondary-color font-bold uppercase mt-3 max-md:text-center"

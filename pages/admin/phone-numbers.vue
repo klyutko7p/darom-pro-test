@@ -83,12 +83,19 @@ watch(isOpen, (newValue) => {
   </Head>
 
   <div v-if="token && user.role === 'ADMIN'">
-    <NuxtLayout name="admin">
-      <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 max-sm:px-1 pb-5 pt-10 space-y-1">
+    <NuxtLayout name="table-admin-no-pad">
+      <div
+        v-if="!isLoading"
+        class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5 w-screen"
+      >
         <UIMainButton class="mb-5" @click="openModal">
           Привязка телефона к адресу
         </UIMainButton>
-        <PhoneNumberTable :rows="phoneNumbers" :user="user" @open-modal="openModal" />
+        <PhoneNumberTable
+          :rows="phoneNumbers"
+          :user="user"
+          @open-modal="openModal"
+        />
 
         <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
           <template v-slot:icon-header>
@@ -113,19 +120,28 @@ watch(isOpen, (newValue) => {
             </div>
           </template>
           <template v-slot:footer>
-            <div class="flex items-center justify-center gap-3" v-if="rowData.id">
-              <UISaveModalButton @click="updateRow">Сохранить</UISaveModalButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+            <div
+              class="flex items-center justify-center gap-3"
+              v-if="rowData.id"
+            >
+              <UISaveModalButton @click="updateRow"
+                >Сохранить</UISaveModalButton
+              >
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
             <div class="flex items-center justify-center gap-3" v-else>
               <UISaveModalButton @click="createRow">Создать</UISaveModalButton>
-              <UIExitModalButton @click="closeModal">Отменить </UIExitModalButton>
+              <UIExitModalButton @click="closeModal"
+                >Отменить
+              </UIExitModalButton>
             </div>
           </template>
         </UINewModalEdit>
       </div>
 
-      <div v-else>
+      <div class="w-screen" v-else>
         <UISpinner />
       </div>
     </NuxtLayout>
@@ -134,7 +150,8 @@ watch(isOpen, (newValue) => {
   <div v-else-if="user.role === 'USER'">
     <NuxtLayout name="user">
       <h1>
-        У вас недостаточно прав на просмотр этой информации. Обратитесь к администратору
+        У вас недостаточно прав на просмотр этой информации. Обратитесь к
+        администратору
       </h1>
     </NuxtLayout>
   </div>

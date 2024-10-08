@@ -3,225 +3,293 @@ import type { PropType } from "vue";
 
 const storeUsers = useUsersStore();
 
-const emit = defineEmits(['openModal', 'deleteUser'])
+const emit = defineEmits(["openModal", "deleteUser"]);
 
 function openModal(user: User) {
-  emit('openModal', user)
+  emit("openModal", user);
 }
 
 function deleteUser(username: string) {
-  emit('deleteUser', username)
+  emit("deleteUser", username);
 }
 
-defineProps({
+const props = defineProps({
   fields: { type: Array as PropType<String[]>, required: true },
-  users: { type: Array as PropType<User[]> }
-})
+  users: { type: Array as PropType<User[]> },
+});
+
+const columns = [
+  {
+    key: "username",
+    label: "Имя пользователя",
+  },
+  {
+    key: "role",
+    label: "Роль",
+  },
+  {
+    key: "PVZ",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "visibleSC",
+    label: "СЦ",
+  },
+  {
+    key: "visiblePVZ",
+    label: "ПВЗ",
+  },
+  {
+    key: "cell1",
+    label: "Ячейка (Наш выкуп)",
+  },
+  {
+    key: "cell2",
+    label: "Ячейка (Выкуп клиента)",
+  },
+  {
+    key: "additionally1",
+    label: "дополнительно (наш выкуп)",
+  },
+  {
+    key: "additionally2",
+    label: "дополнительно (выкуп клиента)",
+  },
+  {
+    key: "additionally3",
+    label: "дополнительно (доставка)",
+  },
+  {
+    key: "deliveredSC1",
+    label: "доставлено на СЦ (наш выкуп)",
+  },
+  {
+    key: "deliveredSC2",
+    label: "доставлено на СЦ (выкуп клиента)",
+  },
+  {
+    key: "deliveredPVZ1",
+    label: "доставлено на ПВЗ (наш выкуп)",
+  },
+  {
+    key: "deliveredPVZ2",
+    label: "доставлено на ПВЗ (выкуп клиента)",
+  },
+  {
+    key: "deliveredKGT1",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "dispatchPVZ1",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "dispatchPVZ2",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "dispatchPVZ3",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "sorted",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "paid",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "name3",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "fromName1",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "fromName2",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "fromName3",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "issued1",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "issued2",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "orderAccount",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "orderPVZ1",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "orderPVZ2",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "orderPVZ3",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "percentClient1",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "percentClient2",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "percentClient3",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "priceProgram",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "purchaseOfGoods",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "priceSite",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "prepayment1",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "prepayment2",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "productLink1",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "productLink2",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "productName1",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "productName2",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "dataOurRansom",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "dataClientRansom",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "dataDelivery",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "amountFromClient1",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "amountFromClient2",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "amountFromClient3",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "clientLink1",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "clientLink2",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "clientLink3",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "profit1",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "profit2",
+    label: "Доступ к ПВЗ",
+  },
+  {
+    key: "profit3",
+    label: "Доступ к ПВЗ",
+  },
+];
+
+columns.forEach((col, index) => {
+  if (props.fields[index]) {
+    col.label = props.fields[index];
+  }
+});
+
+columns.unshift({ key: "actions", label: "Действия" });
+
+const items = (userData) => [
+  [
+    {
+      label: "Изменить",
+      icon: "i-heroicons-pencil-square-20-solid",
+      click: () => openModal(userData),
+    },
+  ],
+  [
+    {
+      label: "Удалить",
+      icon: "i-heroicons-trash-20-solid",
+      click: () => deleteUser(userData.username),
+    },
+  ],
+];
 </script>
 
 <template>
-  <div class="relative overflow-x-auto overflow-y-auto mt-5 mb-5">
-    <table id="theTable" class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500">
-      <thead class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center">
-        <tr>
-          <th scope="col" class="px-2 border-2" v-for="field in fields">{{ field }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="bg-white text-center h-[50px] border-2" v-for="userData in users">
-          <td class="">
-            <Icon @click="openModal(userData)" class="text-green-600 cursor-pointer hover:text-green-300 duration-200"
-              name="material-symbols:person-edit-outline" size="24" />
-          </td>
-          <td class="border-2">
-            <Icon @click="deleteUser(userData.username)"
-              class="text-red-600 cursor-pointer hover:text-red-300 duration-200"
-              name="material-symbols:person-remove-outline" size="24" v-if="userData.role !== 'ADMIN'" />
-          </td>
-          <th scope="row" class=" font-medium border-2 text-gray-900 whitespace-nowrap">
-            {{ userData.username }}
-          </th>
-          <td class="">{{ userData.role }}</td>
-          <td class="whitespace-nowrap px-2 border-2">{{ userData.PVZ.join(', ') }}</td>
-          <td class="px-2 border-2">
-            {{ storeUsers.getNormalizedDate(userData.created_at) }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.visibleSC }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.visiblePVZ }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.cell1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.cell2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.additionally1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.additionally2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.additionally3 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.deliveredSC1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.deliveredSC2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.deliveredPVZ1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.deliveredPVZ2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.deliveredKGT1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.deliveredKGT2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.dispatchPVZ1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.dispatchPVZ2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.dispatchPVZ3 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.sorted }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.paid }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.name3 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.fromName1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.fromName2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.fromName3 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.issued1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.issued2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.orderAccount }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.orderPVZ1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.orderPVZ2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.orderPVZ3 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.percentClient1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.percentClient2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.percentClient3 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.notation1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.notation2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.priceProgram }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.purchaseOfGoods }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.priceSite }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.prepayment1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.prepayment2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.productLink1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.productLink2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.productName1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.productName2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.dataOurRansom }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.dataClientRansom }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.dataDelivery }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.amountFromClient1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.amountFromClient2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.amountFromClient3 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.clientLink1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.clientLink2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.clientLink3 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.profit1 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.profit2 }}
-          </td>
-          <td class="px-2 border-2">
-            {{ userData.profit3 }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <UTable
+    class="w-full text-center bg-white border-[1px] rounded-md"
+    :ui="{ td: { base: 'max-h-[0]', size: 'text-[14px]' }, th: {base: 'text-center uppercase', padding: 'px-3', size: 'text-[10px]'}, default: { checkbox: { color: 'gray' as any } } }"
+    :rows="users"
+    :columns="columns"
+  >
+    <template #actions-data="{ row }">
+      <UDropdown :items="items(row)">
+        <Icon
+          class="text-gray-500"
+          size="24"
+          name="i-heroicons-ellipsis-horizontal-20-solid"
+        />
+      </UDropdown>
+    </template>
+
+    <template #expand="{ row }">
+      <div class="p-4 text-left">
+        <pre>
+Дата создания: {{ storeUsers.getNormalizedDate(row.created_at) }}</pre
+        >
+      </div>
+    </template>
+
+    <template #PVZ-data="{ row }">
+      <span>{{ row.PVZ.join(", ") }}</span>
+    </template>
+  </UTable>
 </template>
-
-
-<style scoped>
-.hidden-row {
-  display: none !important;
-}
-
-tr:nth-child(even) {
-  background-color: #f2f2f2; /* Цвет для четных строк */
-}
-
-</style>

@@ -59,11 +59,9 @@ onMounted(async () => {
   isLoading.value = false;
 });
 
-
 definePageMeta({
   layout: false,
 });
-
 
 function lockScroll() {
   document.body.classList.add("no-scroll");
@@ -88,8 +86,11 @@ watch(isOpen, (newValue) => {
   </Head>
 
   <div v-if="token && user.role === 'ADMIN'">
-    <NuxtLayout name="admin">
-      <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5">
+    <NuxtLayout name="table-admin-no-pad">
+      <div
+        v-if="!isLoading"
+        class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5 w-screen"
+      >
         <AdminDataTable2
           :fields="fields"
           :rows="pvz"
@@ -105,39 +106,33 @@ watch(isOpen, (newValue) => {
           </template>
           <template v-slot:header>
             <div class="custom-header">
-              <h1>Изменение:  {{ pvzData.name }}</h1>
+              <h1>Изменение: {{ pvzData.name }}</h1>
             </div>
           </template>
           <template v-slot:body>
             <div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Название ПВЗ</label>
-                <UInput
-                  class="w-full"
-                  v-model="pvzData.name"
-                  type="text"
-                />
+                <UInput class="w-full" v-model="pvzData.name" type="text" />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Адрес ПВЗ</label>
-                <UInput
-                  class="w-full"
-                  v-model="pvzData.address"
-                  type="text"
-                />
+                <UInput class="w-full" v-model="pvzData.address" type="text" />
               </div>
             </div>
           </template>
           <template v-slot:footer>
             <div class="flex gap-3 items-center justify-center">
-              <UISaveModalButton @click="updatePVZ">СОХРАНИТЬ</UISaveModalButton>
+              <UISaveModalButton @click="updatePVZ"
+                >СОХРАНИТЬ</UISaveModalButton
+              >
               <UIExitModalButton @click="closeModal">ЗАКРЫТЬ</UIExitModalButton>
             </div>
           </template>
         </UINewModalEdit>
       </div>
 
-      <div v-else>
+      <div class="w-screen" v-else>
         <UISpinner />
       </div>
     </NuxtLayout>
@@ -146,7 +141,8 @@ watch(isOpen, (newValue) => {
   <div v-else-if="user.role === 'USER'">
     <NuxtLayout name="user">
       <h1>
-        У вас недостаточно прав на просмотр этой информации. Обратитесь к администратору
+        У вас недостаточно прав на просмотр этой информации. Обратитесь к
+        администратору
       </h1>
     </NuxtLayout>
   </div>

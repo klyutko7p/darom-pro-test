@@ -59,11 +59,9 @@ onMounted(async () => {
   isLoading.value = false;
 });
 
-
 definePageMeta({
   layout: false,
 });
-
 
 function lockScroll() {
   document.body.classList.add("no-scroll");
@@ -88,8 +86,11 @@ watch(isOpen, (newValue) => {
   </Head>
 
   <div v-if="token && user.role === 'ADMIN'">
-    <NuxtLayout name="admin">
-      <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5">
+    <NuxtLayout name="table-admin-no-pad">
+      <div
+        v-if="!isLoading"
+        class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5 w-screen"
+      >
         <AdminDataTable
           :fields="fields"
           :rows="marketplaces"
@@ -97,7 +98,10 @@ watch(isOpen, (newValue) => {
           @open-modal="openModal"
         />
 
-        <AdminDataCreate :title="'Маркетплейс'" @create-data="createMarketplace" />
+        <AdminDataCreate
+          :title="'Маркетплейс'"
+          @create-data="createMarketplace"
+        />
 
         <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
           <template v-slot:icon-header>
@@ -105,7 +109,7 @@ watch(isOpen, (newValue) => {
           </template>
           <template v-slot:header>
             <div class="custom-header">
-              <h1>Изменение:  {{ marketplaceData.name }}</h1>
+              <h1>Изменение: {{ marketplaceData.name }}</h1>
             </div>
           </template>
           <template v-slot:body>
@@ -122,14 +126,16 @@ watch(isOpen, (newValue) => {
           </template>
           <template v-slot:footer>
             <div class="flex gap-3 items-center justify-center">
-              <UISaveModalButton @click="updateMarketplace">СОХРАНИТЬ</UISaveModalButton>
+              <UISaveModalButton @click="updateMarketplace"
+                >СОХРАНИТЬ</UISaveModalButton
+              >
               <UIExitModalButton @click="closeModal">ЗАКРЫТЬ</UIExitModalButton>
             </div>
           </template>
         </UINewModalEdit>
       </div>
 
-      <div v-else>
+      <div class="w-screen" v-else>
         <UISpinner />
       </div>
     </NuxtLayout>
@@ -138,7 +144,8 @@ watch(isOpen, (newValue) => {
   <div v-else-if="user.role === 'USER'">
     <NuxtLayout name="user">
       <h1>
-        У вас недостаточно прав на просмотр этой информации. Обратитесь к администратору
+        У вас недостаточно прав на просмотр этой информации. Обратитесь к
+        администратору
       </h1>
     </NuxtLayout>
   </div>

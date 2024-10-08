@@ -33,12 +33,15 @@ definePageMeta({
   </Head>
 
   <div v-if="token && user.role === 'ADMIN'">
-    <NuxtLayout name="admin">
-      <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 pt-3 max-sm:px-1 pb-5">
+    <NuxtLayout name="table-admin-no-pad">
+      <div
+        v-if="!isLoading"
+        class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5 w-screen"
+      >
         <AdminDataTable3 :fields="fields" :rows="cells" />
       </div>
 
-      <div v-else>
+      <div class="w-screen" v-else>
         <UISpinner />
       </div>
     </NuxtLayout>
@@ -47,7 +50,8 @@ definePageMeta({
   <div v-else-if="user.role === 'USER'">
     <NuxtLayout name="user">
       <h1>
-        У вас недостаточно прав на просмотр этой информации. Обратитесь к администратору
+        У вас недостаточно прав на просмотр этой информации. Обратитесь к
+        администратору
       </h1>
     </NuxtLayout>
   </div>
