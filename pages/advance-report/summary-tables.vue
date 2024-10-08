@@ -254,6 +254,27 @@ function getAllSum() {
         +sumOfPVZ2Cashless -
         +sumOfPVZ3Cashless;
       break;
+
+    case "Власенкова":
+      allSum.value =
+        +sumOfPVZ -
+        +sumOfPVZ1 +
+        +sumOfPVZ2 -
+        +sumOfPVZ3 +
+        +sumOfPVZ4 +
+        +sumOfPVZ5 -
+        +sumOfPVZ6 +
+        +sumOfPVZ7 +
+        +sumOfPVZ8 -
+        +sumOfPVZ9 +
+        +sumOfPVZ10;
+
+      allSum2.value =
+        +sumOfPVZ -
+        +sumOfPVZ1Cashless +
+        +sumOfPVZ2Cashless -
+        +sumOfPVZ3Cashless;
+      break;
     default:
       allSum.value =
         +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;

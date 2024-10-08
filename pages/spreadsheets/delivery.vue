@@ -229,7 +229,6 @@ function getNameFromName() {
     }
   }
 
-
   if (trimmedFromName.length === 12 && isAutoFromName.value) {
     const rowCell = rows.value?.find((row) => row.fromName === trimmedFromName);
     if (rowCell) {
@@ -260,7 +259,12 @@ function getFromNameFromName() {
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="table-admin">
         <div v-if="!isLoading" class="bg-[#f8f9fd] pt-5 px-5">
-          <div class="flex justify-end" v-if="user.username === 'Директор'">
+          <div
+            class="flex justify-end"
+            v-if="
+              user.username === 'Директор' || user.username === 'Власенкова'
+            "
+          >
             <div
               class="bg-secondary-color cursor-pointer hover:opacity-50 duration-200 rounded-full pt-1.5 px-1.5 text-white"
               @click="router.push('/summary-tables/delivery')"
@@ -545,7 +549,12 @@ function getFromNameFromName() {
     <div v-else>
       <NuxtLayout name="table-user">
         <div v-if="!isLoading" class="bg-[#f8f9fd] pt-5 px-5">
-          <div class="flex justify-end" v-if="user.username === 'Директор'">
+          <div
+            class="flex justify-end"
+            v-if="
+              user.username === 'Директор' || user.username === 'Власенкова'
+            "
+          >
             <div
               class="bg-secondary-color cursor-pointer hover:opacity-50 duration-200 rounded-full pt-1.5 px-1.5 text-white"
               @click="router.push('/summary-tables/delivery')"

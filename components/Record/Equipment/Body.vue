@@ -22,7 +22,8 @@ onMounted(async () => {
     user.value.username === "Миллер" ||
     user.value.username === "Шведова" ||
     user.value.username === "Директор" ||
-    user.value.username === "Горцуева"
+    user.value.username === "Горцуева" ||
+    user.value.username === "Власенкова"
   ) {
     toast.success("Доступ разрешен");
   } else {

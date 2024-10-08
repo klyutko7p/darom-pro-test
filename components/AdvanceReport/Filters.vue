@@ -185,30 +185,59 @@ const filterRows = () => {
   newEndDate.setSeconds(59);
   newEndDate.setMilliseconds(0);
 
-  filteredRows.value = props.rows.slice();
-  filteredRows.value = props.rows.filter((row) => {
-    return (
-      (!selectedPVZ.value.length || selectedPVZ.value.includes(row.PVZ)) &&
-      (!selectedType.value.length || selectedType.value.includes(row.type)) &&
-      (!selectedExpenditure.value.length ||
-        selectedExpenditure.value.includes(row.expenditure)) &&
-      (!selectedTypeOfExpenditure.value.length ||
-        selectedTypeOfExpenditure.value.includes(row.typeOfExpenditure)) &&
-      (!selectedNotation.value.length ||
-        selectedNotation.value.some((notation) =>
-          row.notation
-            ? row.notation.toLowerCase().includes(notation.toLowerCase())
-            : row.notation
-        )) &&
-      (!selectedCompany.value.length ||
-        selectedCompany.value.includes(row.company)) &&
-      (!selectedCreatedUser.value.length ||
-        selectedCreatedUser.value.includes(row.createdUser)) &&
-      (!selected.value.start ||
-        new Date(row.date) >= new Date(newStartingDate)) &&
-      (!selected.value.end || new Date(row.date) <= new Date(newEndDate))
-    );
-  });
+  if (props.user.username !== "Власенкова") {
+    filteredRows.value = props.rows.slice();
+    filteredRows.value = props.rows.filter((row) => {
+      return (
+        (!selectedPVZ.value.length || selectedPVZ.value.includes(row.PVZ)) &&
+        (!selectedType.value.length || selectedType.value.includes(row.type)) &&
+        (!selectedExpenditure.value.length ||
+          selectedExpenditure.value.includes(row.expenditure)) &&
+        (!selectedTypeOfExpenditure.value.length ||
+          selectedTypeOfExpenditure.value.includes(row.typeOfExpenditure)) &&
+        (!selectedNotation.value.length ||
+          selectedNotation.value.some((notation) =>
+            row.notation
+              ? row.notation.toLowerCase().includes(notation.toLowerCase())
+              : row.notation
+          )) &&
+        (!selectedCompany.value.length ||
+          selectedCompany.value.includes(row.company)) &&
+        (!selectedCreatedUser.value.length ||
+          selectedCreatedUser.value.includes(row.createdUser)) &&
+        (!selected.value.start ||
+          new Date(row.date) >= new Date(newStartingDate)) &&
+        (!selected.value.end || new Date(row.date) <= new Date(newEndDate))
+      );
+    });
+  } else {
+    filteredRows.value = props.rows.slice();
+    filteredRows.value = props.rows.filter((row) => {
+      return (
+        (!selectedPVZ.value.length || selectedPVZ.value.includes(row.PVZ)) &&
+        (!selectedType.value.length || selectedType.value.includes(row.type)) &&
+        (!selectedExpenditure.value.length ||
+          selectedExpenditure.value.includes(row.expenditure)) &&
+        (!selectedTypeOfExpenditure.value.length ||
+          selectedTypeOfExpenditure.value.includes(row.typeOfExpenditure)) &&
+        (!selectedNotation.value.length ||
+          selectedNotation.value.some((notation) =>
+            row.notation
+              ? row.notation.toLowerCase().includes(notation.toLowerCase())
+              : row.notation
+          )) &&
+        (!selectedCompany.value.length ||
+          selectedCompany.value.includes(row.company)) &&
+        (!selectedCreatedUser.value.length ||
+          selectedCreatedUser.value.includes(row.createdUser)) &&
+        (!selected.value.start ||
+          new Date(row.created_at) >= new Date(newStartingDate)) &&
+        (!selected.value.end ||
+          new Date(row.created_at) <= new Date(newEndDate))
+      );
+    });
+  }
+
   emit("filtered-rows", [filteredRows.value, selected.value]);
   showFilters.value = false;
 };

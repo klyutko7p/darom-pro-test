@@ -66,9 +66,7 @@ const nextPage = () => {
 let isVisiblePages = ref(true);
 </script>
 <template>
-  <div
-    class="flex items-end justify-between mt-5"
-  >
+  <div class="flex items-end justify-between mt-5">
     <div class="flex flex-col text-center" v-if="isVisiblePages">
       <h1 class="text-sm">Страница:</h1>
       <h1 class="text-sm mb-2">{{ currentPage }} из {{ totalPages }}</h1>
@@ -111,9 +109,7 @@ let isVisiblePages = ref(true);
     </UTooltip>
   </div>
 
-  <div
-    class="relative max-h-[410px] bg-white overflow-y-auto mt-5 mb-10"
-  >
+  <div class="relative max-h-[410px] bg-white overflow-y-auto mt-5 mb-10">
     <table
       id="theTable"
       class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
@@ -125,7 +121,9 @@ let isVisiblePages = ref(true);
           <th
             scope="col"
             class="exclude-row px-3 border-[1px] h-[60px]"
-            v-if="user.username === 'Директор'"
+            v-if="
+              user.username === 'Директор' || user.username === 'Власенкова'
+            "
           >
             редакт.
           </th>
@@ -142,21 +140,27 @@ let isVisiblePages = ref(true);
           <th
             scope="col"
             class="px-1 border-[1px]"
-            v-if="user.username === 'Директор'"
+            v-if="
+              user.username === 'Директор' || user.username === 'Власенкова'
+            "
           >
             Тип
           </th>
           <th
             scope="col"
             class="px-1 border-[1px]"
-            v-if="user.username === 'Директор'"
+            v-if="
+              user.username === 'Директор' || user.username === 'Власенкова'
+            "
           >
             Дата создания
           </th>
           <th
             scope="col"
             class="px-1 border-[1px]"
-            v-if="user.username === 'Директор'"
+            v-if="
+              user.username === 'Директор' || user.username === 'Власенкова'
+            "
           >
             Удаление
           </th>
@@ -167,7 +171,12 @@ let isVisiblePages = ref(true);
           v-for="row in filteredRows"
           class="text-center h-[50px] border-[1px]"
         >
-          <td class="border-[1px]" v-if="user.username === 'Директор'">
+          <td
+            class="border-[1px]"
+            v-if="
+              user.username === 'Директор' || user.username === 'Власенкова'
+            "
+          >
             <div
               @click="openModal(row)"
               class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
@@ -224,7 +233,8 @@ let isVisiblePages = ref(true);
               @click="updateDeliveryRow(row)"
               v-if="
                 (user.username === row.issuedUser && !row.received) ||
-                (user.username === 'Директор' &&
+                ((user.username === 'Директор' ||
+                  user.username === 'Власенкова') &&
                   row.issuedUser === 'Директор (С)' &&
                   !row.received)
               "
@@ -241,19 +251,25 @@ let isVisiblePages = ref(true);
           </td>
           <td
             class="whitespace-nowrap px-2 border-[1px]"
-            v-if="user.username === 'Директор'"
+            v-if="
+              user.username === 'Директор' || user.username === 'Власенкова'
+            "
           >
             {{ row.type }}
           </td>
           <td
             class="whitespace-nowrap px-2 border-[1px]"
-            v-if="user.username === 'Директор'"
+            v-if="
+              user.username === 'Директор' || user.username === 'Власенкова'
+            "
           >
             {{ storeUsers.getNormalizedDate(row.created_at) }}
           </td>
           <td
             class="whitespace-nowrap border-[1px]"
-            v-if="user.username === 'Директор'"
+            v-if="
+              user.username === 'Директор' || user.username === 'Власенкова'
+            "
           >
             <div
               @click="deleteRow(row.id)"

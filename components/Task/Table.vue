@@ -26,11 +26,11 @@ let returnRows = ref<Array<Task>>();
 function updateCurrentPageData() {
   returnRows.value = props.rows;
 }
-
 </script>
 <template>
   <div class="relative overflow-x-auto overflow-y-auto mt-5 mb-5">
-    <table id="theTable"
+    <table
+      id="theTable"
       class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
     >
       <thead
@@ -41,7 +41,7 @@ function updateCurrentPageData() {
             scope="col"
             class="exclude-row border-[1px] h-[30px] px-3"
             v-if="
-              user.username === 'Директор'
+              user.username === 'Директор' || user.username === 'Власенкова'
             "
           >
             изменение
@@ -57,7 +57,7 @@ function updateCurrentPageData() {
           <td class="border-[1px]">
             <div
               @click="openModal(row)"
-              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1  mx-auto"
+              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
             >
               <Icon
                 class="text-green-500"
@@ -110,5 +110,4 @@ function updateCurrentPageData() {
 tr:nth-child(even) {
   background-color: #f2f2f2; /* Цвет для четных строк */
 }
-
 </style>

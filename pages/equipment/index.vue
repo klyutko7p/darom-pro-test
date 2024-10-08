@@ -188,7 +188,7 @@ async function updateStateRows(obj: any) {
       const subject = "Статус оборудования: Darom.pro";
       const message = "У оборудования изменен статус на «Требуется ремонт»";
       const employees = [
-        "Директор",
+        "Власенкова",
         "Волошина",
         "Шарафаненко",
         "Кулешов",
@@ -202,11 +202,11 @@ async function updateStateRows(obj: any) {
     }
 
     if (obj.flag === "FT") {
-      if (user.value.username !== "Директор") {
+      if (user.value.username !== "Власенкова") {
         await storeUsers.sendMessageToEmployee(
           "Статус оборудования: Darom.pro",
           "У оборудования изменен статус на «Неисправное»",
-          "Директор"
+          "Власенкова"
         );
       }
     }
@@ -282,7 +282,7 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
           >
             <UIMainButton @click="openModal">Создать строку</UIMainButton>
             <NuxtLink
-              v-if="user.username === 'Директор'"
+              v-if="user.username === 'Директор' || user.username === 'Власенкова'"
               to="/equipment/decommissioned"
               class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200"
               >Показать списанное
@@ -422,7 +422,7 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
           >
             <UIMainButton @click="openModal">Создать строку</UIMainButton>
             <NuxtLink
-              v-if="user.username === 'Директор'"
+              v-if="user.username === 'Директор' || user.username === 'Власенкова'"
               to="/equipment/decommissioned"
               class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200"
               >Показать списанное

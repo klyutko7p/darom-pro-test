@@ -21,7 +21,7 @@ onMounted(async () => {
   }
   user.value = await storeUsers.getUser();
 
-  if (user.value.username !== "Директор") {
+  if (user.value.username !== "Директор" && user.value.username !== 'Власенкова') {
     router.push("/user/main");
   }
 

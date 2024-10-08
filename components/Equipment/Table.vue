@@ -245,7 +245,9 @@ function handleCheckboxChangeAll() {
             >
               <UTextarea
                 autoresize
-                :disabled="user.username !== 'Директор'"
+                :disabled="
+                  user.username !== 'Директор' && user.username !== 'Власенкова'
+                "
                 @blur="getRowByIdFromInput(row)"
                 :model-value="row.nameOfEquipment"
               />
@@ -474,7 +476,10 @@ function handleCheckboxChangeAll() {
         </UAccordion>
 
         <div
-          v-if="checkedRows.length && user.username === 'Директор'"
+          v-if="
+            checkedRows.length &&
+            (user.username === 'Директор' || user.username === 'Власенкова')
+          "
           @click="updateDecommissionedRows()"
           class="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 flex-shrink-0 font-medium rounded-full-md text-sm gap-x-1.5 px-2.5 py-1.5 text-orange-500 dark:text-orange-400 bg-orange-50 hover:bg-orange-100 disabled:bg-orange-50 dark:bg-orange-950 dark:hover:bg-orange-900 dark:disabled:bg-orange-950 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-orange-500 dark:focus-visible:ring-orange-400 inline-flex items-center mb-1.5 w-full cursor-pointer duration-100"
         >

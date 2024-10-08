@@ -165,13 +165,20 @@ function formatPhoneNumber(phoneNumber: string) {
         class="text-red-700"
       />
       <Icon
-        v-if="user.username !== 'Директор' && quantityRequiredARRows"
+        v-if="
+          user.username !== 'Директор' &&
+          user.username !== 'Власенкова' &&
+          quantityRequiredARRows
+        "
         name="pepicons-print:exclamation"
         size="40"
         class="text-red-700"
       />
       <Icon
-        v-if="user.username === 'Директор' && quantityRequiredARRowsAdmin"
+        v-if="
+          (user.username === 'Директор' || user.username === 'Власенкова') &&
+          quantityRequiredARRowsAdmin
+        "
         name="pepicons-print:exclamation"
         size="40"
         class="text-red-700"

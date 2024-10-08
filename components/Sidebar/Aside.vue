@@ -186,7 +186,8 @@ function showSettingsList() {
                 <span
                   v-if="
                     (quantityRequiredARRows || quantityRequiredBalanceRows) &&
-                    user.username !== 'Директор'
+                    user.username !== 'Директор' &&
+                    user.username !== 'Власенкова'
                   "
                   class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300"
                 >
@@ -196,7 +197,8 @@ function showSettingsList() {
                   v-if="
                     (quantityRequiredBalanceRows ||
                       quantityRequiredARRowsAdmin) &&
-                    user.username === 'Директор'
+                    (user.username === 'Директор' ||
+                      user.username === 'Власенкова')
                   "
                   class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300"
                 >
@@ -248,7 +250,8 @@ function showSettingsList() {
                   user.username === 'Директор' ||
                   user.username === 'Горцуева' ||
                   user.role === 'ADMIN' ||
-                  user.role === 'ADMINISTRATOR'
+                  user.role === 'ADMINISTRATOR' ||
+                  user.username === 'Власенкова'
                 "
               >
                 <Icon
@@ -264,7 +267,9 @@ function showSettingsList() {
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
                 @click="showSettingsList"
                 v-if="
-                  user.username === 'Директор' || user.username === 'Горцуева'
+                  user.username === 'Директор' ||
+                  user.username === 'Горцуева' ||
+                  user.username === 'Власенкова'
                 "
               >
                 <Icon
@@ -495,14 +500,20 @@ function showSettingsList() {
                   >Авансовый отчёт</span
                 >
                 <span
-                  v-if="user.username !== 'Директор' && quantityRequiredARRows"
+                  v-if="
+                    user.username !== 'Директор' &&
+                    user.username === 'Власенкова' &&
+                    quantityRequiredARRows
+                  "
                   class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300"
                 >
                   {{ quantityRequiredARRows }}
                 </span>
                 <span
                   v-if="
-                    user.username === 'Директор' && quantityRequiredARRowsAdmin
+                    (user.username === 'Директор' ||
+                      user.username === 'Власенкова') &&
+                    quantityRequiredARRowsAdmin
                   "
                   class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300"
                 >
@@ -513,7 +524,9 @@ function showSettingsList() {
             <li>
               <div
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-                v-if="user.username === 'Директор'"
+                v-if="
+                  user.username === 'Директор' || user.username === 'Власенкова'
+                "
                 @click="router.push('/advance-report/summary-tables')"
               >
                 <Icon
@@ -529,7 +542,9 @@ function showSettingsList() {
             <li>
               <div
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-                v-if="user.username === 'Директор'"
+                v-if="
+                  user.username === 'Директор' || user.username === 'Власенкова'
+                "
                 @click="router.push('/advance-report/payroll')"
               >
                 <Icon
@@ -570,7 +585,8 @@ function showSettingsList() {
                   user.username === 'Миллер' ||
                   user.username === 'Шведова' ||
                   user.username === 'Директор' ||
-                  user.username === 'Горцуева'
+                  user.username === 'Горцуева' ||
+                  user.username === 'Власенкова'
                 "
               >
                 <Icon
@@ -605,7 +621,9 @@ function showSettingsList() {
               <div
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
                 @click="router.push('/map')"
-                v-if="user.username === 'Директор'"
+                v-if="
+                  user.username === 'Директор' || user.username === 'Власенкова'
+                "
               >
                 <Icon
                   class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -665,7 +683,9 @@ function showSettingsList() {
               <div
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
                 @click="router.push('/summary-tables/delivery')"
-                v-if="user.username === 'Директор'"
+                v-if="
+                  user.username === 'Директор' || user.username === 'Власенкова'
+                "
               >
                 <Icon
                   class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -699,7 +719,9 @@ function showSettingsList() {
               <div
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
                 @click="router.push('/admin/users')"
-                v-if="user.username === 'Директор'"
+                v-if="
+                  user.username === 'Директор' || user.username === 'Власенкова'
+                "
               >
                 <Icon
                   class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -713,7 +735,9 @@ function showSettingsList() {
               <div
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
                 @click="router.push('/admin/marketplaces')"
-                v-if="user.username === 'Директор'"
+                v-if="
+                  user.username === 'Директор' || user.username === 'Власенкова'
+                "
               >
                 <Icon
                   class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -742,7 +766,9 @@ function showSettingsList() {
               <div
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
                 @click="router.push('/admin/cells')"
-                v-if="user.username === 'Директор'"
+                v-if="
+                  user.username === 'Директор' || user.username === 'Власенкова'
+                "
               >
                 <Icon
                   class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -756,7 +782,9 @@ function showSettingsList() {
               <div
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
                 @click="router.push('/admin/pvz')"
-                v-if="user.username === 'Директор'"
+                v-if="
+                  user.username === 'Директор' || user.username === 'Власенкова'
+                "
               >
                 <Icon
                   class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -770,7 +798,9 @@ function showSettingsList() {
               <div
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
                 @click="router.push('/admin/sorting-centers')"
-                v-if="user.username === 'Директор'"
+                v-if="
+                  user.username === 'Директор' || user.username === 'Власенкова'
+                "
               >
                 <Icon
                   class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -784,7 +814,9 @@ function showSettingsList() {
               <div
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
                 @click="router.push('/admin/pvz-delivery')"
-                v-if="user.username === 'Директор'"
+                v-if="
+                  user.username === 'Директор' || user.username === 'Власенкова'
+                "
               >
                 <Icon
                   class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -800,7 +832,9 @@ function showSettingsList() {
               <div
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
                 @click="router.push('/admin/sorting-centers-delivery')"
-                v-if="user.username === 'Директор'"
+                v-if="
+                  user.username === 'Директор' || user.username === 'Власенкова'
+                "
               >
                 <Icon
                   class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -814,7 +848,9 @@ function showSettingsList() {
               <div
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
                 @click="router.push('/admin/order-accounts')"
-                v-if="user.username === 'Директор'"
+                v-if="
+                  user.username === 'Директор' || user.username === 'Власенкова'
+                "
               >
                 <Icon
                   class="text-gray-500 transition duration-75 group-hover:text-gray-900"

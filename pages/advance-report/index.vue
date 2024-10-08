@@ -65,7 +65,11 @@ onMounted(async () => {
       );
     }
 
-    if (rows.value && user.value.username === "Директор") {
+    if (
+      rows.value &&
+      (user.value.username === "Директор" ||
+        user.value.username === "Власенкова")
+    ) {
       handleFilteredRows([
         rows.value,
         {
@@ -132,14 +136,18 @@ function getAllSumDirector() {
   );
 
   let sumOfPVZ = rowsBalance.value
-    ?.filter((row) => row.received !== null && row.recipient === "Директор")
+    ?.filter(
+      (row) =>
+        row.received !== null &&
+        (row.recipient === "Директор" || row.recipient === "Власенкова")
+    )
     .reduce((acc, value) => acc + +value.sum, 0);
 
   let sumOfPVZ1 = rows.value
     ?.filter(
       (row) =>
         row.received !== null &&
-        row.createdUser === "Директор" &&
+        (row.createdUser === "Директор" || row.createdUser === "Власенкова") &&
         row.typeOfExpenditure !== "Пополнение баланса" &&
         row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
         row.typeOfExpenditure !== "Новый кредит нал" &&
@@ -154,7 +162,9 @@ function getAllSumDirector() {
     ?.filter(
       (row) =>
         row.received !== null &&
-        (row.issuedUser === "Директор" || row.issuedUser === "Директор (С)") &&
+        (row.issuedUser === "Директор" ||
+          row.issuedUser === "Директор (С)" ||
+          row.issuedUser === "Власенкова") &&
         row.typeOfExpenditure !== "Перевод с баланса нал" &&
         row.typeOfExpenditure !== "Перевод с баланса безнал" &&
         row.type === "Нал" &&
@@ -166,7 +176,7 @@ function getAllSumDirector() {
   let sumOfPVZ3 = rows.value
     ?.filter(
       (row) =>
-        row.createdUser === "Директор" &&
+        (row.createdUser === "Директор" || row.createdUser === "Власенкова") &&
         !row.issuedUser &&
         row.type === "Нал" &&
         row.typeOfExpenditure !== "Кредитовый баланс нал" &&
@@ -224,8 +234,9 @@ function getAllSumDirector() {
   let sumOfPVZ11 = rows.value
     ?.filter(
       (row) =>
-        row.createdUser === "Директор" &&
-        row.issuedUser === "Директор" &&
+        ((row.createdUser === "Директор" && row.issuedUser === "Директор") ||
+          (row.createdUser === "Власенкова" &&
+            row.issuedUser === "Власенкова")) &&
         row.type === "Нал" &&
         row.typeOfExpenditure === "Перевод с баланса безнал"
     )
@@ -234,8 +245,9 @@ function getAllSumDirector() {
   let sumOfPVZ12 = rows.value
     ?.filter(
       (row) =>
-        row.createdUser === "Директор" &&
-        row.issuedUser === "Директор" &&
+        ((row.createdUser === "Директор" && row.issuedUser === "Директор") ||
+          (row.createdUser === "Власенкова" &&
+            row.issuedUser === "Власенкова")) &&
         row.type === "Безнал" &&
         row.typeOfExpenditure === "Перевод с баланса нал"
     )
@@ -245,7 +257,7 @@ function getAllSumDirector() {
     ?.filter(
       (row) =>
         row.received !== null &&
-        row.createdUser === "Директор" &&
+        (row.createdUser === "Директор" || row.createdUser === "Власенкова") &&
         row.typeOfExpenditure !== "Пополнение баланса" &&
         row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
         row.typeOfExpenditure !== "Новый кредит безнал" &&
@@ -258,7 +270,9 @@ function getAllSumDirector() {
     ?.filter(
       (row) =>
         row.received !== null &&
-        (row.issuedUser === "Директор" || row.issuedUser === "Директор (С)") &&
+        (row.issuedUser === "Директор" ||
+          row.issuedUser === "Директор (С)" ||
+          row.issuedUser === "Власенкова") &&
         row.typeOfExpenditure !== "Перевод с баланса нал" &&
         row.typeOfExpenditure !== "Перевод с баланса безнал" &&
         row.type === "Безнал"
@@ -268,7 +282,7 @@ function getAllSumDirector() {
   let sumOfPVZ3Cashless = rows.value
     ?.filter(
       (row) =>
-        row.createdUser === "Директор" &&
+        (row.createdUser === "Директор" || row.createdUser === "Власенкова") &&
         !row.issuedUser &&
         row.type === "Безнал" &&
         row.typeOfExpenditure !== "Перевод с баланса нал" &&
@@ -279,8 +293,10 @@ function getAllSumDirector() {
   let sumOfPVZ4Cashless = rows.value
     ?.filter(
       (row) =>
-        row.createdUser === "Директор" &&
-        (row.issuedUser === "Директор" || row.issuedUser === "Директор (С)") &&
+        (row.createdUser === "Директор" || row.createdUser === "Власенкова") &&
+        (row.issuedUser === "Директор" ||
+          row.issuedUser === "Директор (С)" ||
+          row.issuedUser === "Власенкова") &&
         row.type === "Нал" &&
         row.typeOfExpenditure === "Перевод с баланса безнал"
     )
@@ -289,8 +305,10 @@ function getAllSumDirector() {
   let sumOfPVZ5Cashless = rows.value
     ?.filter(
       (row) =>
-        row.createdUser === "Директор" &&
-        (row.issuedUser === "Директор" || row.issuedUser === "Директор (С)") &&
+        (row.createdUser === "Директор" || row.createdUser === "Власенкова") &&
+        (row.issuedUser === "Директор" ||
+          row.issuedUser === "Директор (С)" ||
+          row.issuedUser === "Власенкова") &&
         row.type === "Безнал" &&
         row.typeOfExpenditure === "Перевод с баланса нал"
     )
@@ -314,7 +332,7 @@ function getAllSumDirector() {
   sumOfPVZ3Cashless = sumOfPVZ3Cashless === undefined ? 0 : sumOfPVZ3Cashless;
   sumOfPVZ4Cashless = sumOfPVZ4Cashless === undefined ? 0 : sumOfPVZ4Cashless;
   sumOfPVZ5Cashless = sumOfPVZ5Cashless === undefined ? 0 : sumOfPVZ5Cashless;
-  switch ("Директор") {
+  switch (user.value.username) {
     case "Директор":
       allSum.value =
         sumOfPVZ -
@@ -341,6 +359,34 @@ function getAllSumDirector() {
         +sumOfPVZ4Cashless +
         +sumOfPVZ5Cashless;
       break;
+
+    case "Власенкова":
+      allSum.value =
+        sumOfPVZ -
+        sumOfPVZ1 +
+        sumOfPVZ2 -
+        sumOfPVZ3 +
+        sumOfPVZ4 +
+        sumOfPVZ6 +
+        sumOfPVZ7 +
+        sumOfPVZ8 -
+        sumOfPVZ9 +
+        sumOfPVZ10 +
+        sumOfPVZ11 -
+        sumOfPVZ12 -
+        149000 +
+        sumOfPVZ1 +
+        332531 +
+        1477830;
+
+      allSum2.value =
+        +sumOfPVZ1Cashless +
+        +sumOfPVZ2Cashless -
+        +sumOfPVZ3Cashless -
+        +sumOfPVZ4Cashless +
+        +sumOfPVZ5Cashless;
+      break;
+
     default:
       allSum.value =
         +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
@@ -365,7 +411,8 @@ function getSumCreditCash() {
     let sumOfPVZ = rows.value
       .filter(
         (row) =>
-          row.createdUser === "Директор" &&
+          (row.createdUser === "Директор" ||
+            row.createdUser === "Власенкова") &&
           row.typeOfExpenditure ===
             "Перевод в междубалансовый, кредитный баланс" &&
           row.type === "Нал"
@@ -375,7 +422,8 @@ function getSumCreditCash() {
     let sumOfPVZ1 = rows.value
       .filter(
         (row) =>
-          row.createdUser === "Директор" &&
+          (row.createdUser === "Директор" ||
+            row.createdUser === "Власенкова") &&
           row.typeOfExpenditure === "Перевод с кредитного баланса нал" &&
           row.type === "Нал"
       )
@@ -384,7 +432,8 @@ function getSumCreditCash() {
     let sumOfPVZ2 = rows.value
       .filter(
         (row) =>
-          row.createdUser === "Директор" &&
+          (row.createdUser === "Директор" ||
+            row.createdUser === "Власенкова") &&
           row.typeOfExpenditure === "Новый кредит нал" &&
           row.type === "Нал"
       )
@@ -393,7 +442,8 @@ function getSumCreditCash() {
     let sumOfPVZ3 = rows.value
       .filter(
         (row) =>
-          row.createdUser === "Директор" &&
+          (row.createdUser === "Директор" ||
+            row.createdUser === "Власенкова") &&
           row.typeOfExpenditure ===
             "Списание кредитной задолженности торговой империи" &&
           row.type === "Нал"
@@ -410,7 +460,8 @@ function getSumCreditOnline() {
     let sumOfPVZ = rows.value
       .filter(
         (row) =>
-          row.createdUser === "Директор" &&
+          (row.createdUser === "Директор" ||
+            row.createdUser === "Власенкова") &&
           row.typeOfExpenditure ===
             "Перевод в междубалансовый, кредитный баланс" &&
           row.type === "Безнал"
@@ -420,7 +471,8 @@ function getSumCreditOnline() {
     let sumOfPVZ1 = rows.value
       .filter(
         (row) =>
-          row.createdUser === "Директор" &&
+          (row.createdUser === "Директор" ||
+            row.createdUser === "Власенкова") &&
           row.typeOfExpenditure === "Перевод с кредитного баланса безнал" &&
           row.type === "Безнал"
       )
@@ -429,7 +481,8 @@ function getSumCreditOnline() {
     let sumOfPVZ2 = rows.value
       .filter(
         (row) =>
-          row.createdUser === "Директор" &&
+          (row.createdUser === "Директор" ||
+            row.createdUser === "Власенкова") &&
           row.typeOfExpenditure === "Новый кредит безнал" &&
           row.type === "Безнал"
       )
@@ -438,7 +491,8 @@ function getSumCreditOnline() {
     let sumOfPVZ3 = rows.value
       .filter(
         (row) =>
-          row.createdUser === "Директор" &&
+          (row.createdUser === "Директор" ||
+            row.createdUser === "Власенкова") &&
           row.typeOfExpenditure ===
             "Списание кредитной задолженности торговой империи" &&
           row.type === "Безнал"
@@ -454,7 +508,8 @@ function getSumCreditBalance() {
     let sumOfPVZ1 = rows.value
       .filter(
         (row) =>
-          row.createdUser === "Директор" &&
+          (row.createdUser === "Директор" ||
+            row.createdUser === "Власенкова") &&
           row.typeOfExpenditure === "Перевод с баланса безнал" &&
           row.type === "Нал"
       )
@@ -463,7 +518,8 @@ function getSumCreditBalance() {
     let sumOfPVZ2 = rows.value
       .filter(
         (row) =>
-          row.createdUser === "Директор" &&
+          (row.createdUser === "Директор" ||
+            row.createdUser === "Власенкова") &&
           row.typeOfExpenditure === "Перевод с баланса нал" &&
           row.type === "Безнал"
       )
@@ -472,7 +528,8 @@ function getSumCreditBalance() {
     let sumOfPVZ1Debt = rows.value
       .filter(
         (row) =>
-          row.createdUser === "Директор" &&
+          (row.createdUser === "Директор" ||
+            row.createdUser === "Власенкова") &&
           row.typeOfExpenditure === "Перевод с баланса нал" &&
           row.type === "Безнал"
       )
@@ -481,7 +538,8 @@ function getSumCreditBalance() {
     let sumOfPVZ2Debt = rows.value
       .filter(
         (row) =>
-          row.createdUser === "Директор" &&
+          (row.createdUser === "Директор" ||
+            row.createdUser === "Власенкова") &&
           row.typeOfExpenditure === "Перевод с баланса безнал" &&
           row.type === "Нал"
       )
@@ -505,7 +563,10 @@ function openModal(row: IAdvanceReport, flag: string = "CASH") {
   isOpen.value = true;
   if (row.id) {
     rowData.value = JSON.parse(JSON.stringify(row));
-    if (user.value.username !== "Директор") {
+    if (
+      user.value.username !== "Директор" &&
+      user.value.username !== "Власенкова"
+    ) {
       rowData.value.date = rowData.value.date ? rowData.value.date : null;
     }
   } else {
@@ -576,11 +637,11 @@ function openModalAdmin(row: IAdvanceReport) {
   rowData.value.company = row.company;
   rowData.value.expenditure = row.expenditure;
   rowData.value.notation = row.notation;
-  rowData.value.issuedUser = "Директор";
+  rowData.value.issuedUser = user.value.username;
   rowData.value.received = new Date();
   rowData.value.supportingDocuments = "";
   rowData.value.typeOfExpenditure = row.typeOfExpenditure;
-  rowData.value.createdUser = "Директор";
+  rowData.value.createdUser = user.value.username;
   rowData.value.date = storeUsers.getISODate(new Date());
 }
 
@@ -608,12 +669,12 @@ function openModalAdminOOO(row: IAdvanceReport) {
   rowData.value.company = row.company;
   rowData.value.expenditure = row.expenditure;
   rowData.value.notation = row.notation;
-  rowData.value.issuedUser = "Директор";
+  rowData.value.issuedUser = user.value.username;
   rowData.value.received = new Date();
   rowData.value.supportingDocuments = "";
   rowData.value.typeOfExpenditure = row.typeOfExpenditure;
   rowData.value.type = "Безнал";
-  rowData.value.createdUser = "Директор";
+  rowData.value.createdUser = user.value.username;
   rowData.value.date = storeUsers.getISODate(new Date());
 }
 
@@ -678,6 +739,7 @@ let companies = ref([
 
 let usersOfIssued = ref([
   "Директор (С)",
+  "Власенкова",
   "Шведова",
   "Косой",
   "Шарафаненко",
@@ -834,7 +896,11 @@ async function createRow() {
     }
     filteredRows.value = rows.value;
 
-    if (rows.value && user.value.username === "Директор") {
+    if (
+      rows.value &&
+      (user.value.username === "Директор" ||
+        user.value.username === "Власенкова")
+    ) {
       handleFilteredRows([
         rows.value,
         {
@@ -945,7 +1011,10 @@ async function updateRow() {
   }
   filteredRows.value = rows.value;
 
-  if (rows.value && user.value.username === "Директор") {
+  if (
+    rows.value &&
+    (user.value.username === "Директор" || user.value.username === "Власенкова")
+  ) {
     handleFilteredRows([
       rows.value,
       {
@@ -987,7 +1056,10 @@ async function updateDeliveryRow(row: any) {
   }
   filteredRows.value = rows.value;
 
-  if (rows.value && user.value.username === "Директор") {
+  if (
+    rows.value &&
+    (user.value.username === "Директор" || user.value.username === "Власенкова")
+  ) {
     handleFilteredRows([
       rows.value,
       {
@@ -1042,7 +1114,11 @@ async function deleteRow(id: any) {
     }
     filteredRows.value = rows.value;
 
-    if (rows.value && user.value.username === "Директор") {
+    if (
+      rows.value &&
+      (user.value.username === "Директор" ||
+        user.value.username === "Власенкова")
+    ) {
       handleFilteredRows([
         rows.value,
         {
@@ -1133,7 +1209,10 @@ function getAllSumFromEmployees() {
 
   usersOfIssued.value
     .filter(
-      (username) => username !== "Директор" && username !== "Директор (С)"
+      (username) =>
+        username !== "Директор" &&
+        username !== "Директор (С)" &&
+        username !== "Власенкова"
     )
     .forEach((username) => {
       let sumOfPVZ = rowsBalance.value
@@ -1413,7 +1492,9 @@ const typeOfOptions2 = [
             <div
               class="text-center text-2xl my-5"
               v-if="
-                selectedUser !== 'Директор' && selectedUser !== 'Директор (С)'
+                selectedUser !== 'Директор' &&
+                selectedUser !== 'Директор (С)' &&
+                selectedUser !== 'Власенкова'
               "
             >
               <h1>Баланс {{ selectedUser }}:</h1>
@@ -1423,14 +1504,20 @@ const typeOfOptions2 = [
             </div>
             <div
               class="text-center text-2xl my-5"
-              v-if="selectedUser === 'Директор (С)'"
+              v-if="
+                selectedUser === 'Директор (С)'
+              "
             >
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
                 {{ formatNumber(allSum - 19008030 - 91594) }} ₽
               </h1>
             </div>
-            <div v-if="selectedUser === 'Директор'">
+            <div
+              v-if="
+                selectedUser === 'Директор' || selectedUser === 'Власенкова'
+              "
+            >
               <div class="flex items-center flex-col mb-3">
                 <div class="text-center text-xl my-3">
                   <h1>Баланс Торговой Империи онлайн&наличные:</h1>
@@ -1484,7 +1571,10 @@ const typeOfOptions2 = [
                 </div>
                 <UIMainButton
                   class="max-sm:w-full max-w-[400px]"
-                  v-if="user.username === 'Директор'"
+                  v-if="
+                    user.username === 'Директор' ||
+                    user.username === 'Власенкова'
+                  "
                   @click="openModalAdminOOO"
                 >
                   Пополнение баланса (безнал)
@@ -1540,7 +1630,9 @@ const typeOfOptions2 = [
 
             <div
               class="flex items-center gap-3 w-full max-w-[400px] max-sm:max-w-full"
-              v-if="user.username === 'Директор'"
+              v-if="
+                user.username === 'Директор' || user.username === 'Власенкова'
+              "
             >
               <UIMainButton
                 class="w-full max-sm:max-w-[400px] mx-auto max-sm:text-sm"
@@ -1560,7 +1652,9 @@ const typeOfOptions2 = [
 
           <AdvanceReportTable
             v-if="
-              selectedUser !== 'Директор (С)' && selectedUser !== 'Директор'
+              selectedUser !== 'Директор (С)' &&
+              selectedUser !== 'Директор' &&
+              user.username !== 'Власенкова'
             "
             :rows="
               filteredRows?.filter(
@@ -1593,7 +1687,7 @@ const typeOfOptions2 = [
           />
 
           <AdvanceReportTable
-            v-if="selectedUser === 'Директор'"
+            v-if="selectedUser === 'Директор' || selectedUser === 'Власенкова'"
             :rows="filteredRows"
             :user="user"
             @open-modal="openModal"
@@ -1768,7 +1862,9 @@ const typeOfOptions2 = [
 
               <div
                 class="flex flex-col items-start text-left gap-2 mb-5"
-                v-if="user.username === 'Директор'"
+                v-if="
+                  user.username === 'Директор' || user.username === 'Власенкова'
+                "
               >
                 <label for="name">Тип</label>
                 <USelectMenu

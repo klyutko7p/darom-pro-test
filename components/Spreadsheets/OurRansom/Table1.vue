@@ -557,7 +557,9 @@ async function openModalQR() {
     `Онлайн оплата доставки, ${Date.now()}`
   );
   await checkPaymentStatus(qrBodyInfo.value.Data.operationId);
-  qrBody.value = await storeQR.getPaymentStatusQR(qrBodyInfo.value.Data.operationId);
+  qrBody.value = await storeQR.getPaymentStatusQR(
+    qrBodyInfo.value.Data.operationId
+  );
   isGeneratedQR.value = true;
   isLoading.value = false;
 }
@@ -834,7 +836,8 @@ async function writeClipboardText(text: any) {
             (user.username === 'Директор' ||
               user.username === 'Горцуева' ||
               user.username === 'Светлана1' ||
-              user.username === 'Светлана2')
+              user.username === 'Светлана2' ||
+              user.username === 'Власенкова')
           "
           @click="updateDeliveryRows('additionally', getAllSum)"
           >Оплата онлайн (Старый метод)
@@ -891,7 +894,8 @@ async function writeClipboardText(text: any) {
             (user.username === 'Директор' ||
               user.username === 'Горцуева' ||
               user.username === 'Светлана1' ||
-              user.username === 'Светлана2')
+              user.username === 'Светлана2' ||
+              user.username === 'Власенкова')
           "
           @click="updateDeliveryRows('additionally', getAllSum)"
           >Оплата онлайн (Старый метод)
@@ -1219,7 +1223,9 @@ async function writeClipboardText(text: any) {
               scope="col"
               class="exclude-row px-6 py-3 border-2"
               v-if="
-                user.username === 'Директор' || user.username === 'Горцуева'
+                user.username === 'Директор' ||
+                user.username === 'Горцуева' ||
+                user.username === 'Власенкова'
               "
             >
               очистить
@@ -1597,7 +1603,9 @@ async function writeClipboardText(text: any) {
             <td
               class="px-6 py-4 border-2"
               v-if="
-                user.username === 'Директор' || user.username === 'Горцуева'
+                user.username === 'Директор' ||
+                user.username === 'Горцуева' ||
+                user.username === 'Власенкова'
               "
             >
               <div
@@ -1662,12 +1670,17 @@ async function writeClipboardText(text: any) {
             <h1>Отсканируйте QR-код для оплаты</h1>
             <div class="text-left text-sm mt-10">
               <h1>
-                Стоимость оплаты: <b>{{ qrBody.Data?.Operation[0]?.amount}} ₽ </b>
+                Стоимость оплаты:
+                <b>{{ qrBody.Data?.Operation[0]?.amount }} ₽ </b>
               </h1>
               <h1>
                 Дата и время создания:
                 <b
-                  >{{ storeUsers.getNormalizedDate(qrBody.Data?.Operation[0]?.createdAt) }}
+                  >{{
+                    storeUsers.getNormalizedDate(
+                      qrBody.Data?.Operation[0]?.createdAt
+                    )
+                  }}
                   (МСК)
                 </b>
               </h1>

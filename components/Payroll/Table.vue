@@ -162,10 +162,12 @@ function getAllSumZPMonth() {
     : 0;
 }
 
-function exportToExcel() {
+async function exportToExcel() {
+  await hideHiddenFields();
   let table = document.querySelector("#theTable");
   let wb = utils.table_to_book(table);
-  writeFile(wb, "расчёт_зп.xlsx");
+  await writeFile(wb, "расчёт_зп.xlsx");
+  await showHiddenFields();
 }
 
 async function createAdvanceReportAdvance() {
@@ -368,6 +370,16 @@ function saveFiltersToLocalStorage() {
 watch([props.rows, totalRows, props.user], updateCurrentPageData);
 watch([selectedCompany, selectedPVZ], filterRowsCompanyAndPVZ);
 watch(month, saveFiltersToLocalStorage);
+
+let isHidden = ref(true);
+
+function showHiddenFields() {
+  isHidden.value = true;
+}
+
+function hideHiddenFields() {
+  isHidden.value = false;
+}
 </script>
 <template>
   <div class="my-10 flex items-center gap-5">
@@ -503,13 +515,16 @@ watch(month, saveFiltersToLocalStorage);
         class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
       >
         <tr>
-          
           <th scope="col" class="border-[1px] max-w-[65px]">ПВЗ</th>
-          <th scope="col" class="border-[1px] max-w-[55px] overflow-hidden">Компания</th>
+          <th scope="col" class="border-[1px] max-w-[55px] overflow-hidden">
+            Компания
+          </th>
           <th scope="col" class="border-[1px]">ФИО</th>
-          <th scope="col" class="border-[1px]">Телефон</th>
-          <th scope="col" class="border-[1px]">Банк</th>
-          <th scope="col" class="border-[1px] px-2">оплата в час</th>
+          <th v-if="!isHidden" scope="col" class="border-[1px]">Телефон</th>
+          <th v-if="!isHidden" scope="col" class="border-[1px]">Банк</th>
+          <th v-if="!isHidden" scope="col" class="border-[1px] px-2">
+            оплата в час
+          </th>
           <th scope="col" class="border-[1px]">Аванс ФОССАН</th>
           <th scope="col" class="border-[1px]">Аванс</th>
           <th scope="col" class="border-[1px]">Кол-во часов</th>
@@ -545,7 +560,6 @@ watch(month, saveFiltersToLocalStorage);
             'bg-yellow-400 text-black': row.notation === 'Оплачено',
           }"
         >
-          
           <th scope="row" class="border-[1px] max-w-[65px] overflow-hidden">
             {{ row.PVZ }}
           </th>
@@ -553,13 +567,13 @@ watch(month, saveFiltersToLocalStorage);
             {{ row.company }}
           </th>
           <td class="border-[1px]">{{ row.fullname }}</td>
-          <td class="border-[1px]">
+          <td class="border-[1px]" v-if="!isHidden">
             {{ row.phone }}
           </td>
-          <td class="border-[1px]">
+          <td class="border-[1px]" v-if="!isHidden">
             {{ row.bank }}
           </td>
-          <td class="border-[1px]">
+          <td class="border-[1px]" v-if="!isHidden">
             {{ row.paymentPerShift ? row.paymentPerShift : 0 }} ₽
           </td>
           <td class="border-[1px]">
