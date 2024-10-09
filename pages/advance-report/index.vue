@@ -1261,13 +1261,23 @@ function handleFilteredRows(obj: any) {
   const newStartingDate = new Date(selected.value.start).setHours(0, 0, 0, 0);
   const newEndDate = new Date(selected.value.end).setHours(23, 59, 59, 999);
 
-  filteredRows.value = filteredRows.value?.filter((row: IAdvanceReport) => {
-    const rowDate = new Date(row.date).getTime();
-    return (
-      (!selected.value.start || rowDate >= newStartingDate) &&
-      (!selected.value.end || rowDate <= newEndDate)
-    );
-  });
+  if (user.value.username !== "Власенкова") {
+    filteredRows.value = filteredRows.value?.filter((row: IAdvanceReport) => {
+      const rowDate = new Date(row.date).getTime();
+      return (
+        (!selected.value.start || rowDate >= newStartingDate) &&
+        (!selected.value.end || rowDate <= newEndDate)
+      );
+    });
+  } else {
+    filteredRows.value = filteredRows.value?.filter((row: IAdvanceReport) => {
+      const rowDate = new Date(row.created_at).getTime();
+      return (
+        (!selected.value.start || rowDate >= newStartingDate) &&
+        (!selected.value.end || rowDate <= newEndDate)
+      );
+    });
+  }
 }
 
 let linkPhoto = ref("");
@@ -1504,9 +1514,7 @@ const typeOfOptions2 = [
             </div>
             <div
               class="text-center text-2xl my-5"
-              v-if="
-                selectedUser === 'Директор (С)'
-              "
+              v-if="selectedUser === 'Директор (С)'"
             >
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
