@@ -410,37 +410,30 @@ const columns = [
   {
     key: "paymentPerShift",
     label: "Оплата в час",
-    sortable: true,
   },
   {
     key: "advanceFourssan",
     label: "Ав. ФОССАН",
-    sortable: true,
   },
   {
     key: "advance",
     label: "Аванс",
-    sortable: true,
   },
   {
     key: "hours",
     label: "Кол-во часов",
-    sortable: true,
   },
   {
     key: "deductions",
     label: "Удержания",
-    sortable: true,
   },
   {
     key: "additionalPayment",
     label: "Доплата",
-    sortable: true,
   },
   {
     key: "salaryFourssan",
     label: "ЗП ФОССАН",
-    sortable: true,
   },
   {
     key: "totalPayroll",
@@ -626,15 +619,15 @@ const columnsTable = computed(() =>
   </div>
 
   <UTable
-    class="w-full text-center bg-white border-[1px] rounded-md mt-5 max-h-[500px]"
+    class="w-full mx-auto text-center bg-white border-[1px] rounded-md mt-5 max-h-[500px]"
     :ui="{
   td: {
-    base: 'border-r-[1px] border-b-[1px] text-center',
+    base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
     padding: 'px-3 py-2',
   },
   th: {
-    base: 'text-center uppercase',
-    padding: 'px-3',
+    base: 'text-center uppercase sticky top-0 z-[20] bg-white',
+    padding: 'px-1',
     size: 'text-xs'
   },
   default:
