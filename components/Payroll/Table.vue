@@ -164,7 +164,7 @@ function getAllSumZPMonth() {
 
 async function exportToExcel() {
   await hideHiddenFields();
-  let table = document.querySelector("#theTable");
+  let table = document.querySelector(".table-fixed");
   let wb = utils.table_to_book(table);
   await writeFile(wb, "расчёт_зп.xlsx");
   await showHiddenFields();
@@ -375,11 +375,112 @@ let isHidden = ref(true);
 
 function showHiddenFields() {
   isHidden.value = true;
+  selectedColumns.value = columns.toSpliced(3, 3);
 }
 
 function hideHiddenFields() {
   isHidden.value = false;
+  selectedColumns.value = columns;
 }
+
+const columns = [
+  {
+    key: "PVZ",
+    label: "ПВЗ",
+    sortable: true,
+  },
+  {
+    key: "company",
+    label: "Компания",
+    sortable: true,
+  },
+  {
+    key: "fullname",
+    label: "ФИО",
+    sortable: true,
+  },
+  {
+    key: "phone",
+    label: "Телефон/Карта",
+  },
+  {
+    key: "bank",
+    label: "Банк",
+  },
+  {
+    key: "paymentPerShift",
+    label: "Оплата в час",
+    sortable: true,
+  },
+  {
+    key: "advanceFourssan",
+    label: "Ав. ФОССАН",
+    sortable: true,
+  },
+  {
+    key: "advance",
+    label: "Аванс",
+    sortable: true,
+  },
+  {
+    key: "hours",
+    label: "Кол-во часов",
+    sortable: true,
+  },
+  {
+    key: "deductions",
+    label: "Удержания",
+    sortable: true,
+  },
+  {
+    key: "additionalPayment",
+    label: "Доплата",
+    sortable: true,
+  },
+  {
+    key: "salaryFourssan",
+    label: "ЗП ФОССАН",
+    sortable: true,
+  },
+  {
+    key: "totalPayroll",
+    label: "ЗП к начислению",
+  },
+  {
+    key: "totalPayrollMonth",
+    label: "Итого начислено за месяц",
+  },
+  {
+    key: "notation",
+    label: "Примечание",
+    sortable: true,
+  },
+  {
+    key: "actions",
+  },
+];
+
+const items = (row) => [
+  [
+    {
+      label: "Изменить",
+      icon: "i-heroicons-pencil-square-20-solid",
+      click: () => openModal(row),
+    },
+  ],
+  [
+    {
+      label: "Удалить",
+      icon: "i-heroicons-trash-20-solid",
+      click: () => deleteRow(row.id),
+    },
+  ],
+];
+
+const selectedColumns = ref(columns.toSpliced(3, 3));
+const columnsTable = computed(() =>
+  columns.filter((column) => selectedColumns.value.includes(column))
+);
 </script>
 <template>
   <div class="my-10 flex items-center gap-5">
@@ -506,214 +607,168 @@ function hideHiddenFields() {
     </UIActionButton>
   </div>
 
-  <div class="relative max-h-[500px] bg-white overflow-y-auto mt-5 mb-10">
-    <table
-      id="theTable"
-      class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+  <div class="w-full flex items-end justify-end">
+    <USelectMenu
+      class="w-[100px]"
+      v-model="selectedColumns"
+      :options="columns"
+      multiple
     >
-      <thead
-        class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
+      <UButton
+        class="w-[100px]"
+        icon="i-heroicons-view-columns"
+        color="gray"
+        size="xs"
       >
-        <tr>
-          <th scope="col" class="border-[1px] max-w-[65px]">ПВЗ</th>
-          <th scope="col" class="border-[1px] max-w-[55px] overflow-hidden">
-            Компания
-          </th>
-          <th scope="col" class="border-[1px]">ФИО</th>
-          <th v-if="!isHidden" scope="col" class="border-[1px]">Телефон</th>
-          <th v-if="!isHidden" scope="col" class="border-[1px]">Банк</th>
-          <th v-if="!isHidden" scope="col" class="border-[1px] px-2">
-            оплата в час
-          </th>
-          <th scope="col" class="border-[1px]">Аванс ФОССАН</th>
-          <th scope="col" class="border-[1px]">Аванс</th>
-          <th scope="col" class="border-[1px]">Кол-во часов</th>
-          <th scope="col" class="border-[1px]">Удержания</th>
-          <th scope="col" class="border-[1px]">Доплата</th>
-          <th scope="col" class="border-[1px]">ЗП ФОССАН</th>
-          <th scope="col" class="border-[1px]">ЗП к начислению</th>
-          <th scope="col" class="border-[1px]">Итого начислено за месяц</th>
-          <th scope="col" class="border-[1px]">Примечание</th>
-          <th
-            scope="col"
-            class="exclude-row h-[50px] px-3 border-[1px]"
-            v-if="
-              user.dataDelivery === 'WRITE' ||
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            изменение
-          </th>
-          <th scope="col" class="border-[1px]">удаление</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="row in filteredRows"
-          class="text-center"
-          :class="{
-            'bg-red-500 text-black': row.notation === 'Нам должны',
-            'bg-pink-900 text-white':
-              row.notation === 'Расчёт уволенных сотрудников',
-            'bg-yellow-400 text-black': row.notation === 'Оплачено',
-          }"
-        >
-          <th scope="row" class="border-[1px] max-w-[65px] overflow-hidden">
-            {{ row.PVZ }}
-          </th>
-          <th scope="row" class="border-[1px] max-w-[55px] overflow-hidden">
-            {{ row.company }}
-          </th>
-          <td class="border-[1px]">{{ row.fullname }}</td>
-          <td class="border-[1px]" v-if="!isHidden">
-            {{ row.phone }}
-          </td>
-          <td class="border-[1px]" v-if="!isHidden">
-            {{ row.bank }}
-          </td>
-          <td class="border-[1px]" v-if="!isHidden">
-            {{ row.paymentPerShift ? row.paymentPerShift : 0 }} ₽
-          </td>
-          <td class="border-[1px]">
-            <UInput
-              class="w-[85px] mx-1 text-center bg-gray-100"
-              @input="getRowByIdFromInput(row)"
-              v-model="row.advanceFourssan"
-              type="number"
-            />
-            <span class="hidden">{{ row.advanceFourssan }} ₽</span>
-          </td>
-          <td class="border-[1px]">
-            <UInput
-              class="w-[85px] mx-1 text-center bg-gray-100"
-              @input="getRowByIdFromInput(row)"
-              v-model="row.advance"
-              type="number"
-            />
-            <span class="hidden">{{ row.advance }} ₽</span>
-          </td>
-          <td class="border-[1px]">
-            <UInput
-              class="w-[85px] mx-1 text-center bg-gray-100"
-              @input="getRowByIdFromInput(row)"
-              v-model="row.hours"
-              type="number"
-            />
-            <span class="hidden">{{ row.hours }} ₽</span>
-          </td>
-          <td class="border-[1px]">
-            <UInput
-              class="w-[85px] mx-1 text-center bg-gray-100"
-              @input="getRowByIdFromInput(row)"
-              v-model="row.deductions"
-              type="number"
-            />
-            <span class="hidden">{{ row.deductions }} ₽</span>
-          </td>
-          <td class="border-[1px]">
-            <UInput
-              class="w-[85px] mx-1 text-center bg-gray-100"
-              @input="getRowByIdFromInput(row)"
-              v-model="row.additionalPayment"
-              type="number"
-            />
-            <span class="hidden">{{ row.additionalPayment }} ₽</span>
-          </td>
-          <td class="border-[1px]">
-            <UInput
-              class="w-[85px] mx-1 text-center bg-gray-100"
-              @input="getRowByIdFromInput(row)"
-              v-model="row.salaryFourssan"
-              type="number"
-            />
-            <span class="hidden">{{ row.salaryFourssan }} ₽</span>
-          </td>
-          <td
-            class="border-[1px]"
-            v-if="
-              row.hours !== '' &&
-              row.paymentPerShift !== '' &&
-              row.advance !== '' &&
-              row.advanceFourssan !== '' &&
-              row.deductions !== '' &&
-              row.additionalPayment !== '' &&
-              row.salaryFourssan !== ''
-            "
-          >
-            {{
-              (
-                row.hours * row.paymentPerShift -
-                row.advance -
-                row.advanceFourssan -
-                row.salaryFourssan -
-                row.deductions +
-                row.additionalPayment
-              ).toFixed(0)
-            }}
-          </td>
-          <td class="border-[1px]" v-else>0</td>
-          <td
-            class="border-[1px]"
-            v-if="
-              row.hours !== '' &&
-              row.paymentPerShift !== '' &&
-              row.advance !== '' &&
-              row.advanceFourssan !== '' &&
-              row.deductions !== '' &&
-              row.additionalPayment !== '' &&
-              row.salaryFourssan !== ''
-            "
-          >
-            {{
-              (
-                row.advance +
-                row.advanceFourssan +
-                row.salaryFourssan +
-                (row.hours * row.paymentPerShift -
-                  row.advance -
-                  row.advanceFourssan -
-                  row.salaryFourssan -
-                  row.deductions +
-                  row.additionalPayment)
-              ).toFixed(0)
-            }}
-            ₽
-          </td>
-          <td class="border-[1px]" v-else>0 ₽</td>
-          <td class="border-[1px]">{{ row.notation }}</td>
-          <td class="border-[1px]">
-            <div
-              @click="openModal(row)"
-              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
-            >
-              <Icon
-                class="text-green-500"
-                name="ic:baseline-mode-edit"
-                size="18"
-              />
-            </div>
-          </td>
-          <td
-            class="py-3 border-[1px]"
-            v-if="
-              (user.dataOurRansom === 'WRITE' && user.role === 'ADMIN') ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            <div
-              @click="deleteRow(row.id)"
-              class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
-            >
-              <Icon class="text-red-600" name="ic:round-delete" size="18" />
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        Столбцы
+      </UButton>
+    </USelectMenu>
   </div>
+
+  <UTable
+    class="w-full text-center bg-white border-[1px] rounded-md mt-5 max-h-[500px]"
+    :ui="{
+  td: {
+    base: 'border-r-[1px] border-b-[1px] text-center',
+    padding: 'px-3 py-2',
+  },
+  th: {
+    base: 'text-center uppercase',
+    padding: 'px-3',
+    size: 'text-xs'
+  },
+  default:
+  {
+    checkbox:
+      { color: 'gray' as any }
+  },
+    }"
+    :rows="filteredRows"
+    :columns="columnsTable"
+    sort-asc-icon="i-heroicons-arrow-up"
+    sort-desc-icon="i-heroicons-arrow-down"
+  >
+    <template #PVZ-data="{ row }">
+      <p class="max-w-[65px] overflow-hidden">{{ row.PVZ }}</p>
+    </template>
+    <template #advanceFourssan-data="{ row }">
+      <UInput
+        class="w-[85px] mx-1 text-center bg-gray-100"
+        @input="getRowByIdFromInput(row)"
+        v-model="row.advanceFourssan"
+        type="number"
+      />
+      <span class="hidden">{{ row.advanceFourssan }} ₽</span>
+    </template>
+    <template #advance-data="{ row }">
+      <UInput
+        class="w-[85px] mx-1 text-center bg-gray-100"
+        @input="getRowByIdFromInput(row)"
+        v-model="row.advance"
+        type="number"
+      />
+      <span class="hidden">{{ row.advance }} ₽</span>
+    </template>
+    <template #hours-data="{ row }">
+      <UInput
+        class="w-[85px] mx-1 text-center bg-gray-100"
+        @input="getRowByIdFromInput(row)"
+        v-model="row.hours"
+        type="number"
+      />
+      <span class="hidden">{{ row.hours }} ₽</span>
+    </template>
+    <template #deductions-data="{ row }">
+      <UInput
+        class="w-[85px] mx-1 text-center bg-gray-100"
+        @input="getRowByIdFromInput(row)"
+        v-model="row.deductions"
+        type="number"
+      />
+      <span class="hidden">{{ row.deductions }} ₽</span>
+    </template>
+    <template #additionalPayment-data="{ row }">
+      <UInput
+        class="w-[85px] mx-1 text-center bg-gray-100"
+        @input="getRowByIdFromInput(row)"
+        v-model="row.additionalPayment"
+        type="number"
+      />
+      <span class="hidden">{{ row.additionalPayment }} ₽</span>
+    </template>
+    <template #salaryFourssan-data="{ row }">
+      <UInput
+        class="w-[85px] mx-1 text-center bg-gray-100"
+        @input="getRowByIdFromInput(row)"
+        v-model="row.salaryFourssan"
+        type="number"
+      />
+      <span class="hidden">{{ row.salaryFourssan }} ₽</span>
+    </template>
+    <template #totalPayroll-data="{ row }">
+      <p
+        v-if="
+          row.hours !== '' &&
+          row.paymentPerShift !== '' &&
+          row.advance !== '' &&
+          row.advanceFourssan !== '' &&
+          row.deductions !== '' &&
+          row.additionalPayment !== '' &&
+          row.salaryFourssan !== ''
+        "
+      >
+        {{
+          (
+            row.hours * row.paymentPerShift -
+            row.advance -
+            row.advanceFourssan -
+            row.salaryFourssan -
+            row.deductions +
+            row.additionalPayment
+          ).toFixed(0)
+        }}
+      </p>
+      <p v-else>0</p>
+    </template>
+    <template #totalPayrollMonth-data="{ row }">
+      <p
+        v-if="
+          row.hours !== '' &&
+          row.paymentPerShift !== '' &&
+          row.advance !== '' &&
+          row.advanceFourssan !== '' &&
+          row.deductions !== '' &&
+          row.additionalPayment !== '' &&
+          row.salaryFourssan !== ''
+        "
+      >
+        {{
+          (
+            row.advance +
+            row.advanceFourssan +
+            row.salaryFourssan +
+            (row.hours * row.paymentPerShift -
+              row.advance -
+              row.advanceFourssan -
+              row.salaryFourssan -
+              row.deductions +
+              row.additionalPayment)
+          ).toFixed(0)
+        }}
+        ₽
+      </p>
+      <p v-else>0</p>
+    </template>
+    <template #actions-data="{ row }">
+      <UDropdown :items="items(row)">
+        <Icon
+          class="text-gray-500"
+          size="24"
+          name="i-heroicons-ellipsis-horizontal-20-solid"
+        />
+      </UDropdown>
+    </template>
+  </UTable>
 </template>
 
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>

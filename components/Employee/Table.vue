@@ -31,100 +31,90 @@ function updateCurrentPageData() {
 }
 
 watch([props.rows, totalRows, props.user], updateCurrentPageData);
+
+const columns = [
+  {
+    key: "PVZ",
+    label: "ПВЗ",
+    sortable: true,
+  },
+  {
+    key: "company",
+    label: "Компания",
+    sortable: true,
+  },
+  {
+    key: "fullname",
+    label: "ФИО",
+    sortable: true,
+  },
+  {
+    key: "phone",
+    label: "Телефон/Карта",
+  },
+  {
+    key: "bank",
+    label: "Банк",
+  },
+  {
+    key: "paymentPerShift",
+    label: "Оплата в смену",
+    sortable: true,
+  },
+  {
+    key: "hoursPerShift",
+    label: "Часов в смене",
+    sortable: true,
+  },
+  {
+    key: "payroll",
+    label: "Оплата в час",
+  },
+  {
+    key: "actions",
+  },
+];
+
+const items = (row) => [
+  [
+    {
+      label: "Изменить",
+      icon: "i-heroicons-pencil-square-20-solid",
+      click: () => openModal(row),
+    },
+  ],
+  [
+    {
+      label: "Удалить",
+      icon: "i-heroicons-trash-20-solid",
+      click: () => deleteRow(row.id),
+    },
+  ],
+];
 </script>
 <template>
-  <div class="relative overflow-x-auto overflow-y-auto mt-5 mb-5">
-    <table
-      id="theTable"
-      class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
-    >
-      <thead
-        class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
-      >
-        <tr>
-          <th
-            scope="col"
-            class="exclude-row h-[40px] border-[1px]"
-            v-if="
-              user.dataDelivery === 'WRITE' ||
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            изменение
-          </th>
-          <th scope="col" class="border-[1px]">ПВЗ</th>
-          <th scope="col" class="border-[1px]">Компания</th>
-          <th scope="col" class="border-[1px]">ФИО</th>
-          <th scope="col" class="border-[1px]">Телефон/Карта</th>
-          <th scope="col" class="border-[1px]">Банк</th>
-          <th scope="col" class="border-[1px]">Оплата в смену</th>
-          <th scope="col" class="border-[1px]">часов в смене</th>
-          <th scope="col" class="border-[1px]">оплата в час</th>
-          <th scope="col" class="border-[1px]">удаление</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="row in returnRows" class="text-center">
-          <td class="border-[1px]">
-            <div
-              @click="openModal(row)"
-              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
-            >
-              <Icon class="text-green-500" name="ic:baseline-mode-edit" size="18" />
-            </div>
-          </td>
-          <th scope="row" class="border-[1px]">
-            {{ row.PVZ }}
-          </th>
-          <th scope="row" class="border-[1px]">
-            {{ row.company }}
-          </th>
-          <td class="border-[1px] whitespace-nowrap">{{ row.fullname }}</td>
-          <td class="border-[1px] whitespace-nowrap">
-            {{ row.phone }}
-          </td>
-          <td class="border-[1px] whitespace-nowrap">
-            {{ row.bank }}
-          </td>
-          <td class="border-[1px] whitespace-nowrap">
-            {{ row.paymentPerShift }}
-          </td>
-          <td class="border-[1px] whitespace-nowrap">
-            {{ row.hoursPerShift }}
-          </td>
-          <td
-            class="border-[1px] whitespace-nowrap"
-            v-if="row.paymentPerShift !== null && row.hoursPerShift !== null"
-          >
-            {{ (row.paymentPerShift / row.hoursPerShift).toFixed(2) }}
-          </td>
-          <td
-            class="border-[1px] whitespace-nowrap"
-            v-if="row.paymentPerShift === null && row.hoursPerShift === null"
-          >
-            {{ 0 }}
-          </td>
-          <td
-            class="px-4 py-2 border-[1px]"
-            v-if="
-              (user.dataOurRansom === 'WRITE' && user.role === 'ADMIN') ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
-            "
-          >
-            <div
-              @click="deleteRow(row.id)"
-              class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
-            >
-              <Icon class="text-red-600" name="ic:round-delete" size="18" />
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <UTable
+    class="w-full text-center bg-white border-[1px] rounded-md mt-5"
+    :ui="{ td: { base: 'border-r-[1px] border-b-[1px]' }, th: {base: 'text-center'}, default: { checkbox: { color: 'gray' as any } } }"
+    :rows="rows"
+    :columns="columns"
+  >
+    <template #payroll-data="{ row }">
+      <p v-if="row.paymentPerShift !== null && row.hoursPerShift !== null">
+        {{ (row.paymentPerShift / row.hoursPerShift).toFixed(2) }}
+      </p>
+      <p class="border-[1px] whitespace-nowrap" v-else>0</p>
+    </template>
+    <template #actions-data="{ row }">
+      <UDropdown :items="items(row)">
+        <Icon
+          class="text-gray-500"
+          size="24"
+          name="i-heroicons-ellipsis-horizontal-20-solid"
+        />
+      </UDropdown>
+    </template>
+  </UTable>
 </template>
 
 <style scoped>
