@@ -600,7 +600,7 @@ const columnsTable = computed(() =>
     </UIActionButton>
   </div>
 
-  <div class="w-full flex items-end justify-end">
+  <div class="w-full flex items-end justify-end z-[30]">
     <USelectMenu
       class="w-[100px]"
       v-model="selectedColumns"
