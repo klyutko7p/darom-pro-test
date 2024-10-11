@@ -600,15 +600,15 @@ const columnsTable = computed(() =>
     </UIActionButton>
   </div>
 
-  <div class="w-full flex items-end justify-end z-[30]">
+  <div class="w-full flex items-end justify-end z-[50]">
     <USelectMenu
-      class="w-[100px]"
+      class="w-[200px] z-[50]"
       v-model="selectedColumns"
       :options="columns"
       multiple
     >
       <UButton
-        class="w-[100px]"
+        class="w-[200px] z-[50]"
         icon="i-heroicons-view-columns"
         color="gray"
         size="xs"
