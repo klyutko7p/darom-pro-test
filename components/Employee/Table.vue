@@ -75,7 +75,7 @@ const columns = [
   },
 ];
 
-const items = (row) => [
+const items = (row: IEmployee) => [
   [
     {
       label: "Изменить",
@@ -91,6 +91,15 @@ const items = (row) => [
     },
   ],
 ];
+
+const dropdownStates = ref({} as any);
+
+const toggleDropdown = (rowId: any) => {
+  dropdownStates.value = {};
+
+  dropdownStates.value[rowId] = !dropdownStates.value[rowId];
+
+};
 </script>
 <template>
   <UTable
@@ -106,12 +115,15 @@ const items = (row) => [
       <p class="border-[1px] whitespace-nowrap" v-else>0</p>
     </template>
     <template #actions-data="{ row }">
-      <UDropdown :items="items(row)">
-        <Icon
-          class="text-gray-500"
-          size="24"
-          name="i-heroicons-ellipsis-horizontal-20-solid"
-        />
+      <UDropdown :open="dropdownStates[row.id]" :items="items(row)">
+        <UButton
+          variant="ghost"
+          color="gray"
+          class="text-sm duration-200"
+          @touchstart.stop="toggleDropdown(row.id)"
+        >
+          ...
+        </UButton>
       </UDropdown>
     </template>
   </UTable>

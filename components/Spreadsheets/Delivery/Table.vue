@@ -698,7 +698,7 @@ const items = [
       </template>
 
       <div
-        class="relative max-h-[200px] overflow-y-auto mb-2 border-[1px] border-black"
+        class="relative max-h-[400px] overflow-y-auto mb-2 border-[1px] border-black"
       >
         <table
           id="theTable"
@@ -709,6 +709,18 @@ const items = [
             class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
           >
             <tr>
+              <th
+                scope="col"
+                class="border-[1px] px-3"
+                v-if="user.dataDelivery === 'WRITE'"
+              >
+                <input
+                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
+                  type="checkbox"
+                  v-model="isAllSelected"
+                  @change="handleCheckboxChangeAll()"
+                />
+              </th>
               <th
                 scope="col"
                 class="border-[1px]"
@@ -747,8 +759,22 @@ const items = [
             <tr
               :class="{ 'bg-orange-100': isChecked(row.id) }"
               class="border-b text-center text-sm"
-              v-for="row in allSum"
+              v-for="row in returnRows.filter((row) =>
+                allSum.map((item) => item.name).includes(row.name)
+              )"
             >
+              <td
+                v-if="user.dataDelivery === 'WRITE'"
+                class="border-[1px] underline text-secondary-color whitespace-nowrap uppercase overflow-hidden max-w-[200px]"
+              >
+                <input
+                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
+                  type="checkbox"
+                  :value="row.id"
+                  :checked="isChecked(row.id)"
+                  @change="handleCheckboxChange(row)"
+                />
+              </td>
               <td
                 v-if="user.name3 === 'READ' || user.name3 === 'WRITE'"
                 class="border-[1px]"
@@ -762,7 +788,7 @@ const items = [
                   user.amountFromClient3 === 'WRITE'
                 "
               >
-                {{ row.amount }}
+                {{ row.amountFromClient3 }}
               </td>
               <td
                 class="border-[1px]"

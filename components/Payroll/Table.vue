@@ -474,6 +474,14 @@ const selectedColumns = ref(columns.toSpliced(3, 3));
 const columnsTable = computed(() =>
   columns.filter((column) => selectedColumns.value.includes(column))
 );
+
+const dropdownStates = ref({} as any);
+
+const toggleDropdown = (rowId: any) => {
+  dropdownStates.value = {};
+
+  dropdownStates.value[rowId] = !dropdownStates.value[rowId];
+};
 </script>
 <template>
   <div class="my-10 flex items-center gap-5">
@@ -753,12 +761,15 @@ const columnsTable = computed(() =>
       <p v-else>0</p>
     </template>
     <template #actions-data="{ row }">
-      <UDropdown :items="items(row)">
-        <Icon
-          class="text-gray-500"
-          size="24"
-          name="i-heroicons-ellipsis-horizontal-20-solid"
-        />
+      <UDropdown :open="dropdownStates[row.id]" :items="items(row)">
+        <UButton
+          variant="ghost"
+          color="gray"
+          class="text-sm duration-200"
+          @touchstart.stop="toggleDropdown(row.id)"
+        >
+          ...
+        </UButton>
       </UDropdown>
     </template>
   </UTable>
