@@ -733,6 +733,12 @@ const toggleDropdown = (rowId: any) => {
     </template>
     <template #totalPayrollMonth-data="{ row }">
       <p
+        :class="{
+          'bg-red-500 text-black': row.notation === 'Нам должны',
+          'bg-pink-900 text-white':
+            row.notation === 'Расчёт уволенных сотрудников',
+          'bg-yellow-400 text-black': row.notation === 'Оплачено',
+        }"
         v-if="
           row.hours !== '' &&
           row.paymentPerShift !== '' &&

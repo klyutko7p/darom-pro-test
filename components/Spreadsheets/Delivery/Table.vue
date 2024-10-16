@@ -76,10 +76,25 @@ const isChecked = (rowId: number): boolean => {
   return checkedRows.value.includes(rowId);
 };
 
+const updateRowBackground = (rowId: string, isChecked: boolean): void => {
+  const tdElements = document.querySelectorAll("td");
+  tdElements.forEach((td) => {
+    const linkElement = td.querySelector("a");
+    if (linkElement?.innerHTML === rowId) {
+      if (isChecked) {
+        td.parentElement?.classList.add("bg-orange-100");
+      } else {
+        td.parentElement?.classList.remove("bg-orange-100");
+      }
+    }
+  });
+};
+
 const handleCheckboxChange = (row: IDelivery): void => {
   if (isChecked(row.id)) {
     checkedRows.value = checkedRows.value.filter((id) => id !== row.id);
     allSum.value = allSum.value.filter((obj) => obj.id !== row.id);
+    updateRowBackground(row.id.toString(), false);
   } else {
     checkedRows.value.push(row.id);
     allSum.value.push({
@@ -89,6 +104,7 @@ const handleCheckboxChange = (row: IDelivery): void => {
       sorted: row.sorted,
       name: row.name,
     });
+    updateRowBackground(row.id.toString(), true);
   }
   getAllSum.value = allSum.value
     .filter((obj) => obj.paid === null)
@@ -184,6 +200,92 @@ const items = [
     slot: "getting-started",
   },
 ];
+
+const itemsTable = (row: IDelivery) => [
+  [
+    {
+      label: "Изменить",
+      icon: "i-heroicons-pencil-square-20-solid",
+      click: () => openModal(row),
+    },
+  ],
+  [
+    {
+      label: "Удалить",
+      icon: "i-heroicons-trash-20-solid",
+      click: () => deleteRow(row.id),
+    },
+  ],
+];
+
+const dropdownStates = ref({} as any);
+
+const toggleDropdown = (rowId: any) => {
+  dropdownStates.value = {};
+
+  dropdownStates.value[rowId] = !dropdownStates.value[rowId];
+};
+
+const columns = [
+  {
+    key: "select",
+  },
+  {
+    key: "id",
+    label: "ID",
+  },
+  {
+    key: "clientLink3",
+    label: "Ссылка кл.",
+  },
+  {
+    key: "name",
+    label: "Имя",
+  },
+  {
+    key: "fromName",
+    label: "Телефон",
+  },
+  {
+    key: "purchaseOfGoods",
+    label: "Стоимость выкупа товара",
+  },
+  {
+    key: "percentClient",
+    label: "Процент",
+  },
+  {
+    key: "amountFromClient3",
+    label: "Сумма с кл.",
+  },
+  {
+    key: "dispatchPVZ",
+    label: "ПВЗ",
+  },
+  {
+    key: "orderPVZ",
+    label: "СЦ",
+  },
+  {
+    key: "sorted",
+    label: "Отсортировано",
+  },
+  {
+    key: "paid",
+    label: "Оплачено",
+  },
+  {
+    key: "additionally",
+    label: "Доп.",
+  },
+  {
+    key: "profit",
+    label: "Доход",
+  },
+  {
+    key: "actions",
+  },
+];
 </script>
 <template>
   <div>
@@ -218,9 +320,10 @@ const items = [
         class="flex h-[100px] items-end max-lg:mt-5 max-lg:justify-between gap-20"
       >
         <div class="flex flex-col text-center">
-          <h1 class="text-base">Страница:</h1>
-          <h1 class="text-base mb-2">{{ currentPage }} из {{ totalPages }}</h1>
-          <div class="flex items-center justify-center gap-2">
+          <h1 class="text-base mb-2">
+            Страница: {{ currentPage }} из {{ totalPages }}
+          </h1>
+          <div class="flex items-center justify-start gap-2">
             <button
               @click="prevPage(), updateCurrentPageData()"
               :disabled="currentPage === 1"
@@ -258,406 +361,202 @@ const items = [
       </div>
     </div>
 
+
     <div
       :class="{ 'overflow-x-auto max-2xl:w-screen': isOpen }"
-      class="relative max-h-[600px] overflow-y-auto mt-5 mb-10"
+      class="mt-5 mb-10"
     >
-      <div id="up"></div>
-      <table
-        id="theTable"
-        class="w-full border-[1px] bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+      <UTable
+        v-if="returnRows.length"
+        class="w-full z-[20] mx-auto text-center bg-white border-[1px] rounded-md mt-5"
+        :ui="{ wrapper: 'relative overflow-x-visible bg-white',
+  td: {
+    base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
+    padding: 'px-3 py-1',
+  },
+  th: {
+    base: 'text-center uppercase sticky top-0 z-[20] bg-white',
+    padding: 'px-1',
+    size: 'text-xs'
+  },
+  default:
+  {
+    checkbox:
+      { color: 'gray' as any }
+  },
+    }"
+        :rows="returnRows"
+        :columns="columns"
       >
-        <thead
-          class="text-xs bg-[#36304a] text-white sticky top-0 z-30 uppercase text-center"
-        >
-          <tr class="h-[30px]">
-            <th
-              scope="col"
-              class="border-[1px] px-3"
-              v-if="user.dataDelivery === 'WRITE'"
-            >
-              <input
-                class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
-                type="checkbox"
-                v-model="isAllSelected"
-                @change="handleCheckboxChangeAll()"
-              />
-            </th>
-            <th
-              scope="col"
-              class="exclude-row border-[1px] px-2"
-              v-if="user.dataDelivery === 'WRITE' && user.role === 'ADMIN'"
-            >
-              изм.
-            </th>
-            <th scope="col" class="border-[1px]">id</th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="user.clientLink3 === 'READ' || user.clientLink3 === 'WRITE'"
-            >
-              ссылка клиента
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="user.name3 === 'READ' || user.name3 === 'WRITE'"
-            >
-              имя
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="user.fromName3 === 'READ' || user.fromName3 === 'WRITE'"
-            >
-              телефон
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="
-                user.nameOfAction === 'READ' || user.nameOfAction === 'WRITE'
-              "
-            >
-              название
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="
-                user.purchaseOfGoods === 'READ' ||
-                user.purchaseOfGoods === 'WRITE'
-              "
-            >
-              стоимость выкупа товара
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="
-                user.percentClient3 === 'READ' ||
-                user.percentClient3 === 'WRITE'
-              "
-            >
-              процент с клиента (%)
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="
-                user.amountFromClient3 === 'READ' ||
-                user.amountFromClient3 === 'WRITE'
-              "
-            >
-              сумма с клиента
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="
-                user.dispatchPVZ3 === 'READ' || user.dispatchPVZ3 === 'WRITE'
-              "
-            >
-              ПВЗ
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="user.orderPVZ3 === 'READ' || user.orderPVZ3 === 'WRITE'"
-            >
-              СЦ
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="user.sorted === 'READ' || user.sorted === 'WRITE'"
-            >
-              отсортировано
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="user.paid === 'READ' || user.paid === 'WRITE'"
-            >
-              оплачено
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="
-                user.additionally3 === 'READ' || user.additionally3 === 'WRITE'
-              "
-            >
-              доп.
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="user.profit3 === 'READ' || user.profit3 === 'WRITE'"
-            >
-              доход
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="user.role === 'ADMIN' || user.username === 'Волошина'"
-            >
-              создан
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="user.role === 'ADMIN' || user.username === 'Волошина'"
-            >
-              изменен
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="user.role === 'ADMIN' || user.username === 'Волошина'"
-            >
-              удален
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="user.role === 'ADMIN' || user.username === 'Волошина'"
-            >
-              создан
-            </th>
-            <th
-              scope="col"
-              class="border-[1px]"
-              v-if="user.role === 'ADMIN' || user.username === 'Волошина'"
-            >
-              изменен
-            </th>
-            <th
-              scope="col"
-              class="exclude-row border-[1px] px-1"
-              v-if="user.dataDelivery === 'WRITE' && user.role === 'ADMIN'"
-            >
-              удал.
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <div id="left"></div>
-          <tr
-            :class="{ 'bg-orange-100': isChecked(row.id) }"
-            class="border-b text-center text-sm h-[30px]"
-            v-for="row in returnRows"
-          >
-            <td
-              v-if="user.dataDelivery === 'WRITE'"
-              class="border-[1px] underline text-secondary-color whitespace-nowrap uppercase overflow-hidden max-w-[200px]"
-            >
-              <input
-                class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
-                type="checkbox"
-                :value="row.id"
-                :checked="isChecked(row.id)"
-                @change="handleCheckboxChange(row)"
-              />
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="user.dataDelivery === 'WRITE' && user.role === 'ADMIN'"
-            >
-              <div
-                @click="openModal(row)"
-                class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
-              >
-                <Icon
-                  class="text-green-500"
-                  name="ic:baseline-mode-edit"
-                  size="18"
-                />
-              </div>
-            </td>
-            <th scope="row" class="border-[1px]">
-              <NuxtLink
-                target="_blank"
-                class="cursor-pointer text-secondary-color hover:opacity-50 duration-200"
-                :to="`/spreadsheets/record/3/${row.id}`"
-              >
-                {{ row.id }}
-              </NuxtLink>
-            </th>
-            <td
-              class="border-[1px] pr-3 pl-1"
-              v-if="user.clientLink3 === 'READ' || user.clientLink3 === 'WRITE'"
-            >
-              <NuxtLink
-                target="_blank"
-                class="cursor-pointer hover:opacity-50 duration-200 bg-secondary-color text-white rounded-sm px-2 py-1 font-bold"
-                :to="`/spreadsheets/order/${row.clientLink3}`"
-              >
-                Перейти
-              </NuxtLink>
-            </td>
-            <td
-              v-if="user.name3 === 'READ' || user.name3 === 'WRITE'"
-              class="border-[1px] whitespace-nowrap"
-            >
-              {{ row.name }}
-            </td>
-            <td
-              v-if="user.fromName3 === 'READ' || user.fromName3 === 'WRITE'"
-              class="border-[1px]"
-            >
-              <NuxtLink
-                v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
-                class="cursor-pointer font-bold text-secondary-color hover:opacity-50 duration-200"
-                :to="`/phone/${row.fromName}`"
-              >
-                {{ row.fromName }}
-              </NuxtLink>
-            </td>
-            <td
-              v-if="
-                user.nameOfAction === 'READ' || user.nameOfAction === 'WRITE'
-              "
-              class="border-[1px]"
-            >
-              {{ row.nameOfAction }}
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="
-                user.purchaseOfGoods === 'READ' ||
-                user.purchaseOfGoods === 'WRITE'
-              "
-            >
-              {{ row.purchaseOfGoods }}
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="
-                user.percentClient3 === 'READ' ||
-                user.percentClient3 === 'WRITE'
-              "
-            >
-              {{ row.percentClient }}
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="
-                user.amountFromClient3 === 'READ' ||
-                user.amountFromClient3 === 'WRITE'
-              "
-            >
-              {{ row.amountFromClient3 }}
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="
-                user.dispatchPVZ3 === 'READ' || user.dispatchPVZ3 === 'WRITE'
-              "
-            >
-              {{ row.dispatchPVZ }}
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="user.orderPVZ3 === 'READ' || user.orderPVZ3 === 'WRITE'"
-            >
-              {{ row.orderPVZ }}
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="user.sorted === 'READ' || user.sorted === 'WRITE'"
-            >
-              <Icon
-                @click="updateDeliveryRow(row, 'sorted')"
-                v-if="!row.sorted && user.sorted === 'WRITE'"
-                class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
-                name="mdi:checkbox-multiple-marked-circle"
-                size="32"
-              />
-              <h1 class="font-bold text-green-500">
-                {{ row.sorted ? storeUsers.getNormalizedDate(row.sorted) : "" }}
-              </h1>
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="user.paid === 'READ' || user.paid === 'WRITE'"
-            >
-              <Icon
-                @click="updateDeliveryRow(row, 'paid')"
-                v-if="!row.paid && user.paid === 'WRITE'"
-                class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
-                name="mdi:checkbox-multiple-marked-circle"
-                size="32"
-              />
-              <h1 class="font-bold text-green-500">
-                {{ row.paid ? storeUsers.getNormalizedDate(row.paid) : "" }}
-              </h1>
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="
-                user.additionally3 === 'READ' || user.additionally3 === 'WRITE'
-              "
-            >
-              {{ row.additionally ? row.additionally : "–" }}
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="
-                user.profit3 === 'READ' ||
-                (user.profit3 === 'WRITE' && user.username !== 'Волошина')
-              "
-            >
-              {{ row.profit3 }}
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="user.role === 'ADMIN' || user.username === 'Волошина'"
-            >
-              {{ storeUsers.getNormalizedDate(row.created_at) }}
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="user.role === 'ADMIN' || user.username === 'Волошина'"
-            >
+        <template #expand="{ row }">
+          <div class="px-4 py-2 text-left text-sm text-gray-400">
+            <h1>
+              Дата создания: {{ storeUsers.getNormalizedDate(row.created_at) }}
+            </h1>
+            <h1>
+              Дата последнего изменения:
               {{ storeUsers.getNormalizedDate(row.updated_at) }}
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="user.role === 'ADMIN' || user.username === 'Волошина'"
+            </h1>
+            <h1 v-if="row.deleted">
+              Дата удаления: {{ storeUsers.getNormalizedDate(row.deleted) }}
+            </h1>
+            <h1>Создан: {{ row.createdUser }}</h1>
+            <h1>Изменен: {{ row.updatedUser }}</h1>
+          </div>
+        </template>
+
+        <template #select-data="{ row }">
+          <input
+            v-if="user.dataDelivery === 'WRITE'"
+            class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
+            type="checkbox"
+            :value="row.id"
+            :checked="isChecked(row.id)"
+            @change="handleCheckboxChange(row)"
+          />
+        </template>
+
+        <template #id-data="{ row }">
+          <NuxtLink
+            target="_blank"
+            class="cursor-pointer text-secondary-color hover:opacity-50 duration-200"
+            :to="`/spreadsheets/record/3/${row.id}`"
+          >
+            {{ row.id }}
+          </NuxtLink>
+        </template>
+
+        <template #clientLink3-data="{ row }">
+          <NuxtLink
+            v-if="user.clientLink3 === 'READ' || user.clientLink3 === 'WRITE'"
+            target="_blank"
+            class="cursor-pointer hover:opacity-50 duration-200 bg-secondary-color text-white rounded-sm px-2 py-1 font-bold"
+            :to="`/spreadsheets/order/${row.clientLink3}`"
+          >
+            Перейти
+          </NuxtLink>
+        </template>
+
+        <template #name-data="{ row }">
+          <p v-if="user.name3 === 'READ' || user.name3 === 'WRITE'">
+            {{ row.name }}
+          </p>
+        </template>
+
+        <template #fromName-data="{ row }">
+          <NuxtLink
+            v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
+            class="cursor-pointer font-bold text-secondary-color hover:opacity-50 duration-200"
+            :to="`/phone/${row.fromName}`"
+          >
+            {{ row.fromName }}
+          </NuxtLink>
+        </template>
+
+        <template #purchaseOfGoods-data="{ row }">
+          <p
+            v-if="
+              user.purchaseOfGoods === 'READ' ||
+              user.purchaseOfGoods === 'WRITE'
+            "
+          >
+            {{ row.purchaseOfGoods }}
+          </p>
+        </template>
+
+        <template #percentClient-data="{ row }">
+          <p
+            v-if="
+              user.percentClient3 === 'READ' || user.percentClient3 === 'WRITE'
+            "
+          >
+            {{ row.percentClient }}
+          </p>
+        </template>
+
+        <template #amountFromClien3-data="{ row }">
+          <p
+            v-if="
+              user.amountFromClient3 === 'READ' ||
+              user.amountFromClient3 === 'WRITE'
+            "
+          >
+            {{ row.amountFromClient3 }}
+          </p>
+        </template>
+
+        <template #dispatchPVZ-data="{ row }">
+          <p
+            v-if="user.dispatchPVZ3 === 'READ' || user.dispatchPVZ3 === 'WRITE'"
+          >
+            {{ row.dispatchPVZ }}
+          </p>
+        </template>
+
+        <template #orderPVZ-data="{ row }">
+          <p v-if="user.orderPVZ3 === 'READ' || user.orderPVZ3 === 'WRITE'">
+            {{ row.orderPVZ }}
+          </p>
+        </template>
+
+        <template #sorted-data="{ row }">
+          <Icon
+            @click="updateDeliveryRow(row, 'sorted')"
+            v-if="!row.sorted && user.sorted === 'WRITE'"
+            class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
+            name="mdi:checkbox-multiple-marked-circle"
+            size="32"
+          />
+          <h1 class="font-bold text-green-500">
+            {{ row.sorted ? storeUsers.getNormalizedDate(row.sorted) : "" }}
+          </h1>
+        </template>
+
+        <template #paid-data="{ row }">
+          <Icon
+            @click="updateDeliveryRow(row, 'paid')"
+            v-if="!row.paid && user.paid === 'WRITE'"
+            class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
+            name="mdi:checkbox-multiple-marked-circle"
+            size="32"
+          />
+          <h1 class="font-bold text-green-500">
+            {{ row.paid ? storeUsers.getNormalizedDate(row.paid) : "" }}
+          </h1>
+        </template>
+
+        <template #additionally-data="{ row }">
+          <p
+            v-if="
+              user.additionally3 === 'READ' || user.additionally3 === 'WRITE'
+            "
+          >
+            {{ row.additionally ? row.additionally : "–" }}
+          </p>
+        </template>
+
+        <template #profit-data="{ row }">
+          <p v-if="user.profit3 === 'READ' || user.profit3 === 'WRITE'">
+            {{ row.profit3 }}
+          </p>
+        </template>
+
+        <template
+          v-if="user.username === 'Директор' || user.username === 'Власенкова'"
+          #actions-data="{ row }"
+        >
+          <UDropdown :open="dropdownStates[row.id]" :items="itemsTable(row)">
+            <UButton
+              variant="ghost"
+              color="gray"
+              class="text-sm duration-200"
+              @touchstart.stop="toggleDropdown(row.id)"
             >
-              {{
-                row.deleted ? storeUsers.getNormalizedDate(row.deleted) : "–"
-              }}
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="user.role === 'ADMIN' || user.username === 'Волошина'"
-            >
-              {{ row.createdUser }}
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="user.role === 'ADMIN' || user.username === 'Волошина'"
-            >
-              {{ row.updatedUser }}
-            </td>
-            <td
-              class="border-[1px]"
-              v-if="user.dataDelivery === 'WRITE' && user.role === 'ADMIN'"
-            >
-              <div
-                @click="deleteRow(row.id)"
-                class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
-              >
-                <Icon class="text-red-600" name="ic:round-delete" size="18" />
-              </div>
-            </td>
-            <div id="right"></div>
-          </tr>
-        </tbody>
-      </table>
-      <div id="down"></div>
+              ...
+            </UButton>
+          </UDropdown>
+        </template>
+      </UTable>
     </div>
 
     <div
@@ -829,7 +728,7 @@ const items = [
       <UAccordion color="orange" :items="items">
         <template #getting-started>
           <div
-            class="text-gray-900 dark:text-white text-center items-center justify-center bg-[#f8f9fd] py-5 flex flex-col gap-3"
+            class="text-gray-900 dark:text-white text-center items-center justify-center bg-gray-50 py-5 flex flex-col gap-3"
           >
             <UIActionButton
               class="w-full max-w-[300px]"

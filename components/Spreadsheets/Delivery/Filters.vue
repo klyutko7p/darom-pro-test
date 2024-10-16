@@ -142,7 +142,7 @@ const filterRows = () => {
       (!selectedOrderPVZ.value.length ||
         selectedOrderPVZ.value.includes(row.orderPVZ)) &&
       (!selectedAdditionally.value.length ||
-        selectedAdditionally.value.includes(row.additionally)) 
+        selectedAdditionally.value.includes(row.additionally))
     );
   });
   emit("filtered-rows", filteredRows.value);
@@ -167,9 +167,13 @@ function clearFields() {
   endDate.value = "";
   startingDate2.value = "";
   endDate2.value = "";
-  selected.value.start = new Date(new Date().getFullYear(), 0, 1),
-  selected.value.end = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
-  filterRows();
+  (selected.value.start = new Date(new Date().getFullYear(), 0, 1)),
+    (selected.value.end = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      0
+    )),
+    filterRows();
   clearLocalStorage();
 }
 
@@ -216,8 +220,8 @@ function saveFiltersToLocalStorage() {
 }
 
 function clearLocalStorage() {
-  const addressData = localStorage.getItem("addressData"); 
-  localStorage.clear(); 
+  const addressData = localStorage.getItem("addressData");
+  localStorage.clear();
   if (addressData) {
     localStorage.setItem("addressData", addressData);
   }
@@ -309,46 +313,42 @@ const selectedArrays = [
   selectedPurchaseOfGoods,
 ];
 
-// const nonEmptyCount = computed(() => {
-//   let count = 0;
-//   selectedArrays.forEach(selectedArray => {
-//     selectedArray.value.forEach(element => {
-//       if (element !== undefined && element !== null && element !== "") {
-//         count++;
-//       }
-//     });
-//   });
+const nonEmptyCount = computed(() => {
+  let count = 0;
+  selectedArrays.forEach(selectedArray => {
+    selectedArray.value.forEach(element => {
+      if (element !== undefined && element !== null && element !== "") {
+        count++;
+      }
+    });
+  });
 
-//   if (startingDate.value) {
-//     count++;
-//   } else if (endDate.value) {
-//     count++;
-//   }
+  if (startingDate.value) {
+    count++;
+  } else if (endDate.value) {
+    count++;
+  }
 
-//   return count;
-// });
+  return count;
+});
 </script>
 
 <template>
   <div v-auto-animate class="">
-    <div class="flex items-center gap-3 mt-5 max-xl:mt-0">
-      <h1 class="text-xl font-bold">Фильтры</h1>
-      <Icon
+    <div class="flex items-center gap-3 max-xl:mt-0">
+      <UButton
+        color="orange"
+        variant="solid"
+        class="font-semibold duration-200"
+        icon="material-symbols:filter-list-rounded"
         @click="showFilters = !showFilters"
-        class="cursor-pointer duration-200 hover:text-secondary-color"
-        name="material-symbols:settings-rounded"
-        size="24"
-      />
-      <!-- <h1
-        class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full"
       >
-        {{ nonEmptyCount }}
-      </h1> -->
+        Фильтры – {{ nonEmptyCount }}
+      </UButton>
     </div>
-
     <div
       v-if="showFilters"
-      class="border-2 bg-white border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
+      class="bg-white max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-lg mt-3"
     >
       <div
         class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5"

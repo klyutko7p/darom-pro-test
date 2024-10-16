@@ -431,24 +431,21 @@ onMounted(() => {
 
 <template>
   <div v-auto-animate>
-    <div class="flex items-center gap-3 mt-14 max-xl:mt-0">
-      <h1 class="text-xl font-bold">Фильтры</h1>
-      <Icon
+    <div class="flex items-center gap-3 max-xl:mt-0">
+      <UButton
+        color="orange"
+        variant="solid"
+        class="font-semibold duration-200"
+        icon="material-symbols:filter-list-rounded"
         @click="showFilters = !showFilters"
-        class="cursor-pointer duration-200 hover:text-secondary-color"
-        name="material-symbols:settings-rounded"
-        size="24"
-      />
-      <h1
-        class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full"
       >
-        {{ nonEmptyCount }}
-      </h1>
+        Фильтры – {{ nonEmptyCount }}
+      </UButton>
     </div>
 
     <div
       v-if="showFilters"
-      class="border-2 bg-white border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
+      class="bg-white max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3 mb-5"
     >
       <div
         class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5"

@@ -85,7 +85,7 @@ const date = ref(new Date());
 
   <div v-if="token && user.role === 'ADMIN'">
     <NuxtLayout name="admin">
-      <div v-if="!isLoading" class="bg-[#f8f9fd] px-5 pt-10 max-sm:px-1 pb-5">
+      <div v-if="!isLoading" class="bg-gray-50 px-5 pt-10 max-sm:px-1 pb-5">
         <UIMainButton @click="openModal" class="mb-5"
           >Создать задачу</UIMainButton
         >

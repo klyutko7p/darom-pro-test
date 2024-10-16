@@ -55,13 +55,65 @@ function deleteRow(id: number) {
 }
 
 watch([props.rows, totalRows, props.user], updateCurrentPageData);
+
+const columns = [
+  {
+    key: "decommissionDate",
+    label: "Списано",
+  },
+  {
+    key: "nameOfEquipment",
+    label: "Название",
+  },
+  {
+    key: "reason",
+    label: "Причина",
+  },
+  {
+    key: "updatedUser",
+    label: "Изменил",
+  },
+  {
+    key: "updated_at",
+    label: "Дата изменения",
+  },
+  {
+    key: "pvz",
+    label: "ПВЗ",
+  },
+  {
+    key: "decommissionedUser",
+    label: "Списал",
+  },
+  {
+    key: "actions",
+  },
+];
+
+const items = (row: IDecommissionedEquipmentRow) => [
+  [
+    {
+      label: "Удалить",
+      icon: "i-heroicons-trash-20-solid",
+      click: () => deleteRow(row.id),
+    },
+  ],
+];
+
+const dropdownStates = ref({} as any);
+
+const toggleDropdown = (rowId: any) => {
+  dropdownStates.value = {};
+
+  dropdownStates.value[rowId] = !dropdownStates.value[rowId];
+};
 </script>
 
 <template>
   <div v-if="!isLoading">
     <div class="flex items-end justify-between mb-5">
       <div>
-        <h1 class="text-xl max-sm:text-lg font-bold mb-3">
+        <h1 class="text-lg max-sm:text-lg font-semibold mb-3">
           Строк в таблице:
           <span class="text-secondary-color">{{ totalRows }} шт.</span>
         </h1>
@@ -84,63 +136,91 @@ watch([props.rows, totalRows, props.user], updateCurrentPageData);
       </div>
     </div>
 
-    <div
-      class="relative max-h-[710px] overflow-y-auto mt-5 mb-10"
-      v-if="returnRows.length > 0"
+  
+    <UTable
+      v-if="filteredRows.length"
+      class="w-full text-center bg-white border-[1px] rounded-md"
+      :ui="{
+  td: {
+    base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
+    padding: 'px-3 py-1',
+  },
+  th: {
+    base: 'text-center uppercase sticky top-0 z-[20] bg-white',
+    padding: 'px-1',
+    size: 'text-xs'
+  },
+  default:
+  {
+    checkbox:
+      { color: 'gray' as any }
+  },
+    }"
+      :rows="filteredRows"
+      :columns="columns"
     >
-      <table
-        id="theTable"
-        class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
-      >
-        <thead
-          class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
-        >
-          <tr>
-            <th scope="col" class="px-1 py-2">списано</th>
-            <th scope="col" class="px-1 py-2">название</th>
-            <th scope="col" class="px-1 py-2">причина</th>
-            <th scope="col" class="px-1 py-2">изменил</th>
-            <th scope="col" class="px-1 py-2">дата изменения</th>
-            <th scope="col" class="px-1 py-2">пвз</th>
-            <th scope="col" class="px-1 py-2">списал</th>
-            <th scope="col" class="py-2">удаление</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white">
-          <tr class="text-center font-bold" v-for="row in returnRows">
-            <td class="border-[1px] max-sm:px-2 py-2">
-              {{ storeUsers.getNormalizedDate(row.decommissionDate) }}
-            </td>
-            <td class="border-[1px] max-w-[200px]">
-              {{ row.equipmentRow.nameOfEquipment }}
-            </td>
-            <td class="border-[1px] max-sm:px-2 max-w-[200px]">
-              {{ row.reason }}
-            </td>
-            <td class="border-[1px] max-sm:px-2">
-              {{ row.equipmentRow.updatedUser.username }}
-            </td>
-            <td class="border-[1px] max-sm:px-2">
-              {{ storeUsers.getNormalizedDate(row.equipmentRow.updated_at) }}
-            </td>
-            <td class="border-[1px] max-sm:px-2">
-              {{ row.equipmentRow.pvz.name }}
-            </td>
-            <td class="border-[1px] max-sm:px-2">
-              {{ row.decommissionedUser.username }}
-            </td>
-            <td class="border-[1px] max-sm:px-2 py-2">
-              <div
-                @click="deleteRow(row.id)"
-                class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
-              >
-                <Icon class="text-red-600" name="ic:round-delete" size="18" />
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <template #decommissionDate-data="{ row }">
+        {{ storeUsers.getNormalizedDate(row.decommissionDate) }}
+      </template>
+
+      <template #nameOfEquipment-data="{ row }">
+        {{ row.equipmentRow.nameOfEquipment }}
+      </template>
+
+      <template #updated_at-data="{ row }">
+        {{ storeUsers.getNormalizedDate(row.equipmentRow.updated_at) }}
+      </template>
+
+      <template #updatedUser-data="{ row }">
+        {{ row.equipmentRow.updatedUser.username }}
+      </template>
+
+      <template #pvz-data="{ row }">
+        {{ row.equipmentRow.pvz.name }}
+      </template>
+
+      <template #decommissionedUser-data="{ row }">
+        {{ row.decommissionedUser.username }}
+      </template>
+
+      <template #state-data="{ row }">
+        <UBadge
+          v-if="row.state === 'Исправное'"
+          size="xs"
+          label="Исправное"
+          color="emerald"
+          variant="subtle"
+        />
+        <UBadge
+          v-if="row.state === 'Требуется ремонт'"
+          size="xs"
+          label="Требуется ремонт"
+          color="orange"
+          variant="subtle"
+        />
+        <UBadge
+          v-if="row.state === 'Неисправное'"
+          size="xs"
+          label="Неисправное"
+          color="red"
+          variant="subtle"
+        />
+      </template>
+
+      <template #actions-data="{ row }">
+        <UDropdown :open="dropdownStates[row.id]" :items="items(row)">
+          <UButton
+            variant="ghost"
+            color="gray"
+            class="text-sm duration-200"
+            @touchstart.stop="toggleDropdown(row.id)"
+          >
+            ...
+          </UButton>
+        </UDropdown>
+      </template>
+    </UTable>
+
     <div v-else class="flex items-center justify-center flex-col gap-3 mt-10">
       <h1 class="text-2xl">Оборудование не найдено</h1>
       <Icon name="fluent-emoji:sad-but-relieved-face" size="40" />

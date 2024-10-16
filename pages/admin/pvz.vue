@@ -90,7 +90,7 @@ watch(isOpen, (newValue) => {
     <NuxtLayout name="admin">
       <div
         v-if="!isLoading"
-        class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5 w-screen"
+        class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5 w-screen"
       >
         <AdminDataTable
           :fields="fields"

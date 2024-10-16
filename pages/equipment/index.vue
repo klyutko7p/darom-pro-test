@@ -26,7 +26,7 @@ onMounted(async () => {
   try {
     const [currentUser, equipmentStates, equipments, pvzList, usersList] =
       await Promise.all([
-        storeUsers.getUser(),
+        await storeUsers.getUser(),
         storeEquipments.getAllStateEquipments(),
         storeEquipments.getEquipments(),
         storePVZ.getAllPVZ(),
@@ -276,16 +276,19 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
   <div v-if="!isLoading">
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="admin">
-        <div class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5">
+        <div class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5">
           <div
-            class="flex items-center justify-between max-[400px]:flex-col max-sm:gap-2 max-[400px]:items-start"
+            class="flex items-center justify-between max-sm:gap-2 max-[400px]:items-start mb-10"
           >
             <UIMainButton @click="openModal">Создать строку</UIMainButton>
             <NuxtLink
-              v-if="user.username === 'Директор' || user.username === 'Власенкова'"
+              v-if="
+                user.username === 'Директор' || user.username === 'Власенкова'
+              "
               to="/equipment/decommissioned"
-              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200"
-              >Показать списанное
+              class="bg-orange-500 text-sm pt-1.5 pb-0.5 px-2 text-white rounded-full text-secondary-color font-semibold hover:opacity-50 duration-200"
+            >
+              <Icon size="24" name="hugeicons:group-items" />
             </NuxtLink>
           </div>
 
@@ -416,16 +419,19 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
     </div>
     <div v-else>
       <NuxtLayout name="user">
-        <div class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5">
+        <div class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5">
           <div
-            class="flex items-center justify-between max-[400px]:flex-col max-sm:gap-2 max-[400px]:items-start"
+            class="flex items-center justify-between max-sm:gap-2 max-[400px]:items-start"
           >
             <UIMainButton @click="openModal">Создать строку</UIMainButton>
             <NuxtLink
-              v-if="user.username === 'Директор' || user.username === 'Власенкова'"
+              v-if="
+                user.username === 'Директор' || user.username === 'Власенкова'
+              "
               to="/equipment/decommissioned"
-              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200"
-              >Показать списанное
+              class="bg-orange-500 text-sm pt-1.5 pb-0.5 px-2 text-white rounded-full text-secondary-color font-semibold hover:opacity-50 duration-200"
+            >
+              <Icon size="32" name="hugeicons:group-items" />
             </NuxtLink>
           </div>
 

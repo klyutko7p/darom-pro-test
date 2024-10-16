@@ -275,9 +275,9 @@ useSeoMeta({
       class="px-10 relative h-full py-20 max-sm:py-20 max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50"
     >
       <div
-        class="absolute top-4 right-4 text-center underline text-secondary-color font-bold mt-5"
+        class="absolute top-4 right-4 text-center text-secondary-color font-bold mt-5"
       >
-        <NuxtLink to="/auth/client/login">Или войдите</NuxtLink>
+        <NuxtLink to="/auth/client/login">Войти в личный кабинет</NuxtLink>
       </div>
       <div class="">
         <div class="flex items-center justify-center">
@@ -373,7 +373,7 @@ useSeoMeta({
               <label class="italic text-sm"
                 >Подтверждаю, что я ознакомлен и согласен с условиями
                 <a
-                  class="underline text-secondary-color duration-200 cursor-pointer hover:opacity-50"
+                  class="text-secondary-color font-semibold duration-200 cursor-pointer hover:opacity-50"
                   href="https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/files/docx/policy_info_dp.pdf"
                   >Политики обработки персональных данных</a
                 ></label
@@ -392,7 +392,7 @@ useSeoMeta({
               <label class="italic text-sm"
                 >Подтверждаю, что я ознакомлен и согласен с условиями
                 <a
-                  class="underline text-secondary-color duration-200 cursor-pointer hover:opacity-50"
+                  class="text-secondary-color font-semibold duration-200 cursor-pointer hover:opacity-50"
                   href="https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/files/docx/policy_conf_dp.pdf"
                   >Политики конфиденциальности</a
                 ></label

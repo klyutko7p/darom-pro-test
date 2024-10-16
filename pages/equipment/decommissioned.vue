@@ -21,7 +21,10 @@ onMounted(async () => {
   }
   user.value = await storeUsers.getUser();
 
-  if (user.value.username !== "Директор" && user.value.username !== 'Власенкова') {
+  if (
+    user.value.username !== "Директор" &&
+    user.value.username !== "Власенкова"
+  ) {
     router.push("/user/main");
   }
 
@@ -80,13 +83,14 @@ function handleFilteredRows(filteredRowsData: IDecommissionedEquipmentRow[]) {
   <div v-if="!isLoading">
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="admin">
-        <div class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5">
+        <div class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5">
           <div class="flex items-center justify-end">
             <NuxtLink
               to="/equipment"
-              class="bg-orange-500 px-5 py-2 text-white rounded-full text-secondary-color font-bold text-base hover:opacity-50 duration-200"
-              >Показать оборудование</NuxtLink
+              class="bg-orange-500 text-sm pt-1.5 pb-0.5 px-2 text-white rounded-full text-secondary-color font-semibold hover:opacity-50 duration-200"
             >
+              <Icon size="24" name="lsicon:equipment-outline" />
+            </NuxtLink>
           </div>
           <div>
             <EquipmentDecommissionedFilters

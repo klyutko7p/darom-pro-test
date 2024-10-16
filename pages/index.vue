@@ -17,6 +17,10 @@ onMounted(async () => {
   if (token && user.value.role === "CLIENT") {
     router.push("/auth/client/login");
   } 
+
+  if (token && user.value.username === "Власенкова") {
+    router.push("/auth/login");
+  }
 })
 
 const addressItems = ref([

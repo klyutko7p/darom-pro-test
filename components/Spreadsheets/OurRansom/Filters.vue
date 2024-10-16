@@ -130,9 +130,9 @@ const filterRows = () => {
       (!selectedOrderAccount.value || row.orderAccount === selectedOrderAccount.value) &&
       (!selectedAdditionally.value || row.additionally === selectedAdditionally.value) &&
       (!selectedNotation.value ||
-        row.notation
+        (row.notation && row.notation
           .toLowerCase()
-          .includes(selectedNotation.value.trim().toLowerCase())) &&
+          .includes(selectedNotation.value.toLowerCase()))) &&
       (!selectedPriceSite.value || row.priceSite == selectedPriceSite.value) &&
       (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
       (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&

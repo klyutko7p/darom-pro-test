@@ -1,46 +1,70 @@
 <script setup lang="ts">
 const props = defineProps({
-  rows: { type: Array as PropType<IDecommissionedEquipmentRow[]>, required: true },
+  rows: {
+    type: Array as PropType<IDecommissionedEquipmentRow[]>,
+    required: true,
+  },
   user: { type: Object as PropType<User>, required: true },
 });
 import VueMultiselect from "vue-multiselect";
 import { vAutoAnimate } from "@formkit/auto-animate";
-import { formatRelative, subDays, sub, format, isSameDay, type Duration } from 'date-fns'
-import ru from 'date-fns/locale/ru'
+import {
+  formatRelative,
+  subDays,
+  sub,
+  format,
+  isSameDay,
+  type Duration,
+} from "date-fns";
+import ru from "date-fns/locale/ru";
 
 const ranges = [
-  { label: 'Текущий месяц', duration: { month: 'current' } },
-  { label: 'Сегодня', duration: { days: 0 } },
-  { label: 'Последние 7 дней', duration: { days: 7 } },
-  { label: 'Последние 14 дней', duration: { days: 14 } },
-  { label: 'Последние 30 дней', duration: { days: 30 } },
-  { label: 'Последние 3 месяца', duration: { months: 3 } },
-  { label: 'Последние 6 месяцев', duration: { months: 6 } },
-  { label: 'Последний год', duration: { years: 1 } }
-]
+  { label: "Текущий месяц", duration: { month: "current" } },
+  { label: "Сегодня", duration: { days: 0 } },
+  { label: "Последние 7 дней", duration: { days: 7 } },
+  { label: "Последние 14 дней", duration: { days: 14 } },
+  { label: "Последние 30 дней", duration: { days: 30 } },
+  { label: "Последние 3 месяца", duration: { months: 3 } },
+  { label: "Последние 6 месяцев", duration: { months: 6 } },
+  { label: "Последний год", duration: { years: 1 } },
+];
 
 const selected = ref({
   start: new Date(new Date().getFullYear(), 0, 1),
-  end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-})
+  end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+});
 
 function isRangeSelected(duration: Duration) {
-  if (duration.month === 'current') {
-    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-    const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-    return isSameDay(selected.value.start, startOfMonth) && isSameDay(selected.value.end, endOfMonth)
+  if (duration.month === "current") {
+    const startOfMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      1
+    );
+    const endOfMonth = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      0
+    );
+    return (
+      isSameDay(selected.value.start, startOfMonth) &&
+      isSameDay(selected.value.end, endOfMonth)
+    );
   }
-  return isSameDay(selected.value.start, sub(new Date(), duration)) && isSameDay(selected.value.end, new Date())
+  return (
+    isSameDay(selected.value.start, sub(new Date(), duration)) &&
+    isSameDay(selected.value.end, new Date())
+  );
 }
 
 function selectRange(duration: Duration) {
-  if (duration.month === 'current') {
+  if (duration.month === "current") {
     selected.value = {
       start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-      end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-    }
+      end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+    };
   } else {
-    selected.value = { start: sub(new Date(), duration), end: new Date() }
+    selected.value = { start: sub(new Date(), duration), end: new Date() };
   }
 }
 
@@ -54,18 +78,35 @@ const startingDate = ref<Date | string | null>(null);
 const endDate = ref<Date | string | null>(null);
 
 const uniquePVZ = computed(() => {
-  let array = storeEquipments.getUniqueNonEmptyValues(rowsEquipments.value.filter((row) => row.deleted !== null && props.rows.some((rowData) => rowData.equipmentRowId === row.id)), "pvz");
-  array = array.map((pvz) => pvz.name)
-  array = [...new Set(array)]
+  let array = storeEquipments.getUniqueNonEmptyValues(
+    rowsEquipments.value.filter(
+      (row) =>
+        row.deleted !== null &&
+        props.rows.some((rowData) => rowData.equipmentRowId === row.id)
+    ),
+    "pvz"
+  );
+  array = array.map((pvz) => pvz.name);
+  array = [...new Set(array)];
   return array;
 });
 
 const uniqueNameOfEquipment = computed(() => {
-  return storeEquipments.getUniqueNonEmptyValues(rowsEquipments.value.filter((row) => row.deleted !== null && props.rows.some((rowData) => rowData.equipmentRowId === row.id)), "nameOfEquipment");
+  return storeEquipments.getUniqueNonEmptyValues(
+    rowsEquipments.value.filter(
+      (row) =>
+        row.deleted !== null &&
+        props.rows.some((rowData) => rowData.equipmentRowId === row.id)
+    ),
+    "nameOfEquipment"
+  );
 });
 
 const uniqueReason = computed(() => {
-  return storeEquipments.getUniqueNonEmptyValuesDecommissioned(props.rows.filter((row) => row.deleted === null), "reason");
+  return storeEquipments.getUniqueNonEmptyValuesDecommissioned(
+    props.rows.filter((row) => row.deleted === null),
+    "reason"
+  );
 });
 
 const filteredRows = ref<Array<IDecommissionedEquipmentRow>>();
@@ -88,11 +129,18 @@ const filterRows = () => {
   filteredRows.value = props.rows.slice();
   filteredRows.value = props.rows.filter((row) => {
     return (
-      (!selectedPVZ.value.length || selectedPVZ.value.includes(row.equipmentRow.pvz.name)) &&
-      (!selectedNameOfEquipment.value.length || selectedNameOfEquipment.value.includes(row.equipmentRow.nameOfEquipment)) &&
-      (!selectedReason.value.length || selectedReason.value.includes(row.reason)) &&
-      (!selected.value.start || new Date(row.decommissionDate) >= new Date(newStartingDate)) &&
-      (!selected.value.end || new Date(row.decommissionDate) <= new Date(newEndDate))
+      (!selectedPVZ.value.length ||
+        selectedPVZ.value.includes(row.equipmentRow.pvz.name)) &&
+      (!selectedNameOfEquipment.value.length ||
+        selectedNameOfEquipment.value.includes(
+          row.equipmentRow.nameOfEquipment
+        )) &&
+      (!selectedReason.value.length ||
+        selectedReason.value.includes(row.reason)) &&
+      (!selected.value.start ||
+        new Date(row.decommissionDate) >= new Date(newStartingDate)) &&
+      (!selected.value.end ||
+        new Date(row.decommissionDate) <= new Date(newEndDate))
     );
   });
   emit("filtered-rows", filteredRows.value);
@@ -104,8 +152,16 @@ function clearFields() {
   selectedReason.value = [];
   startingDate.value = "";
   endDate.value = "";
-  selected.value.start = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  selected.value.end = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+  selected.value.start = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1
+  );
+  selected.value.end = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() + 1,
+    0
+  );
   filterRows();
 }
 
@@ -121,22 +177,18 @@ watch(
   filterRows
 );
 
-const selectedArrays = [
-  selectedPVZ,
-  selectedNameOfEquipment,
-  selectedReason,
-];
+const selectedArrays = [selectedPVZ, selectedNameOfEquipment, selectedReason];
 
-const rowsEquipments = ref<Array<IEquipmentRow>>([])
+const rowsEquipments = ref<Array<IEquipmentRow>>([]);
 onMounted(async () => {
-  filterRows()
-  rowsEquipments.value = await storeEquipments.getEquipments()
-})
+  filterRows();
+  rowsEquipments.value = await storeEquipments.getEquipments();
+});
 
 const nonEmptyCount = computed(() => {
   let count = 0;
-  selectedArrays.forEach(selectedArray => {
-    selectedArray.value.forEach(element => {
+  selectedArrays.forEach((selectedArray) => {
+    selectedArray.value.forEach((element) => {
       if (element !== undefined && element !== null && element !== "") {
         count++;
       }
@@ -155,24 +207,24 @@ const nonEmptyCount = computed(() => {
 
 <template>
   <div v-auto-animate>
-    <div class="flex items-center gap-3 mt-5 max-xl:mt-0">
-      <h1 class="text-xl font-bold">Фильтры</h1>
-      <Icon
+    <div class="flex items-center gap-3 max-xl:mt-0">
+      <UButton
+        color="orange"
+        variant="solid"
+        class="font-semibold duration-200"
+        icon="material-symbols:filter-list-rounded"
         @click="showFilters = !showFilters"
-        class="cursor-pointer duration-200 hover:text-secondary-color"
-        name="material-symbols:settings-rounded"
-        size="24"
-      />
-      <h1 class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full">
-        {{ nonEmptyCount }}
-      </h1>
+      >
+        Фильтры – {{ nonEmptyCount }}
+      </UButton>
     </div>
-
     <div
       v-if="showFilters"
-      class="border-2 bg-white border-secondary-color border-dashed max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-2xl mt-3"
+      class="bg-white max-sm:px-3 max-sm:py-1 py-3 px-10 shadow-lg mt-3 mb-5"
     >
-      <div class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5">
+      <div
+        class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5"
+      >
         <div class="flex items-start space-y-2 flex-col mt-5 text-center">
           <h1>Показать для ПВЗ</h1>
           <VueMultiselect
@@ -210,7 +262,11 @@ const nonEmptyCount = computed(() => {
           :popper="{ placement: 'auto' }"
           class="block max-sm:hidden my-5 max-w-[220px]"
         >
-          <UButton type="button" icon="i-heroicons-calendar-days-20-solid" color="orange">
+          <UButton
+            type="button"
+            icon="i-heroicons-calendar-days-20-solid"
+            color="orange"
+          >
             {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
             {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
           </UButton>
@@ -246,7 +302,11 @@ const nonEmptyCount = computed(() => {
           :popper="{ placement: 'auto' }"
           class="hidden max-sm:block mx-auto max-w-[220px] my-5"
         >
-          <UButton type="button" icon="i-heroicons-calendar-days-20-solid" color="orange">
+          <UButton
+            type="button"
+            icon="i-heroicons-calendar-days-20-solid"
+            color="orange"
+          >
             {{ format(selected.start, "dd MMM yyy", { locale: ru }) }} —
             {{ format(selected.end, "dd MMM yyy", { locale: ru }) }}
           </UButton>

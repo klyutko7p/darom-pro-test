@@ -19,7 +19,7 @@ defineProps({
     variant="solid"
     label="Button"
     :trailing="false"
-    class="duration-200"
+    class="duration-200 font-semibold"
   >
     <slot />
   </UButton>

@@ -19,7 +19,6 @@ let rows = ref<Array<IDelivery>>();
 let pvz = ref<Array<PVZ>>();
 let sortingCenters = ref<Array<SortingCenter>>();
 
-
 const filteredRows = ref<Array<IDelivery>>();
 
 function handleFilteredRows(filteredRowsData: IDelivery[]) {
@@ -50,12 +49,11 @@ definePageMeta({
 });
 
 const token = Cookies.get("token");
-
 </script>
 
 <template>
   <Head>
-    <Title>Наш выкуп</Title>
+    <Title>Сводные таблицы</Title>
   </Head>
   <div>
     <div v-if="user.role === 'ADMIN'">

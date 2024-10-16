@@ -921,21 +921,21 @@ async function writeClipboardText(text: any) {
       </div>
     </div>
 
-    <div class="py-3 flex max-sm:flex-col gap-5 max-sm:w-full">
+    <div class="py-3 flex max-sm:flex-col gap-3 max-sm:w-full">
       <h1
         v-if="
           user.role === 'ADMIN' ||
           user.role === 'ADMINISTRATOR' ||
           user.role === 'RMANAGER'
         "
-        class="bg-red-500 px-5 py-3 text-white font-bold rounded-full border-red-500 border-2 hover:bg-transparent hover:text-black duration-200 cursor-pointer"
+        class="bg-red-500 px-5 py-1.5 text-white font-semibold rounded-md border-red-500 border-2 hover:bg-transparent hover:text-black duration-200 cursor-pointer"
         @click="showExpiredRows"
       >
         Истекает срок хранения {{ expiredRows?.length }} товаров
       </h1>
       <h1
         v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
-        class="bg-yellow-400 px-5 py-3 text-white font-bold rounded-full border-yellow-400 border-2 hover:bg-transparent hover:text-black duration-200 cursor-pointer"
+        class="bg-yellow-400 px-5 py-1.5 text-white font-semibold rounded-md border-yellow-400 border-2 hover:bg-transparent hover:text-black duration-200 cursor-pointer"
         @click="changeProcessingRows(), showProcessingRows()"
       >
         Ждут обработку {{ processingRows?.length }} товаров
@@ -1340,6 +1340,7 @@ async function writeClipboardText(text: any) {
             <td
               class="border-2"
               v-if="user.notation1 === 'READ' || user.notation1 === 'WRITE'"
+              :class="{ 'bg-yellow-300 text-white font-semibold': row.notation }"
             >
               {{ row.notation ? row.notation : "Пусто" }}
             </td>

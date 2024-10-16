@@ -716,6 +716,8 @@ let pvz = ref([
   "НаДом",
 ]);
 
+pvz.value = pvz.value.sort((a, b) => a.localeCompare(b, 'ru'));
+
 let typesOfExpenditure = ref([
   "Передача денежных средств",
   "Сопутствующие расходы",
@@ -1375,10 +1377,6 @@ watch(isOpenYM, (newValue) => {
   }
 });
 
-import ru from "date-fns/locale/ru";
-import { format } from "date-fns";
-const date = ref(new Date());
-
 const paymentOptions = [
   { value: "Нал", label: "Нал" },
   { value: "Безнал", label: "Безнал" },
@@ -1410,7 +1408,7 @@ const typeOfOptions2 = [
   <div v-if="!isLoading">
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="table-admin-no-pad">
-        <div class="bg-[#f8f9fd] px-16 w-screen pt-10 max-sm:px-5 pb-5">
+        <div class="bg-gray-50 px-16 w-screen pt-10 max-sm:px-5 pb-5">
           <AdvanceReportFilters
             v-if="rows"
             @filtered-rows="handleFilteredRows"
@@ -1711,7 +1709,12 @@ const typeOfOptions2 = [
             <div class="custom-header" v-if="rowData.id">
               Изменение: <b> {{ rowData.id }}</b>
             </div>
-            <div class="custom-header" v-else>Создание аван. документа</div>
+            <div class="custom-header" v-else-if="rowData.type === 'Нал'">
+              Создание аван. документа Нал
+            </div>
+            <div class="custom-header" v-else-if="rowData.type === 'Безнал'">
+              Создание аван. документа Безнал
+            </div>
           </template>
           <template v-slot:body>
             <div class="text-black">
@@ -1914,7 +1917,7 @@ const typeOfOptions2 = [
             <div class="custom-header" v-if="rowData.id">
               Изменение: <b> {{ rowData.id }}</b>
             </div>
-            <div class="custom-header" v-else>Пополнение баланса</div>
+            <div class="custom-header" v-else>Пополнение баланса Нал</div>
           </template>
           <template v-slot:body>
             <div class="text-black">
@@ -2024,7 +2027,7 @@ const typeOfOptions2 = [
             <div class="custom-header" v-if="rowData.id">
               Изменение: <b> {{ rowData.id }}</b>
             </div>
-            <div class="custom-header" v-else>Пополнение баланса</div>
+            <div class="custom-header" v-else>Пополнение баланса Безнал</div>
           </template>
           <template v-slot:body>
             <div class="text-black">
@@ -2127,7 +2130,7 @@ const typeOfOptions2 = [
 
     <div v-else>
       <NuxtLayout name="table-user-no-pad">
-        <div class="bg-[#f8f9fd] px-16 w-screen pt-10 max-sm:px-5 pb-5">
+        <div class="bg-gray-50 px-16 w-screen pt-10 max-sm:px-5 pb-5">
           <div>
             <div
               class="text-center text-2xl my-5 flex items-center justify-center flex-col gap-3"
@@ -2192,7 +2195,12 @@ const typeOfOptions2 = [
             <div class="custom-header" v-if="rowData.id">
               Изменение: <b> {{ rowData.id }}</b>
             </div>
-            <div class="custom-header" v-else>Создание аван. документа</div>
+            <div class="custom-header" v-else-if="rowData.type === 'Нал'">
+              Создание аван. документа Нал
+            </div>
+            <div class="custom-header" v-else-if="rowData.type === 'Безнал'">
+              Создание аван. документа Безнал
+            </div>
           </template>
           <template v-slot:body>
             <div class="text-black">

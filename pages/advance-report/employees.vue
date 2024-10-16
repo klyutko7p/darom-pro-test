@@ -102,7 +102,7 @@ watch(isOpen, (newValue) => {
   <div v-if="!isLoading">
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="table-admin-no-pad">
-        <div class="bg-[#f8f9fd] px-16 w-screen pt-10 max-sm:px-5 pb-5">
+        <div class="bg-gray-50 px-16 w-screen pt-10 max-sm:px-5 pb-5">
           <div
             class="flex items-center justify-between max-sm:items-start gap-3"
           >

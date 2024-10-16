@@ -1795,8 +1795,7 @@ async function createProfitRow() {
     toast.error("Вы не можете вывести такую сумму!");
   } else {
     isLoading.value = true;
-    rowData.value.reminder =
-      Math.ceil(allSumProfit.value) - +rowData.value.sum;
+    rowData.value.reminder = Math.ceil(allSumProfit.value) - +rowData.value.sum;
     await storeBalance.createBalanceProfitRow(rowData.value);
     rowsProfit.value = await storeBalance.getBalanceProfitRows();
     closeModalProfitRow();
@@ -2083,16 +2082,18 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
   <div v-if="!isLoading">
     <div v-if="token && (user.role === 'ADMIN' || user.username === 'Шведова')">
       <NuxtLayout name="admin">
-        <div class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5">
+        <div class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5">
           <div v-auto-animate>
-            <div class="flex items-center gap-3 mt-14 max-xl:mt-0">
-              <h1 class="text-xl font-bold">Фильтры</h1>
-              <Icon
+            <div class="flex items-center gap-3 max-xl:mt-0">
+              <UButton
+                color="orange"
+                variant="solid"
+                class="font-semibold duration-200"
+                icon="material-symbols:filter-list-rounded"
                 @click="showFilters = !showFilters"
-                class="cursor-pointer duration-200 hover:text-secondary-color"
-                name="material-symbols:settings-rounded"
-                size="24"
-              />
+              >
+                Фильтры
+              </UButton>
             </div>
 
             <div
@@ -2533,16 +2534,18 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
 
     <div v-else>
       <NuxtLayout name="user">
-        <div class="bg-[#f8f9fd] px-5 pt-5 max-sm:px-1 pb-5">
+        <div class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5">
           <div v-auto-animate>
-            <div class="flex items-center gap-3 mt-14 max-xl:mt-0">
-              <h1 class="text-xl font-bold">Фильтры</h1>
-              <Icon
+            <div class="flex items-center gap-3 max-xl:mt-0">
+              <UButton
+                color="orange"
+                variant="solid"
+                class="font-semibold duration-200"
+                icon="material-symbols:filter-list-rounded"
                 @click="showFilters = !showFilters"
-                class="cursor-pointer duration-200 hover:text-secondary-color"
-                name="material-symbols:settings-rounded"
-                size="24"
-              />
+              >
+                Фильтры
+              </UButton>
             </div>
 
             <div

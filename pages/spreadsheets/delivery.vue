@@ -253,12 +253,12 @@ function getFromNameFromName() {
 
 <template>
   <Head>
-    <Title>Наш выкуп</Title>
+    <Title>Доставка и сортировка</Title>
   </Head>
   <div>
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="table-admin-no-pad">
-        <div v-if="!isLoading" class="bg-[#f8f9fd] pt-5 px-5">
+        <div v-if="!isLoading" class="bg-gray-50 px-5 pt-5 max-sm:px-5 pb-5 w-screen">
           <div
             class="flex justify-end"
             v-if="
@@ -548,7 +548,7 @@ function getFromNameFromName() {
     </div>
     <div v-else>
       <NuxtLayout name="table-user-no-pad">
-        <div v-if="!isLoading" class="bg-[#f8f9fd] pt-5 px-5">
+        <div v-if="!isLoading" class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5 w-screen">
           <div
             class="flex justify-end"
             v-if="
@@ -562,6 +562,7 @@ function getFromNameFromName() {
               <Icon name="material-symbols:table-chart-view" size="24" />
             </div>
           </div>
+          
           <div>
             <SpreadsheetsDeliveryFilters
               v-if="rows"

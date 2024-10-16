@@ -267,7 +267,7 @@ useSeoMeta({
             <label
               for="phone"
               class="block text-sm font-medium leading-6 text-gray-900"
-              >Телефон (формат +7XXXXXXXXXX)</label
+              >Телефон (+7XXXXXXXXXX)</label
             >
             <div class="mt-2">
               <input
@@ -310,13 +310,15 @@ useSeoMeta({
               />
             </div>
           </div>
-          <h1 class="text-sm text-center italic font-bold text-secondary-color">
-            Если не можете вспомнить пароль, <br />
-            нажмите
+          <h1
+            class="text-sm text-center italic font-semibold text-secondary-color"
+          >
+            Забыли пароль?
             <span
-              class="underline cursor-pointer"
+              class="cursor-pointer font-bold"
               @click="isShowFirstConfirmationModal = true"
-              >здесь</span
+            >
+              Нажмите здесь</span
             >
           </h1>
           <div class="flex items-center gap-3 p-3">
@@ -341,8 +343,8 @@ useSeoMeta({
               >Войти</UIMainButton
             >
           </div>
-          <div class="text-center underline text-secondary-color font-bold">
-            <NuxtLink to="/auth/register">Или зарегистрируйтесь</NuxtLink>
+          <div class="text-center text-secondary-color font-bold">
+            <NuxtLink to="/auth/register">Зарегистрироваться</NuxtLink>
           </div>
         </form>
       </div>

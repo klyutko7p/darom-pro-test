@@ -59,17 +59,42 @@ const isChecked = (rowId: number): boolean => {
   return checkedRows.value.includes(rowId);
 };
 
+const updateRowBackground = (rowId: string, isChecked: boolean): void => {
+  const tdElements = document.querySelectorAll("td");
+  tdElements.forEach((td) => {
+    const linkElement = td.querySelector("a");
+    if (linkElement?.innerHTML === rowId) {
+      if (isChecked) {
+        td.parentElement?.classList.add("bg-orange-100");
+      } else {
+        td.parentElement?.classList.remove("bg-orange-100");
+      }
+    }
+  });
+};
+
+function clearOrangeBg() {
+  const tdElements = document.querySelectorAll("td");
+  tdElements.forEach((td) => {
+    td.parentElement?.classList.remove("bg-orange-100");
+  });
+}
+
 const handleCheckboxChange = (row: IEquipmentRow): void => {
+  const rowId = row.id.toString();
+
   if (isChecked(row.id)) {
+    clearOrangeBg();
     checkedRows.value = checkedRows.value.filter((id) => id !== row.id);
+    updateRowBackground(rowId, false);
   } else {
-    checkedRows.value = [];
-    checkedRows.value.push(row.id);
+    clearOrangeBg();
+    checkedRows.value = [row.id];
+    updateRowBackground(rowId, true);
     isOpen.value = true;
   }
-  if (!checkedRows.value.length) {
-    isAllSelected.value = false;
-  }
+
+  isAllSelected.value = checkedRows.value.length === 0;
 };
 
 const perPage = ref(20000);
@@ -142,23 +167,50 @@ async function getRowByIdFromInput(row: IEquipmentRow) {
 
 let isAllSelected = ref(false);
 function handleCheckboxChangeAll() {
-  // if (isAllSelected.value) {
-  //   let arrayId = props.rows.filter((row) => !row.deleted).map((row) => row.id);
-  //   checkedRows.value = arrayId;
-  //   isOpen.value = true;
-  // } else {
-  //   checkedRows.value = [];
-  // }
   isAllSelected.value = false;
   toast.warning("Вы не можете выделить все записи");
 }
+
+const columns = [
+  {
+    key: "select",
+  },
+  {
+    key: "id",
+    label: "ID",
+  },
+  {
+    key: "pvz",
+    label: "ПВЗ",
+  },
+  {
+    key: "nameOfEquipment",
+    label: "НАЗВАНИЕ",
+  },
+  {
+    key: "state",
+    label: "Состояние",
+  },
+  {
+    key: "updatedUser",
+    label: "ИЗМЕНИЛ",
+  },
+  {
+    key: "created_at",
+    label: "ДАТА СОЗДАНИЯ",
+  },
+  {
+    key: "updated_at",
+    label: "ДАТА ИЗМЕНЕНИЯ",
+  },
+];
 </script>
 
 <template>
   <div v-if="!isLoading">
-    <div class="flex items-end justify-between mb-5">
+    <div class="flex items-end justify-between mt-5 mb-5">
       <div>
-        <h1 class="text-xl max-sm:text-lg font-bold mb-3">
+        <h1 class="text-lg max-sm:text-lg font-semibold mb-3">
           Строк в таблице:
           <span class="text-secondary-color">{{ totalRows }} шт.</span>
         </h1>
@@ -179,126 +231,101 @@ function handleCheckboxChangeAll() {
       </div>
     </div>
 
-    <div
-      class="relative max-h-[710px] overflow-y-auto mt-5 mb-10"
-      v-if="filteredRows.length > 0"
+    <UTable
+      v-if="filteredRows.length"
+      class="w-full text-center bg-white border-[1px] rounded-md"
+      :ui="{
+  td: {
+    base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
+    padding: 'px-3 py-1',
+  },
+  th: {
+    base: 'text-center uppercase sticky top-0 z-[20] bg-white',
+    padding: 'px-1',
+    size: 'text-xs'
+  },
+  default:
+  {
+    checkbox:
+      { color: 'gray' as any }
+  },
+    }"
+      :rows="filteredRows"
+      :columns="columns"
     >
-      <table
-        id="theTable"
-        class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
-      >
-        <thead
-          class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
+      <template #select-data="{ row }">
+        <input
+          class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
+          type="checkbox"
+          :value="row.id"
+          :checked="isChecked(row.id, e)"
+          @change="handleCheckboxChange(row)"
+        />
+      </template>
+
+      <template #id-data="{ row }">
+        <NuxtLink
+          class="cursor-pointer text-secondary-color font-semibold hover:text-orange-200 duration-200"
+          :to="`/equipment/record/${row.id}`"
+          target="_blank"
         >
-          <tr>
-            <th scope="col" class="max-md:px-1 max-xl:px-2">
-              <input
-                class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
-                type="checkbox"
-                v-model="isAllSelected"
-                @change="handleCheckboxChangeAll()"
-              />
-            </th>
-            <th scope="col" class="py-1 max-xl:px-2">id</th>
-            <th scope="col" class="px-1 py-2 max-xl:px-2">пвз</th>
-            <th scope="col" class="max-w-[150px]">название</th>
-            <th scope="col" class="max-w-[150px]">состояние</th>
-            <th scope="col" class="px-1 py-2 max-xl:px-3">изменил</th>
-            <th scope="col" class="px-1 max-xl:px-3">дата создания</th>
-            <th scope="col" class="px-1 max-xl:px-3">дата изменения</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white">
-          <tr
-            :class="{
-              'bg-orange-100 text-black': isChecked(row.id),
-            }"
-            class="text-center font-bold"
-            v-for="row in filteredRows"
-          >
-            <td class="text-secondary-color border-[1px]">
-              <input
-                class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
-                type="checkbox"
-                :value="row.id"
-                :checked="isChecked(row.id)"
-                @change="handleCheckboxChange(row)"
-              />
-            </td>
-            <th
-              scope="row"
-              class="font-bold border-[1px] max-md:px-2 underline text-secondary-color whitespace-nowrap"
-            >
-              <NuxtLink
-                class="cursor-pointer hover:text-orange-200 duration-200"
-                :to="`/equipment/record/${row.id}`"
-                target="_blank"
-              >
-                {{ row.id }}
-              </NuxtLink>
-            </th>
-            <td class="border-[1px] max-md:px-2 py-2">
-              {{ row.pvz.name }}
-            </td>
-            <td
-              class="border-[1px] px-2 max-w-[150px] max-sm:py-1 max-sm:px-1 max-xl:min-w-[300px]"
-            >
-              <UTextarea
-                autoresize
-                :disabled="
-                  user.username !== 'Директор' && user.username !== 'Власенкова'
-                "
-                @blur="getRowByIdFromInput(row)"
-                :model-value="row.nameOfEquipment"
-              />
-              <span class="hidden">{{ row.nameOfEquipment }} ₽</span>
-            </td>
-            <td
-              v-if="row.state === 'Исправное'"
-              class="max-w-[100px] border-[1px] px-2 max-xl:min-w-[150px] max-lg:min-w-[180px]"
-            >
-              <h1
-                class="mx-auto text-green-500 py-1 rounded-full w-full max-lg:min-w-[150px]"
-                :class="{ 'bg-green-100': !isChecked(row.id) }"
-              >
-                {{ row.state }}
-              </h1>
-            </td>
-            <td
-              v-if="row.state === 'Требуется ремонт'"
-              class="max-w-[100px] border-[1px] px-2 max-xl:min-w-[150px] max-lg:min-w-[180px]"
-            >
-              <h1
-                class="mx-auto text-yellow-500 py-1 rounded-full w-full max-lg:px-2 max-lg:min-w-[150px]"
-                :class="{ 'bg-yellow-100': !isChecked(row.id) }"
-              >
-                {{ row.state }}
-              </h1>
-            </td>
-            <td
-              v-if="row.state === 'Неисправное'"
-              class="max-w-[100px] border-[1px] px-2 max-xl:min-w-[150px] max-lg:min-w-[180px]"
-            >
-              <h1
-                class="mx-auto text-red-500 py-1 rounded-full w-full max-lg:min-w-[150px]"
-                :class="{ 'bg-red-100': !isChecked(row.id) }"
-              >
-                {{ row.state }}
-              </h1>
-            </td>
-            <td class="border-[1px] max-md:px-2">
-              {{ row.updatedUser.username }}
-            </td>
-            <td class="border-[1px] max-md:px-2">
-              {{ storeUsers.getNormalizedDate(row.created_at) }}
-            </td>
-            <td class="border-[1px] max-md:px-2">
-              {{ storeUsers.getNormalizedDate(row.updated_at) }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+          {{ row.id }}
+        </NuxtLink>
+      </template>
+
+      <template #created_at-data="{ row }">
+        {{ storeUsers.getNormalizedDate(row.created_at) }}
+      </template>
+
+      <template #updated_at-data="{ row }">
+        {{ storeUsers.getNormalizedDate(row.updated_at) }}
+      </template>
+
+      <template #updatedUser-data="{ row }">
+        {{ row.updatedUser.username }}
+      </template>
+
+      <template #pvz-data="{ row }">
+        {{ row.pvz.name }}
+      </template>
+
+      <template #nameOfEquipment-data="{ row }">
+        <textarea
+          autoresize
+          :disabled="
+            user.username !== 'Директор' && user.username !== 'Власенкова'
+          "
+          @blur="getRowByIdFromInput(row)"
+          v-model="row.nameOfEquipment"
+          class="min-w-[170px] w-full relative block disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-textarea rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 resize-none"
+        />
+        <span class="hidden">{{ row.nameOfEquipment }} ₽</span>
+      </template>
+
+      <template #state-data="{ row }">
+        <UBadge
+          v-if="row.state === 'Исправное'"
+          size="xs"
+          label="Исправное"
+          color="emerald"
+          variant="subtle"
+        />
+        <UBadge
+          v-if="row.state === 'Требуется ремонт'"
+          size="xs"
+          label="Требуется ремонт"
+          color="orange"
+          variant="subtle"
+        />
+        <UBadge
+          v-if="row.state === 'Неисправное'"
+          size="xs"
+          label="Неисправное"
+          color="red"
+          variant="subtle"
+        />
+      </template>
+    </UTable>
 
     <div v-else class="flex items-center justify-center flex-col gap-3 mt-10">
       <h1 class="text-2xl">Оборудование не найдено</h1>
@@ -335,7 +362,7 @@ function handleCheckboxChangeAll() {
             class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
           >
             <thead
-              class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
+              class="text-xs text-black border-[1px] bg-white sticky top-0 z-30 uppercase text-center"
             >
               <tr>
                 <th scope="col" class="max-md:px-1">
@@ -347,7 +374,7 @@ function handleCheckboxChangeAll() {
                   />
                 </th>
                 <th scope="col" class="">пвз</th>
-                <th scope="col" class="">название</th>
+                <th scope="col" class="">назв.</th>
                 <th scope="col" class="">сост.</th>
               </tr>
             </thead>
@@ -416,7 +443,7 @@ function handleCheckboxChangeAll() {
             "
           >
             <div
-              class="text-gray-900 dark:text-white text-center items-center justify-center bg-[#f8f9fd] py-5 flex flex-col gap-3"
+              class="text-gray-900 dark:text-white text-center items-center justify-center bg-gray-50 py-5 flex flex-col gap-3"
             >
               <UIActionButton2
                 :disabled="!checkedRows.length"
@@ -454,7 +481,7 @@ function handleCheckboxChangeAll() {
             "
           >
             <div
-              class="text-gray-900 dark:text-white text-center items-center justify-center bg-[#f8f9fd] py-5 flex flex-col gap-3"
+              class="text-gray-900 dark:text-white text-center items-center justify-center bg-gray-50 py-5 flex flex-col gap-3"
             >
               <USelectMenu
                 v-model="transferPVZ"
