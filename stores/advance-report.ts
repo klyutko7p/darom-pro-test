@@ -5,6 +5,7 @@ const toast = useToast();
 
 export const useAdvanceReports = defineStore("advance-reports", () => {
   let cachedAdvanceReportRows: IAdvanceReport[] | null = null;
+  let cachedAdvanceReportRowsSidebar: IAdvanceReport[] | null = null;
   let pvz: string[] = [
     "Ряженое",
     "Алексеевка",
@@ -102,6 +103,27 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
         });
         cachedAdvanceReportRows = data.value;
         return cachedAdvanceReportRows;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getAdvancedReportsForSidebar() {
+    try {
+      if (cachedAdvanceReportRowsSidebar) {
+        return cachedAdvanceReportRowsSidebar;
+      } else {
+        let { data }: any = await useFetch("/api/advance-report/get-rows-for-sidebar", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        cachedAdvanceReportRowsSidebar = data.value;
+        return cachedAdvanceReportRowsSidebar;
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -214,5 +236,6 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
     createAdvanceReports,
     deleteRow,
     getPVZ,
+    getAdvancedReportsForSidebar,
   };
 });

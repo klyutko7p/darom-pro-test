@@ -122,7 +122,11 @@ async function updateRow() {
 
   rows.value = filteredRows.value;
   isLoading.value = false;
-  originallyRows.value = await storeRansom.getRansomRowsForModalOurRansom();
+  let originallyRowsDataOne =
+    await storeRansom.getRansomRowsForModalOurRansomPartOne();
+  let originallyRowsDataTwo =
+    await storeRansom.getRansomRowsForModalOurRansomPartTwo();
+  originallyRows.value = [...originallyRowsDataOne, ...originallyRowsDataTwo];
   await updateCells();
 }
 
@@ -149,7 +153,11 @@ async function createRow() {
   isLoading.value = false;
 
   rows.value = filteredRows.value;
-  originallyRows.value = await storeRansom.getRansomRowsForModalOurRansom();
+  let originallyRowsDataOne =
+    await storeRansom.getRansomRowsForModalOurRansomPartOne();
+  let originallyRowsDataTwo =
+    await storeRansom.getRansomRowsForModalOurRansomPartTwo();
+  originallyRows.value = [...originallyRowsDataOne, ...originallyRowsDataTwo];
   await updateCells();
 }
 
@@ -276,7 +284,11 @@ onMounted(async () => {
 
   isLoading.value = false;
 
-  originallyRows.value = await storeRansom.getRansomRowsForModalOurRansom();
+  let originallyRowsDataOne =
+    await storeRansom.getRansomRowsForModalOurRansomPartOne();
+  let originallyRowsDataTwo =
+    await storeRansom.getRansomRowsForModalOurRansomPartTwo();
+  originallyRows.value = [...originallyRowsDataOne, ...originallyRowsDataTwo];
   if (user.value.role !== "SORTIROVKA") {
     await updateCells();
   }
@@ -635,7 +647,8 @@ async function parsingPage() {
               .substring(0, rowData.value.priceSite.toString().length - 2)
           );
         } else {
-          rowData.value.priceSite = itemInfo[2].data.products[0].sizes[0].price.product;
+          rowData.value.priceSite =
+            itemInfo[2].data.products[0].sizes[0].price.product;
           rowData.value.priceSite = Number(
             rowData.value.priceSite
               .toString()

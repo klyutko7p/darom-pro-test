@@ -28,7 +28,7 @@ onMounted(async () => {
   try {
     const [balanceResult, advanceResult] = await Promise.all([
       storeBalance.getBalanceRows(),
-      storeAdvanceReports.getAdvancedReports(),
+      storeAdvanceReports.getAdvancedReportsForSidebar(),
     ]);
 
     requestsBalance.value = balanceResult;

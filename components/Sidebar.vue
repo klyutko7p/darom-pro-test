@@ -33,7 +33,7 @@ onMounted(async () => {
     const [userResult, balanceResult, advanceResult] = await Promise.all([
       storeUsers.getUser(),
       storeBalance.getBalanceRows(),
-      storeAdvanceReports.getAdvancedReports(),
+      storeAdvanceReports.getAdvancedReportsForSidebar(),
     ]);
 
     user.value = userResult;

@@ -16,6 +16,7 @@ export default defineEventHandler(async (event) => {
         deleted: true,
       },
       where: {
+        deleted: null,
         created_at: {
           gt: startDate,
         },

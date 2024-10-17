@@ -258,7 +258,7 @@ function getFromNameFromName() {
   <div>
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="table-admin-no-pad">
-        <div v-if="!isLoading" class="bg-gray-50 px-5 pt-5 max-sm:px-5 pb-5 w-screen">
+        <div v-if="!isLoading" class="px-5 pt-5 max-sm:px-5 pb-5 w-screen">
           <div
             class="flex justify-end"
             v-if="
@@ -548,7 +548,7 @@ function getFromNameFromName() {
     </div>
     <div v-else>
       <NuxtLayout name="table-user-no-pad">
-        <div v-if="!isLoading" class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5 w-screen">
+        <div v-if="!isLoading" class="px-5 pt-5 max-sm:px-1 pb-5 w-screen">
           <div
             class="flex justify-end"
             v-if="

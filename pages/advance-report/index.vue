@@ -28,12 +28,15 @@ onMounted(async () => {
     user.value = await storeUsers.getUser();
     let advanceReportsPromise;
     let ourRansomRowsPromise;
+    let ourRansomRowsPromise2;
     let deliveryRowsPromise;
 
     if (user.value.role === "ADMIN") {
       advanceReportsPromise = storeAdvanceReports.getAdvancedReports();
       ourRansomRowsPromise =
-        storeRansom.getRansomRowsForAdvanceReportOurRansom();
+        storeRansom.getRansomRowsForAdvanceReportOurRansomPartOne();
+      ourRansomRowsPromise2 =
+        storeRansom.getRansomRowsForAdvanceReportOurRansomPartTwo();
       deliveryRowsPromise = storeRansom.getRansomRowsForBalanceDelivery();
     } else {
       advanceReportsPromise = storeAdvanceReports.getAdvancedReports();
@@ -42,12 +45,14 @@ onMounted(async () => {
     const [
       advanceReportsData,
       ourRansomRowsData,
+      ourRansomRowsData2,
       deliveryRowsData,
       balanceRowsData,
       onlineBalanceRowsData,
     ] = await Promise.all([
       advanceReportsPromise,
       ourRansomRowsPromise,
+      ourRansomRowsPromise2,
       deliveryRowsPromise,
       storeBalance.getBalanceRows(),
       storeBalance.getBalanceOnlineRows(),
@@ -88,7 +93,7 @@ onMounted(async () => {
     }
 
     if (user.value.role === "ADMIN") {
-      rowsOurRansom.value = ourRansomRowsData;
+      rowsOurRansom.value = [...ourRansomRowsData, ...ourRansomRowsData2];
       rowsDelivery.value = deliveryRowsData;
       getAllSumDirector();
     }
@@ -716,7 +721,7 @@ let pvz = ref([
   "НаДом",
 ]);
 
-pvz.value = pvz.value.sort((a, b) => a.localeCompare(b, 'ru'));
+pvz.value = pvz.value.sort((a, b) => a.localeCompare(b, "ru"));
 
 let typesOfExpenditure = ref([
   "Передача денежных средств",

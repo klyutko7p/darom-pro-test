@@ -398,6 +398,44 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  async function getRansomRowsForModalOurRansomPartOne() {
+    try {
+      let response = await fetch("/api/ransom/get-rows-for-modal-or-part-one", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsForModalOurRansomPartTwo() {
+    try {
+      let response = await fetch("/api/ransom/get-rows-for-modal-or-part-two", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function getRansomRowsForModalClientRansom() {
     try {
       let response = await fetch("/api/ransom/get-rows-for-modal-cl", {
@@ -465,6 +503,28 @@ export const useRansomStore = defineStore("ransom", () => {
     try {
       let response = await fetch(
         "/api/ransom/get-rows-for-balance-or-part-three",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        }
+      );
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsForBalanceOurRansomPartFour() {
+    try {
+      let response = await fetch(
+        "/api/ransom/get-rows-for-balance-or-part-four",
         {
           method: "GET",
           headers: {
@@ -990,9 +1050,28 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-  async function getRansomRowsForAdvanceReportOurRansom() {
+  async function getRansomRowsForAdvanceReportOurRansomPartOne() {
     try {
-      let response = await fetch("/api/ransom/get-rows-for-advance-report-or", {
+      let response = await fetch("/api/ransom/get-rows-for-advance-report-or-part-one", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsForAdvanceReportOurRansomPartTwo() {
+    try {
+      let response = await fetch("/api/ransom/get-rows-for-advance-report-or-part-two", {
         method: "GET",
         headers: {
           "Content-Type": "application/octet-stream",
@@ -1130,12 +1209,16 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsForBalanceDelivery,
     getRansomRowsForModalOurRansom,
     getRansomRowsForModalClientRansom,
+    getRansomRowsForModalOurRansomPartOne,
+    getRansomRowsForModalOurRansomPartTwo,
     getRansomRowsWithDeletedForCellsOurRansom,
     getRansomRowsWithPVZOurRansom,
     getRansomRowsOurRansom,
-    getRansomRowsForAdvanceReportOurRansom,
+    getRansomRowsForAdvanceReportOurRansomPartOne,
+    getRansomRowsForAdvanceReportOurRansomPartTwo,
     getDeletedRansomRowsByPVZ,
     clearRansomRow,
     deleteNotSortedRows,
+    getRansomRowsForBalanceOurRansomPartFour
   };
 });

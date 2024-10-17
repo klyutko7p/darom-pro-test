@@ -42,6 +42,7 @@ onMounted(async () => {
     ransomRowsForBalanceOurRansomDataPartOne,
     ransomRowsForBalanceOurRansomDataPartTwo,
     ransomRowsForBalanceOurRansomDataPartThree,
+    ransomRowsForBalanceOurRansomDataPartFour,
     rowsDeliveryValue,
     clientRansomRowsValue,
     rowsBalanceValue,
@@ -49,6 +50,7 @@ onMounted(async () => {
     storeRansom.getRansomRowsForBalanceOurRansomPartOne(),
     storeRansom.getRansomRowsForBalanceOurRansomPartTwo(),
     storeRansom.getRansomRowsForBalanceOurRansomPartThree(),
+    storeRansom.getRansomRowsForBalanceOurRansomPartFour(),
     storeRansom.getRansomRowsForBalanceDelivery(),
     storeRansom.getRansomRowsForBalanceClientRansom(),
     storeBalance.getBalanceRows(),
@@ -58,6 +60,7 @@ onMounted(async () => {
     ...ransomRowsForBalanceOurRansomDataPartOne,
     ...ransomRowsForBalanceOurRansomDataPartTwo,
     ...ransomRowsForBalanceOurRansomDataPartThree,
+    ...ransomRowsForBalanceOurRansomDataPartFour,
   ];
   rowsDelivery.value = rowsDeliveryValue;
 
