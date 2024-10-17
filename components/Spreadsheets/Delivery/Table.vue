@@ -228,6 +228,9 @@ const toggleDropdown = (rowId: any) => {
 
 const columns = [
   {
+    key: "actions",
+  },
+  {
     key: "select",
   },
   {
@@ -282,9 +285,6 @@ const columns = [
     key: "profit",
     label: "Доход",
   },
-  {
-    key: "actions",
-  },
 ];
 </script>
 <template>
@@ -323,7 +323,7 @@ const columns = [
           <h1 class="text-base mb-2">
             Страница: {{ currentPage }} из {{ totalPages }}
           </h1>
-          <div class="flex items-center justify-start gap-2">
+          <div class="flex items-center justify-center gap-2">
             <button
               @click="prevPage(), updateCurrentPageData()"
               :disabled="currentPage === 1"
@@ -361,14 +361,13 @@ const columns = [
       </div>
     </div>
 
-
     <div
       :class="{ 'overflow-x-auto max-2xl:w-screen': isOpen }"
       class="mt-5 mb-10"
     >
       <UTable
         v-if="returnRows.length"
-        class="w-full z-[20] mx-auto text-center bg-white border-[1px] max-h-[600px] rounded-md mt-5"
+        class="w-full z-[20] overflow-x-visible mx-auto text-center  border-[1px] rounded-md mt-5"
         :ui="{ wrapper: 'relative bg-white',
   td: {
     base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
@@ -388,23 +387,6 @@ const columns = [
         :rows="returnRows"
         :columns="columns"
       >
-        <template #expand="{ row }">
-          <div class="px-4 py-2 text-left text-sm text-gray-400">
-            <h1>
-              Дата создания: {{ storeUsers.getNormalizedDate(row.created_at) }}
-            </h1>
-            <h1>
-              Дата последнего изменения:
-              {{ storeUsers.getNormalizedDate(row.updated_at) }}
-            </h1>
-            <h1 v-if="row.deleted">
-              Дата удаления: {{ storeUsers.getNormalizedDate(row.deleted) }}
-            </h1>
-            <h1>Создан: {{ row.createdUser }}</h1>
-            <h1>Изменен: {{ row.updatedUser }}</h1>
-          </div>
-        </template>
-
         <template #select-data="{ row }">
           <input
             v-if="user.dataDelivery === 'WRITE'"
@@ -555,6 +537,23 @@ const columns = [
               ...
             </UButton>
           </UDropdown>
+        </template>
+
+        <template #expand="{ row }">
+          <div class="px-4 py-2 text-left text-sm text-gray-400">
+            <h1>
+              Дата создания: {{ storeUsers.getNormalizedDate(row.created_at) }}
+            </h1>
+            <h1>
+              Дата последнего изменения:
+              {{ storeUsers.getNormalizedDate(row.updated_at) }}
+            </h1>
+            <h1 v-if="row.deleted">
+              Дата удаления: {{ storeUsers.getNormalizedDate(row.deleted) }}
+            </h1>
+            <h1>Создан: {{ row.createdUser }}</h1>
+            <h1>Изменен: {{ row.updatedUser }}</h1>
+          </div>
         </template>
       </UTable>
     </div>
