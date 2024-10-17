@@ -368,8 +368,8 @@ const columns = [
     >
       <UTable
         v-if="returnRows.length"
-        class="w-full z-[20] mx-auto text-center bg-white border-[1px] rounded-md mt-5"
-        :ui="{ wrapper: 'relative overflow-x-visible bg-white',
+        class="w-full z-[20] mx-auto text-center bg-white border-[1px] max-h-[600px] rounded-md mt-5"
+        :ui="{ wrapper: 'relative bg-white',
   td: {
     base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
     padding: 'px-3 py-1',
