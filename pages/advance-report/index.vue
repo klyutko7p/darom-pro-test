@@ -239,7 +239,7 @@ function getAllSumDirector() {
   let sumOfPVZ11 = rows.value
     ?.filter(
       (row) =>
-        ((row.createdUser === "Директор" && row.issuedUser === "Директор") ||
+      ((row.createdUser === "Директор" && row.issuedUser === "Директор") ||
           (row.createdUser === "Власенкова" &&
             row.issuedUser === "Власенкова")) &&
         row.type === "Нал" &&

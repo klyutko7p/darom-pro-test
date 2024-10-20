@@ -129,8 +129,10 @@ let isVisiblePages = ref(true);
           </th>
           <th scope="col" class="px-1 border-[1px]">Дата</th>
           <th scope="col" class="px-1 border-[1px]">ПВЗ</th>
-          <th scope="col" class="px-1 border-[1px]">Сумма (₽)</th>
+          <th scope="col" class="px-1 border-[1px]">Приход (₽)</th>
+          <th scope="col" class="px-1 border-[1px]">Расход (₽)</th>
           <th scope="col" class="px-1 border-[1px]">Статья расхода</th>
+          <th scope="col" class="px-1 border-[1px]">Приход</th>
           <th scope="col" class="px-1 border-[1px]">Комментарий</th>
           <th scope="col" class="px-1 border-[1px]">Компания</th>
           <th scope="col" class="px-1 border-[1px]">Создано</th>
@@ -199,7 +201,29 @@ let isVisiblePages = ref(true);
           <th scope="row" class="border-[1px]">
             {{ row.PVZ ? row.PVZ : "—" }}
           </th>
-          <td class="whitespace-nowrap">{{ row.expenditure }}</td>
+          <td class="whitespace-nowrap px-2 border-[1px]">
+            {{
+              row.typeOfExpenditure === "Перевод с баланса нал" ||
+              row.typeOfExpenditure === "Перевод с баланса безнал" ||
+              row.typeOfExpenditure === "Новый кредит нал" ||
+              row.typeOfExpenditure === "Новый кредит безнал" ||
+              row.typeOfExpenditure === "Пополнение баланса"
+                ? row.expenditure
+                : "—"
+            }}
+          </td>
+          <td class="whitespace-nowrap px-2 border-[1px]">
+            {{
+              row.typeOfExpenditure !== "Перевод с баланса нал" &&
+              row.typeOfExpenditure !== "Перевод с баланса безнал" &&
+              row.typeOfExpenditure !== "Новый кредит нал" &&
+              row.typeOfExpenditure !== "Новый кредит безнал" &&
+              row.typeOfExpenditure !== "Пополнение баланса"
+                ? row.expenditure
+                : "—"
+            }}
+          </td>
+
           <td class="whitespace-nowrap px-2 border-[1px]">
             {{ row.typeOfExpenditure }}
           </td>
