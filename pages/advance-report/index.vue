@@ -239,7 +239,7 @@ function getAllSumDirector() {
   let sumOfPVZ11 = rows.value
     ?.filter(
       (row) =>
-      ((row.createdUser === "Директор" && row.issuedUser === "Директор") ||
+        ((row.createdUser === "Директор" && row.issuedUser === "Директор") ||
           (row.createdUser === "Власенкова" &&
             row.issuedUser === "Власенкова")) &&
         row.type === "Нал" &&
@@ -711,17 +711,18 @@ let pvz = ref([
   "Коломенское WB",
   "Бессоново",
   "Новоандриановка",
-  "ПВЗ_1",
-  "ПВЗ_2",
-  "ПВЗ_3",
-  "ПВЗ_4",
-  "ППВЗ_5",
-  "ППВЗ_7",
   "Офис",
   "НаДом",
 ]);
 
 pvz.value = pvz.value.sort((a, b) => a.localeCompare(b, "ru"));
+
+pvz.value.push("ПВЗ_1");
+pvz.value.push("ПВЗ_2");
+pvz.value.push("ПВЗ_3");
+pvz.value.push("ПВЗ_4");
+pvz.value.push("ППВЗ_5");
+pvz.value.push("ППВЗ_7");
 
 let typesOfExpenditure = ref([
   "Передача денежных средств",

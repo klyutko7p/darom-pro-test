@@ -132,7 +132,6 @@ let isVisiblePages = ref(true);
           <th scope="col" class="px-1 border-[1px]">Приход (₽)</th>
           <th scope="col" class="px-1 border-[1px]">Расход (₽)</th>
           <th scope="col" class="px-1 border-[1px]">Статья расхода</th>
-          <th scope="col" class="px-1 border-[1px]">Приход</th>
           <th scope="col" class="px-1 border-[1px]">Комментарий</th>
           <th scope="col" class="px-1 border-[1px]">Компания</th>
           <th scope="col" class="px-1 border-[1px]">Создано</th>
@@ -223,7 +222,6 @@ let isVisiblePages = ref(true);
                 : "—"
             }}
           </td>
-
           <td class="whitespace-nowrap px-2 border-[1px]">
             {{ row.typeOfExpenditure }}
           </td>
