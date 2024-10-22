@@ -1664,8 +1664,7 @@ const typeOfOptions2 = [
           <AdvanceReportTable
             v-if="
               selectedUser !== 'Директор (С)' &&
-              selectedUser !== 'Директор' &&
-              user.username !== 'Власенкова'
+              selectedUser !== 'Директор'
             "
             :rows="
               filteredRows?.filter(
