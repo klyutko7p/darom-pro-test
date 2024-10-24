@@ -1414,7 +1414,7 @@ const typeOfOptions2 = [
   <div v-if="!isLoading">
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="table-admin-no-pad">
-        <div class="bg-gray-50 px-16 w-screen pt-10 max-sm:px-5 pb-5">
+        <div class="bg-gray-50 px-5 w-screen pt-10 max-sm:px-5 pb-5">
           <AdvanceReportFilters
             v-if="rows"
             @filtered-rows="handleFilteredRows"

@@ -30,8 +30,77 @@ const totalPages = computed(() =>
 );
 const totalRows = computed(() => Math.ceil(props.rows?.length || 0));
 
+const columns = [
+  {
+    key: "actions",
+  },
+  {
+    key: "date",
+    label: "Дата",
+  },
+  {
+    key: "PVZ",
+    label: "ПВЗ",
+  },
+  {
+    key: "expenditure1",
+    label: "Приход",
+  },
+  {
+    key: "expenditure2",
+    label: "Расход",
+  },
+  {
+    key: "typeOfExpenditure",
+    label: "Статья расхода",
+  },
+  {
+    key: "notation",
+    label: "Комментарий",
+  },
+  {
+    key: "company",
+    label: "Компания",
+  },
+  {
+    key: "createdUser",
+    label: "Создано",
+  },
+  {
+    key: "issuedUser",
+    label: "Получил",
+  },
+  {
+    key: "supportingDocuments",
+    label: "Документ",
+  },
+  {
+    key: "received",
+    label: "Получено",
+  },
+  {
+    key: "type",
+    label: "Тип",
+  },
+  {
+    key: "created_at",
+    label: " Дата создания",
+  },
+];
+
 onMounted(() => {
   updateCurrentPageData();
+
+  if (
+    props.user.username !== "Директор" &&
+    props.user.username !== "Власенкова"
+  ) {
+    columns.splice(0, 1);
+    columns.splice(12, 1);
+    columns.splice(11, 1);
+  }
+
+  selectedColumns.value = columns;
 });
 
 let returnRows = ref<Array<IAdvanceReport>>();
@@ -46,10 +115,14 @@ function updateCurrentPageData() {
 
 watch([props.rows, totalRows, props.user], updateCurrentPageData);
 
-function exportToExcel() {
-  let table = document.querySelector("#theTable");
+async function exportToExcel() {
+  perPage.value = await totalRows.value;
+  await updateCurrentPageData();
+  let table = document.querySelector(".table-fixed");
   let wb = utils.table_to_book(table);
-  writeFile(wb, "авансовый_отчет.xlsx");
+  await writeFile(wb, "авансовый_отчёт.xlsx");
+  perPage.value = await 100;
+  await updateCurrentPageData();
 }
 
 const prevPage = () => {
@@ -62,6 +135,36 @@ const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++;
   }
+};
+
+const items = (row: IAdvanceReport) => [
+  [
+    {
+      label: "Изменить",
+      icon: "i-heroicons-pencil-square-20-solid",
+      click: () => openModal(row),
+    },
+  ],
+  [
+    {
+      label: "Удалить",
+      icon: "i-heroicons-trash-20-solid",
+      click: () => deleteRow(row.id),
+    },
+  ],
+];
+
+const selectedColumns = ref();
+const columnsTable = computed(() =>
+  columns.filter((column) => selectedColumns.value?.includes(column))
+);
+
+const dropdownStates = ref({} as any);
+
+const toggleDropdown = (rowId: any) => {
+  dropdownStates.value = {};
+
+  dropdownStates.value[rowId] = !dropdownStates.value[rowId];
 };
 let isVisiblePages = ref(true);
 </script>
@@ -109,210 +212,175 @@ let isVisiblePages = ref(true);
     </UTooltip>
   </div>
 
-  <div class="relative max-h-[410px] bg-white overflow-y-auto mt-5 mb-10">
-    <table
-      id="theTable"
-      class="w-full bg-white border-gray-50 text-sm text-left rtl:text-right text-gray-500"
+  <div class="w-full flex items-end justify-end z-[50] mt-5">
+    <USelectMenu
+      class="w-[200px] z-[50]"
+      v-model="selectedColumns"
+      :options="columns"
+      multiple
     >
-      <thead
-        class="text-xs bg-[#36304a] border-[1px] text-white sticky top-0 z-30 uppercase text-center"
+      <UButton
+        class="w-[200px] z-[50]"
+        icon="i-heroicons-view-columns"
+        color="gray"
+        size="xs"
       >
-        <tr>
-          <th
-            scope="col"
-            class="exclude-row px-3 border-[1px] h-[60px]"
-            v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
-            "
-          >
-            редакт.
-          </th>
-          <th scope="col" class="px-1 border-[1px]">Дата</th>
-          <th scope="col" class="px-1 border-[1px]">ПВЗ</th>
-          <th scope="col" class="px-1 border-[1px]">Приход (₽)</th>
-          <th scope="col" class="px-1 border-[1px]">Расход (₽)</th>
-          <th scope="col" class="px-1 border-[1px]">Статья расхода</th>
-          <th scope="col" class="px-1 border-[1px]">Комментарий</th>
-          <th scope="col" class="px-1 border-[1px]">Компания</th>
-          <th scope="col" class="px-1 border-[1px]">Создано</th>
-          <th scope="col" class="px-1 border-[1px]">Получил</th>
-          <th scope="col" class="px-1 border-[1px]">Документ</th>
-          <th scope="col" class="px-1 border-[1px]">Получено</th>
-          <th
-            scope="col"
-            class="px-1 border-[1px]"
-            v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
-            "
-          >
-            Тип
-          </th>
-          <th
-            scope="col"
-            class="px-1 border-[1px]"
-            v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
-            "
-          >
-            Дата создания
-          </th>
-          <th
-            scope="col"
-            class="px-1 border-[1px]"
-            v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
-            "
-          >
-            Удаление
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="row in filteredRows"
-          class="text-center h-[50px] border-[1px]"
-        >
-          <td
-            class="border-[1px]"
-            v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
-            "
-          >
-            <div
-              @click="openModal(row)"
-              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
-            >
-              <div
-                @click="openModal(row)"
-                class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
-              >
-                <Icon
-                  class="text-green-500"
-                  name="ic:baseline-mode-edit"
-                  size="18"
-                />
-              </div>
-            </div>
-          </td>
-          <th scope="row" class="border-[1px] px-2">
-            {{ storeUsers.getNormalizedDateWithoutTime(row.date) }}
-          </th>
-          <th scope="row" class="border-[1px]">
-            {{ row.PVZ ? row.PVZ : "—" }}
-          </th>
-          <td class="whitespace-nowrap px-2 border-[1px]">
-            {{
-              row.typeOfExpenditure === "Перевод с баланса нал" ||
-              row.typeOfExpenditure === "Перевод с баланса безнал" ||
-              row.typeOfExpenditure === "Новый кредит нал" ||
-              row.typeOfExpenditure === "Новый кредит безнал" ||
-              row.typeOfExpenditure === "Пополнение баланса"
-                ? row.expenditure
-                : "—"
-            }}
-          </td>
-          <td class="whitespace-nowrap px-2 border-[1px]">
-            {{
-              row.typeOfExpenditure !== "Перевод с баланса нал" &&
-              row.typeOfExpenditure !== "Перевод с баланса безнал" &&
-              row.typeOfExpenditure !== "Новый кредит нал" &&
-              row.typeOfExpenditure !== "Новый кредит безнал" &&
-              row.typeOfExpenditure !== "Пополнение баланса"
-                ? row.expenditure
-                : "—"
-            }}
-          </td>
-          <td class="whitespace-nowrap px-2 border-[1px]">
-            {{ row.typeOfExpenditure }}
-          </td>
-          <td class="px-2 border-[1px]">
-            {{ row.notation ? row.notation : "—" }}
-          </td>
-          <td class="whitespace-nowrap px-2 border-[1px]">
-            {{ row.company ? row.company : "—" }}
-          </td>
-          <td class="whitespace-nowrap px-2 border-[1px]">
-            {{ row.createdUser }}
-          </td>
-          <td class="whitespace-nowrap border-[1px]">
-            {{ row.issuedUser ? row.issuedUser : "—" }}
-          </td>
-          <td class="whitespace-nowrap border-[1px]">
-            <a
-              target="_blank"
-              class="text-secondary-color hover:opacity-60 duration-200 font-bold"
-              v-if="
-                row.supportingDocuments && row.supportingDocuments.length > 2
-              "
-              :href="`https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/image/img-${row.supportingDocuments}`"
-            >
-              Фото
-            </a>
-            <h1 v-else>—</h1>
-          </td>
-          <td class="whitespace-nowrap border-[1px]">
-            <Icon
-              @click="updateDeliveryRow(row)"
-              v-if="
-                (user.username === row.issuedUser && !row.received) ||
-                ((user.username === 'Директор' ||
-                  user.username === 'Власенкова') &&
-                  row.issuedUser === 'Директор (С)' &&
-                  !row.received)
-              "
-              class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
-              name="mdi:checkbox-multiple-marked-circle"
-              size="32"
-            />
-            <h1 class="font-bold text-green-500">
-              {{
-                row.received ? storeUsers.getNormalizedDate(row.received) : ""
-              }}
-            </h1>
-            <h1 v-if="!row.received && !row.issuedUser">—</h1>
-          </td>
-          <td
-            class="whitespace-nowrap px-2 border-[1px]"
-            v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
-            "
-          >
-            {{ row.type }}
-          </td>
-          <td
-            class="whitespace-nowrap px-2 border-[1px]"
-            v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
-            "
-          >
-            {{ storeUsers.getNormalizedDate(row.created_at) }}
-          </td>
-          <td
-            class="whitespace-nowrap border-[1px]"
-            v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
-            "
-          >
-            <div
-              @click="deleteRow(row.id)"
-              class="bg-red-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
-            >
-              <Icon class="text-red-600" name="ic:round-delete" size="18" />
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        Столбцы
+      </UButton>
+    </USelectMenu>
   </div>
+
+  <UTable
+    class="w-full mx-auto text-center bg-white border-[1px] rounded-md mt-5 max-h-[390px]"
+    :ui="{
+  td: {
+    base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
+    padding: 'px-3 py-2',
+  },
+  th: {
+    base: 'text-center uppercase sticky top-0 z-[20] bg-white',
+    padding: 'px-1',
+    size: 'text-xs'
+  },
+  default:
+  {
+    checkbox:
+      { color: 'gray' as any }
+  },
+    }"
+    :rows="filteredRows"
+    :columns="columnsTable"
+    sort-asc-icon="i-heroicons-arrow-up"
+    sort-desc-icon="i-heroicons-arrow-down"
+  >
+    <template #date-data="{ row }">
+      <p>
+        {{ storeUsers.getNormalizedDateWithoutTime(row.date) }}
+      </p>
+    </template>
+
+    <template #PVZ-data="{ row }">
+      <p>
+        {{ row.PVZ ? row.PVZ : "—" }}
+      </p>
+    </template>
+
+    <template #expenditure1-data="{ row }">
+      <p>
+        {{
+          row.typeOfExpenditure === "Перевод с баланса нал" ||
+          row.typeOfExpenditure === "Перевод с баланса безнал" ||
+          row.typeOfExpenditure === "Новый кредит нал" ||
+          row.typeOfExpenditure === "Новый кредит безнал" ||
+          row.typeOfExpenditure === "Пополнение баланса"
+            ? row.expenditure
+            : "—"
+        }}
+      </p>
+    </template>
+
+    <template #expenditure2-data="{ row }">
+      <p>
+        {{
+          row.typeOfExpenditure !== "Перевод с баланса нал" &&
+          row.typeOfExpenditure !== "Перевод с баланса безнал" &&
+          row.typeOfExpenditure !== "Новый кредит нал" &&
+          row.typeOfExpenditure !== "Новый кредит безнал" &&
+          row.typeOfExpenditure !== "Пополнение баланса"
+            ? row.expenditure
+            : "—"
+        }}
+      </p>
+    </template>
+
+    <template #typeOfExpenditure-data="{ row }">
+      <p>
+        {{ row.typeOfExpenditure }}
+      </p>
+    </template>
+
+    <template #notation-data="{ row }">
+      <p>
+        {{ row.notation ? row.notation : "—" }}
+      </p>
+    </template>
+
+    <template #company-data="{ row }">
+      <p>
+        {{ row.company ? row.company : "—" }}
+      </p>
+    </template>
+
+    <template #createdUser-data="{ row }">
+      <p>
+        {{ row.createdUser }}
+      </p>
+    </template>
+
+    <template #issuedUser-data="{ row }">
+      <p>
+        {{ row.issuedUser ? row.issuedUser : "—" }}
+      </p>
+    </template>
+
+    <template #supportingDocuments-data="{ row }">
+      <a
+        target="_blank"
+        class="text-secondary-color hover:opacity-60 duration-200 font-bold"
+        v-if="row.supportingDocuments && row.supportingDocuments.length > 2"
+        :href="`https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/image/img-${row.supportingDocuments}`"
+      >
+        Фото
+      </a>
+      <h1 v-else>—</h1>
+    </template>
+
+    <template #received-data="{ row }">
+      <Icon
+        @click="updateDeliveryRow(row)"
+        v-if="
+          (user.username === row.issuedUser && !row.received) ||
+          ((user.username === 'Директор' || user.username === 'Власенкова') &&
+            row.issuedUser === 'Директор (С)' &&
+            !row.received)
+        "
+        class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
+        name="mdi:checkbox-multiple-marked-circle"
+        size="32"
+      />
+      <h1 class="font-bold text-green-500">
+        {{ row.received ? storeUsers.getNormalizedDate(row.received) : "" }}
+      </h1>
+      <h1 v-if="!row.received && !row.issuedUser">—</h1>
+    </template>
+
+    <template #type-data="{ row }">
+      <p v-if="user.username === 'Директор' || user.username === 'Власенкова'">
+        {{ row.type }}
+      </p>
+    </template>
+
+    <template #created_at-data="{ row }">
+      <p v-if="user.username === 'Директор' || user.username === 'Власенкова'">
+        {{ storeUsers.getNormalizedDate(row.created_at) }}
+      </p>
+    </template>
+
+    <template #actions-data="{ row }">
+      <UDropdown
+        v-if="user.username === 'Директор' || user.username === 'Власенкова'"
+        :open="dropdownStates[row.id]"
+        :items="items(row)"
+      >
+        <UButton
+          variant="ghost"
+          color="gray"
+          class="text-sm duration-200"
+          @touchstart.stop="toggleDropdown(row.id)"
+        >
+          ...
+        </UButton>
+      </UDropdown>
+    </template>
+  </UTable>
 </template>
-
-<style scoped>
-.hidden-row {
-  display: none !important;
-}
-
-tr:nth-child(even) {
-  background-color: #f2f2f2;
-  /* Цвет для четных строк */
-}
-</style>
