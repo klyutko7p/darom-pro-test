@@ -206,8 +206,26 @@ function scanItem() {
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertToURL(scannedLink);
+    console.log(scannedLink);
     let rowData = await storeRansom.getRansomRowById(+scannedLink, "OurRansom");
-    handleCheckboxChange(rowData);
+    if (props.user.role !== "SORTIROVKA") {
+      if (rowData.issued) {
+        toast.error(`Товар с ID: ${rowData.id} не отметился. Причина: товар уже выдан!`, { timeout: 10000 });
+        return;
+      }
+
+      if (!rowData.deliveredPVZ) {
+        toast.error(`Товар с ID: ${rowData.id} не отметился. Причина: товар не принят на ПВЗ!`, {
+          timeout: 10000,
+        });
+        return;
+      }
+
+      handleCheckboxChange(rowData);
+    } else {
+      handleCheckboxChange(rowData);
+    }
+    console.log(rowData);
     scanStringItem.value = "";
   }, 1000);
 }
@@ -1340,7 +1358,9 @@ async function writeClipboardText(text: any) {
             <td
               class="border-2"
               v-if="user.notation1 === 'READ' || user.notation1 === 'WRITE'"
-              :class="{ 'bg-yellow-300 text-white font-semibold': row.notation }"
+              :class="{
+                'bg-yellow-300 text-white font-semibold': row.notation,
+              }"
             >
               {{ row.notation ? row.notation : "Пусто" }}
             </td>
