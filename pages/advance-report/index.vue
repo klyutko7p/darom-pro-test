@@ -2136,7 +2136,7 @@ const typeOfOptions2 = [
 
     <div v-else>
       <NuxtLayout name="table-user-no-pad">
-        <div class="bg-gray-50 px-16 w-screen pt-10 max-sm:px-5 pb-5">
+        <div class="bg-gray-50 px-5 w-screen pt-10 max-sm:px-5 pb-5">
           <div>
             <div
               class="text-center text-2xl my-5 flex items-center justify-center flex-col gap-3"
