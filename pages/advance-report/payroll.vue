@@ -94,29 +94,35 @@ async function updateReport(rowsData: IPayroll[]) {
 }
 
 async function createRow() {
+  isLoading.value = true;
   rowData.value.fullname = employees.value.find(
     (employee) => employee.id === rowData.value.fullname
   )?.fullname;
   await storePayrolls.createPayroll(rowData.value);
   rows.value = await storePayrolls.getPayrolls();
+  isLoading.value = false;
   closeModal();
 }
 
 async function updateRow() {
+  isLoading.value = true;
   rowData.value.fullname = employees.value.find(
     (employee) => employee.id === rowData.value.fullname
   )?.fullname;
   await storePayrolls.updatePayroll(rowData.value);
   rows.value = await storePayrolls.getPayrolls();
+  isLoading.value = false;
   closeModal();
 }
 
 async function deleteRow(id: number) {
   let answer = confirm("Вы точно хотите удалить строку?");
   if (answer) {
+    isLoading.value = true;
     await storePayrolls.deletePayroll(id);
     rows.value = await storePayrolls.getPayrolls();
   }
+  isLoading.value = false;
 }
 
 const filteredRows = ref<Array<IAdvanceReport>>();
@@ -203,8 +209,8 @@ const options = [
 ];
 
 function clearLocalStorage() {
-  const addressData = localStorage.getItem("addressData"); 
-  localStorage.clear(); 
+  const addressData = localStorage.getItem("addressData");
+  localStorage.clear();
   if (addressData) {
     localStorage.setItem("addressData", addressData);
   }

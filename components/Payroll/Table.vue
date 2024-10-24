@@ -453,7 +453,7 @@ const columns = [
   },
 ];
 
-const items = (row) => [
+const items = (row: IPayroll) => [
   [
     {
       label: "Изменить",

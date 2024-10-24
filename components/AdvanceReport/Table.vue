@@ -30,7 +30,7 @@ const totalPages = computed(() =>
 );
 const totalRows = computed(() => Math.ceil(props.rows?.length || 0));
 
-const columns = [
+let columns = [
   {
     key: "actions",
   },
@@ -101,6 +101,31 @@ onMounted(() => {
   }
 
   selectedColumns.value = columns;
+
+  let storageSelectedColumns = localStorage.getItem(
+    "advanceReportSelectedCols"
+  );
+  let storageColumns = localStorage.getItem("advanceReportColumns");
+  let storageTableColumns = localStorage.getItem("advanceReportTableColumns");
+  if (storageColumns && storageSelectedColumns) {
+    try {
+      const parsedSelectedColumns = JSON.parse(storageSelectedColumns);
+      const parsedColumns = JSON.parse(storageColumns);
+
+      if (parsedColumns.length) {
+        selectedColumns.value = parsedSelectedColumns;
+        columns = parsedColumns;
+      }
+    } catch (e) {
+      console.error("Error parsing stored columns:", e);
+    }
+  }
+
+  columnsTable.value = columns.filter((column) => {
+    return selectedColumns.value?.some(
+      (selectedColumn: any) => selectedColumn.key === column.key
+    );
+  });
 });
 
 let returnRows = ref<Array<IAdvanceReport>>();
@@ -154,11 +179,46 @@ const items = (row: IAdvanceReport) => [
   ],
 ];
 
-const selectedColumns = ref();
-const columnsTable = computed(() =>
+const selectedColumns = ref([] as any);
+let columnsTable = ref(
   columns.filter((column) => selectedColumns.value?.includes(column))
 );
 
+watch([selectedColumns], saveSelectedColumns);
+function saveSelectedColumns() {
+  localStorage.setItem(
+    "advanceReportSelectedCols",
+    JSON.stringify(selectedColumns.value)
+  );
+  localStorage.setItem("advanceReportColumns", JSON.stringify(columns));
+
+  columnsTable.value = columns.filter((column) => {
+    return selectedColumns.value?.some(
+      (selectedColumn: any) => selectedColumn.key === column.key
+    );
+  });
+}
+
+function clearColumns() {
+  localStorage.removeItem("advanceReportSelectedCols");
+
+  if (
+    props.user.username !== "Директор" &&
+    props.user.username !== "Власенкова"
+  ) {
+    columns.splice(0, 1);
+    columns.splice(12, 1);
+    columns.splice(11, 1);
+  }
+
+  selectedColumns.value = columns;
+
+  columnsTable.value = columns.filter((column) => {
+    return selectedColumns.value?.some(
+      (selectedColumn: any) => selectedColumn.key === column.key
+    );
+  });
+}
 const dropdownStates = ref({} as any);
 
 const toggleDropdown = (rowId: any) => {
@@ -212,7 +272,7 @@ let isVisiblePages = ref(true);
     </UTooltip>
   </div>
 
-  <div class="w-full flex items-end justify-end z-[50] mt-5">
+  <div class="w-full flex items-center gap-3 justify-end z-[50] mt-5">
     <USelectMenu
       class="w-[200px] z-[50]"
       v-model="selectedColumns"
@@ -228,6 +288,7 @@ let isVisiblePages = ref(true);
         Столбцы
       </UButton>
     </USelectMenu>
+    <Icon class="hover:bg-secondary-color duration-200 cursor-pointer" name="pajamas:clear-all" @click="clearColumns" />
   </div>
 
   <UTable
