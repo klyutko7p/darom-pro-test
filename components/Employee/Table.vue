@@ -49,6 +49,10 @@ const columns = [
     sortable: true,
   },
   {
+    key: "job",
+    label: "Должность",
+  },
+  {
     key: "phone",
     label: "Телефон/Карта",
   },

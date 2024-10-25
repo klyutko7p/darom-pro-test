@@ -15,6 +15,7 @@ export default defineEventHandler(async (event) => {
         PVZ: row.PVZ,
         company: row.company,
         fullname: row.fullname,
+        job: row.job,
         phone: row.phone,
         bank: row.bank,
         paymentPerShift: +row.paymentPerShift,

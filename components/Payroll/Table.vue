@@ -400,6 +400,10 @@ const columns = [
     sortable: true,
   },
   {
+    key: "job",
+    label: "Должность",
+  },
+  {
     key: "phone",
     label: "Телефон/Карта",
   },
@@ -470,7 +474,7 @@ const items = (row: IPayroll) => [
   ],
 ];
 
-const selectedColumns = ref(columns.toSpliced(3, 3));
+const selectedColumns = ref(columns.toSpliced(3, 4));
 const columnsTable = computed(() =>
   columns.filter((column) => selectedColumns.value.includes(column))
 );

@@ -267,6 +267,7 @@ model Employee {
   id              Int     @id @default(autoincrement())
   PVZ             String?
   company         String?
+  job             String?
   fullname        String?
   phone           String?
   bank            String?
@@ -279,6 +280,7 @@ model Payroll {
   PVZ               String?
   company           String?
   fullname          String?
+  job               String?
   phone             String?
   bank              String?
   paymentPerShift   Float?

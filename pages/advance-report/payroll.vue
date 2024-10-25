@@ -68,6 +68,7 @@ async function createReport(object: any) {
   const newArray = object.rows.map((employee: IEmployee) => ({
     PVZ: employee.PVZ,
     company: employee.company,
+    job: employee.job,
     fullname: employee.fullname,
     phone: employee.phone,
     bank: employee.bank,
@@ -152,6 +153,17 @@ let pvz = ref([
 
 let companies = ref(["W/O/Я start", "Darom.pro", "Сортировка", "Доставка"]);
 
+let jobs: string[] = [
+  "Руководитель проекта",
+  "Управляющий ПВЗ",
+  "Сотрудник ПВЗ",
+  "Секретарь",
+  "Директор",
+  "Служба поддержки",
+  "Светлана",
+  "Водитель",
+];
+
 let banks = ref([
   "тинькофф",
   "сбер",
@@ -169,6 +181,7 @@ function autoInfoByFullname() {
   rowData.value.PVZ = row[0].PVZ;
   rowData.value.company = row[0].company;
   rowData.value.phone = row[0].phone;
+  rowData.value.job = row[0].job;
   rowData.value.bank = row[0].bank;
   rowData.value.paymentPerShift2 = row[0].paymentPerShift;
   rowData.value.hoursPerShift = row[0].hoursPerShift;
@@ -296,6 +309,15 @@ onUnmounted(() => {
                       )
                     "
                     @change="autoInfoByFullname"
+                  />
+                </div>
+
+                <div class="flex flex-col items-start text-left gap-2 mb-5">
+                  <label for="job">Должность</label>
+                  <USelectMenu
+                    class="w-full"
+                    v-model="rowData.job"
+                    :options="jobs"
                   />
                 </div>
 

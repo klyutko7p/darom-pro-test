@@ -15,6 +15,7 @@ export default defineEventHandler(async (event) => {
         PVZ: row.PVZ,
         company: row.company,
         fullname: row.fullname,
+        job: row.job,
         phone: row.phone,
         bank: row.bank,
         paymentPerShift: +row.paymentPerShift,
@@ -23,7 +24,7 @@ export default defineEventHandler(async (event) => {
     });
   } catch (error) {
     if (error instanceof Error) {
-      console.error(error.message)
+      console.error(error.message);
       return { error: error.message };
     }
   }

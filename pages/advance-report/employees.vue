@@ -12,6 +12,7 @@ const token = Cookies.get("token");
 let isLoading = ref(false);
 const pvz = ref<Array<string>>([]);
 const companies = ref<Array<string>>([]);
+const jobs = ref<Array<string>>([]);
 const banks = ref<Array<string>>([]);
 
 onMounted(async () => {
@@ -22,6 +23,7 @@ onMounted(async () => {
   isLoading.value = true;
   pvz.value = storeEmployees.getPVZ();
   companies.value = storeEmployees.getCompanies();
+  jobs.value = storeEmployees.getJobs();
   banks.value = storeEmployees.getBanks();
   user.value = await storeUsers.getUser();
   const employees = await storeEmployees.getEmployees();
@@ -158,6 +160,15 @@ watch(isOpen, (newValue) => {
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">ФИО</label>
                 <UInput class="w-full" v-model="rowData.fullname" type="text" />
+              </div>
+
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="job">Должность</label>
+                <USelectMenu
+                  class="w-full"
+                  v-model="rowData.job"
+                  :options="jobs"
+                />
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">

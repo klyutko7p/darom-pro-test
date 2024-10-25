@@ -36,6 +36,17 @@ export const useEmployeesStore = defineStore("employees", () => {
     "Доставка",
   ];
 
+  let jobs: string[] = [
+    "Руководитель проекта",
+    "Управляющий ПВЗ",
+    "Сотрудник ПВЗ",
+    "Секретарь",
+    "Директор",
+    "Служба поддержки",
+    "Светлана",
+    "Водитель",
+  ];
+
   let banks: string[] = [
     "тинькофф",
     "сбер",
@@ -55,6 +66,10 @@ export const useEmployeesStore = defineStore("employees", () => {
 
   function getCompanies() {
     return companies;
+  }
+
+  function getJobs() {
+    return jobs;
   }
 
   function getBanks() {
@@ -153,5 +168,14 @@ export const useEmployeesStore = defineStore("employees", () => {
     }
   }
 
-  return { getPVZ, getCompanies, getBanks, updateEmployee, getEmployees, createEmployee, deleteEmployee };
+  return {
+    getJobs,
+    getPVZ,
+    getCompanies,
+    getBanks,
+    updateEmployee,
+    getEmployees,
+    createEmployee,
+    deleteEmployee,
+  };
 });
