@@ -50,33 +50,33 @@ function openModal(row: IEmployee) {
 }
 
 async function createRow() {
-  isLoading.value = true;
   await storeEmployees.createEmployee(rowData.value);
+  closeModal();
   const employees = await storeEmployees.getEmployees();
   rows.value = employees!;
-
-  closeModal();
-  isLoading.value = false;
+  rows.value = rows.value.sort((a, b) => {
+    return a.fullname.localeCompare(b.fullname, "ru");
+  });
 }
 
 async function updateRow() {
-  isLoading.value = true;
   await storeEmployees.updateEmployee(rowData.value);
+  closeModal();
   const employees = await storeEmployees.getEmployees();
   rows.value = employees!;
-
-  closeModal();
-  isLoading.value = false;
+  rows.value = rows.value.sort((a, b) => {
+    return a.fullname.localeCompare(b.fullname, "ru");
+  });
 }
 
 async function deleteRow(id: number) {
-  isLoading.value = true;
   await storeEmployees.deleteEmployee(id);
+  closeModal();
   const employees = await storeEmployees.getEmployees();
   rows.value = employees!;
-
-  closeModal();
-  isLoading.value = false;
+  rows.value = rows.value.sort((a, b) => {
+    return a.fullname.localeCompare(b.fullname, "ru");
+  });
 }
 
 function lockScroll() {
@@ -104,7 +104,7 @@ watch(isOpen, (newValue) => {
   <div v-if="!isLoading">
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="table-admin-no-pad">
-        <div class="bg-gray-50 px-16 w-screen pt-10 max-sm:px-5 pb-5">
+        <div class="bg-gray-50 px-8 w-screen pt-10 max-sm:px-5 pb-5">
           <div
             class="flex items-center justify-between max-sm:items-start gap-3"
           >
