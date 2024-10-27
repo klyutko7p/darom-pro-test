@@ -1272,7 +1272,6 @@ async function writeClipboardText(text: any) {
                 @change="handleCheckboxChange(row)"
                 :disabled="
                   user.username === 'Кожемякина' ||
-                  user.username === 'Гарник' ||
                   user.username === 'Гриценко'
                 "
               />

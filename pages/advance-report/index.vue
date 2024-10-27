@@ -32,14 +32,14 @@ onMounted(async () => {
     let deliveryRowsPromise;
 
     if (user.value.role === "ADMIN") {
-      advanceReportsPromise = storeAdvanceReports.getAdvancedReports();
+      advanceReportsPromise = storeAdvanceReports.getAdvancedReports(user.value);
       ourRansomRowsPromise =
         storeRansom.getRansomRowsForAdvanceReportOurRansomPartOne();
       ourRansomRowsPromise2 =
         storeRansom.getRansomRowsForAdvanceReportOurRansomPartTwo();
       deliveryRowsPromise = storeRansom.getRansomRowsForBalanceDelivery();
     } else {
-      advanceReportsPromise = storeAdvanceReports.getAdvancedReports();
+      advanceReportsPromise = storeAdvanceReports.getAdvancedReports(user.value);
     }
 
     const [
@@ -889,7 +889,7 @@ async function createRow() {
       rowData.value,
       user.value.username
     );
-    rows.value = await storeAdvanceReports.getAdvancedReports();
+    rows.value = await storeAdvanceReports.getAdvancedReports(user.value);
     originallyRows.value = rows.value;
 
     if (user.value.role !== "ADMIN") {
@@ -1004,7 +1004,7 @@ async function updateRow() {
     await storeAdvanceReports.updateAdvanceReport(rowData.value);
   }
 
-  rows.value = await storeAdvanceReports.getAdvancedReports();
+  rows.value = await storeAdvanceReports.getAdvancedReports(user.value);
   originallyRows.value = rows.value;
 
   if (user.value.role !== "ADMIN") {
@@ -1049,7 +1049,7 @@ async function updateRow() {
 async function updateDeliveryRow(row: any) {
   isLoading.value = true;
   await storeAdvanceReports.updateDeliveryStatus(row.row);
-  rows.value = await storeAdvanceReports.getAdvancedReports();
+  rows.value = await storeAdvanceReports.getAdvancedReports(user.value);
   originallyRows.value = rows.value;
 
   if (user.value.role !== "ADMIN") {
@@ -1107,7 +1107,7 @@ async function deleteRow(id: any) {
   if (answer) {
     isLoading.value = true;
     await storeAdvanceReports.deleteRow(id.id);
-    rows.value = await storeAdvanceReports.getAdvancedReports();
+    rows.value = await storeAdvanceReports.getAdvancedReports(user.value);
     originallyRows.value = rows.value;
 
     if (user.value.role !== "ADMIN") {

@@ -90,16 +90,17 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
     }
   }
 
-  async function getAdvancedReports() {
+  async function getAdvancedReports(user: User) {
     try {
       if (cachedAdvanceReportRows) {
         return cachedAdvanceReportRows;
       } else {
         let { data }: any = await useFetch("/api/advance-report/get-rows", {
-          method: "GET",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({ user }),
         });
         cachedAdvanceReportRows = data.value;
         return cachedAdvanceReportRows;

@@ -36,7 +36,7 @@ onMounted(async () => {
 
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  rows.value = await storeAdvanceReports.getAdvancedReports();
+  rows.value = await storeAdvanceReports.getAdvancedReports(user.value);
 
   const [
     ransomRowsForBalanceOurRansomDataPartOne,
