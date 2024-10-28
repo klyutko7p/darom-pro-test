@@ -32,14 +32,18 @@ onMounted(async () => {
     let deliveryRowsPromise;
 
     if (user.value.role === "ADMIN") {
-      advanceReportsPromise = storeAdvanceReports.getAdvancedReports(user.value);
+      advanceReportsPromise = storeAdvanceReports.getAdvancedReports(
+        user.value
+      );
       ourRansomRowsPromise =
         storeRansom.getRansomRowsForAdvanceReportOurRansomPartOne();
       ourRansomRowsPromise2 =
         storeRansom.getRansomRowsForAdvanceReportOurRansomPartTwo();
       deliveryRowsPromise = storeRansom.getRansomRowsForBalanceDelivery();
     } else {
-      advanceReportsPromise = storeAdvanceReports.getAdvancedReports(user.value);
+      advanceReportsPromise = storeAdvanceReports.getAdvancedReports(
+        user.value
+      );
     }
 
     const [
@@ -804,14 +808,16 @@ async function createRow() {
   } else if (
     rowData.value.typeOfExpenditure === "Перевод с баланса нал" &&
     +rowData.value.expenditure > +Math.ceil(getAllSumFromEmployees()) &&
-    rowData.value.type === "Безнал"
+    rowData.value.type === "Безнал" &&
+    user.value.username !== "Власенкова"
   ) {
     toast.error("На балансе нал не хватает средств!");
     return;
   } else if (
     rowData.value.typeOfExpenditure === "Перевод с баланса безнал" &&
     +rowData.value.expenditure > +allSum2.value &&
-    rowData.value.type === "Нал"
+    rowData.value.type === "Нал" &&
+    user.value.username !== "Власенкова"
   ) {
     toast.error("На балансе Директора безнал не хватает средств!");
     return;
@@ -2070,10 +2076,10 @@ const typeOfOptions2 = [
               <label for="dispatchPVZ1">ПВЗ</label>
               <USelectMenu
                 :disabled="
-                  rowData.typeOfExpenditure === 'Новый кредит нал' ||
-                  rowData.typeOfExpenditure === 'Перевод с баланса безнал' ||
+                  rowData.typeOfExpenditure === 'Новый кредит безнал' ||
+                  rowData.typeOfExpenditure === 'Перевод с баланса нал' ||
                   rowData.typeOfExpenditure ===
-                    'Перевод с кредитного баланса нал'
+                    'Перевод с кредитного баланса безнал'
                 "
                 class="w-full"
                 v-model="rowData.PVZ"
@@ -2085,10 +2091,10 @@ const typeOfOptions2 = [
               <label for="dispatchPVZ1">Компания</label>
               <USelectMenu
                 :disabled="
-                  rowData.typeOfExpenditure === 'Новый кредит нал' ||
-                  rowData.typeOfExpenditure === 'Перевод с баланса безнал' ||
+                  rowData.typeOfExpenditure === 'Новый кредит безнал' ||
+                  rowData.typeOfExpenditure === 'Перевод с баланса нал' ||
                   rowData.typeOfExpenditure ===
-                    'Перевод с кредитного баланса нал'
+                    'Перевод с кредитного баланса безнал'
                 "
                 class="w-full"
                 v-model="rowData.company"
