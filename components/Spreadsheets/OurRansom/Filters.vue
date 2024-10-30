@@ -125,20 +125,27 @@ const filterRows = () => {
           row.productName
             .toLowerCase()
             .includes(selectedProductName.value.trim().toLowerCase()))) &&
-      (!selectedDispatchPVZ.value || row.dispatchPVZ === selectedDispatchPVZ.value) &&
+      (!selectedDispatchPVZ.value ||
+        row.dispatchPVZ === selectedDispatchPVZ.value) &&
       (!selectedOrderPVZ.value || row.orderPVZ === selectedOrderPVZ.value) &&
-      (!selectedOrderAccount.value || row.orderAccount === selectedOrderAccount.value) &&
-      (!selectedAdditionally.value || row.additionally === selectedAdditionally.value) &&
+      (!selectedOrderAccount.value ||
+        row.orderAccount === selectedOrderAccount.value) &&
+      (!selectedAdditionally.value ||
+        row.additionally === selectedAdditionally.value) &&
       (!selectedNotation.value ||
-        (row.notation && row.notation
-          .toLowerCase()
-          .includes(selectedNotation.value.toLowerCase()))) &&
+        (row.notation &&
+          row.notation
+            .toLowerCase()
+            .includes(selectedNotation.value.toLowerCase()))) &&
       (!selectedPriceSite.value || row.priceSite == selectedPriceSite.value) &&
-      (!startingDate.value || new Date(row.issued) >= new Date(newStartingDate)) &&
+      (!startingDate.value ||
+        new Date(row.issued) >= new Date(newStartingDate)) &&
       (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
-      (!startingDate2.value || new Date(row.deliveredSC) >= new Date(newStartingDate2)) &&
+      (!startingDate2.value ||
+        new Date(row.deliveredSC) >= new Date(newStartingDate2)) &&
       (!endDate2.value || new Date(row.deliveredSC) <= new Date(newEndDate2)) &&
-      (!startingDate3.value || new Date(row.created_at) >= new Date(newStartingDate3)) &&
+      (!startingDate3.value ||
+        new Date(row.created_at) >= new Date(newStartingDate3)) &&
       (!endDate3.value || new Date(row.created_at) <= new Date(newEndDate3)) &&
       (!startingDate4.value ||
         new Date(row.deliveredPVZ) >= new Date(newStartingDate4)) &&
@@ -215,7 +222,9 @@ let variables = ref([
 const nonEmptyCount: Ref<number> = computed(() => {
   return variables.value.filter((variable: any) => {
     return (
-      variable.value !== undefined && variable.value !== null && variable.value !== ""
+      variable.value !== undefined &&
+      variable.value !== null &&
+      variable.value !== ""
     );
   }).length;
 });
@@ -251,8 +260,25 @@ function saveFiltersToLocalStorage() {
 }
 
 function clearLocalStorage() {
-  const addressData = localStorage.getItem("addressData"); 
-  localStorage.clear(); 
+  localStorage.removeItem("selectedCell");
+  localStorage.removeItem("selectedFromName");
+  localStorage.removeItem("selectedOrderPVZ");
+  localStorage.removeItem("selectedProductName");
+  localStorage.removeItem("selectedDispatchPVZ");
+  localStorage.removeItem("selectedOrderAccount");
+  localStorage.removeItem("selectedNotation");
+  localStorage.removeItem("selectedAdditionally");
+  localStorage.removeItem("selectedPriceSite");
+  localStorage.removeItem("startingDate");
+  localStorage.removeItem("endDate");
+  localStorage.removeItem("startingDate2");
+  localStorage.removeItem("endDate2");
+  localStorage.removeItem("startingDate3");
+  localStorage.removeItem("endDate3");
+  localStorage.removeItem("startingDate4");
+  localStorage.removeItem("endDate4");
+
+  const addressData = localStorage.getItem("addressData");
   if (addressData) {
     localStorage.setItem("addressData", addressData);
   }
@@ -301,12 +327,16 @@ onMounted(() => {
     selectedOrderPVZ.value = storedSelectedOrderPVZ;
   }
 
-  const storedSelectedOrderAccount = loadFromLocalStorage("selectedOrderAccount");
+  const storedSelectedOrderAccount = loadFromLocalStorage(
+    "selectedOrderAccount"
+  );
   if (storedSelectedOrderAccount !== null) {
     selectedOrderAccount.value = storedSelectedOrderAccount;
   }
 
-  const storedSelectedAdditionally = loadFromLocalStorage("selectedAdditionally");
+  const storedSelectedAdditionally = loadFromLocalStorage(
+    "selectedAdditionally"
+  );
   if (storedSelectedAdditionally !== null) {
     selectedAdditionally.value = storedSelectedAdditionally;
   }
@@ -375,11 +405,16 @@ let dateFilter = ref("issued");
         name="material-symbols:settings-rounded"
         size="24"
       />
-      <h1 class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full">
+      <h1
+        class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full"
+      >
         {{ nonEmptyCount }}
       </h1>
     </div>
-    <div v-if="showFilters" class="border-2 border-gray-300 p-3 mt-3 border-dashed">
+    <div
+      v-if="showFilters"
+      class="border-2 border-gray-300 p-3 mt-3 border-dashed"
+    >
       <div class="grid grid-cols-2 max-xl:grid-cols-2 max-md:grid-cols-1">
         <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
           <h1>Ячейка:</h1>
@@ -525,7 +560,10 @@ let dateFilter = ref("issued");
         <div
           class="flex items-center max-sm:flex-col max-sm:items-start max-sm:gap-5 mt-5"
         >
-          <div class="flex items-center gap-3 mr-5" v-if="dateFilter === 'issued'">
+          <div
+            class="flex items-center gap-3 mr-5"
+            v-if="dateFilter === 'issued'"
+          >
             <h1 class="max-sm:mr-3">С</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
@@ -535,7 +573,10 @@ let dateFilter = ref("issued");
               v-model="startingDate"
             />
           </div>
-          <div class="flex items-center gap-3 max-sm:mb-7" v-if="dateFilter === 'issued'">
+          <div
+            class="flex items-center gap-3 max-sm:mb-7"
+            v-if="dateFilter === 'issued'"
+          >
             <h1>По</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
@@ -545,7 +586,10 @@ let dateFilter = ref("issued");
               v-model="endDate"
             />
           </div>
-          <div class="flex items-center gap-3 mr-5" v-if="dateFilter === 'sorted'">
+          <div
+            class="flex items-center gap-3 mr-5"
+            v-if="dateFilter === 'sorted'"
+          >
             <h1 class="max-sm:mr-3">C</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
@@ -555,7 +599,10 @@ let dateFilter = ref("issued");
               v-model="startingDate2"
             />
           </div>
-          <div class="flex items-center gap-3 max-sm:mb-7" v-if="dateFilter === 'sorted'">
+          <div
+            class="flex items-center gap-3 max-sm:mb-7"
+            v-if="dateFilter === 'sorted'"
+          >
             <h1>По</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
@@ -565,7 +612,10 @@ let dateFilter = ref("issued");
               v-model="endDate2"
             />
           </div>
-          <div class="flex items-center gap-3 mr-5" v-if="dateFilter === 'created'">
+          <div
+            class="flex items-center gap-3 mr-5"
+            v-if="dateFilter === 'created'"
+          >
             <h1 class="max-sm:mr-3">C</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
@@ -588,7 +638,10 @@ let dateFilter = ref("issued");
               v-model="endDate3"
             />
           </div>
-          <div class="flex items-center gap-3 mr-5" v-if="dateFilter === 'delivered'">
+          <div
+            class="flex items-center gap-3 mr-5"
+            v-if="dateFilter === 'delivered'"
+          >
             <h1 class="max-sm:mr-3">C</h1>
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"

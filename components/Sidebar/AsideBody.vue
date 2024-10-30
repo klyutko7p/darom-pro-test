@@ -385,6 +385,26 @@ function showSettingsList() {
             >
           </div>
         </li>
+        <li>
+          <div
+            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
+            @click="router.push('/spreadsheets/inventory')"
+            v-if="
+              user.username === 'Шведова' ||
+              user.role === 'PVZ' ||
+              user.role === 'PPVZ' ||
+              user.username === 'Директор' ||
+              user.username === 'Власенкова'
+            "
+          >
+            <Icon
+              class="text-gray-500 transition duration-75 group-hover:text-gray-900"
+              name="material-symbols:inventory-rounded"
+              size="24"
+            />
+            <span class="flex-1 ms-3 whitespace-nowrap">Инвентаризация</span>
+          </div>
+        </li>
       </ul>
     </div>
 

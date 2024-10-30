@@ -35,11 +35,19 @@ let pvz = ref<Array<string>>([]);
 const filteredRows = ref(props.rows);
 
 const totalRows = computed(() => Math.ceil(props.rows?.length));
+let uniqueId = ref("q");
 
 onMounted(() => {
   pvz.value = storeAdvanceReports.getPVZ();
   updateCurrentPageData();
   getTotal();
+
+  const getRandomLetter = () => {
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    return letters[Math.floor(Math.random() * letters.length)];
+  };
+
+  uniqueId.value = getRandomLetter();
 });
 
 let returnRows = ref<Array<IAdvanceReport>>();
@@ -404,7 +412,7 @@ watch([props.rows, totalRows, filteredRows.value], clearTotalSums);
 watch([props.rows, totalRows, filteredRows.value], updateCurrentPageData);
 
 function exportToExcel() {
-  let table = document.querySelector("#theTable");
+  let table = document.querySelector(`.${uniqueId.value}`);
   let wb = utils.table_to_book(table);
   writeFile(wb, "сводные_таблицы.xlsx");
 }
@@ -428,7 +436,7 @@ function exportToExcel() {
     </div>
     <div class="relative rounded-xl mt-5 mb-10">
       <table
-        id="theTable"
+        :class="`${uniqueId}`"
         class="w-full border-[1px] border-gray-50 text-sm text-left rtl:text-right text-gray-500"
       >
         <thead
