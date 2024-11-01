@@ -284,75 +284,24 @@ async function createOrder() {
 }
 
 async function getCellFromName() {
-  if (item.value.fromName.trim().length === 4) {
-    let phoneNum = item.value.fromName.trim().toString().slice(-4);
-    let row = originallyRows.value?.filter((row) =>
-      row.fromName ? row.fromName.slice(-4) === phoneNum : ""
+  const matchedCell = cells.value?.find(
+    (cell) =>
+      cell.fromName === item.value.fromName &&
+      cell.PVZ === item.value.dispatchPVZ &&
+      cell.status === "Занято"
+  );
+
+  if (matchedCell) {
+    item.value.cell = matchedCell.name;
+  } else {
+    const freeCell = cells.value?.find(
+      (cell) => cell.PVZ === item.value.dispatchPVZ && cell.status === "Свободно"
     );
-
-    if (row && row.length > 0) {
-      if (row.some((r) => r.fromName !== row[0].fromName)) {
-        toast.warning("Было найдено несколько номеров");
-      } else {
-        item.value.fromName = row[0].fromName;
-      }
-    }
-  }
-
-  if (item.value.fromName.trim().length === 12) {
-    let row = originallyRows.value?.filter(
-      (row) =>
-        row.fromName === item.value.fromName &&
-        row.dispatchPVZ === item.value.dispatchPVZ &&
-        (row.deliveredPVZ === null ||
-          row.deliveredSC === null ||
-          row.issued === null) &&
-        !row.cell.includes("-")
-    );
-
-    if (row && row.length > 0) {
-      const unoccupiedCellsAndPVZ = cells.value?.sort(
-        (a, b) => a.name - b.name
-      );
-      const freeCell = unoccupiedCellsAndPVZ?.find(
-        (cell) =>
-          cell.PVZ === item.value.dispatchPVZ && cell.status === "Свободно"
-      );
-
-      const targetCell = row[0].cell;
-      const targetPVZ = row[0].dispatchPVZ;
-      const targetFromName = row[0].fromName;
-
-      const cellIsOccupied = unoccupiedCellsAndPVZ?.some(
-        (cell) =>
-          cell.name === targetCell &&
-          cell.PVZ === targetPVZ &&
-          cell.fromName !== targetFromName
-      );
-
-      if (cellIsOccupied) {
-        if (freeCell) {
-          item.value.cell = freeCell.name;
-          cellData.value = freeCell;
-        } else {
-          toast.warning("Нет свободных ячеек для выбранного ПВЗ");
-        }
-      } else {
-        item.value.cell = row[0].cell;
-      }
+    if (freeCell) {
+      item.value.cell = freeCell.name;
+      cellData.value = freeCell;
     } else {
-      const unoccupiedCellsAndPVZ = cells.value
-        ?.filter((cell) => cell.status === "Свободно")
-        .sort((a, b) => a.name - b.name);
-      const freeCell = unoccupiedCellsAndPVZ?.find(
-        (cell) => cell.PVZ === item.value.dispatchPVZ
-      );
-      if (freeCell) {
-        item.value.cell = freeCell.name;
-        cellData.value = freeCell;
-      } else {
-        toast.warning("Нет свободных ячеек для выбранного ПВЗ");
-      }
+      console.warn("Нет свободных ячеек для выбранного ПВЗ");
     }
   }
 }
