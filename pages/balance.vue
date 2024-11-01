@@ -1027,6 +1027,7 @@ function getAllSum() {
       } else if (selectedPVZ.value === "ПВЗ_1") {
         allSum.value -= 2330;
         allSum.value += 15000;
+        allSum.value += 2367;
       }
       console.log(sum1.value + sum2.value);
     }
@@ -1467,6 +1468,7 @@ function getProfitRowsSum() {
     } else if (selectedPVZ.value === "ПВЗ_1") {
       allSumProfit.value += 2125;
       allSumProfit.value += 15000;
+      allSumProfit.value += 2367;
     }
   }
 }
