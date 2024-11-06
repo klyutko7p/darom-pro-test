@@ -248,7 +248,6 @@ let allFromNamesEqual = ref(false);
 const handleCheckboxChange = (row: IOurRansom): void => {
   phoneNumberClient.value = "";
   allSumInput.value = "";
-  allFromNamesEqual.value = false;
   if (isChecked(row.id)) {
     checkedRows.value = checkedRows.value.filter((id) => id !== row.id);
     allSum.value = allSum.value.filter((obj) => obj.rowId !== row.id);
@@ -271,27 +270,10 @@ const handleCheckboxChange = (row: IOurRansom): void => {
     });
   }
 
-  allFromNamesEqual.value = allSum.value.every((item, index, array) => {
-    if (item.fromName === array[0].fromName) {
-      phoneNumberClient.value = item.fromName;
-      return clients.value.some(
-        (client) => client.phoneNumber === item.fromName && client.balance > 0
-      );
-    }
-    return false;
-  });
-
   getAllSum.value = allSum.value
     .filter((obj) => obj.issued === null)
     .reduce((sum, obj) => sum + obj.amount, 0);
 
-  if (allFromNamesEqual.value) {
-    getAllSumBonuses.value = clients.value
-      .filter(
-        (client: Client) => client.phoneNumber === allSum.value[0].fromName
-      )
-      .reduce((sum, obj) => sum + obj.balance, 0);
-  }
   showButton.value = allSum.value.every((obj) => obj.issued === null);
   showButtonPVZ.value = allSum.value.every((obj) => obj.deliveredPVZ === null);
   showButtonSC.value = allSum.value.every((obj) => obj.deliveredSC === null);
