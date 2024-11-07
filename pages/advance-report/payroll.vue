@@ -223,9 +223,15 @@ const options = [
 
 function clearLocalStorage() {
   const addressData = localStorage.getItem("addressData");
+  const monthDataPayroll = localStorage.getItem("monthDataPayroll");
   localStorage.clear();
+  
   if (addressData) {
     localStorage.setItem("addressData", addressData);
+  }
+
+  if (monthDataPayroll) {
+    localStorage.setItem("monthDataPayroll", monthDataPayroll);
   }
 }
 
