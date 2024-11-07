@@ -15,6 +15,11 @@ let originallyRows = ref<Array<IPayroll>>([]);
 const token = Cookies.get("token");
 let isLoading = ref(false);
 
+function loadFromLocalStorage(key: string) {
+  const storedValue = localStorage.getItem(key);
+  return storedValue ? JSON.parse(storedValue) : null;
+}
+
 onMounted(async () => {
   if (!token) {
     router.push("/auth/login");
@@ -25,6 +30,11 @@ onMounted(async () => {
   rows.value = await storePayrolls.getPayrolls();
   employees.value = await storeEmployees.getEmployees();
   isLoading.value = false;
+
+  const storedMonthData = loadFromLocalStorage("monthDataPayroll");
+  if (storedMonthData !== null) {
+    monthValue.value = storedMonthData;
+  }
 });
 
 definePageMeta({
@@ -45,12 +55,14 @@ function openModal(row: IPayroll) {
   const currentDate = new Date();
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-  let newDate;
-  if (monthValue.value === month) {
-    newDate = new Date(year, month, 5);
-  } else {
-    newDate = new Date(year, monthValue.value - 1, 5);
+
+  const storedMonthData = loadFromLocalStorage("monthDataPayroll");
+  if (storedMonthData !== null) {
+    monthValue.value = storedMonthData;
   }
+
+  let newDate;
+  newDate = new Date(year, monthValue.value - 1, 5);
 
   rowData.value = JSON.parse(JSON.stringify(row));
   rowData.value.fullname = employees.value.find(
@@ -225,7 +237,7 @@ function clearLocalStorage() {
   const addressData = localStorage.getItem("addressData");
   const monthDataPayroll = localStorage.getItem("monthDataPayroll");
   localStorage.clear();
-  
+
   if (addressData) {
     localStorage.setItem("addressData", addressData);
   }
