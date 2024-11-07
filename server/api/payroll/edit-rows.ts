@@ -14,12 +14,12 @@ export default defineEventHandler(async (event) => {
       const updatedRow = await prisma.payroll.update({
         where: { id: payroll.id },
         data: {
-          advance: payroll.advance,
+          advance: +payroll.advance,
           advanceFourssan: +payroll.advanceFourssan,
           salaryFourssan: +payroll.salaryFourssan,
-          hours: payroll.hours,
-          deductions: payroll.deductions,
-          additionalPayment: payroll.additionalPayment,
+          hours: +payroll.hours,
+          deductions: +payroll.deductions,
+          additionalPayment: +payroll.additionalPayment,
         },
       });
     }
