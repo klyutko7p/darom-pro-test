@@ -13,7 +13,17 @@ const emit = defineEmits([
 ]);
 
 function openModal(row: IPayroll) {
-  emit("openModal", row);
+  let answer = true;
+
+  if (arrayWithModifiedRows.value.length) {
+    answer = confirm(
+      "У Вас есть несохранные данные, в случае продолжения данные не будут сохранены. Продолжить?"
+    );
+  }
+
+  if (answer) {
+    emit("openModal", row);
+  }
 }
 
 function getMonth() {
@@ -21,15 +31,36 @@ function getMonth() {
 }
 
 function deleteRow(id: number) {
-  emit("deleteRow", id);
+  let answer = true;
+
+  if (arrayWithModifiedRows.value.length) {
+    answer = confirm(
+      "У Вас есть несохранные данные, в случае продолжения данные не будут сохранены. Продолжить?"
+    );
+  }
+
+  if (answer) {
+    emit("deleteRow", id);
+  }
 }
 
 function createReport() {
-  emit("createReport", { rows: props.employees, month: month.value });
+  let answer = true;
+
+  if (arrayWithModifiedRows.value.length) {
+    answer = confirm(
+      "У Вас есть несохранные данные, в случае продолжения данные не будут сохранены. Продолжить?"
+    );
+  }
+
+  if (answer) {
+    emit("createReport", { rows: props.employees, month: month.value });
+  }
 }
 
 function updateReport() {
   emit("updateReport", arrayWithModifiedRows.value);
+  arrayWithModifiedRows.value = [];
 }
 
 const props = defineProps({
@@ -52,10 +83,6 @@ const filteredRows = ref(
   })
 );
 
-onMounted(() => {
-  getMonth();
-});
-
 let showFilters = ref(false);
 let months = ref([3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2]);
 let monthNames: any = ref({
@@ -73,7 +100,36 @@ let monthNames: any = ref({
   2: "Февраль",
 });
 const totalRows = computed(() => Math.ceil(props.rows?.length));
+
+const handleBeforeUnload = (event: any) => {
+  event.preventDefault();
+  event.returnValue = "";
+};
+
+onBeforeUnmount(() => {
+  window.removeEventListener("beforeunload", handleBeforeUnload);
+});
+
+onBeforeRouteLeave((to, from, next) => {
+  if (arrayWithModifiedRows.value.length) {
+    const answer = window.confirm(
+      "Вы точно хотите покинуть эту страницу? У Вас есть несохраненные данные."
+    );
+
+    if (answer) {
+      next(); 
+    } else {
+      next(false);
+    }
+  } else {
+    next(); 
+  }
+});
+
 onMounted(() => {
+  window.addEventListener("beforeunload", handleBeforeUnload);
+  getMonth();
+
   const storedMonthData = loadFromLocalStorage("monthDataPayroll");
   if (storedMonthData !== null) {
     month.value = storedMonthData;
