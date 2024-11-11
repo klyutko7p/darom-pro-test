@@ -9,6 +9,8 @@ interface CellDispatchPair {
 }
 
 export const useCellsStore = defineStore("cells", () => {
+  const runtimeConfig = useRuntimeConfig();
+
   let cashedCells: any = null;
   let cashedCellsClient: any = null;
 
@@ -28,6 +30,7 @@ export const useCellsStore = defineStore("cells", () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: runtimeConfig.public.adminToken,
           },
         });
         cashedCells = data.value;
@@ -50,6 +53,7 @@ export const useCellsStore = defineStore("cells", () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: runtimeConfig.public.adminToken,
           },
         });
         cashedCellsClient = data.value;

@@ -210,14 +210,20 @@ function scanItem() {
     let rowData = await storeRansom.getRansomRowById(+scannedLink, "OurRansom");
     if (props.user.role !== "SORTIROVKA") {
       if (rowData.issued) {
-        toast.error(`Товар с ID: ${rowData.id} не отметился. Причина: товар уже выдан!`, { timeout: 10000 });
+        toast.error(
+          `Товар с ID: ${rowData.id} не отметился. Причина: товар уже выдан!`,
+          { timeout: 10000 }
+        );
         return;
       }
 
       if (!rowData.deliveredPVZ) {
-        toast.error(`Товар с ID: ${rowData.id} не отметился. Причина: товар не принят на ПВЗ!`, {
-          timeout: 10000,
-        });
+        toast.error(
+          `Товар с ID: ${rowData.id} не отметился. Причина: товар не принят на ПВЗ!`,
+          {
+            timeout: 10000,
+          }
+        );
         return;
       }
 
@@ -1253,8 +1259,7 @@ async function writeClipboardText(text: any) {
                 :checked="isChecked(row.id)"
                 @change="handleCheckboxChange(row)"
                 :disabled="
-                  user.username === 'Кожемякина' ||
-                  user.username === 'Гриценко'
+                  user.username === 'Кожемякина' || user.username === 'Гриценко'
                 "
               />
             </td>

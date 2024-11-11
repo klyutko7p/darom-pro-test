@@ -244,8 +244,8 @@ export const useRansomStore = defineStore("ransom", () => {
       });
 
       const arrayBuffer = await response.arrayBuffer();
-      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
-      return unpacked;
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -566,7 +566,15 @@ export const useRansomStore = defineStore("ransom", () => {
   function mapBackToOriginalFields(row: any) {
     const originalRow = {} as IOurRansom;
 
+    if (row.id !== undefined) originalRow.id = row.id;
+    if (row.cl !== undefined) originalRow.clientLink1 = row.cl;
+    if (row.pl !== undefined) originalRow.productLink = row.pl;
+    if (row.pn !== undefined) originalRow.productName = row.pn;
+    if (row.oa !== undefined) originalRow.orderAccount = row.oa;
+    if (row.cu !== undefined) originalRow.createdUser = row.cu;
+    if (row.uu !== undefined) originalRow.updatedUser = row.uu;
     if (row.fm !== undefined) originalRow.fromName = row.fm;
+    if (row.nt !== undefined) originalRow.notation = row.nt;
     if (row.dp !== undefined) originalRow.dispatchPVZ = row.dp;
     if (row.ds !== undefined) originalRow.deliveredSC = row.ds;
     if (row.dz !== undefined) originalRow.deliveredPVZ = row.dz;
@@ -579,6 +587,7 @@ export const useRansomStore = defineStore("ransom", () => {
     if (row.p !== undefined) originalRow.priceSite = row.p;
     if (row.d !== undefined) originalRow.deleted = row.d;
     if (row.c !== undefined) originalRow.created_at = row.c;
+    if (row.u !== undefined) originalRow.updated_at = row.u;
     if (row.cc !== undefined) originalRow.cell = row.cc;
     if (row.pc !== undefined) originalRow.percentClient = row.pc;
     if (row.v !== undefined) originalRow.verified = row.v;
