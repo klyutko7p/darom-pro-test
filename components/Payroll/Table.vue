@@ -641,7 +641,7 @@ const toggleDropdown = (rowId: any) => {
       <h1 class="font-bold text-4xl mb-3">Итого</h1>
       <div>
         <h1 class="font-medium text-lg max-sm:text-base">
-          Выплачен аванс:
+          Выплачен аванс по ЗП:
           {{
             typeof getAllSumAdvance() === "number"
               ? getAllSumAdvance().toFixed(0)
@@ -655,7 +655,7 @@ const toggleDropdown = (rowId: any) => {
           ₽
         </h1>
         <h1 class="font-medium text-lg max-sm:text-base">
-          Итого до удержаний:
+          Итого выплачено за месяц до удержаний:
           {{
             typeof getAllSumZPMonthWithoutDeductions() === "number"
               ? getAllSumZPMonthWithoutDeductions().toFixed(0)
@@ -664,7 +664,7 @@ const toggleDropdown = (rowId: any) => {
           ₽
         </h1>
         <h1 class="font-medium text-lg max-sm:text-base">
-          Итого начислено за месяц:
+          Итого выплачено за месяц после удержаний:
           {{
             typeof getAllSumZPMonth() === "number"
               ? getAllSumZPMonth().toFixed(0)
