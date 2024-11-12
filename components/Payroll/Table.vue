@@ -117,12 +117,12 @@ onBeforeRouteLeave((to, from, next) => {
     );
 
     if (answer) {
-      next(); 
+      next();
     } else {
       next(false);
     }
   } else {
-    next(); 
+    next();
   }
 });
 
@@ -500,6 +500,10 @@ const columns = [
     label: "ЗП к начислению",
   },
   {
+    key: "totalPayrollMonthWithoutDeductions",
+    label: "Итого до удержаний",
+  },
+  {
     key: "totalPayrollMonth",
     label: "Итого начислено за месяц",
   },
@@ -819,6 +823,39 @@ const toggleDropdown = (rowId: any) => {
               row.advanceFourssan -
               row.salaryFourssan -
               row.deductions +
+              row.additionalPayment)
+          ).toFixed(0)
+        }}
+        ₽
+      </p>
+      <p v-else>0</p>
+    </template>
+    <template #totalPayrollMonthWithoutDeductions-data="{ row }">
+      <p
+        :class="{
+          'bg-red-500 text-black': row.notation === 'Нам должны',
+          'bg-pink-900 text-white':
+            row.notation === 'Расчёт уволенных сотрудников',
+          'bg-yellow-400 text-black': row.notation === 'Оплачено',
+        }"
+        v-if="
+          row.hours !== '' &&
+          row.paymentPerShift !== '' &&
+          row.advance !== '' &&
+          row.advanceFourssan !== '' &&
+          row.additionalPayment !== '' &&
+          row.salaryFourssan !== ''
+        "
+      >
+        {{
+          (
+            row.advance +
+            row.advanceFourssan +
+            row.salaryFourssan +
+            (row.hours * row.paymentPerShift -
+              row.advance -
+              row.advanceFourssan -
+              row.salaryFourssan +
               row.additionalPayment)
           ).toFixed(0)
         }}
