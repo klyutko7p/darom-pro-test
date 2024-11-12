@@ -218,6 +218,34 @@ function getAllSumZPMonth() {
     : 0;
 }
 
+function getAllSumZPMonthWithoutDeductions() {
+  return filteredRows.value?.reduce((acc, row) => {
+    const payment =
+      row.advance +
+      row.advanceFourssan +
+      row.salaryFourssan +
+      (row.hours * row.paymentPerShift -
+        row.advance -
+        row.advanceFourssan -
+        row.salaryFourssan +
+        row.additionalPayment);
+    return acc + payment;
+  }, 0)
+    ? filteredRows.value?.reduce((acc, row) => {
+        const payment =
+          row.advance +
+          row.advanceFourssan +
+          row.salaryFourssan +
+          (row.hours * row.paymentPerShift -
+            row.advance -
+            row.advanceFourssan -
+            row.salaryFourssan +
+            row.additionalPayment);
+        return acc + payment;
+      }, 0)
+    : 0;
+}
+
 async function exportToExcel() {
   await hideHiddenFields();
   let table = document.querySelector(".table-fixed");
@@ -612,7 +640,7 @@ const toggleDropdown = (rowId: any) => {
     <div>
       <h1 class="font-bold text-4xl mb-3">Итого</h1>
       <div>
-        <h1 class="font-medium text-xl">
+        <h1 class="font-medium text-lg max-sm:text-base">
           Выплачен аванс:
           {{
             typeof getAllSumAdvance() === "number"
@@ -621,12 +649,21 @@ const toggleDropdown = (rowId: any) => {
           }}
           ₽
         </h1>
-        <h1 class="font-medium text-xl">
-          ЗП к начислению:
+        <h1 class="font-medium text-lg max-sm:text-base">
+          Выплачено ЗП:
           {{ typeof getAllSumZP() === "number" ? getAllSumZP().toFixed(0) : 0 }}
           ₽
         </h1>
-        <h1 class="font-medium text-xl">
+        <h1 class="font-medium text-lg max-sm:text-base">
+          Итого до удержаний:
+          {{
+            typeof getAllSumZPMonthWithoutDeductions() === "number"
+              ? getAllSumZPMonthWithoutDeductions().toFixed(0)
+              : 0
+          }}
+          ₽
+        </h1>
+        <h1 class="font-medium text-lg max-sm:text-base">
           Итого начислено за месяц:
           {{
             typeof getAllSumZPMonth() === "number"
