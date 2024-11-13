@@ -189,7 +189,16 @@ function getAllSumDirector() {
         !row.issuedUser &&
         row.type === "Нал" &&
         row.typeOfExpenditure !== "Кредитовый баланс нал" &&
-        row.typeOfExpenditure !== "Перевод с баланса безнал"
+        row.typeOfExpenditure !== "Перевод с баланса безнал" &&
+        row.typeOfExpenditure !== "Удержания с сотрудников"
+    )
+    .reduce((acc, value) => acc + +value.expenditure, 0);
+
+  let sumOfPVZ13 = rows.value
+    ?.filter(
+      (row) =>
+        row.type === "Нал" &&
+        row.typeOfExpenditure === "Удержания с сотрудников"
     )
     .reduce((acc, value) => acc + +value.expenditure, 0);
 
@@ -336,6 +345,7 @@ function getAllSumDirector() {
   sumOfPVZ10 = sumOfPVZ10 === undefined ? 0 : sumOfPVZ10;
   sumOfPVZ11 = sumOfPVZ11 === undefined ? 0 : sumOfPVZ11;
   sumOfPVZ12 = sumOfPVZ12 === undefined ? 0 : sumOfPVZ12;
+  sumOfPVZ13 = sumOfPVZ13 === undefined ? 0 : sumOfPVZ13;
   sumOfPVZ1Cashless = sumOfPVZ1Cashless === undefined ? 0 : sumOfPVZ1Cashless;
   sumOfPVZ2Cashless = sumOfPVZ2Cashless === undefined ? 0 : sumOfPVZ2Cashless;
   sumOfPVZ3Cashless = sumOfPVZ3Cashless === undefined ? 0 : sumOfPVZ3Cashless;
@@ -358,6 +368,7 @@ function getAllSumDirector() {
         sumOfPVZ12 -
         149000 +
         sumOfPVZ1 +
+        sumOfPVZ13 +
         332531 +
         1477830;
 
@@ -385,6 +396,7 @@ function getAllSumDirector() {
         sumOfPVZ12 -
         149000 +
         sumOfPVZ1 +
+        sumOfPVZ13 +
         332531 +
         1477830;
 
@@ -734,6 +746,7 @@ let typesOfExpenditure = ref([
   "Автомобили",
   "Ежемесячные платежи",
   "Оплата ФОТ",
+  "Удержания с сотрудников",
   "Оплата Налоги. ПФР, СОЦ и т.д.",
   "Вывод дивидендов",
   "Расходники для ПВЗ",

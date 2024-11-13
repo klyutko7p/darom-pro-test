@@ -405,10 +405,42 @@ async function createAdvanceReportZP() {
     })
   );
 
+  let rowsDeductions = filteredRows.value?.filter((row) => {
+    return row.deductions;
+  });
+
+  let groupedRowsDeductions = rowsDeductions?.reduce((acc: any, row: any) => {
+    const key = `${row.PVZ}_${row.company}`;
+    if (!acc[key]) {
+      acc[key] = {
+        PVZ: row.PVZ,
+        company: row.company,
+        expenditureSum: 0,
+      };
+    }
+    const expenditure = row.deductions;
+    acc[key].expenditureSum += expenditure;
+    return acc;
+  }, {});
+
+  let resultRowsDeductions = Object.values(groupedRowsDeductions).map(
+    (groupedRow: any) => ({
+      PVZ: groupedRow.PVZ,
+      expenditure: Math.ceil(groupedRow.expenditureSum).toString(),
+      typeOfExpenditure: "Удержания с сотрудников",
+      company: groupedRow.company,
+      createdUser: "Директор",
+      type: "Нал",
+      date: date,
+      issuedUser: "",
+    })
+  );
+
   let answer = confirm("Вы точно хотите создать отчет по выплате ЗП?");
   if (answer) {
     await storeAdvanceReport.createAdvanceReports(resultRows);
     await storeAdvanceReport.createAdvanceReports(resultRowsFourssan);
+    await storeAdvanceReport.createAdvanceReports(resultRowsDeductions);
   }
 }
 

@@ -95,7 +95,11 @@ async function deleteSelectedRows(idArray: number[]) {
 async function updateRow() {
   isLoading.value = true;
 
-  await storeRansom.updateRansomRow(rowData.value, user.value.username, "OurRansom");
+  await storeRansom.updateRansomRow(
+    rowData.value,
+    user.value.username,
+    "OurRansom"
+  );
   filteredRows.value = await storeRansom.getRansomRowsByFromName(
     fromNameString,
     cellString,
@@ -109,7 +113,11 @@ async function updateRow() {
 async function createRow() {
   isLoading.value = true;
 
-  await storeRansom.createRansomRow(rowData.value, user.value.username, "OurRansom");
+  await storeRansom.createRansomRow(
+    rowData.value,
+    user.value.username,
+    "OurRansom"
+  );
   filteredRows.value = await storeRansom.getRansomRowsByFromName(
     fromNameString,
     cellString,
@@ -133,15 +141,25 @@ const filteredRows = ref<Array<IOurRansom>>();
 function handleFilteredRows(filteredRowsData: IOurRansom[]) {
   if (user.value.visiblePVZ === "ВСЕ" && user.value.visibleSC === "ВСЕ") {
     filteredRows.value = filteredRowsData;
-  } else if (user.value.visiblePVZ === "ВСЕ" && user.value.visibleSC !== "ВСЕ") {
+  } else if (
+    user.value.visiblePVZ === "ВСЕ" &&
+    user.value.visibleSC !== "ВСЕ"
+  ) {
     filteredRows.value = filteredRowsData.filter(
       (row) => row.orderPVZ === user.value.visibleSC && row.deliveredSC !== null
     );
-  } else if (user.value.visiblePVZ !== "ВСЕ" && user.value.visibleSC === "ВСЕ") {
+  } else if (
+    user.value.visiblePVZ !== "ВСЕ" &&
+    user.value.visibleSC === "ВСЕ"
+  ) {
     filteredRows.value = filteredRowsData.filter(
-      (row) => user.value.PVZ.includes(row.dispatchPVZ) && row.deliveredSC !== null
+      (row) =>
+        user.value.PVZ.includes(row.dispatchPVZ) && row.deliveredSC !== null
     );
-  } else if (user.value.visiblePVZ !== "ВСЕ" && user.value.visibleSC !== "ВСЕ") {
+  } else if (
+    user.value.visiblePVZ !== "ВСЕ" &&
+    user.value.visibleSC !== "ВСЕ"
+  ) {
     filteredRows.value = filteredRowsData.filter(
       (row) =>
         user.value.PVZ.includes(row.dispatchPVZ) &&
@@ -152,7 +170,9 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
 
   if (filteredRows.value) {
     if (user.value.role === "SORTIROVKA") {
-      filteredRows.value = filteredRows.value.filter((row) => row.deliveredPVZ === null);
+      filteredRows.value = filteredRows.value.filter(
+        (row) => row.deliveredPVZ === null
+      );
     } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {
       let today = new Date().toLocaleDateString("ru-RU", {
         day: "2-digit",
@@ -213,12 +233,15 @@ onMounted(async () => {
 
   isLoading.value = false;
 
-  originallyRows.value = await storeRansom.getRansomRowsForModalOurRansom();
+  let originallyRowsDataOne =
+    await storeRansom.getRansomRowsForModalOurRansomPartOne();
+  let originallyRowsDataTwo =
+    await storeRansom.getRansomRowsForModalOurRansomPartTwo();
+  originallyRows.value = [...originallyRowsDataOne, ...originallyRowsDataTwo];
   pvz.value = await storePVZ.getPVZ();
   sortingCenters.value = await storeSortingCenters.getSortingCenters();
   orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
 });
-
 
 definePageMeta({
   layout: false,
@@ -258,14 +281,19 @@ async function getCellFromName() {
     );
     if (row && row.length > 0) {
       if (row.some((r) => r.dispatchPVZ !== row[0].dispatchPVZ)) {
-        toast.warning("У клиента есть товары на разных ПВЗ! Выберите ПВЗ самостоятельно");
+        toast.warning(
+          "У клиента есть товары на разных ПВЗ! Выберите ПВЗ самостоятельно"
+        );
       } else {
         rowData.value.dispatchPVZ = row[0].dispatchPVZ;
       }
     }
   }
 
-  if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
+  if (
+    rowData.value.fromName.trim().length === 12 &&
+    isAutoFromName.value === true
+  ) {
     let row = originallyRows.value?.filter(
       (row) =>
         row.fromName === rowData.value.fromName &&
@@ -279,7 +307,10 @@ async function getCellFromName() {
 }
 
 async function changePVZ() {
-  if (rowData.value.fromName.trim().length === 12 && isAutoFromName.value === true) {
+  if (
+    rowData.value.fromName.trim().length === 12 &&
+    isAutoFromName.value === true
+  ) {
     let row = originallyRows.value?.filter(
       (row) =>
         row.fromName === rowData.value.fromName &&
@@ -308,10 +339,14 @@ async function getUnoccupiedCellsAndPVZ() {
   originallyRows.value?.forEach((row) => {
     const { cell, issued, dispatchPVZ } = row;
     if (!unoccupiedCells.has(cell)) {
-      unoccupiedCells.set(cell, { dispatchPVZ, hasEmptyIssued: issued === null });
+      unoccupiedCells.set(cell, {
+        dispatchPVZ,
+        hasEmptyIssued: issued === null,
+      });
     } else {
       const currentInfo = unoccupiedCells.get(cell);
-      currentInfo.hasEmptyIssued = currentInfo.hasEmptyIssued || issued === null;
+      currentInfo.hasEmptyIssued =
+        currentInfo.hasEmptyIssued || issued === null;
       unoccupiedCells.set(cell, currentInfo);
     }
   });
@@ -457,11 +492,16 @@ let isOpenOnlineStatus = ref(false);
         <div class="bg-white w-[500px] p-10 rounded-xl text-center">
           <h1 class="text-lg">При оплате онлайн сумма увеличится на 2%!</h1>
           <h1 class="text-2xl font-bold">
-            ИТОГОВАЯ СУММА: {{ Math.ceil(updatedPriceTwoPercent / 10) * 10 }} руб
+            ИТОГОВАЯ СУММА:
+            {{ Math.ceil(updatedPriceTwoPercent / 10) * 10 }} руб
           </h1>
           <div class="flex gap-5 mt-5 items-center justify-center">
-            <UIActionButton @click="isOpenOnlineStatus = false">Отменить</UIActionButton>
-            <UIExitModalButton @click="updateOnlineMoneyRowsStatus">Принять</UIExitModalButton>
+            <UIActionButton @click="isOpenOnlineStatus = false"
+              >Отменить</UIActionButton
+            >
+            <UIExitModalButton @click="updateOnlineMoneyRowsStatus"
+              >Принять</UIExitModalButton
+            >
           </div>
         </div>
       </div>
@@ -514,7 +554,9 @@ let isOpenOnlineStatus = ref(false);
                 class="grid grid-cols-2 mb-5"
                 v-if="user.fromName1 === 'READ' || user.fromName1 === 'WRITE'"
               >
-                <label for="fromName" class="max-sm:text-sm">Телефон <sup>*</sup></label>
+                <label for="fromName" class="max-sm:text-sm"
+                  >Телефон <sup>*</sup></label
+                >
                 <div>
                   <input
                     :disabled="user.fromName1 === 'READ'"
@@ -532,9 +574,13 @@ let isOpenOnlineStatus = ref(false);
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'"
+                v-if="
+                  user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'
+                "
               >
-                <label for="dispatchPVZ1" class="max-sm:text-sm">Отправка в ПВЗ</label>
+                <label for="dispatchPVZ1" class="max-sm:text-sm"
+                  >Отправка в ПВЗ</label
+                >
                 <div>
                   <select
                     class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -575,9 +621,13 @@ let isOpenOnlineStatus = ref(false);
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.productLink1 === 'READ' || user.productLink1 === 'WRITE'"
+                v-if="
+                  user.productLink1 === 'READ' || user.productLink1 === 'WRITE'
+                "
               >
-                <label for="productLink1" class="max-sm:text-sm">Товар (ссылка)</label>
+                <label for="productLink1" class="max-sm:text-sm"
+                  >Товар (ссылка)</label
+                >
                 <input
                   :disabled="user.productLink1 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -588,9 +638,13 @@ let isOpenOnlineStatus = ref(false);
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.productName1 === 'READ' || user.productName1 === 'WRITE'"
+                v-if="
+                  user.productName1 === 'READ' || user.productName1 === 'WRITE'
+                "
               >
-                <label for="productName1" class="max-sm:text-sm">Название товара</label>
+                <label for="productName1" class="max-sm:text-sm"
+                  >Название товара</label
+                >
                 <input
                   :disabled="user.productName1 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -617,7 +671,9 @@ let isOpenOnlineStatus = ref(false);
                 class="grid grid-cols-2 mb-5"
                 v-if="user.priceSite === 'READ' || user.priceSite === 'WRITE'"
               >
-                <label for="priceSite" class="max-sm:text-sm">Стоимость сайт</label>
+                <label for="priceSite" class="max-sm:text-sm"
+                  >Стоимость сайт</label
+                >
                 <input
                   :disabled="user.priceSite === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -628,9 +684,13 @@ let isOpenOnlineStatus = ref(false);
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'"
+                v-if="
+                  user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'
+                "
               >
-                <label for="prepayment1" class="max-sm:text-sm">Предоплата</label>
+                <label for="prepayment1" class="max-sm:text-sm"
+                  >Предоплата</label
+                >
                 <input
                   :disabled="user.prepayment1 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -642,7 +702,10 @@ let isOpenOnlineStatus = ref(false);
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.percentClient1 === 'READ' || user.percentClient1 === 'WRITE'"
+                v-if="
+                  user.percentClient1 === 'READ' ||
+                  user.percentClient1 === 'WRITE'
+                "
               >
                 <label for="percentClient1" class="max-sm:text-sm"
                   >Процент с клиента</label
@@ -658,7 +721,10 @@ let isOpenOnlineStatus = ref(false);
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.deliveredKGT1 === 'READ' || user.deliveredKGT1 === 'WRITE'"
+                v-if="
+                  user.deliveredKGT1 === 'READ' ||
+                  user.deliveredKGT1 === 'WRITE'
+                "
               >
                 <label for="deliveredKGT1" class="max-sm:text-sm"
                   >Дополнительный доход</label
@@ -676,7 +742,9 @@ let isOpenOnlineStatus = ref(false);
                 class="grid grid-cols-2 mb-5"
                 v-if="user.orderPVZ1 === 'READ' || user.orderPVZ1 === 'WRITE'"
               >
-                <label for="orderPVZ1" class="max-sm:text-sm">Заказано на СЦ</label>
+                <label for="orderPVZ1" class="max-sm:text-sm"
+                  >Заказано на СЦ</label
+                >
                 <select
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.orderPVZ"
@@ -693,9 +761,13 @@ let isOpenOnlineStatus = ref(false);
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.orderAccount === 'READ' || user.orderAccount === 'WRITE'"
+                v-if="
+                  user.orderAccount === 'READ' || user.orderAccount === 'WRITE'
+                "
               >
-                <label for="orderAccount" class="max-sm:text-sm">Аккаунт заказа</label>
+                <label for="orderAccount" class="max-sm:text-sm"
+                  >Аккаунт заказа</label
+                >
                 <select
                   :disabled="user.orderAccount === 'READ'"
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
@@ -711,7 +783,9 @@ let isOpenOnlineStatus = ref(false);
               </div>
 
               <div class="grid grid-cols-2 mb-5" v-if="!rowData.id">
-                <label for="quantity" class="max-sm:text-sm">Количество строк</label>
+                <label for="quantity" class="max-sm:text-sm"
+                  >Количество строк</label
+                >
                 <input
                   type="number"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -729,7 +803,10 @@ let isOpenOnlineStatus = ref(false);
               <div v-if="showAddFields">
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.deliveredSC1 === 'READ' || user.deliveredSC1 === 'WRITE'"
+                  v-if="
+                    user.deliveredSC1 === 'READ' ||
+                    user.deliveredSC1 === 'WRITE'
+                  "
                 >
                   <label for="deliveredSC1" class="max-sm:text-sm"
                     >Доставлено на СЦ</label
@@ -744,7 +821,10 @@ let isOpenOnlineStatus = ref(false);
 
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'"
+                  v-if="
+                    user.deliveredPVZ1 === 'READ' ||
+                    user.deliveredPVZ1 === 'WRITE'
+                  "
                 >
                   <label for="deliveredPVZ1" class="max-sm:text-sm"
                     >Доставлено на ПВЗ</label
@@ -761,7 +841,9 @@ let isOpenOnlineStatus = ref(false);
                   class="grid grid-cols-2 mb-5"
                   v-if="user.issued1 === 'READ' || user.issued1 === 'WRITE'"
                 >
-                  <label for="issued1" class="max-sm:text-sm">Выдан клиенту</label>
+                  <label for="issued1" class="max-sm:text-sm"
+                    >Выдан клиенту</label
+                  >
                   <input
                     :disabled="user.issued1 === 'READ'"
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -772,9 +854,14 @@ let isOpenOnlineStatus = ref(false);
 
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'"
+                  v-if="
+                    user.additionally1 === 'READ' ||
+                    user.additionally1 === 'WRITE'
+                  "
                 >
-                  <label for="additionally1" class="max-sm:text-sm">Дополнительно</label>
+                  <label for="additionally1" class="max-sm:text-sm"
+                    >Дополнительно</label
+                  >
                   <select
                     class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                     v-model="rowData.additionally"
@@ -789,7 +876,10 @@ let isOpenOnlineStatus = ref(false);
               </div>
             </div>
 
-            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
+            <div
+              class="flex items-center justify-center gap-3 mt-10"
+              v-if="rowData.id"
+            >
               <UIMainButton @click="updateRow">Сохранить </UIMainButton>
               <UIMainButton @click="closeModal">Отменить </UIMainButton>
             </div>
@@ -856,7 +946,9 @@ let isOpenOnlineStatus = ref(false);
                 class="grid grid-cols-2 mb-5"
                 v-if="user.fromName1 === 'READ' || user.fromName1 === 'WRITE'"
               >
-                <label for="fromName" class="max-sm:text-sm">Телефон <sup>*</sup></label>
+                <label for="fromName" class="max-sm:text-sm"
+                  >Телефон <sup>*</sup></label
+                >
                 <div>
                   <input
                     :disabled="user.fromName1 === 'READ'"
@@ -874,9 +966,13 @@ let isOpenOnlineStatus = ref(false);
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'"
+                v-if="
+                  user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'
+                "
               >
-                <label for="dispatchPVZ1" class="max-sm:text-sm">Отправка в ПВЗ</label>
+                <label for="dispatchPVZ1" class="max-sm:text-sm"
+                  >Отправка в ПВЗ</label
+                >
                 <div>
                   <select
                     class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -917,9 +1013,13 @@ let isOpenOnlineStatus = ref(false);
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.productLink1 === 'READ' || user.productLink1 === 'WRITE'"
+                v-if="
+                  user.productLink1 === 'READ' || user.productLink1 === 'WRITE'
+                "
               >
-                <label for="productLink1" class="max-sm:text-sm">Товар (ссылка)</label>
+                <label for="productLink1" class="max-sm:text-sm"
+                  >Товар (ссылка)</label
+                >
                 <input
                   :disabled="user.productLink1 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -930,9 +1030,13 @@ let isOpenOnlineStatus = ref(false);
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.productName1 === 'READ' || user.productName1 === 'WRITE'"
+                v-if="
+                  user.productName1 === 'READ' || user.productName1 === 'WRITE'
+                "
               >
-                <label for="productName1" class="max-sm:text-sm">Название товара</label>
+                <label for="productName1" class="max-sm:text-sm"
+                  >Название товара</label
+                >
                 <input
                   :disabled="user.productName1 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -959,7 +1063,9 @@ let isOpenOnlineStatus = ref(false);
                 class="grid grid-cols-2 mb-5"
                 v-if="user.priceSite === 'READ' || user.priceSite === 'WRITE'"
               >
-                <label for="priceSite" class="max-sm:text-sm">Стоимость сайт</label>
+                <label for="priceSite" class="max-sm:text-sm"
+                  >Стоимость сайт</label
+                >
                 <input
                   :disabled="user.priceSite === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -970,9 +1076,13 @@ let isOpenOnlineStatus = ref(false);
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'"
+                v-if="
+                  user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'
+                "
               >
-                <label for="prepayment1" class="max-sm:text-sm">Предоплата</label>
+                <label for="prepayment1" class="max-sm:text-sm"
+                  >Предоплата</label
+                >
                 <input
                   :disabled="user.prepayment1 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -984,7 +1094,10 @@ let isOpenOnlineStatus = ref(false);
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.percentClient1 === 'READ' || user.percentClient1 === 'WRITE'"
+                v-if="
+                  user.percentClient1 === 'READ' ||
+                  user.percentClient1 === 'WRITE'
+                "
               >
                 <label for="percentClient1" class="max-sm:text-sm"
                   >Процент с клиента</label
@@ -1000,7 +1113,10 @@ let isOpenOnlineStatus = ref(false);
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.deliveredKGT1 === 'READ' || user.deliveredKGT1 === 'WRITE'"
+                v-if="
+                  user.deliveredKGT1 === 'READ' ||
+                  user.deliveredKGT1 === 'WRITE'
+                "
               >
                 <label for="deliveredKGT1" class="max-sm:text-sm"
                   >Дополнительный доход</label
@@ -1018,7 +1134,9 @@ let isOpenOnlineStatus = ref(false);
                 class="grid grid-cols-2 mb-5"
                 v-if="user.orderPVZ1 === 'READ' || user.orderPVZ1 === 'WRITE'"
               >
-                <label for="orderPVZ1" class="max-sm:text-sm">Заказано на СЦ</label>
+                <label for="orderPVZ1" class="max-sm:text-sm"
+                  >Заказано на СЦ</label
+                >
                 <select
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.orderPVZ"
@@ -1035,9 +1153,13 @@ let isOpenOnlineStatus = ref(false);
 
               <div
                 class="grid grid-cols-2 mb-5"
-                v-if="user.orderAccount === 'READ' || user.orderAccount === 'WRITE'"
+                v-if="
+                  user.orderAccount === 'READ' || user.orderAccount === 'WRITE'
+                "
               >
-                <label for="orderAccount" class="max-sm:text-sm">Аккаунт заказа</label>
+                <label for="orderAccount" class="max-sm:text-sm"
+                  >Аккаунт заказа</label
+                >
                 <select
                   :disabled="user.orderAccount === 'READ'"
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
@@ -1053,7 +1175,9 @@ let isOpenOnlineStatus = ref(false);
               </div>
 
               <div class="grid grid-cols-2 mb-5" v-if="!rowData.id">
-                <label for="quantity" class="max-sm:text-sm">Количество строк</label>
+                <label for="quantity" class="max-sm:text-sm"
+                  >Количество строк</label
+                >
                 <input
                   type="number"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -1071,7 +1195,10 @@ let isOpenOnlineStatus = ref(false);
               <div v-if="showAddFields">
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.deliveredSC1 === 'READ' || user.deliveredSC1 === 'WRITE'"
+                  v-if="
+                    user.deliveredSC1 === 'READ' ||
+                    user.deliveredSC1 === 'WRITE'
+                  "
                 >
                   <label for="deliveredSC1" class="max-sm:text-sm"
                     >Доставлено на СЦ</label
@@ -1086,7 +1213,10 @@ let isOpenOnlineStatus = ref(false);
 
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'"
+                  v-if="
+                    user.deliveredPVZ1 === 'READ' ||
+                    user.deliveredPVZ1 === 'WRITE'
+                  "
                 >
                   <label for="deliveredPVZ1" class="max-sm:text-sm"
                     >Доставлено на ПВЗ</label
@@ -1103,7 +1233,9 @@ let isOpenOnlineStatus = ref(false);
                   class="grid grid-cols-2 mb-5"
                   v-if="user.issued1 === 'READ' || user.issued1 === 'WRITE'"
                 >
-                  <label for="issued1" class="max-sm:text-sm">Выдан клиенту</label>
+                  <label for="issued1" class="max-sm:text-sm"
+                    >Выдан клиенту</label
+                  >
                   <input
                     :disabled="user.issued1 === 'READ'"
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
@@ -1114,9 +1246,14 @@ let isOpenOnlineStatus = ref(false);
 
                 <div
                   class="grid grid-cols-2 mb-5"
-                  v-if="user.additionally1 === 'READ' || user.additionally1 === 'WRITE'"
+                  v-if="
+                    user.additionally1 === 'READ' ||
+                    user.additionally1 === 'WRITE'
+                  "
                 >
-                  <label for="additionally1" class="max-sm:text-sm">Дополнительно</label>
+                  <label for="additionally1" class="max-sm:text-sm"
+                    >Дополнительно</label
+                  >
                   <select
                     class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                     v-model="rowData.additionally"
@@ -1131,7 +1268,10 @@ let isOpenOnlineStatus = ref(false);
               </div>
             </div>
 
-            <div class="flex items-center justify-center gap-3 mt-10" v-if="rowData.id">
+            <div
+              class="flex items-center justify-center gap-3 mt-10"
+              v-if="rowData.id"
+            >
               <UIMainButton @click="updateRow">Сохранить </UIMainButton>
               <UIMainButton @click="closeModal">Отменить </UIMainButton>
             </div>

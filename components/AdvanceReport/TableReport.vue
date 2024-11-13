@@ -318,7 +318,8 @@ function getTotal() {
   );
   arrayOfReceiptsTotal.value = array?.filter(
     (row: IAdvanceReport) =>
-      row.typeOfExpenditure === "Пополнение баланса" &&
+      (row.typeOfExpenditure === "Пополнение баланса" ||
+        row.typeOfExpenditure === "Удержания с сотрудников") &&
       (!props.type || props.type.includes(row.type))
   );
 

@@ -333,7 +333,8 @@ let isVisiblePages = ref(true);
           row.typeOfExpenditure === "Перевод с баланса безнал" ||
           row.typeOfExpenditure === "Новый кредит нал" ||
           row.typeOfExpenditure === "Новый кредит безнал" ||
-          row.typeOfExpenditure === "Пополнение баланса"
+          row.typeOfExpenditure === "Пополнение баланса" ||
+          row.typeOfExpenditure === "Удержания с сотрудников"
             ? row.expenditure
             : "—"
         }}
@@ -347,7 +348,8 @@ let isVisiblePages = ref(true);
           row.typeOfExpenditure !== "Перевод с баланса безнал" &&
           row.typeOfExpenditure !== "Новый кредит нал" &&
           row.typeOfExpenditure !== "Новый кредит безнал" &&
-          row.typeOfExpenditure !== "Пополнение баланса"
+          row.typeOfExpenditure !== "Пополнение баланса" &&
+          row.typeOfExpenditure !== "Удержания с сотрудников"
             ? row.expenditure
             : "—"
         }}

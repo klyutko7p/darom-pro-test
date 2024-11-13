@@ -56,7 +56,11 @@ onMounted(async () => {
   isLoading.value = true;
   user.value = storeClients.getClient();
   isLoading.value = false;
-  originallyRows.value = await storeRansom.getRansomRowsForModalOurRansom();
+  let originallyRowsDataOne =
+    await storeRansom.getRansomRowsForModalOurRansomPartOne();
+  let originallyRowsDataTwo =
+    await storeRansom.getRansomRowsForModalOurRansomPartTwo();
+  originallyRows.value = [...originallyRowsDataOne, ...originallyRowsDataTwo];
   cells.value = await storeCells.getCells();
 });
 
@@ -295,7 +299,8 @@ async function getCellFromName() {
     item.value.cell = matchedCell.name;
   } else {
     const freeCell = cells.value?.find(
-      (cell) => cell.PVZ === item.value.dispatchPVZ && cell.status === "Свободно"
+      (cell) =>
+        cell.PVZ === item.value.dispatchPVZ && cell.status === "Свободно"
     );
     if (freeCell) {
       item.value.cell = freeCell.name;
