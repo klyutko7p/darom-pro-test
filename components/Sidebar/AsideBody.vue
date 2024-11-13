@@ -353,7 +353,8 @@ function showSettingsList() {
                 user.username !== 'Светлана2') ||
               user.role === 'ADMINISTRATOR' ||
               user.role === 'PVZ' ||
-              user.role === 'PPVZ'
+              user.role === 'PPVZ' ||
+              user.username === 'Шведова'
             "
           >
             <Icon

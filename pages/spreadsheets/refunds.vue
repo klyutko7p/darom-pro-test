@@ -8,6 +8,7 @@ const storeUsers = useUsersStore();
 const storeRansom = useRansomStore();
 const storePVZ = usePVZStore();
 const storeSortingCenters = useSortingCentersStore();
+const storeOrderAccounts = useOrderAccountStore();
 
 const router = useRouter();
 
@@ -18,6 +19,7 @@ let user = ref({} as User);
 let rows = ref<Array<IOurRansom>>();
 let pvz = ref<Array<PVZ>>();
 let sortingCenters = ref<Array<SortingCenter>>();
+let orderAccounts = ref<Array<OrderAccount>>();
 
 const filteredRows = ref<Array<IOurRansom>>();
 function handleFilteredRows(filteredRowsData: IOurRansom[]) {
@@ -66,6 +68,7 @@ onMounted(async () => {
 
   pvz.value = await storePVZ.getPVZ();
   sortingCenters.value = await storeSortingCenters.getSortingCenters();
+  orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
 
   if (!token) {
     router.push("/auth/login");
@@ -257,6 +260,29 @@ const token = Cookies.get("token");
                   type="number"
                   placeholder="По умолчанию: 0"
                 />
+              </div>
+
+              <div
+                class="grid grid-cols-2 mb-5"
+                v-if="
+                  user.orderAccount === 'READ' || user.orderAccount === 'WRITE'
+                "
+              >
+                <label for="orderPVZ1" class="max-sm:text-sm"
+                  >Аккаунт заказа</label
+                >
+                <select
+                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
+                  v-model="rowData.orderAccount"
+                  :disabled="user.orderAccount === 'READ'"
+                >
+                  <option
+                    v-for="orderAccount in orderAccounts"
+                    :value="orderAccount.name"
+                  >
+                    {{ orderAccount.name }}
+                  </option>
+                </select>
               </div>
 
               <div
@@ -457,6 +483,29 @@ const token = Cookies.get("token");
                   type="number"
                   placeholder="По умолчанию: 0"
                 />
+              </div>
+
+              <div
+                class="grid grid-cols-2 mb-5"
+                v-if="
+                  user.orderAccount === 'READ' || user.orderAccount === 'WRITE'
+                "
+              >
+                <label for="orderPVZ1" class="max-sm:text-sm"
+                  >Аккаунт заказа</label
+                >
+                <select
+                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
+                  v-model="rowData.orderAccount"
+                  :disabled="user.orderAccount === 'READ'"
+                >
+                  <option
+                    v-for="orderAccount in orderAccounts"
+                    :value="orderAccount.name"
+                  >
+                    {{ orderAccount.name }}
+                  </option>
+                </select>
               </div>
 
               <div

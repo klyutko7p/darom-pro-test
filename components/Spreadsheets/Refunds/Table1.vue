@@ -70,11 +70,13 @@ const handleCheckboxChange = (row: IOurRansom): void => {
 
     const ceilNumber = (num: number) => {
       return Math.ceil(num / 10) * 10;
-    }
+    };
 
     const roundOrCeil = (num: number) => {
       const lastDigit = num % 10;
-      return lastDigit >= 5 ? Math.ceil(num / 10) * 10 : Math.floor(num / 10) * 10;
+      return lastDigit >= 5
+        ? Math.ceil(num / 10) * 10
+        : Math.floor(num / 10) * 10;
     };
 
     const roundFunction = shouldRound(row) ? roundOrCeil : ceilNumber;
@@ -98,7 +100,6 @@ const handleCheckboxChange = (row: IOurRansom): void => {
   showButtonShipped.value = allSum.value.every((obj) => obj.shipped === null);
   showButtonVerified.value = allSum.value.every((obj) => obj.verified === null);
 };
-
 
 const perPage = ref(100);
 const currentPage = ref(1);
@@ -196,7 +197,7 @@ onMounted(async () => {
     v-if="checkedRows.length > 0"
   >
     <h1
-      class="text-base text-center backdrop-blur-xl p-2 rounded-xl border-2 text-secondary-color font-bold"
+      class="text-base text-center backdrop-blur-xl p-2 rounded-xl border-[1px] text-secondary-color font-bold"
     >
       Количество товаров: {{ checkedRows.length }}
     </h1>
@@ -222,7 +223,9 @@ onMounted(async () => {
 
   <div
     class="fixed z-40 top-56 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
-    v-if="checkedRows.length > 0 && user.role === 'PVZ' || user.role === 'PPVZ'"
+    v-if="
+      (checkedRows.length > 0 && user.role === 'PVZ') || user.role === 'PPVZ'
+    "
   >
     <UIActionButton
       v-if="showButtonShipped"
@@ -244,76 +247,90 @@ onMounted(async () => {
         <tr>
           <th
             scope="col"
-            class="border-2"
-            v-if="user.dataOurRansom === 'WRITE'"
+            class="border-[1px]"
+            v-if="user.dataOurRansom === 'WRITE' && user.username !== 'Шведова'"
           >
             Выделение
           </th>
           <th
             scope="col"
-            class="exclude-row border-2 text-[10px]"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            class="exclude-row border-[1px] text-[10px]"
+            v-if="
+              (user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER') &&
+              user.username !== 'Шведова'
+            "
           >
             изменение
           </th>
-          <th scope="col" class="border-2 px-3">id</th>
-          <th scope="col" class="border-2 px-3" v-if="user.role === 'PVZ' || user.role === 'PPVZ'">
+          <th scope="col" class="border-[1px] px-3">id</th>
+          <th
+            scope="col"
+            class="border-[1px] px-3"
+            v-if="user.role === 'PVZ' || user.role === 'PPVZ'"
+          >
             ячейка
           </th>
           <th
             scope="col"
-            class="border-2"
+            class="border-[1px]"
             v-if="user.productLink1 === 'READ' || user.productLink1 === 'WRITE'"
           >
             товар (ссылка)
           </th>
           <th
             scope="col"
-            class="border-2"
+            class="border-[1px]"
             v-if="user.productName1 === 'READ' || user.productName1 === 'WRITE'"
           >
             название товара
           </th>
           <th
             scope="col"
-            class="border-2"
+            class="border-[1px]"
             v-if="user.priceSite === 'READ' || user.priceSite === 'WRITE'"
           >
             стоимость сайт
           </th>
           <th
             scope="col"
-            class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER'"
+            class="border-[1px]"
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
           >
             стоимость возврата
           </th>
           <th
             scope="col"
-            class="border-2"
-            v-if="user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'"
+            class="border-[1px]"
           >
             отправка в пвз
           </th>
           <th
             scope="col"
-            class="border-2"
+            class="border-[1px]"
+            v-if="user.orderAccount === 'READ' || user.orderAccount === 'WRITE'"
           >
-            заказано на сц
+            аккаунт заказа
           </th>
+          <th scope="col" class="border-[1px]">заказано на сц</th>
           <th
             scope="col"
-            class="border-2"
+            class="border-[1px]"
             v-if="
               user.additionally1 === 'READ' || user.additionally1 === 'WRITE'
             "
           >
             дополнительно
           </th>
-          <th scope="col" class="border-2">отправлено</th>
-          <th scope="col" class="border-2">проверено</th>
-          <th scope="col" class="border-2">кем отправлено</th>
-          <th scope="col" class="border-2">кем проверено</th>
+          <th scope="col" class="border-[1px]">отправлено</th>
+          <th scope="col" class="border-[1px]">проверено</th>
+          <th scope="col" class="border-[1px]">кем отправлено</th>
+          <th scope="col" class="border-[1px]">кем проверено</th>
         </tr>
       </thead>
       <tbody>
@@ -326,8 +343,8 @@ onMounted(async () => {
           v-for="row in returnRows"
         >
           <td
-            v-if="user.dataOurRansom === 'WRITE'"
-            class="border-2 text-secondary-color"
+            v-if="user.dataOurRansom === 'WRITE' && user.username !== 'Шведова'"
+            class="border-[1px] text-secondary-color"
           >
             <input
               type="checkbox"
@@ -337,12 +354,17 @@ onMounted(async () => {
             />
           </td>
           <td
-            class="border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            class="border-[1px]"
+            v-if="
+              (user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER') &&
+              user.username !== 'Шведова'
+            "
           >
-          <div
+            <div
               @click="openModal(row)"
-              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1  mx-auto"
+              class="bg-green-200 cursor-pointer hover:opacity-50 duration-200 rounded-full max-w-[28px] pt-1 mx-auto"
             >
               <Icon
                 class="text-green-500"
@@ -353,10 +375,15 @@ onMounted(async () => {
           </td>
           <th
             scope="row"
-            class="border-2 font-medium underline text-secondary-color whitespace-nowrap"
+            class="border-[1px] font-medium underline text-secondary-color whitespace-nowrap"
           >
             <NuxtLink
-              v-if="user.role !== 'PVZ' && user.role !== 'ADMINISTRATOR' && user.role !== 'RMANAGER' && user.role !== 'PPVZ'"
+              v-if="
+                user.role !== 'PVZ' &&
+                user.role !== 'ADMINISTRATOR' &&
+                user.role !== 'RMANAGER' &&
+                user.role !== 'PPVZ'
+              "
               class="cursor-pointer hover:text-orange-200 duration-200"
               :to="`/spreadsheets/record/1/${row.id}`"
             >
@@ -364,11 +391,14 @@ onMounted(async () => {
             </NuxtLink>
             <h1 v-else>{{ row.id }}</h1>
           </th>
-          <td class="border-2" v-if="user.role === 'PVZ' || user.role === 'PPVZ'">
+          <td
+            class="border-[1px]"
+            v-if="user.role === 'PVZ' || user.role === 'PPVZ'"
+          >
             {{ row.cell }}
           </td>
           <td
-            class="underline border-2 text-secondary-color whitespace-nowrap overflow-hidden max-w-[30px]"
+            class="underline border-[1px] text-secondary-color whitespace-nowrap overflow-hidden max-w-[30px]"
             v-if="user.productLink1 === 'READ' || user.productLink1 === 'WRITE'"
           >
             <a
@@ -379,52 +409,61 @@ onMounted(async () => {
             >
           </td>
           <td
-            class="border-2 overflow-hidden max-h-[40px]"
+            class="border-[1px] overflow-hidden max-h-[40px]"
             v-if="user.productName1 === 'READ' || user.productName1 === 'WRITE'"
           >
             {{ row.productName }}
           </td>
           <td
-            class="border-2"
+            class="border-[1px]"
             v-if="user.priceSite === 'READ' || user.priceSite === 'WRITE'"
           >
             {{ row.priceSite }}
           </td>
           <td
-            class="px-2 py-4 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            class="px-2 py-4 border-[1px]"
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
           >
             {{ row.priceRefund }}
           </td>
           <td
-            class="px-2 py-4 border-2"
-            v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR' || user.role === 'RMANAGER' "
+            class="px-2 py-4 border-[1px]"
+            v-if="
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.role === 'RMANAGER'
+            "
           >
             {{ row.dispatchPVZ }}
           </td>
-          <td
-            class="px-2 py-4 border-2"
-          >
+          <td class="px-2 py-4 border-[1px]">
+            {{ row.orderAccount }}
+          </td>
+          <td class="px-2 py-4 border-[1px]">
             {{ row.orderPVZ }}
           </td>
           <td
-            class="px-6 py-4 border-2"
+            class="px-6 py-4 border-[1px]"
             v-if="
               user.additionally1 === 'READ' || user.additionally1 === 'WRITE'
             "
           >
             {{ row.additionally ? row.additionally : "Пусто" }}
           </td>
-          <td class="px-2 py-4 border-2 text-green-500 font-bold">
+          <td class="px-2 py-4 border-[1px] text-green-500 font-bold">
             {{ storeUsers.getNormalizedDate(row.shipped) }}
           </td>
-          <td class="px-2 py-4 border-2 text-green-500 font-bold">
+          <td class="px-2 py-4 border-[1px] text-green-500 font-bold">
             {{ storeUsers.getNormalizedDate(row.verified) }}
           </td>
-          <td class="px-2 py-4 border-2">
+          <td class="px-2 py-4 border-[1px]">
             {{ row.shippedUser }}
           </td>
-          <td class="px-2 py-4 border-2">
+          <td class="px-2 py-4 border-[1px]">
             {{ row.verifiedUser }}
           </td>
           <div id="right"></div>
