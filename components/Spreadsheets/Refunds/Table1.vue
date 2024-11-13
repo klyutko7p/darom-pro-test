@@ -308,7 +308,7 @@ onMounted(async () => {
             scope="col"
             class="border-[1px]"
           >
-            отправка в пвз
+            отправка из пвз
           </th>
           <th
             scope="col"

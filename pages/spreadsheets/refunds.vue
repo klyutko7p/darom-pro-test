@@ -180,7 +180,7 @@ const token = Cookies.get("token");
                 "
               >
                 <label for="dispatchPVZ1" class="max-sm:text-sm"
-                  >Отправка в ПВЗ</label
+                  >Отправка из ПВЗ</label
                 >
                 <div>
                   <select
@@ -403,7 +403,7 @@ const token = Cookies.get("token");
                 "
               >
                 <label for="dispatchPVZ1" class="max-sm:text-sm"
-                  >Отправка в ПВЗ</label
+                  >Отправка из ПВЗ</label
                 >
                 <div>
                   <select
