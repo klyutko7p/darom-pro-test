@@ -93,7 +93,7 @@ async function scanItem() {
         );
         console.log("Полученные данные:", rowData.value);
       } else {
-        console.warn("Данные не найдены для idRow:", idRow);
+        console.warn("Данные не найдены для:", idRow);
       }
     } catch (error) {
       console.error("Ошибка при обработке данных:", error);

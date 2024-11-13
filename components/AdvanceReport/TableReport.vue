@@ -316,6 +316,7 @@ function getTotal() {
       row.typeOfExpenditure !== "Перевод с кредитного баланса" &&
       row.typeOfExpenditure !== "Вывод дивидендов"
   );
+  
   arrayOfReceiptsTotal.value = array?.filter(
     (row: IAdvanceReport) =>
       (row.typeOfExpenditure === "Пополнение баланса" ||

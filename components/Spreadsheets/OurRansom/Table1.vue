@@ -233,6 +233,7 @@ function scanItem() {
     }
     console.log(rowData);
     scanStringItem.value = "";
+    scannedLink = "";
   }, 1000);
 }
 
