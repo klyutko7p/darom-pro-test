@@ -336,7 +336,7 @@ let isVisiblePages = ref(true);
           row.typeOfExpenditure === "Пополнение баланса" ||
           row.typeOfExpenditure === "Удержания с сотрудников"
             ? row.expenditure
-            : "—"
+            : 0
         }}
       </p>
     </template>
@@ -351,7 +351,7 @@ let isVisiblePages = ref(true);
           row.typeOfExpenditure !== "Пополнение баланса" &&
           row.typeOfExpenditure !== "Удержания с сотрудников"
             ? row.expenditure
-            : "—"
+            : 0
         }}
       </p>
     </template>
