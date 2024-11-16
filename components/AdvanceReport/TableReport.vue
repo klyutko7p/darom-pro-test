@@ -129,7 +129,8 @@ function updateCurrentPageData() {
 
   arrayOfReceipts.value = filteredRows.value?.filter(
     (row: IAdvanceReport) =>
-      row.typeOfExpenditure === "Пополнение баланса" &&
+      (row.typeOfExpenditure === "Пополнение баланса" ||
+        row.typeOfExpenditure === "Удержания с сотрудников") &&
       (!props.selected.start ||
         new Date(row.date).setHours(0, 0, 0, 0) >=
           new Date(newStartingDate).setHours(0, 0, 0, 0)) &&
@@ -172,9 +173,35 @@ function updateCurrentPageData() {
     receiptsByPVZ[pvzName] = 0;
   });
 
+  const processedDeductions = {} as any;
+
   arrayOfExpenditure.value?.forEach((row) => {
     if (!isNaN(expenditureByPVZ[row.PVZ])) {
-      expenditureByPVZ[row.PVZ] += parseFloat(row.expenditure);
+      if (
+        row.typeOfExpenditure !== "Оплата ФОТ"
+      ) {
+        expenditureByPVZ[row.PVZ] += parseFloat(row.expenditure);
+      }
+
+      if (row.typeOfExpenditure === "Оплата ФОТ") {
+        if (!processedDeductions[row.PVZ]) {
+          let deductions =
+            arrayOfReceipts.value
+              ?.filter(
+                (item) =>
+                  item.PVZ === row.PVZ &&
+                  item.typeOfExpenditure === "Удержания с сотрудников"
+              )
+              .reduce((sum, item) => sum + parseFloat(item.expenditure), 0) ||
+            0;
+
+          expenditureByPVZ[row.PVZ] += deductions;
+
+          processedDeductions[row.PVZ] = true;
+        }
+
+        expenditureByPVZ[row.PVZ] += parseFloat(row.expenditure);
+      }
     }
   });
 
@@ -211,6 +238,19 @@ function updateCurrentPageData() {
       }
     });
   }
+
+  if (
+    props.selectedTypeOfExpenditure.includes("Оплата ФОТ") &&
+    !props.selectedTypeOfExpenditure.includes(
+      "Удержания с сотрудников"
+    )
+  ) {
+    arrayOfReceipts.value?.forEach((row) => {
+      if (!isNaN(receiptsByPVZ[row.PVZ])) {
+        receiptsByPVZ[row.PVZ] = 0;
+      }
+    });
+  } 
 
   pvz.value.forEach((pvzName: string) => {
     const difference = receiptsByPVZ[pvzName] - expenditureByPVZ[pvzName];
@@ -288,116 +328,6 @@ function calculateValue(curValue: any) {
 }
 
 function getTotal() {
-  let array;
-  array = props.rows;
-  array = array?.filter((row: IAdvanceReport) => {
-    return row.PVZ !== "";
-  });
-
-  rowsDeliveryArrTotal.value = props.rowsDelivery.filter(
-    (row: IDelivery) => row.paid !== null
-  );
-
-  arrayOfExpenditureTotal.value = array?.filter(
-    (row: IAdvanceReport) =>
-      row.typeOfExpenditure !== "Пополнение баланса" &&
-      row.typeOfExpenditure !== "Передача денежных средств" &&
-      row.typeOfExpenditure !== "Перевод в кредитный баланс" &&
-      row.typeOfExpenditure !==
-        "Списание кредитной задолженности торговой империи" &&
-      row.typeOfExpenditure !==
-        "Списание балансовой задолженности торговой империи" &&
-      row.typeOfExpenditure !== "Перевод с баланса нал" &&
-      row.typeOfExpenditure !== "Перевод с баланса безнал" &&
-      row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
-      row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
-      row.typeOfExpenditure !== "Новый кредит нал" &&
-      row.typeOfExpenditure !== "Новый кредит безнал" &&
-      row.typeOfExpenditure !== "Перевод с кредитного баланса" &&
-      row.typeOfExpenditure !== "Вывод дивидендов"
-  );
-  
-  arrayOfReceiptsTotal.value = array?.filter(
-    (row: IAdvanceReport) =>
-      (row.typeOfExpenditure === "Пополнение баланса" ||
-        row.typeOfExpenditure === "Удержания с сотрудников") &&
-      (!props.type || props.type.includes(row.type))
-  );
-
-  rowsOnlineArrTotal.value = props.rowsOurRansom.filter(
-    (row: IOurRansom) => row.additionally !== "Отказ брак"
-  );
-
-  let plusBalanceArr = [];
-
-  plusBalanceArr = rowsBalanceArr.value?.filter(
-    (row: IBalance) => row.notation === "Вывод дохода"
-  );
-
-  plusBalanceArr?.forEach((row) => {
-    if (!isNaN(expenditureByPVZ[row.pvz])) {
-      expenditureByPVZ[row.pvz] += parseFloat(row.sum);
-    }
-  });
-
-  pvz.value.forEach((pvzName: string) => {
-    expenditureByPVZTotal[pvzName] = 0;
-  });
-
-  pvz.value.forEach((pvzName: string) => {
-    receiptsByPVZTotal[pvzName] = 0;
-  });
-
-  arrayOfExpenditureTotal.value?.forEach((row) => {
-    if (!isNaN(expenditureByPVZTotal[row.PVZ])) {
-      expenditureByPVZTotal[row.PVZ] += parseFloat(row.expenditure);
-    }
-  });
-
-  arrayOfReceiptsTotal.value?.forEach((row) => {
-    if (!isNaN(receiptsByPVZTotal[row.PVZ])) {
-      receiptsByPVZTotal[row.PVZ] += parseFloat(row.expenditure);
-    }
-  });
-
-  rowsBalanceArrTotal.value
-    ?.filter((row) => row.notation !== "Вывод дохода")
-    .forEach((row) => {
-      if (!isNaN(receiptsByPVZTotal[row.pvz])) {
-        receiptsByPVZTotal[row.pvz] += parseFloat(row.sum);
-      }
-    });
-
-  rowsOnlineArrTotal.value?.forEach((row) => {
-    if (!isNaN(receiptsByPVZTotal[row.dispatchPVZ])) {
-      receiptsByPVZTotal[row.dispatchPVZ] += calculateValue(row);
-    }
-  });
-
-  rowsDeliveryArrTotal.value?.forEach((row) => {
-    if (!isNaN(receiptsByPVZTotal[row.orderPVZ])) {
-      receiptsByPVZTotal[row.orderPVZ] += row.amountFromClient3;
-    }
-  });
-
-  pvz.value.forEach((pvzName: string) => {
-    const difference =
-      receiptsByPVZTotal[pvzName] - expenditureByPVZTotal[pvzName];
-    differenceByPVZTotal[pvzName] = difference;
-  });
-
-  Object.keys(expenditureByPVZ).forEach((pvzName: string) => {
-    sumOfArray2Total.value += expenditureByPVZTotal[pvzName];
-  });
-
-  Object.keys(receiptsByPVZ).forEach((pvzName: string) => {
-    sumOfArray1Total.value += receiptsByPVZTotal[pvzName];
-  });
-
-  Object.keys(differenceByPVZ).forEach((pvzName: string) => {
-    sumOfArray3Total.value += differenceByPVZTotal[pvzName];
-  });
-
   returnTotal();
 }
 

@@ -345,17 +345,23 @@ async function getCellFromName() {
   }
 
   if (rowData.value.fromName.trim().length === 12 && isAutoPVZ.value === true) {
-    let row = originallyRows.value?.filter(
-      (row) =>
-        row.fromName === rowData.value.fromName && !row.cell.includes("-")
-    );
-    if (row && row.length > 0) {
-      if (row.some((r) => r.dispatchPVZ !== row[0].dispatchPVZ)) {
-        toast.warning(
-          "У клиента есть товары на разных ПВЗ! Выберите ПВЗ самостоятельно"
-        );
-      } else {
-        rowData.value.dispatchPVZ = row[0].dispatchPVZ;
+    if (rowData.value.fromName === "+77000000000") {
+      rowData.value.cell = "0";
+      rowData.value.dispatchPVZ = "НаДом";
+      return;
+    } else {
+      let row = originallyRows.value?.filter(
+        (row) =>
+          row.fromName === rowData.value.fromName && !row.cell.includes("-")
+      );
+      if (row && row.length > 0) {
+        if (row.some((r) => r.dispatchPVZ !== row[0].dispatchPVZ)) {
+          toast.warning(
+            "У клиента есть товары на разных ПВЗ! Выберите ПВЗ самостоятельно"
+          );
+        } else {
+          rowData.value.dispatchPVZ = row[0].dispatchPVZ;
+        }
       }
     }
   }

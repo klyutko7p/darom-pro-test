@@ -66,9 +66,14 @@ function setDateToStartOfDay(date: Date) {
 const filterRows = async () => {
   filteredRows.value = props.rows?.slice();
   filteredRows.value = props.rows?.filter((row) => {
+    const includeDeductions =
+      selectedTypeOfExpenditure.value.includes("Оплата ФОТ") &&
+      row.typeOfExpenditure === "Удержания с сотрудников";
+
     return (
       (!selectedTypeOfExpenditure.value.length ||
-        selectedTypeOfExpenditure.value.includes(row.typeOfExpenditure)) &&
+        selectedTypeOfExpenditure.value.includes(row.typeOfExpenditure) ||
+        includeDeductions) && 
       (!selectedType.value.length || selectedType.value.includes(row.type)) &&
       (!selected.value.start ||
         setDateToStartOfDay(new Date(row.date)) >=
@@ -78,6 +83,7 @@ const filterRows = async () => {
           setDateToStartOfDay(new Date(selected.value.end)))
     );
   });
+
   emit("filtered-rows", [
     filteredRows.value,
     selected.value,
@@ -86,6 +92,7 @@ const filterRows = async () => {
   ]);
   showFilters.value = false;
 };
+
 
 const ranges = [
   { label: "Январь", duration: { month: "0" } },
