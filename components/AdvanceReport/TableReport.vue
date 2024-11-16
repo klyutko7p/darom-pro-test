@@ -117,6 +117,7 @@ function updateCurrentPageData() {
       row.typeOfExpenditure !== "Новый кредит нал" &&
       row.typeOfExpenditure !== "Новый кредит безнал" &&
       row.typeOfExpenditure !== "Перевод с кредитного баланса" &&
+      row.typeOfExpenditure !== "Удержания с сотрудников" &&
       row.typeOfExpenditure !== "Вывод дивидендов" &&
       (!props.selected.start ||
         new Date(row.date).setHours(0, 0, 0, 0) >=
@@ -178,7 +179,7 @@ function updateCurrentPageData() {
   arrayOfExpenditure.value?.forEach((row) => {
     if (!isNaN(expenditureByPVZ[row.PVZ])) {
       if (
-        row.typeOfExpenditure !== "Оплата ФОТ"
+        row.typeOfExpenditure !== "Оплата ФОТ" 
       ) {
         expenditureByPVZ[row.PVZ] += parseFloat(row.expenditure);
       }
