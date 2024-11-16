@@ -919,43 +919,6 @@ function watchQuantity() {
               <div
                 class="grid grid-cols-2 mb-5"
                 v-if="
-                  user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'
-                "
-              >
-                <label for="prepayment1" class="max-sm:text-sm"
-                  >Предоплата</label
-                >
-                <input
-                  :disabled="user.prepayment1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.prepayment"
-                  type="number"
-                  placeholder="По умолчанию: 0"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.percentClient1 === 'READ' ||
-                  user.percentClient1 === 'WRITE'
-                "
-              >
-                <label for="percentClient1" class="max-sm:text-sm"
-                  >Процент с клиента</label
-                >
-                <input
-                  :disabled="user.percentClient1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.percentClient"
-                  placeholder="По умолчанию: 10"
-                  type="number"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
                   user.deliveredKGT1 === 'READ' ||
                   user.deliveredKGT1 === 'WRITE'
                 "
@@ -1037,6 +1000,43 @@ function watchQuantity() {
                 Показать ещё настройки
               </h1>
               <div v-if="showAddFields">
+                <div
+                  class="grid grid-cols-2 mb-5"
+                  v-if="
+                    user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'
+                  "
+                >
+                  <label for="prepayment1" class="max-sm:text-sm"
+                    >Предоплата</label
+                  >
+                  <input
+                    :disabled="user.prepayment1 === 'READ'"
+                    class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.prepayment"
+                    type="number"
+                    placeholder="По умолчанию: 0"
+                  />
+                </div>
+
+                <div
+                  class="grid grid-cols-2 mb-5"
+                  v-if="
+                    user.percentClient1 === 'READ' ||
+                    user.percentClient1 === 'WRITE'
+                  "
+                >
+                  <label for="percentClient1" class="max-sm:text-sm"
+                    >Процент с клиента</label
+                  >
+                  <input
+                    :disabled="user.percentClient1 === 'READ'"
+                    class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.percentClient"
+                    placeholder="По умолчанию: 10"
+                    type="number"
+                  />
+                </div>
+
                 <div
                   class="grid grid-cols-2 mb-5"
                   v-if="
@@ -1312,43 +1312,6 @@ function watchQuantity() {
               <div
                 class="grid grid-cols-2 mb-5"
                 v-if="
-                  user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'
-                "
-              >
-                <label for="prepayment1" class="max-sm:text-sm"
-                  >Предоплата</label
-                >
-                <input
-                  :disabled="user.prepayment1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.prepayment"
-                  type="number"
-                  placeholder="По умолчанию: 0"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.percentClient1 === 'READ' ||
-                  user.percentClient1 === 'WRITE'
-                "
-              >
-                <label for="percentClient1" class="max-sm:text-sm"
-                  >Процент с клиента</label
-                >
-                <input
-                  :disabled="user.percentClient1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.percentClient"
-                  placeholder="По умолчанию: 10"
-                  type="number"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
                   user.deliveredKGT1 === 'READ' ||
                   user.deliveredKGT1 === 'WRITE'
                 "
@@ -1430,6 +1393,43 @@ function watchQuantity() {
                 Показать ещё настройки
               </h1>
               <div v-if="showAddFields">
+                <div
+                  class="grid grid-cols-2 mb-5"
+                  v-if="
+                    user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'
+                  "
+                >
+                  <label for="prepayment1" class="max-sm:text-sm"
+                    >Предоплата</label
+                  >
+                  <input
+                    :disabled="user.prepayment1 === 'READ'"
+                    class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.prepayment"
+                    type="number"
+                    placeholder="По умолчанию: 0"
+                  />
+                </div>
+
+                <div
+                  class="grid grid-cols-2 mb-5"
+                  v-if="
+                    user.percentClient1 === 'READ' ||
+                    user.percentClient1 === 'WRITE'
+                  "
+                >
+                  <label for="percentClient1" class="max-sm:text-sm"
+                    >Процент с клиента</label
+                  >
+                  <input
+                    :disabled="user.percentClient1 === 'READ'"
+                    class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.percentClient"
+                    placeholder="По умолчанию: 10"
+                    type="number"
+                  />
+                </div>
+
                 <div
                   class="grid grid-cols-2 mb-5"
                   v-if="

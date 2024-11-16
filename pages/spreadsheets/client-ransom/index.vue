@@ -468,43 +468,6 @@ function getFromNameFromCell() {
               <div
                 class="grid grid-cols-2 mb-5"
                 v-if="
-                  user.prepayment2 === 'READ' || user.prepayment2 === 'WRITE'
-                "
-              >
-                <label for="prepayment1" class="max-sm:text-sm"
-                  >Предоплата</label
-                >
-                <input
-                  :disabled="user.prepayment2 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.prepayment"
-                  type="number"
-                  placeholder="По умолчанию: 0"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.percentClient2 === 'READ' ||
-                  user.percentClient2 === 'WRITE'
-                "
-              >
-                <label for="percentClient1" class="max-sm:text-sm"
-                  >Процент с клиента</label
-                >
-                <input
-                  :disabled="user.percentClient2 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.percentClient"
-                  placeholder="По умолчанию: 10"
-                  type="number"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
                   user.deliveredKGT2 === 'READ' ||
                   user.deliveredKGT2 === 'WRITE'
                 "
@@ -569,6 +532,43 @@ function getFromNameFromCell() {
                 Показать ещё настройки
               </h1>
               <div v-if="showAddFields">
+                <div
+                  class="grid grid-cols-2 mb-5"
+                  v-if="
+                    user.prepayment2 === 'READ' || user.prepayment2 === 'WRITE'
+                  "
+                >
+                  <label for="prepayment1" class="max-sm:text-sm"
+                    >Предоплата</label
+                  >
+                  <input
+                    :disabled="user.prepayment2 === 'READ'"
+                    class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.prepayment"
+                    type="number"
+                    placeholder="По умолчанию: 0"
+                  />
+                </div>
+
+                <div
+                  class="grid grid-cols-2 mb-5"
+                  v-if="
+                    user.percentClient2 === 'READ' ||
+                    user.percentClient2 === 'WRITE'
+                  "
+                >
+                  <label for="percentClient1" class="max-sm:text-sm"
+                    >Процент с клиента</label
+                  >
+                  <input
+                    :disabled="user.percentClient2 === 'READ'"
+                    class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.percentClient"
+                    placeholder="По умолчанию: 10"
+                    type="number"
+                  />
+                </div>
+
                 <div
                   class="grid grid-cols-2 mb-5"
                   v-if="
@@ -815,43 +815,6 @@ function getFromNameFromCell() {
               <div
                 class="grid grid-cols-2 mb-5"
                 v-if="
-                  user.prepayment2 === 'READ' || user.prepayment2 === 'WRITE'
-                "
-              >
-                <label for="prepayment1" class="max-sm:text-sm"
-                  >Предоплата</label
-                >
-                <input
-                  :disabled="user.prepayment2 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.prepayment"
-                  type="number"
-                  placeholder="По умолчанию: 0"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.percentClient2 === 'READ' ||
-                  user.percentClient2 === 'WRITE'
-                "
-              >
-                <label for="percentClient1" class="max-sm:text-sm"
-                  >Процент с клиента</label
-                >
-                <input
-                  :disabled="user.percentClient2 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.percentClient"
-                  placeholder="По умолчанию: 10"
-                  type="number"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
                   user.deliveredKGT2 === 'READ' ||
                   user.deliveredKGT2 === 'WRITE'
                 "
@@ -916,6 +879,43 @@ function getFromNameFromCell() {
                 Показать ещё настройки
               </h1>
               <div v-if="showAddFields">
+                <div
+                  class="grid grid-cols-2 mb-5"
+                  v-if="
+                    user.prepayment2 === 'READ' || user.prepayment2 === 'WRITE'
+                  "
+                >
+                  <label for="prepayment1" class="max-sm:text-sm"
+                    >Предоплата</label
+                  >
+                  <input
+                    :disabled="user.prepayment2 === 'READ'"
+                    class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.prepayment"
+                    type="number"
+                    placeholder="По умолчанию: 0"
+                  />
+                </div>
+
+                <div
+                  class="grid grid-cols-2 mb-5"
+                  v-if="
+                    user.percentClient2 === 'READ' ||
+                    user.percentClient2 === 'WRITE'
+                  "
+                >
+                  <label for="percentClient1" class="max-sm:text-sm"
+                    >Процент с клиента</label
+                  >
+                  <input
+                    :disabled="user.percentClient2 === 'READ'"
+                    class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.percentClient"
+                    placeholder="По умолчанию: 10"
+                    type="number"
+                  />
+                </div>
+
                 <div
                   class="grid grid-cols-2 mb-5"
                   v-if="
