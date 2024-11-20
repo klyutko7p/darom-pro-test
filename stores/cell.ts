@@ -348,7 +348,7 @@ export const useCellsStore = defineStore("cells", () => {
         }
       }
 
-      const allCells = await getCells();
+      const allCells = await getCellsClient();
 
       const matches: any = [];
       const disMatches: any = [];

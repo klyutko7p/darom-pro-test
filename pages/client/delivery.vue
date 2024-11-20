@@ -68,8 +68,7 @@ onMounted(async () => {
 });
 
 async function updateCells() {
-  let rowsWithDeleted =
-    await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
+  let rowsWithDeleted = await storeRansom.getRansomRows("ClientRansom");
   await storeCells.updateCellsStatusClient(rowsWithDeleted);
   cells.value = await storeCells.getCellsClient();
   cells.value = cells.value?.filter((cell) => cell.PVZ !== "НаДом");
@@ -112,7 +111,8 @@ async function getCellFromName() {
     rowData.value.cell = matchedCell.name;
   } else {
     const freeCell = cells.value?.find(
-      (cell) => cell.PVZ === rowData.value.dispatchPVZ && cell.status === "Свободно"
+      (cell) =>
+        cell.PVZ === rowData.value.dispatchPVZ && cell.status === "Свободно"
     );
     if (freeCell) {
       rowData.value.cell = freeCell.name;
@@ -240,7 +240,7 @@ const marketplaces = [
 
 async function submitForm() {
   try {
-    rowData.value.orderPVZ = 'Ряженое';
+    rowData.value.orderPVZ = "Ряженое";
     rowData.value.fromName = user.value.phoneNumber;
     rowData.value.productLink = marketplace.value;
     rowData.value.dispatchPVZ = pvzData.value;
