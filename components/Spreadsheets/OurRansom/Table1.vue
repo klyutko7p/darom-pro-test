@@ -160,6 +160,11 @@ function scanItem() {
         return;
       }
 
+      if (!props.rows?.includes(rowData)) {
+        handleCheckboxChange(rowData);
+        return;
+      }
+
       handleCheckboxChange(rowData);
     } else {
       handleCheckboxChange(rowData);
