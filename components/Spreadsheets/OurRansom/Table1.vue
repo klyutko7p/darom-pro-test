@@ -160,16 +160,6 @@ function scanItem() {
         return;
       }
 
-      if (!props.rows?.includes(rowData)) {
-        toast.error(
-          `Товар с ID: ${rowData.id} не отметился. Причина: товар не принадлежит этому клиенту!`,
-          {
-            timeout: 10000,
-          }
-        );
-        return;
-      }
-
       handleCheckboxChange(rowData);
     } else {
       handleCheckboxChange(rowData);
