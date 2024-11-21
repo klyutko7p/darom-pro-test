@@ -49,6 +49,7 @@ function openModal(row: IOurRansom) {
 
 function closeModal() {
   isOpen.value = false;
+  // isShowModal.value = false;
   rowData.value = {} as IOurRansom;
 }
 
@@ -102,6 +103,7 @@ async function deleteSelectedRows(idArray: number[]) {
 
 async function updateRow() {
   isLoading.value = true;
+  // isShowModal.value = false;
 
   await storeRansom.updateRansomRow(
     rowData.value,
@@ -132,6 +134,7 @@ async function updateRow() {
 
 async function createRow() {
   isLoading.value = true;
+  // isShowModal.value = false;
 
   await storeRansom.createRansomRow(
     rowData.value,
@@ -700,6 +703,16 @@ function watchQuantity() {
     rowData.value.quantity = 1;
   }
 }
+
+// let isShowModal = ref(false);
+
+// function checkWB() {
+//   rowData.value.dp = true;
+// }
+
+// function nonCheckWB() {
+//   rowData.value.dp = false;
+// }
 </script>
 
 <template>
@@ -1117,10 +1130,31 @@ function watchQuantity() {
               class="flex items-center justify-center gap-3 mt-10"
               v-if="rowData.id"
             >
-              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
+              <!-- <div class="flex flex-col items-center gap-2 mr-5">
+                <label>Предоплата</label>
+                <input
+                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
+                  type="checkbox"
+                  required
+                  v-model="rowData.dp"
+                />
+                {{ rowData }}
+              </div> -->
+              <UIMainButton @click="updateRow"
+                >Сохранить
+              </UIMainButton>
               <UIMainButton @click="closeModal">Отменить </UIMainButton>
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
+              <!-- <div class="flex flex-col items-center gap-2 mr-5">
+                <label>Предоплата</label>
+                <input
+                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
+                  type="checkbox"
+                  required
+                  v-model="rowData.dp"
+                />
+              </div> -->
               <UIMainButton
                 :disabled="rowData.fromName === '' || rowData.fromName === null"
                 @click="createRow"
@@ -1510,10 +1544,30 @@ function watchQuantity() {
               class="flex items-center justify-center gap-3 mt-10"
               v-if="rowData.id"
             >
-              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
+              <div class="flex flex-col items-center gap-2 mr-5">
+                <label>Предоплата</label>
+                <input
+                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
+                  type="checkbox"
+                  required
+                  v-model="rowData.dp"
+                />
+              </div>
+              <UIMainButton @click="isShowModal = true"
+                >Сохранить
+              </UIMainButton>
               <UIMainButton @click="closeModal">Отменить </UIMainButton>
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
+              <!-- <div class="flex flex-col items-center gap-2 mr-5">
+                <label>Предоплата</label>
+                <input
+                  class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
+                  type="checkbox"
+                  required
+                  v-model="rowData.dp"
+                />
+              </div> -->
               <UIMainButton
                 :disabled="rowData.fromName === '' || rowData.fromName === null"
                 @click="createRow"
@@ -1528,5 +1582,72 @@ function watchQuantity() {
         </div>
       </NuxtLayout>
     </div>
+
+    <!-- <div
+      v-auto-animate
+      v-if="isShowModal"
+      class="fixed top-0 bottom-0 left-0 bg-black bg-opacity-70 right-0 z-[100]"
+    >
+      <div
+        class="flex items-center justify-center h-screen text-black font-semibold"
+      >
+        <div
+          class="bg-white relative p-10 max-sm:p-3 rounded-lg flex items-center flex-col gap-3"
+        >
+          <div class="absolute top-4 right-4 max-sm:top-2 max-sm:right-2">
+            <Icon
+              name="material-symbols:cancel-rounded"
+              size="32"
+              class="cursor-pointer hover:text-secondary-color duration-200"
+              @click="isShowModal = !isShowModal"
+            />
+          </div>
+          <h1
+            class="text-xl mt-3 max-w-[500px] text-center text-secondary-color font-semibold w-full max-sm:text-xl py-3 max-sm:mt-5"
+          >
+            Отметить предоплату?
+          </h1>
+          <div
+            v-if="!rowData.id"
+            class="flex items-center gap-3 max-sm:flex-col"
+          >
+            <UButton
+              @click="checkWB(), createRow()"
+              class="font-bold"
+              icon="material-symbols:check-rounded"
+              size="xl"
+              color="green"
+              >Да</UButton
+            >
+            <UButton
+              @click="nonCheckWB(), createRow()"
+              class="font-bold"
+              icon="akar-icons:cross"
+              size="xl"
+              color="red"
+              >Нет</UButton
+            >
+          </div>
+          <div v-else class="flex items-center gap-3 max-sm:flex-col">
+            <UButton
+              @click="checkWB(), updateRow()"
+              class="font-bold"
+              icon="material-symbols:check-rounded"
+              size="xl"
+              color="green"
+              >Да</UButton
+            >
+            <UButton
+              @click="nonCheckWB(), updateRow()"
+              class="font-bold"
+              icon="akar-icons:cross"
+              size="xl"
+              color="red"
+              >Нет</UButton
+            >
+          </div>
+        </div>
+      </div>
+    </div> -->
   </div>
 </template>

@@ -111,6 +111,7 @@ model OurRansom {
   verified          DateTime?
   verifiedUser      String?
   priceRefund       Int?      @default(0)
+  dp                Boolean?  @default(true)
 }
 
 model ClientRansom {

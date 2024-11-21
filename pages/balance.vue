@@ -2190,7 +2190,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                       >
                         Баланс онлайн DP
                       </option>
-                      <option
+                      <!-- <option
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
@@ -2201,7 +2201,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                         value="Постоплата WB"
                       >
                         Сумма товаров в заказе с постоплатой WB (до выдачи)
-                      </option>
+                      </option> -->
                       <option
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
@@ -2654,7 +2654,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                       >
                         Баланс онлайн DP
                       </option>
-                      <option
+                      <!-- <option
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
@@ -2665,7 +2665,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                         value="Постоплата WB"
                       >
                         Сумма товаров в заказе с постоплатой WB (до выдачи)
-                      </option>
+                      </option> -->
                       <option
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&

@@ -32,4 +32,5 @@ interface IOurRansom {
     verified: Date | number | string | null;
     verifiedUser: string;
     priceRefund: number;
+    dp?: boolean;
 }
