@@ -115,6 +115,7 @@ function updateCurrentPageData() {
       row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
       row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
       row.typeOfExpenditure !== "Новый кредит нал" &&
+      row.typeOfExpenditure !== "Постоплата WB" &&
       row.typeOfExpenditure !== "Новый кредит безнал" &&
       row.typeOfExpenditure !== "Перевод с кредитного баланса" &&
       row.typeOfExpenditure !== "Удержания с сотрудников" &&

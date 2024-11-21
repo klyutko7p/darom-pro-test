@@ -160,6 +160,7 @@ function getAllSumDirector() {
         row.typeOfExpenditure !== "Пополнение баланса" &&
         row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
         row.typeOfExpenditure !== "Новый кредит нал" &&
+        row.typeOfExpenditure !== "Постоплата WB" &&
         row.typeOfExpenditure !== "Перевод с баланса безнал" &&
         row.type === "Нал"
     )
@@ -415,17 +416,35 @@ function getAllSumDirector() {
   }
   getSumCreditCash();
   getSumCreditOnline();
+  getSumCashWB();
   getSumCreditBalance();
   return allSum.value + allSum2.value - 19008030;
 }
 
 let sumCreditCash = ref(0);
+let sumCashWB = ref(0);
 let sumCreditOnline = ref(0);
 let sumCreditBalance = ref(0);
 
 let sumCreditCashDebt = ref(0);
 let sumCreditOnlineDebt = ref(0);
 let sumCreditBalanceDebt = ref(0);
+
+function getSumCashWB() {
+  if (rows.value) {
+    let sumOfPVZ = rows.value
+      .filter(
+        (row) =>
+          (row.createdUser === "Директор" ||
+            row.createdUser === "Власенкова") &&
+          row.typeOfExpenditure === "Постоплата WB" &&
+          row.type === "Нал"
+      )
+      .reduce((acc, value) => acc + +value.expenditure, 0);
+
+    sumCashWB.value = sumOfPVZ;
+  }
+}
 
 function getSumCreditCash() {
   if (rows.value) {
@@ -625,6 +644,7 @@ function checkStatus() {
     rowData.value.typeOfExpenditure !== "Передача денежных средств" &&
     rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
     rowData.value.typeOfExpenditure !== "Новый кредит нал" &&
+    rowData.value.typeOfExpenditure !== "Постоплата WB" &&
     rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
     rowData.value.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
     rowData.value.typeOfExpenditure !== "Перевод с баланса нал" &&
@@ -638,6 +658,7 @@ function checkStatus() {
     rowData.value.typeOfExpenditure === "Передача денежных средств" ||
     rowData.value.typeOfExpenditure === "Вывод дивидендов" ||
     rowData.value.typeOfExpenditure === "Новый кредит нал" ||
+    rowData.value.typeOfExpenditure === "Постоплата WB" ||
     rowData.value.typeOfExpenditure === "Новый кредит безнал" ||
     rowData.value.typeOfExpenditure === "Перевод с кредитного баланса нал" ||
     rowData.value.typeOfExpenditure === "Перевод с баланса нал" ||
@@ -851,6 +872,7 @@ async function createRow() {
     rowData.value.typeOfExpenditure !==
       "Перевод в междубалансовый, кредитный баланс" &&
     rowData.value.typeOfExpenditure !== "Новый кредит нал" &&
+    rowData.value.typeOfExpenditure !== "Постоплата WB" &&
     rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
     rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
     rowData.value.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
@@ -868,6 +890,7 @@ async function createRow() {
     rowData.value.typeOfExpenditure !==
       "Перевод в междубалансовый, кредитный баланс" &&
     rowData.value.typeOfExpenditure !== "Новый кредит нал" &&
+    rowData.value.typeOfExpenditure !== "Постоплата WB" &&
     rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
     rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
     rowData.value.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
@@ -1412,6 +1435,7 @@ const typeOfOptions = [
   { value: "Пополнение баланса", label: "Нет" },
   { value: "Перевод с кредитного баланса нал", label: "С кредитного баланса" },
   { value: "Перевод с баланса безнал", label: "С баланса безнал" },
+  { value: "Постоплата WB", label: "Постоплата WB" },
 ];
 
 const typeOfOptions2 = [
@@ -1455,27 +1479,32 @@ const typeOfOptions2 = [
                   class="absolute top-0 right-0 hover:text-secondary-color duration-200 cursor-pointer"
                   @click="isShowCreditBalanceCash = !isShowCreditBalanceCash"
                 />
-                <h1 class="text-2xl text-center">
-                  Междубалансовый, кредитный баланс нал
+                <h1 class="text-xl text-center">
+                  Междубалансовый, кредитный <br />
+                  баланс нал
                 </h1>
-                <h1 class="text-center text-3xl text-secondary-color mb-5">
+                <h1 class="text-center text-2xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditCash) }} ₽
                 </h1>
-                <h1 class="text-2xl text-center">Кредитная задолженность</h1>
-                <h1 class="text-center text-3xl text-secondary-color mb-5">
+                <h1 class="text-xl text-center">Кредитная задолженность</h1>
+                <h1 class="text-center text-2xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditCashDebt) }} ₽
                 </h1>
-                <h1 class="text-2xl text-center">
+                <h1 class="text-xl text-center">WB задолженность</h1>
+                <h1 class="text-center text-2xl text-secondary-color mb-5">
+                  {{ formatNumber(sumCashWB) }} ₽
+                </h1>
+                <h1 class="text-xl text-center">
                   Междубалансовая задолженность
                 </h1>
                 <h1
-                  class="text-center text-3xl text-secondary-color mb-5"
+                  class="text-center text-2xl text-secondary-color mb-5"
                   v-if="sumCreditBalanceDebt <= 0"
                 >
                   {{ formatNumber(sumCreditBalance) }} ₽
                 </h1>
                 <h1
-                  class="text-center text-3xl text-secondary-color mb-5"
+                  class="text-center text-2xl text-secondary-color mb-5"
                   v-else
                 >
                   0 ₽
@@ -1500,20 +1529,21 @@ const typeOfOptions2 = [
                     isShowCreditBalanceOnline = !isShowCreditBalanceOnline
                   "
                 />
-                <h1 class="text-2xl text-center">
-                  Междубалансовый, кредитный баланс безнал
+                <h1 class="text-xl text-center">
+                  Междубалансовый, кредитный <br />
+                  баланс безнал
                 </h1>
-                <h1 class="text-center text-3xl text-secondary-color mb-5">
+                <h1 class="text-center text-2xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditOnline) }} ₽
                 </h1>
-                <h1 class="text-2xl text-center">Кредитная задолженность</h1>
-                <h1 class="text-center text-3xl text-secondary-color mb-5">
+                <h1 class="text-xl text-center">Кредитная задолженность</h1>
+                <h1 class="text-center text-2xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditOnlineDebt) }} ₽
                 </h1>
-                <h1 class="text-2xl text-center">
+                <h1 class="text-xl text-center">
                   Междубалансовая задолженность
                 </h1>
-                <h1 class="text-center text-3xl text-secondary-color mb-5">
+                <h1 class="text-center text-2xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditBalanceDebt) }} ₽
                 </h1>
               </div>
@@ -1980,6 +2010,7 @@ const typeOfOptions2 = [
               <USelectMenu
                 :disabled="
                   rowData.typeOfExpenditure === 'Новый кредит нал' ||
+                  rowData.typeOfExpenditure === 'Постоплата WB' ||
                   rowData.typeOfExpenditure === 'Перевод с баланса безнал' ||
                   rowData.typeOfExpenditure ===
                     'Перевод с кредитного баланса нал'
@@ -1995,6 +2026,7 @@ const typeOfOptions2 = [
               <USelectMenu
                 :disabled="
                   rowData.typeOfExpenditure === 'Новый кредит нал' ||
+                  rowData.typeOfExpenditure === 'Постоплата WB' ||
                   rowData.typeOfExpenditure === 'Перевод с баланса безнал' ||
                   rowData.typeOfExpenditure ===
                     'Перевод с кредитного баланса нал'

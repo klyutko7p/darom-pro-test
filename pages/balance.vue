@@ -2198,6 +2198,18 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "
+                        value="Постоплата WB"
+                      >
+                        Сумма товаров в заказе с постоплатой WB (до выдачи)
+                      </option>
+                      <option
+                        v-if="
+                          user.role !== 'ADMINISTRATOR' &&
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ' &&
+                          user.role !== 'RMANAGER'
+                        "
                         value="Заказано"
                       >
                         Сумма товаров в заказе (до выдачи)
@@ -2641,6 +2653,18 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                         value="Баланс безнал"
                       >
                         Баланс онлайн DP
+                      </option>
+                      <option
+                        v-if="
+                          user.role !== 'ADMINISTRATOR' &&
+                          user.role !== 'PVZ' &&
+                          user.role !== 'COURIER' &&
+                          user.role !== 'PPVZ' &&
+                          user.role !== 'RMANAGER'
+                        "
+                        value="Постоплата WB"
+                      >
+                        Сумма товаров в заказе с постоплатой WB (до выдачи)
                       </option>
                       <option
                         v-if="
