@@ -35,23 +35,7 @@ async function updateDeliveryRows(flag: string, allSumData: string = "0") {
     flag: flag,
     allSum: allSumData,
   });
-  // if (+allSumInput.value > 0) {
-  //   await storeBalance.createBalanceRow(
-  //     {
-  //       pvz: props.user.visiblePVZ,
-  //       sum: allSumInput.value,
-  //       issued: new Date(),
-  //       received: new Date(),
-  //       notation: "Оплата бонусами",
-  //       receivedUser: props.user.username,
-  //       receivedUser2: props.user.username,
-  //       createdUser: props.user.username,
-  //       recipient: "Нет",
-  //     },
-  //     props.user.username
-  //   );
-  //   await storeClients.updateBalance(phoneNumberClient.value, getAllSumBonuses.value);
-  // }
+
   checkedRows.value = [];
   allSum.value = [];
   getAllSum.value = 0;
@@ -117,59 +101,7 @@ async function exportToExcel() {
   await writeFile(wb, "наш_выкуп.xlsx");
 
   perPage.value = await 100;
-
-  // let formData = new FormData();
-  // formData.append("chat_id", "-1002055393875");
-  // formData.append("document", blob, 'наш_выкуп.xlsx');
-  // formData.append("caption", "Дата и время: " + getCurrentDateTime());
-
-  // let response = await fetch("https://api.telegram.org/bot6997552821:AAH_0b0457h-oNj4DxBnQCBylpX5xZVo6Fc/sendDocument", {
-  //     method: "POST",
-  //     body: formData
-  // });
-
-  // let data = await response.json();
-  // console.log(data);
-
-  // await writeFile(wb, "наш_выкуп.xlsx");
 }
-
-// function getCurrentDateTime() {
-//     let options = {
-//         year: 'numeric',
-//         month: 'numeric',
-//         day: 'numeric',
-//         hour: 'numeric',
-//         minute: 'numeric',
-//         second: 'numeric',
-//         timeZone: 'Europe/Moscow',
-//         timeZoneName: 'short'
-//     };
-//     return new Date().toLocaleString('ru-RU', options);
-// }
-
-// async function sendFileToTelegram(file: any) {
-//   const token = "6997552821:AAH_0b0457h-oNj4DxBnQCBylpX5xZVo6Fc";
-//   const chatId = "-1002055393875";
-
-//   const url = `https://api.telegram.org/bot${token}/sendDocument`;
-
-//   const formData = new FormData();
-//   formData.append("chat_id", chatId);
-//   formData.append("document", file, "наш_выкуп.xlsx");
-
-//   try {
-//     const response = await fetch(url, {
-//       method: "POST",
-//       body: formData,
-//     });
-//     const data = await response.json();
-//     console.log(data);
-//     console.log(formData);
-//   } catch (error) {
-//     console.error("Error sending file to Telegram:", error);
-//   }
-// }
 
 const allSum: Ref<RowData[]> = ref([]);
 const checkedRows: Ref<number[]> = ref([]);
@@ -203,6 +135,7 @@ function scanItem() {
     clearTimeout(timeoutId);
   }
 
+
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertToURL(scannedLink);
@@ -220,6 +153,16 @@ function scanItem() {
       if (!rowData.deliveredPVZ) {
         toast.error(
           `Товар с ID: ${rowData.id} не отметился. Причина: товар не принят на ПВЗ!`,
+          {
+            timeout: 10000,
+          }
+        );
+        return;
+      }
+
+      if (!props.rows?.includes(rowData)) {
+        toast.error(
+          `Товар с ID: ${rowData.id} не отметился. Причина: товар не принадлежит этому клиенту!`,
           {
             timeout: 10000,
           }

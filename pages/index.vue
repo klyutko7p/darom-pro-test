@@ -7,7 +7,7 @@ const router = useRouter();
 const coordinates = ref([47.971605, 37.860323]);
 const controls = ["geolocationControl", "zoomControl", "typeSelector"];
 
-const storeClients = useClientsStore()
+const storeClients = useClientsStore();
 
 const token = Cookies.get("token");
 let user = ref({} as User);
@@ -16,12 +16,12 @@ onMounted(async () => {
 
   if (token && user.value.role === "CLIENT") {
     router.push("/auth/client/login");
-  } 
+  }
 
   if (token && user.value.username === "Власенкова") {
     router.push("/auth/login");
   }
-})
+});
 
 const addressItems = ref([
   {
@@ -130,7 +130,6 @@ useSeoMeta({
   ogDescription:
     "Доставка из интернет-магазинов WILDBERRIES, OZON, ЯНДЕКС МАРКЕТ И ДР. По всем вопросам и для оформления заказа звоните: +7(949)612-47-60",
 });
-
 </script>
 
 <template>
@@ -179,9 +178,9 @@ useSeoMeta({
           </h1>
         </div>
         <div class="flex items-center justify-center gap-5 mt-5">
-          <UIMainButton @click="router.push('/auth/client/login')"
-            >оформить заказ</UIMainButton
-          >
+          <UIMainButton class="max-xl:w-full max-xl:max-w-[770px]" @click="router.push('/auth/client/login')">
+            оформить заказ
+          </UIMainButton>
         </div>
         <div
           class="flex items-center justify-between mt-24 max-xl:flex-col-reverse max-xl:gap-10 max-xl:mt-10"

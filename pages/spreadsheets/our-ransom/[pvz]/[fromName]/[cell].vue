@@ -390,30 +390,6 @@ async function showDeletedRows(flag: boolean) {
   }
 }
 
-// async function updateDeliveryRows(obj: any) {
-//   if (obj.flag === "additionally") {
-//     isOpenOnlineStatus.value = true;
-//     itemsId.value = obj.idArray;
-//     obj.allSum *= 1 + 2 / 100;
-//     updatedPriceTwoPercent.value = obj.allSum;
-//   } else {
-//     let answer = confirm(
-//       `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
-//     );
-//     if (answer) {
-//       isLoading.value = true;
-//       await storeRansom.updateDeliveryRowsStatus(
-//         obj.idArray,
-//         obj.flag,
-//         "OurRansom",
-//         user.value.username
-//       );
-//       filteredRows.value = await storeRansom.getRansomRows("OurRansom");
-//       rows.value = filteredRows.value;
-//       isLoading.value = false;
-//     }
-//   }
-// }
 
 async function updateDeliveryRows(obj: any) {
   if (obj.flag !== "additionally") {
@@ -434,6 +410,7 @@ async function updateDeliveryRows(obj: any) {
         "OurRansom"
       );
       rows.value = filteredRows.value;
+      router.push(`/spreadsheets/our-ransom/${pvzLink}`)
       isLoading.value = false;
     }
   } else {
@@ -450,6 +427,7 @@ async function updateDeliveryRows(obj: any) {
       "OurRansom"
     );
     rows.value = filteredRows.value;
+    router.push(`/spreadsheets/our-ransom/${pvzLink}`)
     isLoading.value = false;
   }
 }
