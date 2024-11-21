@@ -160,7 +160,6 @@ function scanItem() {
         return;
       }
 
-      
       handleCheckboxChange(rowData);
     } else {
       handleCheckboxChange(rowData);
