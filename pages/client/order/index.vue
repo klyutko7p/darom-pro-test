@@ -43,16 +43,25 @@ definePageMeta({
               <UIMainButton
                 class="w-full"
                 @click="router.push('order/independently')"
-                >заказать Самостоятельно в интернет-магазине
-                <br />
-                (OZON, WB, ЯМ и другие) <br />
-                с последующей доставкой
+                >заказать Самостоятельно в интернет-магазине <br />
+                с последующей доставкой по штрих-коду (QR)
               </UIMainButton>
               <UIMainButton
                 class="w-full"
                 @click="router.push('order/accept-order')"
                 >Заказать через личный кабинет DAROM.PRO</UIMainButton
               >
+              <a
+                href="https://t.me/darom_pro_bot"
+                target="_blank"
+                class="w-full"
+              >
+                <UIMainButton
+                  class="w-full"
+                  @click="router.push('/client/main?notification=false')"
+                  >Заказать через телеграм-бота</UIMainButton
+                >
+              </a>
               <a
                 href="https://t.me/Svetlana_Darompro"
                 target="_blank"

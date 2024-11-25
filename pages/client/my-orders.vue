@@ -266,10 +266,14 @@ function closeQRModal() {
 
       <h1 class="mt-5 text-xl max-[330px]:text-lg">
         <span class="flex items-center gap-3">
-          <Icon name="solar:box-bold-duotone" size="24" /> Оформленные заказы
-          через:
+          <Icon
+            class="text-orange-500"
+            name="solar:box-bold-duotone"
+            size="32"
+          />
+          Оформленные заказы через:
         </span>
-        <span class="text-lg italic">
+        <span class="text-lg">
           Администратора <br />
           Телеграм-бота <br />
           Личный кабинет Darom Pro
@@ -306,11 +310,16 @@ function closeQRModal() {
 
       <h1 class="mt-20 text-xl max-[330px]:text-lg">
         <span class="flex items-center gap-3">
-          <Icon name="flowbite:truck-solid" size="24" /> Оформленные доставки
-          заказов <br class="max-[380px]:block hidden" />
-          по штрих-коду (QR) через:
+          <Icon
+            name="mdi:truck-fast"
+            class="text-secondary-color"
+            size="32"
+          />
+          Оформленные доставки заказов по
+          <br class="max-[380px]:block hidden" />
+          Штрих-коду (QR) через:
         </span>
-        <span class="text-lg italic">
+        <span class="text-lg">
           Администратора <br />
           Телеграм-бота <br />
           Личный кабинет Darom Pro

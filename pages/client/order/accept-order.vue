@@ -579,7 +579,7 @@ let isNotAskingAcceptOrder = ref(false);
               <h1 class="font-semibold text-base max-sm:text-lg">
                 Заказать через личный кабинет
                 <span class="uppercase text-secondary-color">darom.pro</span>
-                можно <br />
+                можно только<br />
                 из интернет-магазинов OZON и WILDBERRIES
               </h1>
               <div class="flex items-center gap-3">

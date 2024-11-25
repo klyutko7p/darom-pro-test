@@ -159,7 +159,7 @@ onMounted(async () => {
     rows.value = await storeRansom.getRansomRowsByLink(link, "Delivery");
   }
 
-  if (rows.value) {
+  if (rows.value.length) {
     copyRows.value = [...rows.value];
     let ransomRow = copyRows.value;
     phoneNumber.value = copyRows.value[0].fromName;
@@ -232,7 +232,7 @@ async function updateDeliveryRows() {
   );
   rows.value = await storeRansom.getRansomRowsByLink(link, "Delivery");
 
-  if (rows.value) {
+  if (rows.value.length) {
     copyRows.value = [...rows.value];
     let ransomRow = copyRows.value;
     phoneNumber.value = copyRows.value[0].fromName;
@@ -455,25 +455,36 @@ const pvzs = [
         </div>
       </div>
 
-      <h1 v-if="link.startsWith('1')" class="mt-5 text-xl max-[330px]:text-lg">
+      <h1
+        v-if="link.startsWith('1')"
+        class="mt-5 text-xl max-[330px]:text-lg ml-5"
+      >
         <span class="flex items-center gap-3">
-          <Icon name="solar:box-bold-duotone" size="24" /> Оформленные заказы
-          через:
+          <Icon
+            name="solar:box-bold-duotone"
+            class="text-secondary-color"
+            size="32"
+          />
+          Оформленные заказы через:
         </span>
-        <span class="text-lg italic">
+        <span class="text-lg">
           Администратора <br />
           Телеграм-бота <br />
           Личный кабинет Darom Pro
         </span>
       </h1>
 
-      <h1 v-if="link.startsWith('2')" class="mt-5 text-xl max-[330px]:text-lg">
+      <h1
+        v-if="link.startsWith('2')"
+        class="mt-5 text-xl max-[330px]:text-lg ml-5"
+      >
         <span class="flex items-center gap-3">
-          <Icon name="flowbite:truck-solid" size="24" /> Оформленные доставки
-          заказов <br class="max-[380px]:block hidden" />
-          по штрих-коду (QR) через:
+          <Icon name="mdi:truck-fast" class="text-secondary-color" size="32" />
+          Оформленные доставки заказов по
+          <br class="max-[380px]:block hidden" />
+          штрих-коду (QR) через:
         </span>
-        <span class="text-lg italic">
+        <span class="text-lg">
           Администратора <br />
           Телеграм-бота <br />
           Личный кабинет Darom Pro
