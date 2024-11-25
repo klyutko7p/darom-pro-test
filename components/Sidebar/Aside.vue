@@ -327,7 +327,9 @@ function showSettingsList() {
                   name="icon-park-solid:buy"
                   size="24"
                 />
-                <span class="flex-1 ms-3 whitespace-nowrap">Наш Выкуп</span>
+                <span class="flex-1 ms-3 whitespace-nowrap"
+                  >Товары клиентов</span
+                >
               </div>
             </li>
             <li>
@@ -345,7 +347,9 @@ function showSettingsList() {
                   name="icon-park-solid:buy"
                   size="24"
                 />
-                <span class="flex-1 ms-3 whitespace-nowrap">Наш Выкуп</span>
+                <span class="flex-1 ms-3 whitespace-nowrap"
+                  >Товары клиентов</span
+                >
               </div>
             </li>
             <li>
@@ -365,7 +369,10 @@ function showSettingsList() {
                   name="material-symbols:lock-person-rounded"
                   size="24"
                 />
-                <span class="flex-1 ms-3 whitespace-nowrap">Выкуп клиента</span>
+                <span class="flex-1 ms-3 whitespace-nowrap"
+                  >Доставка заказов <br />
+                  по ШК (QR)</span
+                >
               </div>
             </li>
             <li>
@@ -384,7 +391,10 @@ function showSettingsList() {
                   name="material-symbols:lock-person-rounded"
                   size="24"
                 />
-                <span class="flex-1 ms-3 whitespace-nowrap">Выкуп клиента</span>
+                <span class="flex-1 ms-3 whitespace-nowrap"
+                  >Доставка заказов <br />
+                  по ШК (QR)</span
+                >
               </div>
             </li>
             <li>
@@ -424,7 +434,8 @@ function showSettingsList() {
                   size="24"
                 />
                 <span class="flex-1 ms-3 whitespace-nowrap"
-                  >Все данные: Наш Выкуп</span
+                  >Все данные: <br />
+                  Товары клиентов</span
                 >
               </div>
             </li>

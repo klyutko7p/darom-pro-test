@@ -300,7 +300,7 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Ячейка (Наш выкуп)</label>
+                <label for="cell">Ячейка (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -310,7 +310,7 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Ячейка (Выкуп клиента)</label>
+                <label for="cell">Ячейка (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -320,7 +320,7 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Дополнительно (Наш выкуп)</label>
+                <label for="cell">Дополнительно (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -330,7 +330,7 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Дополнительно (Выкуп клиента)</label>
+                <label for="cell">Дополнительно (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -350,7 +350,7 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Доставлено на СЦ (Наш выкуп)</label>
+                <label for="cell">Доставлено на СЦ (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -360,7 +360,7 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Доставлено на СЦ (Выкуп клиента)</label>
+                <label for="cell">Доставлено на СЦ (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -370,7 +370,7 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Доставлено на ПВЗ (Наш выкуп)</label>
+                <label for="cell">Доставлено на ПВЗ (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -380,7 +380,7 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Доставлено на ПВЗ (Выкуп клиента)</label>
+                <label for="cell">Доставлено на ПВЗ (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -390,7 +390,7 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Дополнительный доход (Наш выкуп)</label>
+                <label for="cell">Дополнительный доход (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -400,7 +400,7 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Дополнительный доход (Выкуп клиента)</label>
+                <label for="cell">Дополнительный доход (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -410,7 +410,7 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Отправка в ПВЗ (Наш выкуп)</label>
+                <label for="cell">Отправка в ПВЗ (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -420,7 +420,7 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Отправка в ПВЗ (Выкуп клиента)</label>
+                <label for="cell">Отправка в ПВЗ (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -470,7 +470,7 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Телефон (Наш выкуп)</label>
+                <label for="cell">Телефон (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -480,7 +480,7 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Телефон (Выкуп клиента)</label>
+                <label for="cell">Телефон (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -502,7 +502,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Выдан клиенту (Наш выкуп)</label>
+                <label for="cell">Выдан клиенту (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -513,7 +513,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Выдан клиенту (Выкуп клиента)</label>
+                <label for="cell">Выдан клиенту (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -524,7 +524,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Аккаунт заказа (Наш выкуп)</label>
+                <label for="cell">Аккаунт заказа (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -535,7 +535,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Заказано на СЦ (Наш выкуп)</label>
+                <label for="cell">Заказано на СЦ (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -546,7 +546,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Заказано на СЦ (Выкуп клиента)</label>
+                <label for="cell">Заказано на СЦ (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -568,7 +568,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Процент с клиента (Наш выкуп)</label>
+                <label for="cell">Процент с клиента (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -579,7 +579,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Процент с клиента (Выкуп клиента)</label>
+                <label for="cell">Процент с клиента (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -601,7 +601,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Примечание (Наш выкуп)</label>
+                <label for="cell">Примечание (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -612,7 +612,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Примечание (Выкуп клиента)</label>
+                <label for="cell">Примечание (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -624,7 +624,7 @@ const userOptions = [
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell"
-                  >Стоимость выкупа товара (Выкуп клиента)
+                  >Стоимость выкупа товара (Доставка заказов по ШК (QR))
                 </label>
                 <USelectMenu
                   class="w-full"
@@ -647,7 +647,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Стоимость сайт (Наш выкуп)</label>
+                <label for="cell">Стоимость сайт (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -658,7 +658,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Предоплата (Наш выкуп)</label>
+                <label for="cell">Предоплата (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -669,7 +669,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Предоплата (Выкуп клиента)</label>
+                <label for="cell">Предоплата (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -680,7 +680,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Товар (ссылка) (Наш выкуп)</label>
+                <label for="cell">Товар (ссылка) (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -691,7 +691,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Маркетплейс (Выкуп клиента)</label>
+                <label for="cell">Маркетплейс (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -702,7 +702,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Название товара (Наш выкуп)</label>
+                <label for="cell">Название товара (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -713,7 +713,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Количество товаров (Выкуп клиента)</label>
+                <label for="cell">Количество товаров (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -724,7 +724,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Данные (Наш Выкуп)</label>
+                <label for="cell">Данные (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -735,7 +735,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Данные (Выкуп Клиента)</label>
+                <label for="cell">Данные (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -757,7 +757,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Сумма с клиента (Наш выкуп)</label>
+                <label for="cell">Сумма с клиента (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -768,7 +768,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Сумма с клиента (Выкуп клиента)</label>
+                <label for="cell">Сумма с клиента (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -790,7 +790,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Ссылка для клиента (Наш выкуп)</label>
+                <label for="cell">Ссылка для клиента (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -801,7 +801,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Ссылка для клиента (Выкуп клиента)</label>
+                <label for="cell">Ссылка для клиента (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -823,7 +823,7 @@ const userOptions = [
               </div>
 
               <div v class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Прибыль (доход) (Наш выкуп)</label>
+                <label for="cell">Прибыль (доход) (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -834,7 +834,7 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Прибыль (доход) (Выкуп клиента)</label>
+                <label for="cell">Прибыль (доход) (Доставка заказов по ШК (QR))</label>
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"

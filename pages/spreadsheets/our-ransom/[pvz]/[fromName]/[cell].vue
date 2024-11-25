@@ -459,7 +459,7 @@ let isOpenOnlineStatus = ref(false);
 
 <template>
   <Head>
-    <Title>Наш выкуп</Title>
+    <Title>Товары клиентов</Title>
   </Head>
   <div>
     <div

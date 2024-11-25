@@ -184,7 +184,7 @@ function convertUrl(url: string): string {
 
 <template>
   <Head>
-    <Title>Наш выкуп</Title>
+    <Title>Товары клиентов</Title>
   </Head>
   <div>
     <div v-if="user.role === 'ADMIN'">

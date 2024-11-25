@@ -189,26 +189,26 @@ function formatPhoneNumber(phoneNumber: string) {
       <h1 class="font-medium" v-if="user.username === 'Директор'">Император</h1>
     </div>
     <h1
-      class="text-lg font-medium max-sm:hidden"
+      class="text-lg font-medium max-sm:text-sm"
       v-if="
         route.meta.name === 'Товары из' &&
         route.fullPath.includes('/our-ransom')
       "
     >
-      {{ route.meta.name }} {{ route.params.pvz }} (Наш Выкуп)
+      {{ route.meta.name }} {{ route.params.pvz }} (Товары клиентов)
     </h1>
     <h1
-      class="text-lg font-medium max-sm:hidden"
+      class="text-lg font-medium max-sm:text-sm"
       v-else-if="
         route.fullPath.includes('/client-ransom') &&
         route.params.pvz &&
         !route.params.fromName
       "
     >
-      Товары из {{ route.meta.name }} {{ route.params.pvz }} (Выкуп Клиента)
+      Товары из {{ route.meta.name }} {{ route.params.pvz }} (Доставка заказов по ШК (QR))
     </h1>
     <h1
-      class="text-lg font-medium max-sm:hidden"
+      class="text-lg font-medium"
       v-else-if="
         route.fullPath.includes('/client-ransom') &&
         route.params.pvz &&
@@ -216,7 +216,7 @@ function formatPhoneNumber(phoneNumber: string) {
       "
     >
       Товары по телефону:
-      {{ formatPhoneNumber(route.params.fromName as string) }} (Выкуп Клиента)
+      {{ formatPhoneNumber(route.params.fromName as string) }} (Доставка заказов по ШК (QR))
     </h1>
     <h1
       class="text-lg font-medium max-sm:hidden"
@@ -227,9 +227,9 @@ function formatPhoneNumber(phoneNumber: string) {
       "
     >
       Товары по телефону:
-      {{ formatPhoneNumber(route.params.fromName as string) }} (Наш Выкуп)
+      {{ formatPhoneNumber(route.params.fromName as string) }} (Товары клиентов)
     </h1>
-    <h1 class="text-lg font-medium max-sm:hidden" v-else>
+    <h1 class="text-lg font-medium max-sm:text-sm" v-else>
       {{ route.meta.name }}
     </h1>
     <div class="flex gap-1">

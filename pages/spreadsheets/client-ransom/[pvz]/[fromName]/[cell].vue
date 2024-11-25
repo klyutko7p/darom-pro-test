@@ -322,7 +322,7 @@ function getFromNameFromCell() {
 
 <template>
   <Head>
-    <Title>Выкуп клиента</Title>
+    <Title>Доставка заказов по ШК (QR)</Title>
   </Head>
   <div>
     <div v-if="user.role === 'ADMIN'">

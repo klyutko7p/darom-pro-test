@@ -237,7 +237,7 @@ async function updateCells() {
 
 definePageMeta({
   layout: false,
-  name: "Все товары: Наш Выкуп (Удаленное)"
+  name: "Все товары: Товары клиентов (Удаленное)"
 });
 
 const token = Cookies.get("token");
@@ -385,7 +385,7 @@ async function showDeletedRows(flag: boolean) {
 <template>
 
   <Head>
-    <Title>Наш выкуп</Title>
+    <Title>Товары клиентов</Title>
   </Head>
   <div>
     <div v-if="user.role === 'ADMIN'">

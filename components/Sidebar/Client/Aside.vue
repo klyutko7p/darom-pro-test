@@ -90,7 +90,7 @@ let isShowInfo = ref(false);
                     size="24"
                   />
                   <span class="flex-1 ms-3 whitespace-nowrap"
-                    >Товары в пути</span
+                    >Мои заказы</span
                   >
                 </div>
               </li>
@@ -107,7 +107,7 @@ let isShowInfo = ref(false);
                     name="i-mdi-basket-check"
                     size="24"
                   />
-                  <span class="flex-1 ms-3 whitespace-nowrap">Корзина</span>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Моя корзина</span>
                 </div>
               </li>
               <li>

@@ -464,7 +464,7 @@ function closeTicketModal() {
             500 человек - <span class="uppercase font-bold text-secondary-color"> iphone 15 pro </span>
           </h1>
           <h1 class="italic mt-1 text-sm font-semibold">
-            **от 1000р (учитываются только полученные товары).
+            **от 1000р (учитываются только доставленные заказы).
           </h1>
           <h1 class="italic mt-1 text-sm font-semibold">
             *** за каждые 5 друзей.

@@ -69,7 +69,7 @@ function getCountOfItemsByPVZOurRansomIssued(PVZ: string) {
 
 definePageMeta({
   layout: false,
-  name: "Выбор ПВЗ (Наш Выкуп)",
+  name: "Выбор ПВЗ (Товары клиентов)",
 });
 </script>
 

@@ -206,7 +206,7 @@ function closeQRModal() {
 
 <template>
   <Head>
-    <Title>Товары в пути</Title>
+    <Title>Мои заказы</Title>
   </Head>
   <div v-if="!isLoading">
     <div v-if="token" class="w-screen px-10 max-sm:px-3">
@@ -240,14 +240,14 @@ function closeQRModal() {
             v-if="showReceivedItems"
             class="mt-5"
             @click="disableReceivedItems"
-            >Скрыть полученные товары</UIMainButton
+            >Скрыть доставленные заказы</UIMainButton
           >
           <UIMainButton
             v-if="!showReceivedItems"
             class="mt-5"
             @click="enableReceivedItems"
           >
-            Показать полученные товары</UIMainButton
+            Показать доставленные заказы</UIMainButton
           >
         </div>
         <div
@@ -265,7 +265,15 @@ function closeQRModal() {
       </div>
 
       <h1 class="mt-5 text-xl max-[330px]:text-lg">
-        Оформленные заказы через личный кабинет DP и Администратора
+        <span class="flex items-center gap-3">
+          <Icon name="solar:box-bold-duotone" size="24" /> Оформленные заказы
+          через:
+        </span>
+        <span class="text-lg italic">
+          Администратора <br />
+          Телеграм-бота <br />
+          Личный кабинет Darom Pro
+        </span>
       </h1>
       <div v-for="pvz in pvzs" class="mt-5">
         <div
@@ -297,8 +305,16 @@ function closeQRModal() {
       </div>
 
       <h1 class="mt-20 text-xl max-[330px]:text-lg">
-        Оформленные доставки заказов <br class="max-[380px]:block hidden" />
-        по штрих-коду (QR)
+        <span class="flex items-center gap-3">
+          <Icon name="flowbite:truck-solid" size="24" /> Оформленные доставки
+          заказов <br class="max-[380px]:block hidden" />
+          по штрих-коду (QR) через:
+        </span>
+        <span class="text-lg italic">
+          Администратора <br />
+          Телеграм-бота <br />
+          Личный кабинет Darom Pro
+        </span>
       </h1>
       <div v-for="pvz in pvzs" class="mt-5">
         <div

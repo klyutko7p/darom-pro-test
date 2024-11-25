@@ -57,7 +57,7 @@ let isShowInfo = ref(false);
                 name="i-material-symbols-shopping-cart"
                 size="24"
               />
-              <span class="flex-1 ms-3 whitespace-nowrap">Товары в пути</span>
+              <span class="flex-1 ms-3 whitespace-nowrap">Мои заказы</span>
             </div>
           </li>
           <li>
@@ -70,7 +70,7 @@ let isShowInfo = ref(false);
                 name="i-mdi-basket-check"
                 size="24"
               />
-              <span class="flex-1 ms-3 whitespace-nowrap">Корзина</span>
+              <span class="flex-1 ms-3 whitespace-nowrap">Моя корзина</span>
             </div>
           </li>
           <li>

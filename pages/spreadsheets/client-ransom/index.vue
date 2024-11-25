@@ -284,7 +284,7 @@ onMounted(async () => {
 
 definePageMeta({
   layout: false,
-  name: "Все товары: Выкуп Клиента",
+  name: "Доставка заказов по ШК (QR)",
 });
 
 const token = Cookies.get("token");
@@ -321,7 +321,7 @@ function getFromNameFromCell() {
 
 <template>
   <Head>
-    <Title>Выкуп клиента</Title>
+    <Title>Доставка заказов по ШК (QR)</Title>
   </Head>
   <div>
     <div v-if="user.role === 'ADMIN'">

@@ -271,7 +271,7 @@ async function submitForm() {
     }
 
     await storeUsers.sendMessageToEmployee(
-      "Выкуп Клиента: Darom.pro",
+      "Доставка заказов по ШК (QR): Darom.pro",
       `Прикреплён новый штрих-код`,
       "Волошина"
     );
@@ -600,7 +600,7 @@ function changeMarketplace(marketplaceData: string) {
                 class="font-bold uppercase"
                 icon="i-material-symbols-shopping-cart"
                 size="xl"
-                >Товары в пути</UButton
+                >Мои заказы</UButton
               >
             </div>
             <div class="flex items-center gap-3 max-sm:flex-col">

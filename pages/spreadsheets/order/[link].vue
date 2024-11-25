@@ -443,17 +443,42 @@ const pvzs = [
             v-if="showReceivedItems && !link.startsWith('3')"
             class="mt-5"
             @click="disableReceivedItems"
-            >Скрыть полученные товары</UIMainButton
+            >Скрыть доставленные заказы</UIMainButton
           >
           <UIMainButton
             v-if="!showReceivedItems && !link.startsWith('3')"
             class="mt-5"
             @click="enableReceivedItems"
           >
-            Показать полученные товары</UIMainButton
+            Показать доставленные заказы</UIMainButton
           >
         </div>
       </div>
+
+      <h1 v-if="link.startsWith('1')" class="mt-5 text-xl max-[330px]:text-lg">
+        <span class="flex items-center gap-3">
+          <Icon name="solar:box-bold-duotone" size="24" /> Оформленные заказы
+          через:
+        </span>
+        <span class="text-lg italic">
+          Администратора <br />
+          Телеграм-бота <br />
+          Личный кабинет Darom Pro
+        </span>
+      </h1>
+
+      <h1 v-if="link.startsWith('2')" class="mt-5 text-xl max-[330px]:text-lg">
+        <span class="flex items-center gap-3">
+          <Icon name="flowbite:truck-solid" size="24" /> Оформленные доставки
+          заказов <br class="max-[380px]:block hidden" />
+          по штрих-коду (QR) через:
+        </span>
+        <span class="text-lg italic">
+          Администратора <br />
+          Телеграм-бота <br />
+          Личный кабинет Darom Pro
+        </span>
+      </h1>
 
       <div v-for="pvz in pvzs" class="mt-5" v-if="!link.startsWith('3')">
         <div

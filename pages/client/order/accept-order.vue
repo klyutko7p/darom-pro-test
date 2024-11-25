@@ -1373,7 +1373,7 @@ let isNotAskingAcceptOrder = ref(false);
                 class="font-bold uppercase"
                 icon="i-material-symbols-shopping-cart"
                 size="xl"
-                >Товары в пути</UButton
+                >Мои заказы</UButton
               >
             </div>
           </div>
