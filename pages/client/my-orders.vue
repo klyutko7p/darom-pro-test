@@ -265,7 +265,7 @@ function closeQRModal() {
       </div>
 
       <h1 class="mt-5 text-xl max-[330px]:text-lg">
-        <span class="flex items-center gap-3">
+        <span class="flex items-center gap-3 max-sm:flex-col max-sm:gap-0 max-sm:items-start mb-1">
           <Icon
             class="text-orange-500"
             name="solar:box-bold-duotone"
@@ -273,7 +273,7 @@ function closeQRModal() {
           />
           Оформленные заказы через:
         </span>
-        <span class="text-lg">
+        <span class="text-lg max-[330px]:text-base">
           Администратора <br />
           Телеграм-бота <br />
           Личный кабинет Darom Pro
@@ -309,17 +309,17 @@ function closeQRModal() {
       </div>
 
       <h1 class="mt-20 text-xl max-[330px]:text-lg">
-        <span class="flex items-center gap-3">
+        <span class="flex items-center gap-3 max-sm:flex-col max-sm:gap-0 max-sm:items-start mb-1">
           <Icon
             name="mdi:truck-fast"
             class="text-secondary-color"
             size="32"
           />
           Оформленные доставки заказов по
-          <br class="max-[380px]:block hidden" />
+          <!-- <br class="max-[380px]:block hidden" /> -->
           Штрих-коду (QR) через:
         </span>
-        <span class="text-lg">
+        <span class="text-lg max-[330px]:text-base">
           Администратора <br />
           Телеграм-бота <br />
           Личный кабинет Darom Pro

@@ -459,7 +459,7 @@ const pvzs = [
         v-if="link.startsWith('1')"
         class="mt-5 text-xl max-[330px]:text-lg ml-5"
       >
-        <span class="flex items-center gap-3">
+        <span class="flex items-center gap-3 max-sm:flex-col max-sm:gap-0 max-sm:items-start mb-1">
           <Icon
             name="solar:box-bold-duotone"
             class="text-secondary-color"
@@ -467,7 +467,7 @@ const pvzs = [
           />
           Оформленные заказы через:
         </span>
-        <span class="text-lg">
+        <span class="text-lg max-[330px]:text-base">
           Администратора <br />
           Телеграм-бота <br />
           Личный кабинет Darom Pro
@@ -478,13 +478,11 @@ const pvzs = [
         v-if="link.startsWith('2')"
         class="mt-5 text-xl max-[330px]:text-lg ml-5"
       >
-        <span class="flex items-center gap-3">
+        <span class="flex items-center gap-3 max-sm:flex-col max-sm:gap-0 max-sm:items-start mb-1">
           <Icon name="mdi:truck-fast" class="text-secondary-color" size="32" />
-          Оформленные доставки заказов по
-          <br class="max-[380px]:block hidden" />
-          штрих-коду (QR) через:
+          Оформленные доставки заказов по Штрих-коду (QR) через:
         </span>
-        <span class="text-lg">
+        <span class="text-lg max-[330px]:text-base">
           Администратора <br />
           Телеграм-бота <br />
           Личный кабинет Darom Pro
