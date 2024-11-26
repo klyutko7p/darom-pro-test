@@ -273,7 +273,7 @@ function closeQRModal() {
           />
           Оформленные заказы через:
         </span>
-        <span class="text-lg max-[330px]:text-base">
+        <span class="text-lg">
           Администратора <br />
           Телеграм-бота <br />
           Личный кабинет Darom Pro
@@ -319,7 +319,7 @@ function closeQRModal() {
           <!-- <br class="max-[380px]:block hidden" /> -->
           Штрих-коду (QR) через:
         </span>
-        <span class="text-lg max-[330px]:text-base">
+        <span class="text-lg">
           Администратора <br />
           Телеграм-бота <br />
           Личный кабинет Darom Pro

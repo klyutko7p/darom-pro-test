@@ -467,7 +467,7 @@ const pvzs = [
           />
           Оформленные заказы через:
         </span>
-        <span class="text-lg max-[330px]:text-base">
+        <span class="text-lg">
           Администратора <br />
           Телеграм-бота <br />
           Личный кабинет Darom Pro
@@ -482,7 +482,7 @@ const pvzs = [
           <Icon name="mdi:truck-fast" class="text-secondary-color" size="32" />
           Оформленные доставки заказов по Штрих-коду (QR) через:
         </span>
-        <span class="text-lg max-[330px]:text-base">
+        <span class="text-lg">
           Администратора <br />
           Телеграм-бота <br />
           Личный кабинет Darom Pro

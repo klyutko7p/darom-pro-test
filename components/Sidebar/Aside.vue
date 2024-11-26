@@ -156,6 +156,7 @@ function showSettingsList() {
                   user.username !== 'Алиса' &&
                   user.username !== 'Миллер' &&
                   user.username !== 'Косой' &&
+                  user.username !== 'Василенко' &&
                   user.username !== '+7'
                 "
               >

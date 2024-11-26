@@ -130,6 +130,7 @@ function showSettingsList() {
               user.username !== 'Алиса' &&
               user.username !== 'Миллер' &&
               user.username !== 'Косой' &&
+              user.username !== 'Василенко' &&
               user.username !== '+7'
             "
           >
@@ -210,6 +211,19 @@ function showSettingsList() {
           <div
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             @click="showEquipmentsList"
+            v-if="
+              user.username === 'Волошина' ||
+              user.username === 'Шарафаненко' ||
+              user.username === 'Кулешов' ||
+              user.username === 'Алиса' ||
+              user.username === 'Миллер' ||
+              user.username === 'Шведова' ||
+              user.username === 'Директор' ||
+              user.username === 'Горцуева' ||
+              user.role === 'ADMIN' ||
+              user.role === 'ADMINISTRATOR' ||
+              user.username === 'Власенкова'
+            "
           >
             <Icon
               class="text-gray-500 transition duration-75 group-hover:text-gray-900"
