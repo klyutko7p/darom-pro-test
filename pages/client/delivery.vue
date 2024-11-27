@@ -41,6 +41,10 @@ onMounted(async () => {
     showThirdModal();
   }
 
+  checkAvailability();
+
+  setInterval(checkAvailability, 5 * 60 * 1000);
+
   isLoading.value = true;
   user.value = await storeClients.getClient();
   originallyRows.value = await storeRansom.getRansomRowsForModalClientRansom();
@@ -293,6 +297,16 @@ function changeMarketplace(marketplaceData: string) {
   marketplace.value = marketplaceData;
   showSecondModal();
 }
+
+const isAvailable = ref(false);
+
+const checkAvailability = () => {
+  const now = new Date();
+  const hours = now.getHours();
+  console.log(hours);
+
+  isAvailable.value = hours >= 0 && hours < 18;
+};
 </script>
 
 <template>
@@ -419,6 +433,7 @@ function changeMarketplace(marketplaceData: string) {
               <label>Прикрепите скриншот Штрих-кода*</label>
               <div v-if="!rowData.img" class="h-[44px]">
                 <UInput
+                  :disabled="!isAvailable"
                   @change="uploadQRFile"
                   class="w-full mt-3"
                   type="file"
@@ -458,7 +473,10 @@ function changeMarketplace(marketplaceData: string) {
                   </UButton>
                 </div>
               </div>
-              <h1 class="text-sm italic text-center mt-2">
+              <h1 class="text-sm text-center mt-2">
+                Прикрепить штрих-код можно с 00:00 до 18:00
+              </h1>
+              <h1 class="text-sm italic text-center mt-1">
                 *штрих-код обновляется каждые 24 часа в 00:00
               </h1>
               <div class="mt-5 flex justify-end gap-3" v-auto-animate>
@@ -506,7 +524,7 @@ function changeMarketplace(marketplaceData: string) {
                 Чтобы мы доставили ваш заказ, он должен быть оформлен на адрес:
                 <br />
               </h1>
-              <h1 class="italic font-bold text-right">
+              <h1 class="italic font-bold text-left">
                 Ростовская область, Матвеево-Курганский район, <br />
                 с. Ряженое, ул Ленина 6*
               </h1>

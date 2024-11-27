@@ -62,9 +62,8 @@ onMounted(async () => {
   clientData.value = await storeClients.getClientById(client.value.id);
 
   if (
-    clientData.value.dateOfPersonalDataProcessingPolicyAgreement ===
-      "2024-09-01T18:04:10.119Z" &&
-    clientData.value.dateOfPrivacyPolicyAgreement === "2024-09-01T18:04:10.119Z"
+    !clientData.value.dateOfPersonalDataProcessingPolicyAgreement &&
+    !clientData.value.dateOfPrivacyPolicyAgreement
   ) {
     isShowModal3.value = true;
   }
