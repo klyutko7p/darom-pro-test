@@ -63,7 +63,9 @@ let isShowInfo = ref(false);
           <li>
             <div
               class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 group cursor-pointer"
-              @click="router.push('/client/order/accept-order?card=true'), editMenu()"
+              @click="
+                router.push('/client/order/accept-order?card=true'), editMenu()
+              "
             >
               <Icon
                 class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -118,9 +120,22 @@ let isShowInfo = ref(false);
       </div>
       <UIMainButton
         @click="isShowInfo = true"
-        class="mt-10 w-full max-w-[300px] mx-auto"
+        class="mt-5 w-full max-w-[300px] mx-auto"
         >Важная информация</UIMainButton
       >
+      <div class="flex items-center justify-center mt-5">
+        <div
+          class="flex items-center p-2 px-10 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 justify-center group cursor-pointer"
+          @click="router.push('/?home=true')"
+        >
+          <Icon
+            class="text-gray-500 transition duration-75 group-hover:text-gray-900"
+            name="material-symbols:home-and-garden-rounded"
+            size="24"
+          />
+          <span class="flex-1 ms-3 whitespace-nowrap">На главную</span>
+        </div>
+      </div>
     </div>
 
     <UINewModalEdit v-show="isShowInfo" @close-modal="isShowInfo = !isShowInfo">

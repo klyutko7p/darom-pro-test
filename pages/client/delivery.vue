@@ -244,48 +244,52 @@ const marketplaces = [
 
 async function submitForm() {
   try {
-    rowData.value.orderPVZ = "Ряженое";
-    rowData.value.fromName = user.value.phoneNumber;
-    rowData.value.productLink = marketplace.value;
-    rowData.value.dispatchPVZ = pvzData.value;
-    if (phoneNumbersWithoutPercent.value.includes(user.value.phoneNumber)) {
-      rowData.value.percentClient = 0;
-    }
-    getCellFromName();
+    if (pvzData.value) {
+      rowData.value.orderPVZ = "Ряженое";
+      rowData.value.fromName = user.value.phoneNumber;
+      rowData.value.productLink = marketplace.value;
+      rowData.value.dispatchPVZ = pvzData.value;
+      if (phoneNumbersWithoutPercent.value.includes(user.value.phoneNumber)) {
+        rowData.value.percentClient = 0;
+      }
+      getCellFromName();
 
-    isLoading.value = true;
+      isLoading.value = true;
 
-    const filePromises = [handleFile("image", fileQRPhoto.value)];
+      const filePromises = [handleFile("image", fileQRPhoto.value)];
 
-    await Promise.all(filePromises);
+      await Promise.all(filePromises);
 
-    await storeRansom.createRansomRow(
-      rowData.value,
-      user.value.phoneNumber,
-      "ClientRansom"
-    );
-    isOpen.value = false;
-    isShowModal.value = true;
-    if (cellData.value) {
-      await storeCells.updateCellClient(
-        cellData.value,
-        "Занято",
-        rowData.value.fromName
+      await storeRansom.createRansomRow(
+        rowData.value,
+        user.value.phoneNumber,
+        "ClientRansom"
       );
+      isOpen.value = false;
+      isShowModal.value = true;
+      if (cellData.value) {
+        await storeCells.updateCellClient(
+          cellData.value,
+          "Занято",
+          rowData.value.fromName
+        );
+      }
+
+      await storeUsers.sendMessageToEmployee(
+        "Доставка заказов по ШК (QR): Darom.pro",
+        `Прикреплён новый штрих-код`,
+        "Волошина"
+      );
+
+      localStorage.removeItem("fileName");
+      localStorage.removeItem("marketplace");
+
+      setTimeout(() => {
+        router.push("/client/main?notification=false");
+      }, 3000);
+    } else {
+      toast.error("Сначала выберите пункт выдачи!")
     }
-
-    await storeUsers.sendMessageToEmployee(
-      "Доставка заказов по ШК (QR): Darom.pro",
-      `Прикреплён новый штрих-код`,
-      "Волошина"
-    );
-
-    localStorage.removeItem("fileName");
-    localStorage.removeItem("marketplace");
-
-    setTimeout(() => {
-      router.push("/client/main?notification=false");
-    }, 3000);
   } catch (error) {
     console.error("Error while creating employee or handling files:", error);
   } finally {

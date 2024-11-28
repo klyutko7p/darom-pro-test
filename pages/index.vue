@@ -3,7 +3,7 @@ import { YandexMap } from "vue-yandex-maps";
 import Cookies from "js-cookie";
 
 const router = useRouter();
-
+const route = useRoute();
 const coordinates = ref([47.971605, 37.860323]);
 const controls = ["geolocationControl", "zoomControl", "typeSelector"];
 
@@ -14,7 +14,7 @@ let user = ref({} as User);
 onMounted(async () => {
   user.value = await storeClients.getClient();
 
-  if (token && user.value.role === "CLIENT") {
+  if (token && user.value.role === "CLIENT" && !route.query.home) {
     router.push("/auth/client/login");
   }
 
@@ -178,7 +178,10 @@ useSeoMeta({
           </h1>
         </div>
         <div class="flex items-center justify-center gap-5 mt-5">
-          <UIMainButton class="max-xl:w-full max-xl:max-w-[770px]" @click="router.push('/auth/client/login')">
+          <UIMainButton
+            class="max-xl:w-full max-xl:max-w-[770px]"
+            @click="router.push('/auth/client/login')"
+          >
             оформить заказ
           </UIMainButton>
         </div>

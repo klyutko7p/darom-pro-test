@@ -9,6 +9,18 @@ onMounted(async () => {
 
   if (props.marketplace === "OZON") {
     address.value = localStorage.getItem("addressData") || "";
+    let addressString = JSON.parse(address.value);
+    if (addressString === "ПВЗ_1") {
+      selectedMarkerId.value = 1;
+    } else if (addressString === "ПВЗ_3") {
+      selectedMarkerId.value = 3;
+    } else if (addressString === "ПВЗ_4") {
+      selectedMarkerId.value = 4;
+    } else if (addressString === "ППВЗ_5") {
+      selectedMarkerId.value = 5;
+    } else if (addressString === "ППВЗ_7") {
+      selectedMarkerId.value = 7;
+    }
   } else if (props.marketplace === "WB") {
     address.value = localStorage.getItem("addressData") || "";
   } else if (props.marketplace === "YM") {
@@ -36,7 +48,7 @@ function saveAddress() {
   emit("saveAddress", address.value);
 }
 
-const selectedMarkerId = ref(null);
+const selectedMarkerId = ref();
 
 function selectMarker(marker: any) {
   address.value = "";

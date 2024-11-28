@@ -89,9 +89,7 @@ let isShowInfo = ref(false);
                     name="i-material-symbols-shopping-cart"
                     size="24"
                   />
-                  <span class="flex-1 ms-3 whitespace-nowrap"
-                    >Мои заказы</span
-                  >
+                  <span class="flex-1 ms-3 whitespace-nowrap">Мои заказы</span>
                 </div>
               </li>
               <li>
@@ -160,6 +158,19 @@ let isShowInfo = ref(false);
             class="mt-5 flex items-center justify-center w-full"
             >Важная информация</UIMainButton
           >
+          <div class="flex items-center justify-center mt-5">
+            <div
+              class="flex items-center p-2 px-10 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 justify-center group cursor-pointer"
+              @click="router.push('/?home=true')"
+            >
+              <Icon
+                class="text-gray-500 transition duration-75 group-hover:text-gray-900"
+                name="material-symbols:home-and-garden-rounded"
+                size="24"
+              />
+              <span class="flex-1 ms-3 whitespace-nowrap">На главную</span>
+            </div>
+          </div>
         </div>
       </div>
     </aside>
