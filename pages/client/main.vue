@@ -121,8 +121,12 @@ const pvzs = [
     name: "ул. Антропова 16",
   },
   {
+    pvz: "ПВЗ_2",
+    name: "г. Донецк, ул. Харитоново, 8",
+  },
+  {
     pvz: "ПВЗ_3",
-    name: "ул. Палладина, 20",
+    name: "ул. Палладина, 16",
   },
   {
     pvz: "ПВЗ_4",
@@ -131,10 +135,6 @@ const pvzs = [
   {
     pvz: "ППВЗ_5",
     name: "ул. Дудинская, д. 4, кв. 7",
-  },
-  {
-    pvz: "ППВЗ_7",
-    name: "ул. Жебелева, д. 7",
   },
 ];
 
@@ -160,26 +160,40 @@ useSeoMeta({
     <div v-if="token">
       <div class="py-5">
         <div class="flex items-center justify-between mt-3">
-          <div class="flex items-center gap-3">
-            <div class="bg-secondary-color text-white pt-2 rounded-full px-1.5">
-              <Icon name="i-material-symbols-package-2" size="32" />
+          <div
+            class="flex items-center justify-between w-full max-sm:flex-col-reverse max-sm:items-start max-md:gap-3"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="bg-secondary-color text-white pt-2 rounded-full px-1.5"
+              >
+                <Icon name="i-material-symbols-package-2" size="32" />
+              </div>
+              <div class="flex flex-col gap-0">
+                <span class="text-sm text-gray-400 font-semibold"
+                  >Пункт выдачи заказов</span
+                >
+                <h1
+                  @click="clearCookies"
+                  class="text-lg font-semibold cursor-pointer hover:text-secondary-color duration-200"
+                >
+                  {{
+                    pvzs.find((pvz) => pvz.pvz === pvzData)?.name
+                      ? pvzs.find((pvz) => pvz.pvz === pvzData)?.name
+                      : "Не выбран"
+                  }}
+                </h1>
+              </div>
             </div>
-            <div class="flex flex-col gap-0">
-              <span class="text-sm text-gray-400 font-semibold"
-                >Пункт выдачи заказов</span
-              >
+            <div>
               <h1
-                @click="clearCookies"
-                class="text-lg font-semibold cursor-pointer hover:text-secondary-color duration-200"
+                class="text-5xl text-secondary-color max-md:text-3xl font-bold max-sm:text-center"
               >
-                {{
-                  pvzs.find((pvz) => pvz.pvz === pvzData)?.name
-                    ? pvzs.find((pvz) => pvz.pvz === pvzData)?.name
-                    : "Не выбран"
-                }}
+                ЛИЧНЫЙ КАБИНЕТ
               </h1>
             </div>
           </div>
+
           <!-- <div
             @click="router.push('/client/referral')"
             class="cursor-pointer hover:animate-pulse bg-secondary-color text-white pt-2 pb-1 rounded-full px-2 animate-bounce"
@@ -223,43 +237,6 @@ useSeoMeta({
           v-auto-animate
         />
       </div>
-
-      <!-- <div
-        v-auto-animate
-        v-if="isShowModalWB"
-        class="fixed top-0 bottom-0 left-0 bg-black bg-opacity-70 right-0 z-[100]"
-      >
-        <div
-          class="flex items-center justify-center h-screen text-black font-semibold"
-        >
-          <div
-            class="bg-white relative p-10 max-sm:p-3 rounded-lg flex items-center flex-col gap-3"
-          >
-            <div class="absolute top-4 right-4 max-sm:top-2 max-sm:right-2">
-              <Icon
-                name="material-symbols:cancel-rounded"
-                size="32"
-                class="cursor-pointer hover:text-secondary-color duration-200"
-                @click="isShowModalWB = !isShowModalWB"
-              />
-            </div>
-            <h1
-              class="text-lg max-w-[400px] text-center font-semibold w-full max-sm:text-xl py-3 max-sm:mt-5"
-            >
-              Когда Ваш заказ в приложении <span class="">WILDBERRIES</span> получит статус "ГОТОВ К ВЫДАЧЕ", прикрепите штрих-код заказа в
-            </h1>
-            <div class="flex items-center gap-3 max-sm:flex-col">
-              <UButton
-                @click="router.push('/client/order/accept-order?card=true')"
-                class="font-bold"
-                icon="i-mdi-truck-delivery"
-                size="xl"
-                >Оформить доставку заказа</UButton
-              >
-            </div>
-          </div>
-        </div>
-      </div> -->
 
       <div
         v-auto-animate
