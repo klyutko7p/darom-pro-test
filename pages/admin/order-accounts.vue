@@ -13,7 +13,7 @@ let orderAccountData = ref({} as OrderAccount);
 async function createOrderAccount(name: string) {
   isLoading.value = true;
   await storeOrderAccounts.createOrderAccount(name);
-  orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
+  orderAccounts.value = await storeOrderAccounts.getFullOrderAccounts();
   isLoading.value = false;
 }
 
@@ -31,7 +31,7 @@ function closeModal() {
 async function updateOrderAccount() {
   isLoading.value = true;
   await storeOrderAccounts.updateOrderAccount(orderAccountData.value);
-  orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
+  orderAccounts.value = await storeOrderAccounts.getFullOrderAccounts();
   closeModal();
   isLoading.value = false;
 }
@@ -40,7 +40,7 @@ async function deleteOrderAccount(id: number) {
   isLoading.value = true;
   let answer = confirm("Вы точно хотите удалить данный Сортировочный Центр?");
   if (answer) await storeOrderAccounts.deleteOrderAccount(id);
-  orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
+  orderAccounts.value = await storeOrderAccounts.getFullOrderAccounts();
   isLoading.value = false;
 }
 
@@ -55,7 +55,7 @@ onMounted(async () => {
 
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
+  orderAccounts.value = await storeOrderAccounts.getFullOrderAccounts();
   isLoading.value = false;
 });
 
@@ -88,7 +88,7 @@ watch(isOpen, (newValue) => {
   <div v-if="token && user.role === 'ADMIN'">
     <NuxtLayout name="table-admin-no-pad">
       <div v-if="!isLoading" class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5 w-screen">
-        <AdminDataTable
+        <AdminDataTableOA
           :fields="fields"
           :rows="orderAccounts"
           @delete-row="deleteOrderAccount"

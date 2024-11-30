@@ -566,6 +566,7 @@ let isNotAskingAcceptOrder = ref(false);
 <template>
   <Head>
     <Title>Создание строк</Title>
+    <Meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">

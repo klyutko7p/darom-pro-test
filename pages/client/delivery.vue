@@ -288,7 +288,7 @@ async function submitForm() {
         router.push("/client/main?notification=false");
       }, 3000);
     } else {
-      toast.error("Сначала выберите пункт выдачи!")
+      toast.error("Сначала выберите пункт выдачи!");
     }
   } catch (error) {
     console.error("Error while creating employee or handling files:", error);
@@ -315,7 +315,7 @@ const checkAvailability = () => {
 
 <template>
   <Head>
-    <Title>Оформить доставку заказа по Штрих-коду (QR)</Title>
+    <Title>Оформить доставку Вашего заказа из интернет-магазина по QR</Title>
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">
@@ -434,6 +434,36 @@ const checkAvailability = () => {
             </div>
 
             <div v-if="isOpenThirdModal" v-auto-animate>
+              <div class="mb-2" v-if="marketplace === 'Wildberries'">
+                <UButton
+                  icon="i-mdi:package-variant-closed-check"
+                  color="pink"
+                  class="duration-200 font-semibold"
+                  @click="router.push(`/client/order/independently/wb`)"
+                  >Посмотреть куда заказать, чтобы Ваш заказ доставили в данный
+                  пункт выдачи</UButton
+                >
+              </div>
+              <div class="mb-2" v-if="marketplace === 'Ozon'">
+                <UButton
+                  icon="i-mdi:package-variant-closed-check"
+                  color="blue"
+                  class="duration-200 font-semibold"
+                  @click="router.push(`/client/order/independently/ozon`)"
+                  >Посмотреть куда заказать, чтобы Ваш заказ доставили в данный
+                  пункт выдачи</UButton
+                >
+              </div>
+              <div class="mb-2" v-if="marketplace === 'Яндекс Маркет'">
+                <UButton
+                  icon="i-mdi:package-variant-closed-check"
+                  color="yellow"
+                  class="duration-200 font-semibold"
+                  @click="router.push(`/client/order/independently/ym`)"
+                  >Посмотреть куда заказать, чтобы Ваш заказ доставили в данный
+                  пункт выдачи</UButton
+                >
+              </div>
               <label>Прикрепите скриншот Штрих-кода*</label>
               <div v-if="!rowData.img" class="h-[44px]">
                 <UInput

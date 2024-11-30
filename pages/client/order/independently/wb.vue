@@ -210,8 +210,8 @@ function clearValue() {
                     icon="i-mdi-truck-delivery"
                     size="xl"
                     color="pink"
-                    >Оформить доставку заказа <br class="hidden max-sm:block" />
-                    по Штрих-коду (QR)</UButton
+                    >Оформить доставку Вашего <br class="hidden max-sm:block" />
+                    заказа из интернет-магазина по QR</UButton
                   >
                   <br />
                   для оформления доставки на пункт выдачи заказов на территории

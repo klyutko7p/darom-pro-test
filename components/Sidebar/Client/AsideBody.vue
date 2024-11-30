@@ -55,8 +55,9 @@ let isShowInfo = ref(false);
                 size="24"
               />
               <span class="flex-1 ms-3 whitespace-nowrap"
-                >Оформить доставку заказа <br />
-                по Штрих-коду (QR)</span
+                >Оформить доставку Вашего <br />
+                заказа из интернет-магазина <br class="max-sm:block hidden" />
+                по QR</span
               >
             </div>
           </li>

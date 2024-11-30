@@ -217,8 +217,9 @@ model SortingCenterDelivery {
 }
 
 model OrderAccount {
-  id   Int    @id @default(autoincrement())
-  name String
+  id     Int     @id @default(autoincrement())
+  name   String
+  active Boolean @default(true)
 }
 
 model SumOfRejection {

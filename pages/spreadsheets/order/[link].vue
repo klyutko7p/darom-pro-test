@@ -460,10 +460,12 @@ const pvzs = [
       </div>
 
       <h1
-        v-if="link.startsWith('1')"
+        v-if="link.startsWith('1') && copyRows?.length"
         class="mt-5 text-xl max-[330px]:text-lg ml-5"
       >
-        <span class="flex items-center gap-3 max-sm:flex-col max-sm:gap-0 max-sm:items-start mb-1">
+        <span
+          class="flex items-center gap-3 max-sm:flex-col max-sm:gap-0 max-sm:items-start mb-1"
+        >
           <Icon
             name="solar:box-bold-duotone"
             class="text-secondary-color"
@@ -479,18 +481,34 @@ const pvzs = [
       </h1>
 
       <h1
-        v-if="link.startsWith('2')"
+        v-if="link.startsWith('1') && !copyRows?.length"
+        class="mt-5 text-3xl max-[330px]:text-xl ml-5 text-center"
+      >
+        <h1>В данный момент доставок не найдено!</h1>
+      </h1>
+
+      <h1
+        v-if="link.startsWith('2') && copyRows?.length"
         class="mt-5 text-xl max-[330px]:text-lg ml-5"
       >
-        <span class="flex items-center gap-3 max-sm:flex-col max-sm:gap-0 max-sm:items-start mb-1">
+        <span
+          class="flex items-center gap-3 max-sm:flex-col max-sm:gap-0 max-sm:items-start mb-1"
+        >
           <Icon name="mdi:truck-fast" class="text-secondary-color" size="32" />
-          Оформленные доставки заказов по Штрих-коду (QR) через:
+          Оформленные доставки заказов из интернет-магазина по QR через:
         </span>
         <span class="text-lg">
           Администратора <br />
           Телеграм-бота <br />
           Личный кабинет Darom Pro
         </span>
+      </h1>
+
+      <h1
+        v-if="link.startsWith('2') && !copyRows?.length"
+        class="mt-5 text-3xl max-[330px]:text-xl ml-5 text-center"
+      >
+        <h1>В данный момент заказов не найдено!</h1>
       </h1>
 
       <div v-for="pvz in pvzs" class="mt-5" v-if="!link.startsWith('3')">

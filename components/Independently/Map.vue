@@ -73,8 +73,13 @@ function changeAddress(coordinatesData: Array<number>) {
   ) {
     address.value = "ПВЗ_4";
   } else if (
-    coordinatesData[0] === 47.955462 &&
-    coordinatesData[1] === 37.964951
+    coordinatesData[0] === 47.995839 &&
+    coordinatesData[1] === 37.846517
+  ) {
+    address.value = "ПВЗ_2";
+  } else if (
+    coordinatesData[0] === 47.955214 &&
+    coordinatesData[1] === 37.963109
   ) {
     address.value = "ПВЗ_3";
   } else if (

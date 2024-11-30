@@ -40,12 +40,6 @@ definePageMeta({
               Выберите как оформить заказ
             </h1>
             <div class="flex items-center gap-5 flex-col max-w-[500px]">
-              <UIMainButton
-                class="w-full"
-                @click="router.push('order/independently')"
-                >Доставить Ваш заказ из интернет-магазина <br />
-                по штрих-коду (QR)
-              </UIMainButton>
               <a
                 href="https://t.me/Svetlana_Darompro"
                 target="_blank"
