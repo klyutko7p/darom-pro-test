@@ -277,12 +277,7 @@ function closeQRModal() {
             name="solar:box-bold-duotone"
             size="32"
           />
-          Оформленные заказы через:
-        </span>
-        <span class="text-lg">
-          Администратора <br />
-          Телеграм-бота <br />
-          Личный кабинет Darom Pro
+          Оформленные заказы
         </span>
       </h1>
       <div v-for="pvz in pvzs" class="mt-5">
@@ -319,14 +314,7 @@ function closeQRModal() {
           class="flex items-center gap-3 max-sm:flex-col max-sm:gap-0 max-sm:items-start mb-1"
         >
           <Icon name="mdi:truck-fast" class="text-secondary-color" size="32" />
-          Оформленные доставки заказов по
-          <!-- <br class="max-[380px]:block hidden" /> -->
-          Штрих-коду (QR) через:
-        </span>
-        <span class="text-lg">
-          Администратора <br />
-          Телеграм-бота <br />
-          Личный кабинет Darom Pro
+          Оформленные доставки заказов по Штрих-коду (QR)
         </span>
       </h1>
       <div v-for="pvz in pvzs" class="mt-5">

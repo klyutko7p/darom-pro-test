@@ -76,7 +76,7 @@ function skipWindow() {
                 Ростовская область, Матвеево-Курганский район, Село Ряженое,
                 Улица Ленина 6
               </span>
-              переходите в раздел: <br />
+              прикрепите Ваш Штрих-код (QR) в: <br />
               <UButton
                 @click="router.push('/client/delivery?marketplace=wb')"
                 class="font-bold m-5 text-left"

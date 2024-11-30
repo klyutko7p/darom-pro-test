@@ -12,6 +12,8 @@ onMounted(async () => {
     let addressString = JSON.parse(address.value);
     if (addressString === "ПВЗ_1") {
       selectedMarkerId.value = 1;
+    } else if (addressString === "ПВЗ_2") {
+      selectedMarkerId.value = 2;
     } else if (addressString === "ПВЗ_3") {
       selectedMarkerId.value = 3;
     } else if (addressString === "ПВЗ_4") {

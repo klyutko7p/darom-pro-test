@@ -18,7 +18,7 @@ onMounted(async () => {
   address.value = localStorage.getItem("addressData") || "";
   let isNotAsking = localStorage.getItem("isNotAskingOZ");
   if (isNotAsking) {
-    isNotAskingOzon.value = true;
+    isNotAskingOZ.value = true;
   }
   selectedPVZClient.value = address.value;
 });
@@ -27,7 +27,7 @@ definePageMeta({
   layout: "client",
 });
 
-let isNotAskingOzon = ref(false);
+let isNotAskingOZ = ref(false);
 const cookieExpires = 7 * 365 * 100;
 
 function saveAddress(address: string) {
@@ -44,21 +44,28 @@ function saveAddress(address: string) {
     router.push("/client/order/accept-order?card=true");
   }
 
+  if (
+    route.query.change === "true" &&
+    route.query.delivery === "true" &&
+    route.query.marketplace
+  ) {
+    router.push(
+      `/client/delivery?marketplace=${route.query.marketplace}`
+    );
+  }
+
   if (route.query.accept === "true") {
     router.push("/client/order/accept-order");
   }
 }
 
 function skipWindow() {
-  if (isNotAskingOzon.value) {
-    localStorage.setItem("isNotAskingOZ", JSON.stringify(true));
-  }
-
-  router.push("/client/order/info/ozon");
+  localStorage.setItem("isNotAskingOZ", true);
+  router.push("/client/delivery?marketplace=ozon");
 }
 
 function clearValue() {
-  isNotAskingOzon.value = false;
+  isNotAskingOZ.value = false;
 }
 </script>
 
@@ -71,7 +78,7 @@ function clearValue() {
       <div>
         <div v-if="selectedPVZClient && route.query.change !== 'true'">
           <div
-            v-if="!isNotAskingOzon"
+            v-if="!isNotAskingOZ"
             class="flex items-center justify-center flex-col h-screen"
           >
             <UButton
@@ -95,13 +102,13 @@ function clearValue() {
                   Вам необязательно снова выбирать адрес, Вы можете сразу
                   переходить в раздел: <br />
                   <UButton
-                    @click="router.push('/client/delivery')"
+                    @click="router.push('/client/delivery?marketplace=ozon')"
                     class="font-bold m-5 text-left"
                     icon="i-mdi-truck-delivery"
                     size="xl"
                     color="blue"
-                    >Оформить доставку Вашего <br class="hidden max-sm:block" /> заказа 
-                    из интернет-магазина по QR</UButton
+                    >Оформить доставку Вашего <br class="hidden max-sm:block" />
+                    заказа из интернет-магазина по Штрих-коду (QR)</UButton
                   >
                   <br />
                   для оформления доставки на пункт выдачи заказов на территории

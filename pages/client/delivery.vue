@@ -13,6 +13,9 @@ let pvzData = ref("");
 let user = ref({} as Client);
 const token = Cookies.get("token");
 let isLoading = ref(false);
+let isNotAskingWB = ref(false);
+let isNotAskingOZ = ref(false);
+let isNotAskingYM = ref(false);
 
 const storeCells = useCellsStore();
 
@@ -35,10 +38,29 @@ onMounted(async () => {
     marketplace.value = JSON.parse(storedMarketplace);
   }
 
+  const storedIsNotAskingWB = localStorage.getItem("isNotAskingWB");
+  if (storedIsNotAskingWB) {
+    isNotAskingWB.value = JSON.parse(storedIsNotAskingWB);
+  }
+
+  const storedIsNotAskingOZ = localStorage.getItem("isNotAskingOZ");
+  if (storedIsNotAskingOZ) {
+    isNotAskingOZ.value = JSON.parse(storedIsNotAskingOZ);
+  }
+
+  const storedIsNotAskingYM = localStorage.getItem("isNotAskingYM");
+  if (storedIsNotAskingYM) {
+    isNotAskingYM.value = JSON.parse(storedIsNotAskingYM);
+  }
+
   if (route.query.qr === "true") {
     isOpenFirstModal.value = false;
     isOpenSecondModal.value = false;
     showThirdModal();
+  }
+
+  if (route.query.marketplace) {
+    marketplaceData = route.query.marketplace;
   }
 
   checkAvailability();
@@ -307,15 +329,19 @@ const isAvailable = ref(false);
 const checkAvailability = () => {
   const now = new Date();
   const hours = now.getHours();
-  console.log(hours);
 
   isAvailable.value = hours >= 0 && hours < 18;
 };
+
+const showInfo = ref(true);
 </script>
 
 <template>
   <Head>
-    <Title>Оформить доставку Вашего заказа из интернет-магазина по QR</Title>
+    <Title
+      >Оформить доставку Вашего заказа из интернет-магазина по Штрих-коду
+      (QR)</Title
+    >
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">
@@ -371,6 +397,94 @@ const checkAvailability = () => {
         prevent-close
         v-if="!isOpenFirstModal"
       >
+        <div
+          v-if="
+            (isNotAskingWB && marketplace === 'Wildberries') ||
+            (isNotAskingOZ && marketplace === 'Ozon') ||
+            (isNotAskingYM && marketplace === 'Яндекс Маркет')
+          "
+          class="flex items-end justify-end"
+        >
+          <UButton
+            v-if="showInfo"
+            @click="showInfo = !showInfo"
+            class="font-semibold m-2 max-w-[200px]"
+            icon="bx:bxs-hide"
+            >Скрыть</UButton
+          >
+          <UButton
+            v-if="!showInfo"
+            @click="showInfo = !showInfo"
+            class="font-semibold m-2 max-w-[200px]"
+            icon="ic:round-remove-red-eye"
+            >Показать</UButton
+          >
+        </div>
+        <div
+          v-if="isNotAskingWB && marketplace === 'Wildberries' && showInfo"
+          class="px-4 py-5 mb-5 sm:px-6 rounded-lg divide-y divide-gray-100 dark:divide-gray-800 shadow bg-white dark:bg-gray-900 z-[200]"
+        >
+          <div class="text-center max-sm:text-sm">
+            <h1 class="text-xl font-semibold mb-1">
+              Успешно выбран адрес заказа!
+            </h1>
+            Если Вы верно указали адрес, то можете заказывать товар и после
+            уведомления о доставке по адресу: <br />
+            <span class="text-[#ec208b] font-semibold text-center">
+              Ростовская область, Матвеево-Курганский район, Село Ряженое, Улица
+              Ленина 6
+            </span>
+            <br />
+            <span class="mt-1"
+              >можете ниже прикрепить Штрих-код (QR) из приложения
+              Wildberries</span
+            >
+          </div>
+        </div>
+
+        <div
+          v-if="isNotAskingOZ && marketplace === 'Ozon' && showInfo"
+          class="px-4 py-5 mb-5 sm:px-6 rounded-lg divide-y divide-gray-100 dark:divide-gray-800 shadow bg-white dark:bg-gray-900 z-[200]"
+        >
+          <div class="text-center max-sm:text-sm">
+            <h1 class="text-xl font-semibold mb-1">
+              Успешно выбран адрес заказа!
+            </h1>
+            Если Вы верно указали адрес, то можете заказывать товар и после
+            уведомления о доставке по адресу: <br />
+            <span class="text-[#005df6] font-semibold text-center">
+              Ростовская область, Матвеево-Курганский район, Село Ряженое, Улица
+              Ленина 6
+            </span>
+            <br />
+            <span class="mt-1"
+              >можете ниже прикрепить Штрих-код (QR) из приложения Ozon</span
+            >
+          </div>
+        </div>
+
+        <div
+          v-if="isNotAskingYM && marketplace === 'Яндекс Маркет' && showInfo"
+          class="px-4 py-5 mb-5 sm:px-6 rounded-lg divide-y divide-gray-100 dark:divide-gray-800 shadow bg-white dark:bg-gray-900 z-[200]"
+        >
+          <div class="text-center max-sm:text-sm">
+            <h1 class="text-xl font-semibold mb-1">
+              Успешно выбран адрес заказа!
+            </h1>
+            Если Вы верно указали адрес, то можете заказывать товар и после
+            уведомления о доставке по адресу: <br />
+            <span class="text-[#f8cf02] font-semibold text-center">
+              Ростовская область, Матвеево-Курганский район, Село Ряженое, Улица
+              Ленина 6
+            </span>
+            <br />
+            <span class="mt-1"
+              >можете ниже прикрепить Штрих-код (QR) из приложения Яндекс
+              Маркет</span
+            >
+          </div>
+        </div>
+
         <UCard
           v-auto-animate
           :ui="{
@@ -434,35 +548,94 @@ const checkAvailability = () => {
             </div>
 
             <div v-if="isOpenThirdModal" v-auto-animate>
-              <div class="mb-2" v-if="marketplace === 'Wildberries'">
+              <label>Пункт выдачи заказов</label>
+              <USelectMenu
+                value-attribute="pvz"
+                option-attribute="name"
+                v-model="pvzData"
+                :options="people"
+                class="mt-3"
+              />
+              <UButton
+                v-if="marketplace === 'Wildberries'"
+                icon="i-material-symbols-add-location"
+                size="sm"
+                @click="
+                  router.push(
+                    '/client/order/independently/ozon?change=true&delivery=true&marketplace=wb'
+                  )
+                "
+                class="font-bold mt-3 mb-3 duration-200"
+                color="pink"
+                variant="solid"
+                label="Выбрать на карте"
+                :trailing="false"
+              />
+              <UButton
+                v-if="marketplace === 'Ozon'"
+                icon="i-material-symbols-add-location"
+                size="sm"
+                @click="
+                  router.push(
+                    '/client/order/independently/ozon?change=true&delivery=true&marketplace=ozon'
+                  )
+                "
+                class="font-bold mt-3 mb-3 duration-200"
+                color="blue"
+                variant="solid"
+                label="Выбрать на карте"
+                :trailing="false"
+              />
+              <UButton
+                v-if="marketplace === 'Яндекс Маркет'"
+                icon="i-material-symbols-add-location"
+                size="sm"
+                @click="
+                  router.push(
+                    '/client/order/independently/ozon?change=true&delivery=true&marketplace=ym'
+                  )
+                "
+                class="font-bold mt-3 mb-3 duration-200"
+                color="yellow"
+                variant="solid"
+                label="Выбрать на карте"
+                :trailing="false"
+              />
+              <div v-if="marketplace === 'Wildberries'">
                 <UButton
+                  v-if="!isNotAskingWB"
                   icon="i-mdi:package-variant-closed-check"
                   color="pink"
-                  class="duration-200 font-semibold"
+                  class="duration-200 text-left font-semibold mb-3"
                   @click="router.push(`/client/order/independently/wb`)"
-                  >Посмотреть куда заказать, чтобы Ваш заказ доставили в данный
-                  пункт выдачи</UButton
-                >
+                  >Нажмите сюда, чтобы посмотреть куда заказать для дальнейшей
+                  доставки в пункт выдачи заказов
+                  {{ people.find((row) => row.pvz === pvzData)?.name }}
+                </UButton>
               </div>
-              <div class="mb-2" v-if="marketplace === 'Ozon'">
+              <div v-if="marketplace === 'Ozon'">
                 <UButton
+                  v-if="!isNotAskingOZ"
                   icon="i-mdi:package-variant-closed-check"
                   color="blue"
-                  class="duration-200 font-semibold"
+                  class="duration-200 text-left font-semibold mb-3"
                   @click="router.push(`/client/order/independently/ozon`)"
-                  >Посмотреть куда заказать, чтобы Ваш заказ доставили в данный
-                  пункт выдачи</UButton
-                >
+                  >Нажмите сюда, чтобы посмотреть куда заказать для дальнейшей
+                  доставки в пункт выдачи заказов
+                  {{ people.find((row) => row.pvz === pvzData)?.name }}
+                </UButton>
               </div>
-              <div class="mb-2" v-if="marketplace === 'Яндекс Маркет'">
+              <div v-if="marketplace === 'Яндекс Маркет'">
                 <UButton
+                  v-if="!isNotAskingYM"
                   icon="i-mdi:package-variant-closed-check"
                   color="yellow"
-                  class="duration-200 font-semibold"
+                  class="duration-200 text-left font-semibold mb-3"
                   @click="router.push(`/client/order/independently/ym`)"
-                  >Посмотреть куда заказать, чтобы Ваш заказ доставили в данный
-                  пункт выдачи</UButton
-                >
+                  >Нажмите сюда, чтобы посмотреть куда заказать для дальнейшей
+                  доставки в пункт выдачи заказов
+                  {{ people.find((row) => row.pvz === pvzData)?.name }}
+                </UButton>
               </div>
               <label>Прикрепите скриншот Штрих-кода*</label>
               <div v-if="!rowData.img" class="h-[44px]">
@@ -666,6 +839,7 @@ const checkAvailability = () => {
       </div>
     </div>
   </div>
+
   <div v-else class="w-screen">
     <NuxtLayout name="default">
       <UISpinner />

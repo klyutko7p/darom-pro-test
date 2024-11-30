@@ -139,7 +139,7 @@ const pvzs = [
 ];
 
 function clearCookies() {
-  localStorage.removeItem("isNotAskingOzon");
+  localStorage.removeItem("isNotAskingOZ");
   localStorage.removeItem("isNotAskingWB");
   localStorage.removeItem("isNotAskingYM");
   router.push("/client/order/independently/ozon?change=true");

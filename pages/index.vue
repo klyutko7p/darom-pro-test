@@ -187,7 +187,7 @@ useSeoMeta({
             class="max-xl:w-full max-xl:max-w-[770px]"
             @click="router.push('/auth/client/login')"
           >
-            оформить заказ
+            оформить заказ в личном кабинете
           </UIMainButton>
         </div>
         <div

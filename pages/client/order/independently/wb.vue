@@ -38,7 +38,8 @@ function saveAddress(address: string) {
 
 function skipWindow() {
   window.open("https://www.wildberries.ru/", "_blank");
-  router.push("/client/order/info/wb");
+  router.push("/client/delivery?marketplace=wb");
+  localStorage.setItem("isNotAskingWB", true);
 }
 
 let isShowModal = ref(false);
@@ -51,7 +52,6 @@ let isClickedCounter = ref(0);
 async function writeClipboardText(text: any) {
   try {
     await navigator.clipboard.writeText(text);
-    toast.success("Вы успешно скопировали адрес!");
     isClickedCounter.value += 1;
   } catch (error: any) {
     console.error(error.message);
@@ -205,13 +205,13 @@ function clearValue() {
                   Вам необязательно снова выбирать адрес, Вы можете сразу
                   переходить в раздел: <br />
                   <UButton
-                    @click="router.push('/client/delivery')"
+                    @click="router.push('/client/delivery?marketplace=wb')"
                     class="font-bold m-5 text-left"
                     icon="i-mdi-truck-delivery"
                     size="xl"
                     color="pink"
                     >Оформить доставку Вашего <br class="hidden max-sm:block" />
-                    заказа из интернет-магазина по QR</UButton
+                    заказа из интернет-магазина по Штрих-коду (QR)</UButton
                   >
                   <br />
                   для оформления доставки на пункт выдачи заказов на территории
@@ -239,7 +239,7 @@ function clearValue() {
         @close-modal="router.push('/client/order/independently')"
       >
         <template v-slot:icon-header> </template>
-        <template v-slot:header> Выбор адреса </template>
+        <template v-slot:header> Выбор адреса заказа </template>
         <template v-slot:body>
           <div class="text-left px-3 pb-10">
             <div>

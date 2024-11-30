@@ -482,20 +482,24 @@ async function parsePageByLink(itemData: IOurRansom) {
 }
 
 async function submitForm() {
-  try {
-    if (route.query.card === "true") {
-      for (const item of items.value) {
-        await parsePageByLink(item);
+  if (addressData.value) {
+    try {
+      if (route.query.card === "true") {
+        for (const item of items.value) {
+          await parsePageByLink(item);
+        }
+        showAcceptSecondModal();
+      } else {
+        await createOrder();
       }
-      showAcceptSecondModal();
-    } else {
-      await createOrder();
+    } catch (error) {
+      console.error("Ошибка при создании заказа или обработке данных:", error);
+      toast.error("Произошла ошибка при создании заказа");
+    } finally {
+      isLoading.value = false;
     }
-  } catch (error) {
-    console.error("Ошибка при создании заказа или обработке данных:", error);
-    toast.error("Произошла ошибка при создании заказа");
-  } finally {
-    isLoading.value = false;
+  } else {
+    toast.error("Для оформления заказа выберите пункт выдачи!");
   }
 }
 
@@ -566,7 +570,10 @@ let isNotAskingAcceptOrder = ref(false);
 <template>
   <Head>
     <Title>Создание строк</Title>
-    <Meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <Meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">
