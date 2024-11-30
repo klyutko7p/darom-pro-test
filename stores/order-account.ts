@@ -27,6 +27,22 @@ export const useOrderAccountStore = defineStore("order-accounts", () => {
     }
   }
 
+  async function getFullOrderAccounts() {
+    try {
+      let { data }: any = await useFetch("/api/order-accounts/get-full-oa", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function createOrderAccount(name: string) {
     try {
       if (name === "") {
@@ -90,5 +106,6 @@ export const useOrderAccountStore = defineStore("order-accounts", () => {
     createOrderAccount,
     updateOrderAccount,
     deleteOrderAccount,
+    getFullOrderAccounts,
   };
 });

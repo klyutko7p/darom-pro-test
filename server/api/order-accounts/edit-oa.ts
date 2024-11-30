@@ -17,6 +17,7 @@ export default defineEventHandler(async (event) => {
             },
             data: {
                 name: orderAccount.name,
+                active: orderAccount.active,
             },
         })
 

@@ -6,10 +6,7 @@ export default defineEventHandler(async (event) => {
   try {
     const orderAccount = await prisma.orderAccount.findMany({
       orderBy: {
-        id: "desc",
-      },
-      where: {
-        active: true,
+        id: 'desc',
       },
     });
     return orderAccount;

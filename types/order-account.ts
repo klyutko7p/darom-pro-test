@@ -1,4 +1,5 @@
 interface OrderAccount {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
+  active: boolean;
 }
