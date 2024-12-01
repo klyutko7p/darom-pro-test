@@ -333,7 +333,16 @@ function reduceArray(array: any, flag: string) {
         0
       );
     }
-  } else if (selectedTypeOfTransaction.value === "Заказано3") {
+  }
+  // else if (selectedTypeOfTransaction.value === "Постоплата WB") {
+  //   if (flag === "OurRansom") {
+  //     return array.reduce(
+  //       (ac: any, curValue: any) => ac + curValue.priceSite,
+  //       0
+  //     );
+  //   }
+  // }
+  else if (selectedTypeOfTransaction.value === "Заказано3") {
     if (flag === "OurRansom") {
       return array.reduce(
         (ac: any, curValue: any) => ac + curValue.priceSite,
@@ -643,12 +652,23 @@ function reduceArrayProfit(array: any[], flag: string) {
     const thresholdDate = new Date("2024-06-05 00:00:01");
     return array.reduce((total: number, row: any) => {
       const createdAt = new Date(row.created_at);
+      const issuedDate = new Date(row.issued);
+      let effectiveRate = rate;
+
+      // Новое условие
+      if (
+        selectedPVZ.value === "ППВЗ_5" &&
+        issuedDate >= new Date("2024-12-01")
+      ) {
+        effectiveRate = 0.03;
+      }
+
       const amount = row[clientField];
       const adjustedAmount =
         createdAt > thresholdDate
           ? roundOrCeil(amount)
           : Math.ceil(amount / 10) * 10;
-      return total + adjustedAmount * rate;
+      return total + adjustedAmount * effectiveRate;
     }, 0);
   };
 
@@ -797,6 +817,7 @@ function getAllSum() {
         (row) =>
           !row.issued &&
           !row.deleted &&
+          // row.dp &&
           (!selected.value.start ||
             new Date(row.created_at) >= new Date(newStartingDate)) &&
           (!selected.value.end ||
@@ -810,6 +831,7 @@ function getAllSum() {
           row.dispatchPVZ === selectedPVZ.value &&
           row.issued === null &&
           row.deleted === null &&
+          // row.dp &&
           (!selected.value.start ||
             new Date(row.created_at) >= new Date(newStartingDate)) &&
           (!selected.value.end ||
@@ -818,7 +840,38 @@ function getAllSum() {
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       allSum.value = sum1.value;
     }
-  } else if (selectedTypeOfTransaction.value === "Заказано3") {
+  } 
+  // else if (selectedTypeOfTransaction.value === "Постоплата WB") {
+  //   if (selectedPVZ.value === "Все ПВЗ") {
+  //     copyArrayOurRansom.value = ourRansomRows.value?.filter(
+  //       (row) =>
+  //         !row.issued &&
+  //         !row.deleted &&
+  //         !row.dp &&
+  //         (!selected.value.start ||
+  //           new Date(row.created_at) >= new Date(newStartingDate)) &&
+  //         (!selected.value.end ||
+  //           new Date(row.created_at) <= new Date(newEndDate))
+  //     );
+  //     sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+  //     allSum.value = sum1.value;
+  //   } else {
+  //     copyArrayOurRansom.value = ourRansomRows.value?.filter(
+  //       (row) =>
+  //         row.dispatchPVZ === selectedPVZ.value &&
+  //         row.issued === null &&
+  //         row.deleted === null &&
+  //         !row.dp &&
+  //         (!selected.value.start ||
+  //           new Date(row.created_at) >= new Date(newStartingDate)) &&
+  //         (!selected.value.end ||
+  //           new Date(row.created_at) <= new Date(newEndDate))
+  //     );
+  //     sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+  //     allSum.value = sum1.value;
+  //   }
+  // }
+  else if (selectedTypeOfTransaction.value === "Заказано3") {
     if (selectedPVZ.value === "Все ПВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -1028,7 +1081,6 @@ function getAllSum() {
         allSum.value -= 2330;
         allSum.value += 15000;
       }
-      console.log(sum1.value + sum2.value);
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (selectedPVZ.value === "Все ПВЗ") {
@@ -2357,7 +2409,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
 
             <div v-if="selectedTypeOfTransaction !== 'Доставка'">
               <div class="text-center text-2xl mt-10">
-                <h1>Итого</h1>
+                <h1>Итого наличных</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(allSum)) }} ₽
                 </h1>
@@ -2820,7 +2872,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
 
             <div v-if="selectedTypeOfTransaction !== 'Доставка'">
               <div class="text-center text-2xl mt-10">
-                <h1>Итого</h1>
+                <h1>Итого наличных</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(allSum)) }} ₽
                 </h1>
