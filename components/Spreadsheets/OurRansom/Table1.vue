@@ -781,6 +781,7 @@ async function writeClipboardText(text: any) {
             (user.username === 'Директор' ||
               user.username === 'Горцуева' ||
               user.username === 'Светлана1' ||
+              user.username === 'Светлана3' ||
               user.username === 'Светлана2' ||
               user.username === 'Власенкова')
           "
@@ -839,6 +840,7 @@ async function writeClipboardText(text: any) {
             (user.username === 'Директор' ||
               user.username === 'Горцуева' ||
               user.username === 'Светлана1' ||
+              user.username === 'Светлана3' ||
               user.username === 'Светлана2' ||
               user.username === 'Власенкова')
           "

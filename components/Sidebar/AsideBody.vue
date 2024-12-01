@@ -149,6 +149,7 @@ function showSettingsList() {
             v-if="
               user.role !== 'SORTIROVKA' &&
               user.username !== 'Светлана1' &&
+              user.username !== 'Светлана3' &&
               user.username !== 'Светлана2'
             "
           >
@@ -188,12 +189,14 @@ function showSettingsList() {
                 user.dataDelivery === 'WRITE') &&
                 (user.role === 'ADMIN' || user.role === 'OPT') &&
                 user.username !== 'Светлана1' &&
+                user.username !== 'Светлана3' &&
                 user.username !== 'Светлана2') ||
               user.dataDelivery === 'READ' ||
               (user.dataDelivery === 'WRITE' &&
                 user.role !== 'ADMINISTRATOR' &&
                 user.role !== 'RMANAGER' &&
                 user.username !== 'Светлана1' &&
+                user.username !== 'Светлана3' &&
                 user.username !== 'Светлана2')
             "
           >
@@ -289,6 +292,7 @@ function showSettingsList() {
               user.dataOurRansom === 'READ' ||
               (user.dataOurRansom === 'WRITE' &&
                 user.username !== 'Светлана1' &&
+                user.username !== 'Светлана3' &&
                 user.username !== 'Светлана2')
             "
           >
@@ -326,6 +330,7 @@ function showSettingsList() {
               user.dataClientRansom === 'READ' ||
               (user.dataClientRansom === 'WRITE' &&
                 user.username !== 'Светлана1' &&
+                user.username !== 'Светлана3' &&
                 user.username !== 'Светлана2' &&
                 !user.username.includes('Горцуева'))
             "
@@ -370,6 +375,7 @@ function showSettingsList() {
             v-if="
               (user.role === 'ADMIN' &&
                 user.username !== 'Светлана1' &&
+                user.username !== 'Светлана3' &&
                 user.username !== 'Светлана2') ||
               user.role === 'ADMINISTRATOR' ||
               user.role === 'PVZ' ||
@@ -452,6 +458,7 @@ function showSettingsList() {
             v-if="
               (user.role === 'ADMIN' &&
                 user.username !== 'Светлана1' &&
+                user.username !== 'Светлана3' &&
                 user.username !== 'Светлана2' &&
                 !user.username.includes('Горцуева')) ||
               user.role === 'ADMINISTRATOR' ||
@@ -482,6 +489,7 @@ function showSettingsList() {
             v-if="
               (user.role === 'ADMIN' &&
                 user.username !== 'Светлана1' &&
+                user.username !== 'Светлана3' &&
                 user.username !== 'Светлана2') ||
               user.role === 'DRIVER' ||
               user.role === 'ADMINISTRATOR' ||
@@ -654,12 +662,14 @@ function showSettingsList() {
                 user.dataDelivery === 'WRITE') &&
                 (user.role === 'ADMIN' || user.role === 'OPT') &&
                 user.username !== 'Светлана1' &&
+                user.username !== 'Светлана3' &&
                 user.username !== 'Светлана2') ||
               user.dataDelivery === 'READ' ||
               (user.dataDelivery === 'WRITE' &&
                 user.role !== 'ADMINISTRATOR' &&
                 user.role !== 'RMANAGER' &&
                 user.username !== 'Светлана1' &&
+                user.username !== 'Светлана3' &&
                 user.username !== 'Светлана2')
             "
           >
@@ -681,6 +691,7 @@ function showSettingsList() {
               (user.dataDelivery === 'READ' || user.dataDelivery === 'WRITE') &&
               (user.role === 'ADMIN' || user.role === 'OPT') &&
               user.username !== 'Светлана1' &&
+              user.username !== 'Светлана3' &&
               user.username !== 'Светлана2'
             "
           >
