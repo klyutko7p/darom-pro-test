@@ -245,7 +245,7 @@ const createItem = async () => {
       priceSite: +priceSite.value,
       quantity: quantityOfItem.value,
       img: urlToImg.value,
-      percentClient: isDiscountApplicable ? 10 : 0,
+      percentClient: isDiscountApplicable ? 10 : 10,
       description: description.value,
       cell: "",
       marketplace: marketplace.value,

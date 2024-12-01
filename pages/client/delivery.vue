@@ -549,58 +549,63 @@ const showInfo = ref(true);
 
             <div v-if="isOpenThirdModal" v-auto-animate>
               <label>Пункт выдачи заказов</label>
-              <USelectMenu
-                value-attribute="pvz"
-                option-attribute="name"
-                v-model="pvzData"
-                :options="people"
-                class="mt-3"
-              />
-              <UButton
-                v-if="marketplace === 'Wildberries'"
-                icon="i-material-symbols-add-location"
-                size="sm"
-                @click="
-                  router.push(
-                    '/client/order/independently/ozon?change=true&delivery=true&marketplace=wb'
-                  )
-                "
-                class="font-bold mt-3 mb-3 duration-200"
-                color="pink"
-                variant="solid"
-                label="Выбрать на карте"
-                :trailing="false"
-              />
-              <UButton
-                v-if="marketplace === 'Ozon'"
-                icon="i-material-symbols-add-location"
-                size="sm"
-                @click="
-                  router.push(
-                    '/client/order/independently/ozon?change=true&delivery=true&marketplace=ozon'
-                  )
-                "
-                class="font-bold mt-3 mb-3 duration-200"
-                color="blue"
-                variant="solid"
-                label="Выбрать на карте"
-                :trailing="false"
-              />
-              <UButton
-                v-if="marketplace === 'Яндекс Маркет'"
-                icon="i-material-symbols-add-location"
-                size="sm"
-                @click="
-                  router.push(
-                    '/client/order/independently/ozon?change=true&delivery=true&marketplace=ym'
-                  )
-                "
-                class="font-bold mt-3 mb-3 duration-200"
-                color="yellow"
-                variant="solid"
-                label="Выбрать на карте"
-                :trailing="false"
-              />
+              <div
+                class="flex mb-3 items-center justify-between gap-2 max-[460px]:flex-col max-[460px]:items-start"
+              >
+                <USelectMenu
+                  value-attribute="pvz"
+                  option-attribute="name"
+                  v-model="pvzData"
+                  :options="people"
+                  class="w-full"
+                />
+                <UButton
+                  v-if="marketplace === 'Wildberries'"
+                  icon="i-material-symbols-add-location"
+                  size="sm"
+                  @click="
+                    router.push(
+                      '/client/order/independently/ozon?change=true&delivery=true&marketplace=wb'
+                    )
+                  "
+                  class="font-bold duration-200 max-[460px]:w-full flex items-center justify-center"
+                  color="pink"
+                  variant="solid"
+                  label="Выбрать на карте"
+                  :trailing="false"
+                />
+                <UButton
+                  v-if="marketplace === 'Ozon'"
+                  icon="i-material-symbols-add-location"
+                  size="sm"
+                  @click="
+                    router.push(
+                      '/client/order/independently/ozon?change=true&delivery=true&marketplace=ozon'
+                    )
+                  "
+                  class="font-bold max-[460px]:w-full flex items-center justify-center duration-200"
+                  color="blue"
+                  variant="solid"
+                  label="Выбрать на карте"
+                  :trailing="false"
+                />
+                <UButton
+                  v-if="marketplace === 'Яндекс Маркет'"
+                  icon="i-material-symbols-add-location"
+                  size="sm"
+                  @click="
+                    router.push(
+                      '/client/order/independently/ozon?change=true&delivery=true&marketplace=ym'
+                    )
+                  "
+                  class="font-bold max-[460px]:w-full flex items-center justify-centerduration-200"
+                  color="yellow"
+                  variant="solid"
+                  label="Выбрать на карте"
+                  :trailing="false"
+                />
+              </div>
+
               <div v-if="marketplace === 'Wildberries'">
                 <UButton
                   v-if="!isNotAskingWB"
