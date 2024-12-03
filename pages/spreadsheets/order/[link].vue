@@ -135,7 +135,7 @@ function disableReceivedItems() {
 
 function enableReceivedItems() {
   showReceivedItems.value = true;
-  copyRows.value = rows.value;
+  copyRows.value = rows.value?.filter((value) => value.issued);
 }
 
 let phoneNumber = ref("");

@@ -92,7 +92,7 @@ function clearValue() {
               class="font-semibold duration-200 w-full max-w-[500px]"
               :trailing="false"
               >Нажмите тут для подтверждения адреса пункта заказа
-              интернет-магазина</UButton
+              интернет-магазина «Село Ряженое, ул. Ленина 6»</UButton
             >
           </div>
           <div class="h-screen flex items-center justify-center" v-else>

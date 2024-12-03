@@ -334,6 +334,17 @@ const checkAvailability = () => {
 };
 
 const showInfo = ref(true);
+
+function removeAskingHistory() {
+  localStorage.setItem("addressData", JSON.stringify(pvzData.value));
+  localStorage.removeItem("isNotAskingOZ");
+  localStorage.removeItem("isNotAskingWB");
+  localStorage.removeItem("isNotAskingYM");
+
+  isNotAskingWB.value = false;
+  isNotAskingOZ.value = false;
+  isNotAskingYM.value = false;
+}
 </script>
 
 <template>
@@ -550,9 +561,10 @@ const showInfo = ref(true);
             <div v-if="isOpenThirdModal" v-auto-animate>
               <label>Пункт выдачи заказов</label>
               <div
-                class="flex mb-3 items-center justify-between gap-2 max-[460px]:flex-col max-[460px]:items-start"
+                class="flex mb-3 mt-3 items-center justify-between gap-2 max-[460px]:flex-col max-[460px]:items-start"
               >
                 <USelectMenu
+                  @change="removeAskingHistory"
                   value-attribute="pvz"
                   option-attribute="name"
                   v-model="pvzData"

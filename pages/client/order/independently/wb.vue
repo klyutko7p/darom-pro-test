@@ -236,7 +236,7 @@ function clearValue() {
 
       <UINewModalEditNoPaddingSecond
         v-show="isShowModal"
-        @close-modal="router.push('/client/order/independently')"
+        @close-modal="router.push('/client/delivery?marketplace=wb')"
       >
         <template v-slot:icon-header> </template>
         <template v-slot:header> Выбор адреса заказа </template>

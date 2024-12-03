@@ -102,8 +102,12 @@ function disableReceivedItems() {
 
 function enableReceivedItems() {
   showReceivedItems.value = true;
-  copyRowsOurRansom.value = rowsOurRansom.value;
-  copyRowsClientRansom.value = rowsClientRansom.value;
+  copyRowsOurRansom.value = rowsOurRansom.value?.filter(
+    (value) => value.issued
+  );
+  copyRowsClientRansom.value = rowsClientRansom.value?.filter(
+    (value) => value.issued
+  );
 }
 
 let phoneNumber = ref("");

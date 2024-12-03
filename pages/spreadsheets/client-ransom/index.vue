@@ -326,7 +326,7 @@ function getFromNameFromCell() {
   <div>
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="admin">
-        <div v-if="!isLoading" class="mt-3">
+        <div v-if="!isLoading" class="mt-3 max-sm:mt-10">
           <div>
             <SpreadsheetsClientRansomFilters
               v-if="rows"
