@@ -59,7 +59,15 @@ onMounted(async () => {
       <h1 class="font-medium italic text-sm">{{ client.fio }}</h1>
     </div>
     <Icon
+      v-if="route.fullPath !== '/client/delivery'"
       @click="router.go(-1)"
+      name="ion:ios-arrow-back"
+      size="32"
+      class="cursor-pointer hover:opacity-50 duration-200"
+    />
+    <Icon
+      v-if="route.fullPath === '/client/delivery'"
+      @click="router.push('/client/main')"
       name="ion:ios-arrow-back"
       size="32"
       class="cursor-pointer hover:opacity-50 duration-200"

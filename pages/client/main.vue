@@ -60,10 +60,9 @@ onMounted(async () => {
   isLoading.value = true;
   client.value = await storeClients.getClient();
   clientData.value = await storeClients.getClientById(client.value.id);
-
   if (
-    !clientData.value.dateOfPersonalDataProcessingPolicyAgreement &&
-    !clientData.value.dateOfPrivacyPolicyAgreement
+    !clientData.value.isPersonalDataProcessingPolicyAgreed &&
+    !clientData.value.isPrivacyPolicyAgreed
   ) {
     isShowModal3.value = true;
   }

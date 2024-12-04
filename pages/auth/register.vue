@@ -264,6 +264,8 @@ useSeoMeta({
   ogDescription:
     "Получите доступ к заказу из любых интернет-магазинов и свой личный кабинет клиента!",
 });
+
+let isShowTelegramMethod = ref(true);
 </script>
 
 <template>
@@ -405,18 +407,80 @@ useSeoMeta({
           <div class="space-y-3">
             <div class="flex items-center justify-center">
               <UIMainButton
-                class="w-full max-sm:max-w-[400px]"
+                icon="material-symbols:app-registration"
+                class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
                 :disabled="isButtonDisabled || isBlocked"
-                >Зарегистрироваться</UIMainButton
-              >
+                >Зарегистрироваться по СМС
+              </UIMainButton>
             </div>
             <h1 class="text-center font-bold text-red-500">
               {{ errorTextValidation }}
             </h1>
           </div>
         </form>
+        <div class="flex items-center justify-center">
+          <UButton
+            @click="isShowTelegramMethod = !isShowTelegramMethod"
+            icon="ic:baseline-telegram"
+            class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+            >Зарегистрироваться через телеграм
+          </UButton>
+        </div>
       </div>
     </div>
+
+    <UINewModalEdit
+      v-if="isShowTelegramMethod"
+      @close-modal="isShowTelegramMethod = !isShowTelegramMethod"
+    >
+      <template v-slot:icon-header> </template>
+      <template v-slot:header>Регистрация</template>
+      <template v-slot:body>
+        <div class="flex items-center justify-center">
+          <div class="rounded-2xl">
+            <div class="mb-3">
+              <Icon name="logos:telegram" size="32" />
+              <h1 class="font-semibold text-base">
+                Регистрация через <br class="hidden max-sm:block" /> телеграм-бот
+              </h1>
+            </div>
+            <ul class="space-y-3 text-left list-decimal">
+              <li>
+                Перейдите в наш официальный
+                <a
+                  class="font-semibold text-secondary-color underline"
+                  href="https://t.me/darom_pro_bot"
+                  target="_blank"
+                  >телеграм-бот</a
+                >
+                (@darom_pro_bot)
+              </li>
+              <li>Нажмите кнопку «ЗАПУСТИТЬ»</li>
+              <li>Дайте доступ к своему номеру телефона</li>
+              <li>Затем нажмите кнопку «Зарегистрироваться»</li>
+              <li>
+                Получите свои данные для входа и
+                <span
+                  class="font-semibold text-secondary-color underline cursor-pointer"
+                  @click="router.push('/auth/client/login')"
+                  >Авторизуйтесь</span
+                >
+              </li>
+            </ul>
+            <h1 class="my-3 text-sm italic">
+              Если у вас нет телеграма или нужно зарегистрировать другой номер
+              телефона, нажмите
+              <span
+                @click="isShowTelegramMethod = false"
+                class="font-semibold text-secondary-color underline cursor-pointer"
+              >
+                здесь</span
+              >
+            </h1>
+          </div>
+        </div>
+      </template>
+    </UINewModalEdit>
 
     <UINewModalEdit
       v-if="isShowConfirmationModal"
