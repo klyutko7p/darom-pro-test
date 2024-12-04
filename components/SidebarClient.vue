@@ -66,7 +66,7 @@ onMounted(async () => {
       class="cursor-pointer hover:opacity-50 duration-200"
     />
     <Icon
-      v-if="route.fullPath === '/client/delivery'"
+      v-if="route.fullPath.includes('/client/delivery')"
       @click="router.push('/client/main')"
       name="ion:ios-arrow-back"
       size="32"
