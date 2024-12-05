@@ -1,4 +1,4 @@
-<!-- <script setup lang="ts">
+<script setup lang="ts">
 import Cookies from "js-cookie";
 import { useToast } from "vue-toastification";
 
@@ -1372,4 +1372,4 @@ let isNotAskingAcceptOrder = ref(false);
       <UISpinner />
     </NuxtLayout>
   </div>
-</template> -->
+</template>
