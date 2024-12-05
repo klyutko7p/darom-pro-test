@@ -427,3 +427,9 @@ enum Role {
   SHVEDOVA
   OFFICE
 }
+
+model TelegramAuthClients {
+  id          Int      @id @default(autoincrement())
+  phoneNumber String
+  created_at  DateTime @default(now())
+}

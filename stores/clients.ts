@@ -46,6 +46,43 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  async function getAuthClients() {
+    try {
+      let { data }: any = await useFetch("/api/telegram/get-auth-clients", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function createAuthClients(client: any) {
+    try {
+      let { data }: any = await useFetch("/api/telegram/create-auth-client", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ client }),
+      });
+      if (data.value === undefined) {
+        return;
+      } else {
+        toast.error("Произошла ошибка при создании клиента!");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function signIn(
     phoneNumber: string,
     password: string,
@@ -129,7 +166,10 @@ export const useClientsStore = defineStore("clients", () => {
   ) {
     let hashedPhoneNumber = crypto.SHA256(phoneNumber);
     let decryptPhoneNumberValue = decryptPhoneNumber(encryptPhoneNumber);
-    if (hashedPhoneNumber.toString() === refValue && decryptPhoneNumberValue !== origPhoneNumber) {
+    if (
+      hashedPhoneNumber.toString() === refValue &&
+      decryptPhoneNumberValue !== origPhoneNumber
+    ) {
       return true;
     } else {
       return false;
@@ -554,5 +594,7 @@ export const useClientsStore = defineStore("clients", () => {
     acceptDocs,
     fetchSiteOZ2,
     compareReferralLinkNumberRefSystem,
+    getAuthClients,
+    createAuthClients
   };
 });

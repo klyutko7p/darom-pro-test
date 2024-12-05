@@ -59,7 +59,7 @@ onMounted(async () => {
       <h1 class="font-medium italic text-sm">{{ client.fio }}</h1>
     </div>
     <Icon
-      v-if="route.fullPath !== '/client/delivery'"
+      v-if="!route.fullPath.includes('/client/delivery')"
       @click="router.go(-1)"
       name="ion:ios-arrow-back"
       size="32"
