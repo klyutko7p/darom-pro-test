@@ -7,6 +7,7 @@ const router = useRouter();
 
 const toast = useToast();
 const phoneNumber = ref("+7");
+const phoneNumberTelegram = ref("+7");
 const password = ref("");
 const message = ref("");
 
@@ -20,6 +21,12 @@ async function signIn() {
     password.value.trim(),
     isForeignDevice.value
   );
+  isLoading.value = false;
+}
+
+async function signInTelegram() {
+  isLoading.value = true;
+  await storeClients.signInTelegram(phoneNumberTelegram.value.trim());
   isLoading.value = false;
 }
 
@@ -161,6 +168,7 @@ function generateRandomPassword(length: number) {
 }
 
 watch(() => phoneNumber.value, validationPhoneNumber);
+watch(() => phoneNumberTelegram.value, validationPhoneNumber);
 
 function validationPhoneNumberData() {
   phoneNumberData.value = phoneNumberData.value.replace(/[^0-9]/g, "");
@@ -176,12 +184,22 @@ function validationPhoneNumberData() {
 
 function validationPhoneNumber() {
   phoneNumber.value = phoneNumber.value.replace(/[^0-9]/g, "");
+  phoneNumberTelegram.value = phoneNumberTelegram.value.replace(/[^0-9]/g, "");
   if (!phoneNumber.value.startsWith("+7")) {
     phoneNumber.value = "+7" + phoneNumber.value.replace(/^(\+?7|8)?/, "");
   }
 
   if (phoneNumber.value.length > 12) {
     phoneNumber.value = phoneNumber.value.slice(0, 12);
+  }
+
+  if (!phoneNumberTelegram.value.startsWith("+7")) {
+    phoneNumberTelegram.value =
+      "+7" + phoneNumberTelegram.value.replace(/^(\+?7|8)?/, "");
+  }
+
+  if (phoneNumberTelegram.value.length > 12) {
+    phoneNumberTelegram.value = phoneNumberTelegram.value.slice(0, 12);
   }
 }
 
@@ -236,6 +254,90 @@ useSeoMeta({
   ogDescription:
     "Получите доступ к заказу из любых интернет-магазинов и свой личный кабинет клиента!",
 });
+
+let isShowTelegramMethod = ref(false);
+
+let selectedTypeOfAuth = ref("");
+
+const isSelectedTypeOfAuthTG = computed(() => {
+  return selectedTypeOfAuth.value === "telegram" ? true : false;
+});
+
+function checkPhoneNumberValidating() {
+  if (phoneNumberTelegram.value.length < 11) {
+    return false;
+  }
+
+  if (phoneNumberTelegram.value.length > 12) {
+    return false;
+  }
+
+  if (!phoneNumberTelegram.value.startsWith("+7")) {
+    return false;
+  }
+
+  if (phoneNumberTelegram.value.trim() === "") {
+    return false;
+  }
+
+  return true;
+}
+
+const isDisabledAuth = computed(() => {
+  if (selectedTypeOfAuth.value && checkPhoneNumberValidating()) {
+    return true;
+  } else {
+    return false;
+  }
+});
+
+function showNotification() {
+  toast.warning("В данный момент вход через смс недоступен!");
+}
+
+function openTelegramBot() {
+  window.open(
+    `https://telegram.me/darom_pro_bot?start=${phoneNumberTelegram.value}`,
+    "_blank"
+  );
+}
+
+let isAuthNonComplete = false; 
+
+async function waitingForAuth() {
+  try {
+    if (isAuthNonComplete) return;
+
+    let clients = await storeClients.getAuthClients();
+
+    const now = new Date();
+
+    const validClients = clients.filter((client: any) => {
+      if (client.phoneNumber !== phoneNumberTelegram.value) return false;
+
+      const createdAt = new Date(client.created_at);
+      const timeDifference = now - createdAt;
+
+      return timeDifference <= 60 * 60 * 1000;
+    });
+
+    if (validClients.length > 0) {
+      isAuthNonComplete = true; 
+      await signInTelegram();
+    } else {
+      console.log("Клиент не найден или время регистрации истекло.");
+    }
+  } catch (error) {
+    console.error("Ошибка при получении обновлений:", error);
+  } finally {
+    if (isShowTelegramMethod.value) {
+      setTimeout(waitingForAuth, 3000); 
+    }
+  }
+}
+
+// Запуск функции
+waitingForAuth();
 </script>
 
 <template>
@@ -338,10 +440,16 @@ useSeoMeta({
           <div v-if="message !== ''">
             <h1 class="text-red-700 text-center">{{ message }}</h1>
           </div>
-          <div class="flex items-center justify-center">
+          <div class="flex items-center justify-center flex-col gap-3">
             <UIMainButton class="w-full max-sm:max-w-[400px]"
               >Войти</UIMainButton
             >
+            <UButton
+              @click="isShowTelegramMethod = !isShowTelegramMethod"
+              icon="ic:baseline-telegram"
+              class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+              >Войти через телеграм
+            </UButton>
           </div>
           <div class="text-center text-secondary-color font-bold">
             <NuxtLink to="/auth/register">Зарегистрироваться</NuxtLink>
@@ -349,6 +457,116 @@ useSeoMeta({
         </form>
       </div>
     </div>
+
+    <!-- <UINewModalEdit
+      v-if="isShowTelegramMethod"
+      @close-modal="isShowTelegramMethod = !isShowTelegramMethod"
+    >
+      <template v-slot:icon-header> </template>
+      <template v-slot:header>Авторизация</template>
+      <template v-slot:body>
+        <div class="flex items-center justify-center">
+          <div class="rounded-2xl">
+            <div class="mb-3">
+              <Icon name="logos:telegram" size="32" />
+              <h1 class="font-semibold text-base">
+                Авторизация через <br class="hidden max-sm:block" />
+                телеграм
+              </h1>
+            </div>
+          </div>
+        </div>
+      </template>
+    </UINewModalEdit> -->
+
+    <UModal
+      :ui="{
+        container: 'flex items-center justify-center text-center',
+      }"
+      v-model="isShowTelegramMethod"
+      prevent-close
+    >
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+            >
+              Авторизация
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isShowTelegramMethod = false"
+            />
+          </div>
+        </template>
+
+        <div class="px-10 max-sm:px-0">
+          <label
+            for="phone"
+            class="block text-sm font-medium leading-6 text-gray-900"
+            >Введите телефон (+7XXXXXXXXXX)</label
+          >
+          <div class="mt-2">
+            <input
+              v-model="phoneNumberTelegram"
+              id="phone"
+              name="phone"
+              type="text"
+              autocomplete="phone"
+              required
+              placeholder="+7XXXXXXXXXX"
+              @input="validationPhoneNumber"
+              class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-xl placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+            />
+          </div>
+          <h1 class="my-3 text-sm">Куда отправить подтверждение?</h1>
+          <div class="flex items-center justify-center gap-3">
+            <div
+              @click="selectedTypeOfAuth = 'telegram'"
+              :class="{
+                'bg-secondary-color text-white': isSelectedTypeOfAuthTG,
+                'bg-orange-100 text-secondary-color': !isSelectedTypeOfAuthTG,
+              }"
+              class="text-secondary-color flex items-center justify-center flex-col rounded-full w-full py-1 cursor-pointer duration-200"
+            >
+              <Icon name="mdi:telegram" size="24" />
+              <h1>Telegram</h1>
+            </div>
+            <div
+              @click="showNotification"
+              class="bg-orange-100 text-secondary-color flex items-center justify-center flex-col rounded-full w-full py-1 cursor-not-allowed duration-200"
+            >
+              <Icon name="mdi:chat-processing-outline" size="24" />
+              <h1>SMS</h1>
+            </div>
+          </div>
+          <h1 class="mt-10 mb-4 text-sm italic">
+            Нажимая «Подтвердить», Вы соглашаетесь с
+            <a
+              class="underline text-secondary-color font-semibold"
+              href="https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/files/docx/policy_info_dp.pdf"
+              >условиями обработки персональных данных</a
+            >
+          </h1>
+          <UButton
+            @click="openTelegramBot(), waitingForAuth()"
+            :disabled="!isDisabledAuth"
+            class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+          >
+            Подтвердить
+          </UButton>
+        </div>
+      </UCard>
+    </UModal>
 
     <UINewModalEdit
       v-if="isShowFirstConfirmationModal"

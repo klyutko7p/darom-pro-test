@@ -122,6 +122,42 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  async function signInTelegram(phoneNumber: string) {
+    try {
+      let { data }: any = await useFetch("/api/clients/get-client-by-phone", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phoneNumber }),
+      });
+
+      if (data) {
+
+        const { clientData, token } = data.value.data;
+
+        userData = clientData;
+
+        const cookieExpires = 7 * 365 * 100;
+        Cookies.set("token", token, { expires: cookieExpires });
+        Cookies.set("user", JSON.stringify(userData), {
+          expires: cookieExpires,
+        });
+
+        if (userData.role === "CLIENT") {
+          router.push("/client/main");
+        }
+      } else {
+        return data?.value?.error || "Unknown error";
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Ошибка во время входа в систему:", error.message);
+        return error.message;
+      }
+    }
+  }
+
   function encryptPhoneNumber(phoneNumber: string) {
     let encryptedPhoneNumber = crypto.AES.encrypt(phoneNumber, key).toString();
     return encryptedPhoneNumber.replace(/\+/g, "-");
@@ -595,6 +631,7 @@ export const useClientsStore = defineStore("clients", () => {
     fetchSiteOZ2,
     compareReferralLinkNumberRefSystem,
     getAuthClients,
-    createAuthClients
+    createAuthClients,
+    signInTelegram,
   };
 });
