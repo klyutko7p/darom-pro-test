@@ -220,6 +220,7 @@ model OrderAccount {
   id     Int     @id @default(autoincrement())
   name   String
   active Boolean @default(true)
+  phone  String?
 }
 
 model SumOfRejection {

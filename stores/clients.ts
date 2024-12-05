@@ -382,6 +382,24 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  async function fetchSiteOZ3(link: string) {
+    console.log(link);
+    try {
+      let { data }: any = await useFetch("/api/clients/fetch-site-oz-3", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ link }),
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function fetchSiteYM(link: string) {
     try {
       let { data }: any = await useFetch("/api/clients/fetch-site-ym", {
@@ -629,6 +647,7 @@ export const useClientsStore = defineStore("clients", () => {
     resetPassword,
     acceptDocs,
     fetchSiteOZ2,
+    fetchSiteOZ3,
     compareReferralLinkNumberRefSystem,
     getAuthClients,
     createAuthClients,

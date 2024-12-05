@@ -296,13 +296,15 @@ function showNotification() {
 }
 
 function openTelegramBot() {
+  const phoneNumber = phoneNumberTelegram.value.slice(2); 
   window.open(
-    `https://telegram.me/darom_pro_bot?start=${phoneNumberTelegram.value}`,
+    `https://t.me/darom_pro_bot?start=${phoneNumber}`,
     "_blank"
   );
 }
 
-let isAuthNonComplete = false; 
+
+let isAuthNonComplete = false;
 
 async function waitingForAuth() {
   try {
@@ -322,7 +324,7 @@ async function waitingForAuth() {
     });
 
     if (validClients.length > 0) {
-      isAuthNonComplete = true; 
+      isAuthNonComplete = true;
       await signInTelegram();
     } else {
       console.log("Клиент не найден или время регистрации истекло.");
@@ -331,7 +333,7 @@ async function waitingForAuth() {
     console.error("Ошибка при получении обновлений:", error);
   } finally {
     if (isShowTelegramMethod.value) {
-      setTimeout(waitingForAuth, 3000); 
+      setTimeout(waitingForAuth, 3000);
     }
   }
 }
@@ -341,6 +343,12 @@ waitingForAuth();
 </script>
 
 <template>
+  <Head>
+    <Meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+  </Head>
   <div
     v-if="!isLoading"
     class="h-screen flex items-center justify-center max-sm:block"
@@ -541,13 +549,13 @@ waitingForAuth();
               <Icon name="mdi:telegram" size="24" />
               <h1>Telegram</h1>
             </div>
-            <div
+            <!-- <div
               @click="showNotification"
               class="bg-orange-100 text-secondary-color flex items-center justify-center flex-col rounded-full w-full py-1 cursor-not-allowed duration-200"
             >
               <Icon name="mdi:chat-processing-outline" size="24" />
               <h1>SMS</h1>
-            </div>
+            </div> -->
           </div>
           <h1 class="mt-10 mb-4 text-sm italic">
             Нажимая «Подтвердить», Вы соглашаетесь с
@@ -557,13 +565,15 @@ waitingForAuth();
               >условиями обработки персональных данных</a
             >
           </h1>
-          <UButton
-            @click="openTelegramBot(), waitingForAuth()"
-            :disabled="!isDisabledAuth"
-            class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
-          >
-            Подтвердить
-          </UButton>
+          <div class="flex items-center justify-center">
+            <UButton
+              @click="openTelegramBot(), waitingForAuth()"
+              :disabled="!isDisabledAuth"
+              class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+            >
+              Подтвердить
+            </UButton>
+          </div>
         </div>
       </UCard>
     </UModal>

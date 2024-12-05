@@ -33,6 +33,10 @@ const columns = [
     sortable: true,
   },
   {
+    key: "phone",
+    label: "Телефон",
+  },
+  {
     key: "actions",
   },
 ];

@@ -82,12 +82,15 @@ watch(isOpen, (newValue) => {
 
 <template>
   <Head>
-    <Title>Сортировочные центры</Title>
+    <Title>Аккаунты заказа</Title>
   </Head>
 
   <div v-if="token && user.role === 'ADMIN'">
     <NuxtLayout name="table-admin-no-pad">
-      <div v-if="!isLoading" class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5 w-screen">
+      <div
+        v-if="!isLoading"
+        class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5 w-screen"
+      >
         <AdminDataTableOA
           :fields="fields"
           :rows="orderAccounts"
@@ -120,6 +123,15 @@ watch(isOpen, (newValue) => {
                 <UInput
                   class="w-full"
                   v-model="orderAccountData.name"
+                  type="text"
+                />
+              </div>
+
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="name">Телефон</label>
+                <UInput
+                  class="w-full"
+                  v-model="orderAccountData.phone"
                   type="text"
                 />
               </div>

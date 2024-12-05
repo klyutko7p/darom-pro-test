@@ -85,6 +85,15 @@ const handleError = (message: string) => {
   isLoading.value = false;
 };
 
+function extractProductName(text) {
+    const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+
+    const productName = lines.find(line => line.length > 30 && /[a-zA-Zа-яА-Я]/.test(line));
+
+    return productName || 'Название товара не найдено';
+}
+
+
 const parsingPage = async () => {
   if (!urlToItem.value && marketplace.value === "WB") {
     handleError("Добавьте ссылку товара для его добавления!");
@@ -140,19 +149,27 @@ const parsingPage = async () => {
     } else if (marketplace.value === "OZ") {
       if (urlToItem.value.includes("https://ozon.ru/t/")) {
         const jsonString = await storeClients.fetchSiteOZ2(urlToItem.value);
-        const parsedLink = jsonString.link;
-        const match = parsedLink.match(/\/product\/([^/?]+)/);
-        if (match) {
-          const productName = match[1];
-          urlToItem.value = productName;
+        const jsonMessage = jsonString.message;
+
+        const priceRegex = /\d+\s?₽/g;
+
+        const prices = jsonMessage.match(priceRegex);
+
+        let productNameData = null;
+        if (prices && prices.length > 0) {
+          const firstPriceIndex = jsonMessage.indexOf(prices[0]);
+          productNameData = jsonMessage.slice(0, firstPriceIndex).trim();
+          productNameData = productNameData.replace(/.*Оригинальный товар/i, "").trim();
         }
-        const jsonString2 = await storeClients.fetchSiteOZ(urlToItem.value);
-        const jsonMessage = JSON.parse(jsonString2.message);
-        const parsedData = JSON.parse(jsonMessage.seo.script[0].innerHTML);
-        productName.value = parsedData.name;
-        priceSite.value = parsedData.offers.price;
-        urlToImg.value = parsedData.image;
-        urlToItem.value = "https://www.ozon.ru/product/" + urlToItem.value;
+        console.log(productNameData);
+
+        const productNameFinal = extractProductName(productNameData);
+        const priceWithoutCurrency = prices[1].replace(/[^\d]/g, '');
+
+        productName.value = productNameFinal;
+        priceSite.value = priceWithoutCurrency;
+        urlToImg.value = "https://cdn-icons-png.flaticon.com/512/5726/5726593.png";
+        urlToItem.value = urlToItem.value;
       } else {
         if (!urlToItemArt.value && urlToItem.value) {
           const match = urlToItem.value.match(/\/product\/([^/?]+)/);
@@ -784,7 +801,7 @@ let isNotAskingAcceptOrder = ref(false);
                 <label
                   >Скопируйте
                   <span class="text-red-500 font-semibold uppercase"
-                    >ссылку на товар из браузера</span
+                    >ссылку на товар из приложения</span
                   >
                 </label>
               </div>
@@ -874,7 +891,7 @@ let isNotAskingAcceptOrder = ref(false);
                 <label
                   >Скопируйте
                   <span class="text-red-500 font-semibold uppercase"
-                    >ссылку на товар</span
+                    >ссылку на товар из приложения</span
                   >
                 </label>
               </div>
