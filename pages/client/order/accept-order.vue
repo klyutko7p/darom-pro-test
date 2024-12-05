@@ -85,18 +85,6 @@ const handleError = (message: string) => {
   isLoading.value = false;
 };
 
-function extractProductName(text) {
-  const lines = text
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0);
-
-  const productName = lines.find(
-    (line) => line.length > 30 && /[a-zA-Zа-яА-Я]/.test(line)
-  );
-
-  return productName || "Название товара не найдено";
-}
 
 const parsingPage = async () => {
   if (!urlToItem.value && marketplace.value === "WB") {
