@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     };
 
     const response = await fetch(
-      "https://telegram-ozon-fetch-2f37fc572ca9.herokuapp.com/parse",
+      "https://telegram-fetch-ozon-5365a314811f.herokuapp.com/parse",
       options
     );
     const data = await response.json();

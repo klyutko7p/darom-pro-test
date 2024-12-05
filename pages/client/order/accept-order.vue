@@ -86,13 +86,17 @@ const handleError = (message: string) => {
 };
 
 function extractProductName(text) {
-    const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+  const lines = text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
 
-    const productName = lines.find(line => line.length > 30 && /[a-zA-Zа-яА-Я]/.test(line));
+  const productName = lines.find(
+    (line) => line.length > 30 && /[a-zA-Zа-яА-Я]/.test(line)
+  );
 
-    return productName || 'Название товара не найдено';
+  return productName || "Название товара не найдено";
 }
-
 
 const parsingPage = async () => {
   if (!urlToItem.value && marketplace.value === "WB") {
@@ -148,27 +152,17 @@ const parsingPage = async () => {
       toast.success("Вы успешно добавили товар!");
     } else if (marketplace.value === "OZ") {
       if (urlToItem.value.includes("https://ozon.ru/t/")) {
-        const jsonString = await storeClients.fetchSiteOZ2(urlToItem.value);
-        const jsonMessage = jsonString.message;
+        const jsonString = await storeClients.fetchSiteOZ3(urlToItem.value);
+        let cleanedPrice = jsonString.product_discount_price.replace(
+          /\s|₽/g,
+          ""
+        );
 
-        const priceRegex = /\d+\s?₽/g;
+        productName.value = jsonString.product_name;
+        priceSite.value = cleanedPrice;
 
-        const prices = jsonMessage.match(priceRegex);
-
-        let productNameData = null;
-        if (prices && prices.length > 0) {
-          const firstPriceIndex = jsonMessage.indexOf(prices[0]);
-          productNameData = jsonMessage.slice(0, firstPriceIndex).trim();
-          productNameData = productNameData.replace(/.*Оригинальный товар/i, "").trim();
-        }
-        console.log(productNameData);
-
-        const productNameFinal = extractProductName(productNameData);
-        const priceWithoutCurrency = prices[1].replace(/[^\d]/g, '');
-
-        productName.value = productNameFinal;
-        priceSite.value = priceWithoutCurrency;
-        urlToImg.value = "https://cdn-icons-png.flaticon.com/512/5726/5726593.png";
+        urlToImg.value =
+          "https://cdn-icons-png.flaticon.com/512/5726/5726593.png";
         urlToItem.value = urlToItem.value;
       } else {
         if (!urlToItemArt.value && urlToItem.value) {
@@ -481,13 +475,13 @@ async function parsePageByLink(itemData: IOurRansom) {
       }
       toast.success("Цена подтверждена!");
     } else if (itemData.productLink.includes("ozon")) {
-      let productId = itemData.productLink.split(
-        "https://www.ozon.ru/product/"
-      )[1];
-      const jsonString = await storeClients.fetchSiteOZ(productId);
-      const jsonMessage = JSON.parse(jsonString.message);
-      const parsedData = JSON.parse(jsonMessage.seo.script[0].innerHTML);
-      itemData.priceSite = +parsedData.offers.price;
+      // let productId = itemData.productLink.split(
+      //   "https://www.ozon.ru/product/"
+      // )[1];
+      // const jsonString = await storeClients.fetchSiteOZ(productId);
+      // const jsonMessage = JSON.parse(jsonString.message);
+      // const parsedData = JSON.parse(jsonMessage.seo.script[0].innerHTML);
+      // itemData.priceSite = +parsedData.offers.price;
       toast.success("Цена подтверждена!");
     } else if (marketplace.value === "YM") {
       const info = await storeClients.fetchSiteYM(urlToItem.value);
@@ -764,39 +758,6 @@ let isNotAskingAcceptOrder = ref(false);
             </div>
 
             <div v-if="isOpenThirdModal && marketplace === 'OZ'" v-auto-animate>
-              <div v-if="!urlToItem">
-                <label
-                  >Скопируйте
-                  <span class="text-red-500 font-semibold uppercase"
-                    >артикул</span
-                  >
-                </label>
-              </div>
-              <div v-if="!urlToItem" class="h-[44px] text-base">
-                <UInput
-                  v-model="urlToItemArt"
-                  name="urlToItemArt"
-                  placeholder="Вставьте скопированный артикул товара"
-                  icon="i-ph-package-bold"
-                  autocomplete="off"
-                  class="w-full mt-3 text-base"
-                  :ui="{
-                    icon: { trailing: { pointer: '' } },
-                  }"
-                >
-                  <template #trailing>
-                    <UButton
-                      v-show="urlToItemArt !== ''"
-                      color="gray"
-                      variant="link"
-                      icon="i-heroicons-x-mark-20-solid"
-                      :padded="false"
-                      @click="urlToItemArt = ''"
-                    />
-                  </template>
-                </UInput>
-              </div>
-              <h1 v-if="!urlToItemArt && !urlToItem" class="mb-3">ИЛИ</h1>
               <div v-if="!urlToItemArt">
                 <label
                   >Скопируйте
