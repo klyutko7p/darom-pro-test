@@ -257,7 +257,7 @@ useSeoMeta({
 
 let isShowTelegramMethod = ref(false);
 
-let selectedTypeOfAuth = ref("");
+let selectedTypeOfAuth = ref("telegram");
 
 const isSelectedTypeOfAuthTG = computed(() => {
   return selectedTypeOfAuth.value === "telegram" ? true : false;
@@ -296,13 +296,9 @@ function showNotification() {
 }
 
 function openTelegramBot() {
-  const phoneNumber = phoneNumberTelegram.value.slice(2); 
-  window.open(
-    `https://t.me/darom_pro_bot?start=${phoneNumber}`,
-    "_blank"
-  );
+  const phoneNumber = phoneNumberTelegram.value.slice(2);
+  window.open(`https://t.me/darom_pro_bot?start=${phoneNumber}`, "_blank");
 }
-
 
 let isAuthNonComplete = false;
 
@@ -449,18 +445,25 @@ waitingForAuth();
             <h1 class="text-red-700 text-center">{{ message }}</h1>
           </div>
           <div class="flex items-center justify-center flex-col gap-3">
-            <UIMainButton class="w-full max-sm:max-w-[400px]"
-              >Войти</UIMainButton
+            <UButton
+              icon="material-symbols:person-book"
+              class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+              type="submit"
             >
+              Войти
+            </UButton>
             <UButton
               @click="isShowTelegramMethod = !isShowTelegramMethod"
               icon="ic:baseline-telegram"
               class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
               >Войти через телеграм
             </UButton>
-          </div>
-          <div class="text-center text-secondary-color font-bold">
-            <NuxtLink to="/auth/register">Зарегистрироваться</NuxtLink>
+            <UButton
+              @click="router.push('/auth/register')"
+              icon="material-symbols:app-registration"
+              class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+              >Зарегистрироваться
+            </UButton>
           </div>
         </form>
       </div>
@@ -503,9 +506,9 @@ waitingForAuth();
         <template #header>
           <div class="flex items-center justify-between">
             <h3
-              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+              class="text-base font-semibold flex items-center gap-2 leading-6 text-gray-900 dark:text-white"
             >
-              Авторизация
+              Авторизация <Icon name="ic:baseline-telegram" size="24" />
             </h3>
             <UButton
               color="gray"
@@ -536,19 +539,7 @@ waitingForAuth();
               class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-xl placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
             />
           </div>
-          <h1 class="my-3 text-sm">Куда отправить подтверждение?</h1>
           <div class="flex items-center justify-center gap-3">
-            <div
-              @click="selectedTypeOfAuth = 'telegram'"
-              :class="{
-                'bg-secondary-color text-white': isSelectedTypeOfAuthTG,
-                'bg-orange-100 text-secondary-color': !isSelectedTypeOfAuthTG,
-              }"
-              class="text-secondary-color flex items-center justify-center flex-col rounded-full w-full py-1 cursor-pointer duration-200"
-            >
-              <Icon name="mdi:telegram" size="24" />
-              <h1>Telegram</h1>
-            </div>
             <!-- <div
               @click="showNotification"
               class="bg-orange-100 text-secondary-color flex items-center justify-center flex-col rounded-full w-full py-1 cursor-not-allowed duration-200"
@@ -557,15 +548,7 @@ waitingForAuth();
               <h1>SMS</h1>
             </div> -->
           </div>
-          <h1 class="mt-10 mb-4 text-sm italic">
-            Нажимая «Подтвердить», Вы соглашаетесь с
-            <a
-              class="underline text-secondary-color font-semibold"
-              href="https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/files/docx/policy_info_dp.pdf"
-              >условиями обработки персональных данных</a
-            >
-          </h1>
-          <div class="flex items-center justify-center">
+          <div class="flex items-center justify-center mt-10">
             <UButton
               @click="openTelegramBot(), waitingForAuth()"
               :disabled="!isDisabledAuth"

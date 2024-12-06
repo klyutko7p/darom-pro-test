@@ -271,16 +271,11 @@ let isShowTelegramMethod = ref(true);
 <template>
   <div
     v-if="!isLoading"
-    class="h-screen flex items-center justify-center max-sm:block"
+    class="h-screen max-sm:h-full flex items-center justify-center max-sm:block"
   >
     <div
-      class="px-10 relative h-full py-20 max-sm:py-20 max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50"
+      class="px-10 relative h-screen max-sm:h-full py-10 max-sm:py-14 max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50"
     >
-      <div
-        class="absolute top-4 right-4 text-center text-secondary-color font-bold mt-5"
-      >
-        <NuxtLink to="/auth/client/login">Войти в личный кабинет</NuxtLink>
-      </div>
       <div class="">
         <div class="flex items-center justify-center">
           <h1
@@ -401,29 +396,37 @@ let isShowTelegramMethod = ref(true);
               >
             </div>
           </div>
-          <div v-if="message !== ''">
-            <h1 class="text-red-700">{{ message }}</h1>
+          <div v-if="errorTextValidation !== ''">
+            <h1 class="text-red-700 text-center my-1">
+              {{ errorTextValidation }}
+            </h1>
           </div>
           <div class="space-y-3">
             <div class="flex items-center justify-center">
-              <UIMainButton
+              <UButton
+                type="submit"
                 icon="material-symbols:app-registration"
                 class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
                 :disabled="isButtonDisabled || isBlocked"
                 >Зарегистрироваться по СМС
-              </UIMainButton>
+              </UButton>
             </div>
-            <h1 class="text-center font-bold text-red-500">
-              {{ errorTextValidation }}
-            </h1>
           </div>
         </form>
-        <div class="flex items-center justify-center">
+        <div class="flex items-center justify-center mt-3">
           <UButton
             @click="isShowTelegramMethod = !isShowTelegramMethod"
             icon="ic:baseline-telegram"
             class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
             >Зарегистрироваться через телеграм
+          </UButton>
+        </div>
+        <div class="flex items-center justify-center mt-3">
+          <UButton
+            @click="router.push('/auth/client/login')"
+            icon="material-symbols:person-book"
+            class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+            >Войти в личный кабинет
           </UButton>
         </div>
       </div>
@@ -441,7 +444,8 @@ let isShowTelegramMethod = ref(true);
             <div class="mb-3">
               <Icon name="logos:telegram" size="32" />
               <h1 class="font-semibold text-base">
-                Регистрация через <br class="hidden max-sm:block" /> телеграм-бот
+                Регистрация через <br class="hidden max-sm:block" />
+                телеграм-бот
               </h1>
             </div>
             <ul class="space-y-3 text-left list-decimal">
