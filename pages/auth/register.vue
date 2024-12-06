@@ -274,7 +274,7 @@ let isShowTelegramMethod = ref(true);
     class="h-screen max-sm:h-full flex items-center justify-center max-sm:block"
   >
     <div
-      class="px-10 relative h-screen max-sm:h-full py-10 max-sm:py-14 max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50"
+      class="px-10 relative h-screen max-sm:h-full py-20 max-sm:py-20 max-sm:px-1 shadow-2xl max-sm:shadow-none border-2 border-[#f0f0f0] bg-opacity-50"
     >
       <div class="">
         <div class="flex items-center justify-center">
