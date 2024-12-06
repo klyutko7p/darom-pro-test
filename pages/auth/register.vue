@@ -265,7 +265,7 @@ useSeoMeta({
     "Получите доступ к заказу из любых интернет-магазинов и свой личный кабинет клиента!",
 });
 
-let isShowTelegramMethod = ref(true);
+let isShowTelegramMethod = ref(false);
 </script>
 
 <template>
@@ -402,6 +402,14 @@ let isShowTelegramMethod = ref(true);
             </h1>
           </div>
           <div class="space-y-3">
+            <div class="flex items-center justify-center mt-3">
+              <UButton
+                @click="isShowTelegramMethod = !isShowTelegramMethod"
+                icon="ic:baseline-telegram"
+                class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+                >Зарегистрироваться через телеграм
+              </UButton>
+            </div>
             <div class="flex items-center justify-center">
               <UButton
                 type="submit"
@@ -413,14 +421,7 @@ let isShowTelegramMethod = ref(true);
             </div>
           </div>
         </form>
-        <div class="flex items-center justify-center mt-3">
-          <UButton
-            @click="isShowTelegramMethod = !isShowTelegramMethod"
-            icon="ic:baseline-telegram"
-            class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
-            >Зарегистрироваться через телеграм
-          </UButton>
-        </div>
+
         <div class="flex items-center justify-center mt-3">
           <UButton
             @click="router.push('/auth/client/login')"
