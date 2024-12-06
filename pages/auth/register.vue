@@ -405,7 +405,7 @@ let isShowTelegramMethod = ref(true);
             <div class="flex items-center justify-center">
               <UButton
                 type="submit"
-                icon="material-symbols:app-registration"
+                icon="ic:baseline-wechat"
                 class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
                 :disabled="isButtonDisabled || isBlocked"
                 >Зарегистрироваться по СМС
