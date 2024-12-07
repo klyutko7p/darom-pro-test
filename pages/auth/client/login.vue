@@ -301,6 +301,7 @@ function openTelegramBot() {
 }
 
 let isAuthNonComplete = false;
+const intervalId = ref(null);
 
 async function waitingForAuth() {
   try {
@@ -328,14 +329,18 @@ async function waitingForAuth() {
   } catch (error) {
     console.error("Ошибка при получении обновлений:", error);
   } finally {
-    if (isShowTelegramMethod.value) {
-      setTimeout(waitingForAuth, 3000);
-    }
+    intervalId.value = setTimeout(waitingForAuth, 5000);
   }
 }
 
-// Запуск функции
 waitingForAuth();
+
+onUnmounted(() => {
+  if (intervalId.value) {
+    clearTimeout(intervalId.value);
+    intervalId.value = null;
+  }
+});
 </script>
 
 <template>
