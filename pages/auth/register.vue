@@ -57,6 +57,15 @@ async function register() {
     return;
   }
 
+  if (
+    clients.value.some(
+      (client) => client.phoneNumber === phoneNumberData.value.trim()
+    )
+  ) {
+    errorTextValidation.value = "Вы уже зарегистрированы!";
+    return;
+  }
+
   if (password.value.trim() === "") {
     errorTextValidation.value = "Пожалуйста, введите пароль";
     return;
@@ -179,9 +188,11 @@ const saveBlockState = () => {
   );
 };
 
+let clients = ref([] as any);
 onMounted(async () => {
   isLoading.value = true;
   user.value = await storeClients.getClient();
+  clients.value = await storeClients.getClients();
   isLoading.value = false;
 
   if (token && user.value.role === "ADMIN") {
@@ -550,7 +561,7 @@ let isShowRegistrationSMS = ref(false);
           Для регистрации через Telegram перейдите в наш официальный
           <a
             class="font-semibold text-secondary-color underline"
-            href="https://t.me/darom_pro_bot"
+            href="https://t.me/darom_pro_bot?start=register"
             target="_blank"
             >Телеграм-бот</a
           >

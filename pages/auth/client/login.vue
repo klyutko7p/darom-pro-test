@@ -4,6 +4,7 @@ import { useToast } from "vue-toastification";
 
 const storeClients = useClientsStore();
 const router = useRouter();
+const route = useRoute();
 
 const toast = useToast();
 const phoneNumber = ref("+7");
@@ -39,6 +40,10 @@ onMounted(async () => {
   isLoading.value = true;
   user.value = await storeClients.getClient();
   isLoading.value = false;
+
+  if (route.query.phone) {
+    phoneNumberTelegram.value = route.query.phone as string;
+  }
 
   if (token && user.value.role === "ADMIN") {
     router.push("/admin/main");
@@ -297,9 +302,16 @@ function showNotification() {
   toast.warning("В данный момент вход через смс недоступен!");
 }
 
-function openTelegramBot() {
-  const phoneNumber = phoneNumberTelegram.value.slice(2);
-  window.open(`https://t.me/darom_pro_bot?start=${phoneNumber}`, "_blank");
+async function openTelegramBot() {
+  let clients = await storeClients.getClients();
+  if (
+    clients.some((client: any) => client.phoneNumber === phoneNumberTelegram.value)
+  ) {
+    const phoneNumber = phoneNumberTelegram.value.slice(2);
+    window.open(`https://t.me/darom_pro_bot?start=${phoneNumber}`, "_blank");
+  } else {
+    toast.error("Вы не зарегистрированы! Сначала пройдите регистрацию");
+  }
 }
 
 let isAuthNonComplete = false;
@@ -332,7 +344,7 @@ async function waitingForAuth() {
   } catch (error) {
     console.error("Ошибка при получении обновлений:", error);
   } finally {
-    intervalId.value = setTimeout(waitingForAuth, 5000);
+    intervalId.value = setTimeout(waitingForAuth, 3000);
   }
 }
 
