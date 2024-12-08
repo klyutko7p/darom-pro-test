@@ -21,6 +21,8 @@ async function signIn() {
     password.value.trim(),
     isForeignDevice.value
   );
+  clearTimeout(intervalId.value);
+  intervalId.value = null;
   isLoading.value = false;
 }
 
@@ -247,8 +249,8 @@ const formattedBlockDuration = computed(() =>
 );
 
 useSeoMeta({
-  title: "DAROM.PRO — Авторизация клиента",
-  ogTitle: "DAROM.PRO — Авторизация клиента",
+  title: "DAROM.PRO — Личный кабинет",
+  ogTitle: "DAROM.PRO — Личный кабинет",
   description:
     "Получите доступ к заказу из любых интернет-магазинов и свой личный кабинет клиента!",
   ogDescription:
@@ -301,6 +303,7 @@ function openTelegramBot() {
 }
 
 let isAuthNonComplete = false;
+let isAuthWithPassword = ref(false);
 const intervalId = ref(null);
 
 async function waitingForAuth() {
@@ -355,7 +358,28 @@ onUnmounted(() => {
     class="h-screen flex items-center justify-center max-sm:block"
   >
     <div
-      class="px-10 py-20 h-full max-sm:py-32 max-sm:px-1 shadow-2xl border-2 border-[#f0f0f0] bg-opacity-50 max-w-[430px] max-sm:max-w-[2000px]"
+      class="max-[360px]:flex py-5 hidden px-10 top-3 left-16 flex-col text-center text-secondary-color font-bold gap-3"
+    >
+      <UButton
+        @click="router.push('/')"
+        icon="material-symbols-light:home-app-logo"
+        class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        >На главную
+      </UButton>
+
+      <UButton
+        @click="router.push('/auth/register')"
+        icon="material-symbols:app-registration"
+        class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        >Зарегистрироваться
+      </UButton>
+    </div>
+    <div
+      :class="{
+        'py-20 max-sm:py-20 max-[360px]:py-0': isAuthWithPassword,
+        'py-60 max-sm:py-60 max-[360px]:py-40': !isAuthWithPassword,
+      }"
+      class="px-10 h-full max-sm:py-32 max-sm:px-1 shadow-2xl bg-opacity-50 max-w-[430px] max-sm:max-w-[2000px]"
     >
       <div class="">
         <div class="flex items-center justify-center">
@@ -368,12 +392,32 @@ onUnmounted(() => {
         <h2
           class="mt-5 text-center text-2xl max-sm:text-xl font-bold leading-9 tracking-tight text-gray-900"
         >
-          Авторизация клиента
+          Вход в личный кабинет
         </h2>
       </div>
 
-      <div class="mt-10 max-sm:px-3">
-        <form class="space-y-6" @submit.prevent="signIn">
+      <div class="flex items-center justify-center flex-col gap-3 mt-10">
+        <UButton
+          @click="isAuthWithPassword = !isAuthWithPassword"
+          icon="material-symbols:person-book"
+          class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+          type="submit"
+        >
+          Войти по паролю
+        </UButton>
+        <UButton
+          @click="
+            (isShowTelegramMethod = !isShowTelegramMethod),
+              (isAuthWithPassword = false)
+          "
+          icon="ic:baseline-telegram"
+          class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+          >Войти через телеграм
+        </UButton>
+      </div>
+
+      <div class="mt-10 max-sm:px-3" v-if="isAuthWithPassword">
+        <form class="space-y-6" @submit="signIn">
           <div>
             <label
               for="phone"
@@ -451,23 +495,10 @@ onUnmounted(() => {
           </div>
           <div class="flex items-center justify-center flex-col gap-3">
             <UButton
-              icon="material-symbols:person-book"
               class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
               type="submit"
             >
               Войти
-            </UButton>
-            <UButton
-              @click="isShowTelegramMethod = !isShowTelegramMethod"
-              icon="ic:baseline-telegram"
-              class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
-              >Войти через телеграм
-            </UButton>
-            <UButton
-              @click="router.push('/auth/register')"
-              icon="material-symbols:app-registration"
-              class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
-              >Зарегистрироваться
             </UButton>
           </div>
         </form>
@@ -553,7 +584,7 @@ onUnmounted(() => {
               <h1>SMS</h1>
             </div> -->
           </div>
-          <div class="flex items-center justify-center mt-10">
+          <div class="flex items-center justify-center mt-5">
             <UButton
               @click="openTelegramBot(), waitingForAuth()"
               :disabled="!isDisabledAuth"
@@ -672,13 +703,25 @@ onUnmounted(() => {
     </UINewModalEdit>
 
     <div
-      class="absolute top-3 left-2 flex flex-col text-center text-secondary-color font-bold gap-3"
+      class="absolute max-[360px]:hidden top-3 left-2 flex flex-col text-center text-secondary-color font-bold gap-3"
     >
-      <UIMainButton
-        class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
+      <UButton
         @click="router.push('/')"
-        >На главную</UIMainButton
-      >
+        icon="material-symbols-light:home-app-logo"
+        class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        >На главную
+      </UButton>
+    </div>
+
+    <div
+      class="absolute max-[360px]:hidden top-3 right-2 flex flex-col text-center text-secondary-color font-bold gap-3"
+    >
+      <UButton
+        @click="router.push('/auth/register')"
+        icon="material-symbols:app-registration"
+        class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        >Зарегистрироваться
+      </UButton>
     </div>
   </div>
 

@@ -17,7 +17,8 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
     "Мещерино",
     "Коломенское ЯМ",
     "Коломенское WB",
-    "Бессоново",
+    "Бессоново WB",
+    "Бессоново OZ",
     "ПВЗ_1",
     "ПВЗ_2",
     "ПВЗ_3",
@@ -117,12 +118,15 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
       if (cachedAdvanceReportRowsSidebar) {
         return cachedAdvanceReportRowsSidebar;
       } else {
-        let { data }: any = await useFetch("/api/advance-report/get-rows-for-sidebar", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        let { data }: any = await useFetch(
+          "/api/advance-report/get-rows-for-sidebar",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         cachedAdvanceReportRowsSidebar = data.value;
         return cachedAdvanceReportRowsSidebar;
       }

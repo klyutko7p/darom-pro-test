@@ -266,6 +266,7 @@ useSeoMeta({
 });
 
 let isShowTelegramMethod = ref(false);
+let isShowRegistrationSMS = ref(false);
 </script>
 
 <template>
@@ -274,9 +275,30 @@ let isShowTelegramMethod = ref(false);
     class="h-screen max-sm:h-full flex items-center justify-center max-sm:block"
   >
     <div
-      class="px-10 relative h-screen max-sm:h-full py-20 max-sm:py-20 max-sm:px-1 shadow-2xl max-sm:shadow-none border-2 border-[#f0f0f0] bg-opacity-50"
+      class="max-[380px]:flex py-5 hidden px-10 top-3 left-16 flex-col text-center text-secondary-color font-bold gap-3"
     >
-      <div class="">
+      <UButton
+        @click="router.push('/')"
+        icon="material-symbols-light:home-app-logo"
+        class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        >На главную
+      </UButton>
+
+      <UButton
+        @click="router.push('/auth/client/login')"
+        icon="material-symbols:person-book"
+        class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        >Войти в личный кабинет
+      </UButton>
+    </div>
+    <div
+      :class="{
+        'py-20 max-sm:py-20 max-[380px]:py-0': isShowRegistrationSMS,
+        'py-60 max-sm:py-60 max-[380px]:py-40': !isShowRegistrationSMS,
+      }"
+      class="px-10 relative h-screen max-sm:h-full max-sm:px-1 shadow-2xl max-sm:shadow-none bg-opacity-50"
+    >
+      <div>
         <div class="flex items-center justify-center">
           <h1
             class="text-center text-secondary-color text-6xl max-sm:text-5xl font-bold"
@@ -291,8 +313,31 @@ let isShowTelegramMethod = ref(false);
         </h2>
       </div>
 
-      <div class="mt-5 max-sm:px-3">
-        <form class="space-y-10" @submit.prevent="register">
+      <div class="space-y-3 mt-10">
+        <div class="flex items-center justify-center mt-3">
+          <UButton
+            @click="
+              (isShowTelegramMethod = !isShowTelegramMethod),
+                (isShowRegistrationSMS = false)
+            "
+            icon="ic:baseline-telegram"
+            class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+            >Зарегистрироваться через телеграм
+          </UButton>
+        </div>
+        <div class="flex items-center justify-center">
+          <UButton
+            @click="isShowRegistrationSMS = !isShowRegistrationSMS"
+            type="submit"
+            icon="ic:baseline-wechat"
+            class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+            >Зарегистрироваться по СМС
+          </UButton>
+        </div>
+      </div>
+
+      <div class="mt-5 max-sm:px-3" v-if="isShowRegistrationSMS">
+        <form class="space-y-7" @submit.prevent="register">
           <div>
             <label
               for="phone"
@@ -402,38 +447,20 @@ let isShowTelegramMethod = ref(false);
             </h1>
           </div>
           <div class="space-y-3">
-            <div class="flex items-center justify-center mt-3">
-              <UButton
-                @click="isShowTelegramMethod = !isShowTelegramMethod"
-                icon="ic:baseline-telegram"
-                class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
-                >Зарегистрироваться через телеграм
-              </UButton>
-            </div>
             <div class="flex items-center justify-center">
               <UButton
                 type="submit"
-                icon="ic:baseline-wechat"
                 class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
                 :disabled="isButtonDisabled || isBlocked"
-                >Зарегистрироваться по СМС
+                >Зарегистрироваться
               </UButton>
             </div>
           </div>
         </form>
-
-        <div class="flex items-center justify-center mt-3">
-          <UButton
-            @click="router.push('/auth/client/login')"
-            icon="material-symbols:person-book"
-            class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
-            >Войти в личный кабинет
-          </UButton>
-        </div>
       </div>
     </div>
 
-    <UINewModalEdit
+    <!-- <UINewModalEdit
       v-if="isShowTelegramMethod"
       @close-modal="isShowTelegramMethod = !isShowTelegramMethod"
     >
@@ -476,7 +503,9 @@ let isShowTelegramMethod = ref(false);
               Если у вас нет телеграма или нужно зарегистрировать другой номер
               телефона, нажмите
               <span
-                @click="isShowTelegramMethod = false"
+                @click="
+                  (isShowTelegramMethod = false), (isShowRegistrationSMS = true)
+                "
                 class="font-semibold text-secondary-color underline cursor-pointer"
               >
                 здесь</span
@@ -485,7 +514,62 @@ let isShowTelegramMethod = ref(false);
           </div>
         </div>
       </template>
-    </UINewModalEdit>
+    </UINewModalEdit> -->
+
+    <UModal
+      :ui="{
+        container: 'flex items-center justify-center text-center',
+      }"
+      v-model="isShowTelegramMethod"
+      prevent-close
+    >
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold flex items-center gap-2 leading-6 text-gray-900 dark:text-white"
+            >
+              Регистрация <Icon name="ic:baseline-telegram" size="24" />
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isShowTelegramMethod = false"
+            />
+          </div>
+        </template>
+
+        <div class="px-10 max-sm:px-0 text-center">
+          Для регистрации через Telegram перейдите в наш официальный
+          <a
+            class="font-semibold text-secondary-color underline"
+            href="https://t.me/darom_pro_bot"
+            target="_blank"
+            >Телеграм-бот</a
+          >
+          (@darom_pro_bot)
+        </div>
+        <h1 class="my-3 text-sm italic text-center">
+          Если у вас нет телеграма или нужно зарегистрировать другой номер
+          телефона, нажмите
+          <span
+            @click="
+              (isShowTelegramMethod = false), (isShowRegistrationSMS = true)
+            "
+            class="font-semibold text-secondary-color underline cursor-pointer"
+          >
+            здесь</span
+          >
+        </h1>
+      </UCard>
+    </UModal>
 
     <UINewModalEdit
       v-if="isShowConfirmationModal"
@@ -523,13 +607,25 @@ let isShowTelegramMethod = ref(false);
     </UINewModalEdit>
 
     <div
-      class="absolute top-3 left-2 flex flex-col text-center text-secondary-color font-bold gap-3"
+      class="absolute max-[380px]:hidden top-3 left-2 flex flex-col text-center text-secondary-color font-bold gap-3"
     >
-      <UIMainButton
-        class="bg-secondary-color px-5 py-3 max-sm:w-full text-white"
+      <UButton
         @click="router.push('/')"
-        >На главную</UIMainButton
-      >
+        icon="material-symbols-light:home-app-logo"
+        class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        >На главную
+      </UButton>
+    </div>
+
+    <div
+      class="absolute max-[380px]:hidden top-3 right-2 flex flex-col text-center text-secondary-color font-bold gap-3"
+    >
+      <UButton
+        @click="router.push('/auth/client/login')"
+        icon="material-symbols:person-book"
+        class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        >Войти в личный кабинет
+      </UButton>
     </div>
   </div>
   <div v-else>
