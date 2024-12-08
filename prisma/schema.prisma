@@ -432,5 +432,6 @@ enum Role {
 model TelegramAuthClients {
   id          Int      @id @default(autoincrement())
   phoneNumber String
+  attempts    Int      @default(0)
   created_at  DateTime @default(now())
 }

@@ -133,7 +133,6 @@ export const useClientsStore = defineStore("clients", () => {
       });
 
       if (data) {
-
         const { clientData, token } = data.value.data;
 
         userData = clientData;
@@ -153,6 +152,23 @@ export const useClientsStore = defineStore("clients", () => {
     } catch (error) {
       if (error instanceof Error) {
         console.error("Ошибка во время входа в систему:", error.message);
+        return error.message;
+      }
+    }
+  }
+
+  async function updateAttemptsTelegramAuth(id: number) {
+    try {
+      let { data }: any = await useFetch("/api/telegram/use-attempt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Ошибка:", error.message);
         return error.message;
       }
     }
@@ -652,5 +668,6 @@ export const useClientsStore = defineStore("clients", () => {
     getAuthClients,
     createAuthClients,
     signInTelegram,
+    updateAttemptsTelegramAuth,
   };
 });

@@ -305,7 +305,9 @@ function showNotification() {
 async function openTelegramBot() {
   let clients = await storeClients.getClients();
   if (
-    clients.some((client: any) => client.phoneNumber === phoneNumberTelegram.value)
+    clients.some(
+      (client: any) => client.phoneNumber === phoneNumberTelegram.value
+    )
   ) {
     const phoneNumber = phoneNumberTelegram.value.slice(2);
     window.open(`https://t.me/darom_pro_bot?start=${phoneNumber}`, "_blank");
@@ -328,15 +330,17 @@ async function waitingForAuth() {
 
     const validClients = clients.filter((client: any) => {
       if (client.phoneNumber !== phoneNumberTelegram.value) return false;
+      if (client.attempts !== 0) return false;
 
       const createdAt = new Date(client.created_at);
       const timeDifference = now - createdAt;
 
-      return timeDifference <= 60 * 60 * 1000;
+      return timeDifference <= 3 * 60 * 1000;
     });
 
     if (validClients.length > 0) {
       isAuthNonComplete = true;
+      await storeClients.updateAttemptsTelegramAuth(validClients[0].id);
       await signInTelegram();
     } else {
       console.log("Клиент не найден или время регистрации истекло.");
@@ -726,12 +730,12 @@ onUnmounted(() => {
     </div>
 
     <div
-      class="absolute max-[360px]:hidden top-3 right-2 flex flex-col text-center text-secondary-color font-bold gap-3"
+      class="absolute w-[235px] max-[360px]:hidden top-3 right-2 flex flex-col text-center text-secondary-color font-bold gap-3"
     >
       <UButton
         @click="router.push('/auth/register')"
         icon="material-symbols:app-registration"
-        class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        class="w-[235px] max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
         >Зарегистрироваться
       </UButton>
     </div>
