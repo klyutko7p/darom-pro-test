@@ -373,9 +373,19 @@ async function openTelegramBot() {
     isShowTelegramMethod.value = false;
     isAuthInsertCode.value = true;
     const phoneNumber = phoneNumberTelegram.value.slice(2);
-    setTimeout(() => {
-      window.open(`https://t.me/darom_pro_bot?start=${phoneNumber}`, "_top");
-    });
+
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    const url = `https://t.me/darom_pro_bot?start=${phoneNumber}`;
+
+    if (isAndroid) {
+      window.open(url, "_blank");
+    } else if (isIOS) {
+      window.open(url, "_top");
+    } else {
+      window.open(url, "_blank");
+    }
   } else {
     toast.error("Вы не зарегистрированы! Сначала пройдите регистрацию");
   }
