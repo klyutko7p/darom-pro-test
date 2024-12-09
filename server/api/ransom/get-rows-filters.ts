@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 interface IRequestBody {
   selectedCell: string[];
   selectedFromName: string[];
-  selectedProductName: string[];
   selectedDispatchPVZ: string[];
   selectedOrderPVZ: string[];
   selectedOrderAccount: string[];
@@ -28,7 +27,6 @@ export default defineEventHandler(async (event) => {
     const {
       selectedCell,
       selectedFromName,
-      selectedProductName,
       selectedDispatchPVZ,
       selectedOrderPVZ,
       selectedOrderAccount,
@@ -45,7 +43,7 @@ export default defineEventHandler(async (event) => {
       endDate4,
     } = await readBody<IRequestBody>(event);
 
-    let query = `SELECT "additionally", "amountFromClient1", "clientLink1", "cell", "createdUser", "created_at", "deleted", "id", "deliveredKGT", "deliveredPVZ", "deliveredSC", "dispatchPVZ", "orderPVZ", "fromName", "issued", "notation", "orderAccount", "percentClient", "prepayment", "priceSite", "productLink", "productName", "profit1","updatedUser", "updated_at" FROM "OurRansom" WHERE 1=1`;
+    let query = `SELECT "additionally", "amountFromClient1", "clientLink1", "cell", "createdUser", "created_at", "deleted", "id", "deliveredKGT", "deliveredPVZ", "deliveredSC", "dispatchPVZ", "orderPVZ", "fromName", "issued", "notation", "orderAccount", "percentClient", "prepayment", "priceSite", "productLink", "profit1","updatedUser", "updated_at" FROM "OurRansom" WHERE 1=1`;
     const params: any[] = [];
 
     if (selectedCell.length > 0) {
@@ -55,10 +53,6 @@ export default defineEventHandler(async (event) => {
     if (selectedFromName.length > 0) {
       query += ` AND "fromName" = ANY($${params.length + 1})`;
       params.push(selectedFromName);
-    }
-    if (selectedProductName.length > 0) {
-      query += ` AND "productName" = ANY($${params.length + 1})`;
-      params.push(selectedProductName);
     }
     if (selectedDispatchPVZ.length > 0) {
       query += ` AND "dispatchPVZ" = ANY($${params.length + 1})`;

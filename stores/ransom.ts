@@ -1160,7 +1160,6 @@ export const useRansomStore = defineStore("ransom", () => {
   async function getRowsFilters(
     selectedCell: string[],
     selectedFromName: string[],
-    selectedProductName: string[],
     selectedDispatchPVZ: string[],
     selectedOrderPVZ: string[],
     selectedOrderAccount: string[],
@@ -1185,7 +1184,6 @@ export const useRansomStore = defineStore("ransom", () => {
         body: JSON.stringify({
           selectedCell,
           selectedFromName,
-          selectedProductName,
           selectedDispatchPVZ,
           selectedOrderPVZ,
           selectedOrderAccount,
