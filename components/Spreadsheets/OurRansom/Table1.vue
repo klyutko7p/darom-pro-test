@@ -1199,9 +1199,6 @@ async function writeClipboardText(text: any) {
                 :value="row.id"
                 :checked="isChecked(row.id)"
                 @change="handleCheckboxChange(row)"
-                :disabled="
-                  user.username === 'Кожемякина' || user.username === 'Гриценко'
-                "
               />
             </td>
             <td
