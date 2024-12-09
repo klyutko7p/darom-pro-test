@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
             updated_at: row.updated_at,
             createdUser: row.createdUser,
             updatedUser: row.updatedUser,
-            dp: row.dp,
+            // dp: row.dp,
           },
         });
       }

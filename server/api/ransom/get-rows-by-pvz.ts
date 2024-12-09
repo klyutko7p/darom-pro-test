@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
   
         if (row.cell !== undefined) newRow.cc = row.cell;
         if (row.fromName !== undefined) newRow.fm = row.fromName;
-        if (row.dispatchPVZ !== undefined) newRow.dpz = row.dispatchPVZ;
+        if (row.dispatchPVZ !== undefined) newRow.dp = row.dispatchPVZ;
         if (row.deliveredSC !== undefined) newRow.ds = row.deliveredSC;
         if (row.deliveredPVZ !== undefined) newRow.dz = row.deliveredPVZ;
         if (row.orderPVZ !== undefined) newRow.oz = row.orderPVZ;

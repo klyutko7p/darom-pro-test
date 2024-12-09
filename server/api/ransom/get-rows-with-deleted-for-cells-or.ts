@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
 
       if (row.cell !== undefined) newRow.cc = row.cell;
       if (row.fromName !== undefined) newRow.fm = row.fromName;
-      if (row.dispatchPVZ !== undefined) newRow.dpz = row.dispatchPVZ;
+      if (row.dispatchPVZ !== undefined) newRow.dp = row.dispatchPVZ;
       if (row.issued !== undefined) newRow.i = row.issued;
       if (row.deleted !== undefined) newRow.d = row.deleted;
 

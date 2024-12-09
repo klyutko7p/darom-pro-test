@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     const processedRows = rows.map((row) => {
       const newRow = {};
       if (row.fromName !== undefined) newRow.fm = row.fromName;
-      if (row.dispatchPVZ !== undefined) newRow.dpz = row.dispatchPVZ;
+      if (row.dispatchPVZ !== undefined) newRow.dp = row.dispatchPVZ;
       if (row.deliveredPVZ !== undefined) newRow.dz = row.deliveredPVZ;
       if (row.deliveredSC !== undefined) newRow.ds = row.deliveredSC;
       if (row.cell !== undefined) newRow.cc = row.cell;
