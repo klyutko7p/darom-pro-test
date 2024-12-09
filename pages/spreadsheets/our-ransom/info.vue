@@ -135,8 +135,6 @@ definePageMeta({
                   user.role === 'ADMIN' ||
                   user.role === 'ADMINISTRATOR' ||
                   user.role === 'RMANAGER' ||
-                  user.role === 'PVZ' ||
-                  user.role === 'PPVZ' ||
                   user.role === 'SORTIROVKA'
                 "
                 @click="router.push('/spreadsheets/our-ransom')"
