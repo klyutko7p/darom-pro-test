@@ -3,19 +3,24 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 interface IRequestBody {
-  client: any;
+  phoneNumber: string;
+  code: string;
 }
 
 export default defineEventHandler(async (event) => {
   try {
-    const { client } = await readBody<IRequestBody>(event);
+    const { phoneNumber, code } = await readBody<IRequestBody>(event);
 
-    const clientCreate = await prisma.telegramAuthClients.create({
-      data: {
-        phoneNumber: client.phoneNumber,
-        code: client.code,
+    const client = await prisma.telegramAuthClients.findFirst({
+      where: {
+        phoneNumber,
+        code,
+      },
+      orderBy: {
+        id: "desc",
       },
     });
+    return client;
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };

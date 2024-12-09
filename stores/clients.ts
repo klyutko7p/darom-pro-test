@@ -62,6 +62,23 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  async function getAuthClient(phoneNumber: string, code: string) {
+    try {
+      let { data }: any = await useFetch("/api/telegram/get-auth-client", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phoneNumber, code }),
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function createAuthClients(client: any) {
     try {
       let { data }: any = await useFetch("/api/telegram/create-auth-client", {
@@ -669,5 +686,6 @@ export const useClientsStore = defineStore("clients", () => {
     createAuthClients,
     signInTelegram,
     updateAttemptsTelegramAuth,
+    getAuthClient,
   };
 });
