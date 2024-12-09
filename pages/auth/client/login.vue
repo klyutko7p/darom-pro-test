@@ -374,7 +374,7 @@ async function openTelegramBot() {
     isAuthInsertCode.value = true;
     const phoneNumber = phoneNumberTelegram.value.slice(2);
     setTimeout(() => {
-      window.open(`https://t.me/darom_pro_bot?start=${phoneNumber}`, "_blank");
+      window.open(`https://t.me/darom_pro_bot?start=${phoneNumber}`, "_top");
     });
   } else {
     toast.error("Вы не зарегистрированы! Сначала пройдите регистрацию");
