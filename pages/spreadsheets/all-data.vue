@@ -59,7 +59,6 @@ const uniqueOrderPVZ = ref<Array<string>>([]);
 const uniquePVZ = ref<Array<string>>([]);
 const uniqueCells = ref<Array<string>>([]);
 const uniqueFromNames = ref<Array<string>>([]);
-const uniqueProductNames = ref<Array<string>>([]);
 const uniqueAdditionally = ref<Array<string>>([]);
 const uniquePriceSite = ref<Array<string>>([]);
 
@@ -78,7 +77,6 @@ onMounted(async () => {
     dispatchPVZ,
     cells,
     fromNames,
-    productNames,
     additionally,
     priceSite,
   ] = await Promise.all([
@@ -88,7 +86,6 @@ onMounted(async () => {
     storeRansom.getUniqueNonEmptyValuesQuery("dispatchPVZ"),
     storeRansom.getUniqueNonEmptyValuesQuery("cell"),
     storeRansom.getUniqueNonEmptyValuesQuery("fromName"),
-    storeRansom.getUniqueNonEmptyValuesQuery("productName"),
     storeRansom.getUniqueNonEmptyValuesQuery("additionally"),
     storeRansom.getUniqueNonEmptyValuesQuery("priceSite"),
   ]);
@@ -99,7 +96,6 @@ onMounted(async () => {
   uniquePVZ.value = dispatchPVZ;
   uniqueCells.value = cells;
   uniqueFromNames.value = fromNames;
-  uniqueProductNames.value = productNames;
   uniqueAdditionally.value = additionally;
   uniquePriceSite.value = priceSite;
 
@@ -167,17 +163,6 @@ onMounted(async () => {
     );
   }
 
-  if (uniqueProductNames.value) {
-    uniqueProductNames.value = Array.from(
-      new Set(
-        uniqueProductNames.value
-          .filter((item) => item && !item.includes("��"))
-          .map((item) => item.trim())
-          .sort((a, b) => a.localeCompare(b))
-      )
-    );
-  }
-
   if (uniqueAdditionally.value) {
     uniqueAdditionally.value = Array.from(
       new Set(
@@ -217,7 +202,6 @@ const token = Cookies.get("token");
               :uniquePVZ="uniquePVZ"
               :uniqueCells="uniqueCells"
               :uniqueFromNames="uniqueFromNames"
-              :uniqueProductNames="uniqueProductNames"
               :uniqueAdditionally="uniqueAdditionally"
               :uniquePriceSite="uniquePriceSite"
               :user="user"
@@ -243,7 +227,6 @@ const token = Cookies.get("token");
               :uniquePVZ="uniquePVZ"
               :uniqueCells="uniqueCells"
               :uniqueFromNames="uniqueFromNames"
-              :uniqueProductNames="uniqueProductNames"
               :uniqueAdditionally="uniqueAdditionally"
               :uniquePriceSite="uniquePriceSite"
               :user="user"

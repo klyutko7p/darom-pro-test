@@ -9,7 +9,6 @@ const props = defineProps({
   uniquePVZ: { type: Array as PropType<string[]>, required: true },
   uniqueCells: { type: Array as PropType<string[]>, required: true },
   uniqueFromNames: { type: Array as PropType<string[]>, required: true },
-  uniqueProductNames: { type: Array as PropType<string[]>, required: true },
   uniqueAdditionally: { type: Array as PropType<string[]>, required: true },
   uniquePriceSite: { type: Array as PropType<string[]>, required: true },
 });
@@ -22,7 +21,6 @@ let rows = ref<Array<IOurRansom>>([]);
 
 const selectedCell = ref<Array<string>>([]);
 const selectedFromName = ref<Array<string>>([]);
-const selectedProductName = ref<Array<string>>([]);
 const selectedDispatchPVZ = ref<Array<string>>([]);
 const selectedOrderPVZ = ref<Array<string>>([]);
 const selectedOrderAccount = ref<Array<string>>([]);
@@ -44,7 +42,6 @@ const uniqueOrderPVZ = ref<Array<string>>(props.uniqueOrderPVZ);
 const uniquePVZ = ref<Array<string>>(props.uniquePVZ);
 const uniqueCells = ref<Array<string>>(props.uniqueCells);
 const uniqueFromNames = ref<Array<string>>(props.uniqueFromNames);
-const uniqueProductNames = ref<Array<string>>(props.uniqueProductNames);
 const uniqueAdditionally = ref<Array<string>>(props.uniqueAdditionally);
 const uniquePriceSite = ref<Array<string>>(props.uniquePriceSite);
 
@@ -57,11 +54,6 @@ onMounted(async () => {
   const storedSelectedFromName = loadFromLocalStorage("selectedFromName");
   if (storedSelectedFromName !== null) {
     selectedFromName.value = storedSelectedFromName;
-  }
-
-  const storedSelectedProductName = loadFromLocalStorage("selectedProductName");
-  if (storedSelectedProductName !== null) {
-    selectedProductName.value = storedSelectedProductName;
   }
 
   const storedSelectedDispatchPVZ = loadFromLocalStorage("selectedDispatchPVZ");
@@ -203,7 +195,6 @@ const filterRows = async () => {
   filteredRows.value = await storeRansom.getRowsFilters(
     selectedCell.value,
     selectedFromName.value,
-    selectedProductName.value,
     selectedDispatchPVZ.value,
     selectedOrderPVZ.value,
     selectedOrderAccount.value,
@@ -232,7 +223,6 @@ function clearFields() {
   selectedFromName.value = [];
   selectedAdditionally.value = [];
   selectedNotation.value = [];
-  selectedProductName.value = [];
   startingDate.value = "";
   endDate.value = "";
   startingDate2.value = "";
@@ -246,7 +236,6 @@ function clearFields() {
 const selectedArrays = [
   selectedCell,
   selectedFromName,
-  selectedProductName,
   selectedDispatchPVZ,
   selectedOrderPVZ,
   selectedOrderAccount,
@@ -290,7 +279,6 @@ function loadFromLocalStorage(key: string) {
 function saveFiltersToLocalStorage() {
   saveToLocalStorage("selectedCell", selectedCell.value);
   saveToLocalStorage("selectedFromName", selectedFromName.value);
-  saveToLocalStorage("selectedProductName", selectedProductName.value);
   saveToLocalStorage("selectedDispatchPVZ", selectedDispatchPVZ.value);
   saveToLocalStorage("selectedOrderPVZ", selectedOrderPVZ.value);
   saveToLocalStorage("selectedOrderAccount", selectedOrderAccount.value);
@@ -322,7 +310,6 @@ function clearLocalStorage() {
   selectedFromName.value = [];
   selectedAdditionally.value = [];
   selectedNotation.value = [];
-  selectedProductName.value = [];
   startingDate.value = null;
   endDate.value = null;
   startingDate2.value = null;
@@ -380,19 +367,6 @@ let dateFilter = ref("issued");
             :multiple="true"
             :close-on-select="true"
             placeholder="Выберите Телефон"
-          />
-        </div>
-        <div
-          v-if="user.productName1 === 'READ' || user.productName1 === 'WRITE'"
-          class="flex items-start space-y-2 flex-col mt-5 text-center"
-        >
-          <h1>Название товара</h1>
-          <VueMultiselect
-            v-model="selectedProductName"
-            :options="uniqueProductNames"
-            :multiple="true"
-            :close-on-select="true"
-            placeholder="Выберите Название"
           />
         </div>
         <div
