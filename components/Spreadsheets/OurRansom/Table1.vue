@@ -135,7 +135,6 @@ function scanItem() {
     clearTimeout(timeoutId);
   }
 
-
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertToURL(scannedLink);
@@ -817,6 +816,11 @@ async function writeClipboardText(text: any) {
         (user.role === 'PVZ' || user.role === 'PPVZ')
       "
     >
+      <UIActionButton
+        v-if="user.deliveredPVZ1 === 'WRITE' && showButtonPVZ"
+        @click="updateDeliveryRows('PVZ')"
+        >Доставить на пвз
+      </UIActionButton>
       <UIActionButton
         v-if="user.issued1 === 'WRITE' && showButton"
         @click="showOthersVariants = !showOthersVariants"
