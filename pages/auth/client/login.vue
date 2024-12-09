@@ -44,10 +44,12 @@ onMounted(async () => {
 
   if (route.query.phone) {
     phoneNumberTelegram.value = route.query.phone as string;
+    isDisabledButtonInsertCode.value = true;
   }
 
   if (route.query.code) {
     isAuthInsertCode.value = true;
+    isDisabledButtonInsertCode.value = true;
   }
 
   if (token && user.value.role === "ADMIN") {
@@ -298,6 +300,7 @@ useSeoMeta({
 });
 
 let isShowTelegramMethod = ref(false);
+let isDisabledButtonInsertCode = ref(false);
 
 let selectedTypeOfAuth = ref("telegram");
 
@@ -372,6 +375,7 @@ async function openTelegramBot() {
   if (client) {
     isShowTelegramMethod.value = false;
     isAuthInsertCode.value = true;
+    isDisabledButtonInsertCode.value = true;
     const phoneNumber = phoneNumberTelegram.value.slice(2);
 
     const isAndroid = /Android/i.test(navigator.userAgent);
@@ -636,7 +640,7 @@ async function waitingForAuth() {
                 (isShowTelegramMethod = false),
                   (isAuthInsertCode = !isAuthInsertCode)
               "
-              :disabled="!isDisabledAuth"
+              :disabled="!isDisabledButtonInsertCode"
               class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
             >
               Ввести полученный код
