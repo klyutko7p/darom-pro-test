@@ -191,6 +191,35 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  function encryptCode(code: any) {
+    const hashedKey = CryptoJS.SHA256(key).toString(CryptoJS.enc.Hex);
+
+    const iv = CryptoJS.enc.Hex.parse("00000000000000000000000000000000");
+
+    const encrypted = CryptoJS.AES.encrypt(
+      code,
+      CryptoJS.enc.Hex.parse(hashedKey),
+      {
+        iv: iv,
+        padding: CryptoJS.pad.Pkcs7,
+        mode: CryptoJS.mode.CBC,
+      }
+    );
+
+    let encryptedCode = encrypted.toString();
+    encryptedCode = encryptedCode
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=/g, "");
+    return encryptedCode;
+  }
+
+  function decryptCode(encryptedCode: string) {
+    const normalizedCode = encryptedCode.replace(/-/g, "+").replace(/_/g, "/");
+    const bytes = crypto.AES.decrypt(normalizedCode, key);
+    return bytes.toString(crypto.enc.Utf8);
+  }
+
   function encryptPhoneNumber(phoneNumber: string) {
     let encryptedPhoneNumber = crypto.AES.encrypt(phoneNumber, key).toString();
     return encryptedPhoneNumber.replace(/\+/g, "-");
@@ -314,6 +343,23 @@ export const useClientsStore = defineStore("clients", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ id }),
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getClientPhone(phoneNumber: string) {
+    try {
+      let { data }: any = await useFetch("/api/clients/get-client-phone", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phoneNumber }),
       });
       return data.value;
     } catch (error) {
@@ -687,5 +733,8 @@ export const useClientsStore = defineStore("clients", () => {
     signInTelegram,
     updateAttemptsTelegramAuth,
     getAuthClient,
+    getClientPhone,
+    encryptCode,
+    decryptCode,
   };
 });

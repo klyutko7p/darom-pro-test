@@ -34,6 +34,7 @@ async function signInTelegram() {
 }
 
 let user = ref({} as User);
+let code = ref("");
 const token = Cookies.get("token");
 
 onMounted(async () => {
@@ -43,6 +44,10 @@ onMounted(async () => {
 
   if (route.query.phone) {
     phoneNumberTelegram.value = route.query.phone as string;
+  }
+
+  if (route.query.code) {
+    isAuthInsertCode.value = true;
   }
 
   if (token && user.value.role === "ADMIN") {
@@ -59,6 +64,15 @@ function generateRandomFiveDigitNumber(): string {
   const max = 99999;
   const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
   return randomNumber.toString();
+}
+
+function generateRandomFiveDigitNumberEncrypt() {
+  const min = 10000;
+  const max = 99999;
+  const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+  let code = randomNumber.toString();
+  let encryptCode = storeClients.encryptCode(code);
+  return { code, encryptCode };
 }
 
 let originallyConfirmationCode = ref("");
@@ -113,6 +127,27 @@ async function validatePhone() {
     isShowSecondConfirmationModal.value = true;
     attempts.value++;
     isLoading.value = false;
+  }
+}
+
+let isTelegramConfirm = ref(false);
+async function validatePhoneTelegram() {
+  isTelegramConfirm.value = true;
+  isLoading.value = true;
+  let client = await storeClients.getClientPhone(phoneNumberData.value);
+  isLoading.value = false;
+  if (client) {
+    const phoneNumber = phoneNumberData.value.slice(2);
+    let { code, encryptCode } = generateRandomFiveDigitNumberEncrypt();
+    originallyConfirmationCode.value = code;
+    isShowFirstConfirmationModal.value = false;
+    isShowSecondConfirmationModal.value = true;
+    window.open(
+      `https://t.me/darom_pro_bot?start=${phoneNumber}and${encryptCode}`,
+      "_blank"
+    );
+  } else {
+    toast.error("Вы не зарегистрированы! Сначала пройдите регистрацию");
   }
 }
 
@@ -271,7 +306,7 @@ const isSelectedTypeOfAuthTG = computed(() => {
 });
 
 function checkPhoneNumberValidating() {
-  if (phoneNumberTelegram.value.length < 11) {
+  if (phoneNumberTelegram.value.length <= 11) {
     return false;
   }
 
@@ -290,8 +325,36 @@ function checkPhoneNumberValidating() {
   return true;
 }
 
+function checkPhoneNumberValidatingConfirm() {
+  if (phoneNumberData.value.length <= 11) {
+    return false;
+  }
+
+  if (phoneNumberData.value.length > 12) {
+    return false;
+  }
+
+  if (!phoneNumberData.value.startsWith("+7")) {
+    return false;
+  }
+
+  if (phoneNumberData.value.trim() === "") {
+    return false;
+  }
+
+  return true;
+}
+
 const isDisabledAuth = computed(() => {
   if (selectedTypeOfAuth.value && checkPhoneNumberValidating()) {
+    return true;
+  } else {
+    return false;
+  }
+});
+
+const isDisabledConfirm = computed(() => {
+  if (checkPhoneNumberValidatingConfirm()) {
     return true;
   } else {
     return false;
@@ -303,12 +366,11 @@ function showNotification() {
 }
 
 async function openTelegramBot() {
-  let clients = await storeClients.getClients();
-  if (
-    clients.some(
-      (client: any) => client.phoneNumber === phoneNumberTelegram.value
-    )
-  ) {
+  isLoading.value = true;
+  let client = await storeClients.getClientPhone(phoneNumberTelegram.value);
+  isLoading.value = false;
+  if (client) {
+    isAuthInsertCode.value = true;
     const phoneNumber = phoneNumberTelegram.value.slice(2);
     window.open(`https://t.me/darom_pro_bot?start=${phoneNumber}`, "_blank");
   } else {
@@ -317,49 +379,26 @@ async function openTelegramBot() {
 }
 
 let isAuthNonComplete = false;
+let isAuthInsertCode = ref(false);
 let isAuthWithPassword = ref(false);
 const intervalId = ref(null);
 
 async function waitingForAuth() {
-  try {
-    if (isAuthNonComplete) return;
+  isLoading.value = true;
+  let client = await storeClients.getAuthClient(
+    phoneNumberTelegram.value,
+    code.value
+  );
 
-    let clients = await storeClients.getAuthClients();
-
-    const now = new Date();
-
-    const validClients = clients.filter((client: any) => {
-      if (client.phoneNumber !== phoneNumberTelegram.value) return false;
-      if (client.attempts !== 0) return false;
-
-      const createdAt = new Date(client.created_at);
-      const timeDifference = now - createdAt;
-
-      return timeDifference <= 3 * 60 * 1000;
-    });
-
-    if (validClients.length > 0) {
-      isAuthNonComplete = true;
-      await storeClients.updateAttemptsTelegramAuth(validClients[0].id);
-      await signInTelegram();
-    } else {
-      console.log("Клиент не найден или время регистрации истекло.");
-    }
-  } catch (error) {
-    console.error("Ошибка при получении обновлений:", error);
-  } finally {
-    intervalId.value = setTimeout(waitingForAuth, 3000);
+  if (client && client.attempts === 0) {
+    await storeClients.updateAttemptsTelegramAuth(client.id);
+    await signInTelegram();
+  } else {
+    toast.error("Такой код не найден или Вы используете его второй раз!");
   }
+  client = {};
+  isLoading.value = false;
 }
-
-waitingForAuth();
-
-onUnmounted(() => {
-  if (intervalId.value) {
-    clearTimeout(intervalId.value);
-    intervalId.value = null;
-  }
-});
 </script>
 
 <template>
@@ -414,14 +453,6 @@ onUnmounted(() => {
 
       <div class="flex items-center justify-center flex-col gap-3 mt-10">
         <UButton
-          @click="isAuthWithPassword = !isAuthWithPassword"
-          icon="material-symbols:person-book"
-          class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
-          type="submit"
-        >
-          Войти по паролю
-        </UButton>
-        <UButton
           @click="
             (isShowTelegramMethod = !isShowTelegramMethod),
               (isAuthWithPassword = false)
@@ -429,6 +460,14 @@ onUnmounted(() => {
           icon="ic:baseline-telegram"
           class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
           >Войти через телеграм
+        </UButton>
+        <UButton
+          @click="isAuthWithPassword = !isAuthWithPassword"
+          icon="material-symbols:person-book"
+          class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+          type="submit"
+        >
+          Войти по паролю
         </UButton>
       </div>
 
@@ -521,27 +560,6 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- <UINewModalEdit
-      v-if="isShowTelegramMethod"
-      @close-modal="isShowTelegramMethod = !isShowTelegramMethod"
-    >
-      <template v-slot:icon-header> </template>
-      <template v-slot:header>Авторизация</template>
-      <template v-slot:body>
-        <div class="flex items-center justify-center">
-          <div class="rounded-2xl">
-            <div class="mb-3">
-              <Icon name="logos:telegram" size="32" />
-              <h1 class="font-semibold text-base">
-                Авторизация через <br class="hidden max-sm:block" />
-                телеграм
-              </h1>
-            </div>
-          </div>
-        </div>
-      </template>
-    </UINewModalEdit> -->
-
     <UModal
       :ui="{
         container: 'flex items-center justify-center text-center',
@@ -591,105 +609,231 @@ onUnmounted(() => {
               class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-xl placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
             />
           </div>
-          <div class="flex items-center justify-center gap-3">
-            <!-- <div
-              @click="showNotification"
-              class="bg-orange-100 text-secondary-color flex items-center justify-center flex-col rounded-full w-full py-1 cursor-not-allowed duration-200"
-            >
-              <Icon name="mdi:chat-processing-outline" size="24" />
-              <h1>SMS</h1>
-            </div> -->
-          </div>
-          <div class="flex items-center justify-center mt-5">
+          <div class="flex items-center justify-center gap-3"></div>
+          <div class="flex items-center justify-center mt-5 flex-col gap-3">
             <UButton
-              @click="openTelegramBot(), waitingForAuth()"
+              @click="openTelegramBot()"
               :disabled="!isDisabledAuth"
               class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
             >
               Подтвердить
+            </UButton>
+            <UButton
+              @click="isAuthInsertCode = !isAuthInsertCode"
+              :disabled="!isDisabledAuth"
+              class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+            >
+              Ввести полученный код
             </UButton>
           </div>
         </div>
       </UCard>
     </UModal>
 
-    <UINewModalEdit
-      v-if="isShowFirstConfirmationModal"
-      @close-modal="
-        isShowFirstConfirmationModal = !isShowFirstConfirmationModal
-      "
+    <UModal
+      :ui="{
+        container: 'flex items-center justify-center text-center',
+      }"
+      v-model="isAuthInsertCode"
+      prevent-close
     >
-      <template v-slot:icon-header> </template>
-      <template v-slot:header>Подтверждение</template>
-      <template v-slot:body>
-        <div class="flex items-center justify-center pt-5">
-          <div class="bg-white rounded-2xl">
-            <div class="space-y-5">
-              <p class="text-center">
-                Введите свой телефон в текстовое поле снизу и нажмите кнопку
-                "Отправить код".
-              </p>
-              <div class="flex justify-center mt-5">
-                <input
-                  @input="validationPhoneNumberData"
-                  v-model="phoneNumberData"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="text"
-                  autocomplete="phoneNumber"
-                  required
-                  placeholder="+7XXXXXXXXXX"
-                  class="relative block disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
-                />
-              </div>
-              <div class="flex justify-center items-center gap-3 mt-5">
-                <UIMainButton @click="validatePhone"
-                  >Отправить код</UIMainButton
-                >
-              </div>
-            </div>
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold flex items-center gap-2 leading-6 text-gray-900 dark:text-white"
+            >
+              Авторизация <Icon name="ic:baseline-telegram" size="24" />
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isAuthInsertCode = false"
+            />
           </div>
-        </div>
-      </template>
-    </UINewModalEdit>
+        </template>
 
-    <UINewModalEdit
-      v-if="isShowSecondConfirmationModal"
-      @close-modal="
-        isShowSecondConfirmationModal = !isShowSecondConfirmationModal
-      "
-    >
-      <template v-slot:icon-header> </template>
-      <template v-slot:header>Подтверждение</template>
-      <template v-slot:body>
-        <div class="flex items-center justify-center pt-5">
-          <div class="bg-white rounded-2xl">
-            <div class="space-y-5">
-              <p class="text-left">
-                Введите код в текстовое поле снизу, который придёт на Ваш номер
-                телефона.
-              </p>
-              <div class="flex justify-center mt-5">
-                <input
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
-                  type="text"
-                  @input="isValidateConfirmationCode"
-                  v-model="confirmationCode"
-                />
-              </div>
-              <div class="flex justify-center items-center gap-3 mt-5">
-                <UIMainButton
-                  :disabled="isButtonDisabled || isBlocked"
-                  @click="validatePhone"
-                  >Отправить код ещё раз</UIMainButton
-                >
-                {{ formattedBlockDuration }}
-              </div>
-            </div>
+        <div class="px-10 max-sm:px-0">
+          <label
+            for="phone"
+            class="block text-sm font-medium leading-6 text-gray-900"
+            >Введите код, полученный в телеграм-боте</label
+          >
+          <div class="mt-2">
+            <input
+              v-model="code"
+              type="text"
+              required
+              placeholder="Введите код"
+              class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-xl placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+            />
+          </div>
+          <div class="flex items-center justify-center mt-5">
+            <UButton
+              @click="waitingForAuth()"
+              :disabled="!isDisabledAuth"
+              class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+            >
+              Войти
+            </UButton>
           </div>
         </div>
-      </template>
-    </UINewModalEdit>
+      </UCard>
+    </UModal>
+
+    <UModal
+      :ui="{
+        container: 'flex items-center justify-center text-center',
+      }"
+      v-model="isShowFirstConfirmationModal"
+      prevent-close
+    >
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold flex items-center gap-2 leading-6 text-gray-900 dark:text-white"
+            >
+              Подтверждение
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isShowFirstConfirmationModal = false"
+            />
+          </div>
+        </template>
+
+        <div class="space-y-5">
+          <div
+            class="text-center max-w-[400px] mx-auto flex items-center justify-center"
+          >
+            <p class="text-center">
+              Введите свой телефон в текстовое поле снизу
+              <br class="max-[400px]:hidden" />
+              и нажмите одну из кнопок.
+            </p>
+          </div>
+          <div class="flex justify-center mt-5">
+            <input
+              @input="validationPhoneNumberData"
+              v-model="phoneNumberData"
+              id="phoneNumber"
+              name="phoneNumber"
+              type="text"
+              autocomplete="phoneNumber"
+              required
+              placeholder="+7XXXXXXXXXX"
+              class="relative block disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+            />
+          </div>
+          <div class="flex justify-center items-center gap-3 mt-5 flex-col">
+            <UButton
+              @click="validatePhoneTelegram"
+              :disabled="!isDisabledConfirm"
+              icon="ic:baseline-telegram"
+              class="w-full max-w-[300px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+            >
+              Отправить код в телеграм
+            </UButton>
+            <UButton
+              @click="validatePhone"
+              :disabled="!isDisabledConfirm"
+              icon="ic:baseline-wechat"
+              class="w-full max-w-[300px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+            >
+              Отправить код в смс
+            </UButton>
+          </div>
+        </div>
+      </UCard>
+    </UModal>
+
+    <UModal
+      :ui="{
+        container: 'flex items-center justify-center text-center',
+      }"
+      v-model="isShowSecondConfirmationModal"
+      prevent-close
+    >
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold flex items-center gap-2 leading-6 text-gray-900 dark:text-white"
+            >
+              Подтверждение
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isShowSecondConfirmationModal = false"
+            />
+          </div>
+        </template>
+
+        <div class="space-y-5">
+          <p v-if="!isTelegramConfirm" class="text-center text-base">
+            Введите код в текстовое поле снизу, <br />
+            который придёт на Ваш номер телефона.
+          </p>
+          <p v-if="isTelegramConfirm" class="text-center text-base">
+            Введите код в текстовое поле снизу, <br />
+            который придёт в телеграм-боте
+          </p>
+          <div class="flex justify-center mt-5">
+            <input
+              class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
+              type="text"
+              @input="isValidateConfirmationCode"
+              v-model="confirmationCode"
+            />
+          </div>
+          <div
+            v-if="!isTelegramConfirm"
+            class="flex justify-center items-center gap-3 mt-5"
+          >
+            <UIMainButton
+              :disabled="isButtonDisabled || isBlocked"
+              @click="validatePhone"
+              >Отправить код ещё раз</UIMainButton
+            >
+            {{ formattedBlockDuration }}
+          </div>
+          <div
+            v-if="isTelegramConfirm"
+            class="flex justify-center items-center gap-3 mt-5"
+          >
+            <UIMainButton
+              :disabled="isButtonDisabled || isBlocked"
+              @click="validatePhoneTelegram"
+              >Отправить код ещё раз</UIMainButton
+            >
+          </div>
+        </div>
+      </UCard>
+    </UModal>
 
     <UINewModalEdit
       v-if="isShowThirdConfirmationModal"
