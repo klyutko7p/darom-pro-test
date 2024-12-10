@@ -642,7 +642,7 @@ async function waitingForAuth() {
               :disabled="!isDisabledAuth"
               class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
             >
-              Подтвердить
+              Получить код в ТГ
             </UButton>
             <UButton
               @click="
