@@ -144,10 +144,19 @@ async function validatePhoneTelegram() {
     originallyConfirmationCode.value = code;
     isShowFirstConfirmationModal.value = false;
     isShowSecondConfirmationModal.value = true;
-    window.open(
-      `https://t.me/darom_pro_bot?start=${phoneNumber}and${encryptCode}`,
-      "_blank"
-    );
+
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    const url = `https://t.me/darom_pro_bot?start=${phoneNumber}and${encryptCode}`;
+
+    if (isAndroid) {
+      window.open(url, "_blank");
+    } else if (isIOS) {
+      window.open(url, "_top");
+    } else {
+      window.open(url, "_blank");
+    }
   } else {
     toast.error("Вы не зарегистрированы! Сначала пройдите регистрацию");
   }
