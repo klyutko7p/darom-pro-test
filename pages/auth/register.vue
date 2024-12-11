@@ -428,6 +428,7 @@ let isShowRegistrationSMS = ref(false);
                 <a
                   class="text-secondary-color font-semibold duration-200 cursor-pointer hover:opacity-50"
                   href="https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/files/docx/policy_info_dp.pdf"
+                  target="_blank"
                   >Политики обработки персональных данных</a
                 ></label
               >
@@ -447,6 +448,7 @@ let isShowRegistrationSMS = ref(false);
                 <a
                   class="text-secondary-color font-semibold duration-200 cursor-pointer hover:opacity-50"
                   href="https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/files/docx/policy_conf_dp.pdf"
+                  target="_blank"
                   >Политики конфиденциальности</a
                 ></label
               >
@@ -470,62 +472,6 @@ let isShowRegistrationSMS = ref(false);
         </form>
       </div>
     </div>
-
-    <!-- <UINewModalEdit
-      v-if="isShowTelegramMethod"
-      @close-modal="isShowTelegramMethod = !isShowTelegramMethod"
-    >
-      <template v-slot:icon-header> </template>
-      <template v-slot:header>Регистрация</template>
-      <template v-slot:body>
-        <div class="flex items-center justify-center">
-          <div class="rounded-2xl">
-            <div class="mb-3">
-              <Icon name="logos:telegram" size="32" />
-              <h1 class="font-semibold text-base">
-                Регистрация через <br class="hidden max-sm:block" />
-                телеграм-бот
-              </h1>
-            </div>
-            <ul class="space-y-3 text-left list-decimal">
-              <li>
-                Перейдите в наш официальный
-                <a
-                  class="font-semibold text-secondary-color underline"
-                  href="https://t.me/darom_pro_bot"
-                  target="_blank"
-                  >телеграм-бот</a
-                >
-                (@darom_pro_bot)
-              </li>
-              <li>Нажмите кнопку «ЗАПУСТИТЬ»</li>
-              <li>Дайте доступ к своему номеру телефона</li>
-              <li>Затем нажмите кнопку «Зарегистрироваться»</li>
-              <li>
-                Получите свои данные для входа и
-                <span
-                  class="font-semibold text-secondary-color underline cursor-pointer"
-                  @click="router.push('/auth/client/login')"
-                  >Авторизуйтесь</span
-                >
-              </li>
-            </ul>
-            <h1 class="my-3 text-sm italic">
-              Если у вас нет телеграма или нужно зарегистрировать другой номер
-              телефона, нажмите
-              <span
-                @click="
-                  (isShowTelegramMethod = false), (isShowRegistrationSMS = true)
-                "
-                class="font-semibold text-secondary-color underline cursor-pointer"
-              >
-                здесь</span
-              >
-            </h1>
-          </div>
-        </div>
-      </template>
-    </UINewModalEdit> -->
 
     <UModal
       :ui="{
@@ -582,19 +528,43 @@ let isShowRegistrationSMS = ref(false);
       </UCard>
     </UModal>
 
-    <UINewModalEdit
-      v-if="isShowConfirmationModal"
-      @close-modal="isShowConfirmationModal = !isShowConfirmationModal"
+    <UModal
+      :ui="{
+        container: 'flex items-center justify-center text-center',
+      }"
+      v-model="isShowConfirmationModal"
+      prevent-close
     >
-      <template v-slot:icon-header> </template>
-      <template v-slot:header>Подтверждение</template>
-      <template v-slot:body>
-        <div class="flex items-center justify-center pt-5">
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold flex items-center gap-2 leading-6 text-gray-900 dark:text-white"
+            >
+              Подтверждение <Icon name="ic:baseline-wechat" size="24" />
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isShowConfirmationModal = false"
+            />
+          </div>
+        </template>
+
+        <div class="flex items-center justify-center">
           <div class="rounded-2xl space-y-5">
             <div class="space-y-5">
               <p class="text-center">
-                Введите код в текстовое поле снизу, который придёт на Ваш номер
-                телефона.
+                Введите код в текстовое поле снизу,
+                <br class="max-[335px]:hidden" />
+                который придёт на Ваш номер телефона.
               </p>
               <div class="flex justify-center">
                 <UInput
@@ -611,11 +581,14 @@ let isShowRegistrationSMS = ref(false);
                 >
                 {{ formattedBlockDuration }}
               </div>
+              <h1 class="text-center italic text-base">
+                Если код не пришёл, то отправьте ещё раз!
+              </h1>
             </div>
           </div>
         </div>
-      </template>
-    </UINewModalEdit>
+      </UCard>
+    </UModal>
 
     <div
       class="absolute max-[380px]:hidden top-3 left-2 flex flex-col text-center text-secondary-color font-bold gap-3"
