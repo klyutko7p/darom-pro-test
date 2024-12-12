@@ -110,25 +110,33 @@ async function validatePhone() {
     return;
   }
 
-  if (isBlocked.value) return;
+  isLoading.value = true;
+  let client = await storeClients.getClientPhone(phoneNumberData.value);
+  isLoading.value = false;
 
-  if (attempts.value >= 2) {
-    blockForFifteenMinutes();
-    toast.error(
-      "Вам на 15 минут заблокирован доступ к восстановлению пароля. Попробуйте восстановить пароль в следующий раз!"
-    );
+  if (client) {
+    if (isBlocked.value) return;
+
+    if (attempts.value >= 2) {
+      blockForFifteenMinutes();
+      toast.error(
+        "Вам на 15 минут заблокирован доступ к восстановлению пароля. Попробуйте восстановить пароль в следующий раз!"
+      );
+    } else {
+      isLoading.value = true;
+      originallyConfirmationCode.value = generateRandomFiveDigitNumber();
+      disableButtonForOneMinute();
+      await storeClients.sendMessage(
+        phoneNumberData.value,
+        originallyConfirmationCode.value
+      );
+      isShowFirstConfirmationModal.value = false;
+      isShowSecondConfirmationModal.value = true;
+      attempts.value++;
+      isLoading.value = false;
+    }
   } else {
-    isLoading.value = true;
-    originallyConfirmationCode.value = generateRandomFiveDigitNumber();
-    disableButtonForOneMinute();
-    await storeClients.sendMessage(
-      phoneNumberData.value,
-      originallyConfirmationCode.value
-    );
-    isShowFirstConfirmationModal.value = false;
-    isShowSecondConfirmationModal.value = true;
-    attempts.value++;
-    isLoading.value = false;
+    toast.error("Вы не зарегистрированы! Сначала пройдите регистрацию");
   }
 }
 
@@ -860,6 +868,9 @@ async function waitingForAuth() {
               >Отправить код ещё раз</UIMainButton
             >
           </div>
+          <h1 class="text-center italic text-base">
+            Если код не пришёл, то отправьте ещё раз!
+          </h1>
         </div>
       </UCard>
     </UModal>
