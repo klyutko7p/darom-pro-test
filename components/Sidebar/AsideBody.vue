@@ -221,6 +221,7 @@ function showSettingsList() {
               user.username === 'Алиса' ||
               user.username === 'Миллер' ||
               user.username === 'Шведова' ||
+              user.username === 'Мешков' ||
               user.username === 'Директор' ||
               user.username === 'Горцуева' ||
               user.role === 'ADMIN' ||
@@ -380,7 +381,8 @@ function showSettingsList() {
               user.role === 'ADMINISTRATOR' ||
               user.role === 'PVZ' ||
               user.role === 'PPVZ' ||
-              user.username === 'Шведова'
+              user.username === 'Шведова' ||
+              user.username === 'Мешков' 
             "
           >
             <Icon
@@ -419,6 +421,7 @@ function showSettingsList() {
             @click="router.push('/spreadsheets/inventory')"
             v-if="
               user.username === 'Шведова' ||
+              user.username === 'Мешков' ||
               user.role === 'PVZ' ||
               user.role === 'PPVZ' ||
               user.username === 'Директор' ||
@@ -588,6 +591,7 @@ function showSettingsList() {
               user.username === 'Алиса' ||
               user.username === 'Миллер' ||
               user.username === 'Шведова' ||
+              user.username === 'Мешков' ||
               user.username === 'Директор' ||
               user.username === 'Горцуева' ||
               user.username === 'Власенкова'

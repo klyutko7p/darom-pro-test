@@ -2127,7 +2127,7 @@ let pvzDataOriginally = [
   "НаДом",
 ];
 
-const options = ["Нет", "Рейзвих", "Шведова", "Директор", "Косой"];
+const options = ["Нет", "Рейзвих", "Шведова", "Директор", "Косой", "Мешков"];
 </script>
 
 <template>
@@ -2136,7 +2136,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
   </Head>
 
   <div v-if="!isLoading">
-    <div v-if="token && (user.role === 'ADMIN' || user.username === 'Шведова')">
+    <div v-if="token && (user.role === 'ADMIN' || user.username === 'Шведова' || user.username === 'Мешков')">
       <NuxtLayout name="admin">
         <div class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5">
           <div v-auto-animate>

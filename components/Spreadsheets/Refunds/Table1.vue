@@ -248,7 +248,11 @@ onMounted(async () => {
           <th
             scope="col"
             class="border-[1px]"
-            v-if="user.dataOurRansom === 'WRITE' && user.username !== 'Шведова'"
+            v-if="
+              user.dataOurRansom === 'WRITE' &&
+              user.username !== 'Шведова' &&
+              user.username !== 'Мешков'
+            "
           >
             Выделение
           </th>
@@ -259,7 +263,8 @@ onMounted(async () => {
               (user.role === 'ADMIN' ||
                 user.role === 'ADMINISTRATOR' ||
                 user.role === 'RMANAGER') &&
-              user.username !== 'Шведова'
+              user.username !== 'Шведова' &&
+              user.username !== 'Мешков'
             "
           >
             изменение
@@ -304,12 +309,7 @@ onMounted(async () => {
           >
             стоимость возврата
           </th>
-          <th
-            scope="col"
-            class="border-[1px]"
-          >
-            отправка из пвз
-          </th>
+          <th scope="col" class="border-[1px]">отправка из пвз</th>
           <th
             scope="col"
             class="border-[1px]"
@@ -343,7 +343,11 @@ onMounted(async () => {
           v-for="row in returnRows"
         >
           <td
-            v-if="user.dataOurRansom === 'WRITE' && user.username !== 'Шведова'"
+            v-if="
+              user.dataOurRansom === 'WRITE' &&
+              user.username !== 'Шведова' &&
+              user.username !== 'Мешков'
+            "
             class="border-[1px] text-secondary-color"
           >
             <input
@@ -359,7 +363,8 @@ onMounted(async () => {
               (user.role === 'ADMIN' ||
                 user.role === 'ADMINISTRATOR' ||
                 user.role === 'RMANAGER') &&
-              user.username !== 'Шведова'
+              user.username !== 'Шведова' &&
+              user.username !== 'Мешков'
             "
           >
             <div

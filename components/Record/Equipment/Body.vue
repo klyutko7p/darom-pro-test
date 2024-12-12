@@ -21,6 +21,7 @@ onMounted(async () => {
     user.value.username === "Алиса" ||
     user.value.username === "Миллер" ||
     user.value.username === "Шведова" ||
+    user.value.username === "Мешков" ||
     user.value.username === "Директор" ||
     user.value.username === "Горцуева" ||
     user.value.username === "Власенкова"

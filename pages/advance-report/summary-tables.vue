@@ -237,6 +237,9 @@ function getAllSum() {
     case "Шведова":
       allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
       break;
+    case "Мешков":
+      allSum.value = +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3;
+      break;
     case "Директор":
       allSum.value =
         +sumOfPVZ -

@@ -220,7 +220,9 @@ let showPayRejectClient = ref(false);
       </UIActionButton>
       <UIActionButton
         v-if="
-          (user.username === 'Шведова' || user.username === 'Директор') &&
+          (user.username === 'Шведова' ||
+            user.username === 'Директор' ||
+            user.username === 'Мешков') &&
           showButtonSC
         "
         @click="updateDeliveryRows('SC')"

@@ -35,14 +35,14 @@ onMounted(async () => {
   isLoading.value = true;
   user.value = await storeClients.getClient();
 
-  rowsOurRansom.value = await storeRansom.getRansomRowsByFromNameWithoutCell(
-    user.value.phoneNumber,
-    "OurRansom"
-  );
-  rowsClientRansom.value = await storeRansom.getRansomRowsByFromNameWithoutCell(
-    user.value.phoneNumber,
-    "ClientRansom"
-  );
+  rowsOurRansom.value =
+    await storeRansom.getRansomRowsByFromNameWithoutCellOurRansom(
+      user.value.phoneNumber
+    );
+  rowsClientRansom.value =
+    await storeRansom.getRansomRowsByFromNameWithoutCellClientRansom(
+      user.value.phoneNumber
+    );
 
   rows.value = [...rowsOurRansom.value, ...rowsClientRansom.value];
 

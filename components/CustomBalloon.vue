@@ -4,7 +4,12 @@
     {{ storeUsers.getNormalizedDate(marker.createdAt) }}. <br />
     Комментарий - {{ marker.notation }}
     <UIActionButton
-      v-if="user.username === 'Директор' || user.username === 'Шведова' || user.username === 'Власенкова'"
+      v-if="
+        user.username === 'Директор' ||
+        user.username === 'Шведова' ||
+        user.username === 'Власенкова' ||
+        user.username === 'Мешков'
+      "
       class="mt-1"
       @click="deleteMarker"
       >Удалить маркер</UIActionButton

@@ -313,19 +313,40 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-  async function getRansomRowsByFromNameWithoutCell(
-    fromName: string | string[],
-    flag: string
+  async function getRansomRowsByFromNameWithoutCellOurRansom(
+    fromName: string | string[]
   ) {
     try {
       let { data }: any = await useFetch(
-        "/api/ransom/get-rows-by-fromname-without-cell",
+        "/api/ransom/get-rows-by-fromname-without-cell-or",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ fromName, flag }),
+          body: JSON.stringify({ fromName }),
+        }
+      );
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsByFromNameWithoutCellClientRansom(
+    fromName: string | string[]
+  ) {
+    try {
+      let { data }: any = await useFetch(
+        "/api/ransom/get-rows-by-fromname-without-cell-cl",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ fromName }),
         }
       );
       return data.value;
@@ -1265,7 +1286,8 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsWithDeleted,
     getRansomRowsRefunds,
     getRansomRowsForUpdateCells,
-    getRansomRowsByFromNameWithoutCell,
+    getRansomRowsByFromNameWithoutCellOurRansom,
+    getRansomRowsByFromNameWithoutCellClientRansom,
     getRansomRowsForBalanceClientRansom,
     getRansomRowsForBalanceDelivery,
     getRansomRowsForModalOurRansom,

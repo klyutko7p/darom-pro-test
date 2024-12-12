@@ -16,6 +16,7 @@ let isLoading = ref(false);
 let isForeignDevice = ref(false);
 
 async function signIn() {
+  message.value = "";
   isLoading.value = true;
   message.value = await storeClients.signIn(
     phoneNumber.value.trim(),

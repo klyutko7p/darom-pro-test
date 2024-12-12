@@ -6,9 +6,9 @@ onMounted(() => {
 
   if (isIOS) {
     PullToRefresh.init({
-      instructionsRefreshing: 'Обновляем',
-      instructionsPullToRefresh: 'Потяните вниз, чтобы обновить',
-      instructionsReleaseToRefresh: 'Отпустите, чтобы обновить',
+      instructionsRefreshing: "Обновляем",
+      instructionsPullToRefresh: "Потяните вниз, чтобы обновить",
+      instructionsReleaseToRefresh: "Отпустите, чтобы обновить",
       onRefresh() {
         window.location.reload();
       },
@@ -20,13 +20,10 @@ onMounted(() => {
 <template>
   <NuxtPwaManifest />
   <NuxtLoadingIndicator />
-    <div class="flex">
-      <SidebarClient />
-      <div class="mx-auto container px-3 mt-10">
-        <slot />
-      </div>
+  <div class="flex">
+    <SidebarClient />
+    <div class="mx-auto container px-3 mt-10">
+      <slot />
     </div>
-  </template>
-  
-  <script setup lang="ts"></script>
-  
+  </div>
+</template>

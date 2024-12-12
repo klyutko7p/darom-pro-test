@@ -51,6 +51,12 @@ onMounted(async () => {
   >
     <div class="flex items-center gap-1">
       <Icon
+        @click="router.push('/?home=true')"
+        size="24"
+        name="material-symbols:home-and-garden-rounded"
+        class="hover:opacity-50 duration-200 cursor-pointer mr-2  "
+      />
+      <Icon
         @click="editMenu"
         size="40"
         name="i-ic-round-menu"
