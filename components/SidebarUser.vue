@@ -227,12 +227,6 @@ function formatPhoneNumber(phoneNumber: string) {
     </h1>
     <div class="flex gap-1">
       <Icon
-        @click="reloadPage"
-        name="material-symbols:refresh-rounded"
-        size="32"
-        class="cursor-pointer hover:opacity-50 duration-200"
-      />
-      <Icon
         @click="router.go(-1)"
         name="ion:ios-arrow-back"
         size="32"

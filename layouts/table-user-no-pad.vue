@@ -6,6 +6,9 @@ onMounted(() => {
 
   if (isIOS) {
     PullToRefresh.init({
+      instructionsRefreshing: 'Обновляем',
+      instructionsPullToRefresh: 'Потяните вниз, чтобы обновить',
+      instructionsReleaseToRefresh: 'Отпустите, чтобы обновить',
       onRefresh() {
         window.location.reload();
       },

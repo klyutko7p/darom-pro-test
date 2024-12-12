@@ -85,7 +85,6 @@ const handleError = (message: string) => {
   isLoading.value = false;
 };
 
-
 const parsingPage = async () => {
   if (!urlToItem.value && marketplace.value === "WB") {
     handleError("Добавьте ссылку товара для его добавления!");
@@ -746,6 +745,39 @@ let isNotAskingAcceptOrder = ref(false);
             </div>
 
             <div v-if="isOpenThirdModal && marketplace === 'OZ'" v-auto-animate>
+              <div v-if="!urlToItem">
+                <label
+                  >Скопируйте
+                  <span class="text-red-500 font-semibold uppercase"
+                    >артикул</span
+                  >
+                </label>
+              </div>
+              <div v-if="!urlToItem" class="h-[44px] text-base">
+                <UInput
+                  v-model="urlToItemArt"
+                  name="urlToItemArt"
+                  placeholder="Вставьте скопированный артикул товара"
+                  icon="i-ph-package-bold"
+                  autocomplete="off"
+                  class="w-full mt-3 text-base"
+                  :ui="{
+                    icon: { trailing: { pointer: '' } },
+                  }"
+                >
+                  <template #trailing>
+                    <UButton
+                      v-show="urlToItemArt !== ''"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      :padded="false"
+                      @click="urlToItemArt = ''"
+                    />
+                  </template>
+                </UInput>
+              </div>
+              <h1 v-if="!urlToItemArt && !urlToItem" class="mb-3">ИЛИ</h1>
               <div v-if="!urlToItemArt">
                 <label
                   >Скопируйте

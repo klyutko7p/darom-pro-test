@@ -136,6 +136,7 @@ async function scanItem() {
     try {
       rowData.value = await storeRansom.getRansomRowById(idRow, "OurRansom");
       if (rowData.value) {
+        storeRansom.announce(`${rowData.value.cell}`);
         await acceptItem(rowData.value);
         arrayOfRows.value.push(rowData.value);
         console.log("Полученные данные:", rowData.value);
@@ -192,7 +193,7 @@ watch(scanStringItem, (newValue) => {
             v-if="selectedPVZ"
           >
             <div class="flex items-center gap-5">
-              <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
+              <UIMainButton @click="focusInput">СКАНИРОВАТЬ qr клиента</UIMainButton>
               <Icon
                 v-if="isScanActive"
                 name="eos-icons:bubble-loading"
@@ -275,7 +276,7 @@ watch(scanStringItem, (newValue) => {
             v-if="selectedPVZ"
           >
             <div class="flex items-center gap-5">
-              <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
+              <UIMainButton @click="focusInput">СКАНИРОВАТЬ qr клиента</UIMainButton>
               <Icon
                 v-if="isScanActive"
                 name="eos-icons:bubble-loading"

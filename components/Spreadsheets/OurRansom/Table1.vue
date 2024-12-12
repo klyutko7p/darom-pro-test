@@ -141,6 +141,8 @@ function scanItem() {
     console.log(scannedLink);
     let rowData = await storeRansom.getRansomRowById(+scannedLink, "OurRansom");
     if (props.user.role !== "SORTIROVKA") {
+      storeRansom.announce(`${rowData.cell}`);
+
       if (rowData.issued) {
         toast.error(
           `Товар с ID: ${rowData.id} не отметился. Причина: товар уже выдан!`,
@@ -167,6 +169,7 @@ function scanItem() {
       handleCheckboxChange(rowData);
     } else {
       handleCheckboxChange(rowData);
+      storeRansom.announce(rowData.cell);
     }
     console.log(rowData);
     scanStringItem.value = "";
@@ -601,7 +604,9 @@ async function writeClipboardText(text: any) {
     <div class="flex items-center justify-between max-lg:block mt-10 mb-5">
       <div>
         <div class="flex items-center gap-5">
-          <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
+          <UIMainButton @click="focusInput"
+            >СКАНИРОВАТЬ qr клиента</UIMainButton
+          >
           <Icon
             v-if="isScanActive"
             name="eos-icons:bubble-loading"

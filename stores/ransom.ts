@@ -923,15 +923,33 @@ export const useRansomStore = defineStore("ransom", () => {
           sumOfReject: cachedSumOfRejection,
         }),
       });
+
       if (data.data.value === undefined) {
         toast.success("Доставка у записей успешно обновлена!");
+
+        let status = "";
+        if (flag === "additionally") {
+          status = "Заказ выдан";
+        } else if (flag === "additionally1-1") {
+          status = "Отказ проведён";
+        } else if (flag === "additionally1-2") {
+          status = "Отказ проведён";
+        } else if (flag === "additionally2") {
+          status = "Отказ проведён";
+        } else if (flag === "additionally3") {
+          status = "Заказ выдан";
+        }
+
+        announce(`${status}`);
       } else {
         console.log(data.data.value);
         toast.error("Произошла ошибка");
+        announce(`Ошибка выдачи`);
       }
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
+        announce(`Ошибка выдачи`);
       }
     }
   }
@@ -1157,6 +1175,16 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  function announce(message: string) {
+    const speech = new SpeechSynthesisUtterance(message);
+
+    speech.lang = "ru-RU";
+    speech.pitch = 1;
+    speech.rate = 1;
+
+    window.speechSynthesis.speak(speech);
+  }
+
   async function getRowsFilters(
     selectedCell: string[],
     selectedFromName: string[],
@@ -1254,5 +1282,6 @@ export const useRansomStore = defineStore("ransom", () => {
     deleteNotSortedRows,
     getRansomRowsForBalanceOurRansomPartFour,
     getRansomRowsByPVZInventory,
+    announce,
   };
 });
