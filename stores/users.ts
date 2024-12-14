@@ -60,7 +60,11 @@ export const useUsersStore = defineStore("users", () => {
     }
   }
 
-  async function signIn(username: string, password: string, role: string) {
+  async function signIn(
+    username: string,
+    password: string,
+    isForeignDevice: boolean = false
+  ) {
     try {
       let { data }: any = await useFetch("/api/login", {
         method: "POST",
@@ -70,7 +74,6 @@ export const useUsersStore = defineStore("users", () => {
         body: JSON.stringify({
           username: username,
           password: password,
-          role: role,
         }),
       });
 
@@ -79,8 +82,11 @@ export const useUsersStore = defineStore("users", () => {
 
         userData = user;
 
-        Cookies.set("token", token, { expires: 1 });
-        Cookies.set("user", JSON.stringify(userData), { expires: 1 });
+        const cookieExpires = isForeignDevice ? 1 / 24 : 1;
+        Cookies.set("token", token, { expires: cookieExpires });
+        Cookies.set("user", JSON.stringify(userData), {
+          expires: cookieExpires,
+        });
 
         if (userData.role === "ADMIN") {
           router.push("/admin/main");
