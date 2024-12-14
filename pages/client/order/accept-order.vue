@@ -85,6 +85,17 @@ const handleError = (message: string) => {
   isLoading.value = false;
 };
 
+let isShowSizeButtons = ref(false);
+let sizeButtons = ref<Array<any>>([]);
+
+function changeURLForSizeWB(optionId: number) {
+  if (urlToItem.value.includes("targetUrl")) {
+    urlToItem.value = urlToItem.value + `&size=${optionId}`;
+  } else {
+    urlToItem.value = urlToItem.value + `?size=${optionId}`;
+  }
+}
+
 const parsingPage = async () => {
   if (!urlToItem.value && marketplace.value === "WB") {
     handleError("Добавьте ссылку товара для его добавления!");
@@ -118,7 +129,10 @@ const parsingPage = async () => {
 
       productName.value = itemInfo[0].data.products[0].name;
       urlToImg.value = itemInfo[1];
-      if (urlToItem.value.includes("size")) {
+      if (
+        urlToItem.value.includes("size") &&
+        itemInfo[2].data.products[0].sizes.length > 1
+      ) {
         let sizeString = urlToItem.value.split("size=")[1];
         priceSite.value = itemInfo[2].data.products[0].sizes.filter(
           (size: any) => size.optionId == sizeString
@@ -128,14 +142,27 @@ const parsingPage = async () => {
             .toString()
             .substring(0, priceSite.value.toString().length - 2)
         );
-      } else {
+      } else if (
+        !urlToItem.value.includes("size") &&
+        itemInfo[2].data.products[0].sizes.length === 1
+      ) {
         priceSite.value = itemInfo[2].data.products[0].sizes[0].price.product;
         priceSite.value = Number(
           priceSite.value
             .toString()
             .substring(0, priceSite.value.toString().length - 2)
         );
+      } else if (
+        !urlToItem.value.includes("size") &&
+        itemInfo[2].data.products[0].sizes.length > 1
+      ) {
+        sizeButtons.value = itemInfo[2].data.products[0].sizes.filter(
+          (size: any) => size.price
+        );
+        isShowSizeButtons.value = true;
+        return;
       }
+      isShowSizeButtons.value = false;
       toast.success("Вы успешно добавили товар!");
     } else if (marketplace.value === "OZ") {
       if (urlToItem.value.includes("https://ozon.ru/t/")) {
@@ -378,6 +405,7 @@ function showThirdModal() {
     isOpenFourModal.value = false;
     isOpenLastModal.value = false;
   }
+  isShowSizeButtons.value = false;
   urlToItem.value = "";
   urlToItemArt.value = "";
 }
@@ -867,7 +895,12 @@ let isNotAskingAcceptOrder = ref(false);
               </div>
             </div>
 
-            <div v-if="isOpenThirdModal && marketplace === 'WB'" v-auto-animate>
+            <div
+              v-if="
+                isOpenThirdModal && marketplace === 'WB' && !isShowSizeButtons
+              "
+              v-auto-animate
+            >
               <div>
                 <label
                   >Скопируйте
@@ -1004,7 +1037,42 @@ let isNotAskingAcceptOrder = ref(false);
               </div>
             </div>
 
-            <div v-if="isOpenLastModal" v-auto-animate>
+            <div
+              v-if="isShowSizeButtons && marketplace === 'WB'"
+              v-auto-animate
+            >
+              <label>Выберите размер</label>
+              <div
+                class="grid grid-cols-2 max-[400px]:grid-cols-1 max-h-[300px] overflow-y-scroll shadow-inner bg-gray-50 px-5 gap-3 rounded-xl mt-3 py-5"
+              >
+                <div v-for="button in sizeButtons">
+                  <UButton
+                    icon="lucide:ruler"
+                    size="sm"
+                    @click="changeURLForSizeWB(button.optionId), parsingPage()"
+                    class="font-bold w-full flex items-center justify-center"
+                    color="primary"
+                    variant="solid"
+                    :label="button.origName"
+                    :trailing="false"
+                  />
+                </div>
+              </div>
+              <div class="mt-5 flex justify-end gap-3" v-auto-animate>
+                <UButton
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  @click="showThirdModal()"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                />
+              </div>
+            </div>
+
+            <div v-if="isOpenLastModal && !isShowSizeButtons" v-auto-animate>
               <div v-if="items.length > 0">
                 <h1 class="font-semibold">
                   Количество товаров:

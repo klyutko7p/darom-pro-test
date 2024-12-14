@@ -78,5 +78,12 @@ onMounted(async () => {
       size="32"
       class="cursor-pointer hover:opacity-50 duration-200"
     />
+    <Icon
+      v-if="route.fullPath.includes('/client/order/independently/ozon?accept=true')"
+      @click="router.push('/client/main')"
+      name="ion:ios-arrow-back"
+      size="32"
+      class="cursor-pointer hover:opacity-50 duration-200"
+    />
   </div>
 </template>
