@@ -2915,8 +2915,17 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
             Заявка на вывод средств наличные</UIMainButton
           >
           <BalanceTable
+            v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
             @update-delivery-row="updateDeliveryRow"
             :rows="rows"
+            :user="user"
+            @open-modal="openModal"
+          />
+
+          <BalanceTable
+            v-if="user.role === 'PVZ' || user.role === 'PPVZ'"
+            @update-delivery-row="updateDeliveryRow"
+            :rows="rows?.filter((row) => !row.received)"
             :user="user"
             @open-modal="openModal"
           />
