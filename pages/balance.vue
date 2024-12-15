@@ -205,6 +205,16 @@ onMounted(async () => {
           user.value.PVZ.includes(row.pvz) ||
           user.value.PVZ.includes(row.recipient)
       );
+    } else if (user.value.username === "Мешков") {
+      selectedPVZ.value = "Все ПВЗ (Город)";
+      rows.value = rows.value?.filter((row) =>
+        user.value.PVZ.includes(row.pvz)
+      );
+    } else if (user.value.username === "Шведова") {
+      selectedPVZ.value = "Все ПВЗ (Город)";
+      rows.value = rows.value?.filter((row) =>
+        user.value.PVZ.includes(row.pvz)
+      );
     }
 
     getProfitRowsSum();
@@ -1050,6 +1060,80 @@ function getAllSum() {
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
       allSum.value = sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ - sumOfPVZ5;
+    } else if (selectedPVZ.value === "Все ПВЗ (Город)") {
+      copyArrayOurRansom.value = ourRansomRows.value?.filter(
+        (row) =>
+          row.issued !== null &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
+          (row.additionally === "Оплата наличными" ||
+            row.additionally === "Отказ клиент наличные" ||
+            row.additionally === "Отказ клиент") &&
+          user.value.PVZ.includes(row.dispatchPVZ)
+      );
+
+      copyArrayClientRansom.value = clientRansomRows.value?.filter(
+        (row) =>
+          row.issued !== null &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
+          (row.additionally === "Оплата наличными" ||
+            row.additionally === "Отказ клиент наличные" ||
+            row.additionally === "Отказ клиент") &&
+          user.value.PVZ.includes(row.dispatchPVZ)
+      );
+
+      let sumOfPVZ = rows.value
+        ?.filter(
+          (row) =>
+            row.received !== null &&
+            row.recipient === "Нет" &&
+            user.value.PVZ.includes(row.pvz)
+        )
+        .reduce((acc, value) => acc + +value.sum, 0);
+
+      let sumOfPVZ3 = rows.value
+        ?.filter(
+          (row) =>
+            row.received !== null &&
+            row.recipient !== "Нет" &&
+            user.value.PVZ.includes(row.pvz)
+        )
+        .reduce((acc, value) => acc + +value.sum, 0);
+
+      let sumOfPVZ5 = rowsProfit.value
+        ?.filter(
+          (row) =>
+            row.received !== null &&
+            (row.recipient === "Владимирова Инна" ||
+              row.recipient === "Динис Ольга" ||
+              row.recipient === "Киризлеева Марина") &&
+            user.value.PVZ.includes(row.pvz)
+        )
+        .reduce((acc, value) => acc + +value.sum, 0);
+
+      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+      sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+
+      if (user.value.username === "Шведова") {
+        allSum.value =
+          sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ + 319610 - sumOfPVZ5;
+        allSum.value -= 11110;
+        allSum.value -= 1570;
+        allSum.value -= 2005;
+        allSum.value -= 13100;
+        allSum.value += 7340;
+      } else if (user.value.username === "Мешков") {
+        allSum.value =
+          sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ - sumOfPVZ5;
+      } else {
+        allSum.value =
+          sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ - sumOfPVZ5;
+      }
     } else {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -1156,6 +1240,45 @@ function getAllSum() {
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
       allSum.value = sum1.value + sum2.value + sum3.value - sumOfPVZ;
+    } else if (selectedPVZ.value === "Все ПВЗ (Город)") {
+      copyArrayOurRansom.value = ourRansomRows.value?.filter(
+        (row) =>
+          row.issued &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
+          (row.additionally === "Оплачено онлайн" ||
+            row.additionally === "Отказ клиент онлайн") &&
+          user.value.PVZ.includes(row.dispatchPVZ)
+      );
+
+      copyArrayClientRansom.value = clientRansomRows.value?.filter(
+        (row) =>
+          row.issued &&
+          (!selected.value.start ||
+            new Date(row.issued) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.issued) <= new Date(newEndDate)) &&
+          (row.additionally === "Оплачено онлайн" ||
+            row.additionally === "Отказ клиент онлайн") &&
+          user.value.PVZ.includes(row.dispatchPVZ)
+      );
+
+      let sumOfPVZ = rowsOnline.value?.reduce(
+        (acc, value) => acc + +value.sum,
+        0
+      );
+
+      if (user.value.username === "Шведова") {
+        sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+        sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+        allSum.value = sum1.value + sum2.value + sum3.value - sumOfPVZ;
+      } else {
+        sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+        sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
+        allSum.value = sum1.value + sum2.value + sum3.value;
+      }
     } else {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -1583,7 +1706,10 @@ function reduceArrayProfitManager(array: any[], flag: string): number {
   };
 
   array.forEach((row: any) => {
-    if (row.additionally !== "Отказ брак" && row.additionally !== "Отказ подмена") {
+    if (
+      row.additionally !== "Отказ брак" &&
+      row.additionally !== "Отказ подмена"
+    ) {
       const roundFunction = shouldRound(row) ? roundOrCeil : Math.ceil;
       switch (flag) {
         case "OurRansom":
@@ -1719,6 +1845,11 @@ watch([selectedPVZ, selectedTypeOfTransaction, selected, selected], getAllSum);
 
 function clearFields() {
   selectedPVZ.value = "Все ПВЗ";
+
+  if (user.value.username === "Мешков" || user.value.username === "Шведова") {
+    selectedPVZ.value = "Все ПВЗ (Город)";
+  }
+
   selectedTypeOfTransaction.value = "Баланс наличные";
   selected.value = {
     start: new Date(new Date().getFullYear(), 0, 1),
@@ -2166,6 +2297,8 @@ let pvzDataOriginally = [
   "ПВЗ_4",
   "ППВЗ_5",
   "ППВЗ_7",
+  "ПВЗ_8",
+  "ППВЗ_9",
   "НаДом",
 ];
 
@@ -2216,7 +2349,9 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                         user.role !== 'PVZ' &&
                         user.role !== 'COURIER' &&
                         user.role !== 'PPVZ' &&
-                        user.role !== 'RMANAGER'
+                        user.role !== 'RMANAGER' &&
+                        user.username !== 'Мешков' &&
+                        user.username !== 'Шведова'
                       "
                       class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
                       v-model="selectedPVZ"
@@ -2232,6 +2367,19 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                       v-model="selectedPVZ"
                     >
                       <option value="Все ППВЗ" selected>Все ППВЗ</option>
+                      <option v-for="pvzValue in user.PVZ">
+                        {{ pvzValue }}
+                      </option>
+                    </select>
+                    <select
+                      v-else-if="
+                        user.username === 'Мешков' ||
+                        user.username === 'Шведова'
+                      "
+                      class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
+                      v-model="selectedPVZ"
+                    >
+                      <option value="Все ПВЗ (Город)" selected>Все ПВЗ</option>
                       <option v-for="pvzValue in user.PVZ">
                         {{ pvzValue }}
                       </option>
@@ -2456,9 +2604,22 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
               </div>
             </div>
 
-            <div v-if="selectedTypeOfTransaction !== 'Доставка'">
+            <div
+              v-if="
+                selectedTypeOfTransaction !== 'Доставка' &&
+                selectedTypeOfTransaction !== 'Баланс безнал'
+              "
+            >
               <div class="text-center text-2xl mt-10">
                 <h1>Итого наличных</h1>
+                <h1 class="font-bold text-secondary-color text-4xl mt-3">
+                  {{ formatNumber(Math.ceil(allSum)) }} ₽
+                </h1>
+              </div>
+            </div>
+            <div v-else-if="selectedTypeOfTransaction === 'Баланс безнал'">
+              <div class="text-center text-2xl mt-10">
+                <h1>Итого безнал</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(allSum)) }} ₽
                 </h1>
@@ -2500,9 +2661,23 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
           >
             Заявка на вывод средств наличные</UIMainButton
           >
+
           <BalanceTable
+            v-if="user.username !== 'Мешков' && user.username !== 'Шведова'"
             @update-delivery-row="updateDeliveryRow"
             :rows="rowsWithProfitRows"
+            :user="user"
+            @open-modal="openModal"
+          />
+
+          <BalanceTable
+            v-if="user.username === 'Мешков' || user.username === 'Шведова'"
+            @update-delivery-row="updateDeliveryRow"
+            :rows="
+              rowsWithProfitRows.filter((row: IBalance) =>
+                user.PVZ.includes(row.pvz)
+              )
+            "
             :user="user"
             @open-modal="openModal"
           />
@@ -2531,13 +2706,29 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
               <div class="text-black">
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">ПВЗ</label>
+
                   <USelectMenu
+                    v-if="
+                      user.username !== 'Мешков' && user.username !== 'Шведова'
+                    "
                     :disabled="rowData.id > 0"
                     class="w-full"
                     v-model="rowData.pvz"
                     value-attribute="name"
                     option-attribute="name"
                     :options="pvz"
+                  />
+
+                  <USelectMenu
+                    v-if="
+                      user.username === 'Мешков' || user.username === 'Шведова'
+                    "
+                    :disabled="rowData.id > 0"
+                    class="w-full"
+                    v-model="rowData.pvz"
+                    value-attribute="name"
+                    option-attribute="name"
+                    :options="user.PVZ"
                   />
                 </div>
 
@@ -2920,9 +3111,22 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
               </div>
             </div>
 
-            <div v-if="selectedTypeOfTransaction !== 'Доставка'">
+            <div
+              v-if="
+                selectedTypeOfTransaction !== 'Доставка' &&
+                selectedTypeOfTransaction !== 'Баланс безнал'
+              "
+            >
               <div class="text-center text-2xl mt-10">
                 <h1>Итого наличных</h1>
+                <h1 class="font-bold text-secondary-color text-4xl mt-3">
+                  {{ formatNumber(Math.ceil(allSum)) }} ₽
+                </h1>
+              </div>
+            </div>
+            <div v-else-if="selectedTypeOfTransaction === 'Баланс безнал'">
+              <div class="text-center text-2xl mt-10">
+                <h1>Итого безнал</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(allSum)) }} ₽
                 </h1>

@@ -281,7 +281,7 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
           <div
             class="flex items-center justify-between max-sm:gap-2 max-[400px]:items-start mb-10"
           >
-            <UIMainButton @click="openModal">Создать строку</UIMainButton>
+            <UIMainButton class="mb-5" @click="openModal">Создать строку</UIMainButton>
             <NuxtLink
               v-if="
                 user.username === 'Директор' || user.username === 'Власенкова'
@@ -424,7 +424,7 @@ function handleFilteredRows(filteredRowsData: IEquipmentRow[]) {
           <div
             class="flex items-center justify-between max-sm:gap-2 max-[400px]:items-start"
           >
-            <UIMainButton @click="openModal">Создать строку</UIMainButton>
+            <UIMainButton class="mb-5" @click="openModal">Создать строку</UIMainButton>
             <NuxtLink
               v-if="
                 user.username === 'Директор' || user.username === 'Власенкова'

@@ -769,6 +769,8 @@ pvz.value.push("ПВЗ_3");
 pvz.value.push("ПВЗ_4");
 pvz.value.push("ППВЗ_5");
 pvz.value.push("ППВЗ_7");
+pvz.value.push("ПВЗ_8");
+pvz.value.push("ППВЗ_9");
 
 let typesOfExpenditure = ref([
   "Передача денежных средств",

@@ -274,6 +274,21 @@ async function submitForm() {
       if (phoneNumbersWithoutPercent.value.includes(user.value.phoneNumber)) {
         rowData.value.percentClient = 0;
       }
+
+      if (
+        rowData.value.dispatchPVZ === "ПВЗ_2" &&
+        rowData.value.productLink === "Wildberries"
+      ) {
+        rowData.value.percentClient = 5;
+      }
+
+      if (
+        rowData.value.dispatchPVZ === "ПВЗ_2" &&
+        rowData.value.productLink === "Ozon"
+      ) {
+        rowData.value.percentClient = 0;
+      }
+
       getCellFromName();
 
       isLoading.value = true;
@@ -657,7 +672,6 @@ function removeAskingHistory() {
               <label>Прикрепите скриншот Штрих-кода*</label>
               <div v-if="!rowData.img" class="h-[44px]">
                 <UInput
-                  :disabled="!isAvailable"
                   @change="uploadQRFile"
                   class="w-full mt-3"
                   type="file"

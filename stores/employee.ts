@@ -26,6 +26,8 @@ export const useEmployeesStore = defineStore("employees", () => {
     "ПВЗ_4",
     "ППВЗ_5",
     "ППВЗ_7",
+    "ПВЗ_8",
+    "ППВЗ_9",
     "Офис",
     "НаДом",
   ];

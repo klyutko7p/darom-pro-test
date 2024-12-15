@@ -240,7 +240,14 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
       );
     } else if (user.value.role === "RMANAGER") {
       filteredRows.value = filteredRows.value.filter(
-        (row) => row.dispatchPVZ && row.dispatchPVZ.includes(user.value.PVZ)
+        (row) => row.dispatchPVZ && user.value.PVZ.includes(row.dispatchPVZ)
+      );
+    } else if (
+      user.value.username === "Мешков" ||
+      user.value.username === "Шведова"
+    ) {
+      filteredRows.value = filteredRows.value.filter(
+        (row) => row.dispatchPVZ && user.value.PVZ.includes(row.dispatchPVZ)
       );
     }
   }
@@ -251,6 +258,7 @@ async function deleteIssuedRows() {
   await storeRansom.deleteIssuedRows("OurRansom");
   filteredRows.value = await storeRansom.getRansomRowsOurRansom();
   rows.value = filteredRows.value;
+  handleFilteredRows(filteredRows.value);
   isLoading.value = false;
 }
 
@@ -822,12 +830,32 @@ function watchQuantity() {
                 >
                 <div>
                   <select
+                    v-if="!user.username.includes('Светлана')"
                     class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.dispatchPVZ"
                     :disabled="user.dispatchPVZ1 === 'READ'"
                     @change="changePVZ"
                   >
                     <option v-for="pvzData in pvz" :value="pvzData.name">
+                      {{ pvzData.name }}
+                    </option>
+                  </select>
+                  <select
+                    v-if="user.username.includes('Светлана')"
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.dispatchPVZ"
+                    :disabled="user.dispatchPVZ1 === 'READ'"
+                    @change="changePVZ"
+                  >
+                    <option
+                      v-for="pvzData in pvz?.filter(
+                        (pvz) =>
+                          pvz.name !== 'ППВЗ_7' &&
+                          pvz.name !== 'ПВЗ_8' &&
+                          pvz.name !== 'ППВЗ_9'
+                      )"
+                      :value="pvzData.name"
+                    >
                       {{ pvzData.name }}
                     </option>
                   </select>
@@ -1140,9 +1168,7 @@ function watchQuantity() {
                   v-model="rowData.dp"
                 />
               </div> -->
-              <UIMainButton @click="updateRow"
-                >Сохранить
-              </UIMainButton>
+              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
               <UIMainButton @click="closeModal">Отменить </UIMainButton>
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
@@ -1244,12 +1270,32 @@ function watchQuantity() {
                 >
                 <div>
                   <select
+                    v-if="!user.username.includes('Светлана')"
                     class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.dispatchPVZ"
                     :disabled="user.dispatchPVZ1 === 'READ'"
                     @change="changePVZ"
                   >
                     <option v-for="pvzData in pvz" :value="pvzData.name">
+                      {{ pvzData.name }}
+                    </option>
+                  </select>
+                  <select
+                    v-if="user.username.includes('Светлана')"
+                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
+                    v-model="rowData.dispatchPVZ"
+                    :disabled="user.dispatchPVZ1 === 'READ'"
+                    @change="changePVZ"
+                  >
+                    <option
+                      v-for="pvzData in pvz?.filter(
+                        (pvz) =>
+                          pvz.name !== 'ППВЗ_7' &&
+                          pvz.name !== 'ПВЗ_8' &&
+                          pvz.name !== 'ППВЗ_9'
+                      )"
+                      :value="pvzData.name"
+                    >
                       {{ pvzData.name }}
                     </option>
                   </select>
@@ -1554,9 +1600,7 @@ function watchQuantity() {
                   v-model="rowData.dp"
                 />
               </div> -->
-              <UIMainButton @click="updateRow"
-                >Сохранить
-              </UIMainButton>
+              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
               <UIMainButton @click="closeModal">Отменить </UIMainButton>
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>

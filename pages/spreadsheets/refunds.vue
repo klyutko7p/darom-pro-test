@@ -53,6 +53,14 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
         row.deliveredSC !== null
     );
   }
+
+  if (filteredRows.value) {
+    if (user.value.username === "Мешков" || user.value.username === "Шведова") {
+      filteredRows.value = filteredRows.value.filter(
+        (row) => row.dispatchPVZ && user.value.PVZ.includes(row.dispatchPVZ)
+      );
+    }
+  }
 }
 
 onMounted(async () => {

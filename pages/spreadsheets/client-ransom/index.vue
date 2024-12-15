@@ -152,6 +152,7 @@ async function deleteIssuedRows() {
   await storeRansom.deleteIssuedRows("ClientRansom");
   filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
   rows.value = filteredRows.value;
+  handleFilteredRows(filteredRows.value);
   isLoading.value = false;
 }
 
@@ -183,6 +184,7 @@ async function deleteNotSortedRows() {
   await Promise.all(promises);
   filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
   rows.value = filteredRows.value;
+  handleFilteredRows(filteredRows.value);
   isLoading.value = false;
 }
 
@@ -254,7 +256,14 @@ function handleFilteredRows(filteredRowsData: IClientRansom[]) {
       );
     } else if (user.value.role === "RMANAGER") {
       filteredRows.value = filteredRows.value.filter(
-        (row) => row.dispatchPVZ && row.dispatchPVZ.includes(user.value.PVZ)
+        (row) => row.dispatchPVZ && user.value.PVZ.includes(row.dispatchPVZ)
+      );
+    } else if (
+      user.value.username === "Мешков" ||
+      user.value.username === "Шведова"
+    ) {
+      filteredRows.value = filteredRows.value.filter(
+        (row) => row.dispatchPVZ && user.value.PVZ.includes(row.dispatchPVZ)
       );
     }
   }
