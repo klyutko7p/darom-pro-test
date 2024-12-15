@@ -533,6 +533,9 @@ async function writeClipboardText(text: any) {
           @click="updateDeliveryRows('additionally2')"
           >Отказ брак
         </UIActionButton2>
+        <UIActionButton2 @click="updateDeliveryRows('additionally4')"
+          >Отказ подмена
+        </UIActionButton2>
       </div>
     </div>
 
@@ -579,6 +582,9 @@ async function writeClipboardText(text: any) {
           @click="updateDeliveryRows('additionally2')"
           >Отказ брак
         </UIActionButton2>
+        <UIActionButton2 @click="updateDeliveryRows('additionally4')"
+          >Отказ подмена
+        </UIActionButton2>
       </div>
     </div>
 
@@ -623,7 +629,7 @@ async function writeClipboardText(text: any) {
                 user.role === 'SORTIROVKA' ||
                 user.username === 'Волошина' ||
                 user.username === 'Шведова' ||
-                user.username === 'Мешков' 
+                user.username === 'Мешков'
               "
             >
               изменение
@@ -832,7 +838,7 @@ async function writeClipboardText(text: any) {
               v-if="
                 (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
                 user.username === 'Шведова' ||
-                user.username === 'Мешков' 
+                user.username === 'Мешков'
               "
             >
               удаление
@@ -867,7 +873,7 @@ async function writeClipboardText(text: any) {
                 user.role === 'SORTIROVKA' ||
                 user.username === 'Волошина' ||
                 user.username === 'Шведова' ||
-                user.username === 'Мешков' 
+                user.username === 'Мешков'
               "
             >
               <div
@@ -1064,7 +1070,8 @@ async function writeClipboardText(text: any) {
                 row.additionally !== 'Отказ клиент' &&
                 row.additionally !== 'Отказ клиент онлайн' &&
                 row.additionally !== 'Отказ клиент наличные' &&
-                row.additionally !== 'Отказ брак'
+                row.additionally !== 'Отказ брак' &&
+                row.additionally !== 'Отказ подмена' 
               "
             >
               {{ row.profit2 }}
@@ -1076,7 +1083,8 @@ async function writeClipboardText(text: any) {
                 (row.additionally === 'Отказ клиент' ||
                   row.additionally === 'Отказ клиент онлайн' ||
                   row.additionally === 'Отказ клиент наличные' ||
-                  row.additionally === 'Отказ брак')
+                  row.additionally === 'Отказ брак' ||
+                  row.additionally === 'Отказ подмена')
               "
             >
               {{ row.profit2 }}

@@ -23,6 +23,7 @@ export default defineEventHandler(async (event) => {
             { additionally: "Отказ клиент онлайн" },
             { additionally: "Отказ клиент" },
             { additionally: "Отказ брак" },
+            { additionally: "Отказ подмена" },
           ],
           issued: {
             gt: startDate,

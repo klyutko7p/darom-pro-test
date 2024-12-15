@@ -600,6 +600,7 @@ function getFromNameFromCell() {
                     <option value="Оплачено онлайн">Оплачено онлайн</option>
                     <option value="Отказ клиент">Отказ клиент</option>
                     <option value="Отказ брак">Отказ брак</option>
+                    <option value="Отказ подмена">Отказ подмена</option>
                   </select>
                 </div>
               </div>
@@ -900,6 +901,7 @@ function getFromNameFromCell() {
                     <option value="Оплачено онлайн">Оплачено онлайн</option>
                     <option value="Отказ клиент">Отказ клиент</option>
                     <option value="Отказ брак">Отказ брак</option>
+                    <option value="Отказ подмена">Отказ подмена</option>
                   </select>
                 </div>
               </div>

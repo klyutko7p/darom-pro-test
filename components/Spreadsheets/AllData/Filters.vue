@@ -5,6 +5,7 @@ const props = defineProps({
   user: { type: Object as PropType<User>, required: true },
   uniqueOrderAccounts: { type: Array as PropType<string[]>, required: true },
   uniqueNotation: { type: Array as PropType<string[]>, required: true },
+  uniqueCreatedUser: { type: Array as PropType<string[]>, required: true },
   uniqueOrderPVZ: { type: Array as PropType<string[]>, required: true },
   uniquePVZ: { type: Array as PropType<string[]>, required: true },
   uniqueCells: { type: Array as PropType<string[]>, required: true },
@@ -25,6 +26,7 @@ const selectedDispatchPVZ = ref<Array<string>>([]);
 const selectedOrderPVZ = ref<Array<string>>([]);
 const selectedOrderAccount = ref<Array<string>>([]);
 const selectedNotation = ref<Array<string>>([]);
+const selectedCreatedUser = ref<Array<string>>([]);
 const selectedAdditionally = ref<Array<string>>([]);
 const selectedPriceSite = ref<Array<string>>([]);
 const startingDate = ref<Date | string | null>(null);
@@ -88,6 +90,11 @@ onMounted(async () => {
   const storedNotation = loadFromLocalStorage("storedNotation");
   if (storedNotation !== null) {
     selectedNotation.value = storedNotation;
+  }
+
+  const storedCreatedUser = loadFromLocalStorage("selectedCreatedUser");
+  if (storedCreatedUser !== null) {
+    selectedCreatedUser.value = storedCreatedUser;
   }
 
   const storedStartingDate = loadFromLocalStorage("startingDate");
@@ -199,6 +206,7 @@ const filterRows = async () => {
     selectedOrderPVZ.value,
     selectedOrderAccount.value,
     selectedNotation.value,
+    selectedCreatedUser.value,
     selectedAdditionally.value,
     selectedPriceSite.value,
     newStartingDate,
@@ -223,6 +231,7 @@ function clearFields() {
   selectedFromName.value = [];
   selectedAdditionally.value = [];
   selectedNotation.value = [];
+  selectedCreatedUser.value = [];
   startingDate.value = "";
   endDate.value = "";
   startingDate2.value = "";
@@ -240,6 +249,7 @@ const selectedArrays = [
   selectedOrderPVZ,
   selectedOrderAccount,
   selectedNotation,
+  selectedCreatedUser,
   selectedAdditionally,
   selectedPriceSite,
 ];
@@ -283,6 +293,7 @@ function saveFiltersToLocalStorage() {
   saveToLocalStorage("selectedOrderPVZ", selectedOrderPVZ.value);
   saveToLocalStorage("selectedOrderAccount", selectedOrderAccount.value);
   saveToLocalStorage("selectedNotation", selectedNotation.value);
+  saveToLocalStorage("selectedCreatedUser", selectedCreatedUser.value);
   saveToLocalStorage("selectedAdditionally", selectedAdditionally.value);
   saveToLocalStorage("selectedPriceSite", selectedPriceSite.value);
   saveToLocalStorage("startingDate", startingDate.value);
@@ -310,6 +321,7 @@ function clearLocalStorage() {
   selectedFromName.value = [];
   selectedAdditionally.value = [];
   selectedNotation.value = [];
+  selectedCreatedUser.value = [];
   startingDate.value = null;
   endDate.value = null;
   startingDate2.value = null;
@@ -442,6 +454,16 @@ let dateFilter = ref("issued");
             :multiple="true"
             :close-on-select="true"
             placeholder="Выберите Примечание"
+          />
+        </div>
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Создал</h1>
+          <VueMultiselect
+            v-model="selectedCreatedUser"
+            :options="uniqueCreatedUser"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите Создал"
           />
         </div>
       </div>

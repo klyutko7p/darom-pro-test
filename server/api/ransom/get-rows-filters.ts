@@ -10,6 +10,7 @@ interface IRequestBody {
   selectedOrderPVZ: string[];
   selectedOrderAccount: string[];
   selectedNotation: string[];
+  selectedCreatedUser: string[];
   selectedAdditionally: string[];
   selectedPriceSite: string[];
   startDate: Date | string;
@@ -31,6 +32,7 @@ export default defineEventHandler(async (event) => {
       selectedOrderPVZ,
       selectedOrderAccount,
       selectedNotation,
+      selectedCreatedUser,
       selectedAdditionally,
       selectedPriceSite,
       startDate,
@@ -69,6 +71,10 @@ export default defineEventHandler(async (event) => {
     if (selectedNotation.length > 0) {
       query += ` AND "notation" = ANY($${params.length + 1})`;
       params.push(selectedNotation);
+    }
+    if (selectedCreatedUser.length > 0) {
+      query += ` AND "createdUser" = ANY($${params.length + 1})`;
+      params.push(selectedCreatedUser);
     }
     if (selectedAdditionally.length > 0) {
       query += ` AND "additionally" = ANY($${params.length + 1})`;

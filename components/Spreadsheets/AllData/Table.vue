@@ -309,6 +309,7 @@ const nextPage = () => {
             >
               доход
             </th>
+
             <th
               scope="col"
               class="border-[1px]"
@@ -341,6 +342,17 @@ const nextPage = () => {
               "
             >
               удален
+            </th>
+            <th
+              scope="col"
+              class="border-[1px]"
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              сортирован
             </th>
             <th
               scope="col"
@@ -570,6 +582,7 @@ const nextPage = () => {
                 row.additionally !== 'Отказ клиент онлайн' &&
                 row.additionally !== 'Отказ клиент наличные' &&
                 row.additionally !== 'Отказ брак' &&
+                row.additionally !== 'Отказ подмена' &&
                 !row.prepayment &&
                 !isDateGreaterThanReference(row.created_at)
               "
@@ -589,6 +602,7 @@ const nextPage = () => {
                 row.additionally !== 'Отказ клиент онлайн' &&
                 row.additionally !== 'Отказ клиент наличные' &&
                 row.additionally !== 'Отказ брак' &&
+                row.additionally !== 'Отказ подмена' &&
                 !row.prepayment &&
                 isDateGreaterThanReference(row.created_at)
               "
@@ -608,6 +622,7 @@ const nextPage = () => {
                 row.additionally !== 'Отказ клиент онлайн' &&
                 row.additionally !== 'Отказ клиент наличные' &&
                 row.additionally !== 'Отказ брак' &&
+                row.additionally !== 'Отказ подмена' &&
                 row.prepayment
               "
             >
@@ -628,12 +643,12 @@ const nextPage = () => {
                 (row.additionally === 'Отказ клиент' ||
                   row.additionally === 'Отказ клиент онлайн' ||
                   row.additionally === 'Отказ клиент наличные' ||
-                  row.additionally === 'Отказ брак')
+                  row.additionally === 'Отказ брак' ||
+                  row.additionally === 'Отказ подмена')
               "
             >
               {{ row.profit1 }}
             </td>
-
             <td
               class="border-[1px]"
               v-if="
@@ -663,6 +678,16 @@ const nextPage = () => {
               "
             >
               {{ storeUsers.getNormalizedDate(row.deleted) }}
+            </td>
+            <td
+              class="border-[1px]"
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              сортировка
             </td>
             <td
               class="border-[1px]"

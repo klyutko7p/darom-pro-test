@@ -161,7 +161,11 @@ function getAllSum() {
     .reduce((acc, value) => acc + +value.priceRefund, 0);
 
   let sumOfPVZ7 = rowsOurRansom.value
-    ?.filter((row) => row.additionally === "Отказ брак")
+    ?.filter(
+      (row) =>
+        row.additionally === "Отказ брак" ||
+        row.additionally === "Отказ подмена"
+    )
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ8 = rowsOurRansom.value
@@ -177,7 +181,8 @@ function getAllSum() {
       (row) =>
         row.additionally !== "Отказ клиент наличные" &&
         row.additionally !== "Отказ клиент" &&
-        row.additionally !== "Отказ брак"
+        row.additionally !== "Отказ брак" &&
+        row.additionally !== "Отказ подмена"
     )
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
@@ -186,7 +191,8 @@ function getAllSum() {
       (row) =>
         row.additionally !== "Отказ клиент наличные" &&
         row.additionally !== "Отказ клиент" &&
-        row.additionally !== "Отказ брак"
+        row.additionally !== "Отказ брак" &&
+        row.additionally !== "Отказ подмена"
     )
     .reduce((acc, value) => acc + +value.deliveredKGT, 0);
 

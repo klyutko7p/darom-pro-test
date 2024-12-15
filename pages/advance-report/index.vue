@@ -220,7 +220,11 @@ function getAllSumDirector() {
     .reduce((acc, value) => acc + +value.priceRefund, 0);
 
   let sumOfPVZ7 = rowsOurRansom.value
-    ?.filter((row) => row.additionally === "Отказ брак")
+    ?.filter(
+      (row) =>
+        row.additionally === "Отказ брак" ||
+        row.additionally === "Отказ подмена"
+    )
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
   let sumOfPVZ8 = rowsOurRansom.value
@@ -237,7 +241,8 @@ function getAllSumDirector() {
         row.additionally !== "Отказ клиент наличные" &&
         row.additionally !== "Отказ клиент безнал" &&
         row.additionally !== "Отказ клиент" &&
-        row.additionally !== "Отказ брак"
+        row.additionally !== "Отказ брак" &&
+        row.additionally !== "Отказ подмена"
     )
     .reduce((acc, value) => acc + +value.priceSite, 0);
 
@@ -246,7 +251,8 @@ function getAllSumDirector() {
       (row) =>
         row.additionally !== "Отказ клиент наличные" &&
         row.additionally !== "Отказ клиент" &&
-        row.additionally !== "Отказ брак"
+        row.additionally !== "Отказ брак" &&
+        row.additionally !== "Отказ подмена"
     )
     .reduce((acc, value) => acc + +value.deliveredKGT, 0);
 
@@ -586,7 +592,9 @@ function getSumCreditBalance() {
       .reduce((acc, value) => acc + +value.expenditure, 0);
 
     sumCreditBalance.value =
-      sumOfPVZ1 - sumOfPVZ2 - 100000 - 1600000 < 0 ? 0 : sumOfPVZ1 - sumOfPVZ2 - 100000 - 1600000;
+      sumOfPVZ1 - sumOfPVZ2 - 100000 - 1600000 < 0
+        ? 0
+        : sumOfPVZ1 - sumOfPVZ2 - 100000 - 1600000;
     sumCreditBalanceDebt.value =
       sumOfPVZ1Debt - sumOfPVZ2Debt + 1700000 < 0
         ? 0

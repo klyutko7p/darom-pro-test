@@ -22,6 +22,8 @@ function getAdditionally(status: string) {
     return "Отказ брак";
   } else if (status === "additionally3") {
     return "Оплата наличными";
+  } else if (status === "additionally4") {
+    return "Отказ подмена";
   }
 }
 
@@ -36,7 +38,7 @@ function getPaid(status: string) {
 function getAmountFromClient(status: string, sumOfRejectValue: any) {
   if (status === "additionally") {
     // return "Онлайн";
-    return
+    return;
   } else if (status === "additionally1-1") {
     return sumOfRejectValue.value;
   } else if (status === "additionally1-2") {
@@ -45,6 +47,8 @@ function getAmountFromClient(status: string, sumOfRejectValue: any) {
     return 0;
   } else if (status === "additionally3") {
     return;
+  } else if (status === "additionally4") {
+    return 0;
   }
 }
 
@@ -59,6 +63,8 @@ function getProfit(status: string, sumOfRejectValue: any) {
     return 0;
   } else if (status === "additionally3") {
     return;
+  } else if (status === "additionally4") {
+    return 0;
   }
 }
 
@@ -74,7 +80,7 @@ export default defineEventHandler(async (event) => {
         },
       },
       select: {
-        id: true, 
+        id: true,
         amountFromClient1: true,
       },
     });
@@ -116,6 +122,9 @@ export default defineEventHandler(async (event) => {
       case "additionally3":
         updateField = "additionally";
         break;
+      case "additionally4":
+        updateField = "additionally";
+        break;
       case "shipped":
         updateField = "shipped";
         break;
@@ -148,7 +157,7 @@ export default defineEventHandler(async (event) => {
         const updateRow = await prisma.ourRansom.updateMany({
           where: {
             id: {
-              equals: element.id, 
+              equals: element.id,
             },
           },
           data: {

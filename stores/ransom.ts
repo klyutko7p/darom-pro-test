@@ -767,6 +767,9 @@ export const useRansomStore = defineStore("ransom", () => {
         } else if (row.additionally === "Отказ брак") {
           row.amountFromClient1 = 0;
           row.profit1 = 0;
+        } else if (row.additionally === "Отказ подмена") {
+          row.amountFromClient1 = 0;
+          row.profit1 = 0;
         } else {
           if (row.priceSite > row.prepayment) {
             row.amountFromClient1 = Math.ceil(
@@ -959,6 +962,8 @@ export const useRansomStore = defineStore("ransom", () => {
           status = "Отказ проведён";
         } else if (flag === "additionally3") {
           status = "Заказ выдан";
+        } else if (flag === "additionally4") {
+          status = "Отказ проведён";
         }
 
         announce(`${status}`);
@@ -1213,6 +1218,7 @@ export const useRansomStore = defineStore("ransom", () => {
     selectedOrderPVZ: string[],
     selectedOrderAccount: string[],
     selectedNotation: string[],
+    selectedCreatedUser: string[],
     selectedAdditionally: string[],
     selectedPriceSite: string[],
     startDate: Date | string,
@@ -1237,6 +1243,7 @@ export const useRansomStore = defineStore("ransom", () => {
           selectedOrderPVZ,
           selectedOrderAccount,
           selectedNotation,
+          selectedCreatedUser,
           selectedAdditionally,
           selectedPriceSite,
           startDate,

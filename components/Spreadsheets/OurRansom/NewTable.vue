@@ -255,6 +255,9 @@ let showPayRejectClient = ref(false);
         <UIActionButton2 @click="updateDeliveryRows('additionally2')"
           >Отказ брак
         </UIActionButton2>
+        <UIActionButton2 @click="updateDeliveryRows('additionally4')"
+          >Отказ подмена
+        </UIActionButton2>
       </div>
     </div>
 
@@ -717,6 +720,7 @@ let showPayRejectClient = ref(false);
                 row.additionally !== 'Отказ клиент онлайн' &&
                 row.additionally !== 'Отказ клиент наличные' &&
                 row.additionally !== 'Отказ брак' &&
+                row.additionally !== 'Отказ подмена' &&
                 !row.prepayment &&
                 !isDateGreaterThanReference(row.created_at)
               "
@@ -735,7 +739,8 @@ let showPayRejectClient = ref(false);
                 row.additionally !== 'Отказ клиент' &&
                 row.additionally !== 'Отказ клиент онлайн' &&
                 row.additionally !== 'Отказ клиент наличные' &&
-                row.additionally !== 'Отказ брак' &&
+                row.additionally !== 'Отказ брак' && 
+                row.additionally !== 'Отказ подмена' &&
                 !row.prepayment &&
                 isDateGreaterThanReference(row.created_at)
               "
@@ -754,7 +759,8 @@ let showPayRejectClient = ref(false);
                 row.additionally !== 'Отказ клиент' &&
                 row.additionally !== 'Отказ клиент онлайн' &&
                 row.additionally !== 'Отказ клиент наличные' &&
-                row.additionally !== 'Отказ брак' &&
+                row.additionally !== 'Отказ брак' && 
+                row.additionally !== 'Отказ подмена' &&
                 row.prepayment
               "
             >
@@ -775,7 +781,8 @@ let showPayRejectClient = ref(false);
                 (row.additionally === 'Отказ клиент' ||
                   row.additionally === 'Отказ клиент онлайн' ||
                   row.additionally === 'Отказ клиент наличные' ||
-                  row.additionally === 'Отказ брак')
+                  row.additionally === 'Отказ брак' ||
+                  row.additionally === 'Отказ подмена')
               "
             >
               {{ row.profit1 }}

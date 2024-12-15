@@ -314,16 +314,28 @@ function roundToNearestTen(num: number): number {
 function reduceArray(array: any, flag: string) {
   if (selectedTypeOfTransaction.value === "Доход") {
     if (flag === "OurRansom") {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      array = array.filter(
+        (row: any) =>
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена"
+      );
       return array.reduce(
         (ac: any, curValue: any) => ac + calculateValue(curValue),
         0
       );
     } else if (flag === "ClientRansom") {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      array = array.filter(
+        (row: any) =>
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена"
+      );
       return array.reduce((ac: any, curValue: any) => ac + curValue.profit2, 0);
     } else {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      array = array.filter(
+        (row: any) =>
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена"
+      );
       return array.reduce((ac: any, curValue: any) => ac + curValue.profit3, 0);
     }
   } else if (selectedTypeOfTransaction.value === "Заказано") {
@@ -356,12 +368,14 @@ function reduceArray(array: any, flag: string) {
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент онлайн" &&
+          row.additionally !== "Отказ подмена" &&
           new Date(row.created_at) < new Date("2024-06-05T00:00:01")
       );
       let array2 = arrayCopy.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент онлайн" &&
+          row.additionally !== "Отказ подмена" &&
           new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
       );
       let firstReduce = array.reduce(
@@ -381,12 +395,14 @@ function reduceArray(array: any, flag: string) {
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент онлайн" &&
+          row.additionally !== "Отказ подмена" &&
           new Date(row.created_at) < new Date("2024-06-05T00:00:01")
       );
       let array2 = arrayCopy.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент онлайн" &&
+          row.additionally !== "Отказ подмена" &&
           new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
       );
       let firstReduce = array.reduce(
@@ -407,6 +423,7 @@ function reduceArray(array: any, flag: string) {
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена" &&
           row.additionally !== "Отказ клиент наличные"
       );
       if (array.length > 0) {
@@ -454,6 +471,7 @@ function reduceArray(array: any, flag: string) {
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена" &&
           row.additionally !== "Отказ клиент наличные"
       );
       if (array.length > 0) {
@@ -479,6 +497,7 @@ function reduceArray(array: any, flag: string) {
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена" &&
           row.additionally !== "Отказ клиент наличные"
       );
       if (array.length > 0) {
@@ -491,7 +510,11 @@ function reduceArray(array: any, flag: string) {
       }
     }
   } else if (selectedTypeOfTransaction.value === "Доставка") {
-    array = array.filter((row: any) => row.additionally !== "Отказ брак");
+    array = array.filter(
+      (row: any) =>
+        row.additionally !== "Отказ брак" &&
+        row.additionally !== "Отказ подмена"
+    );
     return array.reduce(
       (ac: any, curValue: any) => ac + curValue.amountFromClient3,
       0
@@ -503,12 +526,14 @@ function reduceArray(array: any, flag: string) {
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент онлайн" &&
+          row.additionally !== "Отказ подмена" &&
           new Date(row.created_at) < new Date("2024-06-05T00:00:01")
       );
       let array2 = arrayCopy.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
           row.additionally !== "Отказ клиент онлайн" &&
+          row.additionally !== "Отказ подмена" &&
           new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
       );
       let firstReduce = array.reduce(
@@ -526,6 +551,7 @@ function reduceArray(array: any, flag: string) {
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена" &&
           row.additionally !== "Отказ клиент онлайн"
       );
       return array.reduce(
@@ -536,6 +562,7 @@ function reduceArray(array: any, flag: string) {
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена" &&
           row.additionally !== "Отказ клиент онлайн"
       );
       return array.reduce(
@@ -549,12 +576,14 @@ function reduceArray(array: any, flag: string) {
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена" &&
           row.additionally !== "Отказ клиент наличные" &&
           new Date(row.created_at) < new Date("2024-06-05T00:00:01")
       );
       let array2 = arrayCopy.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена" &&
           row.additionally !== "Отказ клиент наличные" &&
           new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
       );
@@ -573,6 +602,7 @@ function reduceArray(array: any, flag: string) {
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена" &&
           row.additionally !== "Отказ клиент наличные"
       );
       return array.reduce(
@@ -583,6 +613,7 @@ function reduceArray(array: any, flag: string) {
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена" &&
           row.additionally !== "Отказ клиент наличные"
       );
       return array.reduce(
@@ -596,12 +627,14 @@ function reduceArray(array: any, flag: string) {
       array = array.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена" &&
           row.additionally !== "Отказ клиент наличные" &&
           new Date(row.created_at) < new Date("2024-06-05T00:00:01")
       );
       let array2 = arrayCopy.filter(
         (row: any) =>
           row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена" &&
           row.additionally !== "Отказ клиент наличные" &&
           new Date(row.created_at) >= new Date("2024-06-05T00:00:01")
       );
@@ -617,13 +650,21 @@ function reduceArray(array: any, flag: string) {
       );
       return firstReduce + secondReduce;
     } else if (flag === "ClientRansom") {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      array = array.filter(
+        (row: any) =>
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена"
+      );
       return array.reduce(
         (ac: any, curValue: any) => ac + curValue.amountFromClient2 * 0.025,
         0
       );
     } else {
-      array = array.filter((row: any) => row.additionally !== "Отказ брак");
+      array = array.filter(
+        (row: any) =>
+          row.additionally !== "Отказ брак" &&
+          row.additionally !== "Отказ подмена"
+      );
       return array.reduce(
         (ac: any, curValue: any) => ac + curValue.amountFromClient3 * 0.025,
         0
@@ -637,6 +678,7 @@ function reduceArrayProfit(array: any[], flag: string) {
     return array.filter(
       (row: any) =>
         row.additionally !== "Отказ брак" &&
+        row.additionally !== "Отказ подмена" &&
         (!dateCondition || new Date(row.issued) >= dateCondition)
     );
   };
@@ -840,7 +882,7 @@ function getAllSum() {
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       allSum.value = sum1.value;
     }
-  } 
+  }
   // else if (selectedTypeOfTransaction.value === "Постоплата WB") {
   //   if (selectedPVZ.value === "Все ПВЗ") {
   //     copyArrayOurRansom.value = ourRansomRows.value?.filter(
@@ -1541,7 +1583,7 @@ function reduceArrayProfitManager(array: any[], flag: string): number {
   };
 
   array.forEach((row: any) => {
-    if (row.additionally !== "Отказ брак") {
+    if (row.additionally !== "Отказ брак" && row.additionally !== "Отказ подмена") {
       const roundFunction = shouldRound(row) ? roundOrCeil : Math.ceil;
       switch (flag) {
         case "OurRansom":
@@ -2136,7 +2178,14 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
   </Head>
 
   <div v-if="!isLoading">
-    <div v-if="token && (user.role === 'ADMIN' || user.username === 'Шведова' || user.username === 'Мешков')">
+    <div
+      v-if="
+        token &&
+        (user.role === 'ADMIN' ||
+          user.username === 'Шведова' ||
+          user.username === 'Мешков')
+      "
+    >
       <NuxtLayout name="admin">
         <div class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5">
           <div v-auto-animate>
@@ -2609,6 +2658,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                 color="orange"
                 variant="solid"
                 class="font-semibold duration-200"
+                v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
                 icon="material-symbols:filter-list-rounded"
                 @click="showFilters = !showFilters"
               >

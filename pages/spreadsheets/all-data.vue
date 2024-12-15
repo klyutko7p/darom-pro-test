@@ -55,6 +55,7 @@ let originallyRows = ref<Array<IOurRansom>>();
 
 const uniqueOrderAccounts = ref<Array<string>>([]);
 const uniqueNotation = ref<Array<string>>([]);
+const uniqueCreatedUser = ref<Array<string>>([]);
 const uniqueOrderPVZ = ref<Array<string>>([]);
 const uniquePVZ = ref<Array<string>>([]);
 const uniqueCells = ref<Array<string>>([]);
@@ -73,6 +74,7 @@ onMounted(async () => {
   const [
     orderAccounts,
     notation,
+    createdUser,
     orderPVZ,
     dispatchPVZ,
     cells,
@@ -81,6 +83,7 @@ onMounted(async () => {
     priceSite,
   ] = await Promise.all([
     storeRansom.getUniqueNonEmptyValuesQuery("orderAccount"),
+    storeRansom.getUniqueNonEmptyValuesQuery("createdUser"),
     storeRansom.getUniqueNonEmptyValuesQuery("notation"),
     storeRansom.getUniqueNonEmptyValuesQuery("orderPVZ"),
     storeRansom.getUniqueNonEmptyValuesQuery("dispatchPVZ"),
@@ -92,6 +95,7 @@ onMounted(async () => {
 
   uniqueOrderAccounts.value = orderAccounts;
   uniqueNotation.value = notation;
+  uniqueCreatedUser.value = notation;
   uniqueOrderPVZ.value = orderPVZ;
   uniquePVZ.value = dispatchPVZ;
   uniqueCells.value = cells;
@@ -115,6 +119,17 @@ onMounted(async () => {
       new Set(
         uniqueNotation.value
           .filter((item) => item && !item.includes("��"))
+          .map((item) => item.trim())
+          .sort((a, b) => a.localeCompare(b))
+      )
+    );
+  }
+
+  if (uniqueCreatedUser.value) {
+    uniqueCreatedUser.value = Array.from(
+      new Set(
+        uniqueCreatedUser.value
+          .filter((item) => item && !item.includes("��") && !item.includes("+"))
           .map((item) => item.trim())
           .sort((a, b) => a.localeCompare(b))
       )
@@ -198,6 +213,7 @@ const token = Cookies.get("token");
               @filtered-rows="handleFilteredRows"
               :uniqueOrderAccounts="uniqueOrderAccounts"
               :uniqueNotation="uniqueNotation"
+              :uniqueCreatedUser="uniqueCreatedUser"
               :uniqueOrderPVZ="uniqueOrderPVZ"
               :uniquePVZ="uniquePVZ"
               :uniqueCells="uniqueCells"
@@ -223,6 +239,7 @@ const token = Cookies.get("token");
               @filtered-rows="handleFilteredRows"
               :uniqueOrderAccounts="uniqueOrderAccounts"
               :uniqueNotation="uniqueNotation"
+              :uniqueCreatedUser="uniqueCreatedUser"
               :uniqueOrderPVZ="uniqueOrderPVZ"
               :uniquePVZ="uniquePVZ"
               :uniqueCells="uniqueCells"
