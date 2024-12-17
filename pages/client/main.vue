@@ -199,7 +199,7 @@ useSeoMeta({
           <h1 v-if="client.fio" class="text-xl">
             Приветствуем, {{ client.fio }}!
           </h1>
-          <h1 v-else class="text-xl mt-10 mb-10">
+          <h1 v-else class="text-xl">
             Приветствуем!
             <span class="text-sm italic"
               >Вы можете настроить личные данные в соответствующей

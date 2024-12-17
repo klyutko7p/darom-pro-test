@@ -541,6 +541,10 @@ function showAcceptModal() {
   isOpen.value = false;
 }
 
+function showWarning() {
+  toast.warning("Для продолжения оформления заказа зарегистрируйтесь!");
+}
+
 function closeAcceptModal() {
   isOpen.value = true;
   isShowAcceptModal.value = false;
@@ -1266,8 +1270,19 @@ let isNotAskingAcceptOrder = ref(false);
                   :trailing="false"
                 />
                 <UButton
-                  v-if="items.length > 0"
+                  v-if="items.length > 0 && user.phoneNumber !== '+70000000001'"
                   @click="showAcceptModal"
+                  class="font-bold"
+                  label="ОТПРАВИТЬ ЗАКАЗ"
+                  color="primary"
+                  icon="i-material-symbols-order-approve"
+                >
+                </UButton>
+                <UButton
+                  v-else-if="
+                    items.length > 0 && user.phoneNumber === '+70000000001'
+                  "
+                  @click="showWarning"
                   class="font-bold"
                   label="ОТПРАВИТЬ ЗАКАЗ"
                   color="primary"

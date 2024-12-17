@@ -28,6 +28,17 @@ async function signIn() {
   isLoading.value = false;
 }
 
+async function signInNoRegistration() {
+  message.value = "";
+  isLoading.value = true;
+  message.value = await storeClients.signIn(
+    '+70000000001',
+    '001001',
+    isForeignDevice.value
+  );
+  isLoading.value = false;
+}
+
 async function signInTelegram() {
   isLoading.value = true;
   await storeClients.signInTelegram(phoneNumberTelegram.value.trim());
@@ -503,6 +514,14 @@ async function waitingForAuth() {
           type="submit"
         >
           Войти по паролю
+        </UButton>
+        <UButton
+          @click="signInNoRegistration()"
+          icon="material-symbols:check-rounded"
+          class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+          type="submit"
+        >
+          Продолжить без регистрации
         </UButton>
       </div>
 

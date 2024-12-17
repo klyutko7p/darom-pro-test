@@ -148,6 +148,7 @@ function copyToClipboard() {
 
 let showPassword = ref(false);
 let newPasswordRepeat = ref("");
+
 </script>
 
 <template>
@@ -308,7 +309,10 @@ let newPasswordRepeat = ref("");
             <UIMainButton class="max-sm:w-full" @click="showChangePassword"
               >Поменять пароль</UIMainButton
             >
-            <UIMainButton class="max-sm:w-full" @click="saveChanges"
+            <UIMainButton
+              :disabled="user.phoneNumber === '+70000000001'"
+              class="max-sm:w-full"
+              @click="saveChanges"
               >Сохранить</UIMainButton
             >
           </div>

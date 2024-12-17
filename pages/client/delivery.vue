@@ -360,6 +360,10 @@ function removeAskingHistory() {
   isNotAskingOZ.value = false;
   isNotAskingYM.value = false;
 }
+
+function showWarning() {
+  toast.warning("Для продолжения оформления заказа зарегистрируйтесь!");
+}
 </script>
 
 <template>
@@ -806,7 +810,22 @@ function removeAskingHistory() {
                   :trailing="false"
                 />
                 <UButton
+                  v-if="user.phoneNumber !== '+70000000001'"
                   @click="submitForm()"
+                  class="font-bold"
+                  label="ОТПРАВИТЬ"
+                  color="primary"
+                >
+                  <template #trailing>
+                    <UIcon
+                      name="i-heroicons-arrow-right-20-solid"
+                      class="w-5 h-5"
+                    />
+                  </template>
+                </UButton>
+                <UButton
+                  v-if="user.phoneNumber === '+70000000001'"
+                  @click="showWarning()"
                   class="font-bold"
                   label="ОТПРАВИТЬ"
                   color="primary"

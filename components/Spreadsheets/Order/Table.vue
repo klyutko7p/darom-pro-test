@@ -153,7 +153,7 @@ watch([props.isShowModalValue], openModalEmit);
   <div
     :class="{ 'overflow-x-hidden max-h-[100px]': isShowModalValue }"
     class="relative"
-    v-if="rows"
+    v-if="rows.length"
   >
     <table
       id="theTable"
@@ -185,11 +185,7 @@ watch([props.isShowModalValue], openModalEmit);
           >
             название
           </th>
-          <th
-            scope="col"
-            class="border-[1px]"
-            v-if="link?.startsWith('1')"
-          >
+          <th scope="col" class="border-[1px]" v-if="link?.startsWith('1')">
             ссылка товара
           </th>
           <th
@@ -222,18 +218,10 @@ watch([props.isShowModalValue], openModalEmit);
           <th scope="col" class="border-[1px]" v-if="link?.startsWith('3')">
             сумма с клиента
           </th>
-          <th
-            scope="col"
-            class="border-[1px]"
-            v-if="link?.startsWith('2')"
-          >
+          <th scope="col" class="border-[1px]" v-if="link?.startsWith('2')">
             стоимость товаров
           </th>
-          <th
-            scope="col"
-            class="border-[1px]"
-            v-if="link?.startsWith('1')"
-          >
+          <th scope="col" class="border-[1px]" v-if="link?.startsWith('1')">
             стоимость товара
           </th>
           <th

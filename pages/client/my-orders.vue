@@ -284,7 +284,7 @@ function closeQRModal() {
           Оформленные заказы
         </span>
       </h1>
-      <div v-for="pvz in pvzs" class="mt-5">
+      <div v-if="copyRowsOurRansom?.length" v-for="pvz in pvzs" class="mt-5">
         <div
           class="border-[1px] shadow-xl rounded-lg bg-white max-sm:border-0 max-sm:shadow-none"
           v-if="
@@ -312,6 +312,9 @@ function closeQRModal() {
           />
         </div>
       </div>
+      <div class="bg-gray-100 text-center py-20 mt-5 font-semibold text-xl rounded-xl" v-else>
+        <h1>Список пуст</h1>
+      </div>
 
       <h1 class="mt-20 text-xl max-[330px]:text-lg">
         <span
@@ -321,7 +324,7 @@ function closeQRModal() {
           Оформленные доставки заказов по Штрих-коду (QR)
         </span>
       </h1>
-      <div v-for="pvz in pvzs" class="mt-5">
+      <div v-if="copyRowsClientRansom?.length" v-for="pvz in pvzs" class="mt-5">
         <div
           class="border-[1px] shadow-xl rounded-lg bg-white max-sm:border-0 max-sm:shadow-none"
           v-if="
@@ -348,6 +351,10 @@ function closeQRModal() {
             :isShowModalValue="isShowModalValue"
           />
         </div>
+      </div>
+
+      <div class="bg-gray-100 text-center py-20 mt-5 font-semibold text-xl rounded-xl" v-else>
+        <h1>Список пуст</h1>
       </div>
 
       <UINewModalClient v-show="isOpenQRModal" @close-modal="closeQRModal">
