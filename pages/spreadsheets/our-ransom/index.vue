@@ -577,6 +577,7 @@ async function updateDeliveryRows(obj: any) {
       );
       filteredRows.value = await storeRansom.getRansomRowsOurRansom();
       rows.value = filteredRows.value;
+      handleFilteredRows(filteredRows.value);
       isLoading.value = false;
       await updateCells();
     }
@@ -590,6 +591,7 @@ async function updateDeliveryRows(obj: any) {
     );
     filteredRows.value = await storeRansom.getRansomRowsOurRansom();
     rows.value = filteredRows.value;
+    handleFilteredRows(filteredRows.value);
     isLoading.value = false;
     await updateCells();
   }
