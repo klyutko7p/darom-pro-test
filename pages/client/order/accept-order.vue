@@ -712,7 +712,7 @@ let isNotAskingAcceptOrder = ref(false);
                 Проверьте информацию
               </h3>
               <Icon
-                @click="showFirstModal"
+                @click="router.push('/client/main?notification=false')"
                 name="i-heroicons-x-mark-20-solid"
                 size="24"
                 class="cursor-pointer hover:text-secondary-color duration-200"
