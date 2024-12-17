@@ -145,6 +145,8 @@ onMounted(async () => {
       ransomRowsForBalanceOurRansomDataPartTwo,
       ransomRowsForBalanceOurRansomDataPartThree,
       ransomRowsForBalanceOurRansomDataPartFour,
+      ransomRowsForBalanceOurRansomDataPartFive,
+      ransomRowsForBalanceOurRansomDataPartSix,
       ransomRowsForBalanceClientRansomData,
       pvzData,
     ] = await Promise.all([
@@ -159,6 +161,8 @@ onMounted(async () => {
       storeRansom.getRansomRowsForBalanceOurRansomPartTwo(),
       storeRansom.getRansomRowsForBalanceOurRansomPartThree(),
       storeRansom.getRansomRowsForBalanceOurRansomPartFour(),
+      storeRansom.getRansomRowsForBalanceOurRansomPartFive(),
+      storeRansom.getRansomRowsForBalanceOurRansomPartSix(),
       storeRansom.getRansomRowsForBalanceClientRansom(),
       storePVZ.getPVZ(),
     ]);
@@ -175,6 +179,8 @@ onMounted(async () => {
       ...ransomRowsForBalanceOurRansomDataPartTwo,
       ...ransomRowsForBalanceOurRansomDataPartThree,
       ...ransomRowsForBalanceOurRansomDataPartFour,
+      ...ransomRowsForBalanceOurRansomDataPartFive,
+      ...ransomRowsForBalanceOurRansomDataPartSix,
     ];
     clientRansomRows.value = ransomRowsForBalanceClientRansomData;
     pvz.value = pvzData;
@@ -2726,10 +2732,9 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                     :disabled="rowData.id > 0"
                     class="w-full"
                     v-model="rowData.pvz"
-                    value-attribute="name"
-                    option-attribute="name"
                     :options="user.PVZ"
                   />
+
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">

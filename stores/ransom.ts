@@ -584,6 +584,50 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  async function getRansomRowsForBalanceOurRansomPartFive() {
+    try {
+      let response = await fetch(
+        "/api/ransom/get-rows-for-balance-or-part-five",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        }
+      );
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsForBalanceOurRansomPartSix() {
+    try {
+      let response = await fetch(
+        "/api/ransom/get-rows-for-balance-or-part-six",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        }
+      );
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   function mapBackToOriginalFields(row: any) {
     const originalRow = {} as IOurRansom;
 
@@ -1310,6 +1354,8 @@ export const useRansomStore = defineStore("ransom", () => {
     clearRansomRow,
     deleteNotSortedRows,
     getRansomRowsForBalanceOurRansomPartFour,
+    getRansomRowsForBalanceOurRansomPartFive,
+    getRansomRowsForBalanceOurRansomPartSix,
     getRansomRowsByPVZInventory,
     announce,
   };

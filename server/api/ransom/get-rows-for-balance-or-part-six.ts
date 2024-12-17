@@ -1,13 +1,12 @@
 import { PrismaClient } from "@prisma/client";
-import * as msgpack from '@msgpack/msgpack';
+import * as msgpack from "@msgpack/msgpack";
 
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
   try {
     const rows = await prisma.ourRansom.findMany({
-      skip: 51000,
-      take: 17000,
+      skip: 85000,
       select: {
         dispatchPVZ: true,
         prepayment: true,
@@ -25,7 +24,7 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    const processedRows = rows.map(row => {
+    const processedRows = rows.map((row) => {
       const newRow = {};
 
       if (row.dispatchPVZ !== undefined) newRow.dp = row.dispatchPVZ;
@@ -33,7 +32,8 @@ export default defineEventHandler(async (event) => {
       if (row.dp !== undefined) newRow.dp = row.dp;
       if (row.additionally !== null) newRow.ad = row.additionally;
       if (row.deliveredKGT !== 0) newRow.dk = row.deliveredKGT;
-      if (row.amountFromClient1 !== undefined) newRow.ac = row.amountFromClient1;
+      if (row.amountFromClient1 !== undefined)
+        newRow.ac = row.amountFromClient1;
       if (row.issued !== null) newRow.i = row.issued;
       if (row.priceSite !== undefined) newRow.p = row.priceSite;
       if (row.deleted !== null) newRow.d = row.deleted;

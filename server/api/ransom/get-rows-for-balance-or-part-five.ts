@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export default defineEventHandler(async (event) => {
   try {
     const rows = await prisma.ourRansom.findMany({
-      skip: 51000,
+      skip: 68000,
       take: 17000,
       select: {
         dispatchPVZ: true,
