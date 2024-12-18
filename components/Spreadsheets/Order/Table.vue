@@ -56,7 +56,7 @@ function isDateGreaterThanReference(dateString: string | Date): boolean {
 
 function getStatus(row: IOurRansom | IClientRansom) {
   if (!row.orderPVZ) {
-    return "Товар обрабатывается";
+    return "Отправлен на сборку";
   }
 
   if (row.orderPVZ && !row.deliveredSC) {
@@ -64,11 +64,11 @@ function getStatus(row: IOurRansom | IClientRansom) {
   }
 
   if (row.orderPVZ && row.deliveredSC && !row.deliveredPVZ) {
-    return "Товар в пути";
+    return "В пути на пункт выдачи";
   }
 
   if (row.deliveredPVZ && !row.issued) {
-    return "Товар доставлен на ПВЗ";
+    return "Товар готов к получению";
   }
 
   if (row.issued) {
@@ -140,6 +140,28 @@ function openModalEmit() {
 }
 
 watch([props.isShowModalValue], openModalEmit);
+
+function add24Hours(createdAt: any) {
+  const date = new Date(createdAt);
+
+  date.setHours(date.getHours() + 24);
+
+  return storeUsers.getNormalizedDate(date);
+}
+
+function add1Hours(createdAt: any) {
+  const date = new Date(createdAt);
+
+  date.setHours(date.getHours() + 1);
+
+  return storeUsers.getNormalizedDate(date);
+}
+
+function addMinutes(date: any, minutes: any) {
+  const newDate = new Date(date);
+  newDate.setMinutes(newDate.getMinutes() + minutes);
+  return storeUsers.getNormalizedDate(newDate);
+}
 </script>
 
 <template>
@@ -377,20 +399,46 @@ watch([props.isShowModalValue], openModalEmit);
     </table>
   </div>
 
-  <UINewModalClient v-show="isShowModal" @close-modal="closeModal">
-    <template v-slot:header>
-      <div class="custom-header mr-10">
-        <h1 class="text-base">Статус доставки</h1>
-      </div>
-    </template>
-    <template v-slot:body>
+  <UModal
+    :ui="{
+      container: 'flex items-center justify-center text-center',
+    }"
+    v-model="isShowModal"
+    prevent-close
+  >
+    <UCard
+      :ui="{
+        ring: '',
+        divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+      }"
+    >
+      <template #header>
+        <div class="flex items-center justify-between">
+          <h3
+            class="text-base font-semibold flex items-center gap-2 leading-6 text-gray-900 dark:text-white"
+          >
+            Статус доставки
+          </h3>
+          <UButton
+            color="gray"
+            variant="ghost"
+            icon="i-heroicons-x-mark-20-solid"
+            class="-my-1"
+            @click="isShowModal = false"
+          />
+        </div>
+      </template>
+
       <div
         class="space-y-3 flex items-center justify-center flex-col font-semibold"
       >
-        <div v-if="rowStatus.issued" class="flex flex-col items-center gap-3">
+        <div
+          v-if="rowStatus.issued"
+          class="flex flex-col items-center gap-3 px-5 w-full"
+        >
           <div
             :class="{ 'animate-pulse': rowStatus.issued }"
-            class="flex items-center max-sm:w-full max-sm:min-w-[230px] gap-5 text-green-500 bg-green-100 px-3 py-2 rounded-xl shadow-inner w-[240px]"
+            class="flex items-center gap-5 text-green-500 bg-green-100 px-3 py-2 rounded-xl shadow-inner w-full"
           >
             <Icon
               name="i-line-md-circle-to-confirm-circle-transition"
@@ -405,8 +453,8 @@ watch([props.isShowModalValue], openModalEmit);
           </div>
         </div>
         <div
-          v-if="rowStatus.deliveredPVZ"
-          class="flex flex-col items-center gap-3"
+          v-if="rowStatus.deliveredPVZ && rowStatus.clientLink1"
+          class="flex flex-col items-center gap-3 px-5 w-full"
         >
           <Icon
             name="i-material-symbols-arrow-warm-up-rounded"
@@ -415,11 +463,11 @@ watch([props.isShowModalValue], openModalEmit);
           />
           <div
             :class="{ 'animate-pulse': !rowStatus.issued }"
-            class="flex items-center max-sm:w-full max-sm:min-w-[230px] gap-5 text-gray-500 bg-gray-100 px-3 py-2 rounded-xl shadow-inner w-[240px]"
+            class="flex items-center w-full gap-5 text-gray-500 bg-gray-100 px-3 py-2 rounded-xl shadow-inner"
           >
             <Icon name="i-line-md-map-marker-multiple-alt" size="24" />
             <div class="flex items-start flex-col text-sm">
-              <h1 class="">Товар доставлен на ПВЗ</h1>
+              <h1 class="">Товар готов к получению</h1>
               <h1>
                 {{ storeUsers.getNormalizedDate(rowStatus.deliveredPVZ) }}
               </h1>
@@ -427,8 +475,35 @@ watch([props.isShowModalValue], openModalEmit);
           </div>
         </div>
         <div
-          v-if="rowStatus.orderPVZ && rowStatus.deliveredSC"
-          class="flex flex-col items-center gap-3"
+          v-if="rowStatus.deliveredPVZ && rowStatus.clientLink2"
+          class="flex flex-col items-center gap-3 px-5 w-full"
+        >
+          <Icon
+            name="i-material-symbols-arrow-warm-up-rounded"
+            v-if="rowStatus.issued"
+            size="30"
+          />
+          <div
+            :class="{ 'animate-pulse': !rowStatus.issued }"
+            class="flex items-center w-full gap-5 text-gray-500 bg-gray-100 px-3 py-2 rounded-xl shadow-inner"
+          >
+            <Icon name="i-line-md-map-marker-multiple-alt" size="24" />
+            <div class="flex items-start flex-col text-sm">
+              <h1 class="">Товар готов к получению</h1>
+              <h1>
+                {{ addMinutes(rowStatus.deliveredPVZ, 15) }}
+              </h1>
+            </div>
+          </div>
+        </div>
+        <div
+          v-if="
+            rowStatus.orderPVZ &&
+            rowStatus.deliveredSC &&
+            !rowStatus.deliveredPVZ &&
+            rowStatus.clientLink1
+          "
+          class="flex flex-col items-center gap-3 px-5 w-full"
         >
           <Icon
             name="i-material-symbols-arrow-warm-up-rounded"
@@ -437,31 +512,135 @@ watch([props.isShowModalValue], openModalEmit);
           />
           <div
             :class="{ 'animate-pulse': !rowStatus.deliveredPVZ }"
-            class="flex items-center max-sm:w-full max-sm:min-w-[230px] gap-5 text-gray-500 bg-gray-100 px-3 py-2 rounded-xl shadow-inner w-[240px]"
+            class="flex items-center w-full gap-5 text-gray-500 bg-gray-100 px-3 py-2 rounded-xl shadow-inner"
           >
             <Icon name="i-eos-icons-hourglass" size="24" />
             <div class="flex items-start flex-col text-sm">
-              <h1 class="">Товар в пути</h1>
+              <h1 class="">В пути на пункт выдачи</h1>
+              <h1>{{ add1Hours(rowStatus.deliveredSC) }}</h1>
+            </div>
+          </div>
+        </div>
+        <div
+          v-if="
+            rowStatus.orderPVZ &&
+            rowStatus.deliveredSC &&
+            rowStatus.clientLink2 &&
+            rowStatus.deliveredPVZ
+          "
+          class="flex flex-col items-center gap-3 px-5 w-full"
+        >
+          <Icon
+            name="i-material-symbols-arrow-warm-up-rounded"
+            v-if="rowStatus.deliveredPVZ"
+            size="30"
+          />
+          <div
+            :class="{ 'animate-pulse': !rowStatus.deliveredPVZ }"
+            class="flex items-center w-full gap-5 text-gray-500 bg-gray-100 px-3 py-2 rounded-xl shadow-inner"
+          >
+            <Icon name="i-eos-icons-hourglass" size="24" />
+            <div class="flex items-start flex-col text-sm">
+              <h1 class="">В пути в пункт выдачи</h1>
+              <h1>
+                {{ storeUsers.getNormalizedDate(rowStatus.deliveredPVZ) }}
+              </h1>
+            </div>
+          </div>
+        </div>
+        <div
+          v-if="
+            rowStatus.orderPVZ && rowStatus.deliveredSC && rowStatus.clientLink2
+          "
+          class="flex flex-col items-center gap-3 px-5 w-full"
+        >
+          <Icon
+            v-if="rowStatus.deliveredPVZ"
+            name="i-material-symbols-arrow-warm-up-rounded"
+            size="30"
+          />
+          <div
+            :class="{ 'animate-pulse': !rowStatus.deliveredPVZ }"
+            class="flex items-center w-full gap-5 text-gray-500 bg-gray-100 px-3 py-2 rounded-xl shadow-inner"
+          >
+            <Icon
+              name="i-line-md-circle-to-confirm-circle-transition"
+              size="24"
+            />
+            <div class="flex items-start flex-col text-sm">
+              <h1>В пути в распределительный центр</h1>
+              <h1>{{ add1Hours(rowStatus.deliveredSC) }}</h1>
+            </div>
+          </div>
+        </div>
+        <div
+          v-if="rowStatus.orderPVZ && rowStatus.deliveredSC"
+          class="flex flex-col items-center gap-3 px-5 w-full"
+        >
+          <Icon name="i-material-symbols-arrow-warm-up-rounded" size="30" />
+          <div
+            :class="{ 'animate-pulse': !rowStatus.deliveredPVZ }"
+            class="flex items-center w-full gap-5 text-gray-500 bg-gray-100 px-3 py-2 rounded-xl shadow-inner"
+          >
+            <Icon
+              name="i-line-md-circle-to-confirm-circle-transition"
+              size="24"
+            />
+            <div class="flex items-start flex-col text-sm">
+              <h1 v-if="rowStatus.clientLink1">Прибыл в сортировочный центр</h1>
+              <h1 v-if="rowStatus.clientLink2">
+                Собран в сортировочном центре
+              </h1>
               <h1>{{ storeUsers.getNormalizedDate(rowStatus.deliveredSC) }}</h1>
             </div>
           </div>
         </div>
         <div
-          v-if="rowStatus.orderPVZ && !rowStatus.deliveredSC"
-          class="flex flex-col items-center gap-3"
+          class="flex flex-col items-center gap-3 px-5 w-full"
+          v-if="!rowStatus.deliveredSC"
         >
+          <Icon
+            name="i-material-symbols-arrow-warm-up-rounded"
+            v-if="rowStatus.deliveredSC"
+            size="30"
+          />
           <div
             :class="{ 'animate-pulse': !rowStatus.deliveredSC }"
-            class="flex items-center max-sm:w-full max-sm:min-w-[230px] gap-5 text-gray-500 bg-gray-100 px-3 py-2 rounded-xl shadow-inner w-[240px]"
+            class="flex items-center w-full gap-5 text-gray-500 bg-gray-100 px-3 py-2 rounded-xl shadow-inner"
           >
-            <Icon name="i-svg-spinners-clock" size="24" />
+            <Icon name="i-eos-icons-hourglass" size="24" />
             <div class="flex items-start flex-col text-sm">
-              <h1 class="">Товар сортируется</h1>
-              <h1>{{ storeUsers.getNormalizedDate(rowStatus.updated_at) }}</h1>
+              <h1 class="">В пути в сортировочный центр</h1>
+              <h1>{{ add24Hours(rowStatus.created_at) }}</h1>
             </div>
           </div>
         </div>
-        <div class="flex flex-col items-center gap-3">
+        <div
+          v-if="rowStatus.orderPVZ && !rowStatus.deliveredSC"
+          class="flex flex-col items-center gap-3 px-5 w-full"
+        >
+          <Icon
+            name="i-material-symbols-arrow-warm-up-rounded"
+            v-if="!rowStatus.deliveredSC"
+            size="30"
+          />
+          <div
+            :class="{ 'animate-pulse': !rowStatus.deliveredSC }"
+            class="flex items-center w-full gap-5 text-gray-500 bg-gray-100 px-3 py-2 rounded-xl shadow-inner"
+          >
+            <Icon name="i-svg-spinners-clock" size="24" />
+            <div class="flex items-start flex-col text-sm">
+              <h1 class="">Отправлен на сборку</h1>
+              <h1 v-if="rowStatus.clientLink1">
+                {{ storeUsers.getNormalizedDate(rowStatus.updated_at) }}
+              </h1>
+              <h1 v-if="rowStatus.clientLink2">
+                {{ addMinutes(rowStatus.updated_at, 10) }}
+              </h1>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col w-full items-center gap-3 px-5">
           <Icon
             v-if="
               (rowStatus.orderPVZ && !rowStatus.deliveredSC) ||
@@ -472,7 +651,7 @@ watch([props.isShowModalValue], openModalEmit);
           />
           <div
             :class="{ 'animate-pulse': !rowStatus.orderPVZ }"
-            class="flex items-center max-sm:w-full max-sm:min-w-[230px] gap-5 text-gray-500 bg-gray-100 px-3 py-2 rounded-xl shadow-inner w-[240px]"
+            class="flex items-center w-full gap-5 text-gray-500 bg-gray-100 px-3 py-2 rounded-xl shadow-inner"
           >
             <Icon name="i-line-md-uploading-loop" size="24" />
             <div class="flex items-start flex-col text-sm">
@@ -481,16 +660,18 @@ watch([props.isShowModalValue], openModalEmit);
             </div>
           </div>
         </div>
+        <div class="mx-auto">
+          <UButton
+            @click="closeModal"
+            class="font-bold text-center mt-5"
+            size="xl"
+          >
+            Понятно
+          </UButton>
+        </div>
       </div>
-    </template>
-    <template v-slot:footer>
-      <div class="mx-auto">
-        <UButton @click="closeModal" class="font-bold text-center" size="xl"
-          >Понятно</UButton
-        >
-      </div>
-    </template>
-  </UINewModalClient>
+    </UCard>
+  </UModal>
 </template>
 
 <style scoped>
