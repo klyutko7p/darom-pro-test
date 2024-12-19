@@ -377,10 +377,10 @@ function addMinutes(date: any, minutes: any) {
             <span
               :class="{
                 'text-secondary-color underline':
-                  getStatus(row) !== 'Товар доставлен на ПВЗ' &&
+                  getStatus(row) !== 'Товар готов к получению' &&
                   getStatus(row) !== 'Товар выдан',
                 'text-green-500 underline':
-                  getStatus(row) === 'Товар доставлен на ПВЗ' ||
+                  getStatus(row) === 'Товар готов к получению' ||
                   getStatus(row) === 'Товар выдан',
               }"
               class="text-[14px] font-semibold cursor-pointer hover:opacity-50 duration-200 whitespace-nowrap overflow-hidden px-3 max-w-[200px]"

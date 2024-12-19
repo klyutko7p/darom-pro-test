@@ -32,8 +32,8 @@ async function signInNoRegistration() {
   message.value = "";
   isLoading.value = true;
   message.value = await storeClients.signIn(
-    '+70000000001',
-    '001001',
+    "+70000000001",
+    "001001",
     isForeignDevice.value
   );
   isLoading.value = false;
@@ -480,7 +480,7 @@ async function waitingForAuth() {
         'py-20 max-sm:py-20 max-[360px]:py-0': isAuthWithPassword,
         'py-60 max-sm:py-60 max-[360px]:py-40': !isAuthWithPassword,
       }"
-      class="px-10 h-full max-sm:py-32 max-sm:px-1 shadow-2xl bg-opacity-50 max-w-[430px] max-sm:max-w-[2000px]"
+      class="px-10 h-full max-sm:py-32 max-sm:px-1 shadow-2xl max-sm:shadow-none bg-opacity-50 max-w-[430px] max-sm:max-w-[2000px]"
     >
       <div class="">
         <div class="flex items-center justify-center">

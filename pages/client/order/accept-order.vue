@@ -65,7 +65,7 @@ onMounted(async () => {
 });
 
 definePageMeta({
-  layout: "client-no-pad",
+  layout: "client-no-pad-for-accept",
 });
 
 let address = ref("");
@@ -79,6 +79,7 @@ let productName = ref("");
 let urlToImg = ref("");
 let priceSite = ref(0);
 let description = ref("");
+let sizeValue = ref("");
 
 const handleError = (message: string) => {
   toast.error(message);
@@ -137,6 +138,9 @@ const parsingPage = async () => {
         priceSite.value = itemInfo[2].data.products[0].sizes.filter(
           (size: any) => size.optionId == sizeString
         )[0].price.product;
+        sizeValue.value = itemInfo[2].data.products[0].sizes.filter(
+          (size: any) => size.optionId == sizeString
+        )[0].origName;
         priceSite.value = Number(
           priceSite.value
             .toString()
@@ -161,6 +165,16 @@ const parsingPage = async () => {
         );
         isShowSizeButtons.value = true;
         return;
+      } else if (
+        urlToItem.value.includes("size") &&
+        itemInfo[2].data.products[0].sizes.length === 1
+      ) {
+        priceSite.value = itemInfo[2].data.products[0].sizes[0].price.product;
+        priceSite.value = Number(
+          priceSite.value
+            .toString()
+            .substring(0, priceSite.value.toString().length - 2)
+        );
       }
       isShowSizeButtons.value = false;
       toast.success("Вы успешно добавили товар!");
@@ -220,6 +234,7 @@ let item = ref({
   description: "",
   cell: "",
   percentClient: 10,
+  size: "",
   marketplace: "",
 });
 
@@ -272,6 +287,7 @@ const createItem = async () => {
       img: urlToImg.value,
       percentClient: isDiscountApplicable ? 10 : 10,
       description: description.value,
+      size: sizeValue.value,
       cell: "",
       marketplace: marketplace.value,
     };
@@ -1150,6 +1166,12 @@ let isNotAskingAcceptOrder = ref(false);
                           >
                             {{ item.productName }}
                           </a>
+                          <h1
+                            v-if="item.size"
+                            class="font-medium text-sm italic"
+                          >
+                            Размер: {{ item.size }}
+                          </h1>
                           <h1 class="font-medium text-sm italic">
                             {{ item.quantity }} шт.
                           </h1>
@@ -1212,11 +1234,16 @@ let isNotAskingAcceptOrder = ref(false);
                           >
                             <a
                               :href="item.productLink"
-                              target="_blank"
                               class="font-bold max-sm:text-sm cursor-pointer text-secondary-color underline line-clamp-1 hover:line-clamp-4 text-left"
                             >
                               {{ item.productName }}
                             </a>
+                            <h1
+                              v-if="item.size"
+                              class="font-medium text-sm italic"
+                            >
+                              Размер: {{ item.size }}
+                            </h1>
                             <h1 class="font-medium text-sm italic">
                               {{ item.quantity }} шт.
                             </h1>
