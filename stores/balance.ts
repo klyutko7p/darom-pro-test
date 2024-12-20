@@ -40,6 +40,29 @@ export const useBalanceStore = defineStore("balance", () => {
     }
   }
 
+  async function deleteRow(id: number) {
+    try {
+      let data = await useFetch("/api/balance/delete-row", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+      if (data.data.value === undefined) {
+        cachedBalanceRows = null;
+        toast.success("Запись успешно удалена!");
+      } else {
+        console.log(data.data.value);
+        toast.error("Произошла ошибка");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function createBalanceOnlineRow(row: IBalanceOnline) {
     try {
       if (row.sum === undefined) row.sum = "0";
@@ -366,5 +389,6 @@ export const useBalanceStore = defineStore("balance", () => {
     getBalanceProfitManagerRows,
     updateDeliveryProfitManagerStatus,
     createBalanceProfitManagerRow,
+    deleteRow,
   };
 });

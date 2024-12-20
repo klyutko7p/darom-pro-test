@@ -2295,6 +2295,18 @@ async function updateRow() {
   isLoading.value = false;
 }
 
+async function deleteRow(id: number) {
+  let answer = confirm("Вы точно хотите удалить строку?");
+  if (answer) {
+    isLoading.value = true;
+    await storeBalance.deleteRow(id);
+    rows.value = await storeBalance.getBalanceRows();
+    rowsWithProfitRows.value = [...rows.value, ...rowsProfit.value];
+    getAllSum();
+    isLoading.value = false;
+  }
+}
+
 let pvzDataOriginally = [
   "Все ПВЗ",
   "ПВЗ_1",
@@ -2671,6 +2683,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
           <BalanceTable
             v-if="user.username !== 'Мешков' && user.username !== 'Шведова'"
             @update-delivery-row="updateDeliveryRow"
+            @delete-row="deleteRow"
             :rows="rowsWithProfitRows"
             :user="user"
             @open-modal="openModal"
@@ -2717,7 +2730,10 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                     v-if="
                       user.username !== 'Мешков' && user.username !== 'Шведова'
                     "
-                    :disabled="rowData.id > 0"
+                    :disabled="
+                      user.username !== 'Директор' &&
+                      user.username !== 'Власенкова'
+                    "
                     class="w-full"
                     v-model="rowData.pvz"
                     value-attribute="name"
@@ -2734,13 +2750,15 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                     v-model="rowData.pvz"
                     :options="user.PVZ"
                   />
-
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">Получатель</label>
                   <USelectMenu
-                    :disabled="rowData.id > 0"
+                    :disabled="
+                      user.username !== 'Директор' &&
+                      user.username !== 'Власенкова'
+                    "
                     class="w-full"
                     v-model="rowData.recipient"
                     :options="options"
@@ -2752,7 +2770,10 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                   <UInput
                     class="w-full"
                     v-model="rowData.sum"
-                    :disabled="rowData.id > 0"
+                    :disabled="
+                      user.username !== 'Директор' &&
+                      user.username !== 'Власенкова'
+                    "
                     type="text"
                   />
                 </div>
