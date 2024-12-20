@@ -16,7 +16,7 @@ let isLoading = ref(false);
 
 onMounted(async () => {
   if (!token) {
-    router.push("/auth/client/login");
+    router.push("/auth/client/login?stay=true");
   }
 
   isLoading.value = true;
@@ -148,7 +148,11 @@ function copyToClipboard() {
 
 let showPassword = ref(false);
 let newPasswordRepeat = ref("");
+let isOpenModalNoRegistration = ref(true);
 
+function signOut() {
+  storeClients.signOut();
+}
 </script>
 
 <template>
@@ -158,6 +162,7 @@ let newPasswordRepeat = ref("");
   <div v-if="!isLoading">
     <div v-if="token">
       <div
+        v-if="user.phoneNumber !== '+70000000001'"
         class="py-5 flex mt-24 items-start justify-between gap-10 max-xl:flex-col max-xl:items-center"
       >
         <h1 class="text-2xl text-center">
@@ -317,6 +322,53 @@ let newPasswordRepeat = ref("");
             >
           </div>
         </div>
+      </div>
+      <div v-else>
+        <UModal
+          :ui="{
+            container: 'flex items-center justify-center text-center',
+          }"
+          v-auto-animate
+          v-model="isOpenModalNoRegistration"
+          prevent-close
+        >
+          <UCard
+            v-auto-animate
+            :ui="{
+              ring: '',
+              divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
+          >
+            <template #header>
+              <div class="flex items-center justify-between">
+                <h3
+                  class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+                >
+                  Авторизация
+                </h3>
+                <Icon
+                  @click="router.push('/client/main?notification=false')"
+                  name="i-heroicons-x-mark-20-solid"
+                  size="24"
+                  class="cursor-pointer hover:text-secondary-color duration-200"
+                />
+              </div>
+            </template>
+            <div class="text-center">
+              <h1>
+                После входа вам будет доступен полный функционал личного
+                кабинета!
+              </h1>
+              <div class="max-md:flex items-center justify-center">
+                <UButton
+                  @click="signOut(), router.push('/auth/client')"
+                  class="my-3 font-semibold uppercase"
+                  >Войти или зарегистрироваться</UButton
+                >
+              </div>
+            </div>
+          </UCard>
+        </UModal>
       </div>
     </div>
   </div>

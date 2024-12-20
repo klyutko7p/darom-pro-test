@@ -10,7 +10,7 @@ let isLoading = ref(false);
 
 onMounted(async () => {
   if (!token) {
-    router.push("/auth/client/login");
+    router.push("/auth/client/login?stay=true");
   }
 });
 

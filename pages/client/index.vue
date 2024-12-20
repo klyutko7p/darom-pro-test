@@ -6,7 +6,7 @@ const token = Cookies.get("token");
 
 onMounted(() => {
   if (!token) {
-    router.push('/auth/client/login')
+    router.push('/auth/client/login?stay=true')
   } else {
     router.push('/client/main')
   }

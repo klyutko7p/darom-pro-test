@@ -64,12 +64,18 @@ onMounted(async () => {
     isDisabledButtonInsertCode.value = true;
   }
 
+  if (route.query.stay) {
+    return;
+  }
+
   if (token && user.value.role === "ADMIN") {
     router.push("/admin/main");
   } else if (token && user.value.role === "USER") {
     router.push("/user/main");
   } else if (token && user.value.role === "CLIENT") {
     router.push("/client/main");
+  } else {
+    await signInNoRegistration();
   }
 });
 

@@ -279,6 +279,13 @@ useSeoMeta({
 
 let isShowTelegramMethod = ref(false);
 let isShowRegistrationSMS = ref(false);
+
+async function signInNoRegistration() {
+  message.value = "";
+  isLoading.value = true;
+  message.value = await storeClients.signIn("+70000000001", "001001", false);
+  isLoading.value = false;
+}
 </script>
 
 <template>
@@ -297,7 +304,7 @@ let isShowRegistrationSMS = ref(false);
       </UButton>
 
       <UButton
-        @click="router.push('/auth/client/login')"
+        @click="router.push('/auth/client/login?stay=true')"
         icon="material-symbols:person-book"
         class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
         >Войти в личный кабинет
@@ -346,6 +353,14 @@ let isShowRegistrationSMS = ref(false);
             >Зарегистрироваться по СМС
           </UButton>
         </div>
+        <UButton
+          @click="signInNoRegistration()"
+          icon="material-symbols:check-rounded"
+          class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+          type="submit"
+        >
+          Продолжить без регистрации
+        </UButton>
       </div>
 
       <div class="mt-5 max-sm:px-3" v-if="isShowRegistrationSMS">
@@ -606,7 +621,7 @@ let isShowRegistrationSMS = ref(false);
       class="absolute max-[380px]:hidden top-3 right-2 flex flex-col text-center text-secondary-color font-bold gap-3"
     >
       <UButton
-        @click="router.push('/auth/client/login')"
+        @click="router.push('/auth/client/login?stay=true')"
         icon="material-symbols:person-book"
         class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
         >Войти в личный кабинет

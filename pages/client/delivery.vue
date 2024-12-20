@@ -25,7 +25,7 @@ let cellData = ref({} as Cell);
 let marketplaceData = route.query.marketplace;
 onMounted(async () => {
   if (!token) {
-    router.push("/auth/client/login");
+    router.push("/auth/client/login?stay=true");
   }
 
   const storedFileName = localStorage.getItem("fileName");

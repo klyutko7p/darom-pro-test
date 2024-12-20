@@ -316,7 +316,7 @@ export const useClientsStore = defineStore("clients", () => {
     const cookies = Object.keys(Cookies.get());
     cookies.forEach((cookie) => Cookies.remove(cookie));
     userData = {} as Client;
-    router.push("/auth/client/login");
+    router.push("/auth/client/login?stay=true");
   }
 
   async function getClients() {

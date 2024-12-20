@@ -24,7 +24,7 @@ let isPrivacyPolicyAgreed = ref(false);
 
 onMounted(async () => {
   if (!token) {
-    router.push("/auth/client/login");
+    router.push("/auth/client/login?stay=true");
   }
   requestPermission();
 
@@ -206,6 +206,7 @@ useSeoMeta({
               вкладке.</span
             >
           </h1>
+
           <div
             @click="requestPermission"
             class="bg-orange-100 duration-200 cursor-pointer hover:opacity-50 pt-1 rounded-full px-1"
@@ -216,6 +217,17 @@ useSeoMeta({
               class="text-secondary-color"
             />
           </div>
+        </div>
+
+        <div
+          v-if="client.phoneNumber === '+70000000001'"
+          class="max-md:flex items-center justify-center"
+        >
+          <UButton
+            @click="signOut(), router.push('/auth/client')"
+            class="my-3 font-semibold uppercase"
+            >Войти или зарегистрироваться</UButton
+          >
         </div>
 
         <h1

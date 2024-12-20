@@ -10,7 +10,7 @@ const address = ref("");
 
 onMounted(async () => {
   if (!token) {
-    router.push("/auth/client/login");
+    router.push("/auth/client/login?stay=true");
   }
   address.value = localStorage.getItem("addressData") || "";
   let isNotAsking = localStorage.getItem("isNotAskingYM");

@@ -424,7 +424,7 @@ function addMinutes(date: any, minutes: any) {
             variant="ghost"
             icon="i-heroicons-x-mark-20-solid"
             class="-my-1"
-            @click="isShowModal = false"
+            @click="closeModal"
           />
         </div>
       </template>
