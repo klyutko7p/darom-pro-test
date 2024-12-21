@@ -189,11 +189,16 @@ const saveBlockState = () => {
 };
 
 let clients = ref([] as any);
+let isIndex = ref(false);
 onMounted(async () => {
   isLoading.value = true;
   user.value = await storeClients.getClient();
   clients.value = await storeClients.getClients();
   isLoading.value = false;
+
+  if (route.query.index) {
+    isIndex.value = true;
+  }
 
   if (token && user.value.role === "ADMIN") {
     router.push("/admin/main");
@@ -304,10 +309,18 @@ async function signInNoRegistration() {
       </UButton>
 
       <UButton
+        v-if="!isIndex"
         @click="router.push('/auth/client/login?stay=true')"
         icon="material-symbols:person-book"
         class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
         >Войти в личный кабинет
+      </UButton>
+      <UButton
+        v-if="isIndex"
+        @click="signInNoRegistration()"
+        icon="material-symbols:arrow-back"
+        class="w-[235px] max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        >Назад
       </UButton>
     </div>
     <div
@@ -353,14 +366,6 @@ async function signInNoRegistration() {
             >Зарегистрироваться по СМС
           </UButton>
         </div>
-        <UButton
-          @click="signInNoRegistration()"
-          icon="material-symbols:check-rounded"
-          class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
-          type="submit"
-        >
-          Продолжить без регистрации
-        </UButton>
       </div>
 
       <div class="mt-5 max-sm:px-3" v-if="isShowRegistrationSMS">
@@ -621,10 +626,18 @@ async function signInNoRegistration() {
       class="absolute max-[380px]:hidden top-3 right-2 flex flex-col text-center text-secondary-color font-bold gap-3"
     >
       <UButton
+        v-if="!isIndex"
         @click="router.push('/auth/client/login?stay=true')"
         icon="material-symbols:person-book"
         class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
         >Войти в личный кабинет
+      </UButton>
+      <UButton
+        v-if="isIndex"
+        @click="signInNoRegistration()"
+        icon="material-symbols:arrow-back"
+        class="w-[235px] max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        >Назад
       </UButton>
     </div>
   </div>

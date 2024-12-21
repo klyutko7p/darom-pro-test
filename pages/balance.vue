@@ -2701,6 +2701,39 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
             @open-modal="openModal"
           />
 
+          <div
+            v-if="
+              (user.username === 'Шведова' ||
+                user.username === 'Мешков' ||
+                user.username === 'Директор' ||
+                user.username === 'Власенкова') &&
+              selectedPVZ &&
+              (selectedPVZ.includes('ППВЗ') || selectedPVZ === 'ПВЗ_1')
+            "
+          >
+            <div class="text-center text-2xl mt-24">
+              <h1>Доход ППВЗ</h1>
+              <h1 class="font-bold text-secondary-color text-4xl mt-3">
+                {{ formatNumber(Math.ceil(allSumProfit)) }} ₽
+              </h1>
+            </div>
+          </div>
+
+          <BalanceTableProfit
+            v-if="
+              (user.username === 'Шведова' ||
+                user.username === 'Мешков' ||
+                user.username === 'Директор' ||
+                user.username === 'Власенкова') &&
+              selectedPVZ &&
+              (selectedPVZ.includes('ППВЗ') || selectedPVZ === 'ПВЗ_1')
+            "
+            @update-delivery-row="updateDeliveryProfitRow"
+            :rows="rowsProfit?.filter((row) => row.pvz === selectedPVZ)"
+            :user="user"
+            @open-modal="openModalProfitRow"
+          />
+
           <div class="mt-24" v-if="user.role === 'ADMIN'">
             <UIMainButton @click="openModalOnline">
               заявка на вывод средств онлайн</UIMainButton

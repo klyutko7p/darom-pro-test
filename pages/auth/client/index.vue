@@ -492,7 +492,7 @@ async function waitingForAuth() {
 
       <div class="flex items-center justify-center flex-col gap-3 mt-10">
         <UButton
-          @click="router.push('/auth/client/login?stay=true')"
+          @click="router.push('/auth/client/login?stay=true&index=true')"
           icon="material-symbols:person-book"
           class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
           type="submit"
@@ -500,7 +500,7 @@ async function waitingForAuth() {
           Войти
         </UButton>
         <UButton
-          @click="router.push('/auth/register')"
+          @click="router.push('/auth/register?index=true')"
           icon="material-symbols:app-registration"
           class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
           >Зарегистрироваться

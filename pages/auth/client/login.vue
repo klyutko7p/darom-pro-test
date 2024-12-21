@@ -48,7 +48,7 @@ async function signInTelegram() {
 let user = ref({} as User);
 let code = ref("");
 const token = Cookies.get("token");
-
+let isIndex = ref(false);
 onMounted(async () => {
   isLoading.value = true;
   user.value = await storeClients.getClient();
@@ -62,6 +62,10 @@ onMounted(async () => {
   if (route.query.code) {
     isAuthInsertCode.value = true;
     isDisabledButtonInsertCode.value = true;
+  }
+
+  if (route.query.index) {
+    isIndex.value = true;
   }
 
   if (route.query.stay) {
@@ -475,10 +479,18 @@ async function waitingForAuth() {
       </UButton>
 
       <UButton
+        v-if="!isIndex"
         @click="router.push('/auth/register')"
         icon="material-symbols:app-registration"
         class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
         >Зарегистрироваться
+      </UButton>
+      <UButton
+        v-if="isIndex"
+        @click="signInNoRegistration()"
+        icon="material-symbols:arrow-back"
+        class="w-[235px] max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        >Назад
       </UButton>
     </div>
     <div
@@ -520,14 +532,6 @@ async function waitingForAuth() {
           type="submit"
         >
           Войти по паролю
-        </UButton>
-        <UButton
-          @click="signInNoRegistration()"
-          icon="material-symbols:check-rounded"
-          class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
-          type="submit"
-        >
-          Продолжить без регистрации
         </UButton>
       </div>
 
@@ -943,10 +947,18 @@ async function waitingForAuth() {
       class="absolute w-[235px] max-[360px]:hidden top-3 right-2 flex flex-col text-center text-secondary-color font-bold gap-3"
     >
       <UButton
+        v-if="!isIndex"
         @click="router.push('/auth/register')"
         icon="material-symbols:app-registration"
         class="w-[235px] max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
         >Зарегистрироваться
+      </UButton>
+      <UButton
+        v-if="isIndex"
+        @click="signInNoRegistration()"
+        icon="material-symbols:arrow-back"
+        class="w-[235px] max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        >Назад
       </UButton>
     </div>
   </div>

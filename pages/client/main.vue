@@ -199,13 +199,17 @@ useSeoMeta({
           <h1 v-if="client.fio" class="text-xl">
             Приветствуем, {{ client.fio }}!
           </h1>
-          <h1 v-else class="text-xl">
+          <h1
+            v-else-if="!client.fio && client.phoneNumber !== '+70000000001'"
+            class="text-xl"
+          >
             Приветствуем!
             <span class="text-sm italic"
               >Вы можете настроить личные данные в соответствующей
               вкладке.</span
             >
           </h1>
+          <h1 v-else class="text-xl">Приветствуем!</h1>
 
           <div
             @click="requestPermission"
@@ -221,7 +225,7 @@ useSeoMeta({
 
         <div
           v-if="client.phoneNumber === '+70000000001'"
-          class="max-md:flex items-center justify-center"
+          class=""
         >
           <UButton
             @click="signOut(), router.push('/auth/client')"

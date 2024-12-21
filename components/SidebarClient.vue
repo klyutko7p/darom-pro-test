@@ -54,7 +54,7 @@ onMounted(async () => {
         @click="router.push('/?home=true')"
         size="24"
         name="material-symbols:home-and-garden-rounded"
-        class="hover:opacity-50 duration-200 cursor-pointer mr-2  "
+        class="hover:opacity-50 duration-200 cursor-pointer mr-2"
       />
       <Icon
         @click="editMenu"
@@ -65,7 +65,10 @@ onMounted(async () => {
       <h1 class="font-medium italic text-sm">{{ client.fio }}</h1>
     </div>
     <Icon
-      v-if="!route.fullPath.includes('/client/delivery')"
+      v-if="
+        !route.fullPath.includes('/client/delivery') &&
+        !route.fullPath.includes('/client/order/independently/ozon?accept=true')
+      "
       @click="router.go(-1)"
       name="ion:ios-arrow-back"
       size="32"
@@ -79,7 +82,9 @@ onMounted(async () => {
       class="cursor-pointer hover:opacity-50 duration-200"
     />
     <Icon
-      v-if="route.fullPath.includes('/client/order/independently/ozon?accept=true')"
+      v-if="
+        route.fullPath.includes('/client/order/independently/ozon?accept=true')
+      "
       @click="router.push('/client/main')"
       name="ion:ios-arrow-back"
       size="32"
