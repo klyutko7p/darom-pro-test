@@ -311,7 +311,9 @@ function updateCurrentPageData() {
   today.setHours(0, 0, 0, 0);
 
   if (searchingQuery.value !== "") {
-    searchingQuery.value = searchingQuery.value.replace(/\./g, "");
+    if (!searchingQuery.value.includes("https")) {
+      searchingQuery.value = searchingQuery.value.replace(/\./g, "");
+    }
     returnRows.value = props.rows?.filter((row) => {
       const deliveredSC = new Date(row.deliveredSC);
       deliveredSC.setHours(0, 0, 0, 0);
@@ -325,27 +327,39 @@ function updateCurrentPageData() {
         (deliveredSCTimeDif === 0 || !row.deliveredSC)
       );
     });
+
     if (returnRows.value?.length === 0) {
-      returnRows.value = props.rows?.filter((row) => {
-        const deliveredSC = new Date(row.deliveredSC);
-        deliveredSC.setHours(0, 0, 0, 0);
-        const deliveredSCTimeDif = deliveredSC - today;
-        return (
-          row.notation &&
-          row.notation
-            .toLowerCase()
-            .includes(searchingQuery.value.trim().toLowerCase()) &&
-          !row.deliveredPVZ &&
-          (deliveredSCTimeDif === 0 || !row.deliveredSC)
-        );
-      });
+      const searchField = searchingQuery.value.includes("https")
+        ? "productLink"
+        : "notation";
+      returnRows.value = filterRows(searchField);
+      currentPage.value = 1;
     }
-    currentPage.value = 1;
   } else {
     returnRows.value = props.rows
       ?.filter((row) => !row.deleted)
       .slice(startIndex, endIndex);
   }
+}
+
+function filterRows(searchField) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return props.rows?.filter((row) => {
+    const deliveredSC = new Date(row.deliveredSC);
+    deliveredSC.setHours(0, 0, 0, 0);
+    const deliveredSCTimeDif = deliveredSC - today;
+
+    return (
+      row[searchField] &&
+      row[searchField]
+        .toLowerCase()
+        .includes(searchingQuery.value.trim().toLowerCase()) &&
+      !row.deliveredPVZ &&
+      (deliveredSCTimeDif === 0 || !row.deliveredSC)
+    );
+  });
 }
 
 function updateCurrentPageDataDeleted() {
@@ -368,9 +382,19 @@ function updateCurrentPageDataDeleted() {
 }
 
 watch(
-  [currentPage, totalRows, props.rows, returnRows.value, searchingQuery],
+  [currentPage, totalRows, props.rows, returnRows.value],
   updateCurrentPageData
 );
+
+let debounceTimer = null;
+
+watch(searchingQuery, (newValue) => {
+  if (debounceTimer) clearTimeout(debounceTimer);
+
+  debounceTimer = setTimeout(() => {
+    updateCurrentPageData();
+  }, 500);
+});
 
 const prevPage = () => {
   if (currentPage.value > 1) {
@@ -1448,7 +1472,7 @@ async function writeClipboardText(text: any) {
                 row.additionally !== 'Отказ клиент' &&
                 row.additionally !== 'Отказ клиент онлайн' &&
                 row.additionally !== 'Отказ клиент наличные' &&
-                row.additionally !== 'Отказ брак' && 
+                row.additionally !== 'Отказ брак' &&
                 row.additionally !== 'Отказ подмена' &&
                 !row.prepayment &&
                 isDateGreaterThanReference(row.created_at)
@@ -1468,7 +1492,7 @@ async function writeClipboardText(text: any) {
                 row.additionally !== 'Отказ клиент' &&
                 row.additionally !== 'Отказ клиент онлайн' &&
                 row.additionally !== 'Отказ клиент наличные' &&
-                row.additionally !== 'Отказ брак' && 
+                row.additionally !== 'Отказ брак' &&
                 row.additionally !== 'Отказ подмена' &&
                 row.prepayment
               "
