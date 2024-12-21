@@ -2763,10 +2763,6 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                     v-if="
                       user.username !== 'Мешков' && user.username !== 'Шведова'
                     "
-                    :disabled="
-                      user.username !== 'Директор' &&
-                      user.username !== 'Власенкова'
-                    "
                     class="w-full"
                     v-model="rowData.pvz"
                     value-attribute="name"
@@ -2788,10 +2784,6 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="dispatchPVZ1">Получатель</label>
                   <USelectMenu
-                    :disabled="
-                      user.username !== 'Директор' &&
-                      user.username !== 'Власенкова'
-                    "
                     class="w-full"
                     v-model="rowData.recipient"
                     :options="options"
@@ -2803,10 +2795,6 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                   <UInput
                     class="w-full"
                     v-model="rowData.sum"
-                    :disabled="
-                      user.username !== 'Директор' &&
-                      user.username !== 'Власенкова'
-                    "
                     type="text"
                   />
                 </div>
