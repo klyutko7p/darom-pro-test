@@ -487,9 +487,9 @@ async function waitingForAuth() {
       </UButton>
       <UButton
         v-if="isIndex"
-        @click="signInNoRegistration()"
+        @click="router.push('/auth/client')"
         icon="material-symbols:arrow-back"
-        class="w-[235px] max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
         >Назад
       </UButton>
     </div>
@@ -955,7 +955,7 @@ async function waitingForAuth() {
       </UButton>
       <UButton
         v-if="isIndex"
-        @click="signInNoRegistration()"
+        @click="router.push('/auth/client')"
         icon="material-symbols:arrow-back"
         class="w-[235px] max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
         >Назад

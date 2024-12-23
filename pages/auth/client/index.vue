@@ -467,10 +467,10 @@ async function waitingForAuth() {
       </UButton>
 
       <UButton
-        @click="router.push('/auth/register')"
-        icon="material-symbols:app-registration"
+        @click="signInNoRegistration()"
+        icon="material-symbols:arrow-back"
         class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
-        >Зарегистрироваться
+        >Назад
       </UButton>
     </div>
     <div
@@ -499,6 +499,7 @@ async function waitingForAuth() {
         >
           Войти
         </UButton>
+        <h1 class="text-base">ИЛИ</h1>
         <UButton
           @click="router.push('/auth/register?index=true')"
           icon="material-symbols:app-registration"
@@ -512,9 +513,20 @@ async function waitingForAuth() {
       class="absolute max-[360px]:hidden top-3 left-2 flex flex-col text-center text-secondary-color font-bold gap-3"
     >
       <UButton
+        @click="router.push('/')"
+        icon="material-symbols-light:home-app-logo"
+        class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        >На главную
+      </UButton>
+    </div>
+
+    <div
+      class="absolute w-[235px] max-[360px]:hidden top-3 right-2 flex flex-col text-center text-secondary-color font-bold gap-3"
+    >
+      <UButton
         @click="signInNoRegistration()"
         icon="material-symbols:arrow-back"
-        class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
+        class="w-[235px] max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
         >Назад
       </UButton>
     </div>

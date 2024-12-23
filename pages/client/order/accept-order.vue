@@ -557,8 +557,9 @@ function showAcceptModal() {
   isOpen.value = false;
 }
 
+let isShowWarning = ref(false);
 function showWarning() {
-  toast.warning("Для продолжения оформления заказа зарегистрируйтесь!");
+  isShowWarning.value = true;
 }
 
 function closeAcceptModal() {
@@ -1494,6 +1495,55 @@ let isNotAskingAcceptOrder = ref(false);
             </div>
           </div>
         </div>
+      </div>
+
+      <div>
+        <UModal
+          :ui="{
+            container: 'flex items-center justify-center text-center',
+          }"
+          v-auto-animate
+          v-model="isShowWarning"
+          prevent-close
+          v-if="isShowWarning"
+        >
+          <UCard
+            v-auto-animate
+            :ui="{
+              ring: '',
+              divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
+          >
+            <template #header>
+              <div class="flex items-center justify-between">
+                <h3
+                  class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+                >
+                  Авторизация
+                </h3>
+                <Icon
+                  @click="isShowWarning = false"
+                  name="i-heroicons-x-mark-20-solid"
+                  size="24"
+                  class="cursor-pointer hover:text-secondary-color duration-200"
+                />
+              </div>
+            </template>
+            <div class="text-center">
+              <h1>
+                После входа вам будет доступен полный функционал личного
+                кабинета!
+              </h1>
+              <div class="max-md:flex items-center justify-center">
+                <UButton
+                  @click="signOut(), router.push('/auth/client')"
+                  class="my-3 font-semibold uppercase"
+                  >Войти или зарегистрироваться</UButton
+                >
+              </div>
+            </div>
+          </UCard>
+        </UModal>
       </div>
     </div>
   </div>
