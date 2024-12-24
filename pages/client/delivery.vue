@@ -365,6 +365,10 @@ let isShowWarning = ref(false);
 function showWarning() {
   isShowWarning.value = true;
 }
+
+function signOut() {
+  storeClients.signOut();
+}
 </script>
 
 <template>
@@ -897,7 +901,6 @@ function showWarning() {
           v-auto-animate
           v-model="isShowWarning"
           prevent-close
-          v-if="isShowWarning"
         >
           <UCard
             v-auto-animate

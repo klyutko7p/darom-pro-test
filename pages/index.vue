@@ -14,9 +14,9 @@ let user = ref({} as User);
 onMounted(async () => {
   user.value = await storeClients.getClient();
 
-  if (token && user.value.role === "CLIENT" && !route.query.home) {
-    router.push("/auth/client/login?stay=true");
-  }
+  // if (token && user.value.role === "CLIENT" && !route.query.home) {
+  //   router.push("/auth/client/login?stay=true");
+  // }
 
   if (token && user.value.username === "Власенкова") {
     router.push("/auth/login");

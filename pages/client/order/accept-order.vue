@@ -612,6 +612,10 @@ function roundToNearestTen(num: number): number {
 }
 
 let isNotAskingAcceptOrder = ref(false);
+
+function signOut() {
+  storeClients.signOut();
+}
 </script>
 
 <template>
@@ -1505,7 +1509,6 @@ let isNotAskingAcceptOrder = ref(false);
           v-auto-animate
           v-model="isShowWarning"
           prevent-close
-          v-if="isShowWarning"
         >
           <UCard
             v-auto-animate

@@ -116,7 +116,7 @@ definePageMeta({
                 :coordinates="marker.coordinates"
                 :marker-id="marker.id"
                 type="Circle"
-                :radius="5"
+                :radius="40"
               >
                 <template #component>
                   <CustomBalloon
@@ -181,7 +181,7 @@ definePageMeta({
               v-if="true"
               :coordinates="coordinates"
               :controls="controls"
-              :zoom="12"
+              :zoom="40"
               @click="getCoords"
             >
               <YandexMarker
@@ -189,7 +189,7 @@ definePageMeta({
                 :coordinates="marker.coordinates"
                 :marker-id="marker.id"
                 type="Circle"
-                :radius="5"
+                :radius="10"
               >
                 <template #component>
                   <CustomBalloon

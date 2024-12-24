@@ -455,6 +455,8 @@ async function waitingForAuth() {
   client = {};
   isLoading.value = false;
 }
+
+
 </script>
 
 <template>
@@ -472,7 +474,7 @@ async function waitingForAuth() {
       class="max-[360px]:flex py-5 hidden px-10 top-3 left-16 flex-col text-center text-secondary-color font-bold gap-3"
     >
       <UButton
-        @click="router.push('/')"
+        @click="router.push('/?home=true')"
         icon="material-symbols-light:home-app-logo"
         class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
         >На главную
@@ -936,7 +938,7 @@ async function waitingForAuth() {
       class="absolute max-[360px]:hidden top-3 left-2 flex flex-col text-center text-secondary-color font-bold gap-3"
     >
       <UButton
-        @click="router.push('/')"
+        @click="router.push('/?home=true')"
         icon="material-symbols-light:home-app-logo"
         class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
         >На главную
