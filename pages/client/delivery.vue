@@ -362,8 +362,15 @@ function removeAskingHistory() {
 }
 
 let isShowWarning = ref(false);
+
 function showWarning() {
   isShowWarning.value = true;
+  isOpen.value = false;
+}
+
+function unShowWarning() {
+  isShowWarning.value = false;
+  isOpen.value = true;
 }
 
 function signOut() {
@@ -917,7 +924,7 @@ function signOut() {
                   Авторизация
                 </h3>
                 <Icon
-                  @click="isShowWarning = false"
+                  @click="unShowWarning"
                   name="i-heroicons-x-mark-20-solid"
                   size="24"
                   class="cursor-pointer hover:text-secondary-color duration-200"
