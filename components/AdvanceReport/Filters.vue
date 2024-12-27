@@ -125,16 +125,46 @@ const endDate = ref<Date | string | null>(null);
 const startingDate2 = ref<Date | string | null>(null);
 const endDate2 = ref<Date | string | null>(null);
 
+let pvz = ref([
+  "Ряженое",
+  "Алексеевка",
+  "Латоново",
+  "Надежда",
+  "Александровка",
+  "Новониколаевка",
+  "Политотдельское",
+  "Мещерино",
+  "Коломенское ЯМ",
+  "Коломенское WB",
+  "Бессоново WB",
+  "Бессоново OZ",
+  "Новоандриановка",
+  "Офис",
+  "НаДом",
+]);
+
+pvz.value = pvz.value.sort((a, b) => a.localeCompare(b, "ru"));
+
+pvz.value.push("ПВЗ_1");
+pvz.value.push("ПВЗ_2");
+pvz.value.push("ПВЗ_3");
+pvz.value.push("ПВЗ_4");
+pvz.value.push("ППВЗ_5");
+pvz.value.push("ППВЗ_7");
+pvz.value.push("ПВЗ_8");
+pvz.value.push("ППВЗ_9");
+pvz.value.push("ПВЗ_10");
+
 const uniquePVZ = computed(() => {
-  let array = storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "PVZ");
-  let newArray = array.map((string) => {
-    if (string === "Алексеевк��") {
-      return "Алексеевка";
-    }
-    return string;
-  });
-  newArray = new Set(newArray);
-  return Array.from(newArray);
+  // let array = storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "PVZ");
+  // let newArray = array.map((string) => {
+  //   if (string === "Алексеевк��") {
+  //     return "Алексеевка";
+  //   }
+  //   return string;
+  // });
+  // newArray = new Set(newArray);
+  return pvz.value;
 });
 
 const uniqueExpenditure = computed(() => {

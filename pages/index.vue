@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 
 const router = useRouter();
 const route = useRoute();
-const coordinates = ref([47.971605, 37.860323]);
+const coordinates = ref([47.640497, 37.689974]);
 const controls = ["geolocationControl", "zoomControl", "typeSelector"];
 
 const storeClients = useClientsStore();
@@ -49,6 +49,11 @@ const addressItems = ref([
     address: [47.946192, 37.90365],
     text: "г. Донецк, ул. Дудинская, д. 4, кв7",
   },
+  {
+    id: 8,
+    address: [47.134833, 37.58217],
+    text: "г. Мариуполь, ул. Макара Мазая, 37А",
+  },
 ]);
 
 let selectedAddress = ref();
@@ -56,13 +61,13 @@ let selectedAddress = ref();
 let counter = ref(0);
 async function changeAddress(arrayCoordinates: Array<number>) {
   if (!counter.value) {
-    zoomValue.value = 12;
+    zoomValue.value = 8;
     coordinates.value = arrayCoordinates;
     selectedAddress.value = addressItems.value.find(
       (item) => item.address[0] === arrayCoordinates[0]
     )?.address;
   } else {
-    zoomValue.value = 12;
+    zoomValue.value = 8;
     coordinates.value = arrayCoordinates;
     selectedAddress.value = addressItems.value.find(
       (item) => item.address[0] === arrayCoordinates[0]
@@ -81,12 +86,12 @@ let markers = [
   {
     id: 2,
     coords: [47.995839, 37.846517],
-    commentary: "ул. Харитоново, 8. Ежедневно 9:00-18:00",
+    commentary: "ул. Харитоново, 8. Есть примерочная. Ежедневно 9:00-18:00",
   },
   {
     id: 3,
     coords: [47.955214, 37.963109],
-    commentary: "ул. Палладина, 16. Ежедневно 9:00-18:00",
+    commentary: "ул. Палладина, 16. Есть примерочная. Ежедневно 9:00-18:00",
   },
   {
     id: 4,
@@ -100,13 +105,14 @@ let markers = [
     commentary: "ул. Дудинская 4. Домашний пункт. Ежедневно 10:00-21:00",
   },
   {
-    id: 7,
-    coords: [47.974937, 37.837714],
-    commentary: "ул. Жебелева 7. Домашний пункт. Ежедневно 12:00-20:00",
+    id: 8,
+    coords: [47.134833, 37.58217],
+    commentary:
+      "ул. Макара Мазая, 37А. Есть примерочная. Ежедневно 09:00-18:00",
   },
 ];
 
-let zoomValue = ref(12);
+let zoomValue = ref(8);
 let isHiddenMenu = ref(true);
 let isShowModal = ref(false);
 
@@ -135,8 +141,6 @@ useSeoMeta({
   ogDescription:
     "Доставка из интернет-магазинов WILDBERRIES, OZON, ЯНДЕКС МАРКЕТ И ДР. По всем вопросам и для оформления заказа звоните: +7(949)612-47-60",
 });
-
-
 </script>
 
 <template>

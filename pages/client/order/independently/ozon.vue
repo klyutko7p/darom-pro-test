@@ -15,7 +15,8 @@ onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login?stay=true");
   }
-  address.value = localStorage.getItem("addressData") || "";
+  address.value =
+    JSON.parse(localStorage.getItem("addressData") as string) || "";
   let isNotAsking = localStorage.getItem("isNotAskingOZ");
   if (isNotAsking) {
     isNotAskingOZ.value = true;
@@ -49,9 +50,7 @@ function saveAddress(address: string) {
     route.query.delivery === "true" &&
     route.query.marketplace
   ) {
-    router.push(
-      `/client/delivery?marketplace=${route.query.marketplace}`
-    );
+    router.push(`/client/delivery?marketplace=${route.query.marketplace}`);
   }
 
   if (route.query.accept === "true") {
@@ -82,6 +81,7 @@ function clearValue() {
             class="flex items-center justify-center flex-col h-screen"
           >
             <UButton
+              v-if="address !== 'ПВЗ_8'"
               @click="skipWindow()"
               to="https://ozon.ru/point/443054"
               target="_blank"
@@ -93,6 +93,20 @@ function clearValue() {
               :trailing="false"
               >Нажмите тут для подтверждения адреса пункта заказа
               интернет-магазина «Село Ряженое, ул. Ленина 6»</UButton
+            >
+            <UButton
+              v-if="address === 'ПВЗ_8'"
+              @click="skipWindow()"
+              to="https://ozon.ru/point/491512"
+              target="_blank"
+              icon="i-mdi-package-variant-closed-plus"
+              size="xl"
+              color="blue"
+              variant="solid"
+              class="font-semibold duration-200 w-full max-w-[500px]"
+              :trailing="false"
+              >Нажмите тут для подтверждения адреса пункта заказа
+              интернет-магазина «Село Латоново, ул. Ленина 67»</UButton
             >
           </div>
           <div class="h-screen flex items-center justify-center" v-else>

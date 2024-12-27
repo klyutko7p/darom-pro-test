@@ -20,8 +20,8 @@ onMounted(async () => {
       selectedMarkerId.value = 4;
     } else if (addressString === "ППВЗ_5") {
       selectedMarkerId.value = 5;
-    } else if (addressString === "ППВЗ_7") {
-      selectedMarkerId.value = 7;
+    } else if (addressString === "ПВЗ_8") {
+      selectedMarkerId.value = 8;
     }
   } else if (props.marketplace === "WB") {
     address.value = localStorage.getItem("addressData") || "";
@@ -90,10 +90,10 @@ function changeAddress(coordinatesData: Array<number>) {
   ) {
     address.value = "ППВЗ_5";
   } else if (
-    coordinatesData[0] === 47.974937 &&
-    coordinatesData[1] === 37.837714
+    coordinatesData[0] === 47.134833 &&
+    coordinatesData[1] === 37.58217
   ) {
-    address.value = "ППВЗ_7";
+    address.value = "ПВЗ_8";
   }
   coordinates.value = coordinatesData;
 }
@@ -109,13 +109,13 @@ let markers = [
   {
     id: 2,
     coords: [47.995839, 37.846517],
-    commentary: "Ежедневно 9:00-18:00",
+    commentary: "Есть примерочная. Ежедневно 9:00-18:00",
     address: "г. Донецк, ул. Харитоново, 8",
   },
   {
     id: 3,
     coords: [47.955214, 37.963109],
-    commentary: "Ежедневно 9:00-18:00",
+    commentary: "Есть примерочная. Ежедневно 9:00-18:00",
     address: "г. Донецк, ул. Палладина, 16",
   },
   {
@@ -130,6 +130,12 @@ let markers = [
     coords: [47.946192, 37.90365],
     commentary: "Домашний пункт. Ежедневно 10:00-21:00",
     address: "г. Донецк, ул. Дудинская, 4, кв. 7",
+  },
+  {
+    id: 8,
+    coords: [47.134833, 37.58217],
+    commentary: "Есть примерочная. Ежедневно 09:00-18:00",
+    address: "г. Мариуполь, ул. Макара Мазая, 37А",
   },
 ];
 
@@ -166,6 +172,12 @@ let markersCopy = [
     commentary: "Домашний пункт. Ежедневно 10:00-21:00",
     address: "г. Донецк, ул. Дудинская, д. 4, кв. 7",
   },
+  {
+    id: 8,
+    coords: [47.134833, 37.58217],
+    commentary: "Есть примерочная. Ежедневно 09:00-18:00",
+    address: "г. Мариуполь, ул. Макара Мазая, 37А",
+  },
 ];
 
 function searchRows() {
@@ -192,7 +204,7 @@ watch([searchQuery], searchRows);
         v-if="isOpenMap"
         :coordinates="coordinates"
         :controls="controls"
-        :zoom="12"
+        :zoom="8"
       >
         <YandexMarker
           v-for="marker in markersCopy"

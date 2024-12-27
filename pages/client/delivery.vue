@@ -219,14 +219,14 @@ function handleFileUpload(e: any) {
   } else {
     rowData.value.img = `${randomDigits}-${fileName}`;
     fileQRPhoto.value = e[0];
-    localStorage.setItem("fileName", JSON.stringify(rowData.value.img));
+    localStorage.setItem("fileName", JSON.stringify(rowData.value.img)); 
     localStorage.setItem("marketplace", JSON.stringify(marketplace.value));
   }
 }
 
 let isOpen = ref(true);
 
-const people = [
+const pvzs = [
   {
     pvz: "ПВЗ_1",
     name: "г. Донецк, ул. Антропова 16",
@@ -246,6 +246,10 @@ const people = [
   {
     pvz: "ППВЗ_5",
     name: "г. Донецк, ул. Дудинская, д. 4, кв. 7",
+  },
+  {
+    pvz: "ПВЗ_8",
+    name: "г. Мариуполь, ул. Макара Мазая, 37А",
   },
 ];
 
@@ -472,9 +476,13 @@ function signOut() {
             </h1>
             Если Вы верно указали адрес, то можете заказывать товар и после
             уведомления о доставке по адресу: <br />
-            <span class="text-[#ec208b] font-semibold text-center">
+            <span v-if="pvzData !== 'ПВЗ_8'" class="text-[#ec208b] font-semibold text-center">
               Ростовская область, Матвеево-Курганский район, Село Ряженое, Улица
               Ленина 6
+            </span>
+            <span v-if="pvzData === 'ПВЗ_8'" class="text-[#ec208b] font-semibold text-center">
+              Ростовская область, Матвеево-Курганский район, Село Латоново, Улица
+              Ленина 67
             </span>
             <br />
             <span class="mt-1"
@@ -494,9 +502,13 @@ function signOut() {
             </h1>
             Если Вы верно указали адрес, то можете заказывать товар и после
             уведомления о доставке по адресу: <br />
-            <span class="text-[#005df6] font-semibold text-center">
+            <span v-if="pvzData !== 'ПВЗ_8'" class="text-[#005df6] font-semibold text-center">
               Ростовская область, Матвеево-Курганский район, Село Ряженое, Улица
               Ленина 6
+            </span>
+            <span v-if="pvzData === 'ПВЗ_8'" class="text-[#005df6] font-semibold text-center">
+              Ростовская область, Матвеево-Курганский район, Село Латоново, Улица
+              Ленина 67
             </span>
             <br />
             <span class="mt-1"
@@ -558,7 +570,7 @@ function signOut() {
                 value-attribute="pvz"
                 option-attribute="name"
                 v-model="pvzData"
-                :options="people"
+                :options="pvzs"
                 class="mt-3"
               />
               <div class="mt-5 flex justify-end gap-3" v-auto-animate>
@@ -599,7 +611,7 @@ function signOut() {
                   value-attribute="pvz"
                   option-attribute="name"
                   v-model="pvzData"
-                  :options="people"
+                  :options="pvzs"
                   class="w-full"
                 />
                 <UButton
@@ -658,7 +670,7 @@ function signOut() {
                   @click="router.push(`/client/order/independently/wb`)"
                   >Нажмите сюда, чтобы посмотреть куда заказать для дальнейшей
                   доставки в пункт выдачи заказов
-                  {{ people.find((row) => row.pvz === pvzData)?.name }}
+                  {{ pvzs.find((row) => row.pvz === pvzData)?.name }}
                 </UButton>
               </div>
               <div v-if="marketplace === 'Ozon'">
@@ -670,7 +682,7 @@ function signOut() {
                   @click="router.push(`/client/order/independently/ozon`)"
                   >Нажмите сюда, чтобы посмотреть куда заказать для дальнейшей
                   доставки в пункт выдачи заказов
-                  {{ people.find((row) => row.pvz === pvzData)?.name }}
+                  {{ pvzs.find((row) => row.pvz === pvzData)?.name }}
                 </UButton>
               </div>
               <div v-if="marketplace === 'Яндекс Маркет'">
@@ -682,7 +694,7 @@ function signOut() {
                   @click="router.push(`/client/order/independently/ym`)"
                   >Нажмите сюда, чтобы посмотреть куда заказать для дальнейшей
                   доставки в пункт выдачи заказов
-                  {{ people.find((row) => row.pvz === pvzData)?.name }}
+                  {{ pvzs.find((row) => row.pvz === pvzData)?.name }}
                 </UButton>
               </div>
               <label>Прикрепите скриншот Штрих-кода*</label>
@@ -795,7 +807,7 @@ function signOut() {
                 >
                   Пункт выдачи
                   <span>
-                    {{ people.find((row) => row.pvz === pvzData)?.name }}</span
+                    {{ pvzs.find((row) => row.pvz === pvzData)?.name }}</span
                   >
                 </h1>
               </div>
@@ -938,7 +950,7 @@ function signOut() {
               </h1>
               <div class="max-md:flex items-center justify-center">
                 <UButton
-                  @click="signOut(), router.push('/auth/client')"
+                  @click="router.push('/auth/client')"
                   class="my-3 font-semibold uppercase"
                   >Войти или зарегистрироваться</UButton
                 >

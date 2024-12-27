@@ -853,7 +853,6 @@ function watchQuantity() {
                       v-for="pvzData in pvz?.filter(
                         (pvz) =>
                           pvz.name !== 'ППВЗ_7' &&
-                          pvz.name !== 'ПВЗ_8' &&
                           pvz.name !== 'ППВЗ_9'
                       )"
                       :value="pvzData.name"
@@ -1293,7 +1292,6 @@ function watchQuantity() {
                       v-for="pvzData in pvz?.filter(
                         (pvz) =>
                           pvz.name !== 'ППВЗ_7' &&
-                          pvz.name !== 'ПВЗ_8' &&
                           pvz.name !== 'ППВЗ_9'
                       )"
                       :value="pvzData.name"

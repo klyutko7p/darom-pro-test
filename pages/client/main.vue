@@ -129,6 +129,10 @@ const pvzs = [
     pvz: "ППВЗ_5",
     name: "ул. Дудинская, д. 4, кв. 7",
   },
+  {
+    pvz: "ПВЗ_8",
+    name: "ул. Макара Мазая, 37А",
+  },
 ];
 
 function clearCookies() {
@@ -228,7 +232,7 @@ useSeoMeta({
           class=""
         >
           <UButton
-            @click="signOut(), router.push('/auth/client')"
+            @click="router.push('/auth/client')"
             class="my-3 font-semibold uppercase"
             >Войти или зарегистрироваться</UButton
           >

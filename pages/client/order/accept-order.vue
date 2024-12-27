@@ -1545,7 +1545,7 @@ function signOut() {
               </h1>
               <div class="max-md:flex items-center justify-center">
                 <UButton
-                  @click="signOut(), router.push('/auth/client')"
+                  @click="router.push('/auth/client')"
                   class="my-3 font-semibold uppercase"
                   >Войти или зарегистрироваться</UButton
                 >

@@ -14,7 +14,8 @@ onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login?stay=true");
   }
-  address.value = localStorage.getItem("addressData") || "";
+  address.value =
+    JSON.parse(localStorage.getItem("addressData") as string) || "";
   let isNotAsking = localStorage.getItem("isNotAskingWB");
   if (isNotAsking) {
     isNotAskingWB.value = true;
@@ -244,6 +245,7 @@ function clearValue() {
           <div class="text-left px-3 pb-10">
             <div>
               <div
+                v-if="address !== 'ПВЗ_8'"
                 class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
               >
                 <h1 class="text-sm font-semibold">
@@ -261,12 +263,49 @@ function clearValue() {
                   >Скопировать адрес</UButton
                 >
               </div>
+              <div
+                v-if="address === 'ПВЗ_8'"
+                class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
+              >
+                <h1 class="text-sm font-semibold">
+                  Село Латоново, Улица Ленина 67
+                </h1>
+                <UButton
+                  @click="writeClipboardText('Село Латоново, Улица Ленина 67')"
+                  target="_blank"
+                  icon="i-material-symbols-content-copy"
+                  size="sm"
+                  color="pink"
+                  variant="solid"
+                  class="font-semibold duration-200 mt-3"
+                  :trailing="false"
+                  >Скопировать адрес</UButton
+                >
+              </div>
 
               <div class="flex justify-center">
                 <UButton
+                  v-if="address !== 'ПВЗ_8'"
                   :disabled="isClickedCounter === 0"
                   @click="
                     writeClipboardText('Село Ряженое, Улица Ленина 6'),
+                      skipWindow()
+                  "
+                  target="_blank"
+                  icon="i-mdi-package-variant-closed-check"
+                  size="sm"
+                  color="pink"
+                  variant="solid"
+                  class="font-semibold text-left duration-200 w-full max-w-[500px] mt-3"
+                  :trailing="false"
+                  >Нажмите сюда, чтобы указать скопированный адрес для заказа
+                  товара на WILDBERRIES</UButton
+                >
+                <UButton
+                  v-if="address === 'ПВЗ_8'"
+                  :disabled="isClickedCounter === 0"
+                  @click="
+                    writeClipboardText('Село Латоново, Улица Ленина 67'),
                       skipWindow()
                   "
                   target="_blank"

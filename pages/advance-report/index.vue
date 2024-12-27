@@ -1369,11 +1369,26 @@ let showBalanceEmployees = ref(false);
 let isShowCreditBalanceCash = ref(false);
 let isShowCreditBalanceOnline = ref(false);
 
-const uniqueNotation = computed(() => {
-  if (user.value.role === "ADMIN") {
-    return storeAdvanceReports.getUniqueNonEmptyValues(rows.value, "notation");
+let searchNotations = ref<Array<string>>([]);
+function searchNotation() {
+  const uniqueNotation = storeAdvanceReports.getUniqueNonEmptyValues(
+    rows.value,
+    "notation"
+  );
+
+  if (uniqueNotation) {
+    searchNotations.value = uniqueNotation.filter((notation) =>
+      notation.toLowerCase().includes(rowData.value.notation.toLowerCase())
+    );
   }
-});
+}
+
+watch(
+  () => rowData.value.notation,
+  (newValue, oldValue) => {
+    searchNotation();
+  }
+);
 
 function checkExpenditure() {
   if (rowData.value.expenditure) {
@@ -1879,11 +1894,12 @@ const typeOfOptions2 = [
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Комментарий</label>
-                <UInputMenu
+                <UInput class="w-full" v-model="rowData.notation" />
+                <USelectMenu
                   class="w-full"
                   v-model="rowData.notation"
-                  v-model:query="rowData.notation"
-                  :options="uniqueNotation"
+                  :options="searchNotations"
+                  placeholder="Выберите из списка"
                 />
               </div>
 
@@ -2065,13 +2081,17 @@ const typeOfOptions2 = [
             <div class="text-black">
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Комментарий</label>
-                <UInputMenu
+                <UInput
                   :disabled="user.role !== 'ADMIN'"
                   class="w-full"
                   v-model="rowData.notation"
-                  v-model:query="rowData.notation"
-                  type="text"
-                  :options="uniqueNotation"
+                />
+                <USelectMenu
+                  :disabled="user.role !== 'ADMIN'"
+                  class="w-full"
+                  v-model="rowData.notation"
+                  :options="searchNotations"
+                  placeholder="Выберите из списка"
                 />
               </div>
             </div>
@@ -2175,13 +2195,17 @@ const typeOfOptions2 = [
             <div class="text-black">
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Комментарий</label>
-                <UInputMenu
+                <UInput
                   :disabled="user.role !== 'ADMIN'"
                   class="w-full"
                   v-model="rowData.notation"
-                  v-model:query="rowData.notation"
-                  type="text"
-                  :options="uniqueNotation"
+                />
+                <USelectMenu
+                  :disabled="user.role !== 'ADMIN'"
+                  class="w-full"
+                  v-model="rowData.notation"
+                  :options="searchNotations"
+                  placeholder="Выберите из списка"
                 />
               </div>
             </div>
@@ -2367,11 +2391,12 @@ const typeOfOptions2 = [
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">Комментарий</label>
-                <UInputMenu
+                <UInput class="w-full" v-model="rowData.notation" />
+                <USelectMenu
                   class="w-full"
                   v-model="rowData.notation"
-                  v-model:query="rowData.notation"
-                  :options="uniqueNotation"
+                  :options="searchNotations"
+                  placeholder="Выберите из списка"
                 />
               </div>
 
