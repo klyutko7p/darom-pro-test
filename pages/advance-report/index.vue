@@ -676,6 +676,12 @@ function checkStatus() {
     rowData.value.PVZ = "";
     rowData.value.company = "";
   }
+
+  if (
+    rowData.value.typeOfExpenditure === "Вывод дивидендов" 
+  ) {
+    rowData.value.PVZ = "Офис";
+  }
 }
 let isOpenYM = ref(false);
 
@@ -1914,8 +1920,7 @@ const typeOfOptions2 = [
                     rowData.typeOfExpenditure ===
                       'Перевод в междубалансовый, кредитный баланс' ||
                     rowData.typeOfExpenditure === 'Передача денежных средств' ||
-                    rowData.typeOfExpenditure === 'Передача денежных средств' ||
-                    rowData.typeOfExpenditure === 'Вывод дивидендов'
+                    rowData.typeOfExpenditure === 'Передача денежных средств'
                   "
                   class="w-full"
                   v-model="rowData.company"
