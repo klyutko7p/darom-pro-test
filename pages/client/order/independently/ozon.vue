@@ -81,7 +81,7 @@ function clearValue() {
             class="flex items-center justify-center flex-col h-screen"
           >
             <UButton
-              v-if="address !== 'ПВЗ_8'"
+              v-if="address !== 'ПВЗ_8' && address !== 'ПВЗ_10'"
               @click="skipWindow()"
               to="https://ozon.ru/point/443054"
               target="_blank"
@@ -95,7 +95,7 @@ function clearValue() {
               интернет-магазина «Село Ряженое, ул. Ленина 6»</UButton
             >
             <UButton
-              v-if="address === 'ПВЗ_8'"
+              v-if="address === 'ПВЗ_8' || address === 'ПВЗ_10'"
               @click="skipWindow()"
               to="https://ozon.ru/point/491512"
               target="_blank"

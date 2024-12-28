@@ -22,6 +22,8 @@ onMounted(async () => {
       selectedMarkerId.value = 5;
     } else if (addressString === "ПВЗ_8") {
       selectedMarkerId.value = 8;
+    } else if (addressString === "ПВЗ_10") {
+      selectedMarkerId.value = 10;
     }
   } else if (props.marketplace === "WB") {
     address.value = localStorage.getItem("addressData") || "";
@@ -94,6 +96,11 @@ function changeAddress(coordinatesData: Array<number>) {
     coordinatesData[1] === 37.58217
   ) {
     address.value = "ПВЗ_8";
+  } else if (
+    coordinatesData[0] === 47.045055 &&
+    coordinatesData[1] === 37.479126
+  ) {
+    address.value = "ПВЗ_10";
   }
   coordinates.value = coordinatesData;
 }
@@ -137,6 +144,12 @@ let markers = [
     commentary: "Есть примерочная. Ежедневно 09:00-18:00",
     address: "г. Мариуполь, ул. Макара Мазая, 37А",
   },
+  {
+    id: 10,
+    coords: [47.045055, 37.479126],
+    commentary: "Вход магазин «Радуга». Ежедневно 9:00-20:00",
+    address: "г. Мариуполь, ул. Азовской Военной Флотилии, 2",
+  },
 ];
 
 let markersCopy = [
@@ -177,6 +190,12 @@ let markersCopy = [
     coords: [47.134833, 37.58217],
     commentary: "Есть примерочная. Ежедневно 09:00-18:00",
     address: "г. Мариуполь, ул. Макара Мазая, 37А",
+  },
+  {
+    id: 10,
+    coords: [47.045055, 37.479126],
+    commentary: "Вход магазин «Радуга». Ежедневно 9:00-20:00",
+    address: "г. Мариуполь, ул. Азовской Военной Флотилии, 2",
   },
 ];
 
@@ -266,7 +285,7 @@ watch([searchQuery], searchRows);
           'border-[#ec208b]': marketplace === 'WB',
           'border-[#f8cf02]': marketplace === 'YM',
         }"
-        class="absolute max-md:static top-20 left-10 z-[10] bg-gray-50 border-[1px] shadow-2xl h-full max-w-[300px] px-5 py-5 max-h-[700px] rounded-r-xl max-md:rounded-xl"
+        class="absolute max-md:static top-20 left-10 z-[10] bg-gray-50 border-[1px] shadow-2xl h-full max-w-[300px] px-5 py-5 max-h-[750px] min-w-[300px] rounded-r-xl max-md:rounded-xl"
       >
         <div class="flex items-center justify-between mb-4">
           <h1 class="font-semibold text-xl">Адреса</h1>

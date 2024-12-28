@@ -219,7 +219,7 @@ function handleFileUpload(e: any) {
   } else {
     rowData.value.img = `${randomDigits}-${fileName}`;
     fileQRPhoto.value = e[0];
-    localStorage.setItem("fileName", JSON.stringify(rowData.value.img)); 
+    localStorage.setItem("fileName", JSON.stringify(rowData.value.img));
     localStorage.setItem("marketplace", JSON.stringify(marketplace.value));
   }
 }
@@ -250,6 +250,10 @@ const pvzs = [
   {
     pvz: "ПВЗ_8",
     name: "г. Мариуполь, ул. Макара Мазая, 37А",
+  },
+  {
+    pvz: "ПВЗ_10",
+    name: "г. Мариуполь, ул. Азовской Военной Флотилии, 2",
   },
 ];
 
@@ -476,13 +480,19 @@ function signOut() {
             </h1>
             Если Вы верно указали адрес, то можете заказывать товар и после
             уведомления о доставке по адресу: <br />
-            <span v-if="pvzData !== 'ПВЗ_8'" class="text-[#ec208b] font-semibold text-center">
+            <span
+              v-if="pvzData !== 'ПВЗ_8' && pvzData !== 'ПВЗ_10'"
+              class="text-[#ec208b] font-semibold text-center"
+            >
               Ростовская область, Матвеево-Курганский район, Село Ряженое, Улица
               Ленина 6
             </span>
-            <span v-if="pvzData === 'ПВЗ_8'" class="text-[#ec208b] font-semibold text-center">
-              Ростовская область, Матвеево-Курганский район, Село Латоново, Улица
-              Ленина 67
+            <span
+              v-if="pvzData === 'ПВЗ_8' || pvzData === 'ПВЗ_10'"
+              class="text-[#ec208b] font-semibold text-center"
+            >
+              Ростовская область, Матвеево-Курганский район, Село Латоново,
+              Улица Ленина 67
             </span>
             <br />
             <span class="mt-1"
@@ -502,13 +512,19 @@ function signOut() {
             </h1>
             Если Вы верно указали адрес, то можете заказывать товар и после
             уведомления о доставке по адресу: <br />
-            <span v-if="pvzData !== 'ПВЗ_8'" class="text-[#005df6] font-semibold text-center">
+            <span
+              v-if="pvzData !== 'ПВЗ_8' && pvzData !== 'ПВЗ_10'"
+              class="text-[#005df6] font-semibold text-center"
+            >
               Ростовская область, Матвеево-Курганский район, Село Ряженое, Улица
               Ленина 6
             </span>
-            <span v-if="pvzData === 'ПВЗ_8'" class="text-[#005df6] font-semibold text-center">
-              Ростовская область, Матвеево-Курганский район, Село Латоново, Улица
-              Ленина 67
+            <span
+              v-if="pvzData === 'ПВЗ_8' || pvzData === 'ПВЗ_10'"
+              class="text-[#005df6] font-semibold text-center"
+            >
+              Ростовская область, Матвеево-Курганский район, Село Латоново,
+              Улица Ленина 67
             </span>
             <br />
             <span class="mt-1"

@@ -245,7 +245,7 @@ function clearValue() {
           <div class="text-left px-3 pb-10">
             <div>
               <div
-                v-if="address !== 'ПВЗ_8'"
+                v-if="address !== 'ПВЗ_8' && address !== 'ПВЗ_10'"
                 class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
               >
                 <h1 class="text-sm font-semibold">
@@ -264,7 +264,7 @@ function clearValue() {
                 >
               </div>
               <div
-                v-if="address === 'ПВЗ_8'"
+                v-if="address === 'ПВЗ_8' || address === 'ПВЗ_10'"
                 class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
               >
                 <h1 class="text-sm font-semibold">
@@ -285,7 +285,7 @@ function clearValue() {
 
               <div class="flex justify-center">
                 <UButton
-                  v-if="address !== 'ПВЗ_8'"
+                  v-if="address !== 'ПВЗ_8' && address !== 'ПВЗ_10'"
                   :disabled="isClickedCounter === 0"
                   @click="
                     writeClipboardText('Село Ряженое, Улица Ленина 6'),
@@ -302,7 +302,7 @@ function clearValue() {
                   товара на WILDBERRIES</UButton
                 >
                 <UButton
-                  v-if="address === 'ПВЗ_8'"
+                  v-if="address === 'ПВЗ_8' || address === 'ПВЗ_10'"
                   :disabled="isClickedCounter === 0"
                   @click="
                     writeClipboardText('Село Латоново, Улица Ленина 67'),
