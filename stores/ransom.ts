@@ -1210,6 +1210,28 @@ export const useRansomStore = defineStore("ransom", () => {
       }
     }
   }
+  
+  async function getRansomRowsForAdvanceReportOurRansomPartThree() {
+    try {
+      let response = await fetch(
+        "/api/ransom/get-rows-for-advance-report-or-part-three",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        }
+      );
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
 
   const getUniqueNonEmptyValues = (
     rows: IOurRansom[] | IClientRansom[] | IDelivery[],
@@ -1350,6 +1372,7 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsOurRansom,
     getRansomRowsForAdvanceReportOurRansomPartOne,
     getRansomRowsForAdvanceReportOurRansomPartTwo,
+    getRansomRowsForAdvanceReportOurRansomPartThree,
     getDeletedRansomRowsByPVZ,
     clearRansomRow,
     deleteNotSortedRows,

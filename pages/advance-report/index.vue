@@ -29,6 +29,7 @@ onMounted(async () => {
     let advanceReportsPromise;
     let ourRansomRowsPromise;
     let ourRansomRowsPromise2;
+    let ourRansomRowsPromise3;
     let deliveryRowsPromise;
 
     if (user.value.role === "ADMIN") {
@@ -39,6 +40,8 @@ onMounted(async () => {
         storeRansom.getRansomRowsForAdvanceReportOurRansomPartOne();
       ourRansomRowsPromise2 =
         storeRansom.getRansomRowsForAdvanceReportOurRansomPartTwo();
+      ourRansomRowsPromise3 =
+        storeRansom.getRansomRowsForAdvanceReportOurRansomPartThree();
       deliveryRowsPromise = storeRansom.getRansomRowsForBalanceDelivery();
     } else {
       advanceReportsPromise = storeAdvanceReports.getAdvancedReports(
@@ -50,6 +53,7 @@ onMounted(async () => {
       advanceReportsData,
       ourRansomRowsData,
       ourRansomRowsData2,
+      ourRansomRowsData3,
       deliveryRowsData,
       balanceRowsData,
       onlineBalanceRowsData,
@@ -57,6 +61,7 @@ onMounted(async () => {
       advanceReportsPromise,
       ourRansomRowsPromise,
       ourRansomRowsPromise2,
+      ourRansomRowsPromise3,
       deliveryRowsPromise,
       storeBalance.getBalanceRows(),
       storeBalance.getBalanceOnlineRows(),
@@ -97,7 +102,7 @@ onMounted(async () => {
     }
 
     if (user.value.role === "ADMIN") {
-      rowsOurRansom.value = [...ourRansomRowsData, ...ourRansomRowsData2];
+      rowsOurRansom.value = [...ourRansomRowsData, ...ourRansomRowsData2, ...ourRansomRowsData3];
       rowsDelivery.value = deliveryRowsData;
       getAllSumDirector();
     }
@@ -677,9 +682,7 @@ function checkStatus() {
     rowData.value.company = "";
   }
 
-  if (
-    rowData.value.typeOfExpenditure === "Вывод дивидендов" 
-  ) {
+  if (rowData.value.typeOfExpenditure === "Вывод дивидендов") {
     rowData.value.PVZ = "Офис";
   }
 }
