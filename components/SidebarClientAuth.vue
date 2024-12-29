@@ -9,8 +9,12 @@ let isLoading = ref(false);
 
 let user = ref({} as User);
 const token = Cookies.get("token");
-
+let marketplaceData = ref("");
 onMounted(async () => {
+  if (route.query.marketplace) {
+    marketplaceData.value = route.query.marketplace as string;
+  }
+
   isLoading.value = true;
   user.value = await storeClients.getClient();
   isLoading.value = false;
@@ -41,8 +45,8 @@ onMounted(async () => {
     </div>
     <Icon
       v-if="
-        !route.fullPath.includes('/client/delivery') &&
-        !route.fullPath.includes('/client/order/independently/ozon?accept=true')
+        !route.fullPath.includes('/auth/client?marketplace') &&
+        !route.fullPath.includes('/auth/client?card')
       "
       @click="router.go(-1)"
       name="ion:ios-arrow-back"
@@ -50,17 +54,29 @@ onMounted(async () => {
       class="cursor-pointer hover:opacity-50 duration-200"
     />
     <Icon
-      v-if="route.fullPath.includes('/client/delivery')"
-      @click="router.push('/client/main')"
+      v-if="route.fullPath.includes('/auth/client?marketplace=wb')"
+      @click="router.push('/client/delivery?marketplace=wb')"
       name="ion:ios-arrow-back"
       size="32"
       class="cursor-pointer hover:opacity-50 duration-200"
     />
     <Icon
-      v-if="
-        route.fullPath.includes('/client/order/independently/ozon?accept=true')
-      "
-      @click="router.push('/client/main')"
+      v-if="route.fullPath.includes('/auth/client?marketplace=ozon')"
+      @click="router.push('/client/delivery?marketplace=ozon')"
+      name="ion:ios-arrow-back"
+      size="32"
+      class="cursor-pointer hover:opacity-50 duration-200"
+    />
+    <Icon
+      v-if="route.fullPath.includes('/auth/client?marketplace=ym')"
+      @click="router.push('/client/delivery?marketplace=ym')"
+      name="ion:ios-arrow-back"
+      size="32"
+      class="cursor-pointer hover:opacity-50 duration-200"
+    />
+    <Icon
+      v-if="route.fullPath.includes('/auth/client?card=true')"
+      @click="router.push('/client/order/accept-order?card=true')"
       name="ion:ios-arrow-back"
       size="32"
       class="cursor-pointer hover:opacity-50 duration-200"

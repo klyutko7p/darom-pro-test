@@ -966,7 +966,20 @@ function signOut() {
               </h1>
               <div class="max-md:flex items-center justify-center">
                 <UButton
-                  @click="router.push('/auth/client')"
+                  v-if="marketplace === 'Wildberries'"
+                  @click="router.push(`/auth/client?marketplace=wb`)"
+                  class="my-3 font-semibold uppercase"
+                  >Войти или зарегистрироваться</UButton
+                >
+                <UButton
+                  v-if="marketplace === 'Ozon'"
+                  @click="router.push(`/auth/client?marketplace=ozon`)"
+                  class="my-3 font-semibold uppercase"
+                  >Войти или зарегистрироваться</UButton
+                >
+                <UButton
+                  v-if="marketplace === 'Яндекс Маркет'"
+                  @click="router.push(`/auth/client?marketplace=ym`)"
                   class="my-3 font-semibold uppercase"
                   >Войти или зарегистрироваться</UButton
                 >
