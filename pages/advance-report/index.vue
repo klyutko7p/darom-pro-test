@@ -102,7 +102,11 @@ onMounted(async () => {
     }
 
     if (user.value.role === "ADMIN") {
-      rowsOurRansom.value = [...ourRansomRowsData, ...ourRansomRowsData2, ...ourRansomRowsData3];
+      rowsOurRansom.value = [
+        ...ourRansomRowsData,
+        ...ourRansomRowsData2,
+        ...ourRansomRowsData3,
+      ];
       rowsDelivery.value = deliveryRowsData;
       getAllSumDirector();
     }
@@ -856,7 +860,7 @@ async function createRow() {
   } else if (
     rowData.value.typeOfExpenditure ===
       "Списание кредитной задолженности торговой империи" &&
-    +rowData.value.expenditure > +sumCreditOnlineDebt.value &&
+    +rowData.value.expenditure > +sumCreditCashDebt.value &&
     rowData.value.type === "Нал"
   ) {
     toast.error("Задолженность кредита меньше чем вписанная сумма!");
@@ -1386,9 +1390,11 @@ function searchNotation() {
   );
 
   if (uniqueNotation) {
-    searchNotations.value = uniqueNotation.filter((notation) =>
-      notation.toLowerCase().includes(rowData.value.notation.toLowerCase())
-    );
+    searchNotations.value = uniqueNotation.filter((notation) => {
+      if (rowData.value.notation) {
+        notation.toLowerCase().includes(rowData.value.notation.toLowerCase());
+      }
+    });
   }
 }
 
