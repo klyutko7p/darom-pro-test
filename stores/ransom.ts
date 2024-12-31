@@ -640,7 +640,8 @@ export const useRansomStore = defineStore("ransom", () => {
     if (row.uu !== undefined) originalRow.updatedUser = row.uu;
     if (row.fm !== undefined) originalRow.fromName = row.fm;
     if (row.nt !== undefined) originalRow.notation = row.nt;
-    if (row.dp !== undefined) originalRow.dispatchPVZ = row.dp;
+    if (row.dpz !== undefined) originalRow.dispatchPVZ = row.dpz;
+    if (row.dp !== undefined) originalRow.dp = row.dp;
     if (row.ds !== undefined) originalRow.deliveredSC = row.ds;
     if (row.dz !== undefined) originalRow.deliveredPVZ = row.dz;
     if (row.oz !== undefined) originalRow.orderPVZ = row.oz;

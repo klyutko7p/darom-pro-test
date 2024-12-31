@@ -10,11 +10,11 @@ interface IRequestBody {
 export default defineEventHandler(async (event) => {
   try {
     let { id, flag } = await readBody<IRequestBody>(event);
-    if (flag === 'OurRansom') {
+    if (flag === "OurRansom") {
       const row = await prisma.ourRansom.findFirst({
         where: {
           id: id,
-        }
+        },
       });
       if (row) {
         const rowData = await prisma.ourRansom.create({
@@ -44,14 +44,15 @@ export default defineEventHandler(async (event) => {
             updated_at: new Date(),
             createdUser: row.createdUser,
             updatedUser: row.updatedUser,
+            dp: row.dp,
           },
         });
       }
-    } else if (flag === 'ClientRansom') {
+    } else if (flag === "ClientRansom") {
       const row = await prisma.clientRansom.findFirst({
         where: {
           id: id,
-        }
+        },
       });
       if (row) {
         const rowData = await prisma.clientRansom.create({
@@ -83,11 +84,11 @@ export default defineEventHandler(async (event) => {
           },
         });
       }
-    } else if (flag === 'Delivery') {
+    } else if (flag === "Delivery") {
       const row = await prisma.delivery.findFirst({
         where: {
           id: id,
-        }
+        },
       });
       if (row) {
         const rowData = await prisma.delivery.create({
@@ -116,7 +117,7 @@ export default defineEventHandler(async (event) => {
     }
   } catch (error) {
     if (error instanceof Error) {
-      console.error(error.message)
+      console.error(error.message);
       return { error: error.message };
     }
   }

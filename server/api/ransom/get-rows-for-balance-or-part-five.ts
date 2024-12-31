@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
         priceSite: true,
         deleted: true,
         created_at: true,
-        // dp: true,
+        dp: true,
       },
       orderBy: {
         created_at: "desc",
@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
     const processedRows = rows.map(row => {
       const newRow = {};
 
-      if (row.dispatchPVZ !== undefined) newRow.dp = row.dispatchPVZ;
+      if (row.dispatchPVZ !== undefined) newRow.dpz = row.dispatchPVZ;
       if (row.prepayment !== 0) newRow.pp = row.prepayment;
       if (row.dp !== undefined) newRow.dp = row.dp;
       if (row.additionally !== null) newRow.ad = row.additionally;
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
 
     const packed = msgpack.encode(processedRows);
     return packed;
-  } catch (error) {
+  } catch (error: any) {
     console.error(error.message);
     return { error: error.message };
   }

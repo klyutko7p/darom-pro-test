@@ -362,14 +362,14 @@ function reduceArray(array: any, flag: string) {
       );
     }
   }
-  // else if (selectedTypeOfTransaction.value === "Постоплата WB") {
-  //   if (flag === "OurRansom") {
-  //     return array.reduce(
-  //       (ac: any, curValue: any) => ac + curValue.priceSite,
-  //       0
-  //     );
-  //   }
-  // }
+  else if (selectedTypeOfTransaction.value === "Постоплата WB") {
+    if (flag === "OurRansom") {
+      return array.reduce(
+        (ac: any, curValue: any) => ac + curValue.priceSite,
+        0
+      );
+    }
+  }
   else if (selectedTypeOfTransaction.value === "Заказано3") {
     if (flag === "OurRansom") {
       return array.reduce(
@@ -875,7 +875,7 @@ function getAllSum() {
         (row) =>
           !row.issued &&
           !row.deleted &&
-          // row.dp &&
+          row.dp &&
           (!selected.value.start ||
             new Date(row.created_at) >= new Date(newStartingDate)) &&
           (!selected.value.end ||
@@ -889,7 +889,7 @@ function getAllSum() {
           row.dispatchPVZ === selectedPVZ.value &&
           row.issued === null &&
           row.deleted === null &&
-          // row.dp &&
+          row.dp &&
           (!selected.value.start ||
             new Date(row.created_at) >= new Date(newStartingDate)) &&
           (!selected.value.end ||
@@ -899,36 +899,36 @@ function getAllSum() {
       allSum.value = sum1.value;
     }
   }
-  // else if (selectedTypeOfTransaction.value === "Постоплата WB") {
-  //   if (selectedPVZ.value === "Все ПВЗ") {
-  //     copyArrayOurRansom.value = ourRansomRows.value?.filter(
-  //       (row) =>
-  //         !row.issued &&
-  //         !row.deleted &&
-  //         !row.dp &&
-  //         (!selected.value.start ||
-  //           new Date(row.created_at) >= new Date(newStartingDate)) &&
-  //         (!selected.value.end ||
-  //           new Date(row.created_at) <= new Date(newEndDate))
-  //     );
-  //     sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
-  //     allSum.value = sum1.value;
-  //   } else {
-  //     copyArrayOurRansom.value = ourRansomRows.value?.filter(
-  //       (row) =>
-  //         row.dispatchPVZ === selectedPVZ.value &&
-  //         row.issued === null &&
-  //         row.deleted === null &&
-  //         !row.dp &&
-  //         (!selected.value.start ||
-  //           new Date(row.created_at) >= new Date(newStartingDate)) &&
-  //         (!selected.value.end ||
-  //           new Date(row.created_at) <= new Date(newEndDate))
-  //     );
-  //     sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
-  //     allSum.value = sum1.value;
-  //   }
-  // }
+  else if (selectedTypeOfTransaction.value === "Постоплата WB") {
+    if (selectedPVZ.value === "Все ПВЗ") {
+      copyArrayOurRansom.value = ourRansomRows.value?.filter(
+        (row) =>
+          !row.issued &&
+          !row.deleted &&
+          !row.dp &&
+          (!selected.value.start ||
+            new Date(row.created_at) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.created_at) <= new Date(newEndDate))
+      );
+      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+      allSum.value = sum1.value;
+    } else {
+      copyArrayOurRansom.value = ourRansomRows.value?.filter(
+        (row) =>
+          row.dispatchPVZ === selectedPVZ.value &&
+          row.issued === null &&
+          row.deleted === null &&
+          !row.dp &&
+          (!selected.value.start ||
+            new Date(row.created_at) >= new Date(newStartingDate)) &&
+          (!selected.value.end ||
+            new Date(row.created_at) <= new Date(newEndDate))
+      );
+      sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
+      allSum.value = sum1.value;
+    }
+  }
   else if (selectedTypeOfTransaction.value === "Заказано3") {
     if (selectedPVZ.value === "Все ПВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
@@ -2458,7 +2458,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                       >
                         Баланс онлайн DP
                       </option>
-                      <!-- <option
+                      <option
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
@@ -2469,7 +2469,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                         value="Постоплата WB"
                       >
                         Сумма товаров в заказе с постоплатой WB (до выдачи)
-                      </option> -->
+                      </option>
                       <option
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
@@ -2995,7 +2995,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                       >
                         Баланс онлайн DP
                       </option>
-                      <!-- <option
+                      <option
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
@@ -3006,7 +3006,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                         value="Постоплата WB"
                       >
                         Сумма товаров в заказе с постоплатой WB (до выдачи)
-                      </option> -->
+                      </option>
                       <option
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&

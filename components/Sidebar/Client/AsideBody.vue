@@ -41,7 +41,7 @@ let isShowInfo = ref(false);
                 name="i-material-symbols-order-approve-rounded"
                 size="24"
               />
-              <span class="flex-1 ms-3 whitespace-nowrap">Оформить заказ</span>
+              <span class="flex-1 ms-3 whitespace-nowrap">Оформить заказ (* от 5%)</span>
             </div>
           </li>
           <li>
@@ -59,7 +59,7 @@ let isShowInfo = ref(false);
                 <br class="max-[500px]:block hidden" />
                 заказа <br class="max-[500px]:hidden block" />
                 из интернет-магазина <br class="max-[500px]:block hidden" />
-                по Штрих-коду (QR)</span
+                по Штрих-коду (QR) (* от 0%)</span
               >
             </div>
           </li>

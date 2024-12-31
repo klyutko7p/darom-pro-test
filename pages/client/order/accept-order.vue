@@ -804,6 +804,7 @@ function signOut() {
             </div>
 
             <div v-if="isOpenThirdModal && marketplace === 'OZ'" v-auto-animate>
+              <h1 class="mb-3 italic text-red-500 font-semibold uppercase">Обработка ссылок в тестовом режиме</h1>
               <div v-if="!urlToItem">
                 <label
                   >Скопируйте

@@ -1478,7 +1478,7 @@ const typeOfOptions = [
   { value: "Пополнение баланса", label: "Нет" },
   { value: "Перевод с кредитного баланса нал", label: "С кредитного баланса" },
   { value: "Перевод с баланса безнал", label: "С баланса безнал" },
-  // { value: "Постоплата WB", label: "Постоплата WB" },
+  { value: "Постоплата WB", label: "Постоплата WB" },
 ];
 
 const typeOfOptions2 = [
@@ -1533,10 +1533,10 @@ const typeOfOptions2 = [
                 <h1 class="text-center text-2xl text-secondary-color mb-5">
                   {{ formatNumber(sumCreditCashDebt) }} ₽
                 </h1>
-                <!-- <h1 class="text-xl text-center">WB задолженность</h1>
+                <h1 class="text-xl text-center">WB задолженность</h1>
                 <h1 class="text-center text-2xl text-secondary-color mb-5">
                   {{ formatNumber(sumCashWB) }} ₽
-                </h1> -->
+                </h1>
                 <h1 class="text-xl text-center">
                   Междубалансовая задолженность
                 </h1>

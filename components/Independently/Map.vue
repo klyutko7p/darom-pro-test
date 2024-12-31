@@ -311,34 +311,36 @@ watch([searchQuery], searchRows);
           @input="searchRows"
           v-model="searchQuery"
         />
-        <div
-          v-for="marker in markers"
-          :key="marker.id"
-          class="mb-3 flex items-start gap-5"
-        >
-          <div>
-            <input
-              :class="{
-                'checked:ring-[#005df6] text-[#005df6] ring-[#005df6] focus-visible:ring-[#005df6] focus:ring-[#005df6]':
-                  marketplace === 'OZON',
-                'checked:ring-[#ec208b] text-[#ec208b] ring-[#ec208b] focus-visible:ring-[#ec208b] focus:ring-[#ec208b]':
-                  marketplace === 'WB',
-                'checked:ring-[#f8cf02] text-[#f8cf02] ring-[#f8cf02] focus-visible:ring-[#f8cf02] focus:ring-[#f8cf02]':
-                  marketplace === 'YM',
-              }"
-              class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 checked:ring-[2px] focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white ring-[2px] bg-transparent duration-100"
-              type="checkbox"
-              :checked="selectedMarkerId === marker.id"
-              @change="changeAddress(marker.coords), selectMarker(marker)"
-            />
-          </div>
-          <div>
-            <h1 class="font-semibold text-sm leading-4 my-1">
-              {{ marker.address }}
-            </h1>
-            <h1 class="text-sm text-gray-400 font-semibold leading-4">
-              {{ marker.commentary }}
-            </h1>
+        <div class="max-h-[700px] max-sm:max-h-[500px] overflow-y-scroll px-1 flex flex-col gap-3">
+          <div
+            v-for="marker in markers"
+            :key="marker.id"
+            class="flex items-start gap-3"
+          >
+            <div>
+              <input
+                :class="{
+                  'checked:ring-[#005df6] text-[#005df6] ring-[#005df6] focus-visible:ring-[#005df6] focus:ring-[#005df6]':
+                    marketplace === 'OZON',
+                  'checked:ring-[#ec208b] text-[#ec208b] ring-[#ec208b] focus-visible:ring-[#ec208b] focus:ring-[#ec208b]':
+                    marketplace === 'WB',
+                  'checked:ring-[#f8cf02] text-[#f8cf02] ring-[#f8cf02] focus-visible:ring-[#f8cf02] focus:ring-[#f8cf02]':
+                    marketplace === 'YM',
+                }"
+                class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 checked:ring-[2px] focus:ring-offset-transparent form-checkbox rounded-full bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white ring-[2px] bg-transparent duration-100"
+                type="checkbox"
+                :checked="selectedMarkerId === marker.id"
+                @change="changeAddress(marker.coords), selectMarker(marker)"
+              />
+            </div>
+            <div>
+              <h1 class="font-semibold text-sm leading-4 my-1">
+                {{ marker.address }}
+              </h1>
+              <h1 class="text-sm text-gray-400 font-semibold leading-4">
+                {{ marker.commentary }}
+              </h1>
+            </div>
           </div>
         </div>
         <div class="flex items-center justify-center mt-10 max-md:mt-5">

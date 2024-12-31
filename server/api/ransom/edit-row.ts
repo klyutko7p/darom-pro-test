@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
           shipped: row.shipped ? new Date(row.shipped).toISOString() : null,
           verified: row.verified ? new Date(row.verified).toISOString() : null,
           priceRefund: row.priceRefund,
-          // dp: row.dp,
+          dp: row.dp,
         },
       });
     } else if ("priceProgram" in row) {

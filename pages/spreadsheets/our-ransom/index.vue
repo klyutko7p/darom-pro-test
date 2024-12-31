@@ -49,7 +49,7 @@ function openModal(row: IOurRansom) {
 
 function closeModal() {
   isOpen.value = false;
-  // isShowModal.value = false;
+  isShowModal.value = false;
   rowData.value = {} as IOurRansom;
 }
 
@@ -103,7 +103,7 @@ async function deleteSelectedRows(idArray: number[]) {
 
 async function updateRow() {
   isLoading.value = true;
-  // isShowModal.value = false;
+  isShowModal.value = false;
 
   await storeRansom.updateRansomRow(
     rowData.value,
@@ -134,7 +134,7 @@ async function updateRow() {
 
 async function createRow() {
   isLoading.value = true;
-  // isShowModal.value = false;
+  isShowModal.value = false;
 
   await storeRansom.createRansomRow(
     rowData.value,
@@ -714,15 +714,15 @@ function watchQuantity() {
   }
 }
 
-// let isShowModal = ref(false);
+let isShowModal = ref(false);
 
-// function checkWB() {
-//   rowData.value.dp = true;
-// }
+function checkWB() {
+  rowData.value.dp = true;
+}
 
-// function nonCheckWB() {
-//   rowData.value.dp = false;
-// }
+function nonCheckWB() {
+  rowData.value.dp = false;
+}
 </script>
 
 <template>
@@ -851,9 +851,7 @@ function watchQuantity() {
                   >
                     <option
                       v-for="pvzData in pvz?.filter(
-                        (pvz) =>
-                          pvz.name !== 'ППВЗ_7' &&
-                          pvz.name !== 'ППВЗ_9'
+                        (pvz) => pvz.name !== 'ППВЗ_7' && pvz.name !== 'ППВЗ_9'
                       )"
                       :value="pvzData.name"
                     >
@@ -1160,7 +1158,7 @@ function watchQuantity() {
               class="flex items-center justify-center gap-3 mt-10"
               v-if="rowData.id"
             >
-              <!-- <div class="flex flex-col items-center gap-2 mr-5">
+              <div class="flex flex-col items-center gap-2 mr-5">
                 <label>Предоплата</label>
                 <input
                   class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
@@ -1168,12 +1166,14 @@ function watchQuantity() {
                   required
                   v-model="rowData.dp"
                 />
-              </div> -->
-              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
+              </div>
+              <UIMainButton @click="updateRow"
+                >Сохранить
+              </UIMainButton>
               <UIMainButton @click="closeModal">Отменить </UIMainButton>
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
-              <!-- <div class="flex flex-col items-center gap-2 mr-5">
+              <div class="flex flex-col items-center gap-2 mr-5">
                 <label>Предоплата</label>
                 <input
                   class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
@@ -1181,10 +1181,10 @@ function watchQuantity() {
                   required
                   v-model="rowData.dp"
                 />
-              </div> -->
+              </div>
               <UIMainButton
                 :disabled="rowData.fromName === '' || rowData.fromName === null"
-                @click="createRow"
+                @click="isShowModal = true"
                 >Создать
               </UIMainButton>
               <UIMainButton @click="closeModal">Отменить </UIMainButton>
@@ -1290,9 +1290,7 @@ function watchQuantity() {
                   >
                     <option
                       v-for="pvzData in pvz?.filter(
-                        (pvz) =>
-                          pvz.name !== 'ППВЗ_7' &&
-                          pvz.name !== 'ППВЗ_9'
+                        (pvz) => pvz.name !== 'ППВЗ_7' && pvz.name !== 'ППВЗ_9'
                       )"
                       :value="pvzData.name"
                     >
@@ -1591,7 +1589,7 @@ function watchQuantity() {
               class="flex items-center justify-center gap-3 mt-10"
               v-if="rowData.id"
             >
-              <!-- <div class="flex flex-col items-center gap-2 mr-5">
+              <div class="flex flex-col items-center gap-2 mr-5">
                 <label>Предоплата</label>
                 <input
                   class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
@@ -1599,12 +1597,14 @@ function watchQuantity() {
                   required
                   v-model="rowData.dp"
                 />
-              </div> -->
-              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
+              </div>
+              <UIMainButton @click="updateRow"
+                >Сохранить
+              </UIMainButton>
               <UIMainButton @click="closeModal">Отменить </UIMainButton>
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
-              <!-- <div class="flex flex-col items-center gap-2 mr-5">
+              <div class="flex flex-col items-center gap-2 mr-5">
                 <label>Предоплата</label>
                 <input
                   class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
@@ -1612,10 +1612,10 @@ function watchQuantity() {
                   required
                   v-model="rowData.dp"
                 />
-              </div> -->
+              </div>
               <UIMainButton
                 :disabled="rowData.fromName === '' || rowData.fromName === null"
-                @click="createRow"
+                @click="isShowModal = true"
                 >Создать
               </UIMainButton>
               <UIMainButton @click="closeModal">Отменить </UIMainButton>

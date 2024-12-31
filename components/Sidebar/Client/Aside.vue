@@ -73,7 +73,7 @@ let isShowInfo = ref(false);
                     size="24"
                   />
                   <span class="flex-1 ms-3 whitespace-nowrap"
-                    >Оформить заказ</span
+                    >Оформить заказ (* от 5%)</span
                   >
                 </div>
               </li>
@@ -89,7 +89,7 @@ let isShowInfo = ref(false);
                   />
                   <span class="flex-1 ms-3 whitespace-nowrap"
                     >Оформить доставку Вашего <br />
-                    заказа по Штрих-коду (QR)</span
+                    заказа по Штрих-коду (QR) (* от 0%)</span
                   >
                 </div>
               </li>

@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
 
       if (row.verified !== undefined) newRow.v = row.verified;
       if (row.priceRefund !== undefined) newRow.pr = row.priceRefund;
-      if (row.dispatchPVZ !== undefined) newRow.dp = row.dispatchPVZ;
+      if (row.dispatchPVZ !== undefined) newRow.dpz = row.dispatchPVZ;
       if (row.prepayment !== undefined) newRow.pp = row.prepayment;
       if (row.additionally !== undefined) newRow.ad = row.additionally;
       if (row.deliveredKGT !== undefined) newRow.dk = row.deliveredKGT;

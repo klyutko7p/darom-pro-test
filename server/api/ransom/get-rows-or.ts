@@ -36,8 +36,8 @@ export default defineEventHandler(async (event) => {
       if (row.createdUser !== undefined) newRow.cu = row.createdUser;
       if (row.updatedUser !== undefined) newRow.uu = row.updatedUser;
       if (row.orderPVZ !== undefined) newRow.oz = row.orderPVZ;
-      if (row.dispatchPVZ !== undefined) newRow.dp = row.dispatchPVZ;
-      // if (row.dp !== undefined) newRow.dp = row.dp;
+      if (row.dispatchPVZ !== undefined) newRow.dpz = row.dispatchPVZ;
+      if (row.dp !== undefined) newRow.dp = row.dp;
       if (row.deliveredPVZ !== undefined) newRow.dz = row.deliveredPVZ;
       if (row.deliveredSC !== undefined) newRow.ds = row.deliveredSC;
       if (row.cell !== undefined) newRow.cc = row.cell;
