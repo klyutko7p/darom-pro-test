@@ -53,7 +53,7 @@ function clearFields() {
   selectedType.value = ["Нал", "Безнал"];
   startingDate.value = "";
   endDate.value = "";
-  selected.value.start = new Date(new Date().getFullYear(), 0, 1);
+  selected.value.start = new Date(2024, 0, 1);
   selected.value.end = new Date();
   filterRows();
 }
@@ -112,7 +112,7 @@ const ranges = [
 ];
 
 const selected = ref<SelectedDateRange>({
-  start: new Date(new Date().getFullYear(), 0, 1),
+  start: new Date(2024, 0, 1),
   end: new Date(),
 });
 

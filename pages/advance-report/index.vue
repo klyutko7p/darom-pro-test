@@ -1323,7 +1323,7 @@ interface SelectedDateRange {
   end: Date;
 }
 const selected = ref<SelectedDateRange>({
-  start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  start: new Date(2024, new Date().getMonth(), 1),
   end: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0),
 });
 

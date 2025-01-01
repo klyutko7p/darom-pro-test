@@ -76,7 +76,7 @@ const ranges = [
 ];
 
 const selected = ref({
-  start: new Date(new Date().getFullYear(), 0, 1),
+  start: new Date(2024, 0, 1),
   end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
 });
 
@@ -167,7 +167,7 @@ function clearFields() {
   endDate.value = "";
   startingDate2.value = "";
   endDate2.value = "";
-  (selected.value.start = new Date(new Date().getFullYear(), 0, 1)),
+  (selected.value.start = new Date(2024, 0, 1)),
     (selected.value.end = new Date(
       new Date().getFullYear(),
       new Date().getMonth() + 1,

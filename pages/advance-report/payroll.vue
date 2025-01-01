@@ -73,7 +73,7 @@ function openModal(row: IPayroll) {
 
 async function createReport(object: any) {
   const currentDate = new Date();
-  const year = currentDate.getFullYear();
+  const year = object.year;
   const newDate = new Date(year, object.month - 1, 5);
 
   isLoading.value = true;

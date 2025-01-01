@@ -4,6 +4,13 @@ import VueMultiselect from "vue-multiselect";
 
 import { read, utils, writeFile, write } from "xlsx";
 const storeAdvanceReport = useAdvanceReports();
+
+let fullYear = ref(2025);
+function editYear(year: number) {
+  fullYear.value = year;
+}
+
+
 const emit = defineEmits([
   "openModal",
   "createReport",
@@ -54,7 +61,11 @@ function createReport() {
   }
 
   if (answer) {
-    emit("createReport", { rows: props.employees, month: month.value });
+    emit("createReport", {
+      rows: props.employees,
+      month: month.value,
+      year: fullYear.value,
+    });
   }
 }
 
@@ -79,7 +90,10 @@ let month = ref(new Date().getMonth() + 1);
 const filteredRows = ref(
   props.rows?.filter((row: IPayroll) => {
     let rowDate: Date = new Date(row.date);
-    return rowDate.getMonth() + 1 === month.value;
+    return (
+      rowDate.getMonth() + 1 === month.value &&
+      rowDate.getFullYear() === fullYear.value
+    );
   })
 );
 
@@ -144,7 +158,10 @@ function updateCurrentPageData() {
   returnRows.value = props.rows;
   filteredRows.value = returnRows.value?.filter((row: IPayroll) => {
     let rowDate: Date = new Date(row.date);
-    return rowDate.getMonth() + 1 === +month.value;
+    return (
+      rowDate.getMonth() + 1 === +month.value &&
+      rowDate.getFullYear() === fullYear.value
+    );
   });
 
   filterRowsCompanyAndPVZ();
@@ -356,7 +373,7 @@ async function createAdvanceReportZP() {
   const selectedMonth = month.value;
 
   const currentDate = new Date();
-  const year = currentDate.getFullYear();
+  const year = fullYear.value;
   const date = new Date(year, selectedMonth - 1, 30);
   date.setHours(15);
   date.setMinutes(0);
@@ -467,9 +484,13 @@ const filterRowsCompanyAndPVZ = () => {
   });
   filteredRows.value = filteredRows.value?.filter((row: IPayroll) => {
     let rowDate: Date = new Date(row.date);
-    return rowDate.getMonth() + 1 === +month.value;
+    return (
+      rowDate.getMonth() + 1 === +month.value &&
+      rowDate.getFullYear() === fullYear.value
+    );
   });
 };
+
 function saveToLocalStorage(key: string, value: any) {
   localStorage.setItem(key, JSON.stringify(value));
 }
@@ -606,13 +627,22 @@ const toggleDropdown = (rowId: any) => {
 
   dropdownStates.value[rowId] = !dropdownStates.value[rowId];
 };
+
+
 </script>
 <template>
   <div class="my-10 flex items-center gap-5">
     <span
-      class="border-[1px] py-1 px-5 border-secondary-color hover:cursor-pointer hover:bg-secondary-color hover:text-white bg-white duration-200 rounded-full"
-      @click="showFilters = !showFilters"
+      :class="{ 'bg-secondary-color text-white': fullYear === 2024 }"
+      class="border-[1px] py-1 px-5 border-secondary-color hover:cursor-pointer duration-200 rounded-full"
+      @click="(showFilters = true), editYear(2024)"
       >2024</span
+    >
+    <span
+      :class="{ 'bg-secondary-color text-white': fullYear === 2025 }"
+      class="border-[1px] py-1 px-5 border-secondary-color hover:cursor-pointer duration-200 rounded-full"
+      @click="(showFilters = true), editYear(2025)"
+      >2025</span
     >
     <div
       v-if="showFilters"

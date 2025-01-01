@@ -57,12 +57,12 @@ const ranges = [
 ];
 
 const selected = ref<SelectedDateRange>({
-  start: new Date(new Date().getFullYear(), 0, 1),
+  start: new Date(2024, 0, 1),
   end: new Date(),
 });
 
 function getMonthRange(year: number, month: number): SelectedDateRange {
-  const start = new Date(year, month, 1);
+  const start = new Date(2024, month, 1);
   const end = new Date(year, month + 1, 0);
   return { start, end };
 }

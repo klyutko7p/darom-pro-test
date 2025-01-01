@@ -30,7 +30,7 @@ onMounted(async () => {
   }
 
   selected.value = {
-    start: new Date(new Date().getFullYear() - 1, 0, 1),
+    start: new Date(2024, 0, 1),
     end: new Date(),
   };
 
