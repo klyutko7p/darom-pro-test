@@ -614,6 +614,7 @@ function getSumCreditBalance() {
 function closeModal() {
   isOpen.value = false;
   rowData.value = {} as IAdvanceReport;
+  rowData.value.notation = "";
 }
 
 function openModal(row: IAdvanceReport, flag: string = "CASH") {
@@ -628,6 +629,7 @@ function openModal(row: IAdvanceReport, flag: string = "CASH") {
     }
   } else {
     rowData.value = {} as IAdvanceReport;
+    rowData.value.notation = "";
     rowData.value.date = new Date();
   }
   if (!row.type) {
@@ -1389,12 +1391,10 @@ function searchNotation() {
     "notation"
   );
 
-  if (uniqueNotation) {
-    searchNotations.value = uniqueNotation.filter((notation) => {
-      if (rowData.value.notation) {
-        notation.toLowerCase().includes(rowData.value.notation.toLowerCase());
-      }
-    });
+  if (rowData.value.notation) {
+    searchNotations.value = uniqueNotation.filter((notation) =>
+      notation.toLowerCase().includes(rowData.value.notation.toLowerCase())
+    );
   }
 }
 
