@@ -24,6 +24,8 @@ onMounted(async () => {
       selectedMarkerId.value = 8;
     } else if (addressString === "ПВЗ_10") {
       selectedMarkerId.value = 10;
+    }  else if (addressString === "ПВЗ_11") {
+      selectedMarkerId.value = 11;
     }
   } else if (props.marketplace === "WB") {
     address.value = localStorage.getItem("addressData") || "";
@@ -100,7 +102,12 @@ function changeAddress(coordinatesData: Array<number>) {
     coordinatesData[0] === 47.045055 &&
     coordinatesData[1] === 37.479126
   ) {
-    address.value = "ПВЗ_10";
+    address.value = "ПВЗ_10"; 
+  } else if (
+    coordinatesData[0] === 47.100255 &&
+    coordinatesData[1] === 37.662614
+  ) {
+    address.value = "ПВЗ_11";
   }
   coordinates.value = coordinatesData;
 }
@@ -150,6 +157,12 @@ let markers = [
     commentary: "Вход магазин «Радуга». Ежедневно 9:00-20:00",
     address: "г. Мариуполь, ул. Азовской Военной Флотилии, 2",
   },
+  {
+    id: 11,
+    coords: [47.100255, 37.662614],
+    commentary: "Ежедневно 9:00-19:00",
+    address: "г. Мариуполь, ул. Азовстальская, 131",
+  },
 ];
 
 let markersCopy = [
@@ -196,6 +209,12 @@ let markersCopy = [
     coords: [47.045055, 37.479126],
     commentary: "Вход магазин «Радуга». Ежедневно 9:00-20:00",
     address: "г. Мариуполь, ул. Азовской Военной Флотилии, 2",
+  },
+  {
+    id: 11,
+    coords: [47.100255, 37.662614],
+    commentary: "Ежедневно 9:00-19:00",
+    address: "г. Мариуполь, ул. Азовстальская, 131",
   },
 ];
 
@@ -311,7 +330,9 @@ watch([searchQuery], searchRows);
           @input="searchRows"
           v-model="searchQuery"
         />
-        <div class="max-h-[700px] max-sm:max-h-[500px] overflow-y-scroll px-1 flex flex-col gap-3">
+        <div
+          class="max-h-[700px] max-sm:max-h-[500px] overflow-y-scroll px-1 flex flex-col gap-3"
+        >
           <div
             v-for="marker in markers"
             :key="marker.id"
