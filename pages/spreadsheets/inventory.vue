@@ -341,7 +341,7 @@ async function deleteSelectedRows(idArray: number[]) {
             v-if="selectedPVZ"
           >
             <div class="flex items-center gap-5">
-              <UIMainButton @click="focusInput">СКАНИРОВАТЬ qr клиента</UIMainButton>
+              <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
               <Icon
                 v-if="isScanActive"
                 name="eos-icons:bubble-loading"

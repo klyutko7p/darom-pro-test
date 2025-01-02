@@ -191,7 +191,7 @@ function convertUrl(url: string): string {
       <NuxtLayout name="admin">
         <div v-if="!isLoading" class="mt-3">
           <div class="mt-10 flex items-center justify-center">
-            <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
+            <UIMainButton @click="focusInput">СКАНИРОВАТЬ qr клиента</UIMainButton>
             <input
               class="opacity-0 max-w-[1px]"
               ref="myInput"
@@ -236,7 +236,7 @@ function convertUrl(url: string): string {
       <NuxtLayout name="user">
         <div v-if="!isLoading" class="mt-3">
           <div class="mt-10 flex items-center justify-center">
-            <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
+            <UIMainButton @click="focusInput">СКАНИРОВАТЬ qr клиента</UIMainButton>
             <input
               class="opacity-0 max-w-[1px]"
               ref="myInput"
