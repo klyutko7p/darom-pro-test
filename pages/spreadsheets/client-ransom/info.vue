@@ -40,6 +40,7 @@ function getCountOfItemsByPVZClientRansom(PVZ: string) {
       (row) =>
         row.dispatchPVZ === PVZ &&
         row.deliveredSC !== null &&
+        !row.deleted &&
         (new Date(row.issued).toLocaleDateString("ru-RU", {
           day: "2-digit",
           month: "2-digit",
@@ -95,7 +96,9 @@ definePageMeta({
               <h1 class="text-xl font-bold">{{ pvz }}</h1>
               <h1 v-if="user.role === 'ADMIN'">
                 Товаров заказано:
-                <span class="font-bold">{{ getCountOfItemsByPVZClientRansom(pvz) }}</span>
+                <span class="font-bold">{{
+                  getCountOfItemsByPVZClientRansom(pvz)
+                }}</span>
               </h1>
               <h1 v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'">
                 Товаров на выдачу:
@@ -105,7 +108,9 @@ definePageMeta({
               </h1>
               <h1 v-if="user.role === 'PVZ' || user.role === 'PPVZ'">
                 Товаров на выдачу:
-                <span class="font-bold">{{ getCountOfItemsByPVZClientRansom(pvz) }}</span>
+                <span class="font-bold">{{
+                  getCountOfItemsByPVZClientRansom(pvz)
+                }}</span>
               </h1>
               <h1 class="absolute right-10 italic top-9">
                 <Icon name="solar:box-bold-duotone" size="40" />
@@ -143,7 +148,9 @@ definePageMeta({
               <h1 class="text-xl font-bold">{{ pvz }}</h1>
               <h1 v-if="user.role === 'ADMIN'">
                 Товаров заказано:
-                <span class="font-bold">{{ getCountOfItemsByPVZClientRansom(pvz) }}</span>
+                <span class="font-bold">{{
+                  getCountOfItemsByPVZClientRansom(pvz)
+                }}</span>
               </h1>
               <h1 v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'">
                 Товаров на выдачу:
@@ -153,7 +160,9 @@ definePageMeta({
               </h1>
               <h1 v-if="user.role === 'PVZ' || user.role === 'PPVZ'">
                 Товаров на выдачу:
-                <span class="font-bold">{{ getCountOfItemsByPVZClientRansom(pvz) }}</span>
+                <span class="font-bold">{{
+                  getCountOfItemsByPVZClientRansom(pvz)
+                }}</span>
               </h1>
               <h1 class="absolute right-10 italic top-9">
                 <Icon name="solar:box-bold-duotone" size="40" />
