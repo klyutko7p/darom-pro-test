@@ -629,7 +629,7 @@ async function writeClipboardText(text: any) {
       <div>
         <div class="flex items-center gap-5">
           <UIMainButton @click="focusInput"
-            >СКАНИРОВАТЬ qr клиента</UIMainButton
+            >СКАНИРОВАТЬ товары клиента</UIMainButton
           >
           <Icon
             v-if="isScanActive"
