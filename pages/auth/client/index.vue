@@ -47,7 +47,7 @@ function signOut() {
     class="h-screen flex items-center justify-center max-sm:block"
   >
     <div
-      class="py-60 max-[360px]:py-40 px-10 h-full max-sm:py-32 max-sm:px-1 shadow-2xl max-sm:shadow-none bg-opacity-50 max-w-[430px] max-sm:max-w-[2000px]"
+      class="px-10 py-60 max-sm:py-60 max-[360px]:py-40 h-full max-sm:px-1 shadow-2xl max-sm:shadow-none bg-opacity-50 max-w-[430px] max-sm:max-w-[2000px]"
     >
       <div class="">
         <div class="flex items-center justify-center">
@@ -57,6 +57,11 @@ function signOut() {
             DAROM.PRO
           </h1>
         </div>
+        <h2
+          class="mt-5 text-center text-2xl max-sm:text-xl font-bold leading-9 tracking-tight text-gray-900"
+        >
+          Вход и Регистрация
+        </h2>
       </div>
 
       <div class="flex items-center justify-center flex-col gap-3 mt-10">

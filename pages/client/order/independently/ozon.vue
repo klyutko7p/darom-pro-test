@@ -66,6 +66,8 @@ function skipWindow() {
 function clearValue() {
   isNotAskingOZ.value = false;
 }
+
+let isShowWarning = ref(true);
 </script>
 
 <template>
@@ -142,6 +144,51 @@ function clearValue() {
         </div>
         <div v-else>
           <IndependentlyMap :marketplace="'OZON'" @save-address="saveAddress" />
+
+          <div>
+            <UModal
+              :ui="{
+                container: 'flex items-center justify-center text-center',
+              }"
+              v-auto-animate
+              v-model="isShowWarning"
+              prevent-close
+            >
+              <UCard
+                v-auto-animate
+                :ui="{
+                  ring: '',
+                  divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                }"
+              >
+                <template #header>
+                  <div class="flex items-center justify-between">
+                    <h3
+                      class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+                    >
+                      Пункт выдачи
+                    </h3>
+                    <Icon
+                      @click="isShowWarning = !isShowWarning"
+                      name="i-heroicons-x-mark-20-solid"
+                      size="24"
+                      class="cursor-pointer hover:text-secondary-color duration-200"
+                    />
+                  </div>
+                </template>
+                <div class="text-center">
+                  <h1>Для продолжения Вам нужно выбрать пункт выдачи!</h1>
+                  <div class="max-md:flex items-center justify-center">
+                    <UButton
+                      @click="isShowWarning = !isShowWarning"
+                      class="my-3 font-semibold uppercase"
+                      >Понятно</UButton
+                    >
+                  </div>
+                </div>
+              </UCard>
+            </UModal>
+          </div>
         </div>
       </div>
     </div>

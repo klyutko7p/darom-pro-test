@@ -28,7 +28,6 @@ let isShowInfo = ref(false);
         <div
           class="flex items-center px-3 justify-between mb-3 pb-2 border-b-[1px] border-black"
         >
-        
           <h5
             @click="router.push('/client/main?notification=false'), editMenu()"
             class="text-3xl cursor-pointer text-secondary-color font-bold uppercase dark:text-gray-400"
@@ -62,21 +61,7 @@ let isShowInfo = ref(false);
                   <span class="flex-1 ms-3 whitespace-nowrap">На главную</span>
                 </div>
               </li>
-              <li>
-                <div
-                  class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-                  @click="router.push('/client/order'), editMenu()"
-                >
-                  <Icon
-                    class="text-gray-500 transition duration-75 group-hover:text-gray-900"
-                    name="i-material-symbols-order-approve-rounded"
-                    size="24"
-                  />
-                  <span class="flex-1 ms-3 whitespace-nowrap"
-                    >Оформить заказ (* от 5%)</span
-                  >
-                </div>
-              </li>
+
               <li>
                 <div
                   class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
@@ -90,6 +75,21 @@ let isShowInfo = ref(false);
                   <span class="flex-1 ms-3 whitespace-nowrap"
                     >Оформить доставку Вашего <br />
                     заказа по Штрих-коду (QR) (* от 0%)</span
+                  >
+                </div>
+              </li>
+              <li>
+                <div
+                  class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
+                  @click="router.push('/client/order'), editMenu()"
+                >
+                  <Icon
+                    class="text-gray-500 transition duration-75 group-hover:text-gray-900"
+                    name="i-material-symbols-order-approve-rounded"
+                    size="24"
+                  />
+                  <span class="flex-1 ms-3 whitespace-nowrap"
+                    >Оформить заказ (* от 5%)</span
                   >
                 </div>
               </li>
