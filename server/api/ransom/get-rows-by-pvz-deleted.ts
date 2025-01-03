@@ -33,9 +33,9 @@ export default defineEventHandler(async (event) => {
         ],
       });
 
-      const processedRows = rows.map(row => {
+      const processedRows = rows.map((row) => {
         const newRow = {};
-  
+
         if (row.cell !== undefined) newRow.cc = row.cell;
         if (row.fromName !== undefined) newRow.fm = row.fromName;
         if (row.dispatchPVZ !== undefined) newRow.dpz = row.dispatchPVZ;
@@ -44,14 +44,24 @@ export default defineEventHandler(async (event) => {
         if (row.orderPVZ !== undefined) newRow.oz = row.orderPVZ;
         if (row.issued !== undefined) newRow.i = row.issued;
         if (row.deleted !== undefined) newRow.d = row.deleted;
-  
+
         return newRow;
       });
-  
+
       const packed = msgpack.encode(processedRows);
       return packed;
     } else if (flag === "ClientRansom") {
       const rows = await prisma.clientRansom.findMany({
+        select: {
+          cell: true,
+          fromName: true,
+          deleted: true,
+          dispatchPVZ: true,
+          deliveredSC: true,
+          issued: true,
+          deliveredPVZ: true,
+          orderPVZ: true,
+        },
         where: {
           dispatchPVZ: PVZ,
         },
@@ -61,7 +71,24 @@ export default defineEventHandler(async (event) => {
           },
         ],
       });
-      return rows;
+
+      const processedRows = rows.map((row) => {
+        const newRow = {};
+
+        if (row.cell !== undefined) newRow.cc = row.cell;
+        if (row.fromName !== undefined) newRow.fm = row.fromName;
+        if (row.dispatchPVZ !== undefined) newRow.dpz = row.dispatchPVZ;
+        if (row.deliveredSC !== undefined) newRow.ds = row.deliveredSC;
+        if (row.deliveredPVZ !== undefined) newRow.dz = row.deliveredPVZ;
+        if (row.orderPVZ !== undefined) newRow.oz = row.orderPVZ;
+        if (row.issued !== undefined) newRow.i = row.issued;
+        if (row.deleted !== undefined) newRow.d = row.deleted;
+
+        return newRow;
+      });
+
+      const packed = msgpack.encode(processedRows);
+      return packed;
     }
     // else if (flag === 'Delivery') {
     //     const rows = await prisma.delivery.findMany({

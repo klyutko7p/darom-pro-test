@@ -2,6 +2,13 @@
 import Cookies from "js-cookie";
 import { useToast } from "vue-toastification";
 
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  "https://fomoljxhkywsdgnchewy.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvbW9sanhoa3l3c2RnbmNoZXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM1ODMwMTksImV4cCI6MjAzOTE1OTAxOX0.ItZhBr3_OBP0nii6RX-jy9Q7hu2qvNQ2UBVZNJyZDFs"
+);
+
 const toast = useToast();
 
 const storeUsers = useUsersStore();
@@ -144,6 +151,67 @@ async function checkData() {
   nonDeliveredPVZRows.value = arrayOfRows.value.filter(
     (row) => !row.deliveredPVZ && row.dispatchPVZ === selectedPVZ.value
   );
+
+  if (differentPVZRows.value.length) {
+    const jsonData = JSON.stringify(differentPVZRows.value, null, 2);
+    const blob = new Blob([jsonData], { type: "application/json" });
+
+    const { data, error } = await supabase.storage.from("inventory").upload(
+      `differentPVZRows/${
+        selectedPVZ.value[selectedPVZ.value.length - 1]
+      }/${new Date().toLocaleDateString("ru", {
+        day: "2-digit",
+        month: "2-digit",
+      })}/${user.value.id}/${Date.now()}`,
+      blob
+    );
+  }
+
+  if (issuedRows.value.length) {
+    const jsonData = JSON.stringify(issuedRows.value, null, 2);
+    const blob = new Blob([jsonData], { type: "application/json" });
+
+    const { data, error } = await supabase.storage.from("inventory").upload(
+      `issuedRows/${
+        selectedPVZ.value[selectedPVZ.value.length - 1]
+      }/${new Date().toLocaleDateString("ru", {
+        day: "2-digit",
+        month: "2-digit",
+      })}/${user.value.id}/${Date.now()}`,
+      blob
+    );
+  }
+
+  if (nonScanningRows.value.length) {
+    const jsonData = JSON.stringify(nonScanningRows.value, null, 2);
+    const blob = new Blob([jsonData], { type: "application/json" });
+
+    const { data, error } = await supabase.storage.from("inventory").upload(
+      `nonScanningRows/${
+        selectedPVZ.value[selectedPVZ.value.length - 1]
+      }/${new Date().toLocaleDateString("ru", {
+        day: "2-digit",
+        month: "2-digit",
+      })}/${user.value.id}/${Date.now()}`,
+      blob
+    );
+  }
+
+  if (nonDeliveredPVZRows.value.length) {
+    const jsonData = JSON.stringify(nonDeliveredPVZRows.value, null, 2);
+    const blob = new Blob([jsonData], { type: "application/json" });
+
+    const { data, error } = await supabase.storage.from("inventory").upload(
+      `nonDeliveredPVZRows/${
+        selectedPVZ.value[selectedPVZ.value.length - 1]
+      }/${new Date().toLocaleDateString("ru", {
+        day: "2-digit",
+        month: "2-digit",
+      })}/${user.value.id}/${Date.now()}`,
+      blob
+    );
+  }
+
   isLoading.value = false;
 }
 
