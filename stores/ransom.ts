@@ -1382,5 +1382,6 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsForBalanceOurRansomPartSix,
     getRansomRowsByPVZInventory,
     announce,
+    generateLink
   };
 });

@@ -129,8 +129,7 @@ let markers = [
   {
     id: 11,
     coords: [47.100255, 37.662614],
-    commentary:
-      "ул. Азовстальская, 131. Ежедневно 9:00-19:00",
+    commentary: "ул. Азовстальская, 131. Ежедневно 9:00-19:00",
   },
 ];
 
@@ -210,12 +209,18 @@ useSeoMeta({
             </div>
           </h1>
         </div>
-        <div class="flex items-center justify-center gap-5 mt-5">
+        <div class="flex items-center justify-center gap-5 mt-5 max-md:flex-col">
           <UIMainButton
-            class="max-xl:w-full max-xl:max-w-[770px]"
+            class="min-w-[300px] max-xl:w-full max-xl:max-w-[770px]"
             @click="router.push('/auth/client/login')"
           >
             оформить заказ в личном кабинете
+          </UIMainButton>
+          <UIMainButton
+            class="min-w-[300px] max-xl:w-full max-xl:max-w-[770px]"
+            @click="router.push('/delivery')"
+          >
+            Доставка в один клик
           </UIMainButton>
         </div>
         <div

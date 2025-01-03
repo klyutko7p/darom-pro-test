@@ -24,10 +24,6 @@ let cells = ref<Array<Cell>>();
 let cellData = ref({} as Cell);
 let marketplaceData = route.query.marketplace;
 onMounted(async () => {
-  if (!token) {
-    router.push("/auth/client/login?stay=true");
-  }
-
   const storedFileName = localStorage.getItem("fileName");
   if (storedFileName) {
     localStorage.removeItem("fileName");
@@ -101,7 +97,7 @@ async function updateCells() {
 }
 
 definePageMeta({
-  layout: "client-no-pad",
+  layout: "client-no-pad-registration",
 });
 
 import { createClient } from "@supabase/supabase-js";
@@ -159,6 +155,7 @@ let isShowModal = ref(false);
 const isOpenFirstModal = ref(true);
 const isOpenSecondModal = ref(false);
 const isOpenThirdModal = ref(false);
+const isOpenFourModal = ref(false);
 const isOpenLastModal = ref(false);
 
 function showFirstModal() {
@@ -184,10 +181,23 @@ function showThirdModal() {
   isOpenFirstModal.value = false;
   isOpenSecondModal.value = false;
   isOpenThirdModal.value = true;
+  isOpenFourModal.value = false;
   isOpenLastModal.value = false;
+  localStorage.setItem("addressData", JSON.stringify(pvzData.value));
 }
+
+function showFourModal() {
+  isOpenFirstModal.value = false;
+  isOpenSecondModal.value = false;
+  isOpenThirdModal.value = false;
+  isOpenFourModal.value = true;
+  isOpenLastModal.value = false;
+  localStorage.setItem("addressData", JSON.stringify(pvzData.value));
+}
+
 function showLastModal() {
   isOpenThirdModal.value = false;
+  isOpenFourModal.value = false;
   isOpenLastModal.value = true;
 }
 
@@ -276,14 +286,15 @@ const marketplaces = [
   },
 ];
 
+let linkToClient = ref("");
 async function submitForm() {
   try {
     if (pvzData.value) {
       rowData.value.orderPVZ = "Ряженое";
-      rowData.value.fromName = user.value.phoneNumber;
+      rowData.value.fromName = phoneNumberData.value;
       rowData.value.productLink = marketplace.value;
       rowData.value.dispatchPVZ = pvzData.value;
-      if (phoneNumbersWithoutPercent.value.includes(user.value.phoneNumber)) {
+      if (phoneNumbersWithoutPercent.value.includes(phoneNumberData.value)) {
         rowData.value.percentClient = 0;
       }
 
@@ -311,7 +322,7 @@ async function submitForm() {
 
       await storeRansom.createRansomRow(
         rowData.value,
-        user.value.phoneNumber,
+        phoneNumberData.value,
         "ClientRansom"
       );
       isOpen.value = false;
@@ -333,9 +344,9 @@ async function submitForm() {
       localStorage.removeItem("fileName");
       localStorage.removeItem("marketplace");
 
-      setTimeout(() => {
-        router.push("/client/main?notification=false");
-      }, 3000);
+      linkToClient.value =
+        "https://darom.pro/spreadsheets/order/" +
+        storeRansom.generateLink(phoneNumberData.value, "ClientRansom");
     } else {
       toast.error("Сначала выберите пункт выдачи!");
     }
@@ -388,6 +399,22 @@ function unShowWarning() {
 function signOut() {
   storeClients.signOut();
 }
+
+const phoneNumberData = ref("+7");
+
+watch(() => phoneNumberData.value, validationPhoneNumber);
+
+function validationPhoneNumber() {
+  phoneNumberData.value = phoneNumberData.value.replace(/[^0-9]/g, "");
+  if (!phoneNumberData.value.startsWith("+7")) {
+    phoneNumberData.value =
+      "+7" + phoneNumberData.value.replace(/^(\+?7|8)?/, "");
+  }
+
+  if (phoneNumberData.value.length > 12) {
+    phoneNumberData.value = phoneNumberData.value.slice(0, 12);
+  }
+}
 </script>
 
 <template>
@@ -398,7 +425,7 @@ function signOut() {
     >
   </Head>
   <div v-if="!isLoading">
-    <div v-if="token">
+    <div>
       <div v-if="isOpenFirstModal">
         <div
           class="bg-[#0763f6cd] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200"
@@ -626,13 +653,13 @@ function signOut() {
                 class="flex items-center justify-between max-[460px]:flex-col max-sm:gap-3 max-sm:items-start"
               >
                 <label>Пункт выдачи заказов</label>
-                <UButton
+                <!-- <UButton
                   v-if="marketplace === 'Wildberries'"
                   icon="i-material-symbols-add-location"
                   size="sm"
                   @click="
                     router.push(
-                      '/client/order/independently/ozon?change=true&delivery=true&marketplace=wb'
+                      '/ozon?change=true&delivery=true&marketplace=wb'
                     )
                   "
                   class="font-bold duration-200 max-[460px]:w-full flex items-center justify-center"
@@ -647,7 +674,7 @@ function signOut() {
                   size="sm"
                   @click="
                     router.push(
-                      '/client/order/independently/ozon?change=true&delivery=true&marketplace=ozon'
+                      '/ozon?change=true&delivery=true&marketplace=ozon'
                     )
                   "
                   class="font-bold max-[460px]:w-full flex items-center justify-center duration-200"
@@ -662,7 +689,7 @@ function signOut() {
                   size="sm"
                   @click="
                     router.push(
-                      '/client/order/independently/ozon?change=true&delivery=true&marketplace=ym'
+                      '/ozon?change=true&delivery=true&marketplace=ym'
                     )
                   "
                   class="font-bold max-[460px]:w-full flex items-center justify-centerduration-200"
@@ -670,7 +697,7 @@ function signOut() {
                   variant="solid"
                   label="Выбрать на карте"
                   :trailing="false"
-                />
+                /> -->
               </div>
               <div
                 class="flex mb-3 mt-3 items-center justify-between gap-2 max-[460px]:flex-col max-[460px]:items-start"
@@ -691,7 +718,7 @@ function signOut() {
                   icon="i-mdi:package-variant-closed-check"
                   color="pink"
                   class="duration-200 text-left font-semibold mb-3"
-                  @click="router.push(`/client/order/independently/wb`)"
+                  @click="router.push(`/order/independently/wb`)"
                   >Нажмите сюда, чтобы посмотреть куда заказать для дальнейшей
                   доставки в пункт выдачи заказов
                   {{ pvzs.find((row) => row.pvz === pvzData)?.name }}
@@ -703,7 +730,7 @@ function signOut() {
                   icon="i-mdi:package-variant-closed-check"
                   color="blue"
                   class="duration-200 text-left font-semibold mb-3"
-                  @click="router.push(`/client/order/independently/ozon`)"
+                  @click="router.push(`/order/independently/ozon`)"
                   >Нажмите сюда, чтобы посмотреть куда заказать для дальнейшей
                   доставки в пункт выдачи заказов
                   {{ pvzs.find((row) => row.pvz === pvzData)?.name }}
@@ -715,7 +742,7 @@ function signOut() {
                   icon="i-mdi:package-variant-closed-check"
                   color="yellow"
                   class="duration-200 text-left font-semibold mb-3"
-                  @click="router.push(`/client/order/independently/ym`)"
+                  @click="router.push(`/order/independently/ym`)"
                   >Нажмите сюда, чтобы посмотреть куда заказать для дальнейшей
                   доставки в пункт выдачи заказов
                   {{ pvzs.find((row) => row.pvz === pvzData)?.name }}
@@ -794,6 +821,47 @@ function signOut() {
                 />
                 <UButton
                   v-if="rowData.img"
+                  @click="showFourModal()"
+                  class="font-bold"
+                  label="ДАЛЕЕ"
+                  color="primary"
+                >
+                  <template #trailing>
+                    <UIcon
+                      name="i-heroicons-arrow-right-20-solid"
+                      class="w-5 h-5"
+                    />
+                  </template>
+                </UButton>
+              </div>
+            </div>
+
+            <div class="h-[120px]" v-if="isOpenFourModal" v-auto-animate>
+              <label>Номер телефона (формат +7XXXXXXXXXX)</label>
+              <input
+                v-model="phoneNumberData"
+                id="phone"
+                name="phone"
+                type="text"
+                autocomplete="phone"
+                required
+                placeholder="+7XXXXXXXXXX"
+                @input="validationPhoneNumber"
+                class="relative block mt-3 w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+              />
+              <div class="mt-5 flex justify-end gap-3" v-auto-animate>
+                <UButton
+                  icon="i-heroicons-arrow-left-20-solid"
+                  size="sm"
+                  @click="showThirdModal()"
+                  class="font-bold"
+                  color="primary"
+                  variant="solid"
+                  label="НАЗАД"
+                  :trailing="false"
+                />
+                <UButton
+                  v-if="phoneNumberData.length === 12"
                   @click="showLastModal()"
                   class="font-bold"
                   label="ДАЛЕЕ"
@@ -849,6 +917,13 @@ function signOut() {
                 <h1
                   class="grid grid-cols-2 border-b-[1px] pb-2 border-secondary-color"
                 >
+                  Номер телефона <span> {{ phoneNumberData }}</span>
+                </h1>
+              </div>
+              <div class="space-y-3 my-5">
+                <h1
+                  class="grid grid-cols-2 border-b-[1px] pb-2 border-secondary-color"
+                >
                   Штрих-код
                   <span>
                     {{ rowData.img ? "Прикреплён" : "Не прикреплён" }}</span
@@ -860,7 +935,7 @@ function signOut() {
                 <UButton
                   icon="i-heroicons-arrow-left-20-solid"
                   size="sm"
-                  @click="showThirdModal()"
+                  @click="showFourModal()"
                   class="font-bold"
                   color="primary"
                   variant="solid"
@@ -868,22 +943,7 @@ function signOut() {
                   :trailing="false"
                 />
                 <UButton
-                  v-if="user.phoneNumber !== '+70000000001'"
                   @click="submitForm()"
-                  class="font-bold"
-                  label="ОТПРАВИТЬ"
-                  color="primary"
-                >
-                  <template #trailing>
-                    <UIcon
-                      name="i-heroicons-arrow-right-20-solid"
-                      class="w-5 h-5"
-                    />
-                  </template>
-                </UButton>
-                <UButton
-                  v-if="user.phoneNumber === '+70000000001'"
-                  @click="showWarning()"
                   class="font-bold"
                   label="ОТПРАВИТЬ"
                   color="primary"
@@ -916,7 +976,7 @@ function signOut() {
                 name="material-symbols:cancel-rounded"
                 size="32"
                 class="cursor-pointer hover:text-secondary-color duration-200"
-                @click="isShowModal = !isShowModal"
+                @click="isShowModal = !isShowModal, router.push('/')"
               />
             </div>
             <h1
@@ -926,15 +986,14 @@ function signOut() {
             </h1>
             <div class="flex items-center gap-3 max-sm:flex-col">
               <h1 class="text-xl max-sm:text-lg max-sm:text-center">
-                Информация о статусе заказа в
+                Информацию о статусе заказа можно посмотреть по
+                <a
+                  target="_blank"
+                  class="underline text-secondary-color font-semibold"
+                  :href="linkToClient"
+                  >ссылке</a
+                >
               </h1>
-              <UButton
-                @click="router.push('/client/my-orders')"
-                class="font-bold uppercase"
-                icon="i-material-symbols-shopping-cart"
-                size="xl"
-                >Мои заказы</UButton
-              >
             </div>
             <div class="flex items-center gap-3 max-sm:flex-col">
               <h1 class="text-xl max-sm:text-lg max-sm:text-center">
