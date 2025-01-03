@@ -321,33 +321,40 @@ async function deleteSelectedRows(idArray: number[]) {
     </div>
 
     <div v-else>
-      <NuxtLayout name="user">
-        <div class="mt-10">
+      <NuxtLayout name="table-user-no-pad">
+        <div class="px-5 w-screen pt-10 max-sm:px-5 pb-5">
           <div>
             <h1 class="mb-3 font-bold text-xl">
-              Выберите нужное ПВЗ, чтобы начать приёмку!
+              Выберите нужное ПВЗ, чтобы начать инвентаризацию!
             </h1>
             <select
               class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
               v-model="selectedPVZ"
+              @change="updateCookies"
               name="pvz"
             >
               <option disabled value="">Выберите ПВЗ</option>
               <option v-for="pvz in user.PVZ">{{ pvz }}</option>
             </select>
           </div>
-          <div
-            class="flex items-center flex-col justify-center gap-5 mt-10"
-            v-if="selectedPVZ"
-          >
-            <div class="flex items-center gap-5">
-              <UIMainButton @click="focusInput">СКАНИРОВАТЬ</UIMainButton>
-              <Icon
-                v-if="isScanActive"
-                name="eos-icons:bubble-loading"
-                class="text-secondary-color"
-              />
+          <div v-if="selectedPVZ">
+            <div class="flex items-center flex-col justify-center gap-5 mt-10">
+              <div class="flex items-center gap-5">
+                <UIActionButton @click="checkData">проверить</UIActionButton>
+                <UIActionButton @click="clearData">очистить</UIActionButton>
+              </div>
+              <div class="flex items-center gap-5">
+                <UIMainButton @click="focusInput"
+                  >НАЧАТЬ ИНВЕНТАРИЗАЦИЮ</UIMainButton
+                >
+                <Icon
+                  v-if="isScanActive"
+                  name="eos-icons:bubble-loading"
+                  class="text-secondary-color"
+                />
+              </div>
             </div>
+
             <input
               ref="myInput"
               class="opacity-0"
@@ -355,47 +362,70 @@ async function deleteSelectedRows(idArray: number[]) {
               v-model="scanStringItem"
               @input="scanItem"
             />
-            <div class="w-full gap-10 flex flex-col-reverse">
-              <div
-                v-for="row in arrayOfRows"
-                class="border-2 border-dashed border-secondary-color p-5"
-              >
-                <div v-if="'clientLink1' in row">
-                  <div class="mt-5 flex items-center justify-between">
-                    <div>
-                      <h1>ID: {{ row.id }}</h1>
-                      <h1>{{ formatPhoneNumber(row.fromName) }}</h1>
-                      <h1 class="text-4xl font-bold">{{ row.cell }}</h1>
-                    </div>
-                    <div class="text-right">
-                      <h1>{{ row.productName }}</h1>
-                      <a
-                        class="text-secondary-color cursor-pointer duration-200 hover:opacity-50 border-b-2 border-secondary-color font-medium"
-                        :href="row.productLink"
-                      >
-                        Ссылка на товар
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <div v-if="'clientLink2' in row">
-                  <div class="mt-5 flex items-center justify-between">
-                    <div>
-                      <h1>{{ row.id }}</h1>
-                      <h1>{{ formatPhoneNumber(row.fromName) }}</h1>
-                      <h1 class="text-4xl font-bold">{{ row.cell }}</h1>
-                    </div>
-                    <div class="text-right">
-                      <h1>{{ row.productName }}</h1>
-                      <a
-                        class="text-secondary-color cursor-pointer duration-200 hover:opacity-50 border-b-2 border-secondary-color font-medium"
-                        :href="row.productLink"
-                      >
-                        Ссылка на товар
-                      </a>
-                    </div>
-                  </div>
-                </div>
+
+            <SpreadsheetsOurRansomFilters
+              v-if="arrayOfRows"
+              @filtered-rows="handleFilteredRows"
+              :rows="arrayOfRows"
+              :user="user"
+              class="mb-10"
+            />
+
+            <SpreadsheetsOurRansomNewTable
+              v-if="!isShowOtherRows"
+              :rows="arrayOfRows"
+              :user="user"
+              @update-delivery-rows="updateDeliveryRows"
+              @delete-selected-rows="deleteSelectedRows"
+            />
+            <div class="space-y-5 text-left" v-if="isShowOtherRows">
+              <div>
+                <h1 class="font-semibold text-xl">
+                  Товары не этого ПВЗ, но отсканированы
+                </h1>
+                <SpreadsheetsOurRansomNewTable
+                  v-if="isShowOtherRows"
+                  :rows="differentPVZRows"
+                  :user="user"
+                  @update-delivery-rows="updateDeliveryRows"
+                  @delete-selected-rows="deleteSelectedRows"
+                />
+              </div>
+              <div>
+                <h1 class="font-semibold text-xl">
+                  Товары, которые програмно выданы клиенту, но отсканированы
+                </h1>
+                <SpreadsheetsOurRansomNewTable
+                  v-if="isShowOtherRows"
+                  :rows="issuedRows"
+                  :user="user"
+                  @update-delivery-rows="updateDeliveryRows"
+                  @delete-selected-rows="deleteSelectedRows"
+                />
+              </div>
+              <div>
+                <h1 class="font-semibold text-xl">
+                  Товары, которые не отсканированы, но должны быть на ПВЗ
+                </h1>
+                <SpreadsheetsOurRansomNewTable
+                  v-if="isShowOtherRows"
+                  :rows="nonScanningRows"
+                  :user="user"
+                  @update-delivery-rows="updateDeliveryRows"
+                  @delete-selected-rows="deleteSelectedRows"
+                />
+              </div>
+              <div>
+                <h1 class="font-semibold text-xl">
+                  Товары, которые не приняты на ПВЗ, но отсканированы
+                </h1>
+                <SpreadsheetsOurRansomNewTable
+                  v-if="isShowOtherRows"
+                  :rows="nonDeliveredPVZRows"
+                  :user="user"
+                  @update-delivery-rows="updateDeliveryRows"
+                  @delete-selected-rows="deleteSelectedRows"
+                />
               </div>
             </div>
           </div>
