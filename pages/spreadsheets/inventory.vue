@@ -86,11 +86,12 @@ async function scanItem() {
       rowData.value = await storeRansom.getRansomRowById(idRow, "OurRansom");
       if (rowData.value) {
         // await acceptItem(rowData.value);
-        arrayOfRows.value.push(rowData.value);
+        arrayOfRows.value.unshift(rowData.value);
         localStorage.setItem(
           "arrayOfRowsStorage",
           JSON.stringify(arrayOfRows.value)
         );
+        storeRansom.announce(`${rowData.value.cell}`);
         console.log("Полученные данные:", rowData.value);
       } else {
         console.warn("Данные не найдены для:", idRow);
