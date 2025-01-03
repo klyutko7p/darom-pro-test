@@ -61,9 +61,7 @@ function signOut() {
 
       <div class="flex items-center justify-center flex-col gap-3 mt-10">
         <UButton
-          @click="
-            signOut(), router.push('/auth/client/login?stay=true&index=true')
-          "
+          @click="router.push('/auth/client/login-2?stay=true&index=true')"
           icon="material-symbols:person-book"
           class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
           type="submit"
@@ -72,7 +70,7 @@ function signOut() {
         </UButton>
         <h1 class="text-base">ИЛИ</h1>
         <UButton
-          @click="signOut(), router.push('/auth/register?index=true')"
+          @click="router.push('/auth/register-2?index=true')"
           icon="material-symbols:app-registration"
           class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
           >Зарегистрироваться
