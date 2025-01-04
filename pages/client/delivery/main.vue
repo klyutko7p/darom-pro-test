@@ -37,13 +37,13 @@ definePageMeta({
             class="text-white flex items-center justify-center flex-col h-screen px-3"
           >
             <h1 class="font-bold text-2xl mb-5 max-sm:text-lg">
-              Выберите как оформить доставку
+              Выберите как оформить доставку по Штрих-коду (QR)
             </h1>
             <div class="flex items-center gap-5 flex-col max-w-[500px]">
               <UIMainButton
-                class="w-full"
+                class="w-full min-w-[400px]"
                 @click="router.push('/client/delivery')"
-                >Доставка по Штрих-коду (QR) через личный кабинет</UIMainButton
+                >Через личный кабинет</UIMainButton
               >
               <a
                 href="https://t.me/darom_pro_bot"
@@ -51,9 +51,9 @@ definePageMeta({
                 class="w-full"
               >
                 <UIMainButton
-                  class="w-full"
+                  class="w-full min-w-[400px]"
                   @click="router.push('/client/main?notification=false')"
-                  >Доставка по Штрих-коду (QR) через телеграм-бота</UIMainButton
+                  >Через телеграм-бота</UIMainButton
                 >
               </a>
               <UIMainButton

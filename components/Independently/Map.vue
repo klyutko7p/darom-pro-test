@@ -331,7 +331,7 @@ watch([searchQuery], searchRows);
           v-model="searchQuery"
         />
         <div
-          class="max-h-[550px] max-sm:max-h-[500px] overflow-y-scroll px-1 flex flex-col gap-3"
+          class="max-h-[550px] max-lg:max-h-[380px] overflow-y-scroll px-1 flex flex-col gap-3"
         >
           <div
             v-for="marker in markers"

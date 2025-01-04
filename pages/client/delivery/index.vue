@@ -978,28 +978,46 @@ function signOut() {
               </div>
             </template>
             <div class="text-center">
-              <h1>
+              <h1 class="mb-2">
                 После входа вам будет доступен полный функционал личного
                 кабинета!
               </h1>
-              <div class="max-md:flex items-center justify-center">
+              <div class="flex items-center justify-center flex-col">
                 <UButton
                   v-if="marketplace === 'Wildberries'"
                   @click="router.push(`/auth/client?marketplace=wb`)"
-                  class="my-3 font-semibold uppercase"
+                  class="my-1 w-full text-center flex items-center justify-center font-semibold uppercase"
                   >Войти или зарегистрироваться</UButton
                 >
                 <UButton
                   v-if="marketplace === 'Ozon'"
                   @click="router.push(`/auth/client?marketplace=ozon`)"
-                  class="my-3 font-semibold uppercase"
+                  class="my-1 w-full text-center flex items-center justify-center font-semibold uppercase"
                   >Войти или зарегистрироваться</UButton
                 >
                 <UButton
                   v-if="marketplace === 'Яндекс Маркет'"
                   @click="router.push(`/auth/client?marketplace=ym`)"
-                  class="my-3 font-semibold uppercase"
+                  class="my-1 w-full text-center flex items-center justify-center font-semibold uppercase"
                   >Войти или зарегистрироваться</UButton
+                >
+                <UButton
+                  v-if="marketplace === 'Wildberries'"
+                  @click="router.push(`/delivery?marketplace=wb`)"
+                  class="my-1 w-full text-center flex items-center justify-center font-semibold uppercase"
+                  >Доставка в один клик</UButton
+                >
+                <UButton
+                  v-if="marketplace === 'Ozon'"
+                  @click="router.push(`/delivery?marketplace=ozon`)"
+                  class="my-1 w-full text-center flex items-center justify-center font-semibold uppercase"
+                  >Доставка в один клик</UButton
+                >
+                <UButton
+                  v-if="marketplace === 'Яндекс Маркет'"
+                  @click="router.push(`/delivery?marketplace=ym`)"
+                  class="my-1 w-full text-center flex items-center justify-center font-semibold uppercase"
+                  >Доставка в один клик</UButton
                 >
               </div>
             </div>
