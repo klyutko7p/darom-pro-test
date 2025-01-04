@@ -62,7 +62,7 @@ const selected = ref<SelectedDateRange>({
 });
 
 function getMonthRange(year: number, month: number): SelectedDateRange {
-  const start = new Date(2024, month, 1);
+  const start = new Date(year, month, 1);
   const end = new Date(year, month + 1, 0);
   return { start, end };
 }

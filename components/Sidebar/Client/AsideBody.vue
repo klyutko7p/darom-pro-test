@@ -35,7 +35,7 @@ let isShowInfo = ref(false);
           <li>
             <div
               class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 group cursor-pointer"
-              @click="router.push('/client/delivery'), editMenu()"
+              @click="router.push('/client/delivery/main'), editMenu()"
             >
               <Icon
                 class="text-gray-500 transition duration-75 group-hover:text-gray-900"
