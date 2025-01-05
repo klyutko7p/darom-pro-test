@@ -232,7 +232,7 @@ const toggleShowDeletedRows = () => {
     </div>
   </div>
   <UTable
-    class="w-full mx-auto text-center bg-white border-[1px] rounded-md mt-5 max-h-[390px]"
+    class="w-full mx-auto text-center bg-white border-[1px] rounded-md mt-5 max-h-[490px]"
     :ui="{
   td: {
     base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
@@ -263,6 +263,12 @@ const toggleShowDeletedRows = () => {
     <template #deadline-data="{ row }">
       <p>
         {{ storeUsers.getNormalizedDateWithoutTime(row.deadline) }}
+      </p>
+    </template>
+
+    <template #description-data="{ row }">
+      <p class="min-w-[300px]">
+        {{ row.description }}
       </p>
     </template>
 
@@ -299,6 +305,7 @@ const toggleShowDeletedRows = () => {
         label="Не выполнено"
         color="red"
         variant="subtle"
+        class="min-w-[95px]"
       />
       <UBadge
         v-if="row.done"

@@ -326,6 +326,28 @@ function getFromNameFromCell() {
     }
   }
 }
+
+const storePVZPercent = usePVZPercentStore();
+async function checkPercent() {
+  let pvzPercent = await storePVZPercent.getPVZ();
+
+  if (rowData.value.dispatchPVZ) {
+    let percentPVZ = pvzPercent.find(
+      (row: IPVZPercent) =>
+        row.pvz.name === rowData.value.dispatchPVZ &&
+        row.flag === "ClientRansom"
+    ) as IPVZPercent;
+    if (rowData.value.productLink) {
+      if (rowData.value.productLink === "Wildberries") {
+        rowData.value.percentClient = percentPVZ.wb;
+      } else if (rowData.value.productLink === "Ozon") {
+        rowData.value.percentClient = percentPVZ.ozon;
+      } else if (rowData.value.productLink === "Яндекс Маркет") {
+        rowData.value.percentClient = percentPVZ.ym;
+      }
+    }
+  }
+}
 </script>
 
 <template>
@@ -427,6 +449,7 @@ function getFromNameFromCell() {
                 <select
                   :disabled="user.productLink2 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  @change="checkPercent"
                   v-model="rowData.productLink"
                 >
                   <option value="">Пусто</option>
@@ -505,6 +528,7 @@ function getFromNameFromCell() {
                 <select
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.dispatchPVZ"
+                  @change="checkPercent"
                   :disabled="user.dispatchPVZ1 === 'READ'"
                 >
                   <option v-for="pvzData in pvz" :value="pvzData.name">
@@ -775,6 +799,7 @@ function getFromNameFromCell() {
                 <select
                   :disabled="user.productLink2 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+                  @change="checkPercent"
                   v-model="rowData.productLink"
                 >
                   <option value="">Пусто</option>
@@ -853,6 +878,7 @@ function getFromNameFromCell() {
                 <select
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.dispatchPVZ"
+                  @change="checkPercent"
                   :disabled="user.dispatchPVZ1 === 'READ'"
                 >
                   <option v-for="pvzData in pvz" :value="pvzData.name">

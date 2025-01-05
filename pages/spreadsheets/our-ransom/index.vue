@@ -313,6 +313,8 @@ onMounted(async () => {
   pvz.value = pvzData;
   sortingCenters.value = sortingCentersData;
   orderAccounts.value = orderAccountsData;
+
+  pvzPercent.value = await storePVZPercent.getPVZ();
 });
 
 async function updateCells() {
@@ -723,6 +725,28 @@ function checkWB() {
 function nonCheckWB() {
   rowData.value.dp = false;
 }
+
+const pvzPercent = ref<Array<IPVZPercent[]>>();
+const storePVZPercent = usePVZPercentStore();
+async function checkPercent() {
+  if (rowData.value.dispatchPVZ) {
+    if (pvzPercent.value) {
+      let percentPVZ = pvzPercent.value.find(
+        (row: any) =>
+          row.pvz.name === rowData.value.dispatchPVZ && row.flag === "OurRansom"
+      ) as any;
+      if (rowData.value.productLink) {
+        if (rowData.value.productLink.includes("wildberries")) {
+          rowData.value.percentClient = percentPVZ.wb;
+        } else if (rowData.value.productLink.includes("ozon")) {
+          rowData.value.percentClient = percentPVZ.ozon;
+        } else if (rowData.value.productLink.includes("yandex")) {
+          rowData.value.percentClient = percentPVZ.ym;
+        }
+      }
+    }
+  }
+}
 </script>
 
 <template>
@@ -836,7 +860,7 @@ function nonCheckWB() {
                     class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.dispatchPVZ"
                     :disabled="user.dispatchPVZ1 === 'READ'"
-                    @change="changePVZ"
+                    @change="changePVZ(), checkPercent()"
                   >
                     <option v-for="pvzData in pvz" :value="pvzData.name">
                       {{ pvzData.name }}
@@ -899,7 +923,7 @@ function nonCheckWB() {
                     :disabled="user.productLink1 === 'READ'"
                     class="bg-transparent w-full rounded-md border-2 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.productLink"
-                    @input="handlePaste"
+                    @input="handlePaste(), checkPercent()"
                     type="text"
                   />
                   <div class="flex gap-3 items-center justify-center mt-2">
@@ -1167,9 +1191,7 @@ function nonCheckWB() {
                   v-model="rowData.dp"
                 />
               </div>
-              <UIMainButton @click="updateRow"
-                >Сохранить
-              </UIMainButton>
+              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
               <UIMainButton @click="closeModal">Отменить </UIMainButton>
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>
@@ -1275,7 +1297,7 @@ function nonCheckWB() {
                     class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.dispatchPVZ"
                     :disabled="user.dispatchPVZ1 === 'READ'"
-                    @change="changePVZ"
+                    @change="changePVZ(), checkPercent()"
                   >
                     <option v-for="pvzData in pvz" :value="pvzData.name">
                       {{ pvzData.name }}
@@ -1337,6 +1359,7 @@ function nonCheckWB() {
                   :disabled="user.productLink1 === 'READ'"
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
                   v-model="rowData.productLink"
+                  @input="checkPercent()"
                   type="text"
                 />
               </div>
@@ -1598,9 +1621,7 @@ function nonCheckWB() {
                   v-model="rowData.dp"
                 />
               </div>
-              <UIMainButton @click="updateRow"
-                >Сохранить
-              </UIMainButton>
+              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
               <UIMainButton @click="closeModal">Отменить </UIMainButton>
             </div>
             <div class="flex items-center justify-center gap-3 mt-10" v-else>

@@ -17,7 +17,7 @@ const emit = defineEmits([
 
 const props = defineProps({
   user: { type: Object as PropType<User>, required: true },
-  rows: { type: Array as PropType<IPVZPercent[]>, required: true },
+  rows: { type: Array as PropType<IPVZPercent[]> },
 });
 
 const checkedRows: Ref<number[]> = ref([]);
@@ -36,7 +36,7 @@ function updateCurrentPageData() {
 }
 
 function deleteRow(id: number) {
-  emit("deleteRow", { id });
+  emit("deleteRow", id);
 }
 
 function openModal(row: Task) {
@@ -96,7 +96,7 @@ let arrayWithModifiedRows = ref<Array<IPVZPercent>>([]);
 async function getRowByIdFromInput(row: IPVZPercent) {
   arrayWithModifiedRows.value.push(row);
   arrayWithModifiedRows.value = [...new Set(arrayWithModifiedRows.value)];
-  //   await storePVZPercent.updatePVZPercents(arrayWithModifiedRows.value);
+  await storePVZPercent.updatePVZPercents(arrayWithModifiedRows.value);
 }
 </script>
 
@@ -104,7 +104,7 @@ async function getRowByIdFromInput(row: IPVZPercent) {
   <div v-if="!isLoading">
     <UTable
       v-if="filteredRows.length"
-      class="w-full text-center bg-white border-[1px] rounded-md"
+      class="w-full max-h-[250px] text-center bg-white border-[1px] rounded-md"
       :ui="{
   td: {
     base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
@@ -137,6 +137,7 @@ async function getRowByIdFromInput(row: IPVZPercent) {
           @blur="getRowByIdFromInput(row)"
           v-model="row.wb"
           class="min-w-[170px] w-full relative block disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-textarea rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 resize-none"
+          type="number"
         />
         <span class="hidden">{{ row.wb }} </span>
       </template>
@@ -150,6 +151,7 @@ async function getRowByIdFromInput(row: IPVZPercent) {
           @blur="getRowByIdFromInput(row)"
           v-model="row.ozon"
           class="min-w-[170px] w-full relative block disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-textarea rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 resize-none"
+          type="number"
         />
         <span class="hidden">{{ row.ozon }} </span>
       </template>
@@ -163,6 +165,7 @@ async function getRowByIdFromInput(row: IPVZPercent) {
           @blur="getRowByIdFromInput(row)"
           v-model="row.ym"
           class="min-w-[170px] w-full relative block disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-textarea rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 resize-none"
+          type="number"
         />
         <span class="hidden">{{ row.ym }} </span>
       </template>

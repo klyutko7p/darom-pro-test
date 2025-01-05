@@ -56,6 +56,7 @@ onMounted(async () => {
   isLoading.value = true;
   user.value = storeClients.getClient();
   isLoading.value = false;
+  await checkPercent();
   let originallyRowsDataOne =
     await storeRansom.getRansomRowsForModalOurRansomPartOne();
   let originallyRowsDataTwo =
@@ -293,6 +294,8 @@ const createItem = async () => {
     };
 
     getCellFromName();
+
+    await checkPercent();
 
     items.value.push(item.value);
     localStorage.setItem("cardItems", JSON.stringify(items.value));
@@ -622,6 +625,28 @@ let isNotAskingAcceptOrder = ref(false);
 function signOut() {
   storeClients.signOut();
 }
+
+let percentPVZ = ref({} as IPVZPercent);
+const storePVZPercent = usePVZPercentStore();
+async function checkPercent() {
+  let pvzPercent = await storePVZPercent.getPVZ();
+
+  if (addressData.value) {
+    percentPVZ.value = pvzPercent.find(
+      (row: any) =>
+        row.pvz.name === addressData.value && row.flag === "OurRansom"
+    );
+    if (item.value.productLink) {
+      if (item.value.productLink.includes("wildberries")) {
+        item.value.percentClient = percentPVZ.value.wb;
+      } else if (item.value.productLink.includes("ozon")) {
+        item.value.percentClient = percentPVZ.value.ozon;
+      } else if (item.value.productLink.includes("yandex")) {
+        item.value.percentClient = percentPVZ.value.ym;
+      }
+    }
+  }
+}
 </script>
 
 <template>
@@ -682,17 +707,28 @@ function signOut() {
 
       <div v-if="isOpenFirstModal">
         <div
-          class="bg-[#0763f6cd] w-screen flex items-center justify-center h-[430px] max-sm:h-[400px] cursor-pointer hover:opacity-70 duration-200"
+          class="bg-[#0763f6cd] w-screen flex items-center justify-center h-[430px] max-sm:h-[400px] cursor-pointer hover:opacity-70 duration-200 relative"
           @click="changeMarketplace('OZ')"
         >
-          <img
-            src="@/assets/images/ozon-bg-1.png"
-            class="max-w-[170px] max-sm:max-w-[130px] shadow-2xl shadow-black rounded-full"
-            alt=""
-          />
+          <div
+            class="w-[470px] max-sm:w-[300px] flex items-center justify-center"
+          >
+            <img
+              src="@/assets/images/ozon-bg-1.png"
+              class="max-w-[170px] max-sm:max-w-[130px] shadow-2xl shadow-black rounded-full"
+              alt=""
+            />
+          </div>
+
+          <div
+            v-if="percentPVZ.ozon"
+            class="relative text-2xl max-sm:text-2xl w-24 h-24 bg-[#f92160] rounded-full flex justify-center font-bold text-white items-center text-center p-5 shadow-xl max-[430px]:absolute max-[430px]:right-3 max-[430px]:top-4 max-[430px]:w-16 max-[430px]:h-16 max-[430px]:text-base max-[430px]:p-3"
+          >
+            {{ percentPVZ.ozon }} %
+          </div>
         </div>
         <div
-          class="bg-gradient-to-r from-[#7c2570] via-[#bb3c95] to-[#ec208b] w-screen flex items-center justify-center h-[500px] max-sm:h-[400px] cursor-pointer hover:opacity-70 duration-200"
+          class="bg-gradient-to-r from-[#7c2570] via-[#bb3c95] to-[#ec208b] w-screen flex items-center justify-center h-[500px] max-sm:h-[400px] cursor-pointer hover:opacity-70 duration-200 relative"
           @click="changeMarketplace('WB')"
         >
           <img
@@ -700,6 +736,12 @@ function signOut() {
             class="max-w-[470px] max-sm:max-w-[300px] z-[10]"
             alt=""
           />
+          <div
+            v-if="percentPVZ.wb"
+            class="relative text-2xl max-sm:text-2xl w-24 h-24 bg-[#7b256f] rounded-full flex justify-center font-bold text-white items-center text-center p-5 shadow-xl max-[430px]:absolute max-[430px]:right-3 max-[430px]:top-2 max-[430px]:w-16 max-[430px]:h-16 max-[430px]:text-base max-[430px]:p-3"
+          >
+            {{ percentPVZ.wb }} %
+          </div>
         </div>
         <!-- <div
           class="bg-[#f8cf02] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200"
@@ -804,7 +846,9 @@ function signOut() {
             </div>
 
             <div v-if="isOpenThirdModal && marketplace === 'OZ'" v-auto-animate>
-              <h1 class="mb-3 italic text-red-500 font-semibold uppercase">Обработка ссылок в тестовом режиме</h1>
+              <h1 class="mb-3 italic text-red-500 font-semibold uppercase">
+                Обработка ссылок в тестовом режиме
+              </h1>
               <div v-if="!urlToItem">
                 <label
                   >Скопируйте
@@ -1194,7 +1238,8 @@ function signOut() {
                         <span class="italic text-[11px]">
                           ({{
                             roundToNearestTen(
-                              item.priceSite + (item.priceSite * 10) / 100
+                              item.priceSite +
+                                (item.priceSite * item.percentClient) / 100
                             )
                           }}
                           ₽)

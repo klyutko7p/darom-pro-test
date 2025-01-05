@@ -4,47 +4,11 @@ import { usePVZStore } from "../../stores/pvz";
 
 const storeUsers = useUsersStore();
 const storePVZ = usePVZStore();
+const storePVZPercent = usePVZPercentStore();
 const router = useRouter();
 
 let allPVZ = ref<Array<PVZ>>([]);
-const rows = ref<Array<IPVZPercent>>([
-  {
-    id: 1,
-    pvzId: 1,
-    pvz: { id: 1, name: "ПВЗ_1" },
-    wb: 0,
-    ozon: 0,
-    ym: 0,
-    flag: "OurRansom",
-  },
-  {
-    id: 2,
-    pvzId: 2,
-    pvz: { id: 2, name: "ПВЗ_2" },
-    wb: 0,
-    ozon: 0,
-    ym: 0,
-    flag: "OurRansom",
-  },
-  {
-    id: 3,
-    pvzId: 1,
-    pvz: { id: 1, name: "ПВЗ_1" },
-    wb: 0,
-    ozon: 0,
-    ym: 0,
-    flag: "ClientRansom",
-  },
-  {
-    id: 4,
-    pvzId: 2,
-    pvz: { id: 2, name: "ПВЗ_2" },
-    wb: 0,
-    ozon: 0,
-    ym: 0,
-    flag: "ClientRansom",
-  },
-]);
+const rows = ref<Array<IPVZPercent>>();
 
 let user = ref({} as User);
 const token = Cookies.get("token");
@@ -54,13 +18,14 @@ onMounted(async () => {
   isLoading.value = true;
 
   try {
-    const [currentUser, pvzList] = await Promise.all([
+    const [currentUser, pvzList, rowsData] = await Promise.all([
       await storeUsers.getUser(),
       storePVZ.getPVZ(),
+      storePVZPercent.getPVZ(),
     ]);
 
     user.value = currentUser;
-    // rows.value = equipments;
+    rows.value = rowsData;
 
     allPVZ.value = preparePVZList(pvzList);
   } catch (error) {
@@ -83,9 +48,13 @@ definePageMeta({
 let rowData = ref({} as IPVZPercent);
 let isOpen = ref(false);
 
-function openModal() {
+function openModal(row: IPVZPercent) {
   isOpen.value = true;
-  rowData.value = {} as IPVZPercent;
+  if (row.id) {
+    rowData.value = JSON.parse(JSON.stringify(row));
+  } else {
+    rowData.value = {} as IPVZPercent;
+  }
 }
 
 function closeModal() {
@@ -95,12 +64,17 @@ function closeModal() {
 
 async function createPVZPercentRow() {
   isLoading.value = true;
-  // await storeEquipments.createEquipment(equipmentRowData.value);
-  // rows.value = await storeEquipments.getEquipments();
-  // closeModal();
-  // if (rows.value) {
-  //   handleFilteredRows(rows.value);
-  // }
+  await storePVZPercent.createPVZ(rowData.value);
+  rows.value = await storePVZPercent.getPVZ();
+  closeModal();
+  isLoading.value = false;
+}
+
+async function deleteRow(id: number) {
+  isLoading.value = true;
+  let answer = confirm("Вы точно хотите удалить данную строчку?");
+  if (answer) await storePVZPercent.deletePVZ(id);
+  rows.value = await storePVZPercent.getPVZ();
   isLoading.value = false;
 }
 
@@ -135,8 +109,10 @@ const flags = [
           </span>
         </h1>
         <AdminDataPercentTable
+          @open-modal="openModal"
+          @delete-row="deleteRow"
           :user="user"
-          :rows="rows.filter((row) => row.flag === 'OurRansom')"
+          :rows="rows?.filter((row) => row.flag === 'OurRansom')"
         />
 
         <h1 class="mt-20 text-xl max-[330px]:text-lg mb-5">
@@ -151,9 +127,12 @@ const flags = [
             Доставка по Штрих-коду (QR)
           </span>
         </h1>
+
         <AdminDataPercentTable
+          @open-modal="openModal"
+          @delete-row="deleteRow"
           :user="user"
-          :rows="rows.filter((row) => row.flag === 'ClientRansom')"
+          :rows="rows?.filter((row) => row.flag === 'ClientRansom')"
         />
 
         <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
@@ -230,7 +209,7 @@ const flags = [
         </UINewModalEdit>
       </div>
 
-      <div class="w-screen" v-else>
+      <div v-else>
         <UISpinner />
       </div>
     </NuxtLayout>

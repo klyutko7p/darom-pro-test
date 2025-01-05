@@ -190,8 +190,9 @@ model BalanceDelivery {
 }
 
 model PVZ {
-  id   Int    @id @default(autoincrement())
-  name String
+  id         Int          @id @default(autoincrement())
+  name       String
+  PVZPercent PVZPercent[]
 }
 
 model SortingCenter {
@@ -371,7 +372,6 @@ model allPVZ {
   id            Int            @id @default(autoincrement())
   name          String
   equipmentRows EquipmentRow[]
-  PVZPercent    PVZPercent[]
 }
 
 model EquipmentRow {
@@ -447,11 +447,11 @@ model Task {
 }
 
 model PVZPercent {
-  id    Int    @id @default(autoincrement())
-  pvzId Int
-  pvz   allPVZ @relation(fields: [pvzId], references: [id])
-  wb    Int    @default(10)
-  ozon  Int    @default(10)
-  ym    Int    @default(10)
-  flag  String @default("OurRansom")
+  id       Int     @id @default(autoincrement())
+  pvzId    Int
+  pvz      PVZ     @relation(fields: [pvzId], references: [id])
+  wb       Int     @default(10)
+  ozon     Int     @default(10)
+  ym       Int     @default(10)
+  flag     String  @default("OurRansom")
 }

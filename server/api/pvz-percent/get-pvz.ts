@@ -8,6 +8,11 @@ export default defineEventHandler(async (event) => {
       include: {
         pvz: true,
       },
+      orderBy: [
+        {
+          id: "asc",
+        },
+      ],
     });
     return pvzData;
   } catch (error) {

@@ -90,6 +90,8 @@ onMounted(async () => {
     isOpenSecondModal.value = false;
     showThirdModal();
   }
+
+  await checkPercent();
   await updateCells();
 });
 
@@ -283,27 +285,17 @@ async function submitForm() {
       rowData.value.fromName = user.value.phoneNumber;
       rowData.value.productLink = marketplace.value;
       rowData.value.dispatchPVZ = pvzData.value;
+
+      isLoading.value = true;
+
+      await checkPercent();
+
       if (phoneNumbersWithoutPercent.value.includes(user.value.phoneNumber)) {
-        rowData.value.percentClient = 0;
-      }
-
-      if (
-        rowData.value.dispatchPVZ === "ПВЗ_2" &&
-        rowData.value.productLink === "Wildberries"
-      ) {
-        rowData.value.percentClient = 5;
-      }
-
-      if (
-        rowData.value.dispatchPVZ === "ПВЗ_2" &&
-        rowData.value.productLink === "Ozon"
-      ) {
         rowData.value.percentClient = 0;
       }
 
       getCellFromName();
 
-      isLoading.value = true;
 
       const filePromises = [handleFile("image", fileQRPhoto.value)];
 
@@ -388,6 +380,28 @@ function unShowWarning() {
 function signOut() {
   storeClients.signOut();
 }
+
+let percentPVZ = ref({} as IPVZPercent);
+const storePVZPercent = usePVZPercentStore();
+async function checkPercent() {
+  let pvzPercent = await storePVZPercent.getPVZ();
+
+  if (pvzData.value) {
+    percentPVZ.value = pvzPercent.find(
+      (row: any) =>
+        row.pvz.name === pvzData.value && row.flag === "ClientRansom"
+    );
+    if (rowData.value.productLink) {
+      if (rowData.value.productLink === "Wildberries") {
+        rowData.value.percentClient = percentPVZ.value.wb;
+      } else if (rowData.value.productLink === "Ozon") {
+        rowData.value.percentClient = percentPVZ.value.ozon;
+      } else if (rowData.value.productLink === "Яндекс Маркет") {
+        rowData.value.percentClient = percentPVZ.value.ym;
+      }
+    }
+  }
+}
 </script>
 
 <template>
@@ -401,17 +415,28 @@ function signOut() {
     <div v-if="token">
       <div v-if="isOpenFirstModal">
         <div
-          class="bg-[#0763f6cd] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200"
+          class="bg-[#0763f6cd] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200 relative"
           @click="changeMarketplace('Ozon')"
         >
-          <img
-            src="@/assets/images/ozon-bg-1.png"
-            class="max-w-[170px] max-sm:max-w-[130px] shadow-2xl shadow-black rounded-full"
-            alt=""
-          />
+          <div
+            class="w-[470px] max-sm:w-[300px] flex items-center justify-center"
+          >
+            <img
+              src="@/assets/images/ozon-bg-1.png"
+              class="max-w-[170px] max-sm:max-w-[130px] shadow-2xl shadow-black rounded-full"
+              alt=""
+            />
+          </div>
+
+          <div
+            v-if="percentPVZ.ozon"
+            class="relative text-2xl max-sm:text-2xl w-24 h-24 bg-[#f92160] rounded-full flex justify-center font-bold text-white items-center text-center p-5 shadow-xl max-[430px]:absolute max-[430px]:right-3 max-[430px]:top-4 max-[430px]:w-16 max-[430px]:h-16 max-[430px]:text-base max-[430px]:p-3"
+          >
+            {{ percentPVZ.ozon }} %
+          </div>
         </div>
         <div
-          class="bg-gradient-to-r from-[#7c2570] via-[#bb3c95] to-[#ec208b] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200"
+          class="bg-gradient-to-r from-[#7c2570] via-[#bb3c95] to-[#ec208b] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200 relative"
           @click="changeMarketplace('Wildberries')"
         >
           <img
@@ -419,9 +444,16 @@ function signOut() {
             class="max-w-[470px] max-sm:max-w-[300px] z-[10]"
             alt=""
           />
+
+          <div
+            v-if="percentPVZ.wb"
+            class="relative text-2xl max-sm:text-2xl w-24 h-24 bg-[#7b256f] rounded-full flex justify-center font-bold text-white items-center text-center p-5 shadow-xl max-[430px]:absolute max-[430px]:right-3 max-[430px]:top-2 max-[430px]:w-16 max-[430px]:h-16 max-[430px]:text-base max-[430px]:p-3"
+          >
+            {{ percentPVZ.wb }} %
+          </div>
         </div>
         <div
-          class="bg-[#f8cf02] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200"
+          class="bg-[#f8cf02] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200 relative"
           @click="changeMarketplace('Яндекс Маркет')"
         >
           <img
@@ -429,16 +461,26 @@ function signOut() {
             class="max-w-[470px] max-sm:max-w-[300px]"
             alt=""
           />
+
+          <div
+            v-if="percentPVZ.ym"
+            class="relative text-2xl max-sm:text-2xl w-24 h-24 bg-[#232323] rounded-full flex justify-center font-bold text-white items-center text-center p-5 shadow-xl max-[430px]:absolute max-[430px]:right-3 max-[430px]:top-4 max-[430px]:w-16 max-[430px]:h-16 max-[430px]:text-base max-[430px]:p-3"
+          >
+            {{ percentPVZ.ym }} %
+          </div>
         </div>
         <a
           href="https://t.me/Svetlana_Darompro"
           target="_blank"
-          class="bg-secondary-color h-[230px] max-sm:h-[200px] flex items-center justify-center cursor-pointer hover:opacity-70 duration-200"
+          class="bg-secondary-color h-[230px] max-sm:h-[200px] flex items-center justify-center cursor-pointer hover:opacity-70 duration-200 flex-col"
         >
           <h1
             class="uppercase text-5xl max-sm:text-3xl font-bold text-white text-center"
           >
             Другой интернет-магазин
+          </h1>
+          <h1 class="text-2xl max-sm:text-lg text-white font-bold">
+            % уточните у администратора
           </h1>
         </a>
       </div>
