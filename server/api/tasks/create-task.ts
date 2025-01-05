@@ -14,8 +14,9 @@ export default defineEventHandler(async (event) => {
       data: {
         description: task.description,
         notation: task.notation,
-        done: task.done ? new Date(task.done).toISOString() : null,
-        checked: task.checked ? new Date(task.checked).toISOString() : null,
+        responsible: task.responsible,
+        deadline: new Date(task.deadline).toISOString(),
+        createdUser: task.createdUser,
       },
     });
   } catch (error) {

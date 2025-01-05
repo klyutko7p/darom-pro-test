@@ -88,7 +88,7 @@ onMounted(async () => {
         rows.value,
         {
           start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-          end: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0),
+          end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
         },
       ]);
     } else {
@@ -983,7 +983,7 @@ async function createRow() {
         rows.value,
         {
           start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-          end: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0),
+          end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
         },
       ]);
     } else {
@@ -1097,7 +1097,7 @@ async function updateRow() {
       rows.value,
       {
         start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-        end: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0),
+        end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
       },
     ]);
   } else {
@@ -1142,7 +1142,7 @@ async function updateDeliveryRow(row: any) {
       rows.value,
       {
         start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-        end: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0),
+        end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
       },
     ]);
   } else {
@@ -1201,7 +1201,7 @@ async function deleteRow(id: any) {
         rows.value,
         {
           start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-          end: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0),
+          end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
         },
       ]);
     } else {
@@ -1325,9 +1325,10 @@ interface SelectedDateRange {
   start: Date;
   end: Date;
 }
+
 const selected = ref<SelectedDateRange>({
-  start: new Date(2024, new Date().getMonth(), 1),
-  end: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 0),
+  start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
 });
 
 const filteredRows = ref<Array<IAdvanceReport>>();

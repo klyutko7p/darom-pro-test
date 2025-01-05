@@ -73,7 +73,7 @@ const filterRows = async () => {
     return (
       (!selectedTypeOfExpenditure.value.length ||
         selectedTypeOfExpenditure.value.includes(row.typeOfExpenditure) ||
-        includeDeductions) && 
+        includeDeductions) &&
       (!selectedType.value.length || selectedType.value.includes(row.type)) &&
       (!selected.value.start ||
         setDateToStartOfDay(new Date(row.date)) >=
@@ -93,7 +93,6 @@ const filterRows = async () => {
   showFilters.value = false;
 };
 
-
 const ranges = [
   { label: "Январь", duration: { month: "0" } },
   { label: "Февраль", duration: { month: "1" } },
@@ -112,8 +111,8 @@ const ranges = [
 ];
 
 const selected = ref<SelectedDateRange>({
-  start: new Date(2024, 0, 1),
-  end: new Date(),
+  start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
 });
 
 function getMonthRange(year: number, month: number): SelectedDateRange {

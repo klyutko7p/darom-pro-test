@@ -86,7 +86,23 @@ function showDSList() {
 function showSettingsList() {
   isShowSettingsList.value = !isShowSettingsList.value;
 }
+
+let usersOfIssued = ref([
+  "Директор",
+  "Власенкова",
+  "Алиса",
+  "Василенко",
+  "Волошина",
+  "Горцуева",
+  "Косой",
+  "Кулешов",
+  "Мешков",
+  "Шарафаненко",
+  "Шведова",
+]);
+
 </script>
+
 <template>
   <aside
     v-auto-animate
@@ -256,7 +272,8 @@ function showSettingsList() {
                   user.username === 'Горцуева' ||
                   user.role === 'ADMIN' ||
                   user.role === 'ADMINISTRATOR' ||
-                  user.username === 'Власенкова'
+                  user.username === 'Власенкова' ||
+                  usersOfIssued.includes(user.username)
                 "
               >
                 <Icon
@@ -414,7 +431,7 @@ function showSettingsList() {
                   user.role === 'PVZ' ||
                   user.role === 'PPVZ' ||
                   user.username === 'Шведова' ||
-                  user.username === 'Мешков' 
+                  user.username === 'Мешков'
                 "
               >
                 <Icon
@@ -667,9 +684,7 @@ function showSettingsList() {
               <div
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
                 @click="router.push('/tasks')"
-                v-if="
-                  user.username === 'Директор' || user.username === 'Власенкова'
-                "
+                v-if="usersOfIssued.includes(user.username)"
               >
                 <Icon
                   class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -840,6 +855,24 @@ function showSettingsList() {
                   size="24"
                 />
                 <span class="flex-1 ms-3 whitespace-nowrap">ПВЗ</span>
+              </div>
+            </li>
+            <li>
+              <div
+                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
+                @click="router.push('/admin/pvz-percent')"
+                v-if="
+                  user.username === 'Директор' ||
+                  user.username === 'Власенкова' ||
+                  user.username === 'Горцуева'
+                "
+              >
+                <Icon
+                  class="text-gray-500 transition duration-75 group-hover:text-gray-900"
+                  name="material-symbols:percent"
+                  size="24"
+                />
+                <span class="flex-1 ms-3 whitespace-nowrap">Проценты ПВЗ</span>
               </div>
             </li>
             <li>

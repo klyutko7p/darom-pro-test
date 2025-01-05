@@ -4,25 +4,18 @@ import { useToast } from "vue-toastification";
 const toast = useToast();
 
 export const useTasksStore = defineStore("tasks", () => {
-  let cachedTasks: any = null;
-
   async function getTasks() {
-    if (cachedTasks) {
-      return cachedTasks;
-    } else {
-      try {
-        let { data }: any = await useFetch("/api/tasks/get-tasks", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        cachedTasks = data.value;
-        return cachedTasks;
-      } catch (error) {
-        if (error instanceof Error) {
-          toast.error(error.message);
-        }
+    try {
+      let { data }: any = await useFetch("/api/tasks/get-tasks", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
       }
     }
   }
@@ -36,7 +29,6 @@ export const useTasksStore = defineStore("tasks", () => {
         },
         body: JSON.stringify({ task }),
       });
-      cachedTasks = null;
       toast.success("Задача успешно добавлена!");
     } catch (error) {
       if (error instanceof Error) {
@@ -54,7 +46,6 @@ export const useTasksStore = defineStore("tasks", () => {
         },
         body: JSON.stringify({ task }),
       });
-      cachedTasks = null;
       toast.success("Задача успешно обновлена!");
     } catch (error) {
       if (error instanceof Error) {
@@ -63,18 +54,34 @@ export const useTasksStore = defineStore("tasks", () => {
     }
   }
 
-  async function updateStatus(task: Task, flag: string) {
+  async function deleteTask(id: number) {
+    try {
+      let data = await useFetch("/api/tasks/delete-task", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+      toast.success("Задача успешно удалена!");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function updateStatus(task: Task, flag: string, username: string) {
     try {
       let data = await useFetch("/api/tasks/update-status", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ task, flag }),
+        body: JSON.stringify({ task, flag, username }),
       });
 
       if (data.data.value === undefined) {
-        cachedTasks = null;
         toast.success("Статус успешно обновлен!");
       } else {
         console.log(data.data.value);
@@ -88,5 +95,44 @@ export const useTasksStore = defineStore("tasks", () => {
     }
   }
 
-  return { getTasks, createTask, updateTask, updateStatus };
+  async function deleteIssuedRows() {
+    try {
+      let data = await useFetch("/api/tasks/delete-issued-rows", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function updateTasks(rows: Task[]) {
+    try {
+      let data = await useFetch("/api/tasks/update-tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ rows }),
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  return {
+    getTasks,
+    createTask,
+    updateTask,
+    updateStatus,
+    updateTasks,
+    deleteTask,
+    deleteIssuedRows,
+  };
 });

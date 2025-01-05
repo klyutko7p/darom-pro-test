@@ -20,6 +20,7 @@ defineProps({
     label="Button"
     :trailing="false"
     class="duration-200 font-semibold"
+    :disabled="disabled"
   >
     <slot />
   </UButton>
