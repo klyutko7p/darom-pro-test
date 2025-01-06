@@ -268,6 +268,18 @@ function updateCurrentPageData() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  let arrayOfProcessing = props.rows?.filter(
+    (row) =>
+      row.orderPVZ === null &&
+      row.deliveredSC === null &&
+      !row.deleted &&
+      row.dispatchPVZ !== "НаДом"
+  );
+  arrayOfProcessing?.forEach((row: any) => {
+    processingRows.value.push(row);
+    processingRows.value = [...new Set(processingRows.value)];
+  });
+
   if (searchingQuery.value !== "") {
     if (!searchingQuery.value.includes("https")) {
       searchingQuery.value = searchingQuery.value.replace(/\./g, "");
@@ -371,6 +383,19 @@ let clients = ref<Array<Client>>([]);
 const storeClients = useClientsStore();
 onMounted(async () => {
   focusInput();
+
+  // let arrayOfProcessing = props.rows?.filter(
+  //   (row) =>
+  //     row.orderPVZ === null &&
+  //     row.deliveredSC === null &&
+  //     !row.deleted &&
+  //     row.dispatchPVZ !== "НаДом"
+  // );
+  // arrayOfProcessing?.forEach((row: any) => {
+  //   processingRows.value.push(row);
+  //   processingRows.value = [...new Set(processingRows.value)];
+  // });
+  showProcessingRows();
 
   updateCurrentPageData();
 
@@ -963,15 +988,13 @@ function showButtonsRows() {
         >Скрыть кнопки</UButton
       >
     </div>
-    <div
-      v-if="isShowButtonsRows"
-      class="py-3 flex max-sm:flex-col gap-3 max-sm:w-full"
-    >
+    <div class="py-3 flex max-sm:flex-col gap-3 max-sm:w-full">
       <h1
         v-if="
-          user.role === 'ADMIN' ||
-          user.role === 'ADMINISTRATOR' ||
-          user.role === 'RMANAGER'
+          (user.role === 'ADMIN' ||
+            user.role === 'ADMINISTRATOR' ||
+            user.role === 'RMANAGER') &&
+          isShowButtonsRows
         "
         class="bg-red-500 px-5 py-1.5 text-white font-semibold rounded-md border-red-500 border-2 hover:bg-transparent hover:text-black duration-200 cursor-pointer"
         @click="showExpiredRows"
@@ -986,7 +1009,7 @@ function showButtonsRows() {
         Ждут обработку {{ processingRows?.length }} товаров
       </h1>
       <h1
-        v-if="user.username === 'Горцуева'"
+        v-if="user.username === 'Горцуева' && isShowButtonsRows"
         class="bg-green-400 px-5 py-1.5 text-white font-semibold rounded-md border-green-400 border-2 hover:bg-transparent hover:text-black duration-200 cursor-pointer"
         @click="changeWaitingRows(), showWaitingRows()"
       >
