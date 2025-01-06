@@ -136,12 +136,28 @@ onMounted(async () => {
   if (rows.value) {
     copyRowsOurRansom.value = [...rowsOurRansom.value];
     copyRowsClientRansom.value = [...rowsClientRansom.value];
-    if (copyRowsOurRansom.value.length > 0) {
+
+    if (copyRowsOurRansom.value.length) {
       let ransomRow = copyRowsOurRansom.value;
+      ransomRow = ransomRow.filter((row) => !row.deleted && !row.issued);
       phoneNumber.value = copyRowsOurRansom.value[0].fromName;
-      dispatchPVZ.value = ransomRow[ransomRow.length - 1].dispatchPVZ;
-      cell.value = ransomRow[ransomRow.length - 1].cell;
-      value.value = `${dispatchPVZ.value}/${phoneNumber.value}/${cell.value}`;
+      if (ransomRow.length) {
+        dispatchPVZ.value = ransomRow[0].dispatchPVZ;
+        cell.value = ransomRow[0].cell;
+        value.value = `${dispatchPVZ.value}/${phoneNumber.value}/${cell.value}`;
+      }
+    }
+
+    if (copyRowsClientRansom.value.length) {
+      let ransomRow = copyRowsClientRansom.value;
+      ransomRow = ransomRow.filter((row) => !row.deleted && !row.issued);
+      phoneNumber.value = copyRowsClientRansom.value[0].fromName;
+
+      if (ransomRow.length) {
+        dispatchPVZ.value = ransomRow[0].dispatchPVZ;
+        cell.value = ransomRow[0].cell;
+        value2.value = `${dispatchPVZ.value}/${phoneNumber.value}/${cell.value}`;
+      }
     }
   }
   disableReceivedItems();
@@ -167,6 +183,7 @@ function roundToNearestTen(num: number): number {
 
 const token = Cookies.get("token");
 let value = ref("");
+let value2 = ref("");
 
 let isShowModalValue = ref(false);
 function showModal(isShow: boolean) {
@@ -201,9 +218,11 @@ const pvzs = [
 ];
 
 let isOpenQRModal = ref(false);
-function openQRModal() {
+let flag = ref("");
+function openQRModal(flagData: string) {
   isOpenQRModal.value = true;
   showModal(true);
+  flag.value = flagData;
 }
 
 function closeQRModal() {
@@ -226,7 +245,7 @@ function signOut() {
     <div v-if="token" class="w-screen px-10 max-sm:px-3">
       <div v-if="user.phoneNumber !== '+70000000001'">
         <div
-          class="flex items-center justify-between max-sm:flex-col-reverse max-sm:items-center"
+          class="flex items-center justify-between max-sm:flex-col max-sm:items-center"
         >
           <div class="max-lg:p-3 w-full mt-5">
             <div class="mb-5 flex items-center gap-3">
@@ -266,11 +285,11 @@ function signOut() {
             >
           </div>
           <div
-            @click="openQRModal"
+            @click="openQRModal('OurRansom')"
             class="flex items-center max-sm:flex-col-reverse max-sm:justify-center gap-3 mt-3 bg-gray-50 p-3 shadow-xl border-[1px] rounded-xl hover:opacity-50 duration-200 cursor-pointer"
           >
             <h1 class="max-w-[240px] max-sm:text-center">
-              Покажите QR-код, чтобы получить заказ
+              Покажите QR-код, чтобы получить заказы
             </h1>
             <CodeQR
               :value="value"
@@ -326,6 +345,60 @@ function signOut() {
           <h1>Список пуст</h1>
         </div>
 
+        <div
+          class="flex items-center justify-between max-sm:flex-col-reverse max-sm:items-center"
+        >
+          <div class="max-lg:p-3 w-full mt-5 opacity-0 max-sm:hidden">
+            <div class="mb-5 flex items-center gap-3">
+              <h1 class="text-xl">
+                Телефон: <span class="italic"> {{ user.phoneNumber }} </span>
+              </h1>
+              <Icon name="material-symbols:contact-phone-rounded" size="24" />
+            </div>
+            <h1 class="text-xl max-sm:text-base">
+              Оставшаяся сумма к оплате:
+              <span class="font-bold">
+                {{ getAmountToBePaid("NONE1") + getAmountToBePaid("NONE2") }}
+                руб.</span
+              >
+            </h1>
+            <h1 class="text-xl max-sm:text-base">
+              Сумма к оплате на выдачу:
+              <span class="font-bold"
+                >{{
+                  getAmountToBePaid("PVZ1") + getAmountToBePaid("PVZ2")
+                }}
+                руб.</span
+              >
+            </h1>
+            <UIMainButton
+              v-if="showReceivedItems"
+              class="mt-5"
+              @click="disableReceivedItems"
+              >Скрыть доставленные заказы</UIMainButton
+            >
+            <UIMainButton
+              v-if="!showReceivedItems"
+              class="mt-5"
+              @click="enableReceivedItems"
+            >
+              Показать доставленные заказы</UIMainButton
+            >
+          </div>
+          <div
+            @click="openQRModal('ClientRansom')"
+            class="flex items-center max-sm:flex-col-reverse max-sm:justify-center gap-3 mt-3 bg-gray-50 p-3 shadow-xl border-[1px] rounded-xl hover:opacity-50 duration-200 cursor-pointer max-sm:mt-10"
+          >
+            <h1 class="max-w-[240px] max-sm:text-center">
+              Покажите QR-код, чтобы получить оформленные доставки
+            </h1>
+            <CodeQR
+              :value="value2"
+              class="max-w-[110px] max-h-[100px] max-sm:mx-auto"
+            />
+          </div>
+        </div>
+
         <h1 class="mt-20 text-xl max-[330px]:text-lg">
           <span
             class="flex items-center gap-3 max-sm:flex-col max-sm:gap-0 max-sm:items-start mb-1"
@@ -374,29 +447,68 @@ function signOut() {
         </div>
 
         <div
-          class="bg-gray-100 text-center py-20 mt-5 font-semibold text-xl rounded-xl"
+          class="bg-gray-100 text-center py-20 mb-5 mt-5 font-semibold text-xl rounded-xl"
           v-else
         >
           <h1>Список пуст</h1>
         </div>
 
-        <UINewModalClient v-show="isOpenQRModal" @close-modal="closeQRModal">
-          <template v-slot:icon-header> </template>
-          <template v-slot:header></template>
-          <template v-slot:body>
+        <UModal
+          :ui="{
+            container: 'flex items-center justify-center text-center',
+          }"
+          v-auto-animate
+          v-model="isOpenQRModal"
+          prevent-close
+        >
+          <UCard
+            v-auto-animate
+            :ui="{
+              ring: '',
+              divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
+          >
+            <template #header>
+              <div class="flex items-center justify-between">
+                <h3
+                  class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+                ></h3>
+                <Icon
+                  @click="closeQRModal"
+                  name="i-heroicons-x-mark-20-solid"
+                  size="24"
+                  class="cursor-pointer hover:text-secondary-color duration-200"
+                />
+              </div>
+            </template>
             <div
-              class="flex items-center flex-col-reverse justify-center gap-3 mt-3 bg-gray-50 p-3"
+              v-if="flag === 'OurRansom'"
+              class="flex items-center text-center flex-col-reverse justify-center gap-3 mt-3 p-3"
             >
               <h1 class="max-w-[240px] max-sm:text-center">
-                Покажите QR-код, чтобы получить заказ
+                Покажите QR-код, чтобы получить оформленные <br />
+                заказы
               </h1>
               <CodeQR
                 :value="value"
                 class="max-w-[210px] max-h-[200px] max-sm:mx-auto"
               />
             </div>
-          </template>
-        </UINewModalClient>
+
+            <div
+              v-if="flag === 'ClientRansom'"
+              class="flex items-center text-center flex-col-reverse justify-center gap-3 mt-3 p-3"
+            >
+              <h1 class="max-w-[240px] max-sm:text-center">
+                Покажите QR-код, чтобы получить оформленные доставки заказов
+              </h1>
+              <CodeQR
+                :value="value2"
+                class="max-w-[210px] max-h-[200px] max-sm:mx-auto"
+              />
+            </div>
+          </UCard>
+        </UModal>
       </div>
 
       <div v-else>
