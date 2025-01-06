@@ -162,9 +162,10 @@ onMounted(async () => {
   if (rows.value.length) {
     copyRows.value = [...rows.value];
     let ransomRow = copyRows.value;
+    ransomRow = ransomRow.filter((row) => !row.deleted && !row.issued);
     phoneNumber.value = copyRows.value[0].fromName;
-    dispatchPVZ.value = ransomRow[ransomRow.length - 1].dispatchPVZ;
-    cell.value = ransomRow[ransomRow.length - 1].cell;
+    dispatchPVZ.value = ransomRow[0].dispatchPVZ;
+    cell.value = ransomRow[0].cell;
     value.value = `${dispatchPVZ.value}/${phoneNumber.value}/${cell.value}`;
   }
   disableReceivedItems();

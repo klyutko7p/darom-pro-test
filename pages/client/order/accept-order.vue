@@ -61,7 +61,13 @@ onMounted(async () => {
     await storeRansom.getRansomRowsForModalOurRansomPartOne();
   let originallyRowsDataTwo =
     await storeRansom.getRansomRowsForModalOurRansomPartTwo();
-  originallyRows.value = [...originallyRowsDataOne, ...originallyRowsDataTwo];
+  let originallyRowsDataThree =
+    await storeRansom.getRansomRowsForModalOurRansomPartThree();
+  originallyRows.value = [
+    ...originallyRowsDataOne,
+    ...originallyRowsDataTwo,
+    ...originallyRowsDataThree,
+  ];
   cells.value = await storeCells.getCells();
 });
 

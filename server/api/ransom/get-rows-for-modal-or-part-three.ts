@@ -21,8 +21,7 @@ export default defineEventHandler(async (event) => {
         cell: true,
         issued: true,
       },
-      skip: 30000,
-      take: 30000,
+      skip: 60000,
       orderBy: {
         created_at: "desc",
       },

@@ -130,7 +130,7 @@ function focusInput() {
   isScanActive.value = true;
 }
 
-const isShowDeletedData = ref(false)
+const isShowDeletedData = ref(false);
 async function showDeletedData() {
   isLoading.value = true;
   rows.value = await storeRansom.getDeletedRansomRowsByPVZ(
@@ -148,10 +148,7 @@ async function showDeletedData() {
 
 async function showData() {
   isLoading.value = true;
-  rows.value = await storeRansom.getRansomRowsByPVZ(
-    pvzString,
-    "OurRansom"
-  );
+  rows.value = await storeRansom.getRansomRowsByPVZ(pvzString, "OurRansom");
 
   if (rows.value) {
     handleFilteredRows(rows.value);
@@ -168,10 +165,8 @@ function scanItem() {
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertUrl(scannedLink);
-    if (window.location.href.includes("soft-praline-633324.netlify.app")) {
-      window.location.href =
-        "https://darom.pro/spreadsheets/our-ransom/ПВЗ" + scannedLink;
-    }
+    window.location.href =
+      "https://darom.pro/spreadsheets/our-ransom/ПВЗ" + scannedLink;
     scanStringItem.value = "";
   }, 500);
 }
@@ -191,7 +186,9 @@ function convertUrl(url: string): string {
       <NuxtLayout name="admin">
         <div v-if="!isLoading" class="mt-3">
           <div class="mt-10 flex items-center justify-center">
-            <UIMainButton @click="focusInput">СКАНИРОВАТЬ qr клиента</UIMainButton>
+            <UIMainButton @click="focusInput"
+              >СКАНИРОВАТЬ qr клиента</UIMainButton
+            >
             <input
               class="opacity-0 max-w-[1px]"
               ref="myInput"
@@ -236,7 +233,9 @@ function convertUrl(url: string): string {
       <NuxtLayout name="user">
         <div v-if="!isLoading" class="mt-3">
           <div class="mt-10 flex items-center justify-center">
-            <UIMainButton @click="focusInput">СКАНИРОВАТЬ qr клиента</UIMainButton>
+            <UIMainButton @click="focusInput"
+              >СКАНИРОВАТЬ qr клиента</UIMainButton
+            >
             <input
               class="opacity-0 max-w-[1px]"
               ref="myInput"

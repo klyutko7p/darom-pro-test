@@ -237,7 +237,13 @@ onMounted(async () => {
     await storeRansom.getRansomRowsForModalOurRansomPartOne();
   let originallyRowsDataTwo =
     await storeRansom.getRansomRowsForModalOurRansomPartTwo();
-  originallyRows.value = [...originallyRowsDataOne, ...originallyRowsDataTwo];
+  let originallyRowsDataThree =
+    await storeRansom.getRansomRowsForModalOurRansomPartThree();
+  originallyRows.value = [
+    ...originallyRowsDataOne,
+    ...originallyRowsDataTwo,
+    ...originallyRowsDataThree,
+  ];
   pvz.value = await storePVZ.getPVZ();
   sortingCenters.value = await storeSortingCenters.getSortingCenters();
   orderAccounts.value = await storeOrderAccounts.getOrderAccounts();
@@ -390,7 +396,6 @@ async function showDeletedRows(flag: boolean) {
   }
 }
 
-
 async function updateDeliveryRows(obj: any) {
   if (obj.flag !== "additionally") {
     let answer = confirm(
@@ -410,7 +415,7 @@ async function updateDeliveryRows(obj: any) {
         "OurRansom"
       );
       rows.value = filteredRows.value;
-      router.push(`/spreadsheets/our-ransom/${pvzLink}`)
+      router.push(`/spreadsheets/our-ransom/${pvzLink}`);
       isLoading.value = false;
     }
   } else {
@@ -427,7 +432,7 @@ async function updateDeliveryRows(obj: any) {
       "OurRansom"
     );
     rows.value = filteredRows.value;
-    router.push(`/spreadsheets/our-ransom/${pvzLink}`)
+    router.push(`/spreadsheets/our-ransom/${pvzLink}`);
     isLoading.value = false;
   }
 }

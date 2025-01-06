@@ -128,7 +128,13 @@ async function updateRow() {
     await storeRansom.getRansomRowsForModalOurRansomPartOne();
   let originallyRowsDataTwo =
     await storeRansom.getRansomRowsForModalOurRansomPartTwo();
-  originallyRows.value = [...originallyRowsDataOne, ...originallyRowsDataTwo];
+  let originallyRowsDataThree =
+    await storeRansom.getRansomRowsForModalOurRansomPartThree();
+  originallyRows.value = [
+    ...originallyRowsDataOne,
+    ...originallyRowsDataTwo,
+    ...originallyRowsDataThree,
+  ];
   await updateCells();
 }
 
@@ -160,7 +166,13 @@ async function createRow() {
     await storeRansom.getRansomRowsForModalOurRansomPartOne();
   let originallyRowsDataTwo =
     await storeRansom.getRansomRowsForModalOurRansomPartTwo();
-  originallyRows.value = [...originallyRowsDataOne, ...originallyRowsDataTwo];
+  let originallyRowsDataThree =
+    await storeRansom.getRansomRowsForModalOurRansomPartThree();
+  originallyRows.value = [
+    ...originallyRowsDataOne,
+    ...originallyRowsDataTwo,
+    ...originallyRowsDataThree,
+  ];
   await updateCells();
 }
 
@@ -299,9 +311,16 @@ onMounted(async () => {
     await storeRansom.getRansomRowsForModalOurRansomPartOne();
   let originallyRowsDataTwo =
     await storeRansom.getRansomRowsForModalOurRansomPartTwo();
-  originallyRows.value = [...originallyRowsDataOne, ...originallyRowsDataTwo];
+  let originallyRowsDataThree =
+    await storeRansom.getRansomRowsForModalOurRansomPartThree();
+  originallyRows.value = [
+    ...originallyRowsDataOne,
+    ...originallyRowsDataTwo,
+    ...originallyRowsDataThree,
+  ];
+  
   if (user.value.role !== "SORTIROVKA") {
-    await updateCells();
+    await updateCells2();
   }
 
   const [pvzData, sortingCentersData, orderAccountsData] = await Promise.all([
@@ -319,8 +338,16 @@ onMounted(async () => {
 
 async function updateCells() {
   let rowsWithDeleted =
-    await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
+  await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
   await storeCells.updateCellsStatus(rowsWithDeleted);
+  cells.value = await storeCells.getCells();
+  cells.value = cells.value?.filter((cell) => cell.PVZ !== "НаДом");
+}
+
+async function updateCells2() {
+  // let rowsWithDeleted =
+  // await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
+  // await storeCells.updateCellsStatus(rowsWithDeleted);
   cells.value = await storeCells.getCells();
   cells.value = cells.value?.filter((cell) => cell.PVZ !== "НаДом");
 }

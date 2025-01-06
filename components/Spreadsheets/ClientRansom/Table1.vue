@@ -201,6 +201,8 @@ let isVisiblePages = ref(true);
 onMounted(async () => {
   updateCurrentPageData();
 
+  focusInput();
+
   if (props.user.role === "SORTIROVKA") {
     perPage.value = totalRows.value;
     updateCurrentPageData();
@@ -375,12 +377,100 @@ async function writeClipboardText(text: any) {
     console.error(error.message);
   }
 }
+
+let scanStringItem = ref("");
+
+let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+function scanItem() {
+  if (timeoutId !== null) {
+    clearTimeout(timeoutId);
+  }
+
+  timeoutId = setTimeout(async () => {
+    let scannedLink = scanStringItem.value.trim();
+    scannedLink = convertToURL(scannedLink);
+    console.log(scannedLink);
+    let rowData = await storeRansom.getRansomRowById(+scannedLink, "ClientRansom");
+    if (props.user.role !== "SORTIROVKA") {
+      storeRansom.announce(`${rowData.cell}`);
+
+      if (rowData.issued) {
+        toast.error(
+          `Товар с ID: ${rowData.id} не отметился. Причина: товар уже выдан!`,
+          { timeout: 10000 }
+        );
+        return;
+      }
+
+      if (!rowData.deliveredPVZ) {
+        toast.error(
+          `Товар с ID: ${rowData.id} не отметился. Причина: товар не принят на ПВЗ!`,
+          {
+            timeout: 10000,
+          }
+        );
+        return;
+      }
+
+      if (!props.rows?.includes(rowData)) {
+        handleCheckboxChange(rowData);
+        return;
+      }
+
+      handleCheckboxChange(rowData);
+    } else {
+      handleCheckboxChange(rowData);
+      storeRansom.announce(rowData.cell);
+    }
+    console.log(rowData);
+    scanStringItem.value = "";
+    scannedLink = "";
+  }, 1000);
+}
+
+const myInput = ref(null);
+
+let isScanActive = ref(false);
+function focusInput() {
+  myInput.value.focus();
+  isScanActive.value = true;
+}
+
+function convertToURL(inputString: string) {
+  if (inputString.includes("/")) {
+    const parts = inputString.split("/");
+    const entryID = parts[parts.length - 1];
+    return entryID;
+  } else if (inputString.includes(".")) {
+    const parts = inputString.split(".");
+    const entryID = parts[parts.length - 1];
+    return entryID;
+  }
+}
 </script>
 
 <template>
   <div v-if="!isLoading">
-    <div class="flex items-center justify-between max-lg:block mt-10">
+    <div class="flex items-center justify-between max-lg:block mt-5">
       <div>
+        <div class="flex items-center gap-5">
+          <UIMainButton @click="focusInput"
+            >СКАНИРОВАТЬ товары клиента</UIMainButton
+          >
+          <Icon
+            v-if="isScanActive"
+            name="eos-icons:bubble-loading"
+            class="text-secondary-color"
+          />
+        </div>
+        <input
+          class="opacity-0"
+          ref="myInput"
+          autofocus
+          v-model="scanStringItem"
+          @input="scanItem"
+        />
         <div
           class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5"
         >
@@ -395,7 +485,7 @@ async function writeClipboardText(text: any) {
             class="text-xl"
             v-if="user.role === 'PVZ' || user.role === 'PPVZ'"
           >
-            Товаров к выдаче:
+            Заказов к выдаче:
             <span class="text-secondary-color font-bold">{{ totalRows }}</span>
           </h1>
         </div>
@@ -524,18 +614,7 @@ async function writeClipboardText(text: any) {
           <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"
             >Отказ клиент онлайн</UIActionButton2
           >
-          <UIActionButton2 @click="updateDeliveryRows('additionally1-2')"
-            >Отказ клиент наличные</UIActionButton2
-          >
         </div>
-        <UIActionButton2
-          v-if="user.additionally2 === 'WRITE'"
-          @click="updateDeliveryRows('additionally2')"
-          >Отказ брак
-        </UIActionButton2>
-        <UIActionButton2 @click="updateDeliveryRows('additionally4')"
-          >Отказ подмена
-        </UIActionButton2>
       </div>
     </div>
 
@@ -564,27 +643,11 @@ async function writeClipboardText(text: any) {
           @click="openModalQR"
           >Оплата онлайн (QR)
         </UIActionButton2>
-        <UIActionButton2
-          v-if="user.additionally2 === 'WRITE'"
-          @click="showPayRejectClient = !showPayRejectClient"
-          >Отказ клиент
-        </UIActionButton2>
         <div v-if="showPayRejectClient" class="flex flex-col gap-3">
           <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"
             >Отказ клиент онлайн</UIActionButton2
           >
-          <UIActionButton2 @click="updateDeliveryRows('additionally1-2')"
-            >Отказ клиент наличные</UIActionButton2
-          >
         </div>
-        <UIActionButton2
-          v-if="user.additionally2 === 'WRITE'"
-          @click="updateDeliveryRows('additionally2')"
-          >Отказ брак
-        </UIActionButton2>
-        <UIActionButton2 @click="updateDeliveryRows('additionally4')"
-          >Отказ подмена
-        </UIActionButton2>
       </div>
     </div>
 
@@ -1071,7 +1134,7 @@ async function writeClipboardText(text: any) {
                 row.additionally !== 'Отказ клиент онлайн' &&
                 row.additionally !== 'Отказ клиент наличные' &&
                 row.additionally !== 'Отказ брак' &&
-                row.additionally !== 'Отказ подмена' 
+                row.additionally !== 'Отказ подмена'
               "
             >
               {{ row.profit2 }}

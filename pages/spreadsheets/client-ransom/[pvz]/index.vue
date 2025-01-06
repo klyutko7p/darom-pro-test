@@ -346,6 +346,7 @@ async function showData() {
   isLoading.value = false;
 }
 
+let letterOfPVZ = ref("");
 function scanItem() {
   if (timeoutId !== null) {
     clearTimeout(timeoutId);
@@ -354,12 +355,43 @@ function scanItem() {
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertUrl(scannedLink);
-    if (window.location.href.includes("soft-praline-633324.netlify.app")) {
-      window.location.href =
-        "https://darom.pro/spreadsheets/client-ransom/ПВЗ" + scannedLink;
+    let numberOfPVZ = scannedLink.split("/")[0];
+
+    if (numberOfPVZ.includes("1")) {
+      letterOfPVZ.value = "А";
+    } else if (numberOfPVZ.includes("2")) {
+      letterOfPVZ.value = "Б";
+    } else if (numberOfPVZ.includes("3")) {
+      letterOfPVZ.value = "В";
+    } else if (numberOfPVZ.includes("4")) {
+      letterOfPVZ.value = "Г";
+    } else if (numberOfPVZ.includes("5")) {
+      letterOfPVZ.value = "Д";
+    } else if (numberOfPVZ.includes("6")) {
+      letterOfPVZ.value = "Е";
+    } else if (numberOfPVZ.includes("7")) {
+      letterOfPVZ.value = "Ё";
+    } else if (numberOfPVZ.includes("8")) {
+      letterOfPVZ.value = "Ж";
+    } else if (numberOfPVZ.includes("9")) {
+      letterOfPVZ.value = "З";
+    } else if (numberOfPVZ.includes("10")) {
+      letterOfPVZ.value = "И";
+    } else if (numberOfPVZ.includes("11")) {
+      letterOfPVZ.value = "Й";
     }
+
+    window.location.href =
+      "https://darom.pro/spreadsheets/client-ransom/ПВЗ" +
+      scannedLink.split("/")[0] +
+      "/" +
+      scannedLink.split("/")[1] +
+      "/" +
+      `${letterOfPVZ.value}` +
+      scannedLink.split("/")[2];
     scanStringItem.value = "";
-  }, 500);
+    console.log(scannedLink);
+  }, 2000);
 }
 
 function convertUrl(url: string): string {
@@ -376,18 +408,20 @@ function convertUrl(url: string): string {
     <div v-if="user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div v-if="!isLoading" class="mt-3">
-          <div class="mt-10 flex items-center justify-center">
+          <div class="mt-10 flex items-center justify-center flex-col">
             <UIMainButton @click="focusInput"
               >СКАНИРОВАТЬ qr клиента</UIMainButton
             >
             <input
-              class="opacity-0 max-w-[1px]"
+              class="opacity-0 max-w-[200px]"
               ref="myInput"
               autofocus
               v-model="scanStringItem"
               @input="scanItem"
+              type="text"
             />
           </div>
+          
           <div class="flex items-center gap-5 mt-10">
             <div
               v-if="!isShowDeletedData"
@@ -748,6 +782,20 @@ function convertUrl(url: string): string {
                 Создать новую запись</UIMainButton
               >
             </div>
+          </div>
+
+          <div class="mt-10 flex items-center justify-center flex-col">
+            <UIMainButton @click="focusInput"
+              >СКАНИРОВАТЬ qr клиента</UIMainButton
+            >
+            <input
+              class="opacity-0 max-w-[200px]"
+              ref="myInput"
+              autofocus
+              v-model="scanStringItem"
+              @input="scanItem"
+              type="text"
+            />
           </div>
 
           <SpreadsheetsClientRansomTable

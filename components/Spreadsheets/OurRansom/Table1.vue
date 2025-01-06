@@ -250,6 +250,7 @@ const totalRows = computed(() =>
 let returnRows = ref<Array<IOurRansom>>();
 let expiredRows = ref<Array<IOurRansom>>([]);
 let processingRows = ref<Array<IOurRansom>>([]);
+let waitingRows = ref<Array<IOurRansom>>([]);
 
 let searchingQuery = ref("");
 function updateCurrentPageData() {
@@ -280,6 +281,13 @@ function updateCurrentPageData() {
       row.dispatchPVZ !== "НаДом"
   );
 
+  let arrayOfWaiting = props.rows?.filter((row) => {
+    const tenDaysAgo = new Date();
+    tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+
+    return !row.deliveredSC && new Date(row.created_at) < tenDaysAgo;
+  });
+
   arrayOfExpired?.forEach((row: any) => {
     const currentDate = new Date();
 
@@ -299,12 +307,18 @@ function updateCurrentPageData() {
     processingRows.value = [...new Set(processingRows.value)];
   });
 
+  arrayOfWaiting?.forEach((row: any) => {
+    waitingRows.value.push(row);
+    waitingRows.value = [...new Set(waitingRows.value)];
+  });
+
   if (props.user.role === "RMANAGER" || props.user.role === "PPVZ") {
     returnRows.value = props.rows?.filter(
       (row) => row.dispatchPVZ && row.dispatchPVZ.includes(props.user.PVZ)
     );
     expiredRows.value = [];
     processingRows.value = [];
+    waitingRows.value = [];
   }
 
   const today = new Date();
@@ -416,6 +430,7 @@ onMounted(async () => {
 
   updateCurrentPageData();
   showProcessingRows();
+  showWaitingRows();
 
   if (props.user.role === "SORTIROVKA") {
     perPage.value = 100;
@@ -453,6 +468,15 @@ function isExpired(row: any) {
   }
 }
 
+function isWaiting(row: any) {
+  if (!row.deliveredSC) {
+    const tenDaysAgo = new Date();
+    tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+
+    return !row.deliveredSC && new Date(row.created_at) < tenDaysAgo;
+  }
+}
+
 function isProcessing(row: IOurRansom) {
   if (row.orderPVZ === null) {
     return true;
@@ -462,13 +486,25 @@ let showProcessingRowsFlag = ref(
   Cookies.get("showProcessingRowsFlag") === "true"
 );
 
+let showWaitingRowsFlag = ref(Cookies.get("showWaitingRowsFlag") === "true");
+
 function showProcessingRows() {
   if (showProcessingRowsFlag.value === true) {
     returnRows.value = processingRows.value;
     perPage.value = 2000;
   } else {
     perPage.value = 100;
-    updateCurrentPageDataDeleted();
+    updateCurrentPageData();
+  }
+}
+
+function showWaitingRows() {
+  if (showWaitingRowsFlag.value === true) {
+    returnRows.value = waitingRows.value;
+    perPage.value = 1000;
+  } else {
+    perPage.value = 100;
+    updateCurrentPageData();
   }
 }
 
@@ -480,7 +516,13 @@ function changeProcessingRows() {
   );
 }
 
+function changeWaitingRows() {
+  showWaitingRowsFlag.value = !showWaitingRowsFlag.value;
+  Cookies.set("showWaitingRowsFlag", JSON.stringify(showWaitingRowsFlag.value));
+}
+
 let showExpiredRowsFlag = ref(false);
+
 function showExpiredRows() {
   if (showExpiredRowsFlag.value === false) {
     showExpiredRowsFlag.value = true;
@@ -926,6 +968,13 @@ async function writeClipboardText(text: any) {
       >
         Ждут обработку {{ processingRows?.length }} товаров
       </h1>
+      <h1
+        v-if="user.username === 'Горцуева'"
+        class="bg-green-400 px-5 py-1.5 text-white font-semibold rounded-md border-green-400 border-2 hover:bg-transparent hover:text-black duration-200 cursor-pointer"
+        @click="changeWaitingRows(), showWaitingRows()"
+      >
+        Долго в пути {{ waitingRows?.length }} товаров
+      </h1>
     </div>
 
     <UInput
@@ -1225,6 +1274,7 @@ async function writeClipboardText(text: any) {
               'bg-orange-100': isChecked(row.id),
               'bg-red-300': isExpired(row),
               'bg-yellow-400 text-white font-bold': isProcessing(row),
+              'bg-green-400 text-white font-bold': isWaiting(row),
             }"
             class="border-b text-center text-sm"
             v-for="row in returnRows"

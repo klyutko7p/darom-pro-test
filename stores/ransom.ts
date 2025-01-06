@@ -477,6 +477,25 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  async function getRansomRowsForModalOurRansomPartThree() {
+    try {
+      let response = await fetch("/api/ransom/get-rows-for-modal-or-part-three", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function getRansomRowsForModalClientRansom() {
     try {
       let response = await fetch("/api/ransom/get-rows-for-modal-cl", {
@@ -1368,6 +1387,7 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsForModalClientRansom,
     getRansomRowsForModalOurRansomPartOne,
     getRansomRowsForModalOurRansomPartTwo,
+    getRansomRowsForModalOurRansomPartThree,
     getRansomRowsWithDeletedForCellsOurRansom,
     getRansomRowsWithPVZOurRansom,
     getRansomRowsOurRansom,
