@@ -257,68 +257,12 @@ function updateCurrentPageData() {
   const startIndex = (currentPage.value - 1) * perPage.value;
   const endIndex = startIndex + perPage.value;
 
-  if (showDeletedRows.value) {
-    returnRows.value = props.rows?.slice(startIndex, endIndex);
-  } else {
-    returnRows.value = props.rows
-      ?.filter((row) => !row.deleted)
-      .slice(startIndex, endIndex);
-  }
-
-  let arrayOfExpired = props.rows?.filter(
-    (row) =>
-      row.deliveredSC !== null &&
-      row.deliveredPVZ !== null &&
-      row.issued === null &&
-      !row.deleted
-  );
-
-  let arrayOfProcessing = props.rows?.filter(
-    (row) =>
-      row.orderPVZ === null &&
-      row.deliveredSC === null &&
-      !row.deleted &&
-      row.dispatchPVZ !== "НаДом"
-  );
-
-  let arrayOfWaiting = props.rows?.filter((row) => {
-    const tenDaysAgo = new Date();
-    tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
-
-    return !row.deliveredSC && new Date(row.created_at) < tenDaysAgo;
-  });
-
-  arrayOfExpired?.forEach((row: any) => {
-    const currentDate = new Date();
-
-    const deliveredDate = new Date(row.deliveredPVZ);
-
-    const difference = currentDate - deliveredDate;
-
-    const daysDifference = difference / (1000 * 3600 * 24);
-    if (daysDifference >= 5) {
-      expiredRows.value.push(row);
-      expiredRows.value = [...new Set(expiredRows.value)];
-    }
-  });
-
-  arrayOfProcessing?.forEach((row: any) => {
-    processingRows.value.push(row);
-    processingRows.value = [...new Set(processingRows.value)];
-  });
-
-  arrayOfWaiting?.forEach((row: any) => {
-    waitingRows.value.push(row);
-    waitingRows.value = [...new Set(waitingRows.value)];
-  });
+  returnRows.value = props.rows?.slice(startIndex, endIndex);
 
   if (props.user.role === "RMANAGER" || props.user.role === "PPVZ") {
     returnRows.value = props.rows?.filter(
-      (row) => row.dispatchPVZ && row.dispatchPVZ.includes(props.user.PVZ)
+      (row) => row.dispatchPVZ && props.user.PVZ.includes(row.dispatchPVZ)
     );
-    expiredRows.value = [];
-    processingRows.value = [];
-    waitingRows.value = [];
   }
 
   const today = new Date();
@@ -390,7 +334,7 @@ function updateCurrentPageDataDeleted() {
 
   if (props.user.role === "RMANAGER" || props.user.role === "PPVZ") {
     returnRows.value = props.rows?.filter(
-      (row) => row.dispatchPVZ && row.dispatchPVZ.includes(props.user.PVZ)
+      (row) => row.dispatchPVZ && props.user.PVZ.includes(row.dispatchPVZ)
     );
   }
 }
@@ -429,8 +373,6 @@ onMounted(async () => {
   focusInput();
 
   updateCurrentPageData();
-  showProcessingRows();
-  showWaitingRows();
 
   if (props.user.role === "SORTIROVKA") {
     perPage.value = 100;
@@ -661,6 +603,64 @@ async function writeClipboardText(text: any) {
     toast.success("Вы успешно скопировали ссылку");
   } catch (error: any) {
     console.error(error.message);
+  }
+}
+
+let isShowButtonsRows = ref(false);
+
+function showButtonsRows() {
+  isShowButtonsRows.value = !isShowButtonsRows.value;
+
+  if (isShowButtonsRows.value) {
+    let arrayOfExpired = props.rows?.filter(
+      (row) =>
+        row.deliveredSC !== null &&
+        row.deliveredPVZ !== null &&
+        row.issued === null &&
+        !row.deleted
+    );
+
+    let arrayOfProcessing = props.rows?.filter(
+      (row) =>
+        row.orderPVZ === null &&
+        row.deliveredSC === null &&
+        !row.deleted &&
+        row.dispatchPVZ !== "НаДом"
+    );
+
+    let arrayOfWaiting = props.rows?.filter((row) => {
+      const tenDaysAgo = new Date();
+      tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+
+      return !row.deliveredSC && new Date(row.created_at) < tenDaysAgo;
+    });
+
+    arrayOfExpired?.forEach((row: any) => {
+      const currentDate = new Date();
+
+      const deliveredDate = new Date(row.deliveredPVZ);
+
+      const difference = currentDate - deliveredDate;
+
+      const daysDifference = difference / (1000 * 3600 * 24);
+      if (daysDifference >= 5) {
+        expiredRows.value.push(row);
+        expiredRows.value = [...new Set(expiredRows.value)];
+      }
+    });
+
+    arrayOfProcessing?.forEach((row: any) => {
+      processingRows.value.push(row);
+      processingRows.value = [...new Set(processingRows.value)];
+    });
+
+    arrayOfWaiting?.forEach((row: any) => {
+      waitingRows.value.push(row);
+      waitingRows.value = [...new Set(waitingRows.value)];
+    });
+    showProcessingRows();
+
+    showWaitingRows();
   }
 }
 </script>
@@ -949,7 +949,24 @@ async function writeClipboardText(text: any) {
       </div>
     </div>
 
-    <div class="py-3 flex max-sm:flex-col gap-3 max-sm:w-full">
+    <div
+      v-if="
+        user.role === 'ADMIN' ||
+        user.role === 'ADMINISTRATOR' ||
+        user.role === 'RMANAGER'
+      "
+    >
+      <UButton @click="showButtonsRows" v-if="!isShowButtonsRows"
+        >Показать кнопки</UButton
+      >
+      <UButton @click="showButtonsRows" v-if="isShowButtonsRows"
+        >Скрыть кнопки</UButton
+      >
+    </div>
+    <div
+      v-if="isShowButtonsRows"
+      class="py-3 flex max-sm:flex-col gap-3 max-sm:w-full"
+    >
       <h1
         v-if="
           user.role === 'ADMIN' ||

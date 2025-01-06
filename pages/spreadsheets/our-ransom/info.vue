@@ -26,8 +26,8 @@ onMounted(async () => {
 
   isLoading.value = false;
 
-  let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
-  await storeCells.updateCellsStatus(rowsWithDeleted);
+  // let rowsWithDeleted = await storeRansom.getRansomRowsWithDeletedForCellsOurRansom();
+  // await storeCells.updateCellsStatus(rowsWithDeleted);
 });
 
 function getCountOfItemsByPVZOurRansom(PVZ: string) {

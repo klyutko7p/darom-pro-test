@@ -67,12 +67,21 @@ function convertToURL(inputString: string): number {
 
 async function updateDeliveryRow(row: IOurRansom, flag: string) {
   try {
-    await storeRansom.updateDeliveryStatus(
-      row,
-      flag,
-      "OurRansom",
-      user.value?.username || ""
-    );
+    if (row.clientLink1) {
+      await storeRansom.updateDeliveryStatus(
+        row,
+        flag,
+        "OurRansom",
+        user.value?.username || ""
+      );
+    } else {
+      await storeRansom.updateDeliveryStatus(
+        row,
+        flag,
+        "ClientRansom",
+        user.value?.username || ""
+      );
+    }
   } catch (error) {
     toast.error("Error updating delivery status.");
   }
@@ -134,7 +143,14 @@ async function scanItem() {
     scanStringItem.value = "";
 
     try {
-      rowData.value = await storeRansom.getRansomRowById(idRow, "OurRansom");
+      if (scannedLink.value.split("/")[5] === "1") {
+        rowData.value = await storeRansom.getRansomRowById(idRow, "OurRansom");
+      } else {
+        rowData.value = await storeRansom.getRansomRowById(
+          idRow,
+          "ClientRansom"
+        );
+      }
       if (rowData.value) {
         storeRansom.announce(`${rowData.value.cell}`);
         await acceptItem(rowData.value);
