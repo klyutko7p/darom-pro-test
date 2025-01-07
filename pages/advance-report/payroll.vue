@@ -53,7 +53,13 @@ function closeModal() {
 function openModal(row: IPayroll) {
   isOpen.value = true;
   const currentDate = new Date();
-  const year = currentDate.getFullYear();
+  let year = 2025;
+
+  const storedYearData = loadFromLocalStorage("yearPayroll");
+  if (storedYearData !== null) {
+    year = storedYearData;
+  }
+
   const month = currentDate.getMonth();
 
   const storedMonthData = loadFromLocalStorage("monthDataPayroll");
@@ -68,7 +74,12 @@ function openModal(row: IPayroll) {
   rowData.value.fullname = employees.value.find(
     (employee) => employee.fullname === rowData.value.fullname
   )?.id;
-  rowData.value.date = newDate;
+
+  if (row.id) {
+    rowData.value.date = rowData.value.date;
+  } else {
+    rowData.value.date = newDate;
+  }
 }
 
 async function createReport(object: any) {

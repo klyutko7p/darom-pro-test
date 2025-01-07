@@ -14,7 +14,7 @@ function editMenu() {
 }
 
 onMounted(async () => {
-  client.value = storeClients.getClient();
+  client.value = await storeClients.getClient();
 });
 </script>
 <template>

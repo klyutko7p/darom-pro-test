@@ -21,6 +21,8 @@ onMounted(async () => {
   if (token && user.value.username === "Власенкова") {
     router.push("/auth/login");
   }
+
+  await getPercents();
 });
 
 const addressItems = ref([
@@ -145,6 +147,36 @@ definePageMeta({
   layout: false,
 });
 
+const storePVZPercent = usePVZPercentStore();
+const rows = ref<Array<IPVZPercent>>();
+
+async function getPercents() {
+  const [rowsData] = await Promise.all([storePVZPercent.getPVZ()]);
+
+  rows.value = rowsData;
+
+  markers = markers.map((marker) => {
+    const row = rows.value?.find(
+      (r) => r.pvz.name.includes(marker.id.toString()) && r.flag === "OurRansom"
+    );
+    if (row && row.wb) {
+      marker.commentary += `. Процент доставки оформленных заказов - WB: ${row.wb}%, Ozon: ${row.ozon}%, Я.Маркет: ${row.ym}%`;
+    }
+    return marker;
+  });
+
+  markers = markers.map((marker) => {
+    const row = rows.value?.find(
+      (r) =>
+        r.pvz.name.includes(marker.id.toString()) && r.flag === "ClientRansom"
+    );
+    if (row && row.wb) {
+      marker.commentary += `. Процент доставки оформленных доставок заказов - WB: ${row.wb}%, Ozon: ${row.ozon}%, Я.Маркет: ${row.ym}%`;
+    }
+    return marker;
+  });
+}
+
 const items = [
   {
     label: "Платежи",
@@ -209,7 +241,9 @@ useSeoMeta({
             </div>
           </h1>
         </div>
-        <div class="flex items-center justify-center gap-5 mt-5 max-md:flex-col">
+        <div
+          class="flex items-center justify-center gap-5 mt-5 max-md:flex-col"
+        >
           <UIMainButton
             class="min-w-[300px] max-xl:w-full max-xl:max-w-[770px]"
             @click="router.push('/auth/client/login')"

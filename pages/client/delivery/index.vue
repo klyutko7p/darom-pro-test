@@ -69,8 +69,10 @@ onMounted(async () => {
 
   isLoading.value = true;
   user.value = await storeClients.getClient();
-  originallyRows.value = await storeRansom.getRansomRowsForModalClientRansom();
+  await checkPercent();
   cells.value = await storeCells.getCellsClient();
+
+  originallyRows.value = await storeRansom.getRansomRowsForModalClientRansom();
   pvzData.value = localStorage.getItem("addressData") || "";
   pvzData.value = pvzData.value.replace(/"/g, "");
   isLoading.value = false;
@@ -91,7 +93,6 @@ onMounted(async () => {
     showThirdModal();
   }
 
-  await checkPercent();
   await updateCells();
 });
 

@@ -960,32 +960,53 @@ function validationPhoneNumber() {
           </div>
         </UCard>
       </UModal>
-      <div
-        v-auto-animate
-        v-if="isShowModal"
-        class="fixed top-0 bottom-0 left-0 bg-black bg-opacity-70 right-0 z-[100]"
-      >
-        <div
-          class="flex items-center justify-center h-screen text-black font-semibold"
+
+      <div>
+        <UModal
+          :ui="{
+            container: 'flex items-center justify-center text-center',
+          }"
+          v-auto-animate
+          v-model="isShowModal"
+          prevent-close
         >
-          <div
-            class="bg-white relative p-10 max-sm:p-3 rounded-lg flex items-center flex-col gap-3"
+          <UCard
+            v-auto-animate
+            :ui="{
+              ring: '',
+              divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
           >
-            <div class="absolute top-4 right-4 max-sm:top-2 max-sm:right-2">
-              <Icon
-                name="material-symbols:cancel-rounded"
-                size="32"
-                class="cursor-pointer hover:text-secondary-color duration-200"
-                @click="isShowModal = !isShowModal, router.push('/')"
-              />
-            </div>
-            <h1
-              class="text-2xl text-center text-green-500 font-bold uppercase border-b-2 border-black w-full mb-3 max-sm:text-xl py-3 max-sm:mt-5"
-            >
-              Ваш заказ успешно оформлен!
-            </h1>
-            <div class="flex items-center gap-3 max-sm:flex-col">
-              <h1 class="text-xl max-sm:text-lg max-sm:text-center">
+            <template #header>
+              <div class="flex items-center justify-between">
+                <h3
+                  class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+                >
+                  Статус доставки
+                </h3>
+                <Icon
+                  @click="isShowModal = !isShowModal"
+                  name="i-heroicons-x-mark-20-solid"
+                  size="24"
+                  class="cursor-pointer hover:text-secondary-color duration-200"
+                />
+              </div>
+            </template>
+            <div class="text-center">
+              <h1
+                class="text-2xl text-center text-green-500 font-bold uppercase w-full max-sm:text-xl"
+              >
+                Ваш заказ успешно оформлен!
+              </h1>
+
+              <div class="">
+                <h1 class="text-xl max-sm:text-lg max-sm:text-center mt-2 mb-5">
+                  Ориентировочное время доставки:
+                  <span class="text-secondary-color font-bold"> 2 дня</span>
+                </h1>
+              </div>
+
+              <h1>
                 Информацию о статусе заказа можно посмотреть по
                 <a
                   target="_blank"
@@ -994,15 +1015,31 @@ function validationPhoneNumber() {
                   >ссылке</a
                 >
               </h1>
+              <div>
+                <h1 class="text-center italic mt-1">
+                  Обязательно сохраните эту
+                  <a
+                    target="_blank"
+                    class="underline text-secondary-color font-semibold"
+                    :href="linkToClient"
+                    >ссылку</a
+                  >, чтобы отслеживать статус доставки!
+                </h1>
+              </div>
+
+              <div class="flex items-center flex-col mt-3">
+                <h1 class="text-center font-semibold">
+                  Если хотите получить полный функционал, то Вы можете
+                </h1>
+                <UButton
+                  @click="router.push(`/auth/client`)"
+                  class="mt-3 mx-auto text-center flex items-center justify-center font-semibold uppercase"
+                  >Зарегистрироваться</UButton
+                >
+              </div>
             </div>
-            <div class="flex items-center gap-3 max-sm:flex-col">
-              <h1 class="text-xl max-sm:text-lg max-sm:text-center">
-                Ориентировочное время доставки:
-                <span class="text-secondary-color font-bold"> 2 дня</span>
-              </h1>
-            </div>
-          </div>
-        </div>
+          </UCard>
+        </UModal>
       </div>
 
       <div>

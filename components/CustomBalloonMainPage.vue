@@ -5,7 +5,9 @@ const props = defineProps({
 </script>
 
 <template>
-  <div>
-    <h1 class="font-semibold text-sm">{{ commentary }}</h1>
+  <div class="">
+    <h1 class="font-semibold text-sm overflow-y-scroll max-h-[100px] max-sm:max-h-[60px]">
+      {{ commentary }}
+    </h1>
   </div>
 </template>

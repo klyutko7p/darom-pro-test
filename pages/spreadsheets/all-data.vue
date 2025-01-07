@@ -95,7 +95,7 @@ onMounted(async () => {
 
   uniqueOrderAccounts.value = orderAccounts;
   uniqueNotation.value = notation;
-  uniqueCreatedUser.value = notation;
+  uniqueCreatedUser.value = createdUser;
   uniqueOrderPVZ.value = orderPVZ;
   uniquePVZ.value = dispatchPVZ;
   uniqueCells.value = cells;

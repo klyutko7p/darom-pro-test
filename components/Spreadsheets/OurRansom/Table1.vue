@@ -527,21 +527,38 @@ const qrBody = ref<QRBodyLink>({} as QRBodyLink);
 const qrBodyInfo = ref<QRBodyInfo>({} as QRBodyInfo);
 const paymentStatusMessage = ref<string>("");
 
-async function openModalQR() {
-  isOpenModalQR.value = true;
-  isLoading.value = true;
-  qrBody.value = {} as QRBodyLink;
-  qrBodyInfo.value = {} as QRBodyInfo;
-  qrBodyInfo.value = await storeQR.createQRCode(
-    getAllSum.value,
-    `Онлайн оплата доставки, ${Date.now()}`
-  );
-  await checkPaymentStatus(qrBodyInfo.value.Data.operationId);
-  qrBody.value = await storeQR.getPaymentStatusQR(
-    qrBodyInfo.value.Data.operationId
-  );
-  isGeneratedQR.value = true;
-  isLoading.value = false;
+async function openModalQR(flag: string) {
+  if (flag === "additionally") {
+    isOpenModalQR.value = true;
+    isLoading.value = true;
+    qrBody.value = {} as QRBodyLink;
+    qrBodyInfo.value = {} as QRBodyInfo;
+    qrBodyInfo.value = await storeQR.createQRCode(
+      getAllSum.value,
+      `Онлайн оплата доставки, ${Date.now()}`
+    );
+    await checkPaymentStatus(qrBodyInfo.value.Data.operationId, flag);
+    qrBody.value = await storeQR.getPaymentStatusQR(
+      qrBodyInfo.value.Data.operationId
+    );
+    isGeneratedQR.value = true;
+    isLoading.value = false;
+  } else if (flag === "additionally1-1") {
+    isOpenModalQR.value = true;
+    isLoading.value = true;
+    qrBody.value = {} as QRBodyLink;
+    qrBodyInfo.value = {} as QRBodyInfo;
+    qrBodyInfo.value = await storeQR.createQRCode(
+      100,
+      `Отказ клиента, ${Date.now()}`
+    );
+    await checkPaymentStatus(qrBodyInfo.value.Data.operationId, flag);
+    qrBody.value = await storeQR.getPaymentStatusQR(
+      qrBodyInfo.value.Data.operationId
+    );
+    isGeneratedQR.value = true;
+    isLoading.value = false;
+  }
 }
 
 let intervalId = ref();
@@ -574,7 +591,7 @@ function closeModalAfterDelay() {
   }, 6000);
 }
 
-async function checkPaymentStatus(operationId: string) {
+async function checkPaymentStatus(operationId: string, flag: string) {
   const interval = 3000;
 
   intervalId.value = setInterval(async () => {
@@ -593,8 +610,13 @@ async function checkPaymentStatus(operationId: string) {
 
         if (status === "APPROVED") {
           toast.success("Операция завершена успешно!");
-          updateDeliveryRows("additionally", getAllSum.value.toString());
-          clearInterval(intervalId.value);
+          if (flag === "additionally") {
+            updateDeliveryRows("additionally", getAllSum.value.toString());
+            clearInterval(intervalId.value);
+          } else if (flag === "additionally1-1") {
+            updateDeliveryRows("additionally1-1");
+            clearInterval(intervalId.value);
+          }
         } else if (status === "EXPIRED") {
           toast.error("Операция отклонена!");
           closeModalQR();
@@ -867,7 +889,7 @@ function showButtonsRows() {
         </UIActionButton2>
         <UIActionButton2
           v-if="user.additionally1 === 'WRITE'"
-          @click="openModalQR"
+          @click="openModalQR('additionally')"
           >Оплата онлайн (QR)
         </UIActionButton2>
         <UIActionButton2
@@ -889,7 +911,7 @@ function showButtonsRows() {
           >Отказ клиент
         </UIActionButton2>
         <div v-if="showPayRejectClient" class="flex flex-col gap-3">
-          <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"
+          <UIActionButton2 @click="openModalQR('additionally1-1')"
             >Отказ клиент онлайн</UIActionButton2
           >
           <UIActionButton2 @click="updateDeliveryRows('additionally1-2')"
@@ -934,7 +956,7 @@ function showButtonsRows() {
         </UIActionButton2>
         <UIActionButton2
           v-if="user.additionally1 === 'WRITE'"
-          @click="openModalQR"
+          @click="openModalQR('additionally')"
           >Оплата онлайн (QR)
         </UIActionButton2>
         <UIActionButton2
@@ -956,7 +978,7 @@ function showButtonsRows() {
           >Отказ клиент
         </UIActionButton2>
         <div v-if="showPayRejectClient" class="flex flex-col gap-3">
-          <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"
+          <UIActionButton2 @click="openModalQR('additionally1-1')"
             >Отказ клиент онлайн</UIActionButton2
           >
           <UIActionButton2 @click="updateDeliveryRows('additionally1-2')"
@@ -1729,7 +1751,10 @@ function showButtonsRows() {
       </template>
       <template v-slot:body>
         <div>
-          <h1 class="text-center mb-1">
+          <h1
+            v-if="!qrBody.Data?.Operation[0]?.purpose.includes('Отказ')"
+            class="text-center mb-1"
+          >
             Сумма:
             <span class="text-secondary-color font-bold"
               >{{ getAllSum }} ₽</span

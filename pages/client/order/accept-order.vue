@@ -54,9 +54,11 @@ onMounted(async () => {
   }
 
   isLoading.value = true;
-  user.value = storeClients.getClient();
+  user.value = await storeClients.getClient();
   isLoading.value = false;
   await checkPercent();
+  cells.value = await storeCells.getCells();
+
   let originallyRowsDataOne =
     await storeRansom.getRansomRowsForModalOurRansomPartOne();
   let originallyRowsDataTwo =
@@ -68,7 +70,6 @@ onMounted(async () => {
     ...originallyRowsDataTwo,
     ...originallyRowsDataThree,
   ];
-  cells.value = await storeCells.getCells();
 });
 
 definePageMeta({

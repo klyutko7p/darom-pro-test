@@ -18,6 +18,10 @@ const token = Cookies.get("token");
 let isLoading = ref(false);
 let rowsDelivery = ref<Array<IDelivery>>([]);
 
+const uniqueNotation = ref<Array<string>>([]);
+const uniqueCreatedUser = ref<Array<string>>([]);
+const uniqueExpenditure = ref<Array<string>>([]);
+
 onMounted(async () => {
   if (!token) {
     router.push("/auth/login");
@@ -113,6 +117,38 @@ onMounted(async () => {
 
     rowsBalance.value = balanceRowsData;
     rowsBalanceOnline.value = onlineBalanceRowsData;
+
+    const [notation, createdUser, expenditure] = await Promise.all([
+      storeAdvanceReports.getUniqueNonEmptyValuesQuery("notation"),
+      storeAdvanceReports.getUniqueNonEmptyValuesQuery("createdUser"),
+      storeAdvanceReports.getUniqueNonEmptyValuesQuery("expenditure"),
+    ]);
+
+    uniqueNotation.value = notation;
+    uniqueCreatedUser.value = createdUser;
+    uniqueExpenditure.value = expenditure;
+
+    if (uniqueNotation.value) {
+      uniqueNotation.value = Array.from(
+        new Set(
+          uniqueNotation.value
+            .filter((item) => item && !item.includes("��"))
+            .map((item) => item.trim())
+            .sort((a, b) => a.localeCompare(b))
+        )
+      );
+    }
+
+    if (uniqueCreatedUser.value) {
+      uniqueCreatedUser.value = Array.from(
+        new Set(
+          uniqueCreatedUser.value
+            .filter((item) => item && !item.includes("��"))
+            .map((item) => item.trim())
+            .sort((a, b) => a.localeCompare(b))
+        )
+      );
+    }
   } catch (error) {
     console.error("An error occurred:", error);
   } finally {
@@ -1508,6 +1544,9 @@ const typeOfOptions2 = [
             @filtered-rows="handleFilteredRows"
             :rows="rows"
             :user="user"
+            :uniqueNotation="uniqueNotation"
+            :uniqueCreatedUser="uniqueCreatedUser"
+            :uniqueExpenditure="uniqueExpenditure"
           />
 
           <div

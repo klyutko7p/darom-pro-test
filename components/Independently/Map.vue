@@ -24,7 +24,7 @@ onMounted(async () => {
       selectedMarkerId.value = 8;
     } else if (addressString === "ПВЗ_10") {
       selectedMarkerId.value = 10;
-    }  else if (addressString === "ПВЗ_11") {
+    } else if (addressString === "ПВЗ_11") {
       selectedMarkerId.value = 11;
     }
   } else if (props.marketplace === "WB") {
@@ -32,6 +32,8 @@ onMounted(async () => {
   } else if (props.marketplace === "YM") {
     address.value = localStorage.getItem("addressData") || "";
   }
+
+  // await getPercents();
 });
 
 const coordinates = ref([47.971605, 37.860323]);
@@ -102,7 +104,7 @@ function changeAddress(coordinatesData: Array<number>) {
     coordinatesData[0] === 47.045055 &&
     coordinatesData[1] === 37.479126
   ) {
-    address.value = "ПВЗ_10"; 
+    address.value = "ПВЗ_10";
   } else if (
     coordinatesData[0] === 47.100255 &&
     coordinatesData[1] === 37.662614
@@ -229,6 +231,36 @@ function searchRows() {
   } else {
     markers = markersCopy;
   }
+}
+
+const storePVZPercent = usePVZPercentStore();
+const rows = ref<Array<IPVZPercent>>();
+
+async function getPercents() {
+  const [rowsData] = await Promise.all([storePVZPercent.getPVZ()]);
+
+  rows.value = rowsData;
+
+  markers = markers.map((marker) => {
+    const row = rows.value?.find(
+      (r) => r.pvz.name.includes(marker.id.toString()) && r.flag === "OurRansom"
+    );
+    if (row && row.wb) {
+      marker.commentary += `. Процент доставки оформленных заказов - WB: ${row.wb}%, Ozon: ${row.ozon}%, Я.Маркет: ${row.ym}%`;
+    }
+    return marker;
+  });
+
+  markers = markers.map((marker) => {
+    const row = rows.value?.find(
+      (r) =>
+        r.pvz.name.includes(marker.id.toString()) && r.flag === "ClientRansom"
+    );
+    if (row && row.wb) {
+      marker.commentary += `. Процент доставки оформленных доставок заказов - WB: ${row.wb}%, Ozon: ${row.ozon}%, Я.Маркет: ${row.ym}%`;
+    }
+    return marker;
+  });
 }
 
 watch([searchQuery], searchRows);

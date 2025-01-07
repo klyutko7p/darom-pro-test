@@ -2,6 +2,9 @@
 const props = defineProps({
   rows: { type: Array as PropType<IAdvanceReport[]>, required: true },
   user: { type: Object as PropType<User>, required: true },
+  uniqueNotation: { type: Array as PropType<string[]>, required: true },
+  uniqueCreatedUser: { type: Array as PropType<string[]>, required: true },
+  uniqueExpenditure: { type: Array as PropType<string[]>, required: true },
 });
 import VueMultiselect from "vue-multiselect";
 import { vAutoAnimate } from "@formkit/auto-animate";
@@ -125,6 +128,10 @@ const endDate = ref<Date | string | null>(null);
 const startingDate2 = ref<Date | string | null>(null);
 const endDate2 = ref<Date | string | null>(null);
 
+const uniqueNotation = ref<Array<string>>(props.uniqueNotation);
+const uniqueCreatedUser = ref<Array<string>>(props.uniqueCreatedUser);
+const uniqueExpenditure = ref<Array<string>>(props.uniqueExpenditure);
+
 let pvz = ref([
   "Ряженое",
   "Алексеевка",
@@ -168,35 +175,24 @@ const uniquePVZ = computed(() => {
   return pvz.value;
 });
 
-const uniqueExpenditure = computed(() => {
-  return storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "expenditure");
-});
-
 const uniqueTypeOfExpenditure = computed(() => {
-  let array = storeAdvanceReports.getUniqueNonEmptyValues(
-    props.rows,
-    "typeOfExpenditure"
-  );
-  let newArray = array.map((string) => {
-    if (string === "Расходники для ПВ��") {
-      return "Расходники для ПВЗ";
-    }
-    return string;
-  });
-  newArray = new Set(newArray);
-  return Array.from(newArray);
-});
-
-const uniqueNotation = computed(() => {
-  return storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "notation");
+  return [
+    "Передача денежных средств",
+    "Сопутствующие расходы",
+    "Автомобили",
+    "Ежемесячные платежи",
+    "Оплата ФОТ",
+    "Удержания с сотрудников",
+    "Оплата Налоги. ПФР, СОЦ и т.д.",
+    "Вывод дивидендов",
+    "Расходники для ПВЗ",
+    "Перевод в междубалансовый, кредитный баланс",
+    "Списание кредитной задолженности торговой империи",
+  ];
 });
 
 const uniqueCompany = computed(() => {
-  return storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "company");
-});
-
-const uniqueCreatedUser = computed(() => {
-  return storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "createdUser");
+  return ["W/O/Я start", "Darom.pro", "Сортировка", "Доставка", "Чаевые"];
 });
 
 const filteredRows = ref<Array<IAdvanceReport>>();

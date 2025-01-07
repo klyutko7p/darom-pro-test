@@ -8,8 +8,8 @@ const storeAdvanceReport = useAdvanceReports();
 let fullYear = ref(2025);
 function editYear(year: number) {
   fullYear.value = year;
+  localStorage.setItem("yearPayroll", JSON.stringify(fullYear.value));
 }
-
 
 const emit = defineEmits([
   "openModal",
@@ -143,6 +143,11 @@ onBeforeRouteLeave((to, from, next) => {
 onMounted(() => {
   window.addEventListener("beforeunload", handleBeforeUnload);
   getMonth();
+
+  const storedYearData = loadFromLocalStorage("yearPayroll");
+  if (storedYearData !== null) {
+    fullYear.value = storedYearData;
+  }
 
   const storedMonthData = loadFromLocalStorage("monthDataPayroll");
   if (storedMonthData !== null) {
@@ -627,21 +632,23 @@ const toggleDropdown = (rowId: any) => {
 
   dropdownStates.value[rowId] = !dropdownStates.value[rowId];
 };
-
-
 </script>
 <template>
   <div class="my-10 flex items-center gap-5">
     <span
       :class="{ 'bg-secondary-color text-white': fullYear === 2024 }"
       class="border-[1px] py-1 px-5 border-secondary-color hover:cursor-pointer duration-200 rounded-full"
-      @click="(showFilters = true), editYear(2024)"
+      @click="
+        (showFilters = true), editYear(2024), filterRows(month), getMonth()
+      "
       >2024</span
     >
     <span
       :class="{ 'bg-secondary-color text-white': fullYear === 2025 }"
       class="border-[1px] py-1 px-5 border-secondary-color hover:cursor-pointer duration-200 rounded-full"
-      @click="(showFilters = true), editYear(2025)"
+      @click="
+        (showFilters = true), editYear(2025), filterRows(month), getMonth()
+      "
       >2025</span
     >
     <div

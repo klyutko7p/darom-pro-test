@@ -592,7 +592,7 @@ async function showDeletedRows(flag: boolean) {
 }
 
 async function updateDeliveryRows(obj: any) {
-  if (obj.flag !== "additionally") {
+  if (obj.flag !== "additionally" && obj.flag !== "additionally1-1") {
     let answer = confirm(
       `Вы точно хотите изменить статус доставки? Количество записей: ${obj.idArray.length}`
     );

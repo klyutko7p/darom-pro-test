@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
+import * as msgpack from "@msgpack/msgpack";
 
 const toast = useToast();
 
@@ -199,6 +200,26 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
     }
   }
 
+  async function getUniqueNonEmptyValuesQuery(fieldName: string) {
+    try {
+      let response = await fetch("/api/advance-report/get-unique-values", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+        body: JSON.stringify({ fieldName }),
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   const getUniqueNonEmptyValues = (
     rows: IAdvanceReport[],
     fieldName: keyof IAdvanceReport
@@ -246,5 +267,6 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
     deleteRow,
     getPVZ,
     getAdvancedReportsForSidebar,
+    getUniqueNonEmptyValuesQuery,
   };
 });
