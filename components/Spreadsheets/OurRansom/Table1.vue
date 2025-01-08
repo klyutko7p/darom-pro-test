@@ -440,7 +440,11 @@ function isWaiting(row: any) {
     const tenDaysAgo = new Date();
     tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
 
-    return !row.deliveredSC && new Date(row.created_at) < tenDaysAgo;
+    return (
+      !row.deliveredSC &&
+      new Date(row.created_at) < tenDaysAgo &&
+      props.user.username === "Горцуева"
+    );
   }
 }
 
