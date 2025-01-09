@@ -41,7 +41,14 @@ function deleteSelectedRows() {
 const props = defineProps({
   user: { type: Object as PropType<User>, required: true },
   rows: { type: Array as PropType<IDelivery[]>, required: true },
+  isShowModalValue: { type: Boolean, required: true },
 });
+
+function openModalEmit() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+watch([props.isShowModalValue], openModalEmit);
 
 async function exportToExcel() {
   perPage.value = await totalRows.value;
@@ -368,6 +375,7 @@ const columns = [
       <UTable
         v-if="returnRows.length"
         class="w-full z-[20] overflow-x-visible mx-auto text-center rounded-md mt-5"
+        :class="{ 'overflow-x-hidden max-h-[100px]': isShowModalValue }"
         :ui="{ wrapper: 'relative bg-white',
   td: {
     base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',

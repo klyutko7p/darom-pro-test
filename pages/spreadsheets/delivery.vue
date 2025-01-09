@@ -2,6 +2,9 @@
 import Cookies from "js-cookie";
 import { useToast } from "vue-toastification";
 
+import ru from "date-fns/locale/ru";
+import { format } from "date-fns";
+
 const toast = useToast();
 
 const storeUsers = useUsersStore();
@@ -22,6 +25,7 @@ let sortingCenters = ref<Array<SortingCenter>>([]);
 let rowData = ref({} as IDelivery);
 
 let isOpen = ref(false);
+let isShowModalValue = ref(false);
 
 function openModal(row: IDelivery) {
   isOpen.value = true;
@@ -37,10 +41,12 @@ function openModal(row: IDelivery) {
     rowData.value = {} as IDelivery;
     rowData.value.fromName = "";
   }
+  isShowModalValue.value = true;
 }
 
 function closeModal() {
   isOpen.value = false;
+  isShowModalValue.value = false;
   rowData.value = {} as IDelivery;
 }
 
@@ -249,6 +255,37 @@ function getFromNameFromName() {
     }
   }
 }
+
+watch(rowData.value, (name) => {
+  if (name) {
+    getFromNameFromName();
+  }
+});
+
+let additionallies = [
+  { name: "Отменить", value: "" },
+  { name: "Оплачено онлайн", value: "Оплачено онлайн" },
+  { name: "Отказ клиент", value: "Отказ клиент" },
+  { name: "Отказ брак", value: "Отказ брак" },
+  { name: "Отказ подмена", value: "Отказ подмена" },
+];
+
+function lockScroll() {
+  document.body.classList.add("no-scroll");
+}
+
+function unlockScroll() {
+  document.body.classList.remove("no-scroll");
+}
+
+watch(isOpen, (newValue) => {
+  if (newValue) {
+    lockScroll();
+  } else {
+    unlockScroll();
+  }
+});
+
 </script>
 
 <template>
@@ -298,249 +335,293 @@ function getFromNameFromName() {
             @open-modal="openModal"
             @delete-selected-rows="deleteSelectedRows"
             @update-delivery-rows="updateDeliveryRows"
+            :isShowModalValue="isShowModalValue"
           />
 
-          <UIModal v-show="isOpen" @close-modal="closeModal">
+          <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
+            <template v-slot:icon-header>
+              <Icon size="24" name="material-symbols:task-alt" />
+            </template>
             <template v-slot:header>
               <div class="custom-header" v-if="rowData.id">
-                Изменение строки с ID - <b> {{ rowData.id }}</b>
+                Изменение: <b> {{ rowData.id }}</b>
               </div>
               <div class="custom-header" v-else>Создание новой строки</div>
             </template>
-            <div class="text-black">
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.name3 === 'READ' || user.name3 === 'WRITE'"
-              >
-                <label for="name">Имя</label>
-                <div>
-                  <input
-                    :disabled="user.name3 === 'READ'"
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.name"
-                    type="text"
-                    @input="getFromNameFromName"
-                  />
-                  <div class="flex gap-3 items-center justify-center mt-1">
-                    <h1>АВТО</h1>
-                    <input type="checkbox" v-model="isAutoName" />
+            <template v-slot:body>
+              <div class="text-black">
+                <div
+                  v-if="user.name3 === 'READ' || user.name3 === 'WRITE'"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="name" class="max-sm:text-sm">Имя</label>
+                  <div class="w-full">
+                    <input
+                      :disabled="user.name3 === 'READ'"
+                      class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                      v-model="rowData.name"
+                      type="text"
+                      @input="getFromNameFromName"
+                    />
+                    <div class="flex gap-3 items-center justify-center mt-2">
+                      <input
+                        class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-sm bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
+                        type="checkbox"
+                        v-model="isAutoName"
+                      />
+                      <label>Авто</label>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.fromName3 === 'READ' || user.fromName3 === 'WRITE'"
-              >
-                <label for="fromName">Телефон <sup>*</sup> </label>
-                <div>
-                  <input
-                    :disabled="user.fromName3 === 'READ'"
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.fromName"
-                    type="text"
-                    @input="getNameFromName"
-                  />
-                  <div class="flex gap-3 items-center justify-center mt-1">
-                    <h1>АВТО</h1>
-                    <input type="checkbox" v-model="isAutoFromName" />
+                <div
+                  class="flex flex-col items-start w-full text-left gap-2 mb-5"
+                >
+                  <label for="fromName">Телефон <sup>*</sup> </label>
+                  <div class="w-full">
+                    <input
+                      :disabled="user.fromName3 === 'READ'"
+                      class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                      v-model="rowData.fromName"
+                      type="text"
+                      @input="getNameFromName"
+                    />
+                    <div class="flex gap-3 items-center justify-center mt-2">
+                      <input
+                        class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-sm bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
+                        type="checkbox"
+                        v-model="isAutoFromName"
+                      />
+                      <label>Авто</label>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  (user.purchaseOfGoods === 'READ' ||
-                    user.purchaseOfGoods === 'WRITE') &&
-                  !rowData.id
-                "
-              >
-                <label for="purchaseOfGoods"
-                  >Стоимость товаров <br />
-                  сортировки</label
+                <div
+                  v-if="
+                    (user.purchaseOfGoods === 'READ' ||
+                      user.purchaseOfGoods === 'WRITE') &&
+                    !rowData.id
+                  "
+                  class="flex flex-col items-start text-left gap-2 mb-5"
                 >
-                <input
-                  :disabled="user.purchaseOfGoods === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.purchaseOfGoods"
-                  type="text"
-                />
-              </div>
-
-              <div class="grid grid-cols-2 mb-5" v-else>
-                <label for="purchaseOfGoods"
-                  >Cтоимость выкупа <br />
-                  товара</label
-                >
-                <input
-                  :disabled="user.purchaseOfGoods === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.purchaseOfGoods"
-                  type="text"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.percentClient3 === 'READ' ||
-                  user.percentClient3 === 'WRITE'
-                "
-              >
-                <label for="percentClient1">Процент с клиента</label>
-                <input
-                  :disabled="user.percentClient3 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.percentClient"
-                  placeholder="По умолчанию: 2"
-                  type="number"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  (user.purchaseOfGoods === 'READ' ||
-                    user.purchaseOfGoods === 'WRITE') &&
-                  !rowData.id
-                "
-              >
-                <label for="purchaseOfGoods"
-                  >Стоимость товаров <br />
-                  доставки</label
-                >
-                <input
-                  :disabled="user.purchaseOfGoods === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.purchaseOfGoods2"
-                  type="text"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  (user.percentClient3 === 'READ' ||
-                    user.percentClient3 === 'WRITE') &&
-                  !rowData.id
-                "
-              >
-                <label for="percentClient1">Процент с клиента</label>
-                <input
-                  :disabled="user.percentClient3 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.percentClient2"
-                  placeholder="По умолчанию: 2"
-                  type="number"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.dispatchPVZ3 === 'READ' || user.dispatchPVZ3 === 'WRITE'
-                "
-              >
-                <label for="dispatchPVZ1">Отправка в ПВЗ</label>
-                <select
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.dispatchPVZ"
-                  :disabled="user.dispatchPVZ3 === 'READ'"
-                >
-                  <option v-for="pvzData in pvz" :value="pvzData.name">
-                    {{ pvzData.name }}
-                  </option>
-                </select>
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.orderPVZ3 === 'READ' || user.orderPVZ3 === 'WRITE'"
-              >
-                <label for="orderPVZ1">Заказано на СЦ</label>
-                <select
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.orderPVZ"
-                  :disabled="user.orderPVZ3 === 'READ'"
-                >
-                  <option
-                    v-for="sortingCenter in sortingCenters"
-                    :value="sortingCenter.name"
+                  <label for="purchaseOfGoods"
+                    >Стоимость товаров сортировки</label
                   >
-                    {{ sortingCenter.name }}
-                  </option>
-                </select>
-              </div>
+                  <UInput
+                    :disabled="user.purchaseOfGoods === 'READ'"
+                    class="w-full"
+                    v-model="rowData.purchaseOfGoods"
+                    type="text"
+                  />
+                </div>
 
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.sorted === 'READ' || user.sorted === 'WRITE'"
-              >
-                <label for="deliveredSC1">Отсортировано</label>
-                <input
-                  :disabled="user.sorted === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.sorted"
-                  type="datetime-local"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.paid === 'READ' || user.paid === 'WRITE'"
-              >
-                <label for="deliveredPVZ1">Оплачено</label>
-                <input
-                  :disabled="user.paid === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.paid"
-                  type="datetime-local"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.additionally3 === 'READ' ||
-                  user.additionally3 === 'WRITE'
-                "
-              >
-                <label for="additionally1">Дополнительно</label>
-                <select
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.additionally"
-                  :disabled="user.additionally3 === 'READ'"
+                <div
+                  v-else
+                  class="flex flex-col items-start text-left gap-2 mb-5"
                 >
-                  <option value="">Отменить</option>
-                  <option value="Оплачено онлайн">Оплачено онлайн</option>
-                  <option value="Отказ клиент">Отказ клиент</option>
-                  <option value="Отказ брак">Отказ брак</option>
-                  <option value="Отказ подмена">Отказ подмена</option>
-                </select>
-              </div>
-            </div>
+                  <label for="purchaseOfGoods">Стоимость выкупа товара</label>
+                  <UInput
+                    :disabled="user.purchaseOfGoods === 'READ'"
+                    class="w-full"
+                    v-model="rowData.purchaseOfGoods"
+                    type="text"
+                  />
+                </div>
 
-            <div
-              class="flex items-center justify-center gap-3 mt-10"
-              v-if="rowData.id"
-            >
-              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
-              <UIExitModalButton @click="closeModal"
-                >Отменить
-              </UIExitModalButton>
-            </div>
-            <div class="flex items-center justify-center gap-3 mt-10" v-else>
-              <UIMainButton
-                :disabled="rowData.fromName === '' || rowData.fromName === null"
-                @click="createRow"
-                >Создать
-              </UIMainButton>
-              <UIExitModalButton @click="closeModal"
-                >Отменить
-              </UIExitModalButton>
-            </div>
-          </UIModal>
+                <div
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                  v-if="
+                    user.percentClient3 === 'READ' ||
+                    user.percentClient3 === 'WRITE'
+                  "
+                >
+                  <label for="percentClient1">Процент с клиента</label>
+                  <input
+                    :disabled="user.percentClient3 === 'READ'"
+                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                    v-model="rowData.percentClient"
+                    placeholder="По умолчанию: 2"
+                    type="number"
+                    min="0"
+                  />
+                </div>
+
+                <div
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                  v-if="
+                    (user.purchaseOfGoods === 'READ' ||
+                      user.purchaseOfGoods === 'WRITE') &&
+                    !rowData.id
+                  "
+                >
+                  <label for="purchaseOfGoods"
+                    >Стоимость товаров доставки</label
+                  >
+                  <UInput
+                    :disabled="user.purchaseOfGoods === 'READ'"
+                    class="w-full"
+                    v-model="rowData.purchaseOfGoods2"
+                    type="text"
+                  />
+                </div>
+
+                <div
+                  v-if="
+                    (user.percentClient3 === 'READ' ||
+                      user.percentClient3 === 'WRITE') &&
+                    !rowData.id
+                  "
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="percentClient1">Процент с клиента</label>
+                  <input
+                    :disabled="user.percentClient3 === 'READ'"
+                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                    v-model="rowData.percentClient2"
+                    placeholder="По умолчанию: 2"
+                    type="number"
+                    min="0"
+                  />
+                </div>
+
+                <div
+                  v-if="
+                    user.dispatchPVZ3 === 'READ' ||
+                    user.dispatchPVZ3 === 'WRITE'
+                  "
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="dispatchPVZ1">Отправка в ПВЗ</label>
+
+                  <USelect
+                    class="w-full"
+                    v-model="rowData.dispatchPVZ"
+                    :options="pvz"
+                    option-attribute="name"
+                    value-attribute="name"
+                  />
+                </div>
+
+                <div
+                  v-if="user.orderPVZ3 === 'READ' || user.orderPVZ3 === 'WRITE'"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="orderPVZ1">Заказано на СЦ</label>
+                  <USelect
+                    class="w-full"
+                    v-model="rowData.orderPVZ"
+                    :options="sortingCenters"
+                    option-attribute="name"
+                    value-attribute="name"
+                  />
+                </div>
+
+                <div
+                  v-if="
+                    (user.sorted === 'READ' || user.sorted === 'WRITE') &&
+                    rowData.sorted
+                  "
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="deliveredSC1">Отсортировано</label>
+                  <UPopover
+                    class="w-full"
+                    v-if="rowData.sorted"
+                    :popper="{ placement: 'bottom-start' }"
+                  >
+                    <UButton
+                      :overlay="true"
+                      type="button"
+                      icon="i-heroicons-calendar-days-20-solid"
+                      color="white"
+                      class="w-full"
+                    >
+                      {{ format(rowData.sorted, "dd MMM yyy", { locale: ru }) }}
+                    </UButton>
+
+                    <template #panel="{ close }">
+                      <DatePickerNotRange
+                        v-model="rowData.sorted"
+                        is-required
+                        @close="close"
+                      />
+                    </template>
+                  </UPopover>
+                </div>
+
+                <div
+                  v-if="
+                    (user.paid === 'READ' || user.paid === 'WRITE') &&
+                    rowData.paid
+                  "
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="deliveredPVZ1">Оплачено</label>
+                  <UPopover
+                    class="w-full"
+                    v-if="rowData.paid"
+                    :popper="{ placement: 'bottom-start' }"
+                  >
+                    <UButton
+                      :overlay="true"
+                      type="button"
+                      icon="i-heroicons-calendar-days-20-solid"
+                      color="white"
+                      class="w-full"
+                    >
+                      {{ format(rowData.paid, "dd MMM yyy", { locale: ru }) }}
+                    </UButton>
+
+                    <template #panel="{ close }">
+                      <DatePickerNotRange
+                        v-model="rowData.paid"
+                        is-required
+                        @close="close"
+                      />
+                    </template>
+                  </UPopover>
+                </div>
+
+                <div
+                  v-if="
+                    user.additionally3 === 'READ' ||
+                    user.additionally3 === 'WRITE'
+                  "
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="additionally1">Дополнительно</label>
+                  <USelect
+                    class="w-full"
+                    v-model="rowData.additionally"
+                    :options="additionallies"
+                    option-attribute="name"
+                  />
+                </div>
+              </div>
+            </template>
+            <template v-slot:footer>
+              <div
+                class="flex items-center justify-center gap-3"
+                v-if="rowData.id"
+              >
+                <UISaveModalButton @click="updateRow"
+                  >Сохранить
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
+              </div>
+              <div class="flex items-center justify-center gap-3" v-else>
+                <UISaveModalButton @click="createRow"
+                  >Создать
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
+              </div>
+            </template>
+          </UINewModalEdit>
         </div>
         <div v-else class="w-screen flex items-center justify-center">
           <UISpinner />
@@ -563,7 +644,7 @@ function getFromNameFromName() {
               <Icon name="material-symbols:table-chart-view" size="24" />
             </div>
           </div>
-          
+
           <div>
             <SpreadsheetsDeliveryFilters
               v-if="rows"

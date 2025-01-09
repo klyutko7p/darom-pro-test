@@ -107,7 +107,7 @@ a {
   gap: 8px;
   line-height: 1;
   font-weight: 700;
-  font-size: 1.125rem;
+  font-size: 1rem;
 }
 
 .modal-container-title svg {
