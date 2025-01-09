@@ -281,13 +281,13 @@ const resetItemInputs = () => {
 
 const createItem = async () => {
   try {
-    const { phoneNumber } = user.value;
-    const isDiscountApplicable =
-      !phoneNumbersWithoutPercent.value.includes(phoneNumber);
+    const isDiscountApplicable = !phoneNumbersWithoutPercent.value.includes(
+      user.value.phoneNumber
+    );
 
     item.value = {
       dispatchPVZ: address.value,
-      fromName: phoneNumber,
+      fromName: user.value.phoneNumber,
       productName: productName.value,
       productLink: urlToItem.value,
       priceSite: +priceSite.value,
@@ -321,6 +321,9 @@ async function createOrder() {
     isLoading.value = true;
 
     for (const item of items.value) {
+      if (item.fromName === "+70000000001") {
+        item.fromName = user.value.phoneNumber;
+      }
       await storeRansom.createRansomRow(
         item,
         user.value.phoneNumber,

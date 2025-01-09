@@ -90,7 +90,19 @@ async function scanItem() {
     scanStringItem.value = "";
 
     try {
-      rowData.value = await storeRansom.getRansomRowById(idRow, "OurRansom");
+      if (
+        (scannedLink.value.includes("/") &&
+          scannedLink.value.split("/")[5] === "1") ||
+        (scannedLink.value.includes(".") &&
+          scannedLink.value.split(".")[5] === "1")
+      ) {
+        rowData.value = await storeRansom.getRansomRowById(idRow, "OurRansom");
+      } else {
+        rowData.value = await storeRansom.getRansomRowById(
+          idRow,
+          "ClientRansom"
+        );
+      }
       if (rowData.value) {
         // await acceptItem(rowData.value);
         arrayOfRows.value.unshift(rowData.value);

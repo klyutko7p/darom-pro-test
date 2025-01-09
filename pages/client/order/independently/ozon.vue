@@ -25,7 +25,7 @@ onMounted(async () => {
 });
 
 definePageMeta({
-  layout: "client",
+  layout: "client-map",
 });
 
 let isNotAskingOZ = ref(false);

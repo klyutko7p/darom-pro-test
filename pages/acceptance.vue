@@ -143,7 +143,12 @@ async function scanItem() {
     scanStringItem.value = "";
 
     try {
-      if (scannedLink.value.split("/")[5] === "1") {
+      if (
+        (scannedLink.value.includes("/") &&
+          scannedLink.value.split("/")[5] === "1") ||
+        (scannedLink.value.includes(".") &&
+          scannedLink.value.split(".")[5] === "1")
+      ) {
         rowData.value = await storeRansom.getRansomRowById(idRow, "OurRansom");
       } else {
         rowData.value = await storeRansom.getRansomRowById(

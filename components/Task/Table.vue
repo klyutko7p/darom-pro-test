@@ -279,7 +279,7 @@ const toggleShowDeletedRows = () => {
     </template>
 
     <template #notation-data="{ row }">
-      <input
+      <textarea
         :disabled="
           user.username !== row.createdUser && user.username !== row.responsible
         "
@@ -385,6 +385,7 @@ const toggleShowDeletedRows = () => {
         label="На проверке"
         color="orange"
         variant="subtle"
+        class="min-w-[85px]"
       />
     </template>
 

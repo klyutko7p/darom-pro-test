@@ -367,14 +367,14 @@ const columns = [
     >
       <UTable
         v-if="returnRows.length"
-        class="w-full z-[20] overflow-x-visible mx-auto text-center  border-[1px] rounded-md mt-5"
+        class="w-full z-[20] overflow-x-visible mx-auto text-center rounded-md mt-5"
         :ui="{ wrapper: 'relative bg-white',
   td: {
     base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
     padding: 'px-3 py-1',
   },
   th: {
-    base: 'text-center uppercase sticky top-0 z-[20] bg-white',
+    base: 'text-center uppercase border-t-[1px] border-b-[1px] sticky top-0 z-[20] bg-white',
     padding: 'px-1',
     size: 'text-xs'
   },
