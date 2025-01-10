@@ -361,16 +361,14 @@ function reduceArray(array: any, flag: string) {
         0
       );
     }
-  }
-  else if (selectedTypeOfTransaction.value === "Постоплата WB") {
+  } else if (selectedTypeOfTransaction.value === "Постоплата WB") {
     if (flag === "OurRansom") {
       return array.reduce(
         (ac: any, curValue: any) => ac + curValue.priceSite,
         0
       );
     }
-  }
-  else if (selectedTypeOfTransaction.value === "Заказано3") {
+  } else if (selectedTypeOfTransaction.value === "Заказано3") {
     if (flag === "OurRansom") {
       return array.reduce(
         (ac: any, curValue: any) => ac + curValue.priceSite,
@@ -738,10 +736,9 @@ function reduceArrayProfit(array: any[], flag: string) {
   };
 
   if (flag === "OurRansom") {
-    const rate = user.value.PVZ.includes("ПВЗ_1") ? 0.035 : 0.025;
-    const dateCondition = user.value.PVZ.includes("ПВЗ_1")
-      ? new Date("2024-04-01")
-      : undefined;
+    const rate = selectedPVZ.value === "ПВЗ_1" ? 0.035 : 0.025;
+    const dateCondition =
+      selectedPVZ.value === "ПВЗ_1" ? new Date("2024-04-01") : undefined;
 
     const filteredArray = filterArray(array, dateCondition);
     const amount = calculateAmount(filteredArray, "amountFromClient1", rate);
@@ -898,8 +895,7 @@ function getAllSum() {
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       allSum.value = sum1.value;
     }
-  }
-  else if (selectedTypeOfTransaction.value === "Постоплата WB") {
+  } else if (selectedTypeOfTransaction.value === "Постоплата WB") {
     if (selectedPVZ.value === "Все ПВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -928,8 +924,7 @@ function getAllSum() {
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       allSum.value = sum1.value;
     }
-  }
-  else if (selectedTypeOfTransaction.value === "Заказано3") {
+  } else if (selectedTypeOfTransaction.value === "Заказано3") {
     if (selectedPVZ.value === "Все ПВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -2795,11 +2790,7 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Сумма</label>
-                  <UInput
-                    class="w-full"
-                    v-model="rowData.sum"
-                    type="text"
-                  />
+                  <UInput class="w-full" v-model="rowData.sum" type="text" />
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
@@ -3007,7 +2998,8 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                         "
                         value="Постоплата WB"
                       >
-                        Сумма товаров в заказе с постоплатой WB (до выдачи, фактический)
+                        Сумма товаров в заказе с постоплатой WB (до выдачи,
+                        фактический)
                       </option>
                       <option
                         v-if="
