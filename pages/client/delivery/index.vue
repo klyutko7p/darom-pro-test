@@ -262,6 +262,10 @@ const pvzs = [
     pvz: "ПВЗ_11",
     name: "г. Мариуполь, ул. Азовстальская, 131",
   },
+  {
+    pvz: "ППВЗ_12",
+    name: "ул. 8 Марта, 77",
+  },
 ];
 
 const marketplaces = [
@@ -296,7 +300,6 @@ async function submitForm() {
       }
 
       getCellFromName();
-
 
       const filePromises = [handleFile("image", fileQRPhoto.value)];
 

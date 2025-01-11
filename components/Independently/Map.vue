@@ -26,6 +26,8 @@ onMounted(async () => {
       selectedMarkerId.value = 10;
     } else if (addressString === "ПВЗ_11") {
       selectedMarkerId.value = 11;
+    } else if (addressString === "ППВЗ_12") {
+      selectedMarkerId.value = 12;
     }
   } else if (props.marketplace === "WB") {
     address.value = localStorage.getItem("addressData") || "";
@@ -110,6 +112,11 @@ function changeAddress(coordinatesData: Array<number>) {
     coordinatesData[1] === 37.662614
   ) {
     address.value = "ПВЗ_11";
+  } else if (
+    coordinatesData[0] === 47.160469 &&
+    coordinatesData[1] === 37.587497
+  ) {
+    address.value = "ППВЗ_12";
   }
   coordinates.value = coordinatesData;
 }

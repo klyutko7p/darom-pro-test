@@ -57,6 +57,11 @@ const addressItems = ref([
     text: "г. Мариуполь, ул. Макара Мазая, 37А",
   },
   {
+    id: 9,
+    address: [47.160469, 37.587497],
+    text: "г. Мариуполь, ул. 8 Марта, 77",
+  },
+  {
     id: 10,
     address: [47.045055, 37.479126],
     text: "г. Мариуполь, ул. Азовской Военной Флотилии, 2",
@@ -118,9 +123,14 @@ let markers = [
   },
   {
     id: 8,
-    coords: [47.134833, 37.58217],
+    coords: [47.160469, 37.587497],
     commentary:
       "ул. Макара Мазая, 37А. Есть примерочная. Ежедневно 09:00-18:00",
+  },
+  {
+    id: 9,
+    coords: [47.134833, 37.58217],
+    commentary: "ул. 8 Марта, 77. Есть примерочная. Ежедневно 09:00-19:00",
   },
   {
     id: 10,
@@ -157,7 +167,7 @@ async function getPercents() {
 
   markers = markers.map((marker) => {
     const row = rows.value?.find(
-      (r) => r.pvz.name.includes(marker.id.toString()) && r.flag === "OurRansom"
+      (r) => r.pvz.name.includes(marker.id.toString()) && r.flag === "ClientRansom"
     );
     if (row && row.wb) {
       marker.commentary += `. Доставка Ваших заказов: Wildberries - ${row.wb}%, Ozon - ${row.ozon}%, Я.Маркет - ${row.ym}%`;
@@ -168,7 +178,7 @@ async function getPercents() {
   markers = markers.map((marker) => {
     const row = rows.value?.find(
       (r) =>
-        r.pvz.name.includes(marker.id.toString()) && r.flag === "ClientRansom"
+        r.pvz.name.includes(marker.id.toString()) && r.flag === "OurRansom"
     );
     if (row && row.wb) {
       marker.commentary += `. Доставка заказанных товаров: 10%`;

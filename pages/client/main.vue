@@ -141,6 +141,10 @@ const pvzs = [
     pvz: "ПВЗ_11",
     name: "ул. Азовстальская, 131",
   },
+  {
+    pvz: "ППВЗ_12",
+    name: "ул. 8 Марта, 77",
+  },
 ];
 
 function clearCookies() {

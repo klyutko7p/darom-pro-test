@@ -129,7 +129,7 @@ watch(isOpen, (newValue) => {
         </UINewModalEdit>
       </div>
 
-      <div class="w-screen" v-else>
+      <div v-else>
         <UISpinner />
       </div>
     </NuxtLayout>

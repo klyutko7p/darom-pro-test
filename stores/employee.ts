@@ -30,6 +30,7 @@ export const useEmployeesStore = defineStore("employees", () => {
     "ППВЗ_9",
     "ПВЗ_10",
     "ПВЗ_11",
+    "ППВЗ_12",
     "Магазин",
     "Офис",
     "НаДом",
