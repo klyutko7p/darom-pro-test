@@ -160,7 +160,7 @@ async function getPercents() {
       (r) => r.pvz.name.includes(marker.id.toString()) && r.flag === "OurRansom"
     );
     if (row && row.wb) {
-      marker.commentary += `. Процент доставки оформленных заказов - WB: ${row.wb}%, Ozon: ${row.ozon}%, Я.Маркет: ${row.ym}%`;
+      marker.commentary += `. Доставка Ваших заказов: Wildberries - ${row.wb}%, Ozon - ${row.ozon}%, Я.Маркет - ${row.ym}%`;
     }
     return marker;
   });
@@ -171,7 +171,7 @@ async function getPercents() {
         r.pvz.name.includes(marker.id.toString()) && r.flag === "ClientRansom"
     );
     if (row && row.wb) {
-      marker.commentary += `. Процент доставки оформленных доставок заказов - WB: ${row.wb}%, Ozon: ${row.ozon}%, Я.Маркет: ${row.ym}%`;
+      marker.commentary += `. Доставка заказанных товаров: 10%`;
     }
     return marker;
   });
