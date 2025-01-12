@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import VueMultiselect from "vue-multiselect";
+import { vAutoAnimate } from "@formkit/auto-animate";
+
 const props = defineProps({
   rows: { type: Array as PropType<IOurRansom[]>, required: true },
   user: { type: Object as PropType<User> },
@@ -8,23 +11,23 @@ const storeRansom = useRansomStore();
 
 let showFilters = ref(false);
 
-const selectedCell = ref<number | string | null>(null);
-const selectedFromName = ref<string | null>(null);
-const selectedProductName = ref<string | null>(null);
-const selectedDispatchPVZ = ref<string | null>(null);
-const selectedOrderPVZ = ref<string | null>(null);
-const selectedOrderAccount = ref<string | null>(null);
-const selectedNotation = ref<string | null>(null);
-const selectedAdditionally = ref<string | null>(null);
-const selectedPriceSite = ref<number | null>(null);
+const selectedCell = ref<Array<string>>([]);
+const selectedFromName = ref<Array<string>>([]);
+const selectedProductName = ref<Array<string>>([]);
+const selectedDispatchPVZ = ref<Array<string>>([]);
+const selectedOrderPVZ = ref<Array<string>>([]);
+const selectedOrderAccount = ref<Array<string>>([]);
+const selectedNotation = ref<Array<string>>([]);
+const selectedAdditionally = ref<Array<string>>([]);
+const selectedPriceSite = ref<Array<string>>([]);
 const startingDate = ref<Date | string | null>(null);
-const endDate = ref<Date | string | null>(null);
-const startingDate2 = ref<Date | string | null>(null);
-const endDate2 = ref<Date | string | null>(null);
-const startingDate3 = ref<Date | string | null>(null);
-const endDate3 = ref<Date | string | null>(null);
-const startingDate4 = ref<Date | string | null>(null);
-const endDate4 = ref<Date | string | null>(null);
+const endDate = ref<Date | string>();
+const startingDate2 = ref<Date | string>();
+const endDate2 = ref<Date | string>();
+const startingDate3 = ref<Date | string>();
+const endDate3 = ref<Date | string>();
+const startingDate4 = ref<Date | string>();
+const endDate4 = ref<Date | string>();
 
 const uniqueOrderAccounts = computed(() => {
   return storeRansom.getUniqueNonEmptyValues(props.rows, "orderAccount");
@@ -67,104 +70,135 @@ const filteredRows = ref<Array<IOurRansom>>();
 const emit = defineEmits(["filtered-rows"]);
 
 const filterRows = () => {
-  let newStartingDate = new Date(startingDate.value);
-  newStartingDate.setHours(0);
-  newStartingDate.setMinutes(0);
-  newStartingDate.setSeconds(0);
-  newStartingDate.setMilliseconds(0);
+  let newStartingDate: string | number | Date;
+  let newEndDate: string | number | Date;
+  let newStartingDate2: string | number | Date;
+  let newEndDate2: string | number | Date;
+  let newStartingDate3: string | number | Date;
+  let newEndDate3: string | number | Date;
+  let newStartingDate4: string | number | Date;
+  let newEndDate4: string | number | Date;
 
-  let newEndDate = new Date(endDate.value);
-  newEndDate.setHours(23);
-  newEndDate.setMinutes(59);
-  newEndDate.setSeconds(59);
-  newEndDate.setMilliseconds(0);
+  if (startingDate.value) {
+    newStartingDate = new Date(startingDate.value);
+    newStartingDate.setHours(0);
+    newStartingDate.setMinutes(0);
+    newStartingDate.setSeconds(0);
+    newStartingDate.setMilliseconds(0);
+  }
 
-  let newStartingDate2 = new Date(startingDate2.value);
-  newStartingDate2.setHours(0);
-  newStartingDate2.setMinutes(0);
-  newStartingDate2.setSeconds(0);
-  newStartingDate2.setMilliseconds(0);
+  if (endDate.value) {
+    newEndDate = new Date(endDate.value);
+    newEndDate.setHours(23);
+    newEndDate.setMinutes(59);
+    newEndDate.setSeconds(59);
+    newEndDate.setMilliseconds(0);
+  }
 
-  let newEndDate2 = new Date(endDate2.value);
-  newEndDate2.setHours(23);
-  newEndDate2.setMinutes(59);
-  newEndDate2.setSeconds(59);
-  newEndDate2.setMilliseconds(0);
+  if (startingDate2.value) {
+    newStartingDate2 = new Date(startingDate2.value);
+    newStartingDate2.setHours(23);
+    newStartingDate2.setMinutes(59);
+    newStartingDate2.setSeconds(59);
+    newStartingDate2.setMilliseconds(0);
+  }
 
-  let newStartingDate3 = new Date(startingDate3.value);
-  newStartingDate3.setHours(0);
-  newStartingDate3.setMinutes(0);
-  newStartingDate3.setSeconds(0);
-  newStartingDate3.setMilliseconds(0);
+  if (endDate2.value) {
+    newEndDate2 = new Date(endDate2.value);
+    newEndDate2.setHours(23);
+    newEndDate2.setMinutes(59);
+    newEndDate2.setSeconds(59);
+    newEndDate2.setMilliseconds(0);
+  }
 
-  let newEndDate3 = new Date(endDate3.value);
-  newEndDate3.setHours(23);
-  newEndDate3.setMinutes(59);
-  newEndDate3.setSeconds(59);
-  newEndDate3.setMilliseconds(0);
+  if (startingDate3.value) {
+    newStartingDate3 = new Date(startingDate3.value);
+    newStartingDate3.setHours(0);
+    newStartingDate3.setMinutes(0);
+    newStartingDate3.setSeconds(0);
+    newStartingDate3.setMilliseconds(0);
+  }
 
-  let newStartingDate4 = new Date(startingDate4.value);
-  newStartingDate4.setHours(0);
-  newStartingDate4.setMinutes(0);
-  newStartingDate4.setSeconds(0);
-  newStartingDate4.setMilliseconds(0);
+  if (endDate3.value) {
+    newEndDate3 = new Date(endDate3.value);
+    newEndDate3.setHours(23);
+    newEndDate3.setMinutes(59);
+    newEndDate3.setSeconds(59);
+    newEndDate3.setMilliseconds(0);
+  }
 
-  let newEndDate4 = new Date(endDate4.value);
-  newEndDate4.setHours(23);
-  newEndDate4.setMinutes(59);
-  newEndDate4.setSeconds(59);
-  newEndDate4.setMilliseconds(0);
+  if (startingDate4.value) {
+    newStartingDate4 = new Date(startingDate4.value);
+    newStartingDate4.setHours(0);
+    newStartingDate4.setMinutes(0);
+    newStartingDate4.setSeconds(0);
+    newStartingDate4.setMilliseconds(0);
+  }
+
+  if (endDate4.value) {
+    newEndDate4 = new Date(endDate4.value);
+    newEndDate4.setHours(23);
+    newEndDate4.setMinutes(59);
+    newEndDate4.setSeconds(59);
+    newEndDate4.setMilliseconds(0);
+  }
 
   filteredRows.value = props.rows.slice();
   filteredRows.value = props.rows.filter((row) => {
     return (
-      (!selectedCell.value || row.cell === selectedCell.value) &&
-      (!selectedFromName.value || row.fromName === selectedFromName.value) &&
-      (!selectedProductName.value ||
+      (!selectedCell.value.length || selectedCell.value.includes(row.cell)) &&
+      (!selectedFromName.value.length ||
+        selectedFromName.value.includes(row.fromName)) &&
+      (!selectedProductName.value?.length ||
         (row.productName &&
-          row.productName
-            .toLowerCase()
-            .includes(selectedProductName.value.trim().toLowerCase()))) &&
-      (!selectedDispatchPVZ.value ||
-        row.dispatchPVZ === selectedDispatchPVZ.value) &&
-      (!selectedOrderPVZ.value || row.orderPVZ === selectedOrderPVZ.value) &&
-      (!selectedOrderAccount.value ||
-        row.orderAccount === selectedOrderAccount.value) &&
-      (!selectedAdditionally.value ||
-        row.additionally === selectedAdditionally.value) &&
-      (!selectedNotation.value ||
+          selectedProductName.value.includes(row.productName.trim()))) &&
+      (!selectedDispatchPVZ.value.length ||
+        selectedDispatchPVZ.value.includes(row.dispatchPVZ)) &&
+      (!selectedOrderPVZ.value.length ||
+        selectedOrderPVZ.value.includes(row.orderPVZ)) &&
+      (!selectedOrderAccount.value.length ||
+        selectedOrderAccount.value.includes(row.orderAccount)) &&
+      (!selectedAdditionally.value.length ||
+        selectedAdditionally.value.includes(row.additionally)) &&
+      (!selectedNotation.value.length ||
         (row.notation &&
-          row.notation
-            .toLowerCase()
-            .includes(selectedNotation.value.toLowerCase()))) &&
-      (!selectedPriceSite.value || row.priceSite == selectedPriceSite.value) &&
+          selectedNotation.value.includes(row.notation.trim()))) &&
+      (!selectedPriceSite.value.length ||
+        selectedPriceSite.value.includes(row.priceSite.toString())) &&
       (!startingDate.value ||
-        new Date(row.issued) >= new Date(newStartingDate)) &&
-      (!endDate.value || new Date(row.issued) <= new Date(newEndDate)) &&
+        (row.issued && new Date(row.issued) >= new Date(newStartingDate))) &&
+      (!endDate.value ||
+        (row.issued && new Date(row.issued) <= new Date(newEndDate))) &&
       (!startingDate2.value ||
-        new Date(row.deliveredSC) >= new Date(newStartingDate2)) &&
-      (!endDate2.value || new Date(row.deliveredSC) <= new Date(newEndDate2)) &&
+        (row.deliveredSC &&
+          new Date(row.deliveredSC) >= new Date(newStartingDate2))) &&
+      (!endDate2.value ||
+        (row.deliveredSC &&
+          new Date(row.deliveredSC) <= new Date(newEndDate2))) &&
       (!startingDate3.value ||
         new Date(row.created_at) >= new Date(newStartingDate3)) &&
       (!endDate3.value || new Date(row.created_at) <= new Date(newEndDate3)) &&
       (!startingDate4.value ||
-        new Date(row.deliveredPVZ) >= new Date(newStartingDate4)) &&
-      (!endDate4.value || new Date(row.deliveredPVZ) <= new Date(newEndDate4))
+        (row.deliveredPVZ &&
+          new Date(row.deliveredPVZ) >= new Date(newStartingDate4))) &&
+      (!endDate4.value ||
+        (row.deliveredPVZ &&
+          new Date(row.deliveredPVZ) <= new Date(newEndDate4)))
     );
   });
   emit("filtered-rows", filteredRows.value);
 };
 
 function clearFields() {
-  selectedCell.value = "";
-  selectedAdditionally.value = "";
-  selectedDispatchPVZ.value = "";
-  selectedOrderPVZ.value = "";
-  selectedOrderAccount.value = "";
-  selectedFromName.value = "";
-  selectedAdditionally.value = "";
-  selectedNotation.value = "";
-  selectedProductName.value = "";
+  selectedCell.value = [];
+  selectedAdditionally.value = [];
+  selectedDispatchPVZ.value = [];
+  selectedOrderPVZ.value = [];
+  selectedOrderAccount.value = [];
+  selectedFromName.value = [];
+  selectedAdditionally.value = [];
+  selectedNotation.value = [];
+  selectedProductName.value = [];
   startingDate.value = "";
   endDate.value = "";
   startingDate2.value = "";
@@ -219,14 +253,35 @@ let variables = ref([
   endDate4,
 ]);
 
-const nonEmptyCount: Ref<number> = computed(() => {
-  return variables.value.filter((variable: any) => {
-    return (
-      variable.value !== undefined &&
-      variable.value !== null &&
-      variable.value !== ""
-    );
-  }).length;
+const selectedArrays = [
+  selectedCell,
+  selectedFromName,
+  selectedProductName,
+  selectedDispatchPVZ,
+  selectedOrderPVZ,
+  selectedOrderAccount,
+  selectedAdditionally,
+  selectedNotation,
+  selectedPriceSite,
+];
+
+const nonEmptyCount = computed(() => {
+  let count = 0;
+  selectedArrays.forEach((selectedArray) => {
+    selectedArray.value.forEach((element) => {
+      if (element !== undefined && element !== null && element !== "") {
+        count++;
+      }
+    });
+  });
+
+  if (startingDate.value) {
+    count++;
+  } else if (endDate.value) {
+    count++;
+  }
+
+  return count;
 });
 
 function saveToLocalStorage(key: string, value: any) {
@@ -282,23 +337,23 @@ function clearLocalStorage() {
   if (addressData) {
     localStorage.setItem("addressData", addressData);
   }
-  selectedCell.value = null;
-  selectedFromName.value = null;
-  selectedProductName.value = null;
-  selectedDispatchPVZ.value = null;
-  selectedOrderPVZ.value = null;
-  selectedOrderAccount.value = null;
-  selectedNotation.value = null;
-  selectedAdditionally.value = null;
-  selectedPriceSite.value = null;
+  selectedCell.value = [];
+  selectedFromName.value = [];
+  selectedProductName.value = [];
+  selectedDispatchPVZ.value = [];
+  selectedOrderPVZ.value = [];
+  selectedOrderAccount.value = [];
+  selectedNotation.value = [];
+  selectedAdditionally.value = [];
+  selectedPriceSite.value = [];
   startingDate.value = null;
-  endDate.value = null;
-  startingDate2.value = null;
-  endDate2.value = null;
-  startingDate3.value = null;
-  endDate3.value = null;
-  startingDate4.value = null;
-  endDate4.value = null;
+  endDate.value = "";
+  startingDate2.value = "";
+  endDate2.value = "";
+  startingDate3.value = "";
+  endDate3.value = "";
+  startingDate4.value = "";
+  endDate4.value = "";
 }
 
 onMounted(() => {
@@ -396,151 +451,116 @@ let dateFilter = ref("issued");
 </script>
 
 <template>
-  <div>
-    <div class="flex items-center gap-3 mt-14 max-xl:mt-0">
-      <h1 class="text-xl font-bold">Фильтры</h1>
-      <Icon
+  <div v-auto-animate>
+    <div class="flex items-center gap-3 mt-10 max-xl:mt-6">
+      <UButton
+        color="orange"
+        variant="solid"
+        class="font-semibold duration-200"
+        icon="material-symbols:filter-list-rounded"
         @click="showFilters = !showFilters"
-        class="cursor-pointer duration-200 hover:text-secondary-color"
-        name="material-symbols:settings-rounded"
-        size="24"
-      />
-      <h1
-        class="bg-secondary-color px-3 py-1 font-bold text-white rounded-full"
       >
-        {{ nonEmptyCount }}
-      </h1>
+        Фильтры – {{ nonEmptyCount }}
+      </UButton>
     </div>
     <div
       v-if="showFilters"
-      class="border-2 border-gray-300 p-3 mt-3 border-dashed"
+      class="bg-white max-sm:px-3 max-sm:py-1 pt-3 pb-5 px-10 shadow-lg mt-3"
     >
-      <div class="grid grid-cols-2 max-xl:grid-cols-2 max-md:grid-cols-1">
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>Ячейка:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+      <div
+        class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5"
+      >
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Ячейка</h1>
+          <VueMultiselect
             v-model="selectedCell"
-            list="uniqueCells"
+            :options="uniqueCells"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите ячейку"
           />
-          <datalist id="uniqueCells" class="">
-            <option v-for="value in uniqueCells" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>Телефон:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Телефон</h1>
+          <VueMultiselect
             v-model="selectedFromName"
-            list="uniqueFromNames"
+            :options="uniqueFromNames"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите телефон"
           />
-          <datalist id="uniqueFromNames" class="">
-            <option v-for="value in uniqueFromNames" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>Название товара:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Название товара</h1>
+          <VueMultiselect
             v-model="selectedProductName"
-            list="uniqueProductNames"
+            :options="uniqueProductNames"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите название"
           />
-          <datalist id="uniqueProductNames" class="">
-            <option v-for="value in uniqueProductNames" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>Стоимость сайт:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Стоимость сайт</h1>
+          <VueMultiselect
             v-model="selectedPriceSite"
-            list="uniquePriceSite"
+            :options="uniquePriceSite"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите стоимость сайт"
           />
-          <datalist id="uniquePriceSite" class="">
-            <option v-for="value in uniquePriceSite" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>ПВЗ:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>ПВЗ</h1>
+          <VueMultiselect
             v-model="selectedDispatchPVZ"
-            list="uniquePVZ"
+            :options="uniquePVZ"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите ПВЗ"
           />
-          <datalist id="uniquePVZ" class="">
-            <option v-for="value in uniquePVZ" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>СЦ:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>СЦ</h1>
+          <VueMultiselect
             v-model="selectedOrderPVZ"
-            list="uniqueOrderPVZ"
+            :options="uniqueOrderPVZ"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите СЦ"
           />
-          <datalist id="uniqueOrderPVZ" class="">
-            <option v-for="value in uniqueOrderPVZ" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>Аккаунт Заказа:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Аккаунт</h1>
+          <VueMultiselect
             v-model="selectedOrderAccount"
-            list="uniqueOrderAccounts"
+            :options="uniqueOrderAccounts"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите аккаунт"
           />
-          <datalist id="uniqueOrderAccounts" class="">
-            <option v-for="value in uniqueOrderAccounts" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>Дополнительно:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Дополнительно</h1>
+          <VueMultiselect
             v-model="selectedAdditionally"
-            list="uniqueAdditionally"
+            :options="uniqueAdditionally"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите дополнительно"
           />
-          <datalist id="uniqueAdditionally" class="">
-            <option v-for="value in uniqueAdditionally" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
-        <div class="grid grid-cols-2 m-3 text-center border-b-2 py-2">
-          <h1>Примечание:</h1>
-          <input
-            type="text"
-            class="bg-transparent max-w-[150px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Примечание</h1>
+          <VueMultiselect
             v-model="selectedNotation"
-            list="uniqueNotation"
+            :options="uniqueNotation"
+            :multiple="true"
+            :close-on-select="true"
+            placeholder="Выберите дополнительно"
           />
-          <datalist id="uniqueNotation" class="">
-            <option v-for="value in uniqueNotation" :value="value">
-              {{ value }}
-            </option>
-          </datalist>
         </div>
       </div>
       <div v-if="user?.role !== 'SORTIROVKA'">
@@ -677,3 +697,5 @@ let dateFilter = ref("issued");
     </div>
   </div>
 </template>
+
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>

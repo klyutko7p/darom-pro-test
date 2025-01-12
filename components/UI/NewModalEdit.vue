@@ -117,7 +117,7 @@ a {
 }
 
 .modal-container-body {
-  height: 450px;
+  height: 550px;
   padding: 10px 32px 10px;
   overflow-y: auto;
 }

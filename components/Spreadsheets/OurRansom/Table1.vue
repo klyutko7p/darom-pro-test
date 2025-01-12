@@ -89,7 +89,14 @@ const props = defineProps({
   user: { type: Object as PropType<User>, required: true },
   rows: { type: Array as PropType<IOurRansom[]> },
   pvzLink: { type: String },
+  isShowModalValue: { type: Boolean, required: true },
 });
+
+function openModalEmit() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+watch([props.isShowModalValue], openModalEmit);
 
 async function exportToExcel() {
   perPage.value = await totalRows.value;
@@ -192,12 +199,28 @@ function convertToURL(inputString: string) {
 let allSumInput = ref("");
 let phoneNumberClient = ref("");
 let allFromNamesEqual = ref(false);
+
+const updateRowBackground = (rowId: string, isChecked: boolean): void => {
+  const tdElements = document.querySelectorAll("td");
+  tdElements.forEach((td) => {
+    const linkElement = td.querySelector("a");
+    if (linkElement?.innerHTML === rowId) {
+      if (isChecked) {
+        td.parentElement?.classList.add("bg-orange-100");
+      } else {
+        td.parentElement?.classList.remove("bg-orange-100");
+      }
+    }
+  });
+};
+
 const handleCheckboxChange = (row: IOurRansom): void => {
   phoneNumberClient.value = "";
   allSumInput.value = "";
   if (isChecked(row.id)) {
     checkedRows.value = checkedRows.value.filter((id) => id !== row.id);
     allSum.value = allSum.value.filter((obj) => obj.rowId !== row.id);
+    updateRowBackground(row.id.toString(), false);
   } else {
     checkedRows.value.push(row.id);
     let amountData = 0;
@@ -215,6 +238,7 @@ const handleCheckboxChange = (row: IOurRansom): void => {
       deliveredSC: row.deliveredSC,
       fromName: row.fromName,
     });
+    updateRowBackground(row.id.toString(), true);
   }
 
   getAllSum.value = allSum.value
@@ -247,7 +271,7 @@ const totalRows = computed(() =>
   Math.ceil(props.rows?.filter((row) => row.deleted === null).length || 0)
 );
 
-let returnRows = ref<Array<IOurRansom>>();
+let returnRows = ref<Array<IOurRansom>>([]);
 let expiredRows = ref<Array<IOurRansom>>([]);
 let processingRows = ref<Array<IOurRansom>>([]);
 let waitingRows = ref<Array<IOurRansom>>([]);
@@ -259,7 +283,7 @@ function updateCurrentPageData() {
 
   returnRows.value = props.rows?.slice(startIndex, endIndex);
 
-  if (props.user.role === "RMANAGER" || props.user.role === "PPVZ") {
+  if (props.user.role === "PPVZ") {
     returnRows.value = props.rows?.filter(
       (row) => row.dispatchPVZ && props.user.PVZ.includes(row.dispatchPVZ)
     );
@@ -279,6 +303,53 @@ function updateCurrentPageData() {
     processingRows.value.push(row);
     processingRows.value = [...new Set(processingRows.value)];
   });
+
+  if (searchingQuery.value !== "") {
+    if (!searchingQuery.value.includes("https")) {
+      searchingQuery.value = searchingQuery.value.replace(/\./g, "");
+    }
+    returnRows.value = props.rows?.filter((row) => {
+      const deliveredSC = new Date(row.deliveredSC);
+      deliveredSC.setHours(0, 0, 0, 0);
+      const deliveredSCTimeDif = deliveredSC - today;
+      return (
+        row.productName &&
+        row.productName
+          .toLowerCase()
+          .includes(searchingQuery.value.trim().toLowerCase()) &&
+        !row.deliveredPVZ &&
+        (deliveredSCTimeDif === 0 || !row.deliveredSC)
+      );
+    });
+
+    if (returnRows.value?.length === 0) {
+      const searchField = searchingQuery.value.includes("https")
+        ? "productLink"
+        : "notation";
+      returnRows.value = filterRows(searchField);
+      currentPage.value = 1;
+    }
+  } else {
+    returnRows.value = props.rows
+      ?.filter((row) => !row.deleted)
+      .slice(startIndex, endIndex);
+  }
+}
+
+function updateCurrentPageData2() {
+  const startIndex = (currentPage.value - 1) * perPage.value;
+  const endIndex = startIndex + perPage.value;
+
+  returnRows.value = props.rows?.slice(startIndex, endIndex);
+
+  if (props.user.role === "PPVZ") {
+    returnRows.value = props.rows?.filter(
+      (row) => row.dispatchPVZ && props.user.PVZ.includes(row.dispatchPVZ)
+    );
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   if (searchingQuery.value !== "") {
     if (!searchingQuery.value.includes("https")) {
@@ -381,20 +452,48 @@ const nextPage = () => {
 let isVisiblePages = ref(true);
 let clients = ref<Array<Client>>([]);
 const storeClients = useClientsStore();
+
+const restrictedKeys = [
+  { key: "cell", access: props.user.cell1 },
+  { key: "additionally", access: props.user.additionally1 },
+  { key: "deliveredSC", access: props.user.deliveredSC1 },
+  { key: "deliveredPVZ", access: props.user.deliveredPVZ1 },
+  { key: "deliveredKGT", access: props.user.deliveredKGT1 },
+  { key: "dispatchPVZ", access: props.user.dispatchPVZ1 },
+  { key: "fromName", access: props.user.fromName1 },
+  { key: "issued", access: props.user.issued1 },
+  { key: "orderAccount", access: props.user.orderAccount },
+  { key: "orderPVZ", access: props.user.orderPVZ1 },
+  { key: "percentClient", access: props.user.percentClient1 },
+  { key: "notation", access: props.user.notation1 },
+  { key: "prepayment", access: props.user.prepayment1 },
+  { key: "priceSite", access: props.user.priceSite },
+  { key: "productLink", access: props.user.productLink1 },
+  { key: "productName", access: props.user.productName1 },
+  { key: "amountFromClient1", access: props.user.amountFromClient1 },
+  { key: "clientLink1", access: props.user.clientLink1 },
+  { key: "profit1", access: props.user.profit1 },
+];
+
 onMounted(async () => {
   focusInput();
 
-  // let arrayOfProcessing = props.rows?.filter(
-  //   (row) =>
-  //     row.orderPVZ === null &&
-  //     row.deliveredSC === null &&
-  //     !row.deleted &&
-  //     row.dispatchPVZ !== "НаДом"
-  // );
-  // arrayOfProcessing?.forEach((row: any) => {
-  //   processingRows.value.push(row);
-  //   processingRows.value = [...new Set(processingRows.value)];
-  // });
+  restrictedKeys.forEach(({ key, access }) => {
+    if (access !== "WRITE" && access !== "READ") {
+      const index = columns.findIndex((column) => column.key === key);
+      if (index !== -1) {
+        columns.splice(index, 1);
+      }
+    }
+  });
+
+  if (props.user.role === "SORTIROVKA") {
+    const index = columns.findIndex((column) => column.key === "deliveredPVZ");
+    if (index !== -1) {
+      columns.splice(index, 1);
+    }
+  }
+
   showProcessingRows();
 
   updateCurrentPageData();
@@ -714,11 +813,133 @@ function showButtonsRows() {
     showWaitingRows();
   }
 }
+
+const itemsTable = (row: IOurRansom) => [
+  [
+    {
+      label: "Изменить",
+      icon: "i-heroicons-pencil-square-20-solid",
+      click: () => openModal(row),
+    },
+  ],
+  [
+    {
+      label: "Удалить",
+      icon: "i-heroicons-trash-20-solid",
+      click: () => deleteRow(row.id),
+    },
+  ],
+  [
+    {
+      label: "Очистить",
+      icon: "i-ic-baseline-close",
+      click: () => clearRow(row.id),
+    },
+  ],
+];
+
+const dropdownStates = ref({} as any);
+
+const toggleDropdown = (rowId: any) => {
+  dropdownStates.value = {};
+
+  dropdownStates.value[rowId] = !dropdownStates.value[rowId];
+};
+
+const columns = [
+  {
+    key: "actions",
+  },
+  {
+    key: "select",
+    label: "Выделение",
+  },
+  {
+    key: "id",
+    label: "ID",
+  },
+  {
+    key: "clientLink1",
+    label: "Ссылка кл.",
+  },
+  {
+    key: "cell",
+    label: "Ячейка",
+  },
+  {
+    key: "fromName",
+    label: "Телефон",
+  },
+  {
+    key: "productLink",
+    label: "🔗 на товар ",
+  },
+  {
+    key: "productName",
+    label: "Название",
+  },
+  {
+    key: "notation",
+    label: "Примеч.",
+  },
+  {
+    key: "priceSite",
+    label: "Стоимость",
+  },
+  {
+    key: "prepayment",
+    label: "Предоплата",
+  },
+  {
+    key: "percentClient",
+    label: "Процент",
+  },
+  {
+    key: "deliveredKGT",
+    label: "Доп. доход",
+  },
+  {
+    key: "amountFromClient1",
+    label: "Сумма с кл.",
+  },
+  {
+    key: "dispatchPVZ",
+    label: "ПВЗ",
+  },
+  {
+    key: "orderPVZ",
+    label: "СЦ",
+  },
+  {
+    key: "orderAccount",
+    label: "Аккаунт",
+  },
+  {
+    key: "deliveredSC",
+    label: "Дост. на СЦ",
+  },
+  {
+    key: "deliveredPVZ",
+    label: "Дост. на ПВЗ",
+  },
+  {
+    key: "issued",
+    label: "Выдан",
+  },
+  {
+    key: "additionally",
+    label: "Доп.",
+  },
+  {
+    key: "profit1",
+    label: "Доход",
+  },
+];
 </script>
 
 <template>
   <div v-if="!isLoading">
-    <div class="flex items-center justify-between max-lg:block mt-10 mb-5">
+    <div class="flex items-center justify-between max-lg:block mt-10 mb-2">
       <div>
         <div class="flex items-center gap-5">
           <UIMainButton @click="focusInput"
@@ -738,7 +959,7 @@ function showButtonsRows() {
           @input="scanItem"
         />
         <div
-          class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-5"
+          class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-2"
         >
           <h1
             class="text-xl"
@@ -755,41 +976,18 @@ function showButtonsRows() {
             <span class="text-secondary-color font-bold">{{ totalRows }}</span>
           </h1>
         </div>
-
-        <div
-          class="flex items-center gap-5"
-          v-if="
-            user.role === 'ADMIN' ||
-            user.role === 'ADMINISTRATOR' ||
-            user.role === 'RMANAGER'
-          "
-        >
-          <UIActionButton
-            @click="toggleShowDeletedRows"
-            v-if="!route.fullPath.includes('+')"
-          >
-            {{
-              showDeletedRows
-                ? "Скрыть удаленное"
-                : "Показать удаленное за неделю"
-            }}
-          </UIActionButton>
-
-          <UIActionButton
-            @click="toggleShowDeletedRows2"
-            v-if="route.fullPath.includes('+')"
-          >
-            {{ showDeletedRows ? "Скрыть удаленное" : "Показать удаленное" }}
-          </UIActionButton>
-        </div>
       </div>
       <div class="flex items-end max-lg:mt-5 max-lg:justify-between gap-20">
         <div class="flex flex-col text-center" v-if="isVisiblePages">
-          <h1 class="text-base">Страница:</h1>
-          <h1 class="text-base mb-2">{{ currentPage }} из {{ totalPages }}</h1>
-          <div class="flex items-center justify-center gap-2">
+          <h1 class="text-base mb-2">
+            Страница: {{ currentPage }} из {{ totalPages }}
+          </h1>
+
+          <div
+            class="flex items-center justify-center gap-2 max-sm:justify-start"
+          >
             <button
-              @click="prevPage(), updateCurrentPageData()"
+              @click="prevPage(), updateCurrentPageData2()"
               :disabled="currentPage === 1"
               class="disabled:opacity-40 disabled:cursor-not-allowed duration-150 bg-secondary-color flex items-center justify-center rounded-sm p-3"
             >
@@ -799,7 +997,7 @@ function showButtonsRows() {
               />
             </button>
             <button
-              @click="nextPage(), updateCurrentPageData()"
+              @click="nextPage(), updateCurrentPageData2()"
               :disabled="currentPage === totalPages"
               class="disabled:opacity-40 disabled:cursor-not-allowed duration-150 bg-secondary-color flex items-center justify-center rounded-sm p-3"
             >
@@ -830,25 +1028,15 @@ function showButtonsRows() {
       v-if="getAllSum > 0"
     >
       <h1
-        class="text-base text-center backdrop-blur-xl p-2 rounded-xl border-2 text-secondary-color font-bold"
+        class="text-base text-center shadow-inner bg-white backdrop-blur-xl p-5 uppercase rounded-xl border-secondary-color border-[1px] text-secondary-color font-bold"
       >
-        К оплате: {{ getAllSum }} <br />
-        Количество товаров: {{ checkedRows.length }} <br />
-        <span v-if="allFromNamesEqual">
-          Бонусы клиента: {{ getAllSumBonuses }} <br />
-          Потратить бонусы: <br />
-          <input
-            @input="changeAmountFromClient"
-            class="mt-2 bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-            type="text"
-            v-model="allSumInput"
-          />
-        </span>
+        К оплате: {{ getAllSum }} ₽ <br />
+        Кол-во товаров: {{ checkedRows.length }} шт. <br />
       </h1>
     </div>
 
     <div
-      class="fixed z-40 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-50%]"
+      class="fixed z-40 flex flex-col gap-3 left-1/2 translate-x-[-50%] translate-y-[-35%]"
       v-if="
         user.dataOurRansom === 'WRITE' &&
         checkedRows.length > 0 &&
@@ -1007,13 +1195,20 @@ function showButtonsRows() {
         user.role === 'RMANAGER'
       "
     >
-      <UButton @click="showButtonsRows" v-if="!isShowButtonsRows"
+      <UButton
+        class="font-semibold"
+        @click="showButtonsRows"
+        v-if="!isShowButtonsRows"
         >Показать кнопки</UButton
       >
-      <UButton @click="showButtonsRows" v-if="isShowButtonsRows"
+      <UButton
+        class="font-semibold"
+        @click="showButtonsRows"
+        v-if="isShowButtonsRows"
         >Скрыть кнопки</UButton
       >
     </div>
+
     <div class="py-3 flex max-sm:flex-col gap-3 max-sm:w-full">
       <h1
         v-if="
@@ -1064,7 +1259,8 @@ function showButtonsRows() {
         />
       </template>
     </UInput>
-    <div
+
+    <!-- <div
       :class="{
         'overflow-x-auto max-h-[300px] overflow-y-auto': isOpenModalQR,
       }"
@@ -1434,6 +1630,7 @@ function showButtonsRows() {
             >
               {{ row.productName }}
             </td>
+
             <td
               class="border-2"
               v-if="user.notation1 === 'READ' || user.notation1 === 'WRITE'"
@@ -1728,6 +1925,392 @@ function showButtonsRows() {
         </tbody>
       </table>
       <div id="down"></div>
+    </div> -->
+
+    <div class="mt-5 mb-10">
+      <UTable
+        v-if="returnRows.length"
+        class="w-full z-[20] overflow-x-visible mx-auto text-center rounded-md mt-5"
+        :class="{ 'overflow-x-hidden max-h-[100px]': isShowModalValue }"
+        :ui="{ wrapper: 'relative bg-white',
+  td: {
+    base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
+    padding: 'px-3 py-1',
+  },
+  th: {
+    base: 'text-center uppercase border-t-[1px] border-b-[1px] sticky top-0 z-[20] bg-white',
+    padding: 'px-1',
+    size: 'text-xs'
+  },
+  default:
+  {
+    checkbox:
+      { color: 'gray' as any }
+  },
+    }"
+        :rows="returnRows"
+        :columns="columns"
+      >
+        <template #select-data="{ row }">
+          <input
+            v-if="user.dataOurRansom === 'WRITE'"
+            class="h-3 w-3 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-sm bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
+            type="checkbox"
+            :value="row.id"
+            :checked="isChecked(row.id)"
+            @change="handleCheckboxChange(row)"
+          />
+        </template>
+
+        <template #id-data="{ row }">
+          <NuxtLink
+            v-if="
+              user.role !== 'PVZ' &&
+              user.role !== 'ADMINISTRATOR' &&
+              user.role !== 'RMANAGER' &&
+              user.role !== 'PPVZ'
+            "
+            class="cursor-pointer text-secondary-color hover:opacity-50 duration-200 font-semibold"
+            :to="`/spreadsheets/record/1/${row.id}`"
+          >
+            {{ row.id }}
+          </NuxtLink>
+          <h1 v-else>{{ row.id }}</h1>
+        </template>
+
+        <template #clientLink1-data="{ row }">
+          <div class="flex items-center gap-2 justify-center">
+            <NuxtLink
+              v-if="user.clientLink1 === 'READ' || user.clientLink1 === 'WRITE'"
+              class="cursor-pointer hover:opacity-50 duration-200 bg-secondary-color text-white font-bold w-6 h-6 rounded-full flex items-center justify-center"
+              target="_blank"
+              :to="`/spreadsheets/order/${row.clientLink1}`"
+            >
+              <Icon name="i-uil-external-link-alt" class="font-bold" />
+            </NuxtLink>
+
+            <div
+              v-if="user.clientLink1 === 'READ' || user.clientLink1 === 'WRITE'"
+              class="cursor-pointer hover:opacity-50 duration-200 bg-secondary-color text-white font-bold w-6 h-6 rounded-full flex items-center justify-center"
+              @click="
+                writeClipboardText(
+                  `https://darom.pro/spreadsheets/order/${row.clientLink1}`
+                )
+              "
+            >
+              <Icon name="material-symbols:content-copy" class="font-bold" />
+            </div>
+          </div>
+        </template>
+
+        <template #cell-data="{ row }">
+          <p v-if="user.cell1 === 'READ' || user.cell1 === 'WRITE'">
+            {{ row.cell }}
+          </p>
+        </template>
+
+        <template #fromName-data="{ row }">
+          <NuxtLink
+            v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
+            class="cursor-pointer hover:text-orange-200 duration-200 text-secondary-color font-semibold"
+            :to="`/phone/${row.fromName}`"
+          >
+            {{ row.fromName }}
+          </NuxtLink>
+        </template>
+
+        <template #productLink-data="{ row }">
+          <a
+            :href="row.productLink"
+            target="_blank"
+            v-if="user.clientLink1 === 'READ' || user.clientLink1 === 'WRITE'"
+            class="cursor-pointer hover:opacity-50 duration-200 bg-secondary-color text-white rounded-sm px-2 py-1 font-bold"
+          >
+            Перейти
+          </a>
+        </template>
+
+        <template #productName-data="{ row }">
+          <p
+            v-if="user.productName1 === 'READ' || user.productName1 === 'WRITE'"
+          >
+            {{ row.productName }}
+          </p>
+        </template>
+
+        <template #notation-data="{ row }">
+          <p
+            :class="{
+              'bg-yellow-300 text-white font-semibold px-1': row.notation,
+            }"
+            v-if="user.notation1 === 'READ' || user.notation1 === 'WRITE'"
+          >
+            {{ row.notation ? row.notation : "Пусто" }}
+          </p>
+        </template>
+
+        <template #priceSite-data="{ row }">
+          <p v-if="user.priceSite === 'READ' || user.priceSite === 'WRITE'">
+            {{ row.priceSite }}
+          </p>
+        </template>
+
+        <template #prepayment-data="{ row }">
+          <p v-if="user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'">
+            {{ row.prepayment }}
+          </p>
+        </template>
+
+        <template #percentClient-data="{ row }">
+          <p
+            v-if="
+              user.percentClient1 === 'READ' || user.percentClient1 === 'WRITE'
+            "
+          >
+            {{ row.percentClient }}
+          </p>
+        </template>
+
+        <template #deliveredKGT-data="{ row }">
+          <p
+            v-if="
+              user.deliveredKGT1 === 'READ' || user.deliveredKGT1 === 'WRITE'
+            "
+          >
+            {{ row.deliveredKGT }}
+          </p>
+        </template>
+
+        <template #amountFromClient1-data="{ row }">
+          <p v-if="!isDateGreaterThanReference(row.created_at)">
+            {{ Math.ceil(+row.amountFromClient1 / 10) * 10 }}
+          </p>
+          <p v-if="isDateGreaterThanReference(row.created_at)">
+            {{ +roundToNearestTen(+row.amountFromClient1) }}
+          </p>
+        </template>
+
+        <template #dispatchPVZ-data="{ row }">
+          <p
+            v-if="user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'"
+          >
+            {{ row.dispatchPVZ }}
+          </p>
+        </template>
+
+        <template #orderPVZ-data="{ row }">
+          <p v-if="user.orderPVZ1 === 'READ' || user.orderPVZ1 === 'WRITE'">
+            {{ row.orderPVZ }}
+          </p>
+        </template>
+
+        <template #orderAccount-data="{ row }">
+          <p
+            v-if="user.orderAccount === 'READ' || user.orderAccount === 'WRITE'"
+          >
+            {{ row.orderAccount }}
+          </p>
+        </template>
+
+        <template #deliveredSC-data="{ row }">
+          <p
+            v-if="user.deliveredSC1 === 'READ' || user.deliveredSC1 === 'WRITE'"
+            class="font-bold text-green-500"
+          >
+            {{
+              row.deliveredSC
+                ? storeUsers.getNormalizedDate(row.deliveredSC)
+                : ""
+            }}
+          </p>
+        </template>
+
+        <template #deliveredPVZ-data="{ row }">
+          <p
+            v-if="
+              user.deliveredPVZ1 === 'READ' || user.deliveredPVZ1 === 'WRITE'
+            "
+            class="font-bold text-green-500"
+          >
+            {{
+              row.deliveredPVZ
+                ? storeUsers.getNormalizedDate(row.deliveredPVZ)
+                : ""
+            }}
+          </p>
+        </template>
+
+        <template #issued-data="{ row }">
+          <p
+            v-if="user.issued1 === 'READ' || user.issued1 === 'WRITE'"
+            class="font-bold text-green-500"
+          >
+            {{ row.issued ? storeUsers.getNormalizedDate(row.issued) : "" }}
+          </p>
+        </template>
+
+        <template #additionally-data="{ row }">
+          <p
+            v-if="
+              user.additionally1 === 'READ' || user.additionally1 === 'WRITE'
+            "
+          >
+            {{ row.additionally ? row.additionally : "Пусто" }}
+          </p>
+        </template>
+
+        <template #profit1-data="{ row }">
+          <p
+            v-if="
+              (user.profit1 === 'READ' || user.profit1 === 'WRITE') &&
+              row.additionally !== 'Отказ клиент' &&
+              row.additionally !== 'Отказ клиент онлайн' &&
+              row.additionally !== 'Отказ клиент наличные' &&
+              row.additionally !== 'Отказ брак' &&
+              row.additionally !== 'Отказ подмена' &&
+              !row.prepayment &&
+              !isDateGreaterThanReference(row.created_at)
+            "
+          >
+            {{
+              Math.ceil(row.amountFromClient1 / 10) * 10 -
+              row.priceSite +
+              row.deliveredKGT
+            }}
+          </p>
+
+          <p
+            v-if="
+              (user.profit1 === 'READ' || user.profit1 === 'WRITE') &&
+              row.additionally !== 'Отказ клиент' &&
+              row.additionally !== 'Отказ клиент онлайн' &&
+              row.additionally !== 'Отказ клиент наличные' &&
+              row.additionally !== 'Отказ брак' &&
+              row.additionally !== 'Отказ подмена' &&
+              !row.prepayment &&
+              isDateGreaterThanReference(row.created_at)
+            "
+          >
+            {{
+              roundToNearestTen(row.amountFromClient1) -
+              row.priceSite +
+              row.deliveredKGT
+            }}
+          </p>
+
+          <p
+            v-if="
+              (user.profit1 === 'READ' || user.profit1 === 'WRITE') &&
+              row.additionally !== 'Отказ клиент' &&
+              row.additionally !== 'Отказ клиент онлайн' &&
+              row.additionally !== 'Отказ клиент наличные' &&
+              row.additionally !== 'Отказ брак' &&
+              row.additionally !== 'Отказ подмена' &&
+              row.prepayment
+            "
+          >
+            {{
+              row.percentClient !== 0
+                ? Math.ceil(
+                    (row.priceSite * row.percentClient) / 100 + row.deliveredKGT
+                  )
+                : row.deliveredKGT
+            }}
+          </p>
+
+          <p
+            v-if="
+              (user.profit1 === 'READ' || user.profit1 === 'WRITE') &&
+              (row.additionally === 'Отказ клиент' ||
+                row.additionally === 'Отказ клиент онлайн' ||
+                row.additionally === 'Отказ клиент наличные' ||
+                row.additionally === 'Отказ брак' ||
+                row.additionally === 'Отказ подмена')
+            "
+          >
+            {{ row.profit1 }}
+          </p>
+        </template>
+
+        <template
+          v-if="
+            user.username === 'Директор' ||
+            user.username === 'Власенкова' ||
+            user.username.includes('Светлана')
+          "
+          #actions-data="{ row }"
+        >
+          <UDropdown :open="dropdownStates[row.id]" :items="itemsTable(row)">
+            <UButton
+              variant="ghost"
+              color="gray"
+              class="text-sm duration-200"
+              @touchstart.stop="toggleDropdown(row.id)"
+            >
+              ...
+            </UButton>
+          </UDropdown>
+        </template>
+
+        <template
+          v-if="
+            user.username === 'Директор' ||
+            user.username === 'Власенкова' ||
+            user.username.includes('Светлана')
+          "
+          #expand="{ row }"
+        >
+          <div class="px-4 py-2 text-left text-sm text-gray-400">
+            <h1
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              Дата создания: {{ storeUsers.getNormalizedDate(row.created_at) }}
+            </h1>
+            <h1
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              Дата последнего изменения:
+              {{ storeUsers.getNormalizedDate(row.updated_at) }}
+            </h1>
+            <h1
+              v-if="
+                (user.role === 'ADMIN' ||
+                  user.role === 'ADMINISTRATOR' ||
+                  user.role === 'RMANAGER') &&
+                row.deleted
+              "
+            >
+              Дата удаления: {{ storeUsers.getNormalizedDate(row.deleted) }}
+            </h1>
+            <h1
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              Создан: {{ row.createdUser }}
+            </h1>
+            <h1
+              v-if="
+                user.role === 'ADMIN' ||
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'RMANAGER'
+              "
+            >
+              Изменен: {{ row.updatedUser }}
+            </h1>
+          </div>
+        </template>
+      </UTable>
     </div>
 
     <UINewModal
