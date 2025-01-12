@@ -2236,6 +2236,8 @@ const columns = [
           v-if="
             user.username === 'Директор' ||
             user.username === 'Власенкова' ||
+            user.username === 'Горцуева' ||
+            user.username === 'Шведова' ||
             user.username.includes('Светлана')
           "
           #actions-data="{ row }"
@@ -2256,6 +2258,8 @@ const columns = [
           v-if="
             user.username === 'Директор' ||
             user.username === 'Власенкова' ||
+            user.username === 'Горцуева' ||
+            user.username === 'Шведова' ||
             user.username.includes('Светлана')
           "
           #expand="{ row }"
