@@ -1588,10 +1588,15 @@ let additionallies = [
                       >
                     </div>
                     <div
-                      class="text-center bg-gray-100 rounded-md px-2 py-1 w-full"
+                      class="text-center rounded-md w-full"
                       v-if="!rowData.deliveredSC"
                     >
-                      <h1>Дата пуста</h1>
+                      <input
+                        class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                        :disabled="user.deliveredSC1 === 'READ'"
+                        v-model="rowData.deliveredSC"
+                        type="date"
+                      />
                     </div>
                   </div>
 
@@ -1636,10 +1641,15 @@ let additionallies = [
                       >
                     </div>
                     <div
-                      class="text-center bg-gray-100 rounded-md px-2 py-1 w-full"
+                      class="text-center rounded-md w-full"
                       v-if="!rowData.deliveredPVZ"
                     >
-                      <h1>Дата пуста</h1>
+                      <input
+                        class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                        :disabled="user.deliveredPVZ1 === 'READ'"
+                        v-model="rowData.deliveredPVZ"
+                        type="date"
+                      />
                     </div>
                   </div>
 
@@ -1683,10 +1693,15 @@ let additionallies = [
                       >
                     </div>
                     <div
-                      class="text-center bg-gray-100 rounded-md px-2 py-1 w-full"
+                      class="text-center rounded-md w-full"
                       v-if="!rowData.issued"
                     >
-                      <h1>Дата пуста</h1>
+                      <input
+                        class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                        :disabled="user.issued1 === 'READ'"
+                        v-model="rowData.issued"
+                        type="date"
+                      />
                     </div>
                   </div>
 
@@ -2107,10 +2122,15 @@ let additionallies = [
                       >
                     </div>
                     <div
-                      class="text-center bg-gray-100 rounded-md px-2 py-1 w-full"
+                      class="text-center rounded-md w-full"
                       v-if="!rowData.deliveredSC"
                     >
-                      <h1>Дата пуста</h1>
+                      <input
+                        class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                        :disabled="user.deliveredSC1 === 'READ'"
+                        v-model="rowData.deliveredSC"
+                        type="date"
+                      />
                     </div>
                   </div>
 
@@ -2155,10 +2175,15 @@ let additionallies = [
                       >
                     </div>
                     <div
-                      class="text-center bg-gray-100 rounded-md px-2 py-1 w-full"
+                      class="text-center rounded-md w-full"
                       v-if="!rowData.deliveredPVZ"
                     >
-                      <h1>Дата пуста</h1>
+                      <input
+                        class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                        :disabled="user.deliveredPVZ1 === 'READ'"
+                        v-model="rowData.deliveredPVZ"
+                        type="date"
+                      />
                     </div>
                   </div>
 
@@ -2202,10 +2227,15 @@ let additionallies = [
                       >
                     </div>
                     <div
-                      class="text-center bg-gray-100 rounded-md px-2 py-1 w-full"
+                      class="text-center rounded-md w-full"
                       v-if="!rowData.issued"
                     >
-                      <h1>Дата пуста</h1>
+                      <input
+                        class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                        :disabled="user.issued1 === 'READ'"
+                        v-model="rowData.issued"
+                        type="date"
+                      />
                     </div>
                   </div>
 

@@ -8,6 +8,8 @@ const router = useRouter();
 let user = ref({} as User);
 const token = Cookies.get("token");
 let isLoading = ref(false);
+let rows = ref<Array<Task>>([]);
+const storeTasks = useTasksStore();
 
 onMounted(async () => {
   if (!token) {
@@ -16,8 +18,18 @@ onMounted(async () => {
 
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  await storeRansom.getSumOfRejection();
+  rows.value = await storeTasks.getTasks();
   isLoading.value = false;
+
+  if (rows.value) {
+    rows.value = rows.value.filter(
+      (row: Task) =>
+        row.responsible === user.value.username &&
+        new Date() > new Date(row.deadline)
+    );
+  }
+
+  await storeRansom.getSumOfRejection();
 });
 
 function signOut() {
@@ -65,7 +77,7 @@ function requestPermission() {
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="py-5">
-          <div class="mt-5 mb-5 flex items-center gap-3">
+          <div class="mt-5 mb-3 flex items-center gap-3">
             <h1 v-if="user.username !== 'Директор'" class="text-xl">
               Приветствуем, {{ user.username }}!
             </h1>
@@ -83,6 +95,7 @@ function requestPermission() {
               />
             </div>
           </div>
+          <h1 v-if="rows.length" class="text-red-500 font-semibold text-xl">У Вас есть невыполненные задачи!</h1>
           <h1
             class="font-bold text-6xl max-[400px]:text-4xl max-md:text-center text-secondary-color mb-5"
           >

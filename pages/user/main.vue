@@ -7,7 +7,9 @@ const router = useRouter();
 let user = ref({} as User);
 const token = Cookies.get("token");
 let isLoading = ref(false);
-
+let rows = ref<Array<Task>>([]);
+const storeTasks = useTasksStore();
+  
 onMounted(async () => {
   if (!token) {
     router.push("/auth/login");
@@ -15,8 +17,18 @@ onMounted(async () => {
 
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  await storeRansom.getSumOfRejection();
+  rows.value = await storeTasks.getTasks();
+
+  if (rows.value) {
+    rows.value = rows.value.filter(
+      (row: Task) =>
+        row.responsible === user.value.username &&
+        new Date() > new Date(row.deadline)
+    );
+  }
+
   isLoading.value = false;
+  await storeRansom.getSumOfRejection();
 });
 
 function signOut() {
@@ -76,6 +88,9 @@ function requestPermission() {
             />
           </div>
         </div>
+        <h1 v-if="rows.length" class="text-red-500 font-semibold text-xl">
+          У Вас есть невыполненные задачи!
+        </h1>
         <h1
           class="font-bold text-6xl max-[400px]:text-4xl max-md:text-center text-secondary-color mb-5"
         >
