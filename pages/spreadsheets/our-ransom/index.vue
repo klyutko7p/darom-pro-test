@@ -757,11 +757,11 @@ function watchQuantity() {
 let isShowModal = ref(false);
 
 function checkWB() {
-  rowData.value.dp = false;
+  rowData.value.dp = true;
 }
 
 function nonCheckWB() {
-  rowData.value.dp = true;
+  rowData.value.dp = false;
 }
 
 const pvzPercent = ref<Array<IPVZPercent[]>>();
