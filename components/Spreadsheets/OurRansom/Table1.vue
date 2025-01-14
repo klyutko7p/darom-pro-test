@@ -494,6 +494,19 @@ onMounted(async () => {
     }
   }
 
+  if (
+    props.user.username !== "Директор" &&
+    props.user.username !== "Власенкова" &&
+    props.user.username !== "Горцуева" &&
+    props.user.username !== "Шведова" &&
+    !props.user.username.includes("Светлана")
+  ) {
+    const index = columns.findIndex((column) => column.key === "actions");
+    if (index !== -1) {
+      columns.splice(index, 1);
+    }
+  }
+
   showProcessingRows();
 
   updateCurrentPageData();
@@ -2023,7 +2036,7 @@ const columns = [
           <a
             :href="row.productLink"
             target="_blank"
-            v-if="user.clientLink1 === 'READ' || user.clientLink1 === 'WRITE'"
+            v-if="user.productLink1 === 'READ' || user.productLink1 === 'WRITE'"
             class="cursor-pointer hover:opacity-50 duration-200 bg-secondary-color text-white rounded-sm px-2 py-1 font-bold"
           >
             Перейти
