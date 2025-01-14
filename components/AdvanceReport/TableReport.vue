@@ -179,9 +179,7 @@ function updateCurrentPageData() {
 
   arrayOfExpenditure.value?.forEach((row) => {
     if (!isNaN(expenditureByPVZ[row.PVZ])) {
-      if (
-        row.typeOfExpenditure !== "Оплата ФОТ" 
-      ) {
+      if (row.typeOfExpenditure !== "Оплата ФОТ") {
         expenditureByPVZ[row.PVZ] += parseFloat(row.expenditure);
       }
 
@@ -243,16 +241,14 @@ function updateCurrentPageData() {
 
   if (
     props.selectedTypeOfExpenditure.includes("Оплата ФОТ") &&
-    !props.selectedTypeOfExpenditure.includes(
-      "Удержания с сотрудников"
-    )
+    !props.selectedTypeOfExpenditure.includes("Удержания с сотрудников")
   ) {
     arrayOfReceipts.value?.forEach((row) => {
       if (!isNaN(receiptsByPVZ[row.PVZ])) {
         receiptsByPVZ[row.PVZ] = 0;
       }
     });
-  } 
+  }
 
   pvz.value.forEach((pvzName: string) => {
     const difference = receiptsByPVZ[pvzName] - expenditureByPVZ[pvzName];
@@ -270,6 +266,8 @@ function updateCurrentPageData() {
   Object.keys(differenceByPVZ).forEach((pvzName: string) => {
     sumOfArray3.value += differenceByPVZ[pvzName];
   });
+
+  getTotal();
 }
 
 function calculateValue(curValue: any) {

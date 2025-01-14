@@ -372,7 +372,7 @@ function returnTotal(sum: number) {
           </div>
 
           <h1 class="text-xl font-bold mt-10">
-            Баланс чистой прибыли торговой империи за всё время:
+            Баланс чистой прибыли торговой империи за период:
             <span class="text-secondary-color font-bold"
               >{{ formatNumber(sumOfArray3) }} ₽</span
             >
