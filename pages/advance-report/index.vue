@@ -1304,6 +1304,7 @@ async function deleteRow(id: any) {
   if (answer) {
     isLoading.value = true;
     await storeAdvanceReports.deleteRow(id.id);
+    await storeBanks.deleteTransaction(id.id);
     rows.value = await storeAdvanceReports.getAdvancedReports(user.value);
     originallyRows.value = rows.value;
 
@@ -1845,7 +1846,6 @@ function showBankTransactions(id: number) {
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="table-admin-no-pad">
         <div class="bg-gray-50 px-5 w-screen pt-10 max-sm:px-5 pb-5">
-
           <AdvanceReportFilters
             v-if="rows"
             @filtered-rows="handleFilteredRows"

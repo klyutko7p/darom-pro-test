@@ -689,7 +689,7 @@ const toggleDropdown = (rowId: any) => {
         </option>
       </select>
       <UIActionButton @click="createReport()"
-        >Создать отчет за {{ monthNames[month] }}</UIActionButton
+        >Заполнить таблицу за {{ monthNames[month] }}</UIActionButton
       >
     </div>
   </div>

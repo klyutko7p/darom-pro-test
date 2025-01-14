@@ -10,9 +10,9 @@ export default defineEventHandler(async (event) => {
   try {
     const { id } = await readBody<IRequestBody>(event);
 
-    const deleteTransaction = await prisma.transaction.delete({
+    const deleteTransaction = await prisma.transaction.deleteMany({
       where: {
-        id: id,
+        idRow: id,
       },
     });
   } catch (error) {
