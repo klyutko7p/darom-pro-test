@@ -30,6 +30,7 @@ onMounted(async () => {
   isLoading.value = true;
   try {
     user.value = await storeUsers.getUser();
+
     let advanceReportsPromise;
     let ourRansomRowsPromise;
     let ourRansomRowsPromise2;
@@ -867,6 +868,7 @@ let usersOfIssued = ref([
 
 import { createClient } from "@supabase/supabase-js";
 import { useToast } from "vue-toastification";
+import { useBanksStore } from "~/stores/banks";
 
 const supabase = createClient(
   "https://fomoljxhkywsdgnchewy.supabase.co",
@@ -994,10 +996,60 @@ async function createRow() {
         );
       }
     }
+
     await storeAdvanceReports.createAdvanceReport(
       rowData.value,
       user.value.username
     );
+
+    if (
+      (rowData.value.typeOfExpenditure === "Перевод с баланса безнал" ||
+        rowData.value.typeOfExpenditure === "Новый кредит безнал" ||
+        rowData.value.typeOfExpenditure === "Пополнение баланса" ||
+        rowData.value.typeOfExpenditure === "Удержания с сотрудников") &&
+      rowData.value.type === "Безнал"
+    ) {
+      banks.value = await storeBanks.getBanks();
+      let idMainBank = banks.value.find((bank) => bank.main === true)?.id;
+      let maxIdRowData = rows.value.reduce((maxRow: any, currentRow: any) => {
+        return currentRow.id > (maxRow?.id || -Infinity) ? currentRow : maxRow;
+      }, null);
+
+      let transaction = {
+        type: "incoming",
+        sum: Number(rowData.value.expenditure),
+        createdUser: user.value.username,
+        fromBankId: idMainBank,
+        toBankId: idMainBank,
+        idRow: maxIdRowData.id + 1,
+      } as any;
+
+      await storeBanks.createTransaction(transaction);
+    } else if (
+      rowData.value.typeOfExpenditure !== "Перевод с баланса безнал" &&
+      rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
+      rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
+      rowData.value.typeOfExpenditure !== "Удержания с сотрудников" &&
+      rowData.value.type === "Безнал"
+    ) {
+      banks.value = await storeBanks.getBanks();
+      let idMainBank = banks.value.find((bank) => bank.main === true)?.id;
+      let maxIdRowData = rows.value.reduce((maxRow: any, currentRow: any) => {
+        return currentRow.id > (maxRow?.id || -Infinity) ? currentRow : maxRow;
+      }, null);
+
+      let transaction = {
+        type: "expenditure",
+        sum: Number(rowData.value.expenditure),
+        createdUser: user.value.username,
+        fromBankId: idMainBank,
+        toBankId: idMainBank,
+        idRow: maxIdRowData.id + 1,
+      } as any;
+
+      await storeBanks.createTransaction(transaction);
+    }
+
     rows.value = await storeAdvanceReports.getAdvancedReports(user.value);
     originallyRows.value = rows.value;
 
@@ -1111,6 +1163,42 @@ async function updateRow() {
   } else {
     isLoading.value = true;
     await storeAdvanceReports.updateAdvanceReport(rowData.value);
+  }
+
+  if (
+    (rowData.value.typeOfExpenditure === "Перевод с баланса безнал" ||
+      rowData.value.typeOfExpenditure === "Новый кредит безнал" ||
+      rowData.value.typeOfExpenditure === "Пополнение баланса" ||
+      rowData.value.typeOfExpenditure === "Удержания с сотрудников") &&
+    rowData.value.type === "Безнал"
+  ) {
+    transactions.value = await storeBanks.getTransactions();
+
+    let currentTransaction = transactions.value.find(
+      (row) => row.idRow === rowData.value.id
+    );
+
+    if (currentTransaction) {
+      currentTransaction.sum = Number(rowData.value.expenditure);
+      await storeBanks.updateTransaction(currentTransaction);
+    }
+  } else if (
+    rowData.value.typeOfExpenditure !== "Перевод с баланса безнал" &&
+    rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
+    rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
+    rowData.value.typeOfExpenditure !== "Удержания с сотрудников" &&
+    rowData.value.type === "Безнал"
+  ) {
+    transactions.value = await storeBanks.getTransactions();
+
+    let currentTransaction = transactions.value.find(
+      (row) => row.idRow === rowData.value.id
+    );
+
+    if (currentTransaction) {
+      currentTransaction.sum = Number(rowData.value.expenditure);
+      await storeBanks.updateTransaction(currentTransaction);
+    }
   }
 
   rows.value = await storeAdvanceReports.getAdvancedReports(user.value);
@@ -1530,6 +1618,222 @@ const typeOfOptions2 = [
   },
   { value: "Перевод с баланса нал", label: "С баланса нал" },
 ];
+
+let isShowBanks = ref(false);
+
+let banks = ref<Array<Bank>>([]);
+let transactions = ref<Array<Transaction>>([]);
+
+async function updateBanksData() {
+  idSelectedBank.value = Number(idSelectedBank.value);
+  const prevCurrentBank = banks.value.find((bank) => bank.main === true);
+
+  if (prevCurrentBank) {
+    prevCurrentBank.main = false;
+  }
+
+  const currentBank = banks.value.find(
+    (bank) => bank.id === idSelectedBank.value
+  );
+
+  if (currentBank) {
+    currentBank.main = true;
+  }
+
+  await storeBanks.updateBanks(banks.value);
+}
+
+let idSelectedBank = ref();
+// watch(idSelectedBank, editMainBank);
+
+let isShowTransactions = ref(false);
+let isShowFromBanksChoice = ref(false);
+let isShowToBanksChoice = ref(false);
+
+const storeBanks = useBanksStore();
+
+async function openModalBanks() {
+  isLoadingBanks.value = true;
+  isShowBanks.value = true;
+  banks.value = await storeBanks.getBanks();
+  transactions.value = await storeBanks.getTransactions();
+
+  banks.value.forEach((bank: Bank) => {
+    transactions.value.forEach((transaction: Transaction) => {
+      if (
+        bank.id === transaction.fromBankId &&
+        transaction.type === "transfer"
+      ) {
+        bank.money -= Number(transaction.sum);
+      } else if (
+        bank.id === transaction.toBankId &&
+        transaction.type === "transfer"
+      ) {
+        bank.money += Number(transaction.sum);
+      } else if (
+        bank.id === transaction.toBankId &&
+        bank.id === transaction.fromBankId &&
+        transaction.type === "incoming"
+      ) {
+        bank.money += Number(transaction.sum);
+      } else if (
+        bank.id === transaction.toBankId &&
+        bank.id === transaction.fromBankId &&
+        transaction.type === "expenditure"
+      ) {
+        bank.money -= Number(transaction.sum);
+      }
+    });
+  });
+
+  let idMainBank = banks.value.find((bank) => bank.main === true)?.id;
+  idSelectedBank.value = idMainBank;
+  idFromBank.value = idMainBank;
+  fromBank.value = banks.value.find((bank) => bank.id === idMainBank);
+  idToBank.value = idFromBank.value === 1 ? 2 : 1;
+  toBank.value = banks.value.find((bank) => bank.id === idToBank.value);
+  isLoadingBanks.value = false;
+}
+
+function closeModalBanks() {
+  isShowBanks.value = false;
+}
+
+function openModalTransactions() {
+  isShowTransactions.value = true;
+  let idMainBank = banks.value.find((bank) => bank.main === true)?.id;
+  idSelectedBank.value = idMainBank;
+  idFromBank.value = idMainBank;
+  fromBank.value = banks.value.find((bank) => bank.id === idMainBank);
+  idToBank.value = idFromBank.value === 1 ? 2 : 1;
+  toBank.value = banks.value.find((bank) => bank.id === idToBank.value);
+  isShowBanks.value = false;
+}
+
+function closeModalTransactions() {
+  isShowTransactions.value = false;
+  isShowBanks.value = true;
+}
+
+function openModalFromBanksChoice() {
+  isShowTransactions.value = false;
+  isShowFromBanksChoice.value = true;
+}
+
+function closeModalFromBanksChoice() {
+  isShowTransactions.value = true;
+  isShowFromBanksChoice.value = false;
+}
+
+function openModalToBanksChoice() {
+  isShowTransactions.value = false;
+  isShowToBanksChoice.value = true;
+}
+
+function closeModalToBanksChoice() {
+  isShowTransactions.value = true;
+  isShowToBanksChoice.value = false;
+}
+
+let idFromBank = ref();
+let fromBank = ref({} as any);
+let idToBank = ref();
+let toBank = ref({} as any);
+let sumOfTransaction = ref("");
+
+function validationSumOfTransaction() {
+  sumOfTransaction.value = sumOfTransaction.value.replace(/[^0-9]/g, "");
+}
+
+watch(() => sumOfTransaction.value, validationSumOfTransaction);
+watch(() => sumOfTransaction.value, checkValidationTransaction);
+
+function changeBanks() {
+  let copyFromBank = {};
+  let copyToBank = {};
+
+  Object.assign(copyFromBank, fromBank.value);
+  Object.assign(copyToBank, toBank.value);
+
+  fromBank.value = copyToBank;
+  toBank.value = copyFromBank;
+}
+
+let isLoadingTransactions = ref(false);
+let isLoadingBanks = ref(false);
+
+function changeToBank(bank: any) {
+  toBank.value = bank;
+  if (toBank.value.id === fromBank.value.id) {
+    fromBank.value = {};
+  }
+  closeModalToBanksChoice();
+}
+
+function changeFromBank(bank: any) {
+  fromBank.value = bank;
+  if (fromBank.value.id === toBank.value.id) {
+    toBank.value = {};
+  }
+  closeModalFromBanksChoice();
+}
+
+function checkValidationTransaction() {
+  if (!sumOfTransaction.value || sumOfTransaction.value === "0") {
+    return true;
+  }
+
+  if (!fromBank.value.money || fromBank.value.money === "0") {
+    return true;
+  }
+
+  if (!fromBank.value.id || !toBank.value.id) {
+    return true;
+  }
+
+  if (Number(fromBank.value.money) < Number(sumOfTransaction.value)) {
+    return true;
+  }
+
+  return false;
+}
+
+async function createTransaction() {
+  isLoadingTransactions.value = true;
+  let transaction = {
+    sum: Number(sumOfTransaction.value),
+    fromBankId: fromBank.value.id,
+    toBankId: toBank.value.id,
+    createdUser: user.value.username,
+    type: "transfer",
+  } as Transaction;
+  await storeBanks.createTransaction(transaction);
+  closeModalTransactions();
+  await openModalBanks();
+  sumOfTransaction.value = "";
+  isLoadingTransactions.value = false;
+}
+
+let isShowHistoryTransactions = ref(false);
+
+function openModalHistoryTransactions() {
+  isShowTransactions.value = false;
+  isShowHistoryTransactions.value = true;
+}
+
+function closeModalHistoryTransactions() {
+  isShowTransactions.value = true;
+  isShowHistoryTransactions.value = false;
+}
+
+let idBankForHistory = ref(2);
+function showBankTransactions(id: number) {
+  if (idBankForHistory.value === id) {
+    idBankForHistory.value = 0;
+  } else {
+    idBankForHistory.value = id;
+  }
+}
 </script>
 
 <template>
@@ -1541,6 +1845,7 @@ const typeOfOptions2 = [
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="table-admin-no-pad">
         <div class="bg-gray-50 px-5 w-screen pt-10 max-sm:px-5 pb-5">
+
           <AdvanceReportFilters
             v-if="rows"
             @filtered-rows="handleFilteredRows"
@@ -1700,6 +2005,12 @@ const typeOfOptions2 = [
                     безнал:
                   </h1>
                   <div class="flex items-center justify-center gap-3 mt-1">
+                    <Icon
+                      name="i-material-symbols-shadow-add"
+                      size="30"
+                      class="text-secondary-color hover:opacity-50 cursor-pointer duration-200"
+                      @click="openModalBanks"
+                    />
                     <h1
                       class="font-bold text-secondary-color text-4xl text-center"
                     >
@@ -1841,6 +2152,635 @@ const typeOfOptions2 = [
             @delete-row="deleteRow"
           />
         </div>
+
+        <UModal
+          :ui="{
+            container: 'flex items-center justify-center text-center',
+          }"
+          v-auto-animate
+          v-model="isShowBanks"
+          prevent-close
+        >
+          <UCard
+            v-auto-animate
+            :ui="{
+              ring: '',
+              divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
+          >
+            <template #header>
+              <div class="flex items-center justify-between">
+                <h3
+                  class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+                >
+                  Банки
+                </h3>
+                <Icon
+                  @click="closeModalBanks"
+                  name="i-heroicons-x-mark-20-solid"
+                  size="24"
+                  class="cursor-pointer hover:text-secondary-color duration-200"
+                />
+              </div>
+            </template>
+            <div v-if="!isLoadingBanks" class="text-center">
+              <div class="flex items-start flex-col">
+                <h1 class="mb-2">Выбор активного банка</h1>
+                <USelect
+                  class="w-full"
+                  v-model="idSelectedBank"
+                  :options="banks"
+                  option-attribute="name"
+                  value-attribute="id"
+                  @change="updateBanksData"
+                />
+              </div>
+              <div v-for="bank in banks" class="my-5">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center justify-between w-full">
+                    <div class="flex items-center gap-3">
+                      <img
+                        alt="name"
+                        :src="bank.img"
+                        className="w-10 h-10 rounded-full border-[1px] shadow-inner bg-white"
+                      />
+                      <h1>{{ bank.name }}</h1>
+                    </div>
+                    <h1
+                      :class="{
+                        'text-secondary-color': idSelectedBank === bank.id,
+                      }"
+                      class="text-xl font-semibold"
+                    >
+                      {{ formatNumber(bank.money) }} ₽
+                    </h1>
+                  </div>
+                </div>
+              </div>
+              <UButton
+                @click="openModalTransactions"
+                class="font-semibold"
+                icon="i-mdi-bank"
+                >Перевод между счетами</UButton
+              >
+            </div>
+            <div v-else>
+              <UISpinnerModal />
+            </div>
+          </UCard>
+        </UModal>
+
+        <UModal
+          :ui="{
+            container: 'flex items-center justify-center text-center',
+          }"
+          v-auto-animate
+          v-model="isShowTransactions"
+          prevent-close
+        >
+          <UCard
+            v-auto-animate
+            :ui="{
+              ring: '',
+              divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
+          >
+            <template #header>
+              <div class="flex items-center justify-between">
+                <h3
+                  class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+                >
+                  Транзакции
+                </h3>
+                <Icon
+                  @click="closeModalTransactions"
+                  name="i-heroicons-x-mark-20-solid"
+                  size="24"
+                  class="cursor-pointer hover:text-secondary-color duration-200"
+                />
+              </div>
+            </template>
+            <div v-if="!isLoadingTransactions">
+              <div
+                :class="{ 'bg-red-200': !fromBank.id }"
+                @click="openModalFromBanksChoice"
+                class="bg-gray-100 flex items-center justify-between rounded-md px-5 py-2 font-semibold space-y-1 hover:cursor-pointer"
+              >
+                <div>
+                  <h1
+                    :class="{ 'text-red-500': !fromBank.id }"
+                    class="text-muted-color text-sm"
+                  >
+                    Откуда
+                  </h1>
+                  <div
+                    v-if="
+                      fromBank.money ||
+                      fromBank.money === '0' ||
+                      fromBank.money === 0
+                    "
+                    class="font-bold"
+                  >
+                    {{ formatNumber(fromBank.money) }} ₽
+                  </div>
+                  <h1 v-if="fromBank.name" class="text-muted-color">
+                    {{ fromBank.name }}
+                  </h1>
+                </div>
+                <div
+                  v-if="fromBank.img"
+                  class="text-white px-3 py-2 rounded-md"
+                >
+                  <img
+                    alt="name"
+                    :src="fromBank.img"
+                    className="w-10 h-10 rounded-full border-[1px] shadow-inner bg-white"
+                  />
+                </div>
+              </div>
+
+              <div class="text-center my-5 flex items-center justify-center">
+                <div
+                  @click="changeBanks"
+                  class="hover:text-white max-w-[40px] rounded-full pt-1 px-2 border-[1px] shadow-inner cursor-pointer duration-200 hover:border-secondary-color hover:shadow-none hover:bg-secondary-color font-bold"
+                >
+                  <Icon
+                    class="rotate-90"
+                    name="i-system-uicons-reverse"
+                    size="24"
+                  />
+                </div>
+              </div>
+
+              <div
+                @click="openModalToBanksChoice"
+                class="bg-gray-100 flex items-center justify-between rounded-md px-5 py-2 font-semibold space-y-1 hover:cursor-pointer"
+                :class="{ 'bg-red-200': !toBank.id }"
+              >
+                <div>
+                  <h1
+                    :class="{ 'text-red-500': !toBank.id }"
+                    class="text-muted-color text-sm"
+                  >
+                    Куда
+                  </h1>
+                  <div
+                    v-if="
+                      toBank.money || toBank.money === '0' || toBank.money === 0
+                    "
+                    class="font-bold"
+                  >
+                    {{ formatNumber(toBank.money) }} ₽
+                  </div>
+                  <h1 v-if="toBank.name" class="text-muted-color">
+                    {{ toBank.name }}
+                  </h1>
+                </div>
+                <div v-if="toBank.img" class="text-white px-3 py-2 rounded-md">
+                  <img
+                    alt="name"
+                    :src="toBank.img"
+                    className="w-10 h-10 rounded-full border-[1px] shadow-inner bg-white"
+                  />
+                </div>
+              </div>
+
+              <div
+                class="bg-gray-100 mt-5 flex items-center justify-between rounded-md px-5 py-2 font-semibold space-y-1"
+              >
+                <div class="w-full">
+                  <h1 class="text-muted-color mb-2 text-sm">Сколько</h1>
+                  <div class="flex items-center justify-between gap-2">
+                    <UInput
+                      @input="validationSumOfTransaction"
+                      class="w-full"
+                      v-model="sumOfTransaction"
+                      name="searchingQuery"
+                      autocomplete="off"
+                      :ui="{ icon: { trailing: { pointer: '' } } }"
+                    >
+                      <template #trailing>
+                        <UButton
+                          v-show="sumOfTransaction !== ''"
+                          color="gray"
+                          variant="link"
+                          icon="i-heroicons-x-mark-20-solid"
+                          :padded="false"
+                          @click="sumOfTransaction = ''"
+                        />
+                      </template>
+                    </UInput>
+                    <Icon
+                      name="i-material-symbols-currency-ruble-rounded"
+                      size="24"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="flex items-center justify-center w-full mt-5 gap-3 max-sm:flex-col"
+              >
+                <UButton
+                  :disabled="checkValidationTransaction()"
+                  @click="createTransaction"
+                  class="font-semibold w-full max-w-[200px]"
+                  icon="i-icon-park-outline-bank-transfer"
+                  >Перевести</UButton
+                >
+                <UButton
+                  @click="openModalHistoryTransactions()"
+                  class="font-semibold w-full max-w-[200px]"
+                  icon="i-mingcute-history-anticlockwise-line"
+                  >История транзакций</UButton
+                >
+              </div>
+            </div>
+            <div v-else>
+              <UISpinnerModal />
+            </div>
+          </UCard>
+        </UModal>
+
+        <UModal
+          :ui="{
+            container: 'flex items-center justify-center text-center',
+          }"
+          v-auto-animate
+          v-model="isShowToBanksChoice"
+          prevent-close
+        >
+          <UCard
+            v-auto-animate
+            :ui="{
+              ring: '',
+              divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
+          >
+            <template #header>
+              <div class="flex items-center justify-between">
+                <h3
+                  class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+                >
+                  Куда
+                </h3>
+                <Icon
+                  @click="closeModalToBanksChoice"
+                  name="i-heroicons-x-mark-20-solid"
+                  size="24"
+                  class="cursor-pointer hover:text-secondary-color duration-200"
+                />
+              </div>
+            </template>
+            <div class="text-center">
+              <div
+                v-for="bank in banks"
+                class="mb-5 hover:bg-secondary-color px-3 py-3 duration-200 rounded-md cursor-pointer border-[1px] hover:text-white"
+                @click="changeToBank(bank)"
+              >
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center justify-between w-full">
+                    <div class="flex items-center gap-3">
+                      <img
+                        alt="name"
+                        :src="bank.img"
+                        className="w-10 h-10 rounded-full border-[1px] shadow-inner bg-white"
+                      />
+                      <h1>{{ bank.name }}</h1>
+                    </div>
+                    <h1 class="text-xl font-semibold">
+                      {{ formatNumber(bank.money) }} ₽
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </UCard>
+        </UModal>
+
+        <UModal
+          :ui="{
+            container: 'flex items-center justify-center text-center',
+          }"
+          v-auto-animate
+          v-model="isShowFromBanksChoice"
+          prevent-close
+        >
+          <UCard
+            v-auto-animate
+            :ui="{
+              ring: '',
+              divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
+          >
+            <template #header>
+              <div class="flex items-center justify-between">
+                <h3
+                  class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+                >
+                  Откуда
+                </h3>
+                <Icon
+                  @click="closeModalFromBanksChoice"
+                  name="i-heroicons-x-mark-20-solid"
+                  size="24"
+                  class="cursor-pointer hover:text-secondary-color duration-200"
+                />
+              </div>
+            </template>
+            <div class="text-center">
+              <div
+                v-for="bank in banks"
+                class="mb-5 hover:bg-secondary-color px-3 py-3 duration-200 rounded-md cursor-pointer border-[1px] hover:text-white"
+                @click="changeFromBank(bank)"
+              >
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center justify-between w-full">
+                    <div class="flex items-center gap-3">
+                      <img
+                        alt="name"
+                        :src="bank.img"
+                        className="w-10 h-10 rounded-full border-[1px] shadow-inner bg-white"
+                      />
+                      <h1>{{ bank.name }}</h1>
+                    </div>
+                    <h1 class="text-xl font-semibold">
+                      {{ formatNumber(bank.money) }} ₽
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </UCard>
+        </UModal>
+
+        <UModal
+          :ui="{
+            container: 'flex items-center justify-center text-center',
+          }"
+          v-auto-animate
+          v-model="isShowHistoryTransactions"
+          prevent-close
+        >
+          <UCard
+            v-auto-animate
+            :ui="{
+              ring: '',
+              divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
+          >
+            <template #header>
+              <div class="flex items-center justify-between">
+                <h3
+                  class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+                >
+                  История транзакций
+                </h3>
+                <Icon
+                  @click="closeModalHistoryTransactions"
+                  name="i-heroicons-x-mark-20-solid"
+                  size="24"
+                  class="cursor-pointer hover:text-secondary-color duration-200"
+                />
+              </div>
+            </template>
+            <div class="text-center">
+              <div
+                v-for="bank in banks"
+                class="mb-5 px-3 py-3 duration-200 rounded-md cursor-pointer border-[1px]"
+                @click="showBankTransactions(bank.id)"
+              >
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center justify-between w-full">
+                    <div class="flex items-center gap-3">
+                      <img
+                        alt="name"
+                        :src="bank.img"
+                        className="w-10 h-10 rounded-full border-[1px] shadow-inner bg-white"
+                      />
+                      <h1>{{ bank.name }}</h1>
+                    </div>
+                  </div>
+                </div>
+                <div v-if="idBankForHistory === bank.id">
+                  <div
+                    v-if="
+                      transactions.filter(
+                        (row) =>
+                          (row.toBankId === bank.id ||
+                            row.fromBankId === bank.id) &&
+                          row.type === 'transfer'
+                      ).length
+                    "
+                  >
+                    <h1 class="text-xl mt-3 mb-3">Переводы</h1>
+
+                    <div
+                      class="bg-gray-100 py-2 px-1 max-h-[300px] overflow-y-scroll rounded-sm"
+                    >
+                      <div
+                        v-for="transaction in transactions.filter(
+                          (row) =>
+                            (row.toBankId === bank.id ||
+                              row.fromBankId === bank.id) &&
+                            row.type === 'transfer'
+                        )"
+                      >
+                        <div
+                          class="bg-white shadow-md rounded-md py-1 px-2 my-5"
+                        >
+                          <div
+                            class="grid grid-cols-3 gap-3 max-sm:gap-0 max-sm:flex max-sm:flex-col max-sm:items-center"
+                          >
+                            <div class="flex items-center gap-3">
+                              <img
+                                alt="name"
+                                :src="transaction.fromBank.img"
+                                className="w-6 h-6 rounded-full border-[1px] shadow-inner bg-white"
+                              />
+                              <h1>{{ transaction.fromBank.name }}</h1>
+                            </div>
+                            <div>
+                              <div class="italic">
+                                {{ formatNumber(transaction.sum) }} ₽
+                              </div>
+                              <Icon
+                                :class="{
+                                  'text-red-500':
+                                    transaction.fromBankId === bank.id,
+                                  'text-green-500':
+                                    transaction.toBankId === bank.id,
+                                }"
+                                name="i-material-symbols-line-end-arrow-notch"
+                                size="24"
+                                class="w-full max-sm:rotate-90"
+                              />
+                            </div>
+                            <div class="flex items-center gap-3">
+                              <img
+                                alt="name"
+                                :src="transaction.toBank.img"
+                                className="w-6 h-6 rounded-full border-[1px] shadow-inner bg-white"
+                              />
+                              <h1>{{ transaction.toBank.name }}</h1>
+                            </div>
+                          </div>
+                          <div>
+                            <h1 class="text-sm italic text-muted-color mt-2">
+                              {{
+                                storeUsers.getNormalizedDate(
+                                  transaction.created_at
+                                )
+                              }}, {{ transaction.createdUser }}
+                            </h1>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    v-if="
+                      transactions.filter(
+                        (row) =>
+                          row.toBankId === bank.id &&
+                          row.fromBankId === bank.id &&
+                          row.type === 'incoming'
+                      ).length
+                    "
+                  >
+                    <h1 class="text-xl mt-3 mb-3">Приход</h1>
+
+                    <div
+                      class="bg-gray-100 py-2 px-1 max-h-[150px] overflow-y-scroll rounded-sm"
+                    >
+                      <div
+                        v-for="transaction in transactions.filter(
+                          (row) =>
+                            row.toBankId === bank.id &&
+                            row.fromBankId === bank.id &&
+                            row.type === 'incoming'
+                        )"
+                      >
+                        <div
+                          class="bg-white shadow-md rounded-md py-1 px-2 my-5"
+                        >
+                          <div
+                            class="grid grid-cols-3 gap-3 max-sm:gap-0 max-sm:flex max-sm:flex-col max-sm:items-center"
+                          >
+                            <div class="flex items-center gap-3">
+                              <img
+                                alt="name"
+                                src="@/assets/images/dp_advance.png"
+                                className="w-6 h-6 rounded-full border-[1px] shadow-inner bg-white"
+                              />
+                              <h1>DAROM.PRO</h1>
+                            </div>
+                            <div>
+                              <div class="italic">
+                                {{ formatNumber(transaction.sum) }} ₽
+                              </div>
+                              <Icon
+                                name="i-material-symbols-line-end-arrow-notch"
+                                size="24"
+                                class="w-full text-green-500 max-sm:rotate-90"
+                              />
+                            </div>
+                            <div class="flex items-center gap-3">
+                              <img
+                                alt="name"
+                                :src="transaction.toBank.img"
+                                className="w-6 h-6 rounded-full border-[1px] shadow-inner bg-white"
+                              />
+                              <h1>{{ transaction.toBank.name }}</h1>
+                            </div>
+                          </div>
+                          <div>
+                            <h1 class="text-sm italic text-muted-color mt-2">
+                              {{
+                                storeUsers.getNormalizedDate(
+                                  transaction.created_at
+                                )
+                              }}, {{ transaction.createdUser }}
+                            </h1>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    v-if="
+                      transactions.filter(
+                        (row) =>
+                          row.toBankId === bank.id &&
+                          row.fromBankId === bank.id &&
+                          row.type === 'expenditure'
+                      ).length
+                    "
+                  >
+                    <h1 class="text-xl mt-3 mb-3">Расход</h1>
+
+                    <div
+                      class="bg-gray-100 py-2 px-1 max-h-[150px] overflow-y-scroll rounded-sm"
+                    >
+                      <div
+                        v-for="transaction in transactions.filter(
+                          (row) =>
+                            row.toBankId === bank.id &&
+                            row.fromBankId === bank.id &&
+                            row.type === 'expenditure'
+                        )"
+                      >
+                        <div
+                          class="bg-white shadow-md rounded-md py-1 px-2 my-5"
+                        >
+                          <div
+                            class="grid grid-cols-3 gap-3 max-sm:gap-0 max-sm:flex max-sm:flex-col max-sm:items-center"
+                          >
+                            <div class="flex items-center gap-3">
+                              <img
+                                alt="name"
+                                :src="transaction.toBank.img"
+                                className="w-6 h-6 rounded-full border-[1px] shadow-inner bg-white"
+                              />
+                              <h1>{{ transaction.toBank.name }}</h1>
+                            </div>
+                            <div>
+                              <div class="italic">
+                                {{ formatNumber(transaction.sum) }} ₽
+                              </div>
+                              <Icon
+                                name="i-material-symbols-line-end-arrow-notch"
+                                size="24"
+                                class="w-full text-red-500 max-sm:rotate-90"
+                              />
+                            </div>
+                            <div class="flex items-center gap-3">
+                              <img
+                                alt="name"
+                                src="@/assets/images/dp_advance.png"
+                                className="w-6 h-6 rounded-full border-[1px] shadow-inner bg-white"
+                              />
+                              <h1>DAROM.PRO</h1>
+                            </div>
+                          </div>
+                          <div>
+                            <h1 class="text-sm italic text-muted-color mt-2">
+                              {{
+                                storeUsers.getNormalizedDate(
+                                  transaction.created_at
+                                )
+                              }}, {{ transaction.createdUser }}
+                            </h1>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </UCard>
+        </UModal>
 
         <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
           <template v-slot:icon-header>

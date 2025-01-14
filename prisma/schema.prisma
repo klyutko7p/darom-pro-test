@@ -447,11 +447,34 @@ model Task {
 }
 
 model PVZPercent {
-  id       Int     @id @default(autoincrement())
-  pvzId    Int
-  pvz      PVZ     @relation(fields: [pvzId], references: [id])
-  wb       Int     @default(10)
-  ozon     Int     @default(10)
-  ym       Int     @default(10)
-  flag     String  @default("OurRansom")
+  id    Int    @id @default(autoincrement())
+  pvzId Int
+  pvz   PVZ    @relation(fields: [pvzId], references: [id])
+  wb    Int    @default(10)
+  ozon  Int    @default(10)
+  ym    Int    @default(10)
+  flag  String @default("OurRansom")
+}
+
+model Bank {
+  id       Int           @id @default(autoincrement())
+  name     String
+  img      String?
+  main     Boolean       @default(false)
+  money    Int           @default(0)
+  outgoing Transaction[] @relation("OutgoingTransactions")
+  incoming Transaction[] @relation("IncomingTransactions")
+}
+
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  fromBankId  Int
+  fromBank    Bank     @relation("OutgoingTransactions", fields: [fromBankId], references: [id])
+  toBankId    Int
+  toBank      Bank     @relation("IncomingTransactions", fields: [toBankId], references: [id])
+  sum         Int
+  created_at  DateTime @default(now())
+  createdUser String
+  type        String
+  idRow       Int?
 }

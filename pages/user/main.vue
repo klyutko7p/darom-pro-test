@@ -88,7 +88,7 @@ function requestPermission() {
             />
           </div>
         </div>
-        <h1 v-if="rows.length" class="text-red-500 font-semibold text-xl">
+        <h1 v-if="rows.length" class="text-red-500 font-semibold text-base">
           У Вас есть невыполненные задачи!
         </h1>
         <h1

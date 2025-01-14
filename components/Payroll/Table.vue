@@ -172,6 +172,27 @@ function updateCurrentPageData() {
   filterRowsCompanyAndPVZ();
 }
 
+function formatNumber(number: number | string) {
+  let numberString = Math.ceil(number).toString();
+
+  if (numberString.length <= 3) {
+    return numberString;
+  }
+
+  let formattedString = "";
+  let reminder = numberString.length % 3;
+
+  if (reminder !== 0) {
+    formattedString += numberString.slice(0, reminder) + " ";
+  }
+
+  for (let i = reminder; i < numberString.length; i += 3) {
+    formattedString += numberString.slice(i, i + 3) + " ";
+  }
+
+  return formattedString.slice(0, -1);
+}
+
 let arrayWithModifiedRows = ref<Array<IPayroll>>([]);
 function getRowByIdFromInput(row: IPayroll) {
   arrayWithModifiedRows.value.push(row);
@@ -713,21 +734,21 @@ const toggleDropdown = (rowId: any) => {
           Выплачен аванс по ЗП:
           {{
             typeof getAllSumAdvance() === "number"
-              ? getAllSumAdvance().toFixed(0)
+              ? formatNumber(getAllSumAdvance().toFixed(0))
               : 0
           }}
           ₽
         </h1>
         <h1 class="font-medium text-lg max-sm:text-base">
           Выплачено ЗП:
-          {{ typeof getAllSumZP() === "number" ? getAllSumZP().toFixed(0) : 0 }}
+          {{ typeof getAllSumZP() === "number" ? formatNumber(getAllSumZP().toFixed(0)) : 0 }}
           ₽
         </h1>
         <h1 class="font-medium text-lg max-sm:text-base">
           Итого выплачено за месяц до удержаний:
           {{
             typeof getAllSumZPMonthWithoutDeductions() === "number"
-              ? getAllSumZPMonthWithoutDeductions().toFixed(0)
+              ? formatNumber(getAllSumZPMonthWithoutDeductions().toFixed(0))
               : 0
           }}
           ₽
@@ -736,7 +757,7 @@ const toggleDropdown = (rowId: any) => {
           Итого выплачено за месяц после удержаний:
           {{
             typeof getAllSumZPMonth() === "number"
-              ? getAllSumZPMonth().toFixed(0)
+              ? formatNumber(getAllSumZPMonth().toFixed(0))
               : 0
           }}
           ₽
