@@ -99,49 +99,66 @@ let markers = [
     coords: [47.98958366983051, 37.8955255423278],
     commentary:
       "ул. Антропова 16. Вход «ремонт обуви». Нет примерочной. Пн-пт 09:00-17:00; Сб 09:00-14:00; Выходной - воскресенье",
+    workTime: "Пн-пт 09:00-17:00; Сб 09:00-14:00; Выходной - воскресенье",
+    info: "Вход «ремонт обуви». Нет примерочной",
   },
   {
     id: 2,
     coords: [47.995839, 37.846517],
     commentary: "ул. Харитоново, 8. Есть примерочная. Ежедневно 9:00-18:00",
+    workTime: "Ежедневно 9:00-18:00",
+    info: "Есть примерочная",
   },
   {
     id: 3,
     coords: [47.955214, 37.963109],
     commentary: "ул. Палладина, 16. Есть примерочная. Ежедневно 9:00-18:00",
+    workTime: "Ежедневно 9:00-18:00",
+    info: "Есть примерочная",
   },
   {
     id: 4,
     coords: [47.945142, 37.960908],
     commentary:
       "ул. Нартова, 1. Возле магазина «Добрый». Есть примерочная. Ежедневно 9:00-18:00",
+    workTime: "Ежедневно 9:00-18:00",
+    info: "Возле магазина «Добрый». Есть примерочная",
   },
   {
     id: 5,
     coords: [47.946192, 37.90365],
     commentary: "ул. Дудинская 4. Домашний пункт. Ежедневно 10:00-21:00",
+    workTime: "Ежедневно 10:00-21:00",
+    info: "Домашний пункт",
   },
   {
     id: 8,
-    coords: [47.134833, 37.58217 ],
+    coords: [47.134833, 37.58217],
     commentary:
       "ул. Макара Мазая, 37А. Есть примерочная. Ежедневно 09:00-18:00",
+    workTime: "Ежедневно 09:00-18:00",
+    info: "Есть примерочная",
   },
   {
     id: 9,
     coords: [47.160469, 37.587497],
     commentary: "ул. 8 Марта, 77. Есть примерочная. Ежедневно 09:00-19:00",
+    workTime: "Ежедневно 09:00-19:00",
+    info: "Есть примерочная",
   },
   {
     id: 10,
     coords: [47.045055, 37.479126],
     commentary:
       "ул. Азовской Военной Флотилии, 2. Вход магазин «Радуга». Ежедневно 9:00-20:00",
+    workTime: "Ежедневно 9:00-20:00",
+    info: "Вход магазин «Радуга»",
   },
   {
     id: 11,
     coords: [47.100255, 37.662614],
     commentary: "ул. Азовстальская, 131. Ежедневно 9:00-19:00",
+    workTime: "Ежедневно 09:00-19:00",
   },
 ];
 
@@ -167,18 +184,18 @@ async function getPercents() {
 
   markers = markers.map((marker) => {
     const row = rows.value?.find(
-      (r) => r.pvz.name.includes(marker.id.toString()) && r.flag === "ClientRansom"
+      (r) =>
+        r.pvz.name.includes(marker.id.toString()) && r.flag === "ClientRansom"
     );
     if (row && row.wb) {
-      marker.commentary += `. Доставка Ваших заказов: Wildberries - ${row.wb}%, Ozon - ${row.ozon}%, Я.Маркет - ${row.ym}%`;
+      marker.commentary += `. Доставка Ваших заказов: Wildberries - ${row.wb}%, Ozon - ${row.ozon}%, Яндекс Маркет - ${row.ym}%`;
     }
     return marker;
   });
 
   markers = markers.map((marker) => {
     const row = rows.value?.find(
-      (r) =>
-        r.pvz.name.includes(marker.id.toString()) && r.flag === "OurRansom"
+      (r) => r.pvz.name.includes(marker.id.toString()) && r.flag === "OurRansom"
     );
     if (row && row.wb) {
       marker.commentary += `. Доставка заказанных товаров: 10%`;
@@ -204,6 +221,26 @@ useSeoMeta({
   ogDescription:
     "Доставка из интернет-магазинов WILDBERRIES, OZON, ЯНДЕКС МАРКЕТ И ДР. По всем вопросам и для оформления заказа звоните: +7(949)612-47-60",
 });
+
+let isShowModalInfo = ref(false);
+let selectedPVZ = ref({} as any);
+async function showInfo(arrayCoordinates: Array<number>) {
+  if (!counter.value) {
+    zoomValue.value = 8;
+    coordinates.value = arrayCoordinates;
+    selectedPVZ.value = markers.find(
+      (item) => item.coords[0] === arrayCoordinates[0]
+    );
+  } else {
+    zoomValue.value = 8;
+    coordinates.value = arrayCoordinates;
+    selectedPVZ.value = markers.find(
+      (item) => item.coords[0] === arrayCoordinates[0]
+    );
+  }
+  counter.value++;
+  isShowModalInfo.value = true;
+}
 </script>
 
 <template>
@@ -336,12 +373,12 @@ useSeoMeta({
                 <YandexMarker
                   v-for="marker in markers"
                   :coordinates="marker.coords"
-                  @click="changeAddress(marker.coords)"
+                  @click="changeAddress(marker.coords), showInfo(marker.coords)"
                   :marker-id="marker.id"
                 >
-                  <template #component>
+                  <!-- <template #component>
                     <CustomBalloonMainPage :commentary="marker.commentary" />
-                  </template>
+                  </template> -->
                 </YandexMarker>
               </YandexMap>
             </ClientOnly>
@@ -357,6 +394,73 @@ useSeoMeta({
         >
       </div>
     </div>
+
+    <UModal
+      :ui="{
+        container: 'flex items-center justify-center text-center',
+      }"
+      v-auto-animate
+      v-model="isShowModalInfo"
+      prevent-close
+    >
+      <UCard
+        v-auto-animate
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3
+              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+            >
+              Информация о пункте выдачи
+            </h3>
+            <Icon
+              @click="isShowModalInfo = !isShowModalInfo"
+              name="i-heroicons-x-mark-20-solid"
+              size="24"
+              class="cursor-pointer hover:text-secondary-color duration-200"
+            />
+          </div>
+        </template>
+        <div>
+          <div class="mb-3">
+            <h1 class="font-bold text-xl max-sm:text-base">Пункт выдачи</h1>
+            <h1>
+              {{ addressItems.find((row) => row.id === selectedPVZ.id)?.text }}
+            </h1>
+          </div>
+          <div class="mb-3" v-if="selectedPVZ.info">
+            <h1 class="font-bold text-xl max-sm:text-base">Дополнительная информация</h1>
+            <h1>
+              {{ selectedPVZ.info }}
+            </h1>
+          </div>
+          <div class="mb-3">
+            <h1 class="font-bold text-xl max-sm:text-base">Время работы</h1>
+            <h1>
+              {{ selectedPVZ.workTime }}
+            </h1>
+          </div>
+          <div class="mb-3">
+            <h1 class="font-bold text-xl max-sm:text-base">Доставка Ваших заказов</h1>
+            <h1>
+              {{
+                selectedPVZ.commentary
+                  .split("Доставка Ваших заказов:")[1]
+                  .split(".")[0]
+              }}
+            </h1>
+          </div>
+          <div class="mb-3">
+            <h1 class="font-bold text-xl max-sm:text-base">Доставка заказанных товаров</h1>
+            <h1>Все маркетплейсы - 10%</h1>
+          </div>
+        </div>
+      </UCard>
+    </UModal>
 
     <UINewModalEditNoPadding
       v-show="isShowModal"
