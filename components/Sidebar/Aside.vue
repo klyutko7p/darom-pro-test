@@ -172,6 +172,7 @@ let usersOfIssued = ref([
                   user.username !== 'Миллер' &&
                   user.username !== 'Косой' &&
                   user.username !== 'Василенко' &&
+                  user.username !== 'Сошников' &&
                   user.username !== '+7'
                 "
               >
@@ -272,6 +273,7 @@ let usersOfIssued = ref([
                   user.role === 'ADMIN' ||
                   user.role === 'ADMINISTRATOR' ||
                   user.username === 'Власенкова' ||
+                  user.username === 'Сошников' ||
                   usersOfIssued.includes(user.username)
                 "
               >
@@ -518,6 +520,7 @@ let usersOfIssued = ref([
                   user.role === 'PVZ' ||
                   user.role === 'COURIER' ||
                   user.role === 'PPVZ' ||
+                  user.username === 'Сошников' ||
                   user.role === 'RMANAGER'
                 "
               >
@@ -549,6 +552,7 @@ let usersOfIssued = ref([
                   user.role === 'OFFICE' ||
                   user.role === 'COURIER' ||
                   user.username === 'Волошина' ||
+                  user.username === 'Сошников' ||
                   user.role === 'RMANAGER'
                 "
               >
@@ -669,7 +673,8 @@ let usersOfIssued = ref([
                   user.username === 'Мешков' ||
                   user.username === 'Директор' ||
                   user.username === 'Горцуева' ||
-                  user.username === 'Власенкова'
+                  user.username === 'Власенкова' ||
+                  user.username === 'Сошников'
                 "
               >
                 <Icon
@@ -689,7 +694,8 @@ let usersOfIssued = ref([
                 v-if="
                   user.role === 'RMANAGER' ||
                   user.role === 'ADMIN' ||
-                  user.role === 'ADMINISTRATOR'
+                  user.role === 'ADMINISTRATOR' ||
+                  user.username === 'Сошников'
                 "
               >
                 <Icon
