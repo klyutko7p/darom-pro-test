@@ -103,21 +103,46 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
       if (cachedAdvanceReportRows) {
         return cachedAdvanceReportRows;
       } else {
-        let { data }: any = await useFetch("/api/advance-report/get-rows", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ user }),
-        });
-        cachedAdvanceReportRows = data.value;
-        return cachedAdvanceReportRows;
+        let response = await fetch(
+          "/api/advance-report/get-rows",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/octet-stream",
+            },
+            body: JSON.stringify({ user }),
+          }
+        );
+
+        const arrayBuffer = await response.arrayBuffer();
+        const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+        return unpacked.map(mapBackToOriginalFields);
       }
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
       }
     }
+  }
+
+  function mapBackToOriginalFields(row: any) {
+    const originalRow = {} as IOurRansom;
+
+    if (row.id !== undefined) originalRow.id = row.id;
+    if (row.dpz !== undefined) originalRow.PVZ = row.dpz;
+    if (row.da !== undefined) originalRow.date = row.da;
+    if (row.iu !== undefined) originalRow.issuedUser = row.iu;
+    if (row.ex !== undefined) originalRow.expenditure = row.ex;
+    if (row.te !== undefined) originalRow.typeOfExpenditure = row.te;
+    if (row.nt !== undefined) originalRow.notation = row.nt;
+    if (row.cm !== undefined) originalRow.company = row.cm;
+    if (row.sd !== undefined) originalRow.supportingDocuments = row.sd;
+    if (row.ty !== undefined) originalRow.type = row.ty;
+    if (row.cu !== undefined) originalRow.createdUser = row.cu;
+    if (row.r !== undefined) originalRow.received = row.r;
+    if (row.c !== undefined) originalRow.created_at = row.c;
+
+    return originalRow;
   }
 
   async function getAdvancedReportsForSidebar() {

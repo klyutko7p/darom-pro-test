@@ -100,7 +100,6 @@ let usersOfIssued = ref([
   "Шарафаненко",
   "Шведова",
 ]);
-
 </script>
 
 <template>
@@ -581,6 +580,27 @@ let usersOfIssued = ref([
                 >
                   {{ quantityRequiredARRowsAdmin }}
                 </span>
+              </div>
+            </li>
+            <li>
+              <div
+                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
+                @click="router.push('/monthly-payments')"
+                v-if="
+                  user.username === 'Директор' ||
+                  user.username === 'Власенкова' ||
+                  user.username === 'Шведова' ||
+                  user.username === 'Мешков'
+                "
+              >
+                <Icon
+                  class="text-gray-500 transition duration-75 group-hover:text-gray-900"
+                  name="i-material-symbols-calendar-month"
+                  size="24"
+                />
+                <span class="flex-1 ms-3 whitespace-nowrap"
+                  >Ежемесячные платежи</span
+                >
               </div>
             </li>
             <li>

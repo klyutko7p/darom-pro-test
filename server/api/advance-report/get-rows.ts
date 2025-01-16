@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import * as msgpack from "@msgpack/msgpack";
 
 const prisma = new PrismaClient();
 
@@ -34,7 +35,30 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    return rows;
+    const processedRows = rows.map((row) => {
+      const newRow = {};
+
+      if (row.id !== undefined) newRow.id = row.id;
+      if (row.PVZ !== null) newRow.dpz = row.PVZ;
+      if (row.date !== undefined) newRow.da = row.date;
+      if (row.issuedUser !== null) newRow.iu = row.issuedUser;
+      if (row.expenditure !== null) newRow.ex = row.expenditure;
+      if (row.typeOfExpenditure !== undefined)
+        newRow.te = row.typeOfExpenditure;
+      if (row.notation !== null) newRow.nt = row.notation;
+      if (row.company !== null) newRow.cm = row.company;
+      if (row.supportingDocuments !== undefined)
+        newRow.sd = row.supportingDocuments;
+      if (row.type !== undefined) newRow.ty = row.type;
+      if (row.createdUser !== undefined) newRow.cu = row.createdUser;
+      if (row.received !== undefined) newRow.r = row.received;
+      if (row.created_at !== undefined) newRow.c = row.created_at;
+
+      return newRow;
+    });
+
+    const packed = msgpack.encode(processedRows);
+    return packed;
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);

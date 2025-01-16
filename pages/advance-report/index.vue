@@ -2598,7 +2598,11 @@ function showBankTransactions(id: number) {
                                 :src="transaction.fromBank.img"
                                 className="w-6 h-6 rounded-full border-[1px] shadow-inner bg-white"
                               />
-                              <h1>{{ transaction.fromBank.name }}</h1>
+                              <h1
+                                class="whitespace-normal overflow-auto break-all"
+                              >
+                                {{ transaction.fromBank.name }}
+                              </h1>
                             </div>
                             <div>
                               <div class="italic">
@@ -2622,7 +2626,11 @@ function showBankTransactions(id: number) {
                                 :src="transaction.toBank.img"
                                 className="w-6 h-6 rounded-full border-[1px] shadow-inner bg-white"
                               />
-                              <h1>{{ transaction.toBank.name }}</h1>
+                              <h1
+                                class="whitespace-normal overflow-auto break-all"
+                              >
+                                {{ transaction.toBank.name }}
+                              </h1>
                             </div>
                           </div>
                           <div>
