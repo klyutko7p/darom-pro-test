@@ -2,6 +2,9 @@
 import { useToast } from "vue-toastification";
 import Cookies from "js-cookie";
 
+import ru from "date-fns/locale/ru";
+import { format } from "date-fns";
+
 let toast = useToast();
 
 const route = useRoute();
@@ -47,11 +50,13 @@ function openModal(row: IOurRansom) {
     rowData.value = {} as IOurRansom;
     rowData.value.fromName = "";
   }
+  isShowModalValue.value = true;
 }
 
 function closeModal() {
   isOpen.value = false;
   rowData.value = {} as IOurRansom;
+  isShowModalValue.value = false;
 }
 
 async function updateDeliveryRow(obj: any) {
@@ -460,6 +465,55 @@ async function updateOnlineMoneyRowsStatus() {
 let updatedPriceTwoPercent = ref(0);
 let itemsId = ref<Array<number[]>>();
 let isOpenOnlineStatus = ref(false);
+
+let isShowModalValue = ref(false);
+
+async function clearRow(id: number) {
+  let answer = confirm("Вы точно хотите очистить данную строку?");
+  if (answer) {
+    isLoading.value = true;
+    await storeRansom.clearRansomRow(id, "OurRansom");
+    filteredRows.value = await storeRansom.getRansomRowsOurRansom();
+    rows.value = filteredRows.value;
+    isLoading.value = false;
+  }
+}
+
+async function checkPercent() {
+  if (rowData.value.dispatchPVZ) {
+    if (pvzPercent.value) {
+      let percentPVZ = pvzPercent.value.find(
+        (row: any) =>
+          row.pvz.name === rowData.value.dispatchPVZ && row.flag === "OurRansom"
+      ) as any;
+      if (rowData.value.productLink) {
+        if (rowData.value.productLink.includes("wildberries")) {
+          rowData.value.percentClient = percentPVZ.wb;
+        } else if (rowData.value.productLink.includes("ozon")) {
+          rowData.value.percentClient = percentPVZ.ozon;
+        } else if (rowData.value.productLink.includes("yandex")) {
+          rowData.value.percentClient = percentPVZ.ym;
+        }
+      }
+    }
+  }
+}
+
+let additionallies = [
+  { name: "Отменить", value: "" },
+  { name: "Оплата наличными", value: "Оплата наличными" },
+  { name: "Оплачено онлайн", value: "Оплачено онлайн" },
+  { name: "Отказ клиент", value: "Отказ клиент" },
+  { name: "Отказ брак", value: "Отказ брак" },
+  { name: "Отказ подмена", value: "Отказ подмена" },
+];
+
+function onDateInput(event: any) {
+  if (event.target.value === "") {
+    console.log("Дата удалена!");
+    rowData.value.additionally = "";
+  }
+}
 </script>
 
 <template>
@@ -490,8 +544,8 @@ let isOpenOnlineStatus = ref(false);
       </div>
     </div>
     <div v-if="user.role === 'ADMIN'">
-      <NuxtLayout name="admin">
-        <div v-if="!isLoading" class="mt-3 max-[400px]:mt-20">
+      <NuxtLayout name="table-admin-no-pad">
+        <div v-if="!isLoading" class="px-5 pt-5 max-sm:px-5 pb-5 w-screen">
           <div>
             <SpreadsheetsOurRansomFilters
               v-if="rows"
@@ -517,365 +571,488 @@ let isOpenOnlineStatus = ref(false);
             :rows="filteredRows"
             :user="user"
             @delete-row="deleteRow"
+            @clear-row="clearRow"
             @open-modal="openModal"
             @delete-selected-rows="deleteSelectedRows"
             @update-delivery-rows="updateDeliveryRows"
             @create-copy-row="createCopyRow"
-            :pvz-link="pvzLink"
             @show-deleted-rows="showDeletedRows"
+            :isShowModalValue="isShowModalValue"
+            :pvz-link="pvzLink"
           />
 
-          <UIModal v-show="isOpen" @close-modal="closeModal">
+          <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
+            <template v-slot:icon-header>
+              <Icon size="24" name="material-symbols:task-alt" />
+            </template>
             <template v-slot:header>
               <div class="custom-header" v-if="rowData.id">
-                Изменение строки с ID - <b> {{ rowData.id }}</b>
+                Изменение: <b> {{ rowData.id }}</b>
               </div>
               <div class="custom-header" v-else>Создание новой строки</div>
             </template>
-            <div class="text-black">
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.fromName1 === 'READ' || user.fromName1 === 'WRITE'"
-              >
-                <label for="fromName" class="max-sm:text-sm"
-                  >Телефон <sup>*</sup></label
+            <template v-slot:body>
+              <div class="text-black">
+                <div
+                  v-if="user.fromName1 === 'READ' || user.fromName1 === 'WRITE'"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
                 >
-                <div>
-                  <input
-                    :disabled="user.fromName1 === 'READ'"
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.fromName"
-                    @input="getCellFromName"
-                    type="text"
-                  />
-                  <div class="flex gap-3 items-center justify-center mt-1">
-                    <h1 class="max-sm:text-sm">АВТО</h1>
-                    <input type="checkbox" v-model="isAutoFromName" />
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'
-                "
-              >
-                <label for="dispatchPVZ1" class="max-sm:text-sm"
-                  >Отправка в ПВЗ</label
-                >
-                <div>
-                  <select
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.dispatchPVZ"
-                    :disabled="user.dispatchPVZ1 === 'READ'"
-                    @change="changePVZ"
+                  <label for="fromName" class="max-sm:text-sm"
+                    >Телефон <sup>*</sup></label
                   >
-                    <option v-for="pvzData in pvz" :value="pvzData.name">
-                      {{ pvzData.name }}
-                    </option>
-                  </select>
-                  <div class="flex gap-3 items-center justify-center mt-1">
-                    <h1 class="max-sm:text-sm">АВТО</h1>
-                    <input type="checkbox" v-model="isAutoPVZ" />
+                  <div class="w-full">
+                    <input
+                      :disabled="user.fromName1 === 'READ'"
+                      class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                      v-model="rowData.fromName"
+                      type="text"
+                      @input="getCellFromName"
+                    />
+                    <div class="flex gap-3 items-center justify-center mt-1">
+                      <h1 class="max-sm:text-sm">АВТО</h1>
+                      <input
+                        class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-sm bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
+                        type="checkbox"
+                        v-model="isAutoFromName"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.cell1 === 'READ' || user.cell1 === 'WRITE'"
-              >
-                <label for="cell" class="max-sm:text-sm">Ячейка</label>
-                <div>
+                <div class="flex flex-col items-start w-full text-left gap-2">
+                  <div
+                    v-if="
+                      user.dispatchPVZ1 === 'READ' ||
+                      user.dispatchPVZ1 === 'WRITE'
+                    "
+                    class="flex flex-col items-start text-left gap-2 w-full"
+                  >
+                    <label for="dispatchPVZ1">Отправка в ПВЗ</label>
+
+                    <USelect
+                      v-if="!user.username.includes('Светлана')"
+                      @change="changePVZ(), checkPercent()"
+                      class="w-full"
+                      v-model="rowData.dispatchPVZ"
+                      :options="pvz"
+                      option-attribute="name"
+                      value-attribute="name"
+                    />
+
+                    <USelect
+                      v-if="user.username.includes('Светлана')"
+                      @change="changePVZ(), checkPercent()"
+                      class="w-full"
+                      v-model="rowData.dispatchPVZ"
+                      :options="
+                        pvz?.filter(
+                          (pvz) =>
+                            pvz.name !== 'ППВЗ_7' && pvz.name !== 'ППВЗ_9'
+                        )
+                      "
+                      option-attribute="name"
+                      value-attribute="name"
+                    />
+
+                    <div
+                      class="flex gap-3 items-center justify-center mt-1 w-full"
+                    >
+                      <h1 class="max-sm:text-sm">АВТО</h1>
+                      <input
+                        class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-sm bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
+                        type="checkbox"
+                        v-model="isAutoPVZ"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  v-if="user.cell1 === 'READ' || user.cell1 === 'WRITE'"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="cell">Ячейка</label>
                   <input
+                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
                     :disabled="user.cell1 === 'READ'"
-                    class="bg-transparent w-full rounded-md border-2 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.cell"
                     @input="getFromNameFromCell"
                     type="text"
                   />
-                  <div class="flex gap-3 items-center justify-center mt-1">
+
+                  <div
+                    class="flex gap-3 items-center justify-center mt-1 w-full"
+                  >
                     <h1 class="max-sm:text-sm">АВТО</h1>
-                    <input type="checkbox" v-model="isAutoCell" />
+                    <input
+                      class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-sm bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
+                      type="checkbox"
+                      v-model="isAutoCell"
+                    />
                   </div>
                 </div>
-              </div>
 
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.productLink1 === 'READ' || user.productLink1 === 'WRITE'
-                "
-              >
-                <label for="productLink1" class="max-sm:text-sm"
-                  >Товар (ссылка)</label
-                >
-                <input
-                  :disabled="user.productLink1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.productLink"
-                  type="text"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.productName1 === 'READ' || user.productName1 === 'WRITE'
-                "
-              >
-                <label for="productName1" class="max-sm:text-sm"
-                  >Название товара</label
-                >
-                <input
-                  :disabled="user.productName1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.productName"
-                  type="text"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.notation1 === 'READ' || user.notation1 === 'WRITE'"
-              >
-                <label for="notation1" class="max-sm:text-sm">Примечание</label>
-                <input
-                  :disabled="user.notation1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.notation"
-                  placeholder="По умолчанию: Пусто"
-                  type="text"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.priceSite === 'READ' || user.priceSite === 'WRITE'"
-              >
-                <label for="priceSite" class="max-sm:text-sm"
-                  >Стоимость сайт</label
-                >
-                <input
-                  :disabled="user.priceSite === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.priceSite"
-                  type="number"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'
-                "
-              >
-                <label for="prepayment1" class="max-sm:text-sm"
-                  >Предоплата</label
-                >
-                <input
-                  :disabled="user.prepayment1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.prepayment"
-                  type="number"
-                  placeholder="По умолчанию: 0"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.percentClient1 === 'READ' ||
-                  user.percentClient1 === 'WRITE'
-                "
-              >
-                <label for="percentClient1" class="max-sm:text-sm"
-                  >Процент с клиента</label
-                >
-                <input
-                  :disabled="user.percentClient1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.percentClient"
-                  placeholder="По умолчанию: 10"
-                  type="number"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.deliveredKGT1 === 'READ' ||
-                  user.deliveredKGT1 === 'WRITE'
-                "
-              >
-                <label for="deliveredKGT1" class="max-sm:text-sm"
-                  >Дополнительный доход</label
-                >
-                <input
-                  :disabled="user.deliveredKGT1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.deliveredKGT"
-                  placeholder="По умолчанию: 0"
-                  type="number"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.orderPVZ1 === 'READ' || user.orderPVZ1 === 'WRITE'"
-              >
-                <label for="orderPVZ1" class="max-sm:text-sm"
-                  >Заказано на СЦ</label
-                >
-                <select
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.orderPVZ"
-                  :disabled="user.orderPVZ1 === 'READ'"
-                >
-                  <option
-                    v-for="sortingCenter in sortingCenters"
-                    :value="sortingCenter.name"
-                  >
-                    {{ sortingCenter.name }}
-                  </option>
-                </select>
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.orderAccount === 'READ' || user.orderAccount === 'WRITE'
-                "
-              >
-                <label for="orderAccount" class="max-sm:text-sm"
-                  >Аккаунт заказа</label
-                >
-                <select
-                  :disabled="user.orderAccount === 'READ'"
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.orderAccount"
-                >
-                  <option
-                    v-for="orderAccount in orderAccounts"
-                    :value="orderAccount.name"
-                  >
-                    {{ orderAccount.name }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="grid grid-cols-2 mb-5" v-if="!rowData.id">
-                <label for="quantity" class="max-sm:text-sm"
-                  >Количество строк</label
-                >
-                <input
-                  type="number"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  min="1"
-                  v-model="rowData.quantity"
-                />
-              </div>
-
-              <h1
-                @click="showAddFields = !showAddFields"
-                class="cursor-pointer hover:opacity-50 text-secondary-color font-bold duration-200 mb-5"
-              >
-                Показать ещё настройки
-              </h1>
-              <div v-if="showAddFields">
                 <div
-                  class="grid grid-cols-2 mb-5"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
                   v-if="
-                    user.deliveredSC1 === 'READ' ||
-                    user.deliveredSC1 === 'WRITE'
+                    user.productLink1 === 'READ' ||
+                    user.productLink1 === 'WRITE'
                   "
                 >
-                  <label for="deliveredSC1" class="max-sm:text-sm"
-                    >Доставлено на СЦ</label
-                  >
+                  <label for="productLink1">Товар (ссылка)</label>
                   <input
-                    :disabled="user.deliveredSC1 === 'READ'"
-                    class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.deliveredSC"
-                    type="datetime-local"
+                    :disabled="user.productLink1 === 'READ'"
+                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                    v-model="rowData.productLink"
+                    type="text"
                   />
                 </div>
 
                 <div
-                  class="grid grid-cols-2 mb-5"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
                   v-if="
-                    user.deliveredPVZ1 === 'READ' ||
-                    user.deliveredPVZ1 === 'WRITE'
+                    user.productName1 === 'READ' ||
+                    user.productName1 === 'WRITE'
                   "
                 >
-                  <label for="deliveredPVZ1" class="max-sm:text-sm"
-                    >Доставлено на ПВЗ</label
-                  >
-                  <input
-                    :disabled="user.deliveredPVZ1 === 'READ'"
-                    class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.deliveredPVZ"
-                    type="datetime-local"
+                  <label for="productName1">Название товара</label>
+                  <UInput
+                    :disabled="user.productName1 === 'READ'"
+                    class="w-full"
+                    v-model="rowData.productName"
+                    type="text"
                   />
                 </div>
 
                 <div
-                  class="grid grid-cols-2 mb-5"
-                  v-if="user.issued1 === 'READ' || user.issued1 === 'WRITE'"
+                  v-if="user.notation1 === 'READ' || user.notation1 === 'WRITE'"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
                 >
-                  <label for="issued1" class="max-sm:text-sm"
-                    >Выдан клиенту</label
-                  >
-                  <input
-                    :disabled="user.issued1 === 'READ'"
-                    class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.issued"
-                    type="datetime-local"
+                  <label for="notation1">Примечание</label>
+                  <UInput
+                    :disabled="user.notation1 === 'READ'"
+                    class="w-full"
+                    v-model="rowData.notation"
+                    placeholder="По умолчанию: Пусто"
+                    type="text"
                   />
                 </div>
 
                 <div
-                  class="grid grid-cols-2 mb-5"
-                  v-if="
-                    user.additionally1 === 'READ' ||
-                    user.additionally1 === 'WRITE'
-                  "
+                  v-if="user.priceSite === 'READ' || user.priceSite === 'WRITE'"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
                 >
-                  <label for="additionally1" class="max-sm:text-sm"
-                    >Дополнительно</label
+                  <label for="priceSite">Стоимость сайт</label>
+                  <UInput
+                    :disabled="user.priceSite === 'READ'"
+                    class="w-full"
+                    v-model="rowData.priceSite"
+                    type="number"
+                  />
+                </div>
+
+                <div
+                  v-if="
+                    user.deliveredKGT1 === 'READ' ||
+                    user.deliveredKGT1 === 'WRITE'
+                  "
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="deliveredKGT1">Дополнительный доход</label>
+                  <UInput
+                    :disabled="user.deliveredKGT1 === 'READ'"
+                    class="w-full"
+                    placeholder="По умолчанию: 0"
+                    v-model="rowData.deliveredKGT"
+                    type="number"
+                  />
+                </div>
+
+                <div
+                  v-if="user.orderPVZ1 === 'READ' || user.orderPVZ1 === 'WRITE'"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="orderPVZ1">Заказано на СЦ</label>
+                  <USelect
+                    class="w-full"
+                    v-model="rowData.orderPVZ"
+                    :options="sortingCenters"
+                    option-attribute="name"
+                    value-attribute="name"
+                  />
+                </div>
+
+                <div
+                  v-if="
+                    user.orderAccount === 'READ' ||
+                    user.orderAccount === 'WRITE'
+                  "
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="orderAccount">Аккаунт заказа</label>
+                  <USelect
+                    class="w-full"
+                    v-model="rowData.orderAccount"
+                    :options="orderAccounts"
+                    option-attribute="name"
+                    value-attribute="name"
+                  />
+                </div>
+
+                <h1
+                  @click="showAddFields = !showAddFields"
+                  class="cursor-pointer hover:opacity-50 text-secondary-color font-bold duration-200 mb-5"
+                >
+                  Показать ещё настройки
+                </h1>
+
+                <div v-if="showAddFields">
+                  <div
+                    v-if="
+                      user.prepayment1 === 'READ' ||
+                      user.prepayment1 === 'WRITE'
+                    "
+                    class="flex flex-col items-start text-left gap-2 mb-5"
                   >
-                  <select
-                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                    v-model="rowData.additionally"
-                    :disabled="user.additionally1 === 'READ'"
+                    <label for="deliveredKGT1">Предоплата</label>
+                    <UInput
+                      :disabled="user.prepayment1 === 'READ'"
+                      class="w-full"
+                      placeholder="По умолчанию: 0"
+                      v-model="rowData.prepayment"
+                      type="number"
+                    />
+                  </div>
+
+                  <div
+                    v-if="
+                      user.percentClient1 === 'READ' ||
+                      user.percentClient1 === 'WRITE'
+                    "
+                    class="flex flex-col items-start text-left gap-2 mb-5"
                   >
-                    <option value="">Отменить</option>
-                    <option value="Оплачено онлайн">Оплачено онлайн</option>
-                    <option value="Отказ клиент">Отказ клиент</option>
-                    <option value="Отказ брак">Отказ брак</option>
-                    <option value="Отказ подмена">Отказ подмена</option>
-                  </select>
+                    <label for="percentClient1">Процент с клиента</label>
+                    <UInput
+                      :disabled="user.percentClient1 === 'READ'"
+                      class="w-full"
+                      placeholder="По умолчанию: 10"
+                      v-model="rowData.percentClient"
+                      type="number"
+                    />
+                  </div>
+
+                  <div
+                    v-if="
+                      user.deliveredSC1 === 'READ' ||
+                      user.deliveredSC1 === 'WRITE'
+                    "
+                    class="flex flex-col items-start text-left gap-2 mb-5"
+                  >
+                    <label for="deliveredSC1">Доставлено на СЦ</label>
+                    <UPopover
+                      class="w-full"
+                      v-if="rowData.deliveredSC"
+                      :popper="{ placement: 'bottom-start' }"
+                    >
+                      <UButton
+                        :overlay="true"
+                        type="button"
+                        icon="i-heroicons-calendar-days-20-solid"
+                        color="white"
+                        class="w-full"
+                      >
+                        {{
+                          format(rowData.deliveredSC, "dd MMM yyy", {
+                            locale: ru,
+                          })
+                        }}
+                      </UButton>
+
+                      <template #panel="{ close }">
+                        <DatePickerNotRange
+                          v-model="rowData.deliveredSC"
+                          is-required
+                          @close="close"
+                        />
+                      </template>
+                    </UPopover>
+                    <div v-if="rowData.deliveredSC">
+                      <UButton @click="rowData.deliveredSC = ''"
+                        >Очистить дату</UButton
+                      >
+                    </div>
+                    <div
+                      class="text-center rounded-md w-full"
+                      v-if="!rowData.deliveredSC"
+                    >
+                      <input
+                        class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                        :disabled="user.deliveredSC1 === 'READ'"
+                        v-model="rowData.deliveredSC"
+                        type="date"
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="
+                      user.deliveredPVZ1 === 'READ' ||
+                      user.deliveredPVZ1 === 'WRITE'
+                    "
+                    class="flex flex-col items-start text-left gap-2 mb-5"
+                  >
+                    <label for="deliveredPVZ1">Доставлено на ПВЗ</label>
+                    <UPopover
+                      class="w-full"
+                      v-if="rowData.deliveredPVZ"
+                      :popper="{ placement: 'bottom-start' }"
+                    >
+                      <UButton
+                        :overlay="true"
+                        type="button"
+                        icon="i-heroicons-calendar-days-20-solid"
+                        color="white"
+                        class="w-full"
+                      >
+                        {{
+                          format(rowData.deliveredPVZ, "dd MMM yyy", {
+                            locale: ru,
+                          })
+                        }}
+                      </UButton>
+
+                      <template #panel="{ close }">
+                        <DatePickerNotRange
+                          v-model="rowData.deliveredPVZ"
+                          is-required
+                          @close="close"
+                        />
+                      </template>
+                    </UPopover>
+                    <div v-if="rowData.deliveredPVZ">
+                      <UButton @click="rowData.deliveredPVZ = ''"
+                        >Очистить дату</UButton
+                      >
+                    </div>
+                    <div
+                      class="text-center rounded-md w-full"
+                      v-if="!rowData.deliveredPVZ"
+                    >
+                      <input
+                        class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                        :disabled="user.deliveredPVZ1 === 'READ'"
+                        v-model="rowData.deliveredPVZ"
+                        type="date"
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="user.issued1 === 'READ' || user.issued1 === 'WRITE'"
+                    class="flex flex-col items-start text-left gap-2 mb-5"
+                  >
+                    <label for="issued1">Выдано</label>
+                    <UPopover
+                      class="w-full"
+                      v-if="rowData.issued"
+                      :popper="{ placement: 'bottom-start' }"
+                    >
+                      <UButton
+                        :overlay="true"
+                        type="button"
+                        icon="i-heroicons-calendar-days-20-solid"
+                        color="white"
+                        class="w-full"
+                      >
+                        {{
+                          format(rowData.issued, "dd MMM yyy", { locale: ru })
+                        }}
+                      </UButton>
+
+                      <template #panel="{ close }">
+                        <DatePickerNotRange
+                          v-model="rowData.issued"
+                          is-required
+                          @close="close"
+                          @input="onDateInput"
+                        />
+                      </template>
+                    </UPopover>
+                    <div v-if="rowData.issued">
+                      <UButton
+                        @click="
+                          (rowData.issued = ''), (rowData.additionally = '')
+                        "
+                        >Очистить дату</UButton
+                      >
+                    </div>
+                    <div
+                      class="text-center rounded-md w-full"
+                      v-if="!rowData.issued"
+                    >
+                      <input
+                        class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                        :disabled="user.issued1 === 'READ'"
+                        v-model="rowData.issued"
+                        type="date"
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="
+                      user.additionally3 === 'READ' ||
+                      user.additionally3 === 'WRITE'
+                    "
+                    class="flex flex-col items-start text-left gap-2 mb-5"
+                  >
+                    <label for="additionally1">Дополнительно</label>
+                    <USelect
+                      class="w-full"
+                      v-model="rowData.additionally"
+                      :options="additionallies"
+                      option-attribute="name"
+                    />
+                  </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-2 mr-5">
+                  <label>Предоплата</label>
+                  <input
+                    class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
+                    type="checkbox"
+                    required
+                    v-model="rowData.dp"
+                  />
                 </div>
               </div>
-            </div>
-
-            <div
-              class="flex items-center justify-center gap-3 mt-10"
-              v-if="rowData.id"
-            >
-              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
-              <UIMainButton @click="closeModal">Отменить </UIMainButton>
-            </div>
-            <div class="flex items-center justify-center gap-3 mt-10" v-else>
-              <UIMainButton
-                :disabled="rowData.fromName === '' || rowData.fromName === null"
-                @click="createRow"
-                >Создать
-              </UIMainButton>
-              <UIMainButton @click="closeModal">Отменить </UIMainButton>
-            </div>
-          </UIModal>
+            </template>
+            <template v-slot:footer>
+              <div
+                class="flex items-center justify-center gap-3"
+                v-if="rowData.id"
+              >
+                <UISaveModalButton @click="updateRow"
+                  >Сохранить
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
+              </div>
+              <div class="flex items-center justify-center gap-3" v-else>
+                <UISaveModalButton
+                  :disabled="
+                    rowData.fromName === '' || rowData.fromName === null
+                  "
+                  @click="createRow"
+                  >Создать
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
+              </div>
+            </template>
+          </UINewModalEdit>
         </div>
         <div v-else>
           <UISpinner />
@@ -883,8 +1060,8 @@ let isOpenOnlineStatus = ref(false);
       </NuxtLayout>
     </div>
     <div v-else>
-      <NuxtLayout name="user">
-        <div v-if="!isLoading" class="mt-3 max-[400px]:mt-20">
+      <NuxtLayout name="table-user-no-pad">
+        <div v-if="!isLoading" class="px-5 pt-5 max-sm:px-5 pb-5 w-screen">
           <div>
             <SpreadsheetsOurRansomFilters
               v-if="rows && user.role !== 'PVZ' && user.role !== 'PPVZ'"
@@ -910,365 +1087,488 @@ let isOpenOnlineStatus = ref(false);
             :rows="filteredRows"
             :user="user"
             @delete-row="deleteRow"
+            @clear-row="clearRow"
             @open-modal="openModal"
             @delete-selected-rows="deleteSelectedRows"
             @update-delivery-rows="updateDeliveryRows"
             @create-copy-row="createCopyRow"
-            :pvz-link="pvzLink"
             @show-deleted-rows="showDeletedRows"
+            :isShowModalValue="isShowModalValue"
+            :pvz-link="pvzLink"
           />
 
-          <UIModal v-show="isOpen" @close-modal="closeModal">
+          <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
+            <template v-slot:icon-header>
+              <Icon size="24" name="material-symbols:task-alt" />
+            </template>
             <template v-slot:header>
               <div class="custom-header" v-if="rowData.id">
-                Изменение строки с ID - <b> {{ rowData.id }}</b>
+                Изменение: <b> {{ rowData.id }}</b>
               </div>
               <div class="custom-header" v-else>Создание новой строки</div>
             </template>
-            <div class="text-black">
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.fromName1 === 'READ' || user.fromName1 === 'WRITE'"
-              >
-                <label for="fromName" class="max-sm:text-sm"
-                  >Телефон <sup>*</sup></label
+            <template v-slot:body>
+              <div class="text-black">
+                <div
+                  v-if="user.fromName1 === 'READ' || user.fromName1 === 'WRITE'"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
                 >
-                <div>
-                  <input
-                    :disabled="user.fromName1 === 'READ'"
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.fromName"
-                    @input="getCellFromName"
-                    type="text"
-                  />
-                  <div class="flex gap-3 items-center justify-center mt-1">
-                    <h1 class="max-sm:text-sm">АВТО</h1>
-                    <input type="checkbox" v-model="isAutoFromName" />
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.dispatchPVZ1 === 'READ' || user.dispatchPVZ1 === 'WRITE'
-                "
-              >
-                <label for="dispatchPVZ1" class="max-sm:text-sm"
-                  >Отправка в ПВЗ</label
-                >
-                <div>
-                  <select
-                    class="bg-transparent w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.dispatchPVZ"
-                    :disabled="user.dispatchPVZ1 === 'READ'"
-                    @change="changePVZ"
+                  <label for="fromName" class="max-sm:text-sm"
+                    >Телефон <sup>*</sup></label
                   >
-                    <option v-for="pvzData in pvz" :value="pvzData.name">
-                      {{ pvzData.name }}
-                    </option>
-                  </select>
-                  <div class="flex gap-3 items-center justify-center mt-1">
-                    <h1 class="max-sm:text-sm">АВТО</h1>
-                    <input type="checkbox" v-model="isAutoPVZ" />
+                  <div class="w-full">
+                    <input
+                      :disabled="user.fromName1 === 'READ'"
+                      class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                      v-model="rowData.fromName"
+                      type="text"
+                      @input="getCellFromName"
+                    />
+                    <div class="flex gap-3 items-center justify-center mt-1">
+                      <h1 class="max-sm:text-sm">АВТО</h1>
+                      <input
+                        class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-sm bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
+                        type="checkbox"
+                        v-model="isAutoFromName"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.cell1 === 'READ' || user.cell1 === 'WRITE'"
-              >
-                <label for="cell" class="max-sm:text-sm">Ячейка</label>
-                <div>
+                <div class="flex flex-col items-start w-full text-left gap-2">
+                  <div
+                    v-if="
+                      user.dispatchPVZ1 === 'READ' ||
+                      user.dispatchPVZ1 === 'WRITE'
+                    "
+                    class="flex flex-col items-start text-left gap-2 w-full"
+                  >
+                    <label for="dispatchPVZ1">Отправка в ПВЗ</label>
+
+                    <USelect
+                      v-if="!user.username.includes('Светлана')"
+                      @change="changePVZ(), checkPercent()"
+                      class="w-full"
+                      v-model="rowData.dispatchPVZ"
+                      :options="pvz"
+                      option-attribute="name"
+                      value-attribute="name"
+                    />
+
+                    <USelect
+                      v-if="user.username.includes('Светлана')"
+                      @change="changePVZ(), checkPercent()"
+                      class="w-full"
+                      v-model="rowData.dispatchPVZ"
+                      :options="
+                        pvz?.filter(
+                          (pvz) =>
+                            pvz.name !== 'ППВЗ_7' && pvz.name !== 'ППВЗ_9'
+                        )
+                      "
+                      option-attribute="name"
+                      value-attribute="name"
+                    />
+
+                    <div
+                      class="flex gap-3 items-center justify-center mt-1 w-full"
+                    >
+                      <h1 class="max-sm:text-sm">АВТО</h1>
+                      <input
+                        class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-sm bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
+                        type="checkbox"
+                        v-model="isAutoPVZ"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  v-if="user.cell1 === 'READ' || user.cell1 === 'WRITE'"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="cell">Ячейка</label>
                   <input
+                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
                     :disabled="user.cell1 === 'READ'"
-                    class="bg-transparent w-full rounded-md border-2 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.cell"
                     @input="getFromNameFromCell"
                     type="text"
                   />
-                  <div class="flex gap-3 items-center justify-center mt-1">
+
+                  <div
+                    class="flex gap-3 items-center justify-center mt-1 w-full"
+                  >
                     <h1 class="max-sm:text-sm">АВТО</h1>
-                    <input type="checkbox" v-model="isAutoCell" />
+                    <input
+                      class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded-sm bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color"
+                      type="checkbox"
+                      v-model="isAutoCell"
+                    />
                   </div>
                 </div>
-              </div>
 
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.productLink1 === 'READ' || user.productLink1 === 'WRITE'
-                "
-              >
-                <label for="productLink1" class="max-sm:text-sm"
-                  >Товар (ссылка)</label
-                >
-                <input
-                  :disabled="user.productLink1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.productLink"
-                  type="text"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.productName1 === 'READ' || user.productName1 === 'WRITE'
-                "
-              >
-                <label for="productName1" class="max-sm:text-sm"
-                  >Название товара</label
-                >
-                <input
-                  :disabled="user.productName1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.productName"
-                  type="text"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.notation1 === 'READ' || user.notation1 === 'WRITE'"
-              >
-                <label for="notation1" class="max-sm:text-sm">Примечание</label>
-                <input
-                  :disabled="user.notation1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.notation"
-                  placeholder="По умолчанию: Пусто"
-                  type="text"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.priceSite === 'READ' || user.priceSite === 'WRITE'"
-              >
-                <label for="priceSite" class="max-sm:text-sm"
-                  >Стоимость сайт</label
-                >
-                <input
-                  :disabled="user.priceSite === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.priceSite"
-                  type="number"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.prepayment1 === 'READ' || user.prepayment1 === 'WRITE'
-                "
-              >
-                <label for="prepayment1" class="max-sm:text-sm"
-                  >Предоплата</label
-                >
-                <input
-                  :disabled="user.prepayment1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.prepayment"
-                  type="number"
-                  placeholder="По умолчанию: 0"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.percentClient1 === 'READ' ||
-                  user.percentClient1 === 'WRITE'
-                "
-              >
-                <label for="percentClient1" class="max-sm:text-sm"
-                  >Процент с клиента</label
-                >
-                <input
-                  :disabled="user.percentClient1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.percentClient"
-                  placeholder="По умолчанию: 10"
-                  type="number"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.deliveredKGT1 === 'READ' ||
-                  user.deliveredKGT1 === 'WRITE'
-                "
-              >
-                <label for="deliveredKGT1" class="max-sm:text-sm"
-                  >Дополнительный доход</label
-                >
-                <input
-                  :disabled="user.deliveredKGT1 === 'READ'"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  v-model="rowData.deliveredKGT"
-                  placeholder="По умолчанию: 0"
-                  type="number"
-                />
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="user.orderPVZ1 === 'READ' || user.orderPVZ1 === 'WRITE'"
-              >
-                <label for="orderPVZ1" class="max-sm:text-sm"
-                  >Заказано на СЦ</label
-                >
-                <select
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.orderPVZ"
-                  :disabled="user.orderPVZ1 === 'READ'"
-                >
-                  <option
-                    v-for="sortingCenter in sortingCenters"
-                    :value="sortingCenter.name"
-                  >
-                    {{ sortingCenter.name }}
-                  </option>
-                </select>
-              </div>
-
-              <div
-                class="grid grid-cols-2 mb-5"
-                v-if="
-                  user.orderAccount === 'READ' || user.orderAccount === 'WRITE'
-                "
-              >
-                <label for="orderAccount" class="max-sm:text-sm"
-                  >Аккаунт заказа</label
-                >
-                <select
-                  :disabled="user.orderAccount === 'READ'"
-                  class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                  v-model="rowData.orderAccount"
-                >
-                  <option
-                    v-for="orderAccount in orderAccounts"
-                    :value="orderAccount.name"
-                  >
-                    {{ orderAccount.name }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="grid grid-cols-2 mb-5" v-if="!rowData.id">
-                <label for="quantity" class="max-sm:text-sm"
-                  >Количество строк</label
-                >
-                <input
-                  type="number"
-                  class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                  min="1"
-                  v-model="rowData.quantity"
-                />
-              </div>
-
-              <h1
-                @click="showAddFields = !showAddFields"
-                class="cursor-pointer hover:opacity-50 text-secondary-color font-bold duration-200 mb-5"
-              >
-                Показать ещё настройки
-              </h1>
-              <div v-if="showAddFields">
                 <div
-                  class="grid grid-cols-2 mb-5"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
                   v-if="
-                    user.deliveredSC1 === 'READ' ||
-                    user.deliveredSC1 === 'WRITE'
+                    user.productLink1 === 'READ' ||
+                    user.productLink1 === 'WRITE'
                   "
                 >
-                  <label for="deliveredSC1" class="max-sm:text-sm"
-                    >Доставлено на СЦ</label
-                  >
+                  <label for="productLink1">Товар (ссылка)</label>
                   <input
-                    :disabled="user.deliveredSC1 === 'READ'"
-                    class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.deliveredSC"
-                    type="datetime-local"
+                    :disabled="user.productLink1 === 'READ'"
+                    class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                    v-model="rowData.productLink"
+                    type="text"
                   />
                 </div>
 
                 <div
-                  class="grid grid-cols-2 mb-5"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
                   v-if="
-                    user.deliveredPVZ1 === 'READ' ||
-                    user.deliveredPVZ1 === 'WRITE'
+                    user.productName1 === 'READ' ||
+                    user.productName1 === 'WRITE'
                   "
                 >
-                  <label for="deliveredPVZ1" class="max-sm:text-sm"
-                    >Доставлено на ПВЗ</label
-                  >
-                  <input
-                    :disabled="user.deliveredPVZ1 === 'READ'"
-                    class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.deliveredPVZ"
-                    type="datetime-local"
+                  <label for="productName1">Название товара</label>
+                  <UInput
+                    :disabled="user.productName1 === 'READ'"
+                    class="w-full"
+                    v-model="rowData.productName"
+                    type="text"
                   />
                 </div>
 
                 <div
-                  class="grid grid-cols-2 mb-5"
-                  v-if="user.issued1 === 'READ' || user.issued1 === 'WRITE'"
+                  v-if="user.notation1 === 'READ' || user.notation1 === 'WRITE'"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
                 >
-                  <label for="issued1" class="max-sm:text-sm"
-                    >Выдан клиенту</label
-                  >
-                  <input
-                    :disabled="user.issued1 === 'READ'"
-                    class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 text-sm sm:leading-6 disabled:text-gray-400"
-                    v-model="rowData.issued"
-                    type="datetime-local"
+                  <label for="notation1">Примечание</label>
+                  <UInput
+                    :disabled="user.notation1 === 'READ'"
+                    class="w-full"
+                    v-model="rowData.notation"
+                    placeholder="По умолчанию: Пусто"
+                    type="text"
                   />
                 </div>
 
                 <div
-                  class="grid grid-cols-2 mb-5"
-                  v-if="
-                    user.additionally1 === 'READ' ||
-                    user.additionally1 === 'WRITE'
-                  "
+                  v-if="user.priceSite === 'READ' || user.priceSite === 'WRITE'"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
                 >
-                  <label for="additionally1" class="max-sm:text-sm"
-                    >Дополнительно</label
+                  <label for="priceSite">Стоимость сайт</label>
+                  <UInput
+                    :disabled="user.priceSite === 'READ'"
+                    class="w-full"
+                    v-model="rowData.priceSite"
+                    type="number"
+                  />
+                </div>
+
+                <div
+                  v-if="
+                    user.deliveredKGT1 === 'READ' ||
+                    user.deliveredKGT1 === 'WRITE'
+                  "
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="deliveredKGT1">Дополнительный доход</label>
+                  <UInput
+                    :disabled="user.deliveredKGT1 === 'READ'"
+                    class="w-full"
+                    placeholder="По умолчанию: 0"
+                    v-model="rowData.deliveredKGT"
+                    type="number"
+                  />
+                </div>
+
+                <div
+                  v-if="user.orderPVZ1 === 'READ' || user.orderPVZ1 === 'WRITE'"
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="orderPVZ1">Заказано на СЦ</label>
+                  <USelect
+                    class="w-full"
+                    v-model="rowData.orderPVZ"
+                    :options="sortingCenters"
+                    option-attribute="name"
+                    value-attribute="name"
+                  />
+                </div>
+
+                <div
+                  v-if="
+                    user.orderAccount === 'READ' ||
+                    user.orderAccount === 'WRITE'
+                  "
+                  class="flex flex-col items-start text-left gap-2 mb-5"
+                >
+                  <label for="orderAccount">Аккаунт заказа</label>
+                  <USelect
+                    class="w-full"
+                    v-model="rowData.orderAccount"
+                    :options="orderAccounts"
+                    option-attribute="name"
+                    value-attribute="name"
+                  />
+                </div>
+
+                <h1
+                  @click="showAddFields = !showAddFields"
+                  class="cursor-pointer hover:opacity-50 text-secondary-color font-bold duration-200 mb-5"
+                >
+                  Показать ещё настройки
+                </h1>
+
+                <div v-if="showAddFields">
+                  <div
+                    v-if="
+                      user.prepayment1 === 'READ' ||
+                      user.prepayment1 === 'WRITE'
+                    "
+                    class="flex flex-col items-start text-left gap-2 mb-5"
                   >
-                  <select
-                    class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
-                    v-model="rowData.additionally"
-                    :disabled="user.additionally1 === 'READ'"
+                    <label for="deliveredKGT1">Предоплата</label>
+                    <UInput
+                      :disabled="user.prepayment1 === 'READ'"
+                      class="w-full"
+                      placeholder="По умолчанию: 0"
+                      v-model="rowData.prepayment"
+                      type="number"
+                    />
+                  </div>
+
+                  <div
+                    v-if="
+                      user.percentClient1 === 'READ' ||
+                      user.percentClient1 === 'WRITE'
+                    "
+                    class="flex flex-col items-start text-left gap-2 mb-5"
                   >
-                    <option value="">Отменить</option>
-                    <option value="Оплачено онлайн">Оплачено онлайн</option>
-                    <option value="Отказ клиент">Отказ клиент</option>
-                    <option value="Отказ брак">Отказ брак</option>
-                    <option value="Отказ подмена">Отказ подмена</option>
-                  </select>
+                    <label for="percentClient1">Процент с клиента</label>
+                    <UInput
+                      :disabled="user.percentClient1 === 'READ'"
+                      class="w-full"
+                      placeholder="По умолчанию: 10"
+                      v-model="rowData.percentClient"
+                      type="number"
+                    />
+                  </div>
+
+                  <div
+                    v-if="
+                      user.deliveredSC1 === 'READ' ||
+                      user.deliveredSC1 === 'WRITE'
+                    "
+                    class="flex flex-col items-start text-left gap-2 mb-5"
+                  >
+                    <label for="deliveredSC1">Доставлено на СЦ</label>
+                    <UPopover
+                      class="w-full"
+                      v-if="rowData.deliveredSC"
+                      :popper="{ placement: 'bottom-start' }"
+                    >
+                      <UButton
+                        :overlay="true"
+                        type="button"
+                        icon="i-heroicons-calendar-days-20-solid"
+                        color="white"
+                        class="w-full"
+                      >
+                        {{
+                          format(rowData.deliveredSC, "dd MMM yyy", {
+                            locale: ru,
+                          })
+                        }}
+                      </UButton>
+
+                      <template #panel="{ close }">
+                        <DatePickerNotRange
+                          v-model="rowData.deliveredSC"
+                          is-required
+                          @close="close"
+                        />
+                      </template>
+                    </UPopover>
+                    <div v-if="rowData.deliveredSC">
+                      <UButton @click="rowData.deliveredSC = ''"
+                        >Очистить дату</UButton
+                      >
+                    </div>
+                    <div
+                      class="text-center rounded-md w-full"
+                      v-if="!rowData.deliveredSC"
+                    >
+                      <input
+                        class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                        :disabled="user.deliveredSC1 === 'READ'"
+                        v-model="rowData.deliveredSC"
+                        type="date"
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="
+                      user.deliveredPVZ1 === 'READ' ||
+                      user.deliveredPVZ1 === 'WRITE'
+                    "
+                    class="flex flex-col items-start text-left gap-2 mb-5"
+                  >
+                    <label for="deliveredPVZ1">Доставлено на ПВЗ</label>
+                    <UPopover
+                      class="w-full"
+                      v-if="rowData.deliveredPVZ"
+                      :popper="{ placement: 'bottom-start' }"
+                    >
+                      <UButton
+                        :overlay="true"
+                        type="button"
+                        icon="i-heroicons-calendar-days-20-solid"
+                        color="white"
+                        class="w-full"
+                      >
+                        {{
+                          format(rowData.deliveredPVZ, "dd MMM yyy", {
+                            locale: ru,
+                          })
+                        }}
+                      </UButton>
+
+                      <template #panel="{ close }">
+                        <DatePickerNotRange
+                          v-model="rowData.deliveredPVZ"
+                          is-required
+                          @close="close"
+                        />
+                      </template>
+                    </UPopover>
+                    <div v-if="rowData.deliveredPVZ">
+                      <UButton @click="rowData.deliveredPVZ = ''"
+                        >Очистить дату</UButton
+                      >
+                    </div>
+                    <div
+                      class="text-center rounded-md w-full"
+                      v-if="!rowData.deliveredPVZ"
+                    >
+                      <input
+                        class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                        :disabled="user.deliveredPVZ1 === 'READ'"
+                        v-model="rowData.deliveredPVZ"
+                        type="date"
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="user.issued1 === 'READ' || user.issued1 === 'WRITE'"
+                    class="flex flex-col items-start text-left gap-2 mb-5"
+                  >
+                    <label for="issued1">Выдано</label>
+                    <UPopover
+                      class="w-full"
+                      v-if="rowData.issued"
+                      :popper="{ placement: 'bottom-start' }"
+                    >
+                      <UButton
+                        :overlay="true"
+                        type="button"
+                        icon="i-heroicons-calendar-days-20-solid"
+                        color="white"
+                        class="w-full"
+                      >
+                        {{
+                          format(rowData.issued, "dd MMM yyy", { locale: ru })
+                        }}
+                      </UButton>
+
+                      <template #panel="{ close }">
+                        <DatePickerNotRange
+                          v-model="rowData.issued"
+                          is-required
+                          @close="close"
+                          @input="onDateInput"
+                        />
+                      </template>
+                    </UPopover>
+                    <div v-if="rowData.issued">
+                      <UButton
+                        @click="
+                          (rowData.issued = ''), (rowData.additionally = '')
+                        "
+                        >Очистить дату</UButton
+                      >
+                    </div>
+                    <div
+                      class="text-center rounded-md w-full"
+                      v-if="!rowData.issued"
+                    >
+                      <input
+                        class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                        :disabled="user.issued1 === 'READ'"
+                        v-model="rowData.issued"
+                        type="date"
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="
+                      user.additionally3 === 'READ' ||
+                      user.additionally3 === 'WRITE'
+                    "
+                    class="flex flex-col items-start text-left gap-2 mb-5"
+                  >
+                    <label for="additionally1">Дополнительно</label>
+                    <USelect
+                      class="w-full"
+                      v-model="rowData.additionally"
+                      :options="additionallies"
+                      option-attribute="name"
+                    />
+                  </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-2 mr-5">
+                  <label>Предоплата</label>
+                  <input
+                    class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
+                    type="checkbox"
+                    required
+                    v-model="rowData.dp"
+                  />
                 </div>
               </div>
-            </div>
-
-            <div
-              class="flex items-center justify-center gap-3 mt-10"
-              v-if="rowData.id"
-            >
-              <UIMainButton @click="updateRow">Сохранить </UIMainButton>
-              <UIMainButton @click="closeModal">Отменить </UIMainButton>
-            </div>
-            <div class="flex items-center justify-center gap-3 mt-10" v-else>
-              <UIMainButton
-                :disabled="rowData.fromName === '' || rowData.fromName === null"
-                @click="createRow"
-                >Создать
-              </UIMainButton>
-              <UIMainButton @click="closeModal">Отменить </UIMainButton>
-            </div>
-          </UIModal>
+            </template>
+            <template v-slot:footer>
+              <div
+                class="flex items-center justify-center gap-3"
+                v-if="rowData.id"
+              >
+                <UISaveModalButton @click="updateRow"
+                  >Сохранить
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
+              </div>
+              <div class="flex items-center justify-center gap-3" v-else>
+                <UISaveModalButton
+                  :disabled="
+                    rowData.fromName === '' || rowData.fromName === null
+                  "
+                  @click="createRow"
+                  >Создать
+                </UISaveModalButton>
+                <UIExitModalButton @click="closeModal"
+                  >Отменить
+                </UIExitModalButton>
+              </div>
+            </template>
+          </UINewModalEdit>
         </div>
         <div v-else>
           <UISpinner />

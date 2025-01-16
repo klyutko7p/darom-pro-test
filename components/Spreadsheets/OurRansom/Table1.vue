@@ -972,6 +972,21 @@ const columns = [
           @input="scanItem"
         />
         <div
+          class="flex items-center gap-5 mb-3"
+          v-if="
+            user.role === 'ADMIN' ||
+            user.role === 'ADMINISTRATOR' ||
+            user.role === 'RMANAGER'
+          "
+        >
+          <UIActionButton
+            @click="toggleShowDeletedRows2"
+            v-if="route.fullPath.includes('+')"
+          >
+            {{ showDeletedRows ? "Скрыть удаленное" : "Показать удаленное" }}
+          </UIActionButton>
+        </div>
+        <div
           class="flex items-center max-sm:flex-col max-sm:items-start gap-5 mb-2"
         >
           <h1
@@ -990,6 +1005,7 @@ const columns = [
           </h1>
         </div>
       </div>
+
       <div class="flex items-end max-lg:mt-5 max-lg:justify-between gap-20">
         <div class="flex flex-col text-center" v-if="isVisiblePages">
           <h1 class="text-base mb-2">
