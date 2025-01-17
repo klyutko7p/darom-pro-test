@@ -826,6 +826,7 @@ pvz.value.push("ППВЗ_9");
 pvz.value.push("ПВЗ_10");
 pvz.value.push("ПВЗ_11");
 pvz.value.push("ППВЗ_12");
+pvz.value.push("ПВЗ_13");
 pvz.value.push("Магазин");
 
 let typesOfExpenditure = ref([

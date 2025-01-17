@@ -28,6 +28,8 @@ onMounted(async () => {
       selectedMarkerId.value = 11;
     } else if (addressString === "ППВЗ_12") {
       selectedMarkerId.value = 12;
+    } else if (addressString === "ПВЗ_13") {
+      selectedMarkerId.value = 13;
     }
   } else if (props.marketplace === "WB") {
     address.value = localStorage.getItem("addressData") || "";
@@ -108,8 +110,8 @@ function changeAddress(coordinatesData: Array<number>) {
   ) {
     address.value = "ПВЗ_10";
   } else if (
-    coordinatesData[0] === 47.100255 &&
-    coordinatesData[1] === 37.662614
+    coordinatesData[0] === 47.100344 &&
+    coordinatesData[1] === 37.660677
   ) {
     address.value = "ПВЗ_11";
   } else if (
@@ -174,9 +176,9 @@ let markers = [
   },
   {
     id: 11,
-    coords: [47.100255, 37.662614],
+    coords: [47.100344, 37.660677],
     commentary: "Ежедневно 9:00-19:00",
-    address: "г. Мариуполь, ул. Азовстальская, 131",
+    address: "г. Мариуполь, ул. Межевая",
   },
 ];
 
@@ -233,9 +235,9 @@ let markersCopy = [
   },
   {
     id: 11,
-    coords: [47.100255, 37.662614],
+    coords: [47.100344, 37.660677],
     commentary: "Ежедневно 9:00-19:00",
-    address: "г. Мариуполь, ул. Азовстальская, 131",
+    address: "г. Мариуполь, ул. Межевая",
   },
 ];
 
