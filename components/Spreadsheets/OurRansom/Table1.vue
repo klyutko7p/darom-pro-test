@@ -102,7 +102,7 @@ async function exportToExcel() {
   perPage.value = await totalRows.value;
   await updateCurrentPageDataDeleted();
 
-  let table = await document.querySelector("#theTable");
+  let table = document.querySelector(".table-fixed");
 
   let wb = await utils.table_to_book(table);
   await writeFile(wb, "наш_выкуп.xlsx");
