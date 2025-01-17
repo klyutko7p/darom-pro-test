@@ -245,6 +245,7 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
         const deliveredSCTimeDif = deliveredSC - today;
         return (
           row.deliveredPVZ === null &&
+          user.value.PVZ.includes(row.dispatchPVZ) &&
           daysDiff >= 1 &&
           (deliveredSCTimeDif === 0 || !row.deliveredSC)
         );

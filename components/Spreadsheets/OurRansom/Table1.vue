@@ -1963,11 +1963,11 @@ const columns = [
         :class="{ 'overflow-x-hidden max-h-[100px]': isShowModalValue }"
         :ui="{ wrapper: 'relative bg-white',
   td: {
-    base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
+    base: 'border-[1px] text-center whitespace-normal',
     padding: 'px-3 py-1',
   },
   th: {
-    base: 'text-center uppercase border-t-[1px] border-b-[1px] sticky top-0 z-[20] bg-white',
+    base: 'text-center uppercase border-[1px] sticky top-0 z-[20] bg-white',
     padding: 'px-1',
     size: 'text-xs'
   },
