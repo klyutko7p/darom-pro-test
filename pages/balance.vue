@@ -216,7 +216,10 @@ onMounted(async () => {
       rows.value = rows.value?.filter((row) =>
         user.value.PVZ.includes(row.pvz)
       );
-    } else if (user.value.username === "Шведова") {
+    } else if (
+      user.value.username === "Шведова" ||
+      user.value.username === "Сошников"
+    ) {
       selectedPVZ.value = "Все ПВЗ (Город)";
       rows.value = rows.value?.filter((row) =>
         user.value.PVZ.includes(row.pvz)
@@ -1120,7 +1123,10 @@ function getAllSum() {
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
 
-      if (user.value.username === "Шведова") {
+      if (
+        user.value.username === "Шведова" ||
+        user.value.username === "Сошников"
+      ) {
         allSum.value =
           sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ + 319610 - sumOfPVZ5;
         allSum.value -= 11110;
@@ -1271,7 +1277,10 @@ function getAllSum() {
         0
       );
 
-      if (user.value.username === "Шведова") {
+      if (
+        user.value.username === "Шведова" ||
+        user.value.username === "Сошников"
+      ) {
         sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
         sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
         allSum.value = sum1.value + sum2.value + sum3.value - sumOfPVZ;
@@ -1847,7 +1856,11 @@ watch([selectedPVZ, selectedTypeOfTransaction, selected, selected], getAllSum);
 function clearFields() {
   selectedPVZ.value = "Все ПВЗ";
 
-  if (user.value.username === "Мешков" || user.value.username === "Шведова") {
+  if (
+    user.value.username === "Мешков" ||
+    user.value.username === "Шведова" ||
+    user.value.username === "Сошников"
+  ) {
     selectedPVZ.value = "Все ПВЗ (Город)";
   }
 
@@ -2319,7 +2332,15 @@ let pvzDataOriginally = [
   "НаДом",
 ];
 
-const options = ["Нет", "Рейзвих", "Шведова", "Директор", "Косой", "Мешков", "Сошников"];
+const options = [
+  "Нет",
+  "Рейзвих",
+  "Шведова",
+  "Директор",
+  "Косой",
+  "Мешков",
+  "Сошников",
+];
 </script>
 
 <template>
@@ -2333,7 +2354,8 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
         token &&
         (user.role === 'ADMIN' ||
           user.username === 'Шведова' ||
-          user.username === 'Мешков')
+          user.username === 'Мешков' ||
+          user.username === 'Сошников')
       "
     >
       <NuxtLayout name="admin">
@@ -2368,7 +2390,8 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                         user.role !== 'PPVZ' &&
                         user.role !== 'RMANAGER' &&
                         user.username !== 'Мешков' &&
-                        user.username !== 'Шведова'
+                        user.username !== 'Шведова' &&
+                        user.username !== 'Сошников'
                       "
                       class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
                       v-model="selectedPVZ"
@@ -2391,7 +2414,8 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
                     <select
                       v-else-if="
                         user.username === 'Мешков' ||
-                        user.username === 'Шведова'
+                        user.username === 'Шведова' ||
+                        user.username === 'Сошников'
                       "
                       class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-transparent text-gray-900 dark:text-white ring-1 ring-inset ring-orange-500 dark:ring-orange-400 focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 pe-9"
                       v-model="selectedPVZ"
@@ -2680,7 +2704,11 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
           >
 
           <BalanceTable
-            v-if="user.username !== 'Мешков' && user.username !== 'Шведова'"
+            v-if="
+              user.username !== 'Мешков' &&
+              user.username !== 'Шведова' &&
+              user.username !== 'Сошников'
+            "
             @update-delivery-row="updateDeliveryRow"
             @delete-row="deleteRow"
             :rows="rowsWithProfitRows"
@@ -2700,12 +2728,21 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
             @open-modal="openModal"
           />
 
+          <BalanceTable
+            v-if="user.username === 'Сошников'"
+            @update-delivery-row="updateDeliveryRow"
+            :rows="rows?.filter((row) => !row.received)"
+            :user="user"
+            @open-modal="openModal"
+          />
+
           <div
             v-if="
               (user.username === 'Шведова' ||
                 user.username === 'Мешков' ||
                 user.username === 'Директор' ||
-                user.username === 'Власенкова') &&
+                user.username === 'Власенкова' ||
+                user.username === 'Сошников') &&
               selectedPVZ &&
               (selectedPVZ.includes('ППВЗ') || selectedPVZ === 'ПВЗ_1')
             "
@@ -2723,7 +2760,8 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
               (user.username === 'Шведова' ||
                 user.username === 'Мешков' ||
                 user.username === 'Директор' ||
-                user.username === 'Власенкова') &&
+                user.username === 'Власенкова' ||
+                user.username === 'Сошников') &&
               selectedPVZ &&
               (selectedPVZ.includes('ППВЗ') || selectedPVZ === 'ПВЗ_1')
             "
@@ -2760,7 +2798,9 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
 
                   <USelectMenu
                     v-if="
-                      user.username !== 'Мешков' && user.username !== 'Шведова'
+                      user.username !== 'Мешков' &&
+                      user.username !== 'Шведова' &&
+                      user.username !== 'Сошников'
                     "
                     class="w-full"
                     v-model="rowData.pvz"
@@ -2771,7 +2811,9 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
 
                   <USelectMenu
                     v-if="
-                      user.username === 'Мешков' || user.username === 'Шведова'
+                      user.username === 'Мешков' ||
+                      user.username === 'Шведова' ||
+                      user.username === 'Сошников'
                     "
                     :disabled="rowData.id > 0"
                     class="w-full"
@@ -3204,7 +3246,8 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
             v-if="
               user.role === 'ADMIN' ||
               user.role === 'ADMINISTRATOR' ||
-              user.role === 'RMANAGER'
+              user.role === 'RMANAGER' ||
+              user.username === 'Сошников'
             "
             class="mt-24"
             @click="openModal"
@@ -3212,7 +3255,11 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
             Заявка на вывод средств наличные</UIMainButton
           >
           <BalanceTable
-            v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
+            v-if="
+              user.role !== 'PVZ' &&
+              user.role !== 'PPVZ' &&
+              user.username !== 'Сошников'
+            "
             @update-delivery-row="updateDeliveryRow"
             :rows="rows"
             :user="user"
@@ -3220,7 +3267,11 @@ const options = ["Нет", "Рейзвих", "Шведова", "Директор
           />
 
           <BalanceTable
-            v-if="user.role === 'PVZ' || user.role === 'PPVZ'"
+            v-if="
+              user.role === 'PVZ' ||
+              user.role === 'PPVZ' ||
+              user.username === 'Сошников'
+            "
             @update-delivery-row="updateDeliveryRow"
             :rows="rows?.filter((row) => !row.received)"
             :user="user"
