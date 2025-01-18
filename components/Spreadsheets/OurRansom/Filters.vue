@@ -13,7 +13,7 @@ let showFilters = ref(false);
 
 const selectedCell = ref<Array<string>>([]);
 const selectedFromName = ref<Array<string>>([]);
-const selectedProductName = ref<Array<string>>([]);
+const selectedProductName = ref<string | null>(null);
 const selectedDispatchPVZ = ref<Array<string>>([]);
 const selectedOrderPVZ = ref<Array<string>>([]);
 const selectedOrderAccount = ref<Array<string>>([]);
@@ -149,9 +149,11 @@ const filterRows = () => {
       (!selectedCell.value.length || selectedCell.value.includes(row.cell)) &&
       (!selectedFromName.value.length ||
         selectedFromName.value.includes(row.fromName)) &&
-      (!selectedProductName.value?.length ||
+      (!selectedProductName.value ||
         (row.productName &&
-          selectedProductName.value.includes(row.productName.trim()))) &&
+          row.productName
+            .toLowerCase()
+            .includes(selectedProductName.value.trim().toLowerCase()))) &&
       (!selectedDispatchPVZ.value.length ||
         selectedDispatchPVZ.value.includes(row.dispatchPVZ)) &&
       (!selectedOrderPVZ.value.length ||
@@ -198,7 +200,7 @@ function clearFields() {
   selectedFromName.value = [];
   selectedAdditionally.value = [];
   selectedNotation.value = [];
-  selectedProductName.value = [];
+  selectedProductName.value = "";
   startingDate.value = "";
   endDate.value = "";
   startingDate2.value = "";
@@ -256,7 +258,6 @@ let variables = ref([
 const selectedArrays = [
   selectedCell,
   selectedFromName,
-  selectedProductName,
   selectedDispatchPVZ,
   selectedOrderPVZ,
   selectedOrderAccount,
@@ -278,6 +279,8 @@ const nonEmptyCount = computed(() => {
   if (startingDate.value) {
     count++;
   } else if (endDate.value) {
+    count++;
+  } else if (selectedProductName.value) {
     count++;
   }
 
@@ -339,7 +342,7 @@ function clearLocalStorage() {
   }
   selectedCell.value = [];
   selectedFromName.value = [];
-  selectedProductName.value = [];
+  selectedProductName.value = "";
   selectedDispatchPVZ.value = [];
   selectedOrderPVZ.value = [];
   selectedOrderAccount.value = [];
@@ -492,13 +495,17 @@ let dateFilter = ref("issued");
         </div>
         <div class="flex items-start space-y-2 flex-col mt-5 text-center">
           <h1>Название товара</h1>
-          <VueMultiselect
+          <input
+            type="text"
+            class="bg-transparent w-full min-h-[40px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
             v-model="selectedProductName"
-            :options="uniqueProductNames"
-            :multiple="true"
-            :close-on-select="true"
-            placeholder="Выберите название"
+            list="uniqueProductNames"
           />
+          <datalist id="uniqueProductNames" class="">
+            <option v-for="value in uniqueProductNames" :value="value">
+              {{ value }}
+            </option>
+          </datalist>
         </div>
         <div class="flex items-start space-y-2 flex-col mt-5 text-center">
           <h1>Стоимость сайт</h1>

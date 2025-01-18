@@ -999,17 +999,23 @@ async function createRow() {
       }
     }
 
-    await storeAdvanceReports.createAdvanceReport(
-      rowData.value,
-      user.value.username
-    );
+    if (rowData.value.type === "Безнал" && user.value.username === "Горцуева") {
+      rowData.value.createdUser = "Директор";
+      await storeAdvanceReports.createAdvanceReport(rowData.value, "Директор");
+    } else {
+      await storeAdvanceReports.createAdvanceReport(
+        rowData.value,
+        user.value.username
+      );
+    }
 
     if (
       (rowData.value.typeOfExpenditure === "Перевод с баланса безнал" ||
         rowData.value.typeOfExpenditure === "Новый кредит безнал" ||
         rowData.value.typeOfExpenditure === "Пополнение баланса" ||
         rowData.value.typeOfExpenditure === "Удержания с сотрудников") &&
-      rowData.value.type === "Безнал"
+      rowData.value.type === "Безнал" &&
+      user.value.username !== "Горцуева"
     ) {
       banks.value = await storeBanks.getBanks();
       let idMainBank = banks.value.find((bank) => bank.main === true)?.id;
@@ -1032,7 +1038,8 @@ async function createRow() {
       rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
       rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
       rowData.value.typeOfExpenditure !== "Удержания с сотрудников" &&
-      rowData.value.type === "Безнал"
+      rowData.value.type === "Безнал" &&
+      user.value.username !== "Горцуева"
     ) {
       banks.value = await storeBanks.getBanks();
       let idMainBank = banks.value.find((bank) => bank.main === true)?.id;
@@ -1046,6 +1053,54 @@ async function createRow() {
         createdUser: user.value.username,
         fromBankId: idMainBank,
         toBankId: idMainBank,
+        idRow: maxIdRowData.id + 1,
+      } as any;
+
+      await storeBanks.createTransaction(transaction);
+    } else if (
+      rowData.value.typeOfExpenditure !== "Перевод с баланса безнал" &&
+      rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
+      rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
+      rowData.value.typeOfExpenditure !== "Удержания с сотрудников" &&
+      rowData.value.type === "Безнал" &&
+      user.value.username === "Горцуева"
+    ) {
+      banks.value = await storeBanks.getBanks();
+      let idMainBank = banks.value.find((bank) => bank.main === true)?.id;
+      let maxIdRowData = rows.value.reduce((maxRow: any, currentRow: any) => {
+        return currentRow.id > (maxRow?.id || -Infinity) ? currentRow : maxRow;
+      }, null);
+
+      let transaction = {
+        type: "expenditure",
+        sum: Number(rowData.value.expenditure),
+        createdUser: user.value.username,
+        fromBankId: 5,
+        toBankId: 5,
+        idRow: maxIdRowData.id + 1,
+      } as any;
+
+      await storeBanks.createTransaction(transaction);
+    } else if (
+      (rowData.value.typeOfExpenditure === "Перевод с баланса безнал" ||
+        rowData.value.typeOfExpenditure === "Новый кредит безнал" ||
+        rowData.value.typeOfExpenditure === "Пополнение баланса" ||
+        rowData.value.typeOfExpenditure === "Удержания с сотрудников") &&
+      rowData.value.type === "Безнал" &&
+      user.value.username === "Горцуева"
+    ) {
+      banks.value = await storeBanks.getBanks();
+      let idMainBank = banks.value.find((bank) => bank.main === true)?.id;
+      let maxIdRowData = rows.value.reduce((maxRow: any, currentRow: any) => {
+        return currentRow.id > (maxRow?.id || -Infinity) ? currentRow : maxRow;
+      }, null);
+
+      let transaction = {
+        type: "incoming",
+        sum: Number(rowData.value.expenditure),
+        createdUser: user.value.username,
+        fromBankId: 5,
+        toBankId: 5,
         idRow: maxIdRowData.id + 1,
       } as any;
 
@@ -2090,7 +2145,9 @@ function showBankTransactions(id: number) {
             <div
               class="flex items-center gap-3 w-full max-w-[400px] max-sm:max-w-full"
               v-if="
-                user.username === 'Директор' || user.username === 'Власенкова'
+                user.username === 'Директор' ||
+                user.username === 'Власенкова' ||
+                user.username === 'Горцуева'
               "
             >
               <UIMainButton
