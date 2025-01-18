@@ -54,7 +54,7 @@ async function exportToExcel() {
   perPage.value = await totalRows.value;
   await updateCurrentPageData();
 
-  let table = await document.querySelector("#theTable");
+  let table = document.querySelector(".table-fixed");
 
   let wb = await utils.table_to_book(table);
 
@@ -378,7 +378,7 @@ const columns = [
         :class="{ 'overflow-x-hidden max-h-[100px]': isShowModalValue }"
         :ui="{ wrapper: 'relative bg-white',
   td: {
-    base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
+    base: 'border-[1px] text-center whitespace-normal',
     padding: 'px-3 py-1',
   },
   th: {
@@ -402,6 +402,7 @@ const columns = [
             :value="row.id"
             :checked="isChecked(row.id)"
             @change="handleCheckboxChange(row)"
+            type="checkbox"
           />
         </template>
 
