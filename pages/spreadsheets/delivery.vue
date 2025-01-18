@@ -96,14 +96,20 @@ async function confirmAndExecute(operation: Operation) {
 }
 
 async function updateDeliveryRow(obj: any) {
-  await confirmAndExecute(async () => {
-    await storeRansom.updateDeliveryStatus(
-      obj.row,
-      obj.flag,
-      "Delivery",
-      user.value.username
-    );
-  });
+  isLoading.value = true;
+  await storeRansom.updateDeliveryStatus(
+    obj.row,
+    obj.flag,
+    "Delivery",
+    user.value.username
+  );
+  filteredRows.value = await storeRansom.getRansomRows("Delivery");
+  rows.value = filteredRows.value;
+
+  if (rows.value) {
+    handleFilteredRows(rows.value);
+  }
+  isLoading.value = false;
 }
 
 async function updateDeliveryRows(obj: any) {
@@ -285,7 +291,6 @@ watch(isOpen, (newValue) => {
     unlockScroll();
   }
 });
-
 </script>
 
 <template>
