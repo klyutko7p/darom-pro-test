@@ -571,8 +571,21 @@ let showProcessingRowsFlag = ref(
 
 let showWaitingRowsFlag = ref(Cookies.get("showWaitingRowsFlag") === "true");
 
+const updateRowBackgroundYellow = (rowId: string): void => {
+  const tdElements = document.querySelectorAll("td");
+  tdElements.forEach((td) => {
+    const linkElement = td.querySelector("a");
+    if (linkElement?.innerHTML === rowId) {
+      td.parentElement?.classList.add("bg-yellow-300");
+    }
+  });
+};
+
 function showProcessingRows() {
   if (showProcessingRowsFlag.value === true) {
+    processingRows.value.forEach((row) =>
+      updateRowBackgroundYellow(row.id.toString())
+    );
     returnRows.value = processingRows.value;
     perPage.value = 2000;
   } else {
@@ -581,10 +594,23 @@ function showProcessingRows() {
   }
 }
 
+const updateRowBackgroundGreen = (rowId: string): void => {
+  const tdElements = document.querySelectorAll("td");
+  tdElements.forEach((td) => {
+    const linkElement = td.querySelector("a");
+    if (linkElement?.innerHTML === rowId) {
+      td.parentElement?.classList.add("bg-green-300");
+    }
+  });
+};
+
 function showWaitingRows() {
   if (showWaitingRowsFlag.value === true) {
+    waitingRows.value.forEach((row) =>
+      updateRowBackgroundGreen(row.id.toString())
+    );
     returnRows.value = waitingRows.value;
-    perPage.value = 1000;
+    perPage.value = 500;
   } else {
     perPage.value = 100;
     updateCurrentPageData();
@@ -606,11 +632,24 @@ function changeWaitingRows() {
 
 let showExpiredRowsFlag = ref(false);
 
+const updateRowBackgroundRed = (rowId: string): void => {
+  const tdElements = document.querySelectorAll("td");
+  tdElements.forEach((td) => {
+    const linkElement = td.querySelector("a");
+    if (linkElement?.innerHTML === rowId) {
+      td.parentElement?.classList.add("bg-red-300");
+    }
+  });
+};
+
 function showExpiredRows() {
   if (showExpiredRowsFlag.value === false) {
+    expiredRows.value.forEach((row) =>
+      updateRowBackgroundRed(row.id.toString())
+    );
     showExpiredRowsFlag.value = true;
     returnRows.value = expiredRows.value;
-    perPage.value = 2000;
+    perPage.value = 500;
   } else {
     showExpiredRowsFlag.value = false;
     perPage.value = 100;
