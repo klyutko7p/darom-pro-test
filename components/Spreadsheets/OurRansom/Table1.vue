@@ -334,6 +334,11 @@ function updateCurrentPageData() {
       ?.filter((row) => !row.deleted)
       .slice(startIndex, endIndex);
   }
+
+  if (showProcessingRowsFlag.value === true) {
+    returnRows.value = processingRows.value;
+    perPage.value = 100;
+  }
 }
 
 function updateCurrentPageData2() {
@@ -581,48 +586,37 @@ const updateRowBackgroundYellow = (rowId: string): void => {
   });
 };
 
-function showProcessingRows() {
-  if (showProcessingRowsFlag.value === true) {
-    processingRows.value.forEach((row) =>
-      updateRowBackgroundYellow(row.id.toString())
-    );
-    returnRows.value = processingRows.value;
-    perPage.value = 2000;
-  } else {
-    perPage.value = 100;
-    updateCurrentPageData();
-  }
-}
-
-const updateRowBackgroundGreen = (rowId: string): void => {
-  const tdElements = document.querySelectorAll("td");
-  tdElements.forEach((td) => {
-    const linkElement = td.querySelector("a");
-    if (linkElement?.innerHTML === rowId) {
-      td.parentElement?.classList.add("bg-green-300");
-    }
-  });
-};
-
-function showWaitingRows() {
-  if (showWaitingRowsFlag.value === true) {
-    waitingRows.value.forEach((row) =>
-      updateRowBackgroundGreen(row.id.toString())
-    );
-    returnRows.value = waitingRows.value;
-    perPage.value = 500;
-  } else {
-    perPage.value = 100;
-    updateCurrentPageData();
-  }
-}
-
 function changeProcessingRows() {
   showProcessingRowsFlag.value = !showProcessingRowsFlag.value;
   Cookies.set(
     "showProcessingRowsFlag",
     JSON.stringify(showProcessingRowsFlag.value)
   );
+  showWaitingRowsFlag.value = false;
+  Cookies.set("showWaitingRowsFlag", JSON.stringify(showWaitingRowsFlag.value));
+}
+
+function showProcessingRows() {
+  if (showProcessingRowsFlag.value === true) {
+    processingRows.value.forEach((row) =>
+      updateRowBackgroundYellow(row.id.toString())
+    );
+    returnRows.value = processingRows.value;
+    perPage.value = 100;
+  } else {
+    perPage.value = 100;
+    updateCurrentPageDataDeleted();
+  }
+}
+
+function showWaitingRows() {
+  if (showWaitingRowsFlag.value === true) {
+    returnRows.value = waitingRows.value;
+    perPage.value = 1000;
+  } else {
+    perPage.value = 100;
+    updateCurrentPageData();
+  }
 }
 
 function changeWaitingRows() {
@@ -632,24 +626,11 @@ function changeWaitingRows() {
 
 let showExpiredRowsFlag = ref(false);
 
-const updateRowBackgroundRed = (rowId: string): void => {
-  const tdElements = document.querySelectorAll("td");
-  tdElements.forEach((td) => {
-    const linkElement = td.querySelector("a");
-    if (linkElement?.innerHTML === rowId) {
-      td.parentElement?.classList.add("bg-red-300");
-    }
-  });
-};
-
 function showExpiredRows() {
   if (showExpiredRowsFlag.value === false) {
-    expiredRows.value.forEach((row) =>
-      updateRowBackgroundRed(row.id.toString())
-    );
     showExpiredRowsFlag.value = true;
     returnRows.value = expiredRows.value;
-    perPage.value = 500;
+    perPage.value = 2000;
   } else {
     showExpiredRowsFlag.value = false;
     perPage.value = 100;
@@ -2038,12 +2019,24 @@ const columns = [
               user.role !== 'RMANAGER' &&
               user.role !== 'PPVZ'
             "
+            :class="{
+              'bg-green-500 text-white py-1': isWaiting(row),
+              'bg-red-500 text-white py-1': isExpired(row),
+            }"
             class="cursor-pointer text-secondary-color hover:opacity-50 duration-200 font-semibold"
             :to="`/spreadsheets/record/1/${row.id}`"
           >
             {{ row.id }}
           </NuxtLink>
-          <h1 v-else>{{ row.id }}</h1>
+          <h1
+            :class="{
+              'bg-green-300 text-white py-1': isWaiting(row),
+              'bg-red-300 text-white py-1': isExpired(row),
+            }"
+            v-else
+          >
+            {{ row.id }}
+          </h1>
         </template>
 
         <template #clientLink1-data="{ row }">
@@ -2167,8 +2160,13 @@ const columns = [
         </template>
 
         <template #orderPVZ-data="{ row }">
-          <p v-if="user.orderPVZ1 === 'READ' || user.orderPVZ1 === 'WRITE'">
-            {{ row.orderPVZ }}
+          <p
+            :class="{
+              'bg-yellow-300 text-white font-semibold': isProcessing(row),
+            }"
+            v-if="user.orderPVZ1 === 'READ' || user.orderPVZ1 === 'WRITE'"
+          >
+            {{ row.orderPVZ ? row.orderPVZ : "Нужна обработка" }}
           </p>
         </template>
 
