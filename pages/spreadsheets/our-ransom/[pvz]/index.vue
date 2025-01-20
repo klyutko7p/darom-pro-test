@@ -133,10 +133,15 @@ function focusInput() {
 const isShowDeletedData = ref(false);
 async function showDeletedData() {
   isLoading.value = true;
-  rows.value = await storeRansom.getDeletedRansomRowsByPVZ(
+  let rowsData = await storeRansom.getDeletedRansomRowsByPVZPartOne(
     pvzString,
     "OurRansom"
   );
+  let rowsData2 = await storeRansom.getDeletedRansomRowsByPVZPartTwo(
+    pvzString,
+    "OurRansom"
+  );
+  rows.value = [...rowsData, ...rowsData2];
 
   if (rows.value) {
     handleFilteredRows(rows.value);

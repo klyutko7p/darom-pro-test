@@ -420,6 +420,52 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  async function getDeletedRansomRowsByPVZPartOne(
+    PVZ: string | string[],
+    flag: string
+  ) {
+    try {
+      let response = await fetch("/api/ransom/get-rows-by-pvz-deleted-part-one", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+        body: JSON.stringify({ PVZ: PVZ, flag: flag }),
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getDeletedRansomRowsByPVZPartTwo(
+    PVZ: string | string[],
+    flag: string
+  ) {
+    try {
+      let response = await fetch("/api/ransom/get-rows-by-pvz-deleted-part-two", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+        body: JSON.stringify({ PVZ: PVZ, flag: flag }),
+      });
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function getRansomRowsForModalOurRansom() {
     try {
       let response = await fetch("/api/ransom/get-rows-for-modal-or", {
@@ -479,12 +525,15 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getRansomRowsForModalOurRansomPartThree() {
     try {
-      let response = await fetch("/api/ransom/get-rows-for-modal-or-part-three", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/octet-stream",
-        },
-      });
+      let response = await fetch(
+        "/api/ransom/get-rows-for-modal-or-part-three",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        }
+      );
 
       const arrayBuffer = await response.arrayBuffer();
       const unpacked = msgpack.decode(new Uint8Array(arrayBuffer));
@@ -767,6 +816,23 @@ export const useRansomStore = defineStore("ransom", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ link: link, flag: flag }),
+      });
+      return data.value;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsByIds(idRows: number[]) {
+    try {
+      let { data }: any = await useFetch("/api/ransom/get-rows-by-ids", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idRows }),
       });
       return data.value;
     } catch (error) {
@@ -1230,7 +1296,7 @@ export const useRansomStore = defineStore("ransom", () => {
       }
     }
   }
-  
+
   async function getRansomRowsForAdvanceReportOurRansomPartThree() {
     try {
       let response = await fetch(
@@ -1402,6 +1468,9 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsForBalanceOurRansomPartSix,
     getRansomRowsByPVZInventory,
     announce,
-    generateLink
+    generateLink,
+    getRansomRowsByIds,
+    getDeletedRansomRowsByPVZPartOne,
+    getDeletedRansomRowsByPVZPartTwo
   };
 });

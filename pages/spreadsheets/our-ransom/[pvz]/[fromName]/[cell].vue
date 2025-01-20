@@ -1054,7 +1054,7 @@ function onDateInput(event: any) {
             </template>
           </UINewModalEdit>
         </div>
-        <div v-else>
+        <div v-else class="w-screen">
           <UISpinner />
         </div>
       </NuxtLayout>
@@ -1570,7 +1570,7 @@ function onDateInput(event: any) {
             </template>
           </UINewModalEdit>
         </div>
-        <div v-else>
+        <div class="w-screen" v-else>
           <UISpinner />
         </div>
       </NuxtLayout>

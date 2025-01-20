@@ -43,18 +43,21 @@ function openModal(row: Task) {
   if (row.id) {
     rowData.value = JSON.parse(JSON.stringify(row));
     rowData.value.created_at = rowData.value.created_at
-      ? storeUsers.getISODateTime(rowData.value.created_at)
-      : storeUsers.getISODateTime(new Date());
+      ? storeUsers.getISODate(rowData.value.created_at)
+      : null;
+    rowData.value.deadline = rowData.value.deadline
+      ? storeUsers.getISODate(rowData.value.deadline)
+      : null;
     rowData.value.done = rowData.value.done
-      ? storeUsers.getISODateTime(rowData.value.done)
+      ? storeUsers.getISODate(rowData.value.done)
       : null;
     rowData.value.checked = rowData.value.checked
-      ? storeUsers.getISODateTime(rowData.value.checked)
+      ? storeUsers.getISODate(rowData.value.checked)
       : null;
   } else {
     rowData.value = {} as Task;
-    rowData.value.created_at = storeUsers.getISODateTime(new Date());
-    rowData.value.deadline = storeUsers.getISODateTime(new Date());
+    rowData.value.created_at = new Date();
+    rowData.value.deadline = new Date();
   }
 }
 
@@ -286,30 +289,11 @@ const isSaveDisabled = computed(() => {
                 <label for="description" class="max-sm:text-sm"
                   >Выполнить до</label
                 >
-                <UPopover
-                  class="w-full"
-                  v-if="rowData.deadline"
-                  :popper="{ placement: 'bottom-start' }"
-                >
-                  <UButton
-                    :overlay="true"
-                    type="button"
-                    icon="i-heroicons-calendar-days-20-solid"
-                    color="white"
-                    class="w-full"
-                  >
-                    {{ format(rowData.deadline, "dd MMM yyy", { locale: ru }) }}
-                  </UButton>
-
-                  <template #panel="{ close }">
-                    <DatePickerNotRange
-                      v-model="rowData.deadline"
-                      is-required
-                      :min-date="new Date()"
-                      @close="close"
-                    />
-                  </template>
-                </UPopover>
+                <input
+                  type="date"
+                  class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                  v-model="rowData.deadline"
+                />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="notation" class="max-sm:text-sm">Комментарий</label>
@@ -326,29 +310,11 @@ const isSaveDisabled = computed(() => {
                 class="flex flex-col items-start text-left gap-2 mb-5"
               >
                 <label for="done" class="max-sm:text-sm">Выполнено</label>
-                <UPopover
-                  class="w-full"
-                  v-if="rowData.done"
-                  :popper="{ placement: 'bottom-start' }"
-                >
-                  <UButton
-                    :overlay="true"
-                    type="button"
-                    icon="i-heroicons-calendar-days-20-solid"
-                    color="white"
-                    class="w-full"
-                  >
-                    {{ format(rowData.done, "dd MMM yyy", { locale: ru }) }}
-                  </UButton>
-
-                  <template #panel="{ close }">
-                    <DatePickerNotRange
-                      v-model="rowData.done"
-                      is-required
-                      @close="close"
-                    />
-                  </template>
-                </UPopover>
+                <input
+                  type="date"
+                  class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                  v-model="rowData.done"
+                />
               </div>
 
               <div
@@ -356,29 +322,11 @@ const isSaveDisabled = computed(() => {
                 class="flex flex-col items-start text-left gap-2 mb-5"
               >
                 <label for="checked" class="max-sm:text-sm">Проверено</label>
-                <UPopover
-                  class="w-full"
-                  v-if="rowData.checked"
-                  :popper="{ placement: 'bottom-start' }"
-                >
-                  <UButton
-                    :overlay="true"
-                    type="button"
-                    icon="i-heroicons-calendar-days-20-solid"
-                    color="white"
-                    class="w-full"
-                  >
-                    {{ format(rowData.checked, "dd MMM yyy", { locale: ru }) }}
-                  </UButton>
-
-                  <template #panel="{ close }">
-                    <DatePickerNotRange
-                      v-model="rowData.checked"
-                      is-required
-                      @close="close"
-                    />
-                  </template>
-                </UPopover>
+                <input
+                  type="date"
+                  class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                  v-model="rowData.checked"
+                />
               </div>
             </div>
           </template>
