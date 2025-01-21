@@ -166,7 +166,8 @@ let usersOfIssued = ref([
               user.role !== 'SORTIROVKA' &&
               user.username !== 'Светлана1' &&
               user.username !== 'Светлана3' &&
-              user.username !== 'Светлана2'
+              user.username !== 'Светлана2' &&
+              user.role !== 'COURIER'
             "
           >
             <Icon
@@ -390,6 +391,30 @@ let usersOfIssued = ref([
         <li>
           <div
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
+            @click="router.push('/spreadsheets/distribution')"
+            v-if="
+              user.username === 'Директор' ||
+              user.username === 'Власенкова' ||
+              user.username === 'Горцуева' ||
+              user.username === 'Шведова' ||
+              user.username === 'Мешков' ||
+              user.role === 'COURIER' ||
+              user.role === 'SORTIROVKA'
+            "
+          >
+            <Icon
+              class="text-gray-500 transition duration-75 group-hover:text-gray-900"
+              name="i-material-symbols-move-to-inbox-rounded"
+              size="24"
+            />
+            <span class="flex-1 ms-3 whitespace-nowrap"
+              >Распределение товара</span
+            >
+          </div>
+        </li>
+        <li>
+          <div
+            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             @click="router.push('/spreadsheets/refunds')"
             v-if="
               (user.role === 'ADMIN' &&
@@ -484,7 +509,7 @@ let usersOfIssued = ref([
                 !user.username.includes('Горцуева')) ||
               user.role === 'ADMINISTRATOR' ||
               user.role === 'PVZ' ||
-              user.role === 'COURIER' ||
+              user.username === 'Рейзвих' ||
               user.role === 'PPVZ' ||
               user.username === 'Сошников' ||
               user.role === 'RMANAGER'
@@ -516,7 +541,7 @@ let usersOfIssued = ref([
               user.role === 'DRIVER' ||
               user.role === 'ADMINISTRATOR' ||
               user.role === 'OFFICE' ||
-              user.role === 'COURIER' ||
+              user.username === 'Рейзвих' ||
               user.username === 'Волошина' ||
               user.username === 'Сошников' ||
               user.role === 'RMANAGER'

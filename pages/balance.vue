@@ -195,7 +195,7 @@ onMounted(async () => {
 
     if (
       user.value.role === "PVZ" ||
-      user.value.role === "COURIER" ||
+      user.value.username === "Рейзвих" ||
       user.value.role === "PPVZ"
     ) {
       selectedPVZ.value = user.value.visiblePVZ;
@@ -1994,7 +1994,7 @@ async function createRow() {
     getAllSum();
     if (
       user.value.role === "PVZ" ||
-      user.value.role === "COURIER" ||
+      user.value.username === "Рейзвих" ||
       user.value.role === "PPVZ"
     ) {
       selectedPVZ.value = user.value.visiblePVZ;
@@ -2091,7 +2091,7 @@ async function updateDeliveryProfitRow(obj: any) {
   getProfitManagerRowsSum();
   if (
     user.value.role === "PVZ" ||
-    user.value.role === "COURIER" ||
+    user.value.username === "Рейзвих" ||
     user.value.role === "PPVZ"
   ) {
     selectedPVZ.value = user.value.visiblePVZ;
@@ -2140,7 +2140,7 @@ async function updateDeliveryProfitManagerStatus(obj: any) {
   getProfitManagerRowsSum();
   if (
     user.value.role === "PVZ" ||
-    user.value.role === "COURIER" ||
+    user.value.username === "Рейзвих" ||
     user.value.role === "PPVZ"
   ) {
     selectedPVZ.value = user.value.visiblePVZ;
@@ -2232,7 +2232,7 @@ async function updateDeliveryRow(obj: any) {
 
   if (
     user.value.role === "PVZ" ||
-    user.value.role === "COURIER" ||
+    user.value.username === "Рейзвих" ||
     user.value.role === "PPVZ"
   ) {
     selectedPVZ.value = user.value.visiblePVZ;
@@ -2283,7 +2283,7 @@ async function updateRow() {
   getAllSum();
   if (
     user.value.role === "PVZ" ||
-    user.value.role === "COURIER" ||
+    user.value.username === "Рейзвих" ||
     user.value.role === "PPVZ"
   ) {
     selectedPVZ.value = user.value.visiblePVZ;
@@ -2387,7 +2387,7 @@ const options = [
                     <select
                       v-if="
                         user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
+                        user.username !== 'Рейзвих' &&
                         user.role !== 'PPVZ' &&
                         user.role !== 'RMANAGER' &&
                         user.username !== 'Мешков' &&
@@ -2448,7 +2448,7 @@ const options = [
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "
@@ -2460,7 +2460,7 @@ const options = [
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "
@@ -2474,7 +2474,7 @@ const options = [
                       <option
                         v-if="
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ'
                         "
                         value="Баланс безнал"
@@ -2485,7 +2485,7 @@ const options = [
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "
@@ -2497,7 +2497,7 @@ const options = [
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "
@@ -2509,7 +2509,7 @@ const options = [
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "
@@ -2521,7 +2521,7 @@ const options = [
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "
@@ -2533,7 +2533,7 @@ const options = [
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "
@@ -2955,7 +2955,7 @@ const options = [
                     <select
                       v-if="
                         user.role !== 'PVZ' &&
-                        user.role !== 'COURIER' &&
+                        user.username !== 'Рейзвих' &&
                         user.role !== 'PPVZ' &&
                         user.role !== 'RMANAGER'
                       "
@@ -2999,7 +2999,7 @@ const options = [
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "
@@ -3011,7 +3011,7 @@ const options = [
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "
@@ -3025,7 +3025,7 @@ const options = [
                       <option
                         v-if="
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ'
                         "
                         value="Баланс безнал"
@@ -3036,7 +3036,7 @@ const options = [
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "
@@ -3049,7 +3049,7 @@ const options = [
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "
@@ -3061,7 +3061,7 @@ const options = [
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "
@@ -3073,7 +3073,7 @@ const options = [
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "
@@ -3085,7 +3085,7 @@ const options = [
                         v-if="
                           user.role !== 'ADMINISTRATOR' &&
                           user.role !== 'PVZ' &&
-                          user.role !== 'COURIER' &&
+                          user.username !== 'Рейзвих' &&
                           user.role !== 'PPVZ' &&
                           user.role !== 'RMANAGER'
                         "

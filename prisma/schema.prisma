@@ -492,3 +492,14 @@ model MonthlyPayment {
   created_at        DateTime  @default(now())
   deleted           DateTime?
 }
+
+model Box {
+  id          Int       @id @default(autoincrement())
+  idRows      Int[]
+  dispatchPVZ String
+  type        String?
+  createdUser String
+  sorted      DateTime?
+  delivered   DateTime?
+  created_at  DateTime  @default(now())
+}

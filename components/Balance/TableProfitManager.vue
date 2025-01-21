@@ -75,7 +75,7 @@ onMounted(() => {});
               v-if="
                 !row.received &&
                 row.issued &&
-                (user.role === 'PVZ' || user.role === 'COURIER' || user.role === 'PPVZ')
+                (user.role === 'PVZ' || user.username === 'Рейзвих' || user.role === 'PPVZ')
               "
               class="text-green-500 cursor-pointer hover:text-green-300 duration-200"
               name="mdi:checkbox-multiple-marked-circle"

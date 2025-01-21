@@ -821,7 +821,7 @@ const toggleDropdown = (rowId: any) => {
     class="w-full mx-auto text-center bg-white border-[1px] rounded-md mt-5 max-h-[500px]"
     :ui="{
   td: {
-    base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
+    base: 'border-[1px] text-center whitespace-normal',
     padding: 'px-3 py-2',
   },
   th: {

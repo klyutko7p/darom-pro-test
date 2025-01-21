@@ -108,7 +108,7 @@ const toggleDropdown = (rowId: any) => {
 <template>
   <UTable
     class="w-full text-center bg-white border-[1px] rounded-md mt-5"
-    :ui="{ td: { base: 'border-r-[1px] border-b-[1px]' }, th: {base: 'text-center'}, default: { checkbox: { color: 'gray' as any } } }"
+    :ui="{ td: { base: 'border-[1px]' }, th: {base: 'text-center'}, default: { checkbox: { color: 'gray' as any } } }"
     :rows="rows"
     :columns="columns"
   >

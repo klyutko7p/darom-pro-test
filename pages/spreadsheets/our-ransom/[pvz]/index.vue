@@ -77,7 +77,7 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
           }) === today ||
             row.issued === null)
       );
-    } else if (user.value.role === "COURIER") {
+    } else if (user.value.username === "Рейзвих") {
       filteredRows.value = filteredRows.value.filter(
         (row) =>
           row.deliveredSC !== null &&

@@ -36,7 +36,7 @@ definePageMeta({
           <div
             class="text-white flex items-center justify-center flex-col h-screen px-3"
           >
-            <h1 class="font-bold text-2xl mb-5 max-sm:text-lg">
+            <h1 class="font-bold text-center text-2xl mb-5 max-sm:text-lg">
               Выберите как оформить доставку по Штрих-коду (QR)
             </h1>
             <div class="flex items-center gap-5 flex-col max-w-[500px]">

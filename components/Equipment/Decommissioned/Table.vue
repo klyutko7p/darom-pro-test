@@ -15,7 +15,7 @@ const props = defineProps({
 async function exportToExcel() {
   perPage.value = await totalRows.value;
 
-  let table = await document.querySelector("#theTable");
+  let table = document.querySelector(".table-fixed");
 
   let wb = await utils.table_to_book(table);
   await writeFile(wb, "списанное_оборудование.xlsx");
@@ -142,7 +142,7 @@ const toggleDropdown = (rowId: any) => {
       class="w-full text-center bg-white border-[1px] rounded-md"
       :ui="{
   td: {
-    base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
+    base: 'border-[1px] text-center whitespace-normal',
     padding: 'px-3 py-1',
   },
   th: {

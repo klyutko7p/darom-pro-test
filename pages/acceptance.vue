@@ -195,19 +195,27 @@ watch(scanStringItem, (newValue) => {
     <div v-if="token && user.role === 'ADMIN'">
       <NuxtLayout name="admin">
         <div class="mt-10">
-          <div>
-            <h1 class="mb-3 font-bold text-xl">
-              Выберите нужное ПВЗ, чтобы начать приёмку!
-            </h1>
-            <select
-              class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
-              v-model="selectedPVZ"
-              @change="updateCookies"
-              name="pvz"
+          <div class="flex justify-between items-center">
+            <div>
+              <h1 class="mb-3 font-bold text-xl">
+                Выберите нужное ПВЗ, чтобы начать приёмку!
+              </h1>
+              <select
+                class="py-1 px-2 border-2 bg-transparent rounded-lg text-base"
+                v-model="selectedPVZ"
+                @change="updateCookies"
+                name="pvz"
+              >
+                <option disabled value="">Выберите ПВЗ</option>
+                <option v-for="pvz in user.PVZ">{{ pvz }}</option>
+              </select>
+            </div>
+            <UButton
+              @click="router.push('/acceptance-box')"
+              icon="i-material-symbols-package-2"
+              class="font-semibold"
+              >Приёмка коробок</UButton
             >
-              <option disabled value="">Выберите ПВЗ</option>
-              <option v-for="pvz in user.PVZ">{{ pvz }}</option>
-            </select>
           </div>
           <div
             class="flex items-center flex-col justify-center gap-5 mt-10"

@@ -92,7 +92,7 @@ onMounted(() => {});
             class="border-[1px]"
             v-if="
               user.role !== 'PVZ' &&
-              user.role !== 'COURIER' &&
+              user.username !== 'Рейзвих' &&
               user.role !== 'PPVZ'
             "
           >
@@ -120,7 +120,7 @@ onMounted(() => {});
               v-if="
                 (!row.issued &&
                   (user.role === 'PVZ' ||
-                    user.role === 'COURIER' ||
+                    user.username === 'Рейзвих' ||
                     user.role === 'PPVZ')) ||
                 (row.notation === 'Вывод дохода' &&
                   (user.role === 'ADMIN' || user.role === 'ADMINISTRATOR') &&

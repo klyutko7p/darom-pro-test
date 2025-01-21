@@ -107,7 +107,7 @@ async function getRowByIdFromInput(row: IPVZPercent) {
       class="w-full max-h-[250px] text-center bg-white border-[1px] rounded-md"
       :ui="{
   td: {
-    base: 'border-r-[1px] border-b-[1px] text-center whitespace-normal',
+    base: 'border-[1px] text-center whitespace-normal',
     padding: 'px-3 py-1',
   },
   th: {

@@ -84,7 +84,7 @@ onMounted(() => {});
                 !row.received &&
                 row.issued &&
                 (user.role === 'PVZ' ||
-                  user.role === 'COURIER' ||
+                  user.username === 'Рейзвих' ||
                   user.role === 'PPVZ')
               "
               class="text-green-500 cursor-pointer hover:text-green-300 duration-200"

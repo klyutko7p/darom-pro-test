@@ -158,6 +158,7 @@ const flags = [
                   option-attribute="name"
                   class="z-[100] w-full bg-white"
                 />
+
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="nameOfEquipment">% Wildberries</label>
