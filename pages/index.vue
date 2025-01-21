@@ -159,7 +159,7 @@ let markers = [
     coords: [47.100344, 37.660677],
     commentary: "ул. Межевая. Ежедневно 9:00-19:00",
     workTime: "Ежедневно 09:00-19:00",
-    info: "Вход в магазин «Семейный»"
+    info: "Вход в магазин «Семейный»",
   },
 ];
 
@@ -189,7 +189,7 @@ async function getPercents() {
         r.pvz.name.includes(marker.id.toString()) && r.flag === "ClientRansom"
     );
     if (row && row.wb) {
-      marker.commentary += `. Доставка Ваших заказов: Wildberries - ${row.wb}%, Ozon - ${row.ozon}%, Яндекс Маркет - ${row.ym}%`;
+      marker.commentary += `. Доставка Ваших заказов по QR-коду: Wildberries - ${row.wb}%, Ozon - ${row.ozon}%, Другие интернет-магазины - ${row.ym}%`;
     }
     return marker;
   });
@@ -199,7 +199,7 @@ async function getPercents() {
       (r) => r.pvz.name.includes(marker.id.toString()) && r.flag === "OurRansom"
     );
     if (row && row.wb) {
-      marker.commentary += `. Доставка заказанных товаров: 10%`;
+      marker.commentary += `. Доставка товаров по постоплате: 10%`;
     }
     return marker;
   });
@@ -434,7 +434,9 @@ async function showInfo(arrayCoordinates: Array<number>) {
             </h1>
           </div>
           <div class="mb-3" v-if="selectedPVZ.info">
-            <h1 class="font-bold text-xl max-sm:text-base">Дополнительная информация</h1>
+            <h1 class="font-bold text-xl max-sm:text-base">
+              Дополнительная информация
+            </h1>
             <h1>
               {{ selectedPVZ.info }}
             </h1>
@@ -446,18 +448,22 @@ async function showInfo(arrayCoordinates: Array<number>) {
             </h1>
           </div>
           <div class="mb-3">
-            <h1 class="font-bold text-xl max-sm:text-base">Доставка Ваших заказов</h1>
+            <h1 class="font-bold text-xl max-sm:text-base">
+              Доставка Ваших заказов по QR-коду
+            </h1>
             <h1>
               {{
                 selectedPVZ.commentary
-                  .split("Доставка Ваших заказов:")[1]
+                  .split("Доставка Ваших заказов по QR-коду:")[1]
                   .split(".")[0]
               }}
             </h1>
           </div>
           <div class="mb-3">
-            <h1 class="font-bold text-xl max-sm:text-base">Доставка заказанных товаров</h1>
-            <h1>Все маркетплейсы - 10%</h1>
+            <h1 class="font-bold text-xl max-sm:text-base">
+              Доставка товаров по постоплате
+            </h1>
+            <h1>Все интернет-магазины - 10%</h1>
           </div>
         </div>
       </UCard>
