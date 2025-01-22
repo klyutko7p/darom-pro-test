@@ -22,6 +22,8 @@ onMounted(async () => {
       selectedMarkerId.value = 5;
     } else if (addressString === "ПВЗ_8") {
       selectedMarkerId.value = 8;
+    } else if (addressString === "ППВЗ_9") {
+      selectedMarkerId.value = 9;
     } else if (addressString === "ПВЗ_10") {
       selectedMarkerId.value = 10;
     } else if (addressString === "ПВЗ_11") {
@@ -118,6 +120,11 @@ function changeAddress(coordinatesData: Array<number>) {
     coordinatesData[0] === 47.160469 &&
     coordinatesData[1] === 37.587497
   ) {
+    address.value = "ППВЗ_9";
+  } else if (
+    coordinatesData[0] === 47.093065 &&
+    coordinatesData[1] === 37.672873
+  ) {
     address.value = "ППВЗ_12";
   }
   coordinates.value = coordinatesData;
@@ -179,6 +186,12 @@ let markers = [
     coords: [47.100344, 37.660677],
     commentary: "Ежедневно 9:00-19:00",
     address: "г. Мариуполь, ул. Межевая",
+  },
+  {
+    id: 12,
+    coords: [47.093065, 37.672873],
+    commentary: "Ежедневно",
+    address: "г. Мариуполь, ул. Центральная, 43",
   },
 ];
 

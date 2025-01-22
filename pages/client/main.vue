@@ -134,6 +134,10 @@ const pvzs = [
     name: "ул. Макара Мазая, 37А",
   },
   {
+    pvz: "ППВЗ_9",
+    name: "ул. 8 Марта, 77",
+  },
+  {
     pvz: "ПВЗ_10",
     name: "ул. Азовской Военной Флотилии, 2",
   },
@@ -143,7 +147,7 @@ const pvzs = [
   },
   {
     pvz: "ППВЗ_12",
-    name: "ул. 8 Марта, 77",
+    name: "ул. Центральная, 43",
   },
 ];
 
@@ -239,10 +243,7 @@ useSeoMeta({
           </div>
         </div>
 
-        <div
-          v-if="client.phoneNumber === '+70000000001'"
-          class=""
-        >
+        <div v-if="client.phoneNumber === '+70000000001'" class="">
           <UButton
             @click="router.push('/auth/client')"
             class="my-3 font-semibold uppercase"

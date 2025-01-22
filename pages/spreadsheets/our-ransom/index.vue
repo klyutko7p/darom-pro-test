@@ -1330,12 +1330,7 @@ let additionallies = [
                       @change="changePVZ(), checkPercent()"
                       class="w-full"
                       v-model="rowData.dispatchPVZ"
-                      :options="
-                        pvz?.filter(
-                          (pvz) =>
-                            pvz.name !== 'ППВЗ_7' && pvz.name !== 'ППВЗ_9'
-                        )
-                      "
+                      :options="pvz?.filter((pvz) => pvz.name !== 'ППВЗ_7')"
                       option-attribute="name"
                       value-attribute="name"
                     />
@@ -1865,12 +1860,7 @@ let additionallies = [
                       @change="changePVZ(), checkPercent()"
                       class="w-full"
                       v-model="rowData.dispatchPVZ"
-                      :options="
-                        pvz?.filter(
-                          (pvz) =>
-                            pvz.name !== 'ППВЗ_7' && pvz.name !== 'ППВЗ_9'
-                        )
-                      "
+                      :options="pvz?.filter((pvz) => pvz.name !== 'ППВЗ_7')"
                       option-attribute="name"
                       value-attribute="name"
                     />
