@@ -76,6 +76,8 @@ model User {
   profit3                    String                       @default("NONE")
   EquipmentRow               EquipmentRow[]
   DecommissionedEquipmentRow DecommissionedEquipmentRow[]
+  AutoRow                    AutoRow[]
+  DecommissionedAutoRow      DecommissionedAutoRow[]
 }
 
 model OurRansom {
@@ -502,4 +504,35 @@ model Box {
   sorted      DateTime?
   delivered   DateTime?
   created_at  DateTime  @default(now())
+}
+
+model AutoType {
+  id       Int       @id @default(autoincrement())
+  name     String
+  autoRows AutoRow[]
+}
+
+model AutoRow {
+  id                    Int                     @id @default(autoincrement())
+  autoTypeId            Int
+  autoType              AutoType                @relation(fields: [autoTypeId], references: [id])
+  nameOfEquipment       String
+  state                 String
+  updatedUserId         Int
+  updatedUser           User                    @relation(fields: [updatedUserId], references: [id])
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @default(now()) @updatedAt
+  deleted               DateTime?
+  DecommissionedAutoRow DecommissionedAutoRow[]
+}
+
+model DecommissionedAutoRow {
+  id                   Int       @id @default(autoincrement())
+  reason               String
+  decommissionDate     DateTime
+  decommissionedUserId Int
+  decommissionedUser   User      @relation(fields: [decommissionedUserId], references: [id])
+  autoRowId            Int
+  autoRow              AutoRow   @relation(fields: [autoRowId], references: [id])
+  deleted              DateTime?
 }

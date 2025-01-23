@@ -5,11 +5,7 @@ import { useToast } from "vue-toastification";
 
 const toast = useToast();
 
-const emit = defineEmits([
-  "updateStateRows",
-  "updatePVZRows",
-  "updateDecommissionedRows",
-]);
+const emit = defineEmits(["updateStateRows", "updateDecommissionedRows"]);
 
 async function updateStateRows(flag: string) {
   emit("updateStateRows", {
@@ -18,14 +14,6 @@ async function updateStateRows(flag: string) {
   });
   checkedRows.value = [];
   updateCurrentPageData();
-}
-
-async function updatePVZRows() {
-  emit("updatePVZRows", {
-    idArray: checkedRows.value,
-    transferPVZ: transferPVZ.value,
-  });
-  checkedRows.value = [];
 }
 
 async function updateDecommissionedRows() {
@@ -38,8 +26,8 @@ async function updateDecommissionedRows() {
 
 const props = defineProps({
   user: { type: Object as PropType<User>, required: true },
-  allPVZ: { type: Array as PropType<PVZ[]>, required: true },
-  rows: { type: Array as PropType<IEquipmentRow[]>, required: true },
+  allAutoTypes: { type: Array as PropType<AutoType[]>, required: true },
+  rows: { type: Array as PropType<AutoRow[]>, required: true },
 });
 
 async function exportToExcel() {
@@ -80,7 +68,7 @@ function clearOrangeBg() {
   });
 }
 
-const handleCheckboxChange = (row: IEquipmentRow): void => {
+const handleCheckboxChange = (row: AutoRow): void => {
   const rowId = row.id.toString();
 
   if (isChecked(row.id)) {
@@ -103,8 +91,8 @@ const totalRows = computed(() =>
   Math.ceil(props.rows.filter((row) => row.deleted === null).length || 0)
 );
 
-let returnRows = ref<Array<IEquipmentRow>>([]);
-let filteredRows = ref<Array<IEquipmentRow>>([]);
+let returnRows = ref<Array<AutoRow>>([]);
+let filteredRows = ref<Array<AutoRow>>([]);
 
 function updateCurrentPageData() {
   const startIndex = (currentPage.value - 1) * perPage.value;
@@ -121,18 +109,11 @@ onMounted(async () => {
 });
 
 function filterRows() {
-  if (selectedPVZ.value !== 111111) {
-    returnRows.value = props.rows.filter(
-      (row) => row.pvz.id === selectedPVZ.value && row.deleted === null
-    );
-  } else {
-    returnRows.value = props.rows.filter((row) => row.deleted === null);
-  }
+  returnRows.value = props.rows.filter((row) => row.deleted === null);
 }
 const storeUsers = useUsersStore();
 let isLoading = ref(false);
 let selectedPVZ = ref(111111);
-let allPVZWithoutStartValue = ref(props.allPVZ.slice(1));
 let transferPVZ = ref("");
 let isOpen = ref(false);
 
@@ -147,22 +128,16 @@ const items = [
     defaultOpen: false,
     slot: "getting-started",
   },
-  {
-    label: "Переместить",
-    icon: "material-symbols:text-select-move-forward-word-outline",
-    defaultOpen: false,
-    slot: "installation",
-  },
 ];
 
 watch([props.rows, totalRows, props.user], updateCurrentPageData);
 
-const storeEquipments = useEquipmentsStore();
-let arrayWithModifiedRows = ref<Array<IEquipmentRow>>([]);
-async function getRowByIdFromInput(row: IEquipmentRow) {
+const storeAutos = useAutosStore();
+let arrayWithModifiedRows = ref<Array<AutoRow>>([]);
+async function getRowByIdFromInput(row: AutoRow) {
   arrayWithModifiedRows.value.push(row);
   arrayWithModifiedRows.value = [...new Set(arrayWithModifiedRows.value)];
-  await storeEquipments.updateEquipments(arrayWithModifiedRows.value);
+  await storeAutos.updateAutos(arrayWithModifiedRows.value);
 }
 
 let isAllSelected = ref(false);
@@ -180,8 +155,8 @@ const columns = [
     label: "ID",
   },
   {
-    key: "pvz",
-    label: "ПВЗ",
+    key: "autoType",
+    label: "Автомобиль",
   },
   {
     key: "nameOfEquipment",
@@ -266,11 +241,21 @@ const columns = [
       <template #id-data="{ row }">
         <NuxtLink
           class="cursor-pointer text-secondary-color font-semibold hover:text-orange-200 duration-200"
-          :to="`/equipment/record/${row.id}`"
+          :to="`/auto-storage/record/${row.id}`"
           target="_blank"
         >
           {{ row.id }}
         </NuxtLink>
+      </template>
+
+      <template #nameOfEquipment-data="{ row }">
+        <textarea
+          autoresize
+          @blur="getRowByIdFromInput(row)"
+          v-model="row.nameOfEquipment"
+          class="min-w-[170px] w-full relative block disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-textarea rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 resize-none"
+        />
+        <span class="hidden">{{ row.nameOfEquipment }} ₽</span>
       </template>
 
       <template #created_at-data="{ row }">
@@ -285,43 +270,23 @@ const columns = [
         {{ row.updatedUser.username }}
       </template>
 
-      <template #pvz-data="{ row }">
-        {{ row.pvz.name }}
-      </template>
-
-      <template #nameOfEquipment-data="{ row }">
-        <textarea
-          autoresize
-          :disabled="
-            user.username !== 'Директор' && user.username !== 'Власенкова'
-          "
-          @blur="getRowByIdFromInput(row)"
-          v-model="row.nameOfEquipment"
-          class="min-w-[170px] w-full relative block disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-textarea rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 resize-none"
-        />
-        <span class="hidden">{{ row.nameOfEquipment }} ₽</span>
+      <template #autoType-data="{ row }">
+        {{ row.autoType.name }}
       </template>
 
       <template #state-data="{ row }">
         <UBadge
-          v-if="row.state === 'Исправное'"
+          v-if="row.state === 'На складе'"
           size="xs"
-          label="Исправное"
+          label="На складе"
+          color="yellow"
+          variant="subtle"
+        />
+        <UBadge
+          v-if="row.state === 'Установлено'"
+          size="xs"
+          label="Установлено"
           color="emerald"
-          variant="subtle"
-        />
-        <UBadge
-          v-if="row.state === 'Требуется ремонт'"
-          size="xs"
-          label="Требуется ремонт"
-          color="orange"
-          variant="subtle"
-        />
-        <UBadge
-          v-if="row.state === 'Неисправное'"
-          size="xs"
-          label="Неисправное"
-          color="red"
           variant="subtle"
         />
       </template>
@@ -373,7 +338,7 @@ const columns = [
                     @change="handleCheckboxChangeAll()"
                   />
                 </th>
-                <th scope="col" class="">пвз</th>
+                <th scope="col" class="">АВТО</th>
                 <th scope="col" class="">назв.</th>
                 <th scope="col" class="">сост.</th>
               </tr>
@@ -396,7 +361,7 @@ const columns = [
                   />
                 </td>
                 <td class="border-[1px] py-1">
-                  {{ row.pvz.name }}
+                  {{ row.autoType.name }}
                 </td>
                 <td
                   :title="row.nameOfEquipment"
@@ -404,21 +369,13 @@ const columns = [
                 >
                   {{ row.nameOfEquipment }}
                 </td>
-                <td v-if="row.state === 'Исправное'" class="border-[1px]">
-                  <h1 class="mx-auto text-green-500">
-                    {{ row.state }}
-                  </h1>
-                </td>
-                <td
-                  v-if="row.state === 'Требуется ремонт'"
-                  class="border-[1px]"
-                >
+                <td v-if="row.state === 'На складе'" class="border-[1px]">
                   <h1 class="mx-auto text-yellow-500">
                     {{ row.state }}
                   </h1>
                 </td>
-                <td v-if="row.state === 'Неисправное'" class="border-[1px]">
-                  <h1 class="mx-auto text-red-500">
+                <td v-if="row.state === 'Установлено'" class="border-[1px]">
+                  <h1 class="mx-auto text-green-500">
                     {{ row.state }}
                   </h1>
                 </td>
@@ -431,14 +388,8 @@ const columns = [
           <template
             #getting-started
             v-if="
-              user.role === 'ADMINISTRATOR' ||
-              user.username === 'Волошина' ||
-              user.username === 'Шарафаненко' ||
-              user.username === 'Кулешов' ||
-              user.username === 'Алиса' ||
-              user.username === 'Миллер' ||
-              user.username === 'Горцуева' ||
               user.username === 'Директор' ||
+              user.username === 'Косой' ||
               user.username === 'Власенкова'
             "
           >
@@ -449,54 +400,13 @@ const columns = [
                 :disabled="!checkedRows.length"
                 @click="updateStateRows('OK')"
                 class="w-full max-w-[300px]"
-                >Исправное</UIActionButton2
+                >На складе</UIActionButton2
               >
               <UIActionButton2
                 :disabled="!checkedRows.length"
                 @click="updateStateRows('RP')"
                 class="w-full max-w-[300px]"
-                >Требуется ремонт</UIActionButton2
-              >
-              <UIActionButton2
-                :disabled="!checkedRows.length"
-                @click="updateStateRows('FT')"
-                class="w-full max-w-[300px]"
-                >Неисправное</UIActionButton2
-              >
-            </div>
-          </template>
-
-          <template
-            #installation
-            v-if="
-              user.role === 'ADMINISTRATOR' ||
-              user.username === 'Волошина' ||
-              user.username === 'Шарафаненко' ||
-              user.username === 'Кулешов' ||
-              user.username === 'Алиса' ||
-              user.username === 'Миллер' ||
-              user.username === 'Горцуева' ||
-              user.username === 'Директор' ||
-              user.username === 'Власенкова'
-            "
-          >
-            <div
-              class="text-gray-900 dark:text-white text-center items-center justify-center bg-gray-50 py-5 flex flex-col gap-3"
-            >
-              <USelectMenu
-                v-model="transferPVZ"
-                :options="allPVZWithoutStartValue"
-                @change="filterRows()"
-                color="orange"
-                placeholder="Выберите ПВЗ"
-                x
-                class="z-[50] w-40 bg-white"
-              />
-              <UIActionButton2
-                :disabled="!transferPVZ"
-                @click="updatePVZRows()"
-                class="w-full max-w-[300px]"
-                >Переместить</UIActionButton2
+                >Установлено</UIActionButton2
               >
             </div>
           </template>
