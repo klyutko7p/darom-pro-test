@@ -66,11 +66,19 @@ const filteredRows = ref<Array<IOurRansom>>();
 //   }
 // }
 
+const boxesScanned = ref<Array<Box>>([]);
+const pvzsBoxesScanned = ref<Array<string>>([]);
 const boxes = ref<Array<Box>>([]);
 onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   boxes.value = await storeBoxes.getBoxes();
+
+  let boxesJSON = localStorage.getItem("boxesScanned") as string;
+  if (JSON.parse(boxesJSON)) {
+    boxesScanned.value = JSON.parse(boxesJSON);
+    pvzsBoxesScanned.value = boxesScanned.value.map((box) => box.dispatchPVZ);
+  }
 
   if (user.value.role !== "COURIER") {
     pvzs = pvzs.filter((pvz) => user.value.PVZ.includes(pvz.name));
@@ -267,10 +275,16 @@ async function scanItem() {
     let scannedLink = scanStringItem.value.trim() as string;
     scannedLink = convertToURL(scannedLink);
     console.log(scannedLink);
-    storeRansom.announce(`ID ${+scannedLink}`);
-    box.value.idRows.push(+scannedLink);
-
-    await storeBoxes.updateBox(box.value);
+    let item = await storeRansom.getRansomRowById(+scannedLink, "OurRansom");
+    if (item.dispatchPVZ === selectedPVZ.value.name) {
+      storeRansom.announce(`Товар в коробке`);
+      toast.success("Товар в коробке!");
+      box.value.idRows.push(+scannedLink);
+      await storeBoxes.updateBox(box.value);
+    } else {
+      storeRansom.announce(`Ошибка. Товар не этого ПВЗ`);
+      toast.error("Ошибка. Товар не этого ПВЗ!");
+    }
   }, 1000);
 }
 
@@ -280,7 +294,6 @@ function focusInput() {
 }
 
 const myInputCourier = ref(null);
-const boxesScanned = ref<Array<Box>>([]);
 let scanStringItemCourier = ref("");
 
 async function scanItemCourier() {
@@ -300,11 +313,13 @@ async function scanItemCourier() {
       box.value.sorted = new Date();
       await storeBoxes.updateBox(box.value);
       toast.success("У коробки изменён статус на «На курьере»!");
+      localStorage.setItem("boxesScanned", JSON.stringify(boxesScanned.value));
       return;
     } else if (box.value.sorted && !box.value.delivered) {
       box.value.delivered = new Date();
       await storeBoxes.updateBox(box.value);
       toast.success("У коробки изменён статус на «Доставлено»!");
+      localStorage.setItem("boxesScanned", JSON.stringify(boxesScanned.value));
       return;
     } else {
       toast.warning("Коробка уже доставлена!");
@@ -336,6 +351,10 @@ function showBoxes(name: string) {
   } else {
     nameForShow.value = name;
   }
+}
+
+function getNameFromPVZ(pvzData: string) {
+  return pvzs.find((pvz) => pvz.name === pvzData)?.address;
 }
 </script>
 
@@ -458,7 +477,9 @@ function showBoxes(name: string) {
                   <div class="flex flex-col print-content">
                     <div class="gap-0 flex flex-col mr-10">
                       <CodeQR :value="value" class="mt-10" />
-                      <h1 class="text-4xl">{{ box.id }}</h1>
+                      <h1 class="text-4xl">
+                        {{ box.id }}, {{ selectedPVZ.name }}
+                      </h1>
                       <h1
                         class="text-6xl mt-2 text-center max-w-[500px] relative"
                       >
@@ -634,7 +655,9 @@ function showBoxes(name: string) {
                   <div class="flex flex-col print-content">
                     <div class="gap-0 flex flex-col mr-10">
                       <CodeQR2 :value="value" class="mt-10" />
-                      <h1 class="text-4xl">{{ box.id }}</h1>
+                      <h1 class="text-4xl">
+                        {{ box.id }}, {{ selectedPVZ.name }}
+                      </h1>
                       <h1
                         class="text-8xl mt-2 text-center max-w-[1000px] relative"
                       >
@@ -864,7 +887,9 @@ function showBoxes(name: string) {
                   <div class="flex flex-col print-content">
                     <div class="gap-0 flex flex-col mr-10">
                       <CodeQR :value="value" class="mt-10" />
-                      <h1 class="text-4xl">{{ box.id }}</h1>
+                      <h1 class="text-4xl">
+                        {{ box.id }}, {{ selectedPVZ.name }}
+                      </h1>
                       <h1
                         class="text-6xl mt-2 text-center max-w-[500px] relative"
                       >
@@ -1040,7 +1065,9 @@ function showBoxes(name: string) {
                   <div class="flex flex-col print-content">
                     <div class="gap-0 flex flex-col mr-10">
                       <CodeQR2 :value="value" class="mt-10" />
-                      <h1 class="text-4xl">{{ box.id }}</h1>
+                      <h1 class="text-4xl">
+                        {{ box.id }}, {{ selectedPVZ.name }}
+                      </h1>
                       <h1
                         class="text-8xl mt-2 text-center max-w-[1000px] relative"
                       >
@@ -1207,9 +1234,9 @@ function showBoxes(name: string) {
               >
                 <div class="w-full flex flex-col gap-7 px-3">
                   <div
-                    @click="showBoxes(pvz.name)"
+                    @click="showBoxes(pvz)"
                     class="bg-gray-50 border-[1px] text-lg duration-200 rounded-md shadow-inner py-3 px-5 cursor-pointer max-sm:text-base"
-                    v-for="pvz in pvzs"
+                    v-for="pvz in pvzsBoxesScanned"
                   >
                     <div class="flex items-center gap-3">
                       <Icon
@@ -1218,11 +1245,11 @@ function showBoxes(name: string) {
                         size="24"
                       />
                       <h1>
-                        {{ pvz.name }}, {{ pvz.address }}. Количество коробок
+                        {{ pvz }}, {{ getNameFromPVZ(pvz) }}. Количество коробок
                         {{
                           boxes.filter(
                             (box) =>
-                              box.dispatchPVZ === pvz.name &&
+                              box.dispatchPVZ === pvz &&
                               box.sorted &&
                               !box.delivered &&
                               box.type === "standard"
@@ -1230,15 +1257,15 @@ function showBoxes(name: string) {
                         }}/{{
                           boxes.filter(
                             (box) =>
-                              box.dispatchPVZ === pvz.name &&
+                              box.dispatchPVZ === pvz &&
                               box.sorted &&
                               !box.delivered &&
                               box.type === "standard"
                           ).length +
                           boxes.filter(
                             (box) =>
-                              box.dispatchPVZ === pvz.name &&
-                              !box.sorted &&
+                              box.dispatchPVZ === pvz &&
+                              box.delivered &&
                               box.type === "standard"
                           ).length
                         }}
@@ -1246,7 +1273,7 @@ function showBoxes(name: string) {
                         {{
                           boxes.filter(
                             (box) =>
-                              box.dispatchPVZ === pvz.name &&
+                              box.dispatchPVZ === pvz &&
                               box.sorted &&
                               !box.delivered &&
                               box.type === "KGT"
@@ -1254,15 +1281,15 @@ function showBoxes(name: string) {
                         }}/{{
                           boxes.filter(
                             (box) =>
-                              box.dispatchPVZ === pvz.name &&
-                              !box.sorted &&
+                              box.dispatchPVZ === pvz &&
+                              box.delivered &&
                               box.type === "KGT"
                           ).length
                         }}
                       </h1>
                     </div>
 
-                    <div v-if="nameForShow === pvz.name">
+                    <div v-if="nameForShow === pvz">
                       <div
                         class="border-[1px] mt-3 mb-3 py-3 px-5 rounded-md shadow-lg"
                       >
@@ -1278,8 +1305,8 @@ function showBoxes(name: string) {
                           :boxes="
                             boxes.filter(
                               (box) =>
-                                box.dispatchPVZ === pvz.name &&
-                                (!box.sorted || !box.delivered) &&
+                                box.dispatchPVZ === pvz &&
+                                (box.sorted || box.delivered) &&
                                 box.type === 'standard'
                             )
                           "
@@ -1302,8 +1329,8 @@ function showBoxes(name: string) {
                           :boxes="
                             boxes.filter(
                               (box) =>
-                                box.dispatchPVZ === pvz.name &&
-                                (!box.sorted || !box.delivered) &&
+                                box.dispatchPVZ === pvz &&
+                                (box.sorted || box.delivered) &&
                                 box.type === 'KGT'
                             )
                           "
