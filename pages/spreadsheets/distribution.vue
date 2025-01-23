@@ -338,6 +338,8 @@ function clearBox() {
 }
 
 function closeBox() {
+  let boxId = boxes.value.indexOf(box.value);
+  boxes.value.splice(boxId, 1);
   clearBox();
   selectedPVZ.value = {} as DistributionPVZ;
 }
@@ -355,6 +357,12 @@ function showBoxes(name: string) {
 
 function getNameFromPVZ(pvzData: string) {
   return pvzs.find((pvz) => pvz.name === pvzData)?.address;
+}
+
+function clearScannedBoxes() {
+  boxesScanned.value = [];
+  localStorage.setItem("boxesScanned", JSON.stringify(boxesScanned.value));
+  pvzsBoxesScanned.value = [];
 }
 </script>
 
@@ -406,6 +414,7 @@ function getNameFromPVZ(pvzData: string) {
                         v-for="box in boxes.filter(
                           (box) =>
                             box.type === 'standard' &&
+                            !box.delivered &&
                             user.PVZ.includes(box.dispatchPVZ)
                         )"
                       >
@@ -569,6 +578,7 @@ function getNameFromPVZ(pvzData: string) {
                         v-for="box in boxes.filter(
                           (box) =>
                             box.type === 'KGT' &&
+                            !box.delivered &&
                             user.PVZ.includes(box.dispatchPVZ)
                         )"
                       >
@@ -816,6 +826,7 @@ function getNameFromPVZ(pvzData: string) {
                         v-for="box in boxes.filter(
                           (box) =>
                             box.type === 'standard' &&
+                            !box.delivered &&
                             user.PVZ.includes(box.dispatchPVZ)
                         )"
                       >
@@ -979,6 +990,7 @@ function getNameFromPVZ(pvzData: string) {
                         v-for="box in boxes.filter(
                           (box) =>
                             box.type === 'KGT' &&
+                            !box.delivered &&
                             user.PVZ.includes(box.dispatchPVZ)
                         )"
                       >
@@ -1202,9 +1214,15 @@ function getNameFromPVZ(pvzData: string) {
                 class="w-full rounded-md bg-gray-100 py-5 flex items-center flex-col justify-center"
               >
                 <div class="flex items-center gap-5 my-10">
-                  <UIMainButton @click="focusInputCourier"
-                    >СКАНИРОВАТЬ
-                  </UIMainButton>
+                  <div class="max-sm:flex max-sm:flex-col gap-3">
+                    <UIMainButton @click="focusInputCourier"
+                      >СКАНИРОВАТЬ
+                    </UIMainButton>
+                    <UIMainButton @click="clearScannedBoxes"
+                      >очистить список
+                    </UIMainButton>
+                  </div>
+
                   <Icon
                     v-if="isScanActive"
                     name="eos-icons:bubble-loading"
