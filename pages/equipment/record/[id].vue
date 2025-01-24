@@ -17,7 +17,7 @@ onMounted(async () => {
     window.location.href = `https://darom.pro${route.fullPath}`;
   }
   
-  if (!token) {
+  if (!token) { 
     router.push("/auth/login");
   }
 
