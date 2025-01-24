@@ -2653,7 +2653,7 @@ const options = [
               "
             >
               <div class="text-center text-2xl mt-10">
-                <h1>Итого наличных</h1>
+                <h1>Баланс ПВЗ</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(allSum)) }} ₽
                 </h1>
@@ -3204,7 +3204,7 @@ const options = [
               "
             >
               <div class="text-center text-2xl mt-10">
-                <h1>Итого наличных</h1>
+                <h1>Баланс ПВЗ</h1>
                 <h1 class="font-bold text-secondary-color text-4xl mt-3">
                   {{ formatNumber(Math.ceil(allSum)) }} ₽
                 </h1>
