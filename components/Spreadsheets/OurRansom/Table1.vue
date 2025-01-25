@@ -2018,7 +2018,6 @@ const columns = [
           <NuxtLink
             v-if="
               user.role !== 'PVZ' &&
-              user.role !== 'ADMINISTRATOR' &&
               user.role !== 'RMANAGER' &&
               user.role !== 'PPVZ'
             "
