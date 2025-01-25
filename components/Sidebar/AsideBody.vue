@@ -502,17 +502,17 @@ let usersOfIssued = ref([
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             @click="router.push('/balance')"
             v-if="
-              (user.role === 'ADMIN' &&
+              ((user.role === 'ADMIN' &&
                 user.username !== 'Светлана1' &&
                 user.username !== 'Светлана3' &&
                 user.username !== 'Светлана2' &&
                 !user.username.includes('Горцуева')) ||
-              user.role === 'ADMINISTRATOR' ||
-              user.role === 'PVZ' ||
-              user.username === 'Рейзвих' ||
-              user.role === 'PPVZ' ||
-              user.username === 'Сошников' ||
-              user.role === 'RMANAGER'
+                user.role === 'ADMINISTRATOR' ||
+                user.role === 'PVZ' ||
+                user.username === 'Рейзвих' ||
+                user.role === 'PPVZ' ||
+                user.role === 'RMANAGER') &&
+              user.username !== 'Сошников'
             "
           >
             <Icon

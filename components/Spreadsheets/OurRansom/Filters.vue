@@ -293,7 +293,16 @@ function saveToLocalStorage(key: string, value: any) {
 
 function loadFromLocalStorage(key: string) {
   const storedValue = localStorage.getItem(key);
-  return storedValue ? JSON.parse(storedValue) : null;
+
+  if (storedValue) {
+    try {
+      return JSON.parse(storedValue);
+    } catch (e) {
+      console.warn("Ошибка парсинга JSON:", e);
+      return null;
+    }
+  }
+  return null;
 }
 
 function saveFiltersToLocalStorage() {

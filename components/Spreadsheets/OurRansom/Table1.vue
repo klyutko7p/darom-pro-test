@@ -504,7 +504,10 @@ onMounted(async () => {
     props.user.username !== "Власенкова" &&
     props.user.username !== "Горцуева" &&
     props.user.username !== "Шведова" &&
-    !props.user.username.includes("Светлана")
+    props.user.username !== "Светлана" &&
+    props.user.username !== "Светлана1" &&
+    props.user.username !== "Светлана2" &&
+    props.user.username !== "Светлана3"
   ) {
     const index = columns.findIndex((column) => column.key === "actions");
     if (index !== -1) {
