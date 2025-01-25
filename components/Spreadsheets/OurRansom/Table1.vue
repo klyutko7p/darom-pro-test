@@ -1184,7 +1184,8 @@ const columns = [
       <UIActionButton
         v-if="user.deliveredPVZ1 === 'WRITE' && showButtonPVZ"
         @click="updateDeliveryRows('PVZ')"
-        >Доставить на пвз
+      >
+        Доставить на пвз
       </UIActionButton>
       <UIActionButton
         v-if="user.issued1 === 'WRITE' && showButton"
@@ -1984,22 +1985,23 @@ const columns = [
         v-if="returnRows.length"
         class="w-full z-[20] overflow-x-visible mx-auto text-center rounded-md mt-5"
         :class="{ 'overflow-x-hidden max-h-[100px]': isShowModalValue }"
-        :ui="{ wrapper: 'relative bg-white',
-  td: {
-    base: 'border-[1px] text-center whitespace-normal',
-    padding: 'px-3 py-1',
-  },
-  th: {
-    base: 'text-center uppercase border-[1px] sticky top-0 z-[20] bg-white',
-    padding: 'px-1',
-    size: 'text-xs'
-  },
-  default:
-  {
-    checkbox:
-      { color: 'gray' as any }
-  },
-    }"
+        :ui="{
+          wrapper: 'relative bg-white',
+          td: {
+            base: 'border-[1px] text-center whitespace-normal',
+            padding: 'px-3 py-1',
+          },
+          th: {
+            base: 'text-center uppercase border-[1px] sticky top-0 z-[20] bg-white',
+            padding: 'px-1',
+            size: 'text-xs'
+          },
+          default:
+          {
+            checkbox:
+              { color: 'gray' as any }
+          },
+        }"
         :rows="returnRows"
         :columns="columns"
       >
@@ -2583,19 +2585,28 @@ const columns = [
 .path {
   stroke-dasharray: 1000;
   stroke-dashoffset: 0;
+
   &.circle {
-    -webkit-animation: dash 1.8s ease-in-out; /* Увеличено до 1.8s */
-    animation: dash 1.8s ease-in-out; /* Увеличено до 1.8s */
+    -webkit-animation: dash 1.8s ease-in-out;
+    /* Увеличено до 1.8s */
+    animation: dash 1.8s ease-in-out;
+    /* Увеличено до 1.8s */
   }
+
   &.line {
     stroke-dashoffset: 1000;
-    -webkit-animation: dash 1.8s 0.35s ease-in-out forwards; /* Увеличено до 1.8s */
-    animation: dash 1.8s 0.35s ease-in-out forwards; /* Увеличено до 1.8s */
+    -webkit-animation: dash 1.8s 0.35s ease-in-out forwards;
+    /* Увеличено до 1.8s */
+    animation: dash 1.8s 0.35s ease-in-out forwards;
+    /* Увеличено до 1.8s */
   }
+
   &.check {
     stroke-dashoffset: -100;
-    -webkit-animation: dash-check 1.8s 0.35s ease-in-out forwards; /* Увеличено до 1.8s */
-    animation: dash-check 1.8s 0.35s ease-in-out forwards; /* Увеличено до 1.8s */
+    -webkit-animation: dash-check 1.8s 0.35s ease-in-out forwards;
+    /* Увеличено до 1.8s */
+    animation: dash-check 1.8s 0.35s ease-in-out forwards;
+    /* Увеличено до 1.8s */
   }
 }
 
@@ -2603,6 +2614,7 @@ const columns = [
   0% {
     stroke-dashoffset: 1000;
   }
+
   100% {
     stroke-dashoffset: 0;
   }
@@ -2612,6 +2624,7 @@ const columns = [
   0% {
     stroke-dashoffset: 1000;
   }
+
   100% {
     stroke-dashoffset: 0;
   }
@@ -2621,6 +2634,7 @@ const columns = [
   0% {
     stroke-dashoffset: -100;
   }
+
   100% {
     stroke-dashoffset: 900;
   }
@@ -2630,6 +2644,7 @@ const columns = [
   0% {
     stroke-dashoffset: -100;
   }
+
   100% {
     stroke-dashoffset: 900;
   }

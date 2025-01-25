@@ -60,7 +60,11 @@ function formatPhoneNumber(phoneNumber: string) {
 }
 
 function printPage() {
-  if (props.user.role === "SORTIROVKA" || props.user.role === "ADMIN") {
+  if (
+    props.user.role === "SORTIROVKA" ||
+    props.user.role === "ADMIN" ||
+    props.user.username === "Шведова"
+  ) {
     window.print();
   } else {
     toast.error("Доступ к печати запрещён");
