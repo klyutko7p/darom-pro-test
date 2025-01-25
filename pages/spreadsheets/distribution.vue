@@ -106,6 +106,16 @@ async function deleteRow(idData: number) {
   }
 }
 
+async function deleteBox(idData: number) {
+  let answer = confirm("Вы точно хотите продолжить?");
+  if (answer) {
+    isLoadingTab.value = true;
+    await storeBoxes.deleteBox(idData);
+    boxes.value = await storeBoxes.getBoxes();
+    isLoadingTab.value = false;
+  }
+}
+
 async function deleteSelectedRows(idsData: number[]) {
   let answer = confirm("Вы точно хотите продолжить?");
   if (answer) {
@@ -736,6 +746,7 @@ function clearScannedBoxes() {
 
             <template #waiting="{ item }">
               <div
+                v-if="!isLoadingTab"
                 class="w-full rounded-md bg-gray-100 py-5 flex items-center flex-col justify-center"
               >
                 <DistributionBoxesTable
@@ -743,7 +754,7 @@ function clearScannedBoxes() {
                     user.username === 'Шведова' || user.username === 'Мешков'
                   "
                   class="w-full px-5"
-                  @delete-row="deleteRow"
+                  @delete-row="deleteBox"
                   :user="user"
                   :boxes="
                     boxes.filter((box) => user.PVZ.includes(box.dispatchPVZ))
@@ -757,7 +768,7 @@ function clearScannedBoxes() {
                     user.username === 'Директор'
                   "
                   class="w-full px-5"
-                  @delete-row="deleteRow"
+                  @delete-row="deleteBox"
                   :user="user"
                   :boxes="boxes"
                 />
@@ -765,12 +776,15 @@ function clearScannedBoxes() {
                 <DistributionBoxesTable
                   v-else
                   class="w-full px-5"
-                  @delete-row="deleteRow"
+                  @delete-row="deleteBox"
                   :user="user"
                   :boxes="
                     boxes.filter((box) => box.createdUser === user.username)
                   "
                 />
+              </div>
+              <div v-else>
+                <UISpinnerModal />
               </div>
             </template>
           </UTabs>
