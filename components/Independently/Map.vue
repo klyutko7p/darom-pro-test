@@ -252,6 +252,12 @@ let markersCopy = [
     commentary: "Ежедневно 9:00-19:00",
     address: "г. Мариуполь, ул. Межевая",
   },
+  {
+    id: 12,
+    coords: [47.093065, 37.672873],
+    commentary: "Ежедневно",
+    address: "г. Мариуполь, ул. Центральная, 43",
+  },
 ];
 
 function searchRows() {
