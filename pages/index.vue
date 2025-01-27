@@ -242,6 +242,9 @@ async function showInfo(arrayCoordinates: Array<number>) {
   counter.value++;
   isShowModalInfo.value = true;
 }
+
+let isShowFirstAddInfo = ref(false);
+let isShowSecondAddInfo = ref(false);
 </script>
 
 <template>
@@ -448,10 +451,17 @@ async function showInfo(arrayCoordinates: Array<number>) {
             </h1>
           </div>
           <div class="mb-3">
-            <h1 class="font-bold text-xl max-sm:text-base">
-              Доставка Ваших заказов по QR-коду
-            </h1>
-            <h1>
+            <div class="flex items-center gap-3">
+              <h1 class="font-bold text-base max-sm:text-base">
+                Доставка Ваших заказов по Штрих-Коду (QR)
+              </h1>
+              <UButton
+                @click="isShowFirstAddInfo = !isShowFirstAddInfo"
+                class="font-semibold"
+                >Подробнее</UButton
+              >
+            </div>
+            <h1 v-if="isShowFirstAddInfo">
               {{
                 selectedPVZ.commentary
                   .split("Доставка Ваших заказов по QR-коду:")[1]
@@ -460,10 +470,17 @@ async function showInfo(arrayCoordinates: Array<number>) {
             </h1>
           </div>
           <div class="mb-3">
-            <h1 class="font-bold text-xl max-sm:text-base">
-              Доставка товаров по постоплате
-            </h1>
-            <h1>Все интернет-магазины - 10%</h1>
+            <div class="flex items-center gap-3">
+              <h1 class="font-bold text-base max-sm:text-base">
+                Доставка товаров по постоплате
+              </h1>
+              <UButton
+                @click="isShowSecondAddInfo = !isShowSecondAddInfo"
+                class="font-semibold"
+                >Подробнее</UButton
+              >
+            </div>
+            <h1 v-if="isShowSecondAddInfo">Все интернет-магазины - 10%</h1>
           </div>
         </div>
       </UCard>

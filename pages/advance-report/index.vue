@@ -2170,13 +2170,30 @@ function showBankTransactions(id: number) {
             v-if="
               selectedUser !== 'Директор (С)' &&
               selectedUser !== 'Директор' &&
-              selectedUser !== 'Власенкова'
+              selectedUser !== 'Власенкова' &&
+              selectedUser !== 'Горцуева'
             "
             :rows="
               filteredRows?.filter(
                 (row) =>
                   row.issuedUser === selectedUser ||
                   row.createdUser === selectedUser
+              )
+            "
+            :user="user"
+            @open-modal="openModal"
+            @update-delivery-row="updateDeliveryRow"
+            @delete-row="deleteRow"
+          />
+
+          <AdvanceReportTable
+            v-if="selectedUser === 'Горцуева'"
+            :rows="
+              filteredRows?.filter(
+                (row) =>
+                  row.issuedUser === selectedUser ||
+                  row.createdUser === selectedUser ||
+                  (row.createdUser === 'Директор' && row.type === 'Безнал')
               )
             "
             :user="user"
