@@ -1010,7 +1010,7 @@ async function createRow() {
     }
 
     if (
-      (rowData.value.typeOfExpenditure === "Перевод с баланса безнал" ||
+      (rowData.value.typeOfExpenditure === "Перевод с баланса нал" ||
         rowData.value.typeOfExpenditure === "Новый кредит безнал" ||
         rowData.value.typeOfExpenditure === "Пополнение баланса" ||
         rowData.value.typeOfExpenditure === "Удержания с сотрудников") &&
@@ -1034,7 +1034,7 @@ async function createRow() {
 
       await storeBanks.createTransaction(transaction);
     } else if (
-      rowData.value.typeOfExpenditure !== "Перевод с баланса безнал" &&
+      rowData.value.typeOfExpenditure !== "Перевод с баланса нал" &&
       rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
       rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
       rowData.value.typeOfExpenditure !== "Удержания с сотрудников" &&
@@ -1058,7 +1058,7 @@ async function createRow() {
 
       await storeBanks.createTransaction(transaction);
     } else if (
-      rowData.value.typeOfExpenditure !== "Перевод с баланса безнал" &&
+      rowData.value.typeOfExpenditure !== "Перевод с баланса нал" &&
       rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
       rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
       rowData.value.typeOfExpenditure !== "Удержания с сотрудников" &&
@@ -1082,7 +1082,7 @@ async function createRow() {
 
       await storeBanks.createTransaction(transaction);
     } else if (
-      (rowData.value.typeOfExpenditure === "Перевод с баланса безнал" ||
+      (rowData.value.typeOfExpenditure === "Перевод с баланса нал" ||
         rowData.value.typeOfExpenditure === "Новый кредит безнал" ||
         rowData.value.typeOfExpenditure === "Пополнение баланса" ||
         rowData.value.typeOfExpenditure === "Удержания с сотрудников") &&
@@ -1223,7 +1223,7 @@ async function updateRow() {
   }
 
   if (
-    (rowData.value.typeOfExpenditure === "Перевод с баланса безнал" ||
+    (rowData.value.typeOfExpenditure === "Перевод с баланса нал" ||
       rowData.value.typeOfExpenditure === "Новый кредит безнал" ||
       rowData.value.typeOfExpenditure === "Пополнение баланса" ||
       rowData.value.typeOfExpenditure === "Удержания с сотрудников") &&

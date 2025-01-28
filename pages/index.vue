@@ -256,6 +256,18 @@ async function showInfo(arrayCoordinates: Array<number>) {
 
 let isShowFirstAddInfo = ref(false);
 let isShowSecondAddInfo = ref(false);
+
+// async function sendMessages() {
+//   let clients = await storeClients.getClients();
+
+//   clients.forEach(async (client: any) => {
+//     await storeClients.sendMessageToClient(
+//       "Важное уведомление!!!",
+//       "Основной аккаунт администратора взломан, если будут приходить СМС с просьбой перейти по ссылке❗️❗️❗️ НЕ ПЕРЕХОДИТЕ🙏",
+//       client.phoneNumber
+//     );
+//   });
+// }
 </script>
 
 <template>
@@ -263,6 +275,7 @@ let isShowSecondAddInfo = ref(false);
     <div class="bg-main-page">
       <div class="py-5 max-md:px-5 mx-auto container" v-cloak>
         <div class="flex items-center justify-center flex-col space-y-5">
+          <!-- <UButton @click="sendMessages">Отправить</UButton> -->
           <h1
             class="text-secondary-color font-bold text-8xl max-lg:text-6xl mt-3"
           >
