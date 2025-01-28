@@ -67,6 +67,21 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  async function updateDpStatus() {
+    try {
+      let data = await useFetch("/api/ransom/update-dp-status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function createCopyRow(id: number, flag: string) {
     try {
       let data = await useFetch("/api/ransom/create-copy-row", {
@@ -425,13 +440,16 @@ export const useRansomStore = defineStore("ransom", () => {
     flag: string
   ) {
     try {
-      let response = await fetch("/api/ransom/get-rows-by-pvz-deleted-part-one", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/octet-stream",
-        },
-        body: JSON.stringify({ PVZ: PVZ, flag: flag }),
-      });
+      let response = await fetch(
+        "/api/ransom/get-rows-by-pvz-deleted-part-one",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+          body: JSON.stringify({ PVZ: PVZ, flag: flag }),
+        }
+      );
 
       const arrayBuffer = await response.arrayBuffer();
       const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
@@ -448,13 +466,16 @@ export const useRansomStore = defineStore("ransom", () => {
     flag: string
   ) {
     try {
-      let response = await fetch("/api/ransom/get-rows-by-pvz-deleted-part-two", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/octet-stream",
-        },
-        body: JSON.stringify({ PVZ: PVZ, flag: flag }),
-      });
+      let response = await fetch(
+        "/api/ransom/get-rows-by-pvz-deleted-part-two",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+          body: JSON.stringify({ PVZ: PVZ, flag: flag }),
+        }
+      );
 
       const arrayBuffer = await response.arrayBuffer();
       const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
@@ -1471,6 +1492,7 @@ export const useRansomStore = defineStore("ransom", () => {
     generateLink,
     getRansomRowsByIds,
     getDeletedRansomRowsByPVZPartOne,
-    getDeletedRansomRowsByPVZPartTwo
+    getDeletedRansomRowsByPVZPartTwo,
+    updateDpStatus,
   };
 });

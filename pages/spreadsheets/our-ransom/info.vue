@@ -19,6 +19,7 @@ onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rowsOurRansom.value = await storeRansom.getRansomRowsWithPVZOurRansom();
+  await storeRansom.updateDpStatus();
 
   if (user.value.role === "SORTIROVKA") {
     router.push("/spreadsheets/our-ransom");
