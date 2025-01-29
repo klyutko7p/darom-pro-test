@@ -362,7 +362,7 @@ function returnTotal(sum: number) {
 
   <div v-if="!isLoading">
     <div v-if="token && user.role === 'ADMIN'">
-      <NuxtLayout name="table-admin-no-pad">
+      <NuxtLayout name="table-admin-no-pad-no-iphone">
         <div class="px-5 w-screen pt-5 max-sm:px-1 pb-5">
           <div v-auto-animate>
             <AdvanceReportSumTablesFilters

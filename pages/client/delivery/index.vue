@@ -69,12 +69,13 @@ onMounted(async () => {
 
   isLoading.value = true;
   user.value = await storeClients.getClient();
-  await checkPercent();
   cells.value = await storeCells.getCellsClient();
 
   originallyRows.value = await storeRansom.getRansomRowsForModalClientRansom();
   pvzData.value = localStorage.getItem("addressData") || "";
   pvzData.value = pvzData.value.replace(/"/g, "");
+
+  await checkPercent();
   isLoading.value = false;
   if (marketplaceData === "ozon") {
     marketplace.value = "Ozon";
@@ -287,6 +288,8 @@ const marketplaces = [
   },
 ];
 
+watch(() => pvzData.value, checkPercent);
+
 async function submitForm() {
   try {
     if (pvzData.value) {
@@ -437,7 +440,7 @@ async function checkPercent() {
           </div>
 
           <div
-            v-if="percentPVZ.ozon"
+            v-if="percentPVZ.ozon || percentPVZ.ozon === 0"
             class="relative text-2xl max-sm:text-2xl w-24 h-24 bg-[#f92160] rounded-full flex justify-center font-bold text-white items-center text-center p-5 shadow-xl max-[430px]:absolute max-[430px]:right-3 max-[430px]:top-4 max-[430px]:w-16 max-[430px]:h-16 max-[430px]:text-base max-[430px]:p-3"
           >
             {{ percentPVZ.ozon }} %
@@ -454,7 +457,7 @@ async function checkPercent() {
           />
 
           <div
-            v-if="percentPVZ.wb"
+            v-if="percentPVZ.wb || percentPVZ.wb === 0"
             class="relative text-2xl max-sm:text-2xl w-24 h-24 bg-[#7b256f] rounded-full flex justify-center font-bold text-white items-center text-center p-5 shadow-xl max-[430px]:absolute max-[430px]:right-3 max-[430px]:top-2 max-[430px]:w-16 max-[430px]:h-16 max-[430px]:text-base max-[430px]:p-3"
           >
             {{ percentPVZ.wb }} %
@@ -471,7 +474,7 @@ async function checkPercent() {
           />
 
           <div
-            v-if="percentPVZ.ym"
+            v-if="percentPVZ.ym || percentPVZ.ym === 0"
             class="relative text-2xl max-sm:text-2xl w-24 h-24 bg-[#232323] rounded-full flex justify-center font-bold text-white items-center text-center p-5 shadow-xl max-[430px]:absolute max-[430px]:right-3 max-[430px]:top-4 max-[430px]:w-16 max-[430px]:h-16 max-[430px]:text-base max-[430px]:p-3"
           >
             {{ percentPVZ.ym }} %
@@ -818,6 +821,12 @@ async function checkPercent() {
               </h1>
               <h1 class="text-sm italic text-center mt-1">
                 *штрих-код обновляется каждые 24 часа в 00:00
+              </h1>
+              <h1
+                v-if="percentPVZ.ozon === 0 && marketplace === 'Ozon'"
+                class="text-sm italic text-center mt-1"
+              >
+                *Ozon - 5%, если вес товара от 25кг
               </h1>
               <div class="mt-5 flex justify-end gap-3" v-auto-animate>
                 <UButton

@@ -60,15 +60,17 @@ onMounted(async () => {
   }
 
   checkAvailability();
-
   setInterval(checkAvailability, 5 * 60 * 1000);
 
   isLoading.value = true;
   user.value = await storeClients.getClient();
+
   originallyRows.value = await storeRansom.getRansomRowsForModalClientRansom();
   cells.value = await storeCells.getCellsClient();
   pvzData.value = localStorage.getItem("addressData") || "";
   pvzData.value = pvzData.value.replace(/"/g, "");
+
+  await checkPercent();
   isLoading.value = false;
   if (marketplaceData === "ozon") {
     marketplace.value = "Ozon";
@@ -306,23 +308,11 @@ async function submitForm() {
         rowData.value.percentClient = 0;
       }
 
-      if (
-        rowData.value.dispatchPVZ === "ПВЗ_2" &&
-        rowData.value.productLink === "Wildberries"
-      ) {
-        rowData.value.percentClient = 5;
-      }
+      isLoading.value = true;
 
-      if (
-        rowData.value.dispatchPVZ === "ПВЗ_2" &&
-        rowData.value.productLink === "Ozon"
-      ) {
-        rowData.value.percentClient = 0;
-      }
+      await checkPercent();
 
       getCellFromName();
-
-      isLoading.value = true;
 
       const filePromises = [handleFile("image", fileQRPhoto.value)];
 
@@ -411,6 +401,7 @@ function signOut() {
 const phoneNumberData = ref("+7");
 
 watch(() => phoneNumberData.value, validationPhoneNumber);
+watch(() => pvzData.value, checkPercent);
 
 function validationPhoneNumber() {
   phoneNumberData.value = phoneNumberData.value.replace(/[^0-9]/g, "");
@@ -422,6 +413,30 @@ function validationPhoneNumber() {
   if (phoneNumberData.value.length > 12) {
     phoneNumberData.value = phoneNumberData.value.slice(0, 12);
   }
+}
+
+let percentPVZ = ref({} as IPVZPercent);
+const storePVZPercent = usePVZPercentStore();
+async function checkPercent() {
+  let pvzPercent = await storePVZPercent.getPVZ();
+
+  if (pvzData.value) {
+    percentPVZ.value = pvzPercent.find(
+      (row: any) =>
+        row.pvz.name === pvzData.value && row.flag === "ClientRansom"
+    );
+    if (rowData.value.productLink) {
+      if (rowData.value.productLink === "Wildberries") {
+        rowData.value.percentClient = percentPVZ.value.wb;
+      } else if (rowData.value.productLink === "Ozon") {
+        rowData.value.percentClient = percentPVZ.value.ozon;
+      } else if (rowData.value.productLink === "Яндекс Маркет") {
+        rowData.value.percentClient = percentPVZ.value.ym;
+      }
+    }
+  }
+
+  return pvzPercent;
 }
 </script>
 
@@ -803,6 +818,12 @@ function validationPhoneNumber() {
               </h1>
               <h1 class="text-sm italic text-center mt-1">
                 *штрих-код обновляется каждые 24 часа в 00:00
+              </h1>
+              <h1
+                v-if="percentPVZ.ozon === 0 && marketplace === 'Ozon'"
+                class="text-sm italic text-center mt-1"
+              >
+                *Ozon - 5%, если вес товара от 25кг
               </h1>
               <div class="mt-5 flex justify-end gap-3" v-auto-animate>
                 <UButton

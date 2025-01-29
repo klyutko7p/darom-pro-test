@@ -310,7 +310,7 @@ watch([searchQuery], searchRows);
   <div>
     <ClientOnly>
       <YandexMap
-        style="height: 700px"
+        style="height: 900px"
         v-if="isOpenMap"
         :coordinates="coordinates"
         :controls="controls"
@@ -327,7 +327,7 @@ watch([searchQuery], searchRows);
     </ClientOnly>
     <div
       v-if="!isOpenList"
-      class="absolute top-20 z-[10] h-full max-w-[350px] px-5 py-5 max-h-[700px] rounded-r-2xl max-md:max-w-[700px] max-md:left-1 max-md:rounded-none"
+      class="absolute top-20 z-[10] h-full max-w-[350px] px-5 py-5 max-h-[50px] rounded-r-2xl max-md:max-w-[700px] max-md:left-1 max-md:rounded-none"
     >
       <UButton
         v-if="marketplace === 'OZON'"
@@ -477,5 +477,3 @@ watch([searchQuery], searchRows);
     </div>
   </div>
 </template>
-
-<style scoped></style>

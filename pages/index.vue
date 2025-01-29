@@ -200,7 +200,11 @@ async function getPercents() {
         r.pvz.name.includes(marker.id.toString()) && r.flag === "ClientRansom"
     );
     if (row && row.wb) {
-      marker.commentary += `. Доставка Ваших заказов по QR-коду: Wildberries - ${row.wb}%, Ozon - ${row.ozon}%, Другие интернет-магазины - ${row.ym}%`;
+      marker.commentary += `. Доставка Ваших заказов по QR-коду: Ozon - ${
+        row.ozon
+      }%, Wildberries - ${row.wb}%, ${
+        row.ozon === 0 ? `Ozon - 5%, если вес товара от 25кг,` : ""
+      } Другие интернет-магазины - ${row.ym}%`;
     }
     return marker;
   });
