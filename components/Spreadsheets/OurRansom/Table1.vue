@@ -510,8 +510,13 @@ onMounted(async () => {
     props.user.username !== "Светлана3"
   ) {
     const index = columns.findIndex((column) => column.key === "actions");
+    const index2 = columns.findIndex((column) => column.key === "dp");
     if (index !== -1) {
       columns.splice(index, 1);
+    }
+
+    if (index2 !== -1) {
+      columns.splice(index2, 1);
     }
   }
 
@@ -969,6 +974,10 @@ const columns = [
   {
     key: "profit1",
     label: "Доход",
+  },
+  {
+    key: "dp",
+    label: "Статус",
   },
 ];
 </script>
@@ -2226,6 +2235,19 @@ const columns = [
             "
           >
             {{ row.additionally ? row.additionally : "Пусто" }}
+          </p>
+        </template>
+
+        <template #dp-data="{ row }">
+          <p
+            v-if="
+              user.username.includes('Светлана') ||
+              user.username === 'Горцуева' ||
+              user.username === 'Власенкова' ||
+              user.username === 'Директор'
+            "
+          >
+            {{ row.dp ? "Предоплата" : "Постоплата" }}
           </p>
         </template>
 

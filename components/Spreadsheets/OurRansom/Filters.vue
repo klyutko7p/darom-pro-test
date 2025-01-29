@@ -12,6 +12,7 @@ const storeRansom = useRansomStore();
 let showFilters = ref(false);
 
 const selectedCell = ref<Array<string>>([]);
+const selectedDPStatus = ref<any>();
 const selectedFromName = ref<Array<string>>([]);
 const selectedProductName = ref<string | null>(null);
 const selectedDispatchPVZ = ref<Array<string>>([]);
@@ -146,6 +147,7 @@ const filterRows = () => {
   filteredRows.value = props.rows.slice();
   filteredRows.value = props.rows.filter((row) => {
     return (
+      (!selectedDPStatus.value || selectedDPStatus.value == row.dp) &&
       (!selectedCell.value.length || selectedCell.value.includes(row.cell)) &&
       (!selectedFromName.value.length ||
         selectedFromName.value.includes(row.fromName)) &&
@@ -193,6 +195,7 @@ const filterRows = () => {
 
 function clearFields() {
   selectedCell.value = [];
+  selectedDPStatus.value = null;
   selectedAdditionally.value = [];
   selectedDispatchPVZ.value = [];
   selectedOrderPVZ.value = [];
@@ -214,6 +217,7 @@ function clearFields() {
 
 watch(
   [
+    selectedDPStatus,
     selectedCell,
     selectedFromName,
     selectedProductName,
@@ -236,6 +240,7 @@ watch(
 );
 
 let variables = ref([
+  selectedDPStatus,
   selectedCell,
   selectedFromName,
   selectedProductName,
@@ -282,6 +287,8 @@ const nonEmptyCount = computed(() => {
     count++;
   } else if (selectedProductName.value) {
     count++;
+  } else if (selectedDPStatus.value) {
+    count++;
   }
 
   return count;
@@ -306,6 +313,7 @@ function loadFromLocalStorage(key: string) {
 }
 
 function saveFiltersToLocalStorage() {
+  saveToLocalStorage("selectedDPStatus", selectedDPStatus.value);
   saveToLocalStorage("selectedCell", selectedCell.value);
   saveToLocalStorage("selectedFromName", selectedFromName.value);
   saveToLocalStorage("selectedProductName", selectedProductName.value);
@@ -327,6 +335,7 @@ function saveFiltersToLocalStorage() {
 }
 
 function clearLocalStorage() {
+  localStorage.removeItem("selectedDPStatus");
   localStorage.removeItem("selectedCell");
   localStorage.removeItem("selectedFromName");
   localStorage.removeItem("selectedOrderPVZ");
@@ -349,6 +358,7 @@ function clearLocalStorage() {
   if (addressData) {
     localStorage.setItem("addressData", addressData);
   }
+  selectedDPStatus.value = null;
   selectedCell.value = [];
   selectedFromName.value = [];
   selectedProductName.value = "";
@@ -369,6 +379,11 @@ function clearLocalStorage() {
 }
 
 onMounted(() => {
+  const storedSelectedDPStatus = loadFromLocalStorage("storedSelectedDPStatus");
+  if (storedSelectedDPStatus !== null) {
+    selectedDPStatus.value = storedSelectedDPStatus;
+  }
+
   const storedSelectedCell = loadFromLocalStorage("selectedCell");
   if (storedSelectedCell !== null) {
     selectedCell.value = storedSelectedCell;
@@ -577,6 +592,17 @@ let dateFilter = ref("issued");
             :close-on-select="true"
             placeholder="Выберите дополнительно"
           />
+        </div>
+
+        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
+          <h1>Статус</h1>
+          <select
+            class="bg-transparent w-full min-h-[40px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
+            v-model="selectedDPStatus"
+          >
+            <option value="1">Предоплата</option>
+            <option value="0">Постоплата</option>
+          </select>
         </div>
       </div>
       <div v-if="user?.role !== 'SORTIROVKA'">

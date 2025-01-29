@@ -1743,10 +1743,25 @@ let additionallies = [
               </div>
               <div class="flex items-center justify-center gap-3" v-else>
                 <UISaveModalButton
+                  v-if="
+                    rowData.orderAccount !== 'Ozon' &&
+                    rowData.orderAccount !== 'ЯндексМаркет'
+                  "
                   :disabled="
                     rowData.fromName === '' || rowData.fromName === null
                   "
                   @click="openModalShow"
+                  >Создать
+                </UISaveModalButton>
+                <UISaveModalButton
+                  v-if="
+                    rowData.orderAccount === 'Ozon' ||
+                    rowData.orderAccount === 'ЯндексМаркет'
+                  "
+                  :disabled="
+                    rowData.fromName === '' || rowData.fromName === null
+                  "
+                  @click="createRow"
                   >Создать
                 </UISaveModalButton>
                 <UIExitModalButton @click="closeModal"
@@ -2272,10 +2287,25 @@ let additionallies = [
               </div>
               <div class="flex items-center justify-center gap-3" v-else>
                 <UISaveModalButton
+                  v-if="
+                    rowData.orderAccount !== 'Ozon' &&
+                    rowData.orderAccount !== 'ЯндексМаркет'
+                  "
                   :disabled="
                     rowData.fromName === '' || rowData.fromName === null
                   "
                   @click="openModalShow"
+                  >Создать
+                </UISaveModalButton>
+                <UISaveModalButton
+                  v-if="
+                    rowData.orderAccount === 'Ozon' ||
+                    rowData.orderAccount === 'ЯндексМаркет'
+                  "
+                  :disabled="
+                    rowData.fromName === '' || rowData.fromName === null
+                  "
+                  @click="createRow"
                   >Создать
                 </UISaveModalButton>
                 <UIExitModalButton @click="closeModal"
