@@ -33,6 +33,7 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
     "ПВЗ_11",
     "ППВЗ_12",
     "ПВЗ_13",
+    "ПВЗ_14",
     "Магазин",
     "Офис",
     "НаДом",

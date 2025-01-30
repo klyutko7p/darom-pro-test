@@ -201,6 +201,10 @@ let pvzs = [
     name: "ППВЗ_12",
     address: "ул. Центральная, 43",
   },
+  {
+    pvz: "ПВЗ_14",
+    name: "пос. Старый Крым, павильон на центральном рынке",
+  },
 ];
 
 const selectedPVZ = ref({} as DistributionPVZ);
