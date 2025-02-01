@@ -1695,6 +1695,7 @@ function getProfitRowsSum() {
       allSumProfit.value += 2125;
       allSumProfit.value += 15000;
       allSumProfit.value += 2367;
+      allSumProfit.value += 563;
     }
   }
 }
