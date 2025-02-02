@@ -10,21 +10,26 @@ interface IRequestBody {
   hours: number;
 }
 
+function getISODateTime(dateData: Date | string | number) {
+  const date = new Date(dateData);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hour = String(date.getHours()).padStart(2, "0");
+  const minute = String(date.getMinutes()).padStart(2, "0");
+
+  const outputDate = `${year}-${month}-${day}T${hour}:${minute}:00.000Z`;
+  return outputDate;
+}
+
 export default defineEventHandler(async (event) => {
+  const { name, year, monthIndex, hours } = await readBody<IRequestBody>(event);
+  const startDate = getISODateTime(startOfMonth(new Date(year, monthIndex - 1)));
+  const endDate = getISODateTime(endOfMonth(new Date(year, monthIndex - 1)));
   try {
-    const { name, year, monthIndex, hours } = await readBody<IRequestBody>(
-      event
-    );
-
-    const startDate = startOfMonth(new Date(year, monthIndex));
-    const endDate = endOfMonth(new Date(year, monthIndex));
-
     const updateRow = await prisma.payroll.updateMany({
       where: {
-        fullname: {
-          contains: name,
-          mode: "insensitive",
-        },
+        fullname: name,
         date: {
           gte: startDate,
           lte: endDate,
@@ -34,9 +39,16 @@ export default defineEventHandler(async (event) => {
         hours: hours,
       },
     });
+
+    return {
+      success: true,
+      updateRow: updateRow,
+      gte: startDate,
+      lte: endDate,
+    };
   } catch (error) {
     if (error instanceof Error) {
-      return { error: error.message };
+      return { error: error.message, gte: startDate, lte: endDate };
     }
   }
 });
