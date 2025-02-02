@@ -21,7 +21,10 @@ export default defineEventHandler(async (event) => {
 
     const updateRow = await prisma.payroll.updateMany({
       where: {
-        fullname: name,
+        fullname: {
+          contains: name,
+          mode: "insensitive",
+        },
         date: {
           gte: startDate,
           lte: endDate,
@@ -31,15 +34,6 @@ export default defineEventHandler(async (event) => {
         hours: hours,
       },
     });
-
-    return {
-      success: true,
-      updatedCount: updateRow.count,
-      startDate: startDate,
-      endDate: endDate,
-      updateRow: updateRow,
-      name: name,
-    };
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };
