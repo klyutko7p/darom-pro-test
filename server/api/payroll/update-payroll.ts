@@ -32,7 +32,14 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    return { success: true, updatedCount: updateRow.count };
+    return {
+      success: true,
+      updatedCount: updateRow.count,
+      startDate: startDate,
+      endDate: endDate,
+      updateRow: updateRow,
+      name: name,
+    };
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };
