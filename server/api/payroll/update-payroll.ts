@@ -9,6 +9,7 @@ interface IRequestBody {
   monthIndex: number;
   hours: number;
   pvz: string;
+  company: string;
 }
 
 function getISODateTime(dateData: Date | string | number) {
@@ -24,9 +25,8 @@ function getISODateTime(dateData: Date | string | number) {
 }
 
 export default defineEventHandler(async (event) => {
-  const { name, year, monthIndex, hours, pvz } = await readBody<IRequestBody>(
-    event
-  );
+  const { name, year, monthIndex, hours, pvz, company } =
+    await readBody<IRequestBody>(event);
   const startDate = getISODateTime(
     startOfMonth(new Date(year, monthIndex - 1))
   );
@@ -36,6 +36,7 @@ export default defineEventHandler(async (event) => {
       where: {
         fullname: name,
         PVZ: pvz,
+        company: company,
         date: {
           gte: startDate,
           lte: endDate,
