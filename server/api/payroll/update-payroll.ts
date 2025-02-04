@@ -8,6 +8,7 @@ interface IRequestBody {
   year: number;
   monthIndex: number;
   hours: number;
+  pvz: string;
 }
 
 function getISODateTime(dateData: Date | string | number) {
@@ -23,13 +24,18 @@ function getISODateTime(dateData: Date | string | number) {
 }
 
 export default defineEventHandler(async (event) => {
-  const { name, year, monthIndex, hours } = await readBody<IRequestBody>(event);
-  const startDate = getISODateTime(startOfMonth(new Date(year, monthIndex - 1)));
+  const { name, year, monthIndex, hours, pvz } = await readBody<IRequestBody>(
+    event
+  );
+  const startDate = getISODateTime(
+    startOfMonth(new Date(year, monthIndex - 1))
+  );
   const endDate = getISODateTime(endOfMonth(new Date(year, monthIndex - 1)));
   try {
     const updateRow = await prisma.payroll.updateMany({
       where: {
         fullname: name,
+        PVZ: pvz,
         date: {
           gte: startDate,
           lte: endDate,
