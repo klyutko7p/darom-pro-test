@@ -169,7 +169,7 @@ model Delivery {
 model Balance {
   id            Int       @id @default(autoincrement())
   pvz           String?
-  sum           String?
+  sum           Int?
   issued        DateTime?
   received      DateTime?
   createdUser   String
@@ -182,7 +182,7 @@ model Balance {
 
 model BalanceOnline {
   id         Int       @id @default(autoincrement())
-  sum        String?
+  sum        Int?
   created_at DateTime? @default(now())
 }
 
@@ -252,7 +252,7 @@ model AdvanceReport {
   PVZ                 String?
   date                DateTime?
   issuedUser          String?
-  expenditure         String?
+  expenditure         Int?
   typeOfExpenditure   String?
   notation            String?
   company             String?
