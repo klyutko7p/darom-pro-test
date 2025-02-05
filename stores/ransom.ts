@@ -1340,6 +1340,24 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  async function getAllSumDirector() {
+    try {
+      const { data }: any = await useFetch("/api/advance-report/get-sum-director", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return data.value;
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+      throw error;
+    }
+  }
+
   async function getRansomRowsForAdvanceReportOurRansomPartFour() {
     try {
       let response = await fetch(
@@ -1517,5 +1535,6 @@ export const useRansomStore = defineStore("ransom", () => {
     getDeletedRansomRowsByPVZPartTwo,
     updateDpStatus,
     getRansomRowsForAdvanceReportOurRansomPartFour,
+    getAllSumDirector,
   };
 });

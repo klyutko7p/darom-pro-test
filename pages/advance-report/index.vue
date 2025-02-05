@@ -32,24 +32,13 @@ onMounted(async () => {
     user.value = await storeUsers.getUser();
 
     let advanceReportsPromise;
-    let ourRansomRowsPromise;
-    let ourRansomRowsPromise2;
-    let ourRansomRowsPromise3;
-    let ourRansomRowsPromise4;
     let deliveryRowsPromise;
 
     if (user.value.role === "ADMIN") {
       advanceReportsPromise = storeAdvanceReports.getAdvancedReports(
         user.value
       );
-      ourRansomRowsPromise =
-        storeRansom.getRansomRowsForAdvanceReportOurRansomPartOne();
-      ourRansomRowsPromise2 =
-        storeRansom.getRansomRowsForAdvanceReportOurRansomPartTwo();
-      ourRansomRowsPromise3 =
-        storeRansom.getRansomRowsForAdvanceReportOurRansomPartThree();
-        ourRansomRowsPromise4 =
-        storeRansom.getRansomRowsForAdvanceReportOurRansomPartFour();
+
       deliveryRowsPromise = storeRansom.getRansomRowsForBalanceDelivery();
     } else {
       advanceReportsPromise = storeAdvanceReports.getAdvancedReports(
@@ -59,22 +48,15 @@ onMounted(async () => {
 
     const [
       advanceReportsData,
-      ourRansomRowsData,
-      ourRansomRowsData2,
-      ourRansomRowsData3,
-      ourRansomRowsData4,
       deliveryRowsData,
       balanceRowsData,
       onlineBalanceRowsData,
     ] = await Promise.all([
       advanceReportsPromise,
-      ourRansomRowsPromise,
-      ourRansomRowsPromise2,
-      ourRansomRowsPromise3,
-      ourRansomRowsPromise4,
       deliveryRowsPromise,
       storeBalance.getBalanceRows(),
       storeBalance.getBalanceOnlineRows(),
+      getAllSumDirector(),
     ]);
 
     rows.value = advanceReportsData;
@@ -112,14 +94,7 @@ onMounted(async () => {
     }
 
     if (user.value.role === "ADMIN") {
-      rowsOurRansom.value = [
-        ...ourRansomRowsData,
-        ...ourRansomRowsData2,
-        ...ourRansomRowsData3,
-        ...ourRansomRowsData4,
-      ];
       rowsDelivery.value = deliveryRowsData;
-      getAllSumDirector();
     }
 
     rowsBalance.value = balanceRowsData;
@@ -183,300 +158,16 @@ let copyArrayClientRansom = ref<Array<IClientRansom>>([]);
 let ourRansomRows = ref<Array<IOurRansom>>([]);
 let clientRansomRows = ref<Array<IClientRansom>>([]);
 
-function getAllSumDirector() {
-  copyArrayOurRansom.value = ourRansomRows.value?.filter(
-    (row) =>
-      row.issued !== null &&
-      (row.additionally === "Оплата наличными" ||
-        row.additionally === "Отказ клиент наличные" ||
-        row.additionally === "Отказ клиент")
-  );
+async function getAllSumDirector() {
+  let data = await storeRansom.getAllSumDirector();
 
-  copyArrayClientRansom.value = clientRansomRows.value?.filter(
-    (row) => row.issued !== null && row.additionally === "Оплата наличными"
-  );
-
-  let sumOfPVZ = rowsBalance.value
-    ?.filter(
-      (row) =>
-        row.received !== null &&
-        (row.recipient === "Директор" || row.recipient === "Власенкова")
-    )
-    .reduce((acc, value) => acc + +value.sum, 0);
-
-  let sumOfPVZ1 = rows.value
-    ?.filter(
-      (row) =>
-        row.received !== null &&
-        (row.createdUser === "Директор" || row.createdUser === "Власенкова") &&
-        row.typeOfExpenditure !== "Пополнение баланса" &&
-        row.typeOfExpenditure !== "Перевод с кредитного баланса нал" &&
-        row.typeOfExpenditure !== "Новый кредит нал" &&
-        row.typeOfExpenditure !== "Постоплата WB" &&
-        row.typeOfExpenditure !== "Перевод с баланса безнал" &&
-        row.type === "Нал"
-    )
-    .reduce((acc, value) => acc + +value.expenditure, 0);
-
-  const march312024 = new Date("2024-04-01");
-
-  let sumOfPVZ2 = rows.value
-    ?.filter(
-      (row) =>
-        row.received !== null &&
-        (row.issuedUser === "Директор" ||
-          row.issuedUser === "Директор (С)" ||
-          row.issuedUser === "Власенкова") &&
-        row.typeOfExpenditure !== "Перевод с баланса нал" &&
-        row.typeOfExpenditure !== "Перевод с баланса безнал" &&
-        row.type === "Нал" &&
-        row.date &&
-        new Date(row.date) >= march312024
-    )
-    .reduce((acc, value) => acc + +value.expenditure, 0);
-
-  let sumOfPVZ3 = rows.value
-    ?.filter(
-      (row) =>
-        (row.createdUser === "Директор" || row.createdUser === "Власенкова") &&
-        !row.issuedUser &&
-        row.type === "Нал" &&
-        row.typeOfExpenditure !== "Кредитовый баланс нал" &&
-        row.typeOfExpenditure !== "Перевод с баланса безнал" &&
-        row.typeOfExpenditure !== "Удержания с сотрудников"
-    )
-    .reduce((acc, value) => acc + +value.expenditure, 0);
-
-  let sumOfPVZ13 = rows.value
-    ?.filter(
-      (row) =>
-        row.type === "Нал" &&
-        row.typeOfExpenditure === "Удержания с сотрудников"
-    )
-    .reduce((acc, value) => acc + +value.expenditure, 0);
-
-  let sumOfPVZ4 = rowsDelivery.value
-    ?.filter(
-      (row) =>
-        row.paid !== null && row.paid && new Date(row.paid) >= march312024
-    )
-    .reduce((acc, value) => acc + +value.amountFromClient3, 0);
-
-  let sumOfPVZ5 = rowsBalanceOnline.value?.reduce(
-    (acc, value) => acc + +value.sum,
-    0
-  );
-
-  let sumOfPVZ6 = rowsOurRansom.value
-    ?.filter((row) => row.verified !== null)
-    .reduce((acc, value) => acc + +value.priceRefund, 0);
-
-  let sumOfPVZ7 = rowsOurRansom.value
-    ?.filter(
-      (row) =>
-        row.additionally === "Отказ брак" ||
-        row.additionally === "Отказ подмена"
-    )
-    .reduce((acc, value) => acc + +value.priceSite, 0);
-
-  let sumOfPVZ8 = rowsOurRansom.value
-    ?.filter(
-      (row) =>
-        row.additionally === "Отказ клиент наличные" ||
-        row.additionally === "Отказ клиент"
-    )
-    .reduce((acc, value) => acc + +value.priceSite, 0);
-
-  let sumOfPVZ9 = rowsOurRansom.value
-    ?.filter(
-      (row) =>
-        row.additionally !== "Отказ клиент наличные" &&
-        row.additionally !== "Отказ клиент безнал" &&
-        row.additionally !== "Отказ клиент" &&
-        row.additionally !== "Отказ брак" &&
-        row.additionally !== "Отказ подмена"
-    )
-    .reduce((acc, value) => acc + +value.priceSite, 0);
-
-  let sumOfPVZ10 = rowsOurRansom.value
-    ?.filter(
-      (row) =>
-        row.additionally !== "Отказ клиент наличные" &&
-        row.additionally !== "Отказ клиент" &&
-        row.additionally !== "Отказ брак" &&
-        row.additionally !== "Отказ подмена"
-    )
-    .reduce((acc, value) => acc + +value.deliveredKGT, 0);
-
-  let sumOfPVZ11 = rows.value
-    ?.filter(
-      (row) =>
-        ((row.createdUser === "Директор" && row.issuedUser === "Директор") ||
-          (row.createdUser === "Власенкова" &&
-            row.issuedUser === "Власенкова")) &&
-        row.type === "Нал" &&
-        row.typeOfExpenditure === "Перевод с баланса безнал"
-    )
-    .reduce((acc, value) => acc + +value.expenditure, 0);
-
-  let sumOfPVZ12 = rows.value
-    ?.filter(
-      (row) =>
-        ((row.createdUser === "Директор" && row.issuedUser === "Директор") ||
-          (row.createdUser === "Власенкова" &&
-            row.issuedUser === "Власенкова")) &&
-        row.type === "Безнал" &&
-        row.typeOfExpenditure === "Перевод с баланса нал"
-    )
-    .reduce((acc, value) => acc + +value.expenditure, 0);
-
-  let sumOfPVZ1Cashless = rows.value
-    ?.filter(
-      (row) =>
-        row.received !== null &&
-        (row.createdUser === "Директор" || row.createdUser === "Власенкова") &&
-        row.typeOfExpenditure !== "Пополнение баланса" &&
-        row.typeOfExpenditure !== "Перевод с кредитного баланса безнал" &&
-        row.typeOfExpenditure !== "Новый кредит безнал" &&
-        row.typeOfExpenditure !== "Перевод с баланса нал" &&
-        row.type === "Безнал"
-    )
-    .reduce((acc, value) => acc + +value.expenditure, 0);
-
-  let sumOfPVZ2Cashless = rows.value
-    ?.filter(
-      (row) =>
-        row.received !== null &&
-        (row.issuedUser === "Директор" ||
-          row.issuedUser === "Директор (С)" ||
-          row.issuedUser === "Власенкова") &&
-        row.typeOfExpenditure !== "Перевод с баланса нал" &&
-        row.typeOfExpenditure !== "Перевод с баланса безнал" &&
-        row.type === "Безнал"
-    )
-    .reduce((acc, value) => acc + +value.expenditure, 0);
-
-  let sumOfPVZ3Cashless = rows.value
-    ?.filter(
-      (row) =>
-        (row.createdUser === "Директор" || row.createdUser === "Власенкова") &&
-        !row.issuedUser &&
-        row.type === "Безнал" &&
-        row.typeOfExpenditure !== "Перевод с баланса нал" &&
-        row.typeOfExpenditure !== "Кредитовый баланс безнал"
-    )
-    .reduce((acc, value) => acc + +value.expenditure, 0);
-
-  let sumOfPVZ4Cashless = rows.value
-    ?.filter(
-      (row) =>
-        (row.createdUser === "Директор" || row.createdUser === "Власенкова") &&
-        (row.issuedUser === "Директор" ||
-          row.issuedUser === "Директор (С)" ||
-          row.issuedUser === "Власенкова") &&
-        row.type === "Нал" &&
-        row.typeOfExpenditure === "Перевод с баланса безнал"
-    )
-    .reduce((acc, value) => acc + +value.expenditure, 0);
-
-  let sumOfPVZ5Cashless = rows.value
-    ?.filter(
-      (row) =>
-        (row.createdUser === "Директор" || row.createdUser === "Власенкова") &&
-        (row.issuedUser === "Директор" ||
-          row.issuedUser === "Директор (С)" ||
-          row.issuedUser === "Власенкова") &&
-        row.type === "Безнал" &&
-        row.typeOfExpenditure === "Перевод с баланса нал"
-    )
-    .reduce((acc, value) => acc + +value.expenditure, 0);
-
-  sumOfPVZ = sumOfPVZ === undefined ? 0 : sumOfPVZ;
-  sumOfPVZ1 = sumOfPVZ1 === undefined ? 0 : sumOfPVZ1;
-  sumOfPVZ2 = sumOfPVZ2 === undefined ? 0 : sumOfPVZ2;
-  sumOfPVZ3 = sumOfPVZ3 === undefined ? 0 : sumOfPVZ3;
-  sumOfPVZ4 = sumOfPVZ4 === undefined ? 0 : sumOfPVZ4;
-  sumOfPVZ5 = sumOfPVZ5 === undefined ? 0 : sumOfPVZ5;
-  sumOfPVZ6 = sumOfPVZ6 === undefined ? 0 : sumOfPVZ6;
-  sumOfPVZ7 = sumOfPVZ7 === undefined ? 0 : sumOfPVZ7;
-  sumOfPVZ8 = sumOfPVZ8 === undefined ? 0 : sumOfPVZ8;
-  sumOfPVZ9 = sumOfPVZ9 === undefined ? 0 : sumOfPVZ9;
-  sumOfPVZ10 = sumOfPVZ10 === undefined ? 0 : sumOfPVZ10;
-  sumOfPVZ11 = sumOfPVZ11 === undefined ? 0 : sumOfPVZ11;
-  sumOfPVZ12 = sumOfPVZ12 === undefined ? 0 : sumOfPVZ12;
-  sumOfPVZ13 = sumOfPVZ13 === undefined ? 0 : sumOfPVZ13;
-  sumOfPVZ1Cashless = sumOfPVZ1Cashless === undefined ? 0 : sumOfPVZ1Cashless;
-  sumOfPVZ2Cashless = sumOfPVZ2Cashless === undefined ? 0 : sumOfPVZ2Cashless;
-  sumOfPVZ3Cashless = sumOfPVZ3Cashless === undefined ? 0 : sumOfPVZ3Cashless;
-  sumOfPVZ4Cashless = sumOfPVZ4Cashless === undefined ? 0 : sumOfPVZ4Cashless;
-  sumOfPVZ5Cashless = sumOfPVZ5Cashless === undefined ? 0 : sumOfPVZ5Cashless;
-  switch (user.value.username) {
-    case "Директор":
-      allSum.value =
-        sumOfPVZ -
-        sumOfPVZ1 +
-        sumOfPVZ2 -
-        sumOfPVZ3 +
-        sumOfPVZ4 +
-        sumOfPVZ6 +
-        sumOfPVZ7 +
-        sumOfPVZ8 -
-        sumOfPVZ9 +
-        sumOfPVZ10 +
-        sumOfPVZ11 -
-        sumOfPVZ12 -
-        149000 +
-        sumOfPVZ1 +
-        sumOfPVZ13 +
-        332531 +
-        1477830;
-
-      allSum2.value =
-        +sumOfPVZ1Cashless +
-        +sumOfPVZ2Cashless -
-        +sumOfPVZ3Cashless -
-        +sumOfPVZ4Cashless +
-        +sumOfPVZ5Cashless;
-      break;
-
-    case "Власенкова":
-      allSum.value =
-        sumOfPVZ -
-        sumOfPVZ1 +
-        sumOfPVZ2 -
-        sumOfPVZ3 +
-        sumOfPVZ4 +
-        sumOfPVZ6 +
-        sumOfPVZ7 +
-        sumOfPVZ8 -
-        sumOfPVZ9 +
-        sumOfPVZ10 +
-        sumOfPVZ11 -
-        sumOfPVZ12 -
-        149000 +
-        sumOfPVZ1 +
-        sumOfPVZ13 +
-        332531 +
-        1477830;
-
-      allSum2.value =
-        +sumOfPVZ1Cashless +
-        +sumOfPVZ2Cashless -
-        +sumOfPVZ3Cashless -
-        +sumOfPVZ4Cashless +
-        +sumOfPVZ5Cashless;
-      break;
-
-    default:
-      allSum.value =
-        +sumOfPVZ - +sumOfPVZ1 + +sumOfPVZ2 - +sumOfPVZ3 + +sumOfPVZ4;
-      break;
-  }
   getSumCreditCash();
   getSumCreditOnline();
   getSumCashWB();
   getSumCreditBalance();
-  return allSum.value + allSum2.value - 19008030;
+  allSum.value = Number(data.allSum);
+  allSum2.value = Number(data.allSum2);
+  return Number(data.allSumValue);
 }
 
 let sumCreditCash = ref(0);
@@ -1461,14 +1152,7 @@ function getAllSumFromName(username: string) {
 }
 
 function getAllSumFromEmployees() {
-  getAllSumDirector();
-  copyArrayOurRansom.value = ourRansomRows.value?.filter(
-    (row) =>
-      row.issued !== null &&
-      (row.additionally === "Оплата наличными" ||
-        row.additionally === "Отказ клиент наличные" ||
-        row.additionally === "Отказ клиент")
-  );
+  // getAllSumDirector();
 
   copyArrayClientRansom.value = clientRansomRows.value?.filter(
     (row) => row.issued !== null && row.additionally === "Оплата наличными"
