@@ -497,6 +497,7 @@ let isShowSecondAddInfo = ref(false);
               <UButton
                 @click="isShowFirstAddInfo = !isShowFirstAddInfo"
                 class="font-semibold"
+                size="2xs"
                 >Подробнее</UButton
               >
             </div>
@@ -507,6 +508,23 @@ let isShowSecondAddInfo = ref(false);
                   .split(".")[0]
               }}
             </h1>
+            <div v-if="isShowFirstAddInfo" class="text-sm my-3">
+              <h1 class="font-bold">Оформление заказа:</h1>
+              <ol class="italic list-decimal px-5 mt-1 space-y-1">
+                <li>
+                  Вы сами заказываете и оплачиваете товары в выбранном
+                  интернет-магазине на указанный нами адрес
+                </li>
+                <li>
+                  Мы получаем Ваш заказ по предоставленному Вами Штрих-коду (QR)
+                  и привозим в удобный вам пункт выдачи
+                </li>
+                <li>
+                  Вы оплачиваете товары самостоятельно до получения нами и
+                  оплачиваете доставку забирая привезенный заказ в пункте выдачи
+                </li>
+              </ol>
+            </div>
           </div>
           <div class="mb-3">
             <div class="flex items-center gap-3">
@@ -516,10 +534,30 @@ let isShowSecondAddInfo = ref(false);
               <UButton
                 @click="isShowSecondAddInfo = !isShowSecondAddInfo"
                 class="font-semibold"
+                size="2xs"
                 >Подробнее</UButton
               >
             </div>
             <h1 v-if="isShowSecondAddInfo">Все интернет-магазины - 10%</h1>
+            <div v-if="isShowSecondAddInfo" class="text-sm my-3">
+              <h1 class="font-bold">Оформление заказа:</h1>
+              <ol class="italic list-decimal px-5 mt-1 space-y-1">
+                <li>
+                  Вы заказываете товары используя ссылки на них через Ваш личный
+                  кабинет на сайте DAROM.PRO или через
+                  <a
+                    class="text-secondary-color underline"
+                    href="https://t.me/Svetlana_Darompro"
+                    target="_blank"
+                    >администратора</a
+                  >
+                </li>
+                <li>
+                  Мы сами выкупаем товар и привозим в удобный Вам пункт выдачи
+                </li>
+                <li>Вы оплачиваете товар и доставку при получении</li>
+              </ol>
+            </div>
           </div>
         </div>
       </UCard>

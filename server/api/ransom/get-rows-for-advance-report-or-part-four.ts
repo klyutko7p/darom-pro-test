@@ -27,8 +27,7 @@ export default defineEventHandler(async (event) => {
           gt: startDate,
         },
       },
-      skip: 40000,
-      take: 20000,
+      skip: 60000,
       orderBy: {
         created_at: "desc",
       },

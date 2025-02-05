@@ -35,6 +35,7 @@ onMounted(async () => {
     let ourRansomRowsPromise;
     let ourRansomRowsPromise2;
     let ourRansomRowsPromise3;
+    let ourRansomRowsPromise4;
     let deliveryRowsPromise;
 
     if (user.value.role === "ADMIN") {
@@ -47,6 +48,8 @@ onMounted(async () => {
         storeRansom.getRansomRowsForAdvanceReportOurRansomPartTwo();
       ourRansomRowsPromise3 =
         storeRansom.getRansomRowsForAdvanceReportOurRansomPartThree();
+        ourRansomRowsPromise4 =
+        storeRansom.getRansomRowsForAdvanceReportOurRansomPartFour();
       deliveryRowsPromise = storeRansom.getRansomRowsForBalanceDelivery();
     } else {
       advanceReportsPromise = storeAdvanceReports.getAdvancedReports(
@@ -59,6 +62,7 @@ onMounted(async () => {
       ourRansomRowsData,
       ourRansomRowsData2,
       ourRansomRowsData3,
+      ourRansomRowsData4,
       deliveryRowsData,
       balanceRowsData,
       onlineBalanceRowsData,
@@ -67,6 +71,7 @@ onMounted(async () => {
       ourRansomRowsPromise,
       ourRansomRowsPromise2,
       ourRansomRowsPromise3,
+      ourRansomRowsPromise4,
       deliveryRowsPromise,
       storeBalance.getBalanceRows(),
       storeBalance.getBalanceOnlineRows(),
@@ -111,6 +116,7 @@ onMounted(async () => {
         ...ourRansomRowsData,
         ...ourRansomRowsData2,
         ...ourRansomRowsData3,
+        ...ourRansomRowsData4,
       ];
       rowsDelivery.value = deliveryRowsData;
       getAllSumDirector();
