@@ -2077,7 +2077,7 @@ async function updateDeliveryProfitRow(obj: any) {
       {
         date: new Date(),
         PVZ: selectedPVZ.value,
-        expenditure: obj.row.sum,
+        expenditure: +obj.row.sum,
         typeOfExpenditure: "Оплата ФОТ",
         company: "Darom.pro",
         createdUser: user.value.username,
@@ -2126,7 +2126,7 @@ async function updateDeliveryProfitManagerStatus(obj: any) {
       {
         date: new Date(),
         PVZ: "Офис",
-        expenditure: obj.row.sum,
+        expenditure: +obj.row.sum,
         typeOfExpenditure: "Оплата ФОТ",
         company: "Darom.pro",
         createdUser: user.value.username,
@@ -2176,7 +2176,7 @@ async function updateDeliveryRow(obj: any) {
           {
             date: new Date(),
             PVZ: obj.row.pvz,
-            expenditure: obj.row.sum,
+            expenditure: +obj.row.sum,
             typeOfExpenditure: "Оплата ФОТ",
             company: "Darom.pro",
             createdUser: user.value.username,
@@ -2202,7 +2202,7 @@ async function updateDeliveryRow(obj: any) {
           {
             date: new Date(),
             PVZ: "Офис",
-            expenditure: obj.row.sum,
+            expenditure: +obj.row.sum,
             typeOfExpenditure: "Оплата ФОТ",
             company: "Darom.pro",
             createdUser: user.value.username,

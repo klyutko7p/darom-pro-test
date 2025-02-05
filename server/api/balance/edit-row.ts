@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
             },
             data: {
                 id: row.id,
-                sum: row.sum,
+                sum: Number(row.sum),
                 pvz: row.pvz,
                 issued: row.issued ? new Date(row.issued).toISOString() : null,
                 received: row.received ? new Date(row.received).toISOString() : null,

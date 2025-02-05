@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
         PVZ: row.PVZ,
         notation: row.notation,
         company: row.company,
-        expenditure: row.expenditure,
+        expenditure: Number(row.expenditure),
         typeOfExpenditure: row.typeOfExpenditure,
         type: row.type,
         issuedUser: row.issuedUser,

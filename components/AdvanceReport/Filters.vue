@@ -223,7 +223,7 @@ const filterRows = () => {
         (!selectedPVZ.value.length || selectedPVZ.value.includes(row.PVZ)) &&
         (!selectedType.value.length || selectedType.value.includes(row.type)) &&
         (!selectedExpenditure.value.length ||
-          selectedExpenditure.value.includes(row.expenditure)) &&
+          selectedExpenditure.value.includes(row.expenditure.toString())) &&
         (!selectedTypeOfExpenditure.value.length ||
           selectedTypeOfExpenditure.value.includes(row.typeOfExpenditure)) &&
         (!selectedNotation.value.length ||
@@ -248,7 +248,7 @@ const filterRows = () => {
         (!selectedPVZ.value.length || selectedPVZ.value.includes(row.PVZ)) &&
         (!selectedType.value.length || selectedType.value.includes(row.type)) &&
         (!selectedExpenditure.value.length ||
-          selectedExpenditure.value.includes(row.expenditure)) &&
+          selectedExpenditure.value.includes(row.expenditure.toString())) &&
         (!selectedTypeOfExpenditure.value.length ||
           selectedTypeOfExpenditure.value.includes(row.typeOfExpenditure)) &&
         (!selectedNotation.value.length ||

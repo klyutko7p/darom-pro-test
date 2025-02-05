@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
       data: {
         id: row.id,
         pvz: row.pvz,
-        sum: row.sum,
+        sum: Number(row.sum),
         issued: row.issued,
         received: row.received,
         notation: row.notation,

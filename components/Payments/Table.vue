@@ -124,7 +124,7 @@ function updateCurrentPageData() {
           new Date(aRows.date).getFullYear() &&
         new Date(row.date).getMonth() === new Date(aRows.date).getMonth() &&
         new Date(row.date).getDate() === new Date(aRows.date).getDate() &&
-        row.expenditure === aRows.expenditure &&
+        row.expenditure === aRows.expenditure.toString() &&
         row.typeOfExpenditure === aRows.typeOfExpenditure &&
         row.type === aRows.type &&
         row.notation === aRows.notation
@@ -212,7 +212,7 @@ const filterRowsCompanyAndPVZ = () => {
           new Date(aRows.date).getFullYear() &&
         new Date(row.date).getMonth() === new Date(aRows.date).getMonth() &&
         new Date(row.date).getDate() === new Date(aRows.date).getDate() &&
-        row.expenditure === aRows.expenditure &&
+        row.expenditure === aRows.expenditure.toString() &&
         row.typeOfExpenditure === aRows.typeOfExpenditure &&
         row.type === aRows.type &&
         row.notation === aRows.notation

@@ -3,7 +3,7 @@ interface IAdvanceReport {
     PVZ: string;
     date: Date | string;
     issuedUser: string;
-    expenditure: string;
+    expenditure: number;
     typeOfExpenditure: string;
     notation: string;
     company: string;

@@ -75,7 +75,6 @@ onMounted(async () => {
       deliveryRowsPromise,
       storeBalance.getBalanceRows(),
       storeBalance.getBalanceOnlineRows(),
-      getAllSumDirector(),
     ]);
 
     rows.value = advanceReportsData;
@@ -714,7 +713,7 @@ function openModalAdmin(row: IAdvanceReport) {
   rowData.value = {} as IAdvanceReport;
   rowData.value.PVZ = row.PVZ;
   rowData.value.company = row.company;
-  rowData.value.expenditure = row.expenditure;
+  rowData.value.expenditure = +row.expenditure;
   rowData.value.notation = row.notation;
   rowData.value.issuedUser = user.value.username;
   rowData.value.received = new Date();
@@ -730,7 +729,7 @@ function openModalYM(row: IAdvanceReport) {
   rowData.value = {} as IAdvanceReport;
   rowData.value.PVZ = "Коломенское ЯМ";
   rowData.value.company = "W/O/Я start";
-  rowData.value.expenditure = row.expenditure;
+  rowData.value.expenditure = +row.expenditure;
   rowData.value.notation = row.notation;
   rowData.value.supportingDocuments = "";
   rowData.value.typeOfExpenditure = row.typeOfExpenditure;
@@ -746,7 +745,7 @@ function openModalAdminOOO(row: IAdvanceReport) {
   rowData.value = {} as IAdvanceReport;
   rowData.value.PVZ = row.PVZ;
   rowData.value.company = row.company;
-  rowData.value.expenditure = row.expenditure;
+  rowData.value.expenditure = +row.expenditure;
   rowData.value.notation = row.notation;
   rowData.value.issuedUser = user.value.username;
   rowData.value.received = new Date();
@@ -1197,6 +1196,7 @@ async function updateRow() {
     toast.error("Баланс кредита меньше чем вписанная сумма!");
   } else {
     isLoading.value = true;
+    rowData.value.expenditure = Number(rowData.value.expenditure)
     await storeAdvanceReports.updateAdvanceReport(rowData.value);
   }
 
@@ -1568,19 +1568,6 @@ watch(
     searchNotation();
   }
 );
-
-function checkExpenditure() {
-  if (rowData.value.expenditure) {
-    rowData.value.expenditure = rowData.value.expenditure.replace(",", ".");
-    rowData.value.expenditure = rowData.value.expenditure.replace(
-      /(?!^-)[^0-9.]/g,
-      ""
-    );
-    if (rowData.value.expenditure.indexOf("-") > 0) {
-      rowData.value.expenditure = rowData.value.expenditure.replace("-", "");
-    }
-  }
-}
 
 let isFirstClick = ref(true);
 
@@ -2938,7 +2925,6 @@ function showBankTransactions(id: number) {
                   class="w-full"
                   v-model="rowData.expenditure"
                   type="text"
-                  @input="checkExpenditure"
                 />
               </div>
 
@@ -3070,7 +3056,6 @@ function showBankTransactions(id: number) {
                   :disabled="user.role !== 'ADMIN'"
                   class="w-full"
                   v-model="rowData.expenditure"
-                  @input="checkExpenditure"
                   type="text"
                 />
               </div>
@@ -3186,7 +3171,6 @@ function showBankTransactions(id: number) {
                   :disabled="user.role !== 'ADMIN'"
                   class="w-full"
                   v-model="rowData.expenditure"
-                  @input="checkExpenditure"
                   type="text"
                 />
               </div>
@@ -3434,7 +3418,6 @@ function showBankTransactions(id: number) {
                   class="w-full"
                   v-model="rowData.expenditure"
                   type="text"
-                  @input="checkExpenditure"
                 />
               </div>
 

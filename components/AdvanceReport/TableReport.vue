@@ -180,7 +180,7 @@ function updateCurrentPageData() {
   arrayOfExpenditure.value?.forEach((row) => {
     if (!isNaN(expenditureByPVZ[row.PVZ])) {
       if (row.typeOfExpenditure !== "Оплата ФОТ") {
-        expenditureByPVZ[row.PVZ] += parseFloat(row.expenditure);
+        expenditureByPVZ[row.PVZ] += parseFloat(row.expenditure.toString());
       }
 
       if (row.typeOfExpenditure === "Оплата ФОТ") {
@@ -192,7 +192,7 @@ function updateCurrentPageData() {
                   item.PVZ === row.PVZ &&
                   item.typeOfExpenditure === "Удержания с сотрудников"
               )
-              .reduce((sum, item) => sum + parseFloat(item.expenditure), 0) ||
+              .reduce((sum, item) => sum + parseFloat(item.expenditure.toString()), 0) ||
             0;
 
           expenditureByPVZ[row.PVZ] += deductions;
@@ -200,14 +200,14 @@ function updateCurrentPageData() {
           processedDeductions[row.PVZ] = true;
         }
 
-        expenditureByPVZ[row.PVZ] += parseFloat(row.expenditure);
+        expenditureByPVZ[row.PVZ] += parseFloat(row.expenditure.toString());
       }
     }
   });
 
   arrayOfReceipts.value?.forEach((row) => {
     if (!isNaN(receiptsByPVZ[row.PVZ])) {
-      receiptsByPVZ[row.PVZ] += parseFloat(row.expenditure);
+      receiptsByPVZ[row.PVZ] += parseFloat(row.expenditure.toString());
     }
   });
 

@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
     const rowData = await prisma.balanceOnline.create({
       data: {
         id: row.id,
-        sum: row.sum,
+        sum: Number(row.sum),
       },
     });
   } catch (error) {

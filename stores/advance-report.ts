@@ -48,7 +48,7 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
       if (row.issuedUser === undefined) row.issuedUser = "";
       if (row.PVZ === undefined) row.PVZ = "";
       if (row.issuedUser === undefined) row.issuedUser = "";
-      if (row.expenditure === undefined) row.expenditure = "0";
+      if (row.expenditure === undefined) row.expenditure = 0;
       if (row.typeOfExpenditure === undefined) row.typeOfExpenditure = "";
       if (row.notation === undefined) row.notation = "";
       if (row.company === undefined) row.company = "";
@@ -176,7 +176,7 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
       if (row.issuedUser === undefined) row.issuedUser = "";
       if (row.PVZ === undefined) row.PVZ = "";
       if (row.issuedUser === undefined) row.issuedUser = "";
-      if (row.expenditure === undefined) row.expenditure = "0";
+      if (row.expenditure === undefined) row.expenditure = 0;
       if (row.typeOfExpenditure === undefined) row.typeOfExpenditure = "";
       if (row.notation === undefined) row.notation = "";
       if (row.company === undefined) row.company = "";
@@ -187,7 +187,7 @@ export const useAdvanceReports = defineStore("advance-reports", () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ row: row }),
+        body: JSON.stringify({ row }),
       });
 
       if (data.data.value === undefined) {
