@@ -114,8 +114,8 @@ function changeAddress(coordinatesData: Array<number>) {
   ) {
     address.value = "ПВЗ_10";
   } else if (
-    coordinatesData[0] === 47.100255 &&
-    coordinatesData[1] === 37.662614
+    coordinatesData[0] === 47.100219 &&
+    coordinatesData[1] === 37.66091
   ) {
     address.value = "ПВЗ_11";
   } else if (
@@ -190,7 +190,7 @@ let markers = [
   },
   {
     id: 11,
-    coords: [47.100255, 37.662614],
+    coords: [47.100219, 37.660910],
     commentary: "Вход магазин «Семейный». Ежедневно 9:00-18:00",
     address: "г. Мариуполь, ул. Азовстальская, 131",
   },
@@ -261,7 +261,7 @@ let markersCopy = [
   },
   {
     id: 11,
-    coords: [47.100255, 37.662614],
+    coords: [47.100219, 37.660910],
     commentary: "Вход магазин «Семейный». Ежедневно 9:00-18:00",
     address: "г. Мариуполь, ул. Азовстальская, 131",
   },
