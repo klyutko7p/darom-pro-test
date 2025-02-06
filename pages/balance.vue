@@ -135,45 +135,43 @@ onMounted(async () => {
 
     const [
       deliveryRansomRowsData,
-      sumOfRejectData,
       balanceRowsData,
       balanceOnlineRowsData,
       balanceProfitRowsData,
-      balanceProfitManagerRowsData,
-      balanceDeliveryRowsData,
       ransomRowsForBalanceOurRansomDataPartOne,
       ransomRowsForBalanceOurRansomDataPartTwo,
       ransomRowsForBalanceOurRansomDataPartThree,
       ransomRowsForBalanceOurRansomDataPartFour,
       ransomRowsForBalanceOurRansomDataPartFive,
       ransomRowsForBalanceOurRansomDataPartSix,
+      ransomRowsForBalanceOurRansomDataPartSeven,
+      ransomRowsForBalanceOurRansomDataPartEight,
       ransomRowsForBalanceClientRansomData,
       pvzData,
     ] = await Promise.all([
       storeRansom.getRansomRowsForBalanceDelivery(),
-      storeRansom.getSumOfRejection(),
       storeBalance.getBalanceRows(),
       storeBalance.getBalanceOnlineRows(),
       storeBalance.getBalanceProfitRows(),
-      storeBalance.getBalanceProfitManagerRows(),
-      storeBalance.getBalanceDeliveryRows(),
       storeRansom.getRansomRowsForBalanceOurRansomPartOne(),
       storeRansom.getRansomRowsForBalanceOurRansomPartTwo(),
       storeRansom.getRansomRowsForBalanceOurRansomPartThree(),
       storeRansom.getRansomRowsForBalanceOurRansomPartFour(),
       storeRansom.getRansomRowsForBalanceOurRansomPartFive(),
       storeRansom.getRansomRowsForBalanceOurRansomPartSix(),
+      storeRansom.getRansomRowsForBalanceOurRansomPartSeven(),
+      storeRansom.getRansomRowsForBalanceOurRansomPartEight(),
       storeRansom.getRansomRowsForBalanceClientRansom(),
       storePVZ.getPVZ(),
     ]);
 
     deliveryRansomRows.value = deliveryRansomRowsData;
-    sumOfReject.value = sumOfRejectData;
+    sumOfReject.value = 100;
     rows.value = balanceRowsData;
     rowsOnline.value = balanceOnlineRowsData;
     rowsProfit.value = balanceProfitRowsData;
-    rowsProfitManager.value = balanceProfitManagerRowsData;
-    rowsDelivery.value = balanceDeliveryRowsData;
+    rowsProfitManager.value = [];
+    rowsDelivery.value = [];
     ourRansomRows.value = [
       ...ransomRowsForBalanceOurRansomDataPartOne,
       ...ransomRowsForBalanceOurRansomDataPartTwo,
@@ -181,6 +179,8 @@ onMounted(async () => {
       ...ransomRowsForBalanceOurRansomDataPartFour,
       ...ransomRowsForBalanceOurRansomDataPartFive,
       ...ransomRowsForBalanceOurRansomDataPartSix,
+      ...ransomRowsForBalanceOurRansomDataPartSeven,
+      ...ransomRowsForBalanceOurRansomDataPartEight,
     ];
     clientRansomRows.value = ransomRowsForBalanceClientRansomData;
     pvz.value = pvzData;

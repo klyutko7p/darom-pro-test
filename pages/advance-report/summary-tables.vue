@@ -45,7 +45,8 @@ onMounted(async () => {
     ransomRowsForBalanceOurRansomDataPartFour,
     ransomRowsForBalanceOurRansomDataPartFive,
     ransomRowsForBalanceOurRansomDataPartSix,
-    rowsDeliveryValue,
+    ransomRowsForBalanceOurRansomDataPartSeven,
+    ransomRowsForBalanceOurRansomDataPartEight,
     clientRansomRowsValue,
     rowsBalanceValue,
   ] = await Promise.all([
@@ -55,7 +56,8 @@ onMounted(async () => {
     storeRansom.getRansomRowsForBalanceOurRansomPartFour(),
     storeRansom.getRansomRowsForBalanceOurRansomPartFive(),
     storeRansom.getRansomRowsForBalanceOurRansomPartSix(),
-    storeRansom.getRansomRowsForBalanceDelivery(),
+    storeRansom.getRansomRowsForBalanceOurRansomPartSeven(),
+    storeRansom.getRansomRowsForBalanceOurRansomPartEight(),
     storeRansom.getRansomRowsForBalanceClientRansom(),
     storeBalance.getBalanceRows(),
   ]);
@@ -67,8 +69,10 @@ onMounted(async () => {
     ...ransomRowsForBalanceOurRansomDataPartFour,
     ...ransomRowsForBalanceOurRansomDataPartFive,
     ...ransomRowsForBalanceOurRansomDataPartSix,
+    ...ransomRowsForBalanceOurRansomDataPartSeven,
+    ...ransomRowsForBalanceOurRansomDataPartEight,
   ];
-  rowsDelivery.value = rowsDeliveryValue;
+  rowsDelivery.value = [];
 
   if (user.value.role !== "ADMIN") {
     rows.value = rows.value?.filter(

@@ -717,6 +717,51 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  async function getRansomRowsForBalanceOurRansomPartSeven() {
+    try {
+      let response = await fetch(
+        "/api/ransom/get-rows-for-balance-or-part-seven",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        }
+      );
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsForBalanceOurRansomPartEight() {
+    try {
+      let response = await fetch(
+        "/api/ransom/get-rows-for-balance-or-part-eight",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        }
+      );
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+
   function mapBackToOriginalFields(row: any) {
     const originalRow = {} as IOurRansom;
 
@@ -1274,6 +1319,50 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
+  async function getRansomRowsForAdvanceReportOurRansomNewPartOne() {
+    try {
+      let response = await fetch(
+        "/api/ransom/get-rows-for-advance-report-or-new-part-one",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        }
+      );
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
+  async function getRansomRowsForAdvanceReportOurRansomNewPartTwo() {
+    try {
+      let response = await fetch(
+        "/api/ransom/get-rows-for-advance-report-or-new-part-two",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/octet-stream",
+          },
+        }
+      );
+
+      const arrayBuffer = await response.arrayBuffer();
+      const unpacked = msgpack.decode(new Uint8Array(arrayBuffer)) as any;
+      return unpacked.map(mapBackToOriginalFields);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function getRansomRowsForAdvanceReportOurRansomPartOne() {
     try {
       let response = await fetch(
@@ -1527,6 +1616,8 @@ export const useRansomStore = defineStore("ransom", () => {
     getRansomRowsForBalanceOurRansomPartFour,
     getRansomRowsForBalanceOurRansomPartFive,
     getRansomRowsForBalanceOurRansomPartSix,
+    getRansomRowsForBalanceOurRansomPartSeven,
+    getRansomRowsForBalanceOurRansomPartEight,
     getRansomRowsByPVZInventory,
     announce,
     generateLink,
@@ -1536,5 +1627,7 @@ export const useRansomStore = defineStore("ransom", () => {
     updateDpStatus,
     getRansomRowsForAdvanceReportOurRansomPartFour,
     getAllSumDirector,
+    getRansomRowsForAdvanceReportOurRansomNewPartOne,
+    getRansomRowsForAdvanceReportOurRansomNewPartTwo,
   };
 });

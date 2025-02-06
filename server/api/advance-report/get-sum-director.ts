@@ -3,272 +3,269 @@ const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
   try {
-    const startDate = new Date("2024-07-01T00:00:00Z");
+    // Для сравнения дат используем дату 2024-04-01
     const march312024 = new Date("2024-04-01");
 
-    // Выполняем параллельно все агрегатные запросы
-    const [
-      // Таблица balance → sumOfPVZ
-      balanceAgg,
-      // advanceReport
-      advReportAgg1, // sumOfPVZ1: received != null, createdUser in [...] и type "Нал", исключая некоторые expenditure
-      advReportAgg2, // sumOfPVZ2: received != null, issuedUser in [...] и type "Нал", date >= march312024
-      advReportAgg3, // sumOfPVZ3: createdUser in [...] и issuedUser == null, type "Нал", исключая некоторые expenditure
-      advReportAgg13, // sumOfPVZ13: type "Нал", typeOfExpenditure === "Удержания с сотрудников"
-      // Таблица delivery → sumOfPVZ4
-      deliveryAgg,
-      // Таблица balanceOnlie → sumOfPVZ5
-      balanceOnlineAgg,
-      // Таблица ourRansom
-      ourRansomAgg6, // sumOfPVZ6: verified != null, сумма priceRefund
-      ourRansomAgg7, // sumOfPVZ7: additionally in ["Отказ брак", "Отказ подмена"], сумма priceSite
-      ourRansomAgg8, // sumOfPVZ8: additionally in ["Отказ клиент наличные", "Отказ клиент"], сумма priceSite
-      ourRansomAgg9, // sumOfPVZ9: additionally не входит в [...] (отказы), сумма priceSite
-      ourRansomAgg10, // sumOfPVZ10: additionally не входит в [...] (отказы), сумма deliveredKGT
-      // Ещё агрегаты из advanceReport
-      advReportAgg11, // sumOfPVZ11: (createdUser и issuedUser совпадают: "Директор" или "Власенкова"), type "Нал", typeOfExpenditure === "Перевод с баланса безнал"
-      advReportAgg12, // sumOfPVZ12: аналогично, но type "Безнал", typeOfExpenditure === "Перевод с баланса нал"
-      advReportAgg1Cashless, // sumOfPVZ1Cashless: received != null, createdUser in [...] и type "Безнал", исключая некоторые expenditure
-      advReportAgg2Cashless, // sumOfPVZ2Cashless: received != null, issuedUser in [...] и type "Безнал", исключая определённые expenditure
-      advReportAgg3Cashless, // sumOfPVZ3Cashless: createdUser in [...] и issuedUser == null, type "Безнал", исключая некоторые expenditure
-      advReportAgg4Cashless, // sumOfPVZ4Cashless: createdUser in [...] и issuedUser in [...] , type "Нал", typeOfExpenditure === "Перевод с баланса безнал"
-      advReportAgg5Cashless, // sumOfPVZ5Cashless: createdUser in [...] и issuedUser in [...] , type "Безнал", typeOfExpenditure === "Перевод с баланса нал"
-    ] = await Promise.all([
-      // balance
-      prisma.balance.aggregate({
-        _sum: { sum: true },
-        where: {
-          received: { not: null },
-          recipient: { in: ["Директор", "Власенкова"] },
-        },
-      }),
-      // advanceReport – sumOfPVZ1
-      prisma.advanceReport.aggregate({
-        _sum: { expenditure: true },
-        where: {
-          received: { not: null },
-          createdUser: { in: ["Директор", "Власенкова"] },
-          typeOfExpenditure: {
-            notIn: [
-              "Пополнение баланса",
-              "Перевод с кредитного баланса нал",
-              "Новый кредит нал",
-              "Постоплата WB",
-              "Перевод с баланса безнал",
-            ],
-          },
-          type: "Нал",
-        },
-      }),
-      // advanceReport – sumOfPVZ2
-      prisma.advanceReport.aggregate({
-        _sum: { expenditure: true },
-        where: {
-          received: { not: null },
-          issuedUser: { in: ["Директор", "Директор (С)", "Власенкова"] },
-          typeOfExpenditure: {
-            notIn: ["Перевод с баланса нал", "Перевод с баланса безнал"],
-          },
-          type: "Нал",
-          date: { gte: march312024 },
-        },
-      }),
-      // advanceReport – sumOfPVZ3
-      prisma.advanceReport.aggregate({
-        _sum: { expenditure: true },
-        where: {
-          createdUser: { in: ["Директор", "Власенкова"] },
-          issuedUser: null,
-          type: "Нал",
-          typeOfExpenditure: {
-            notIn: [
-              "Кредитовый баланс нал",
-              "Перевод с баланса безнал",
-              "Удержания с сотрудников",
-            ],
-          },
-        },
-      }),
-      // advanceReport – sumOfPVZ13
-      prisma.advanceReport.aggregate({
-        _sum: { expenditure: true },
-        where: {
-          type: "Нал",
-          typeOfExpenditure: "Удержания с сотрудников",
-        },
-      }),
-      // delivery – sumOfPVZ4
-      prisma.delivery.aggregate({
-        _sum: { amountFromClient3: true },
-        where: {
-          paid: { not: null, gte: march312024 },
-        },
-      }),
-      // balanceOnlie – sumOfPVZ5
-      prisma.balanceOnline.aggregate({
-        _sum: { sum: true },
-      }),
-      // ourRansom – sumOfPVZ6
-      prisma.ourRansom.aggregate({
-        _sum: { priceRefund: true },
-        where: { verified: { not: null }, created_at: { gt: startDate } },
-      }),
-      // ourRansom – sumOfPVZ7
-      prisma.ourRansom.aggregate({
-        _sum: { priceSite: true },
-        where: { additionally: { in: ["Отказ брак", "Отказ подмена"] } },
-      }),
-      // ourRansom – sumOfPVZ8
-      prisma.ourRansom.aggregate({
-        _sum: { priceSite: true },
-        where: {
-          additionally: { in: ["Отказ клиент наличные", "Отказ клиент"] },
-          created_at: { gt: startDate },
-        },
-      }),
-      // ourRansom – sumOfPVZ9
-      prisma.ourRansom.aggregate({
-        _sum: { priceSite: true },
-        where: {
-          additionally: {
-            notIn: [
-              "Отказ клиент наличные",
-              "Отказ клиент безнал",
-              "Отказ клиент",
-              "Отказ брак",
-              "Отказ подмена",
-            ],
-          },
-          created_at: { gt: startDate },
-        },
-      }),
-      // ourRansom – sumOfPVZ10
-      prisma.ourRansom.aggregate({
-        _sum: { deliveredKGT: true },
-        where: {
-          additionally: {
-            notIn: [
-              "Отказ клиент наличные",
-              "Отказ клиент",
-              "Отказ брак",
-              "Отказ подмена",
-            ],
-          },
-          created_at: { gt: startDate },
-        },
-      }),
-      // advanceReport – sumOfPVZ11
-      prisma.advanceReport.aggregate({
-        _sum: { expenditure: true },
-        where: {
-          OR: [
-            { createdUser: "Директор", issuedUser: "Директор" },
-            { createdUser: "Власенкова", issuedUser: "Власенкова" },
-          ],
-          type: "Нал",
-          typeOfExpenditure: "Перевод с баланса безнал",
-        },
-      }),
-      // advanceReport – sumOfPVZ12
-      prisma.advanceReport.aggregate({
-        _sum: { expenditure: true },
-        where: {
-          OR: [
-            { createdUser: "Директор", issuedUser: "Директор" },
-            { createdUser: "Власенкова", issuedUser: "Власенкова" },
-          ],
-          type: "Безнал",
-          typeOfExpenditure: "Перевод с баланса нал",
-        },
-      }),
-      // advanceReport – sumOfPVZ1Cashless
-      prisma.advanceReport.aggregate({
-        _sum: { expenditure: true },
-        where: {
-          received: { not: null },
-          createdUser: { in: ["Директор", "Власенкова"] },
-          typeOfExpenditure: {
-            notIn: [
-              "Пополнение баланса",
-              "Перевод с кредитного баланса безнал",
-              "Новый кредит безнал",
-              "Перевод с баланса нал",
-            ],
-          },
-          type: "Безнал",
-        },
-      }),
-      // advanceReport – sumOfPVZ2Cashless
-      prisma.advanceReport.aggregate({
-        _sum: { expenditure: true },
-        where: {
-          received: { not: null },
-          issuedUser: { in: ["Директор", "Директор (С)", "Власенкова"] },
-          typeOfExpenditure: {
-            notIn: ["Перевод с баланса нал", "Перевод с баланса безнал"],
-          },
-          type: "Безнал",
-        },
-      }),
-      // advanceReport – sumOfPVZ3Cashless
-      prisma.advanceReport.aggregate({
-        _sum: { expenditure: true },
-        where: {
-          createdUser: { in: ["Директор", "Власенкова"] },
-          issuedUser: null,
-          type: "Безнал",
-          typeOfExpenditure: {
-            notIn: ["Перевод с баланса нал", "Кредитовый баланс безнал"],
-          },
-        },
-      }),
-      // advanceReport – sumOfPVZ4Cashless
-      prisma.advanceReport.aggregate({
-        _sum: { expenditure: true },
-        where: {
-          createdUser: { in: ["Директор", "Власенкова"] },
-          issuedUser: { in: ["Директор", "Директор (С)", "Власенкова"] },
-          type: "Нал",
-          typeOfExpenditure: "Перевод с баланса безнал",
-        },
-      }),
-      // advanceReport – sumOfPVZ5Cashless
-      prisma.advanceReport.aggregate({
-        _sum: { expenditure: true },
-        where: {
-          createdUser: { in: ["Директор", "Власенкова"] },
-          issuedUser: { in: ["Директор", "Директор (С)", "Власенкова"] },
-          type: "Безнал",
-          typeOfExpenditure: "Перевод с баланса нал",
-        },
-      }),
-    ]);
+    // 1. Из модели balance – сумма поля "sum" при условии: received не null и recipient = "Директор" или "Власенкова"
+    const balanceAgg = await prisma.balance.aggregate({
+      _sum: { sum: true },
+      where: {
+        received: { not: null },
+        recipient: { in: ["Директор", "Власенкова"] },
+      },
+    });
+    const sumOfPVZ = balanceAgg._sum.sum ?? 0;
 
-    // Извлекаем суммы, подставляя 0, если агрегат вернул null
-    const sumOfPVZ = balanceAgg._sum.sum || 0;
-    const sumOfPVZ1 = advReportAgg1._sum.expenditure || 0;
-    const sumOfPVZ2 = advReportAgg2._sum.expenditure || 0;
-    const sumOfPVZ3 = advReportAgg3._sum.expenditure || 0;
-    const sumOfPVZ13 = advReportAgg13._sum.expenditure || 0;
-    const sumOfPVZ4 = deliveryAgg._sum.amountFromClient3 || 0;
-    const sumOfPVZ5 = balanceOnlineAgg._sum.sum || 0;
-    const sumOfPVZ6 = ourRansomAgg6._sum.priceRefund || 0;
-    const sumOfPVZ7 = ourRansomAgg7._sum.priceSite || 0;
-    const sumOfPVZ8 = ourRansomAgg8._sum.priceSite || 0;
-    const sumOfPVZ9 = ourRansomAgg9._sum.priceSite || 0;
-    const sumOfPVZ10 = ourRansomAgg10._sum.deliveredKGT || 0;
-    const sumOfPVZ11 = advReportAgg11._sum.expenditure || 0;
-    const sumOfPVZ12 = advReportAgg12._sum.expenditure || 0;
-    const sumOfPVZ1Cashless = advReportAgg1Cashless._sum.expenditure || 0;
-    const sumOfPVZ2Cashless = advReportAgg2Cashless._sum.expenditure || 0;
-    const sumOfPVZ3Cashless = advReportAgg3Cashless._sum.expenditure || 0;
-    const sumOfPVZ4Cashless = advReportAgg4Cashless._sum.expenditure || 0;
-    const sumOfPVZ5Cashless = advReportAgg5Cashless._sum.expenditure || 0;
+    // 2. Из advanceReport – различные суммы по расходам для наличных:
+    // 2.1 sumOfPVZ1: расход, если received задан, createdUser = "Директор" или "Власенкова",
+    //      type = "Нал" и typeOfExpenditure не входит в перечень исключений.
+    const aggPVZ1 = await prisma.advanceReport.aggregate({
+      _sum: { expenditure: true },
+      where: {
+        received: { not: null },
+        createdUser: { in: ["Директор", "Власенкова"] },
+        type: "Нал",
+        typeOfExpenditure: {
+          notIn: [
+            "Пополнение баланса",
+            "Перевод с кредитного баланса нал",
+            "Новый кредит нал",
+            "Постоплата WB",
+            "Перевод с баланса безнал",
+          ],
+        },
+      },
+    });
+    const sumOfPVZ1 = aggPVZ1._sum.expenditure ?? 0;
 
-    let allSum, allSum2;
-    // Если пользователь "Директор" или "Власенкова" – используем полную формулу:
+    // 2.2 sumOfPVZ2: расход, если received задан, issuedUser = "Директор" / "Директор (С)" или "Власенкова",
+    //      type = "Нал", дата >= march312024 и typeOfExpenditure не входит в ["Перевод с баланса нал", "Перевод с баланса безнал"]
+    const aggPVZ2 = await prisma.advanceReport.aggregate({
+      _sum: { expenditure: true },
+      where: {
+        received: { not: null },
+        issuedUser: { in: ["Директор", "Директор (С)", "Власенкова"] },
+        type: "Нал",
+        date: { gte: march312024 },
+        typeOfExpenditure: {
+          notIn: ["Перевод с баланса нал", "Перевод с баланса безнал"],
+        },
+      },
+    });
+    const sumOfPVZ2 = aggPVZ2._sum.expenditure ?? 0;
+
+    // 2.3 sumOfPVZ3: расход, если createdUser = "Директор" или "Власенкова", отсутствует issuedUser,
+    //      type = "Нал" и typeOfExpenditure не входит в ["Кредитовый баланс нал", "Перевод с баланса безнал", "Удержания с сотрудников"]
+    const aggPVZ3 = await prisma.advanceReport.aggregate({
+      _sum: { expenditure: true },
+      where: {
+        createdUser: { in: ["Директор", "Власенкова"] },
+        issuedUser: null,
+        type: "Нал",
+        typeOfExpenditure: {
+          notIn: [
+            "Кредитовый баланс нал",
+            "Перевод с баланса безнал",
+            "Удержания с сотрудников",
+          ],
+        },
+      },
+    });
+    const sumOfPVZ3 = aggPVZ3._sum.expenditure ?? 0;
+
+    // 2.4 sumOfPVZ13: расход, если type = "Нал" и typeOfExpenditure === "Удержания с сотрудников"
+    const aggPVZ13 = await prisma.advanceReport.aggregate({
+      _sum: { expenditure: true },
+      where: {
+        type: "Нал",
+        typeOfExpenditure: "Удержания с сотрудников",
+      },
+    });
+    const sumOfPVZ13 = aggPVZ13._sum.expenditure ?? 0;
+
+    // 2.5 sumOfPVZ11: расход, если (createdUser и issuedUser одновременно "Директор" или одновременно "Власенкова"),
+    //      type = "Нал" и typeOfExpenditure === "Перевод с баланса безнал"
+    const aggPVZ11 = await prisma.advanceReport.aggregate({
+      _sum: { expenditure: true },
+      where: {
+        OR: [
+          { createdUser: "Директор", issuedUser: "Директор" },
+          { createdUser: "Власенкова", issuedUser: "Власенкова" },
+        ],
+        type: "Нал",
+        typeOfExpenditure: "Перевод с баланса безнал",
+      },
+    });
+    const sumOfPVZ11 = aggPVZ11._sum.expenditure ?? 0;
+
+    // 2.6 sumOfPVZ12: расход, если (createdUser и issuedUser одновременно "Директор" или одновременно "Власенкова"),
+    //      type = "Безнал" и typeOfExpenditure === "Перевод с баланса нал"
+    const aggPVZ12 = await prisma.advanceReport.aggregate({
+      _sum: { expenditure: true },
+      where: {
+        OR: [
+          { createdUser: "Директор", issuedUser: "Директор" },
+          { createdUser: "Власенкова", issuedUser: "Власенкова" },
+        ],
+        type: "Безнал",
+        typeOfExpenditure: "Перевод с баланса нал",
+      },
+    });
+    const sumOfPVZ12 = aggPVZ12._sum.expenditure ?? 0;
+
+    // 2.7 Для безналичных операций (суммы с Cashless‑префиксом)
+    // sumOfPVZ1Cashless: received задан, createdUser = "Директор" или "Власенкова", type = "Безнал" и
+    //   typeOfExpenditure не входит в указанный перечень
+    const aggPVZ1Cashless = await prisma.advanceReport.aggregate({
+      _sum: { expenditure: true },
+      where: {
+        received: { not: null },
+        createdUser: { in: ["Директор", "Власенкова"] },
+        type: "Безнал",
+        typeOfExpenditure: {
+          notIn: [
+            "Пополнение баланса",
+            "Перевод с кредитного баланса безнал",
+            "Новый кредит безнал",
+            "Перевод с баланса нал",
+          ],
+        },
+      },
+    });
+    const sumOfPVZ1Cashless = aggPVZ1Cashless._sum.expenditure ?? 0;
+
+    // sumOfPVZ2Cashless: received задан, issuedUser = "Директор", "Директор (С)" или "Власенкова",
+    //   type = "Безнал" и typeOfExpenditure не входит в ["Перевод с баланса нал", "Перевод с баланса безнал"]
+    const aggPVZ2Cashless = await prisma.advanceReport.aggregate({
+      _sum: { expenditure: true },
+      where: {
+        received: { not: null },
+        issuedUser: { in: ["Директор", "Директор (С)", "Власенкова"] },
+        type: "Безнал",
+        typeOfExpenditure: {
+          notIn: ["Перевод с баланса нал", "Перевод с баланса безнал"],
+        },
+      },
+    });
+    const sumOfPVZ2Cashless = aggPVZ2Cashless._sum.expenditure ?? 0;
+
+    // sumOfPVZ3Cashless: createdUser = "Директор" или "Власенкова", issuedUser отсутствует, type = "Безнал" и
+    //   typeOfExpenditure не входит в ["Перевод с баланса нал", "Кредитовый баланс безнал"]
+    const aggPVZ3Cashless = await prisma.advanceReport.aggregate({
+      _sum: { expenditure: true },
+      where: {
+        createdUser: { in: ["Директор", "Власенкова"] },
+        issuedUser: null,
+        type: "Безнал",
+        typeOfExpenditure: {
+          notIn: ["Перевод с баланса нал", "Кредитовый баланс безнал"],
+        },
+      },
+    });
+    const sumOfPVZ3Cashless = aggPVZ3Cashless._sum.expenditure ?? 0;
+
+    // sumOfPVZ4Cashless: createdUser = "Директор" или "Власенкова", issuedUser = "Директор"/"Директор (С)"/"Власенкова",
+    //   type = "Нал" и typeOfExpenditure === "Перевод с баланса безнал"
+    // (Обратите внимание: в исходном коде имя переменной говорит о безналичных операциях, но фильтр остаётся таким же.)
+    const aggPVZ4Cashless = await prisma.advanceReport.aggregate({
+      _sum: { expenditure: true },
+      where: {
+        createdUser: { in: ["Директор", "Власенкова"] },
+        issuedUser: { in: ["Директор", "Директор (С)", "Власенкова"] },
+        type: "Нал",
+        typeOfExpenditure: "Перевод с баланса безнал",
+      },
+    });
+    const sumOfPVZ4Cashless = aggPVZ4Cashless._sum.expenditure ?? 0;
+
+    // sumOfPVZ5Cashless: createdUser = "Директор" или "Власенкова", issuedUser = "Директор"/"Директор (С)"/"Власенкова",
+    //   type = "Безнал" и typeOfExpenditure === "Перевод с баланса нал"
+    const aggPVZ5Cashless = await prisma.advanceReport.aggregate({
+      _sum: { expenditure: true },
+      where: {
+        createdUser: { in: ["Директор", "Власенкова"] },
+        issuedUser: { in: ["Директор", "Директор (С)", "Власенкова"] },
+        type: "Безнал",
+        typeOfExpenditure: "Перевод с баланса нал",
+      },
+    });
+    const sumOfPVZ5Cashless = aggPVZ5Cashless._sum.expenditure ?? 0;
+
+    // 3. Из ourRansom – суммы по разным полям
+    // 3.1 sumOfPVZ6: сумма поля priceRefund, если verified не null
+    const aggOurRansom6 = await prisma.ourRansom.aggregate({
+      _sum: { priceRefund: true },
+      where: {
+        verified: { not: null },
+      },
+    });
+    const sumOfPVZ6 = aggOurRansom6._sum.priceRefund ?? 0;
+
+    // 3.2 sumOfPVZ7: сумма priceSite, если additionally = "Отказ брак" или "Отказ подмена"
+    const aggOurRansom7 = await prisma.ourRansom.aggregate({
+      _sum: { priceSite: true },
+      where: {
+        additionally: { in: ["Отказ брак", "Отказ подмена"] },
+      },
+    });
+    const sumOfPVZ7 = aggOurRansom7._sum.priceSite ?? 0;
+
+    // 3.3 sumOfPVZ8: сумма priceSite, если additionally = "Отказ клиент наличные" или "Отказ клиент"
+    const aggOurRansom8 = await prisma.ourRansom.aggregate({
+      _sum: { priceSite: true },
+      where: {
+        additionally: { in: ["Отказ клиент наличные", "Отказ клиент"] },
+      },
+    });
+    const sumOfPVZ8 = aggOurRansom8._sum.priceSite ?? 0;
+
+    // 3.4 sumOfPVZ9: сумма priceSite, если additionally не входит в перечень отказов
+    const aggOurRansom9 = await prisma.ourRansom.aggregate({
+      _sum: { priceSite: true },
+      where: {
+        additionally: {
+          notIn: [
+            "Отказ клиент наличные",
+            "Отказ клиент безнал",
+            "Отказ клиент",
+            "Отказ брак",
+            "Отказ подмена",
+          ],
+        },
+      },
+    });
+    const sumOfPVZ9 = aggOurRansom9._sum.priceSite ?? 0;
+
+    // 3.5 sumOfPVZ10: сумма deliveredKGT, если additionally не входит в перечень отказов
+    const aggOurRansom10 = await prisma.ourRansom.aggregate({
+      _sum: { deliveredKGT: true },
+      where: {
+        additionally: {
+          notIn: [
+            "Отказ клиент наличные",
+            "Отказ клиент",
+            "Отказ брак",
+            "Отказ подмена",
+          ],
+        },
+      },
+    });
+    const sumOfPVZ10 = aggOurRansom10._sum.deliveredKGT ?? 0;
+
+    const aggDelivery = await prisma.delivery.aggregate({
+      _sum: { amountFromClient3: true },
+      where: {
+        paid: { not: null, gte: march312024 },
+      },
+    });
+    const sumOfPVZ4 = aggDelivery._sum.amountFromClient3 ?? 0;
+
+    let allSum = 0;
+    let allSum2 = 0;
+
     allSum =
-      sumOfPVZ +
+      sumOfPVZ -
+      sumOfPVZ1 +
       sumOfPVZ2 -
       sumOfPVZ3 +
       sumOfPVZ4 +
@@ -278,9 +275,9 @@ export default defineEventHandler(async (event) => {
       sumOfPVZ9 +
       sumOfPVZ10 +
       sumOfPVZ11 -
-      sumOfPVZ12 -
+      sumOfPVZ12 +
+      sumOfPVZ13 -
       149000 +
-      sumOfPVZ13 +
       332531 +
       1477830;
     allSum2 =
