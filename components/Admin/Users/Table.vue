@@ -300,7 +300,11 @@ const toggleDropdown = (rowId: any) => {
     </template>
 
     <template #PVZ-data="{ row }">
-      <span>{{ row.PVZ.join(", ") }}</span>
+      <div
+        class="overflow-y-scroll px-3 bg-gray-100 gap-1 rounded-md flex flex-col max-h-[100px]"
+      >
+        <span v-for="pvz in row.PVZ">{{ pvz }}</span>
+      </div>
     </template>
   </UTable>
 </template>

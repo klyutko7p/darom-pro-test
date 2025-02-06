@@ -230,7 +230,7 @@ export const useUsersStore = defineStore("users", () => {
     const hour = String(date.getHours()).padStart(2, "0");
     const minute = String(date.getMinutes()).padStart(2, "0");
 
-    const outputDate = `${year}-${month}-${day}T${hour}:${minute}`;
+    const outputDate = `${year}-${month}-${day}T${`05`}:${minute}:00.000Z`;
     return outputDate;
   }
 

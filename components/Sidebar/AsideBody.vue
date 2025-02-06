@@ -167,7 +167,8 @@ let usersOfIssued = ref([
               user.username !== 'Светлана1' &&
               user.username !== 'Светлана3' &&
               user.username !== 'Светлана2' &&
-              user.role !== 'COURIER'
+              user.role !== 'COURIER' &&
+              user.username !== 'Кулешов'
             "
           >
             <Icon
@@ -723,8 +724,18 @@ let usersOfIssued = ref([
             <span class="flex-1 ms-3 whitespace-nowrap">Задачи</span>
           </div>
         </li>
-        <!-- <li>
+        <li>
           <div
+            v-if="
+              user.username === 'Волошина' ||
+              user.username === 'Шарафаненко' ||
+              user.username === 'Кулешов' ||
+              user.username === 'Алиса' ||
+              user.username === 'Шведова' ||
+              user.username === 'Мешков' ||
+              user.username === 'Власенкова' ||
+              user.username === 'Директор'
+            "
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             @click="router.push('/tasks-employees')"
           >
@@ -740,6 +751,16 @@ let usersOfIssued = ref([
         </li>
         <li>
           <div
+            v-if="
+              user.username === 'Волошина' ||
+              user.username === 'Шарафаненко' ||
+              user.username === 'Кулешов' ||
+              user.username === 'Алиса' ||
+              user.username === 'Шведова' ||
+              user.username === 'Мешков' ||
+              user.username === 'Власенкова' ||
+              user.username === 'Директор'
+            "
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             @click="router.push('/timesheet')"
           >
@@ -752,7 +773,7 @@ let usersOfIssued = ref([
               >Табель учёта времени</span
             >
           </div>
-        </li> -->
+        </li>
       </ul>
     </div>
 

@@ -391,7 +391,10 @@ function scanItem() {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertToURL(scannedLink);
     console.log(scannedLink);
-    let rowData = await storeRansom.getRansomRowById(+scannedLink, "ClientRansom");
+    let rowData = await storeRansom.getRansomRowById(
+      +scannedLink,
+      "ClientRansom"
+    );
     if (props.user.role !== "SORTIROVKA") {
       storeRansom.announce(`${rowData.cell}`);
 
@@ -485,7 +488,7 @@ function convertToURL(inputString: string) {
             class="text-xl"
             v-if="user.role === 'PVZ' || user.role === 'PPVZ'"
           >
-            Заказов к выдаче:
+            Товаров к выдаче:
             <span class="text-secondary-color font-bold">{{ totalRows }}</span>
           </h1>
         </div>

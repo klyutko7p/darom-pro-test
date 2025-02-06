@@ -236,7 +236,8 @@ function handleFilteredRows(filteredRowsData: IClientRansom[]) {
   if (filteredRows.value) {
     if (user.value.role === "SORTIROVKA") {
       filteredRows.value = filteredRows.value.filter(
-        (row) => row.deliveredPVZ === null
+        (row) =>
+          row.deliveredPVZ === null && user.value.PVZ.includes(row.dispatchPVZ)
       );
     } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {
       let today = new Date().toLocaleDateString("ru-RU", {

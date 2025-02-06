@@ -138,7 +138,7 @@ onMounted(async () => {
   ] = await Promise.all([
     await storeUsers.getUser(),
     storeUsers.getUsers(),
-    await storePVZ.getPVZ(),
+    await storePVZ.getAllPVZ(),
     await storeSC.getSortingCenters(),
     storeRansom.getSumOfRejection(),
   ]);
