@@ -1,10 +1,11 @@
 <script lang="ts" setup>
+import { onMounted } from "vue";
 import PullToRefresh from "pulltorefreshjs";
 
 onMounted(() => {
   const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  if (isIOS) {
+  if (isIOS && !document.body.classList.contains("no-scroll")) {
     PullToRefresh.init({
       instructionsRefreshing: 'Обновляем',
       instructionsPullToRefresh: 'Потяните вниз, чтобы обновить',
@@ -18,13 +19,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <NuxtPwaManifest />
-    <NuxtLoadingIndicator />
-    <div class="flex">
-      <Sidebar  />
-      <div class="mt-10">
-        <slot />
-      </div>
+  <NuxtPwaManifest />
+  <NuxtLoadingIndicator />
+  <div class="flex">
+    <Sidebar />
+    <div class="mt-10">
+      <slot />
     </div>
-  </template>
-  
+  </div>
+</template>
