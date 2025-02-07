@@ -14,9 +14,9 @@ let user = ref({} as User);
 onMounted(async () => {
   user.value = await storeClients.getClient();
 
-  // if (token && user.value.role === "CLIENT" && !route.query.home) {
-  //   router.push("/auth/client/login?stay=true");
-  // }
+  if (token && user.value.role === "CLIENT" && !route.query.home) {
+    router.push("/auth/client/login?stay=true");
+  }
 
   if (token && user.value.username === "Власенкова") {
     router.push("/auth/login");
@@ -68,7 +68,7 @@ const addressItems = ref([
   },
   {
     id: 11,
-    address: [47.100219, 37.660910],
+    address: [47.100219, 37.66091],
     text: "г. Мариуполь, ул. Азовстальская, 131",
   },
   {
@@ -166,7 +166,7 @@ let markers = [
   },
   {
     id: 11,
-    coords: [47.100219, 37.660910],
+    coords: [47.100219, 37.66091],
     commentary: "ул. Азовстальская, 131. Ежедневно 9:00-18:00",
     workTime: "Ежедневно 09:00-18:00",
     info: "Вход в магазин «Семейный»",
@@ -436,6 +436,9 @@ let isShowSecondAddInfo = ref(false);
           >Вход исполнителя</UIMainButton
         >
       </div>
+
+      <!-- Плавающий виджет в правом нижнем углу -->
+      <!-- <ChatWidget /> -->
     </div>
 
     <UModal

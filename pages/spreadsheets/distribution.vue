@@ -491,8 +491,7 @@ function clearScannedBoxes() {
                 </div>
 
                 <div v-if="selectedPVZ.name && isShowQR && box.id">
-                  <div class="flex items-center gap-5 mt-5">
-                    <h1 class="text-2xl">Распечатка Штрих-кода</h1>
+                  <div class="flex items-center justify-center gap-5 mt-5">
                     <UIMainButton @click="printPage"
                       >РАСПЕЧАТАТЬ ЭТИКЕТКУ</UIMainButton
                     >
@@ -670,8 +669,7 @@ function clearScannedBoxes() {
                 </div>
 
                 <div v-if="selectedPVZ.name && isShowQR && box.id">
-                  <div class="flex items-center gap-5 mt-5">
-                    <h1 class="text-2xl">Распечатка Штрих-кода</h1>
+                  <div class="flex items-center justify-center gap-5 mt-5">
                     <UIMainButton @click="printPage"
                       >РАСПЕЧАТАТЬ ЭТИКЕТКУ</UIMainButton
                     >
@@ -907,8 +905,7 @@ function clearScannedBoxes() {
                 </div>
 
                 <div v-if="selectedPVZ.name && isShowQR && box.id">
-                  <div class="flex items-center gap-5 mt-5">
-                    <h1 class="text-2xl">Распечатка Штрих-кода</h1>
+                  <div class="flex items-center justify-center gap-5 mt-5">
                     <UIMainButton @click="printPage"
                       >РАСПЕЧАТАТЬ ЭТИКЕТКУ</UIMainButton
                     >
@@ -1086,8 +1083,7 @@ function clearScannedBoxes() {
                 </div>
 
                 <div v-if="selectedPVZ.name && isShowQR && box.id">
-                  <div class="flex items-center gap-5 mt-5">
-                    <h1 class="text-2xl">Распечатка Штрих-кода</h1>
+                  <div class="flex items-center justify-center gap-5 mt-5">
                     <UIMainButton @click="printPage"
                       >РАСПЕЧАТАТЬ ЭТИКЕТКУ</UIMainButton
                     >

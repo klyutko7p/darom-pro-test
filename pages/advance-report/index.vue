@@ -1059,6 +1059,26 @@ async function createRow() {
       } as any;
 
       await storeBanks.createTransaction(transaction);
+    } else if (
+      rowData.value.typeOfExpenditure === "Перевод с баланса безнал" &&
+      rowData.value.type === "Нал"
+    ) {
+      banks.value = await storeBanks.getBanks();
+      let idMainBank = banks.value.find((bank) => bank.main === true)?.id;
+      let maxIdRowData = rows.value.reduce((maxRow: any, currentRow: any) => {
+        return currentRow.id > (maxRow?.id || -Infinity) ? currentRow : maxRow;
+      }, null);
+
+      let transaction = {
+        type: "expenditure",
+        sum: Number(rowData.value.expenditure),
+        createdUser: user.value.username,
+        fromBankId: idMainBank,
+        toBankId: idMainBank,
+        idRow: maxIdRowData.id + 1,
+      } as any;
+
+      await storeBanks.createTransaction(transaction);
     }
 
     rows.value = await storeAdvanceReports.getAdvancedReports(user.value);
@@ -1195,11 +1215,25 @@ async function updateRow() {
       await storeBanks.updateTransaction(currentTransaction);
     }
   } else if (
-    rowData.value.typeOfExpenditure !== "Перевод с баланса безнал" &&
+    rowData.value.typeOfExpenditure !== "Перевод с баланса нал" &&
     rowData.value.typeOfExpenditure !== "Новый кредит безнал" &&
     rowData.value.typeOfExpenditure !== "Пополнение баланса" &&
     rowData.value.typeOfExpenditure !== "Удержания с сотрудников" &&
     rowData.value.type === "Безнал"
+  ) {
+    transactions.value = await storeBanks.getTransactions();
+
+    let currentTransaction = transactions.value.find(
+      (row) => row.idRow === rowData.value.id
+    );
+
+    if (currentTransaction) {
+      currentTransaction.sum = Number(rowData.value.expenditure);
+      await storeBanks.updateTransaction(currentTransaction);
+    }
+  } else if (
+    rowData.value.typeOfExpenditure === "Перевод с баланса безнал" &&
+    rowData.value.type === "Нал"
   ) {
     transactions.value = await storeBanks.getTransactions();
 
