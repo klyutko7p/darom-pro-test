@@ -2904,6 +2904,8 @@ function showBankTransactions(id: number) {
                   @change="checkStatus"
                   class="w-full"
                   v-model="rowData.typeOfExpenditure"
+                  searchable
+                  searchable-placeholder="Поиск..."
                   :options="typesOfExpenditure"
                 />
               </div>
@@ -3396,6 +3398,8 @@ function showBankTransactions(id: number) {
                 <USelectMenu
                   @change="checkStatus"
                   class="w-full"
+                  searchable
+                  searchable-placeholder="Поиск..."
                   v-model="rowData.typeOfExpenditure"
                   :options="typesOfExpenditure"
                 />
