@@ -68,7 +68,9 @@ function clearValue() {
 }
 
 let isShowWarning = ref(true);
+const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ_12", "ПВЗ_14"]);
 </script>
+
 
 <template>
   <Head>
@@ -83,7 +85,7 @@ let isShowWarning = ref(true);
             class="flex items-center justify-center flex-col h-screen"
           >
             <UButton
-              v-if="address !== 'ПВЗ_8' && address !== 'ПВЗ_10'"
+              v-if="!MPVZs.includes(address)"
               @click="skipWindow()"
               to="https://ozon.ru/point/443054"
               target="_blank"
@@ -97,7 +99,7 @@ let isShowWarning = ref(true);
               интернет-магазина «Село Ряженое, ул. Ленина 6»</UButton
             >
             <UButton
-              v-if="address === 'ПВЗ_8' || address === 'ПВЗ_10'"
+              v-if="MPVZs.includes(address)"
               @click="skipWindow()"
               to="https://ozon.ru/point/491512"
               target="_blank"

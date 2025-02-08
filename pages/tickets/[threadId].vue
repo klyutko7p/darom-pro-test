@@ -27,6 +27,7 @@ interface ChatThread {
   subject: string;
   status: string;
   createdAt: string;
+  name?: string;
 }
 
 // Локальные реактивные переменные
@@ -220,9 +221,15 @@ const newMessages = ref(0);
                 <h2 class="text-center text-2xl font-semibold my-5">
                   Тема: {{ thread?.subject }}
                 </h2>
+                <h2
+                  v-if="thread?.name"
+                  class="text-center text-2xl font-semibold my-5"
+                >
+                  Клиент: {{ thread?.name }}
+                </h2>
                 <ul
                   ref="chatContainer"
-                  class="flex px-5 flex-col gap-5 min-w-[450px] h-[550px] max-sm:max-h-[350px] overflow-y-auto"
+                  class="flex px-5 flex-col gap-5 min-w-[450px] max-sm:min-w-0 h-[550px] max-sm:max-h-[350px] overflow-y-auto"
                 >
                   <li
                     v-for="msg in messages"
@@ -269,8 +276,20 @@ const newMessages = ref(0);
                         class="flex items-center mt-1 gap-3"
                       >
                         <h1 class="italic text-muted-color text-sm">
-                          {{ storeUsers.getNormalizedDate(msg.createdAt) }}
+                          {{
+                            new Date(
+                              new Date(msg.createdAt).getTime() +
+                                3 * 60 * 60 * 1000
+                            ).toLocaleString("ru-RU", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "numeric",
+                              minute: "2-digit",
+                            })
+                          }}
                         </h1>
+
                         <div class="text-blue-500">
                           <Icon name="garden:check-double-fill-12" size="16" />
                         </div>
@@ -382,7 +401,18 @@ const newMessages = ref(0);
                         class="flex items-center mt-1 gap-3"
                       >
                         <h1 class="italic text-muted-color text-sm">
-                          {{ storeUsers.getNormalizedDate(msg.createdAt) }}
+                          {{
+                            new Date(
+                              new Date(msg.createdAt).getTime() +
+                                3 * 60 * 60 * 1000
+                            ).toLocaleString("ru-RU", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "numeric",
+                              minute: "2-digit",
+                            })
+                          }}
                         </h1>
                         <div class="text-blue-500">
                           <Icon name="garden:check-double-fill-12" size="16" />
@@ -425,6 +455,12 @@ const newMessages = ref(0);
                 >
                   Тема: {{ thread?.subject }}
                 </h2>
+                <h2
+                  v-if="thread?.name"
+                  class="text-center text-2xl font-semibold my-5"
+                >
+                  Клиент: {{ thread?.name }}
+                </h2>
                 <ul
                   ref="chatContainer"
                   class="flex px-5 flex-col gap-5 min-w-[450px] max-sm:min-w-0 h-[550px] max-sm:max-h-[350px] overflow-y-auto"
@@ -474,7 +510,18 @@ const newMessages = ref(0);
                         class="flex items-center mt-1 gap-3"
                       >
                         <h1 class="italic text-muted-color text-sm">
-                          {{ storeUsers.getNormalizedDate(msg.createdAt) }}
+                          {{
+                            new Date(
+                              new Date(msg.createdAt).getTime() +
+                                3 * 60 * 60 * 1000
+                            ).toLocaleString("ru-RU", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "numeric",
+                              minute: "2-digit",
+                            })
+                          }}
                         </h1>
                         <div class="text-blue-500">
                           <Icon name="garden:check-double-fill-12" size="16" />
@@ -534,6 +581,12 @@ const newMessages = ref(0);
                 <h2 class="text-center text-2xl font-semibold my-5">
                   Тема: {{ thread?.subject }}
                 </h2>
+                <h2
+                  v-if="thread?.name"
+                  class="text-center text-2xl font-semibold my-5"
+                >
+                  Клиент: {{ thread?.name }}
+                </h2>
                 <ul
                   class="flex px-5 flex-col gap-5 min-w-[450px] max-sm:min-w-0 h-[550px] max-sm:max-h-[350px] overflow-y-auto"
                 >
@@ -587,7 +640,18 @@ const newMessages = ref(0);
                         class="flex items-center mt-1 gap-3"
                       >
                         <h1 class="italic text-muted-color text-sm">
-                          {{ storeUsers.getNormalizedDate(msg.createdAt) }}
+                          {{
+                            new Date(
+                              new Date(msg.createdAt).getTime() +
+                                3 * 60 * 60 * 1000
+                            ).toLocaleString("ru-RU", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "numeric",
+                              minute: "2-digit",
+                            })
+                          }}
                         </h1>
                         <div class="text-blue-500">
                           <Icon name="garden:check-double-fill-12" size="16" />

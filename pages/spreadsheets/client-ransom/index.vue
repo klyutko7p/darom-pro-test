@@ -28,13 +28,13 @@ function openModal(row: IClientRansom) {
   if (row.id) {
     rowData.value = JSON.parse(JSON.stringify(row));
     rowData.value.deliveredSC = rowData.value.deliveredSC
-      ? storeUsers.getISODateTime(rowData.value.deliveredSC)
+      ? storeUsers.getISODate(rowData.value.deliveredSC)
       : null;
     rowData.value.deliveredPVZ = rowData.value.deliveredPVZ
-      ? storeUsers.getISODateTime(rowData.value.deliveredPVZ)
+      ? storeUsers.getISODate(rowData.value.deliveredPVZ)
       : null;
     rowData.value.issued = rowData.value.issued
-      ? storeUsers.getISODateTime(rowData.value.issued)
+      ? storeUsers.getISODate(rowData.value.issued)
       : null;
   } else {
     rowData.value = {} as IClientRansom;
@@ -349,6 +349,10 @@ async function checkPercent() {
     }
   }
 }
+
+function checkForNumber() {
+  rowData.value.productName = rowData.value.productName.replace(/[^0-9]/g, "");
+}
 </script>
 
 <template>
@@ -477,6 +481,7 @@ async function checkPercent() {
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                   v-model="rowData.productName"
                   type="text"
+                  @input="checkForNumber"
                 />
               </div>
 
@@ -617,7 +622,7 @@ async function checkPercent() {
                     :disabled="user.deliveredSC1 === 'READ'"
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.deliveredSC"
-                    type="datetime-local"
+                    type="date"
                   />
                 </div>
 
@@ -635,7 +640,7 @@ async function checkPercent() {
                     :disabled="user.deliveredPVZ1 === 'READ'"
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.deliveredPVZ"
-                    type="datetime-local"
+                    type="date"
                   />
                 </div>
 
@@ -650,7 +655,7 @@ async function checkPercent() {
                     :disabled="user.issued1 === 'READ'"
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.issued"
-                    type="datetime-local"
+                    type="date"
                   />
                 </div>
 
@@ -827,6 +832,7 @@ async function checkPercent() {
                   class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                   v-model="rowData.productName"
                   type="text"
+                  @input="checkForNumber"
                 />
               </div>
 
@@ -967,7 +973,7 @@ async function checkPercent() {
                     :disabled="user.deliveredSC1 === 'READ'"
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.deliveredSC"
-                    type="datetime-local"
+                    type="date"
                   />
                 </div>
 
@@ -985,7 +991,7 @@ async function checkPercent() {
                     :disabled="user.deliveredPVZ1 === 'READ'"
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.deliveredPVZ"
-                    type="datetime-local"
+                    type="date"
                   />
                 </div>
 
@@ -1000,7 +1006,7 @@ async function checkPercent() {
                     :disabled="user.issued1 === 'READ'"
                     class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
                     v-model="rowData.issued"
-                    type="datetime-local"
+                    type="date"
                   />
                 </div>
 

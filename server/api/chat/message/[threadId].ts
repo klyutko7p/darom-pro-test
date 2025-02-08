@@ -20,6 +20,7 @@ export default defineEventHandler(async (event) => {
         sender,
         content,
         thread: { connect: { id: threadId } },
+        createdAt: new Date(),
       },
     });
     return message;

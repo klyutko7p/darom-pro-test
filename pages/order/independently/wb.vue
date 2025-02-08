@@ -179,6 +179,8 @@ function clearValue() {
   isNotAskingWB.value = false;
   isShowModal.value = true;
 }
+
+const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ_12", "ПВЗ_14"]);
 </script>
 
 <template>
@@ -196,49 +198,9 @@ function clearValue() {
         <template v-slot:body>
           <div class="text-left px-3 pb-10">
             <div>
-              <div
-                v-if="address !== 'ПВЗ_8' && address !== 'ПВЗ_10'"
-                class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
-              >
-                <h1 class="text-sm font-semibold">
-                  Село Ряженое, Улица Ленина 6
-                </h1>
-                <UButton
-                  @click="writeClipboardText('Село Ряженое, Улица Ленина 6')"
-                  target="_blank"
-                  icon="i-material-symbols-content-copy"
-                  size="sm"
-                  color="pink"
-                  variant="solid"
-                  class="font-semibold duration-200 mt-3"
-                  :trailing="false"
-                  >Скопировать адрес</UButton
-                >
-              </div>
-              <div
-                v-if="address === 'ПВЗ_8' || address === 'ПВЗ_10'"
-                class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
-              >
-                <h1 class="text-sm font-semibold">
-                  Село Латоново, Улица Ленина 67
-                </h1>
-                <UButton
-                  @click="writeClipboardText('Село Латоново, Улица Ленина 67')"
-                  target="_blank"
-                  icon="i-material-symbols-content-copy"
-                  size="sm"
-                  color="pink"
-                  variant="solid"
-                  class="font-semibold duration-200 mt-3"
-                  :trailing="false"
-                  >Скопировать адрес</UButton
-                >
-              </div>
-
               <div class="flex justify-center">
                 <UButton
-                  v-if="address !== 'ПВЗ_8' && address !== 'ПВЗ_10'"
-                  :disabled="isClickedCounter === 0"
+                  v-if="!MPVZs.includes(address)"
                   @click="
                     writeClipboardText('Село Ряженое, Улица Ленина 6'),
                       skipWindow()
@@ -254,8 +216,7 @@ function clearValue() {
                   товара на WILDBERRIES</UButton
                 >
                 <UButton
-                  v-if="address === 'ПВЗ_8' || address === 'ПВЗ_10'"
-                  :disabled="isClickedCounter === 0"
+                  v-if="MPVZs.includes(address)"
                   @click="
                     writeClipboardText('Село Латоново, Улица Ленина 67'),
                       skipWindow()

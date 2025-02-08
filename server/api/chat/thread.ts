@@ -29,6 +29,7 @@ export default defineEventHandler(async (event) => {
             { sender, content },
           ],
         },
+        createdAt: new Date(),
       },
       include: { messages: true },
     });

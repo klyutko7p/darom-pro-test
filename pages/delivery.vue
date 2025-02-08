@@ -442,6 +442,16 @@ async function checkPercent() {
 
   return pvzPercent;
 }
+
+const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ_12", "ПВЗ_14"]);
+
+async function writeClipboardText(text: any) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (error: any) {
+    console.error(error.message);
+  }
+}
 </script>
 
 <template>
@@ -539,14 +549,14 @@ async function checkPercent() {
             Если Вы верно указали адрес, то можете заказывать товар и после
             уведомления о доставке по адресу: <br />
             <span
-              v-if="pvzData !== 'ПВЗ_8' && pvzData !== 'ПВЗ_10'"
+              v-if="!MPVZs.includes(pvzData)"
               class="text-[#ec208b] font-semibold text-center"
             >
               Ростовская область, Матвеево-Курганский район, Село Ряженое, Улица
               Ленина 6
             </span>
             <span
-              v-if="pvzData === 'ПВЗ_8' || pvzData === 'ПВЗ_10'"
+              v-if="MPVZs.includes(pvzData)"
               class="text-[#ec208b] font-semibold text-center"
             >
               Ростовская область, Матвеево-Курганский район, Село Латоново,
@@ -571,14 +581,14 @@ async function checkPercent() {
             Если Вы верно указали адрес, то можете заказывать товар и после
             уведомления о доставке по адресу: <br />
             <span
-              v-if="pvzData !== 'ПВЗ_8' && pvzData !== 'ПВЗ_10'"
+              v-if="!MPVZs.includes(pvzData)"
               class="text-[#005df6] font-semibold text-center"
             >
               Ростовская область, Матвеево-Курганский район, Село Ряженое, Улица
               Ленина 6
             </span>
             <span
-              v-if="pvzData === 'ПВЗ_8' || pvzData === 'ПВЗ_10'"
+              v-if="MPVZs.includes(pvzData)"
               class="text-[#005df6] font-semibold text-center"
             >
               Ростовская область, Матвеево-Курганский район, Село Латоново,
@@ -680,51 +690,6 @@ async function checkPercent() {
                 class="flex items-center justify-between max-[460px]:flex-col max-sm:gap-3 max-sm:items-start"
               >
                 <label>Пункт выдачи заказов</label>
-                <!-- <UButton
-                  v-if="marketplace === 'Wildberries'"
-                  icon="i-material-symbols-add-location"
-                  size="sm"
-                  @click="
-                    router.push(
-                      '/ozon?change=true&delivery=true&marketplace=wb'
-                    )
-                  "
-                  class="font-bold duration-200 max-[460px]:w-full flex items-center justify-center"
-                  color="pink"
-                  variant="solid"
-                  label="Выбрать на карте"
-                  :trailing="false"
-                />
-                <UButton
-                  v-if="marketplace === 'Ozon'"
-                  icon="i-material-symbols-add-location"
-                  size="sm"
-                  @click="
-                    router.push(
-                      '/ozon?change=true&delivery=true&marketplace=ozon'
-                    )
-                  "
-                  class="font-bold max-[460px]:w-full flex items-center justify-center duration-200"
-                  color="blue"
-                  variant="solid"
-                  label="Выбрать на карте"
-                  :trailing="false"
-                />
-                <UButton
-                  v-if="marketplace === 'Яндекс Маркет'"
-                  icon="i-material-symbols-add-location"
-                  size="sm"
-                  @click="
-                    router.push(
-                      '/ozon?change=true&delivery=true&marketplace=ym'
-                    )
-                  "
-                  class="font-bold max-[460px]:w-full flex items-center justify-centerduration-200"
-                  color="yellow"
-                  variant="solid"
-                  label="Выбрать на карте"
-                  :trailing="false"
-                /> -->
               </div>
               <div
                 class="flex mb-3 mt-3 items-center justify-between gap-2 max-[460px]:flex-col max-[460px]:items-start"
@@ -746,22 +711,77 @@ async function checkPercent() {
                   color="pink"
                   class="duration-200 text-left font-semibold mb-3"
                   @click="router.push(`/order/independently/wb`)"
-                  >Нажмите сюда, чтобы посмотреть куда заказать для дальнейшей
-                  доставки в пункт выдачи заказов
-                  {{ pvzs.find((row) => row.pvz === pvzData)?.name }}
+                  >Нажмите сюда, чтобы посмотреть инструкцию и указать адрес в
+                  приложении
                 </UButton>
+
+                <div
+                  v-if="!MPVZs.includes(pvzData)"
+                  class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
+                >
+                  <h1 class="text-sm font-semibold">
+                    Село Ряженое, Улица Ленина 6
+                  </h1>
+                  <UButton
+                    @click="writeClipboardText('Село Ряженое, Улица Ленина 6')"
+                    target="_blank"
+                    icon="i-material-symbols-content-copy"
+                    size="sm"
+                    color="pink"
+                    variant="solid"
+                    class="font-semibold duration-200 mt-3"
+                    :trailing="false"
+                    >Скопировать адрес</UButton
+                  >
+                </div>
+                <div
+                  v-if="MPVZs.includes(pvzData)"
+                  class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
+                >
+                  <h1 class="text-sm font-semibold">
+                    Село Латоново, Улица Ленина 67
+                  </h1>
+                  <UButton
+                    @click="
+                      writeClipboardText('Село Латоново, Улица Ленина 67')
+                    "
+                    target="_blank"
+                    icon="i-material-symbols-content-copy"
+                    size="sm"
+                    color="pink"
+                    variant="solid"
+                    class="font-semibold duration-200 mt-3"
+                    :trailing="false"
+                    >Скопировать адрес</UButton
+                  >
+                </div>
               </div>
               <div v-if="marketplace === 'Ozon'">
                 <UButton
                   v-if="!isNotAskingOZ"
                   icon="i-mdi:package-variant-closed-check"
                   color="blue"
-                  class="duration-200 text-left font-semibold mb-3"
+                  class="duration-200 text-left font-semibold mb-3 w-full"
                   @click="router.push(`/order/independently/ozon`)"
-                  >Нажмите сюда, чтобы посмотреть куда заказать для дальнейшей
-                  доставки в пункт выдачи заказов
-                  {{ pvzs.find((row) => row.pvz === pvzData)?.name }}
+                  >Нажмите сюда, чтобы указать адрес в приложении
                 </UButton>
+
+                <div
+                  v-if="!MPVZs.includes(pvzData)"
+                  class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
+                >
+                  <h1 class="text-sm font-semibold">
+                    Село Ряженое, Улица Ленина 6
+                  </h1>
+                </div>
+                <div
+                  v-if="MPVZs.includes(pvzData)"
+                  class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
+                >
+                  <h1 class="text-sm font-semibold">
+                    Село Латоново, Улица Ленина 67
+                  </h1>
+                </div>
               </div>
               <div v-if="marketplace === 'Яндекс Маркет'">
                 <UButton
@@ -770,10 +790,28 @@ async function checkPercent() {
                   color="yellow"
                   class="duration-200 text-left font-semibold mb-3"
                   @click="router.push(`/order/independently/ym`)"
-                  >Нажмите сюда, чтобы посмотреть куда заказать для дальнейшей
-                  доставки в пункт выдачи заказов
-                  {{ pvzs.find((row) => row.pvz === pvzData)?.name }}
+                  >Нажмите сюда, чтобы посмотреть инструкцию и указать адрес в
+                  приложении
                 </UButton>
+
+                <div
+                  class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
+                >
+                  <h1 class="text-sm font-semibold">
+                    Село Ряженое, Улица Ленина 6
+                  </h1>
+                  <UButton
+                    @click="writeClipboardText('Село Ряженое, Улица Ленина 6')"
+                    target="_blank"
+                    icon="i-material-symbols-content-copy"
+                    size="sm"
+                    color="yellow"
+                    variant="solid"
+                    class="font-semibold duration-200 mt-3"
+                    :trailing="false"
+                    >Скопировать адрес</UButton
+                  >
+                </div>
               </div>
               <label>Прикрепите скриншот Штрих-кода*</label>
               <div v-if="!rowData.img" class="h-[44px]">
@@ -916,14 +954,14 @@ async function checkPercent() {
                 <br />
               </h1>
               <h1
-                v-if="pvzData !== 'ПВЗ_8' && pvzData !== 'ПВЗ_10'"
+                v-if="!MPVZs.includes(pvzData)"
                 class="italic font-bold text-left"
               >
                 Ростовская область, Матвеево-Курганский район, <br />
                 с. Ряженое, ул Ленина 6*
               </h1>
               <h1
-                v-if="pvzData === 'ПВЗ_8' || pvzData === 'ПВЗ_10'"
+                v-if="MPVZs.includes(pvzData)"
                 class="italic font-bold text-left"
               >
                 Ростовская область, Матвеево-Курганский район, Село Латоново,

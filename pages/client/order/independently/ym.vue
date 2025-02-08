@@ -226,28 +226,8 @@ function clearValue() {
         <template v-slot:body>
           <div class="text-left px-3 pb-10">
             <div>
-              <div
-                class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
-              >
-                <h1 class="text-sm font-semibold">
-                  Село Ряженое, Улица Ленина 6
-                </h1>
-                <UButton
-                  @click="writeClipboardText('Село Ряженое, Улица Ленина 6')"
-                  target="_blank"
-                  icon="i-material-symbols-content-copy"
-                  size="sm"
-                  color="yellow"
-                  variant="solid"
-                  class="font-semibold duration-200 mt-3"
-                  :trailing="false"
-                  >Скопировать адрес</UButton
-                >
-              </div>
-
               <div class="flex justify-center">
                 <UButton
-                  :disabled="isClickedCounter === 0"
                   @click="
                     writeClipboardText('Село Ряженое, Улица Ленина 6'),
                       skipWindow()
