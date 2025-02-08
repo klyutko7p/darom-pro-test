@@ -115,9 +115,9 @@ let usersOfIssued = ref([
         class="space-y-5 font-medium"
       >
         <li>
-          <div
+          <NuxtLink
+            :to="'/acceptance'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/acceptance')"
             v-if="
               (user.role === 'ADMINISTRATOR' ||
                 user.role === 'PVZ' ||
@@ -133,7 +133,7 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Приёмка</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
           <div
@@ -147,6 +147,7 @@ let usersOfIssued = ref([
               user.username !== 'Косой' &&
               user.username !== 'Василенко' &&
               user.username !== 'Сошников' &&
+              user.username !== 'Поддержка' &&
               user.username !== '+7'
             "
           >
@@ -167,6 +168,7 @@ let usersOfIssued = ref([
               user.username !== 'Светлана1' &&
               user.username !== 'Светлана3' &&
               user.username !== 'Светлана2' &&
+              user.username !== 'Поддержка' &&
               user.role !== 'COURIER' &&
               user.username !== 'Кулешов'
             "
@@ -276,6 +278,28 @@ let usersOfIssued = ref([
           </div>
         </li>
         <li>
+          <NuxtLink
+            :to="'/tickets'"
+            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
+            v-if="
+              user.username === 'Директор' ||
+              user.username === 'Светлана' ||
+              user.username === 'Светлана1' ||
+              user.username === 'Светлана2' ||
+              user.username === 'Светлана3' ||
+              user.username === 'Шведова' ||
+              user.username === 'Власенкова'
+            "
+          >
+            <Icon
+              class="text-gray-500 transition duration-75 group-hover:text-gray-900"
+              name="material-symbols:contact-support"
+              size="24"
+            />
+            <span class="flex-1 ms-3 whitespace-nowrap">Чат поддержки</span>
+          </NuxtLink>
+        </li>
+        <li>
           <div
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             @click="signOut"
@@ -306,9 +330,9 @@ let usersOfIssued = ref([
           </div>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/spreadsheets/our-ransom/info'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/spreadsheets/our-ransom/info')"
             v-if="
               user.dataOurRansom === 'READ' ||
               (user.dataOurRansom === 'WRITE' &&
@@ -323,12 +347,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Товары клиентов</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/spreadsheets/our-ransom'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/spreadsheets/our-ransom')"
             v-if="
               user.dataOurRansom === 'READ' ||
               (user.dataOurRansom === 'WRITE' &&
@@ -341,12 +365,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Товары клиентов</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/spreadsheets/client-ransom/info'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/spreadsheets/client-ransom/info')"
             v-if="
               user.dataClientRansom === 'READ' ||
               (user.dataClientRansom === 'WRITE' &&
@@ -361,16 +385,16 @@ let usersOfIssued = ref([
               name="material-symbols:lock-person-rounded"
               size="24"
             />
-            <span class="flex-1 ms-3 whitespace-nowrap"
-              >Доставка заказов <br />
-              по ШК (QR)</span
-            >
-          </div>
+            <span class="flex-1 ms-3 whitespace-nowrap">
+              Доставка заказов <br />
+              по ШК (QR)
+            </span>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/spreadsheets/client-ransom'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/spreadsheets/client-ransom')"
             v-if="
               user.dataClientRansom === 'READ' ||
               (user.dataClientRansom === 'WRITE' &&
@@ -383,16 +407,16 @@ let usersOfIssued = ref([
               name="material-symbols:lock-person-rounded"
               size="24"
             />
-            <span class="flex-1 ms-3 whitespace-nowrap"
-              >Доставка заказов <br />
-              по ШК (QR)</span
-            >
-          </div>
+            <span class="flex-1 ms-3 whitespace-nowrap">
+              Доставка заказов <br />
+              по ШК (QR)
+            </span>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/spreadsheets/distribution'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/spreadsheets/distribution')"
             v-if="
               user.username === 'Директор' ||
               user.username === 'Власенкова' ||
@@ -408,15 +432,13 @@ let usersOfIssued = ref([
               name="i-material-symbols-move-to-inbox-rounded"
               size="24"
             />
-            <span class="flex-1 ms-3 whitespace-nowrap"
-              >Распределение товара</span
-            >
-          </div>
+            <span class="flex-1 ms-3 whitespace-nowrap">Распределение товара</span>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/spreadsheets/refunds'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/spreadsheets/refunds')"
             v-if="
               (user.role === 'ADMIN' &&
                 user.username !== 'Светлана1' &&
@@ -435,12 +457,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Возвраты</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/spreadsheets/all-data'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/spreadsheets/all-data')"
             v-if="
               user.role === 'ADMIN' ||
               user.role === 'ADMINISTRATOR' ||
@@ -453,16 +475,16 @@ let usersOfIssued = ref([
               name="i-material-symbols-backup-table-rounded"
               size="24"
             />
-            <span class="flex-1 ms-3 whitespace-nowrap"
-              >Все данные: <br />
-              Товары клиентов</span
-            >
-          </div>
+            <span class="flex-1 ms-3 whitespace-nowrap">
+              Все данные: <br />
+              Товары клиентов
+            </span>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/spreadsheets/inventory'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/spreadsheets/inventory')"
             v-if="
               user.username === 'Шведова' ||
               user.username === 'Мешков' ||
@@ -478,7 +500,7 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Инвентаризация</span>
-          </div>
+          </NuxtLink>
         </li>
       </ul>
     </div>
@@ -499,9 +521,9 @@ let usersOfIssued = ref([
           </div>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/balance'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/balance')"
             v-if="
               ((user.role === 'ADMIN' &&
                 user.username !== 'Светлана1' &&
@@ -528,12 +550,12 @@ let usersOfIssued = ref([
             >
               {{ quantityRequiredBalanceRows }}
             </span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/advance-report'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/advance-report')"
             v-if="
               (user.role === 'ADMIN' &&
                 user.username !== 'Светлана1' &&
@@ -574,12 +596,12 @@ let usersOfIssued = ref([
             >
               {{ quantityRequiredARRowsAdmin }}
             </span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/monthly-payments'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/monthly-payments')"
             v-if="
               user.username === 'Директор' ||
               user.username === 'Власенкова' ||
@@ -595,15 +617,15 @@ let usersOfIssued = ref([
             <span class="flex-1 ms-3 whitespace-nowrap"
               >Ежемесячные платежи</span
             >
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/advance-report/summary-tables'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             v-if="
               user.username === 'Директор' || user.username === 'Власенкова'
             "
-            @click="router.push('/advance-report/summary-tables')"
           >
             <Icon
               class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -611,15 +633,15 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Сводные таблицы</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/advance-report/payroll'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             v-if="
               user.username === 'Директор' || user.username === 'Власенкова'
             "
-            @click="router.push('/advance-report/payroll')"
           >
             <Icon
               class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -627,7 +649,7 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Расчёт ЗП</span>
-          </div>
+          </NuxtLink>
         </li>
       </ul>
     </div>
@@ -648,9 +670,9 @@ let usersOfIssued = ref([
           </div>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/equipment'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/equipment')"
             v-if="
               user.username === 'Волошина' ||
               user.username === 'Шарафаненко' ||
@@ -671,12 +693,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Оборудование ПВЗ</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/auto-storage'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/auto-storage')"
             v-if="
               user.username === 'Директор' ||
               user.username === 'Власенкова' ||
@@ -689,12 +711,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">АвтоСклад</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/map'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/map')"
             v-if="
               user.role === 'RMANAGER' ||
               user.role === 'ADMIN' ||
@@ -708,12 +730,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Карта</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/tasks'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/tasks')"
             v-if="usersOfIssued.includes(user.username)"
           >
             <Icon
@@ -722,7 +744,7 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Задачи</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
           <div
@@ -744,9 +766,7 @@ let usersOfIssued = ref([
               name="proicons:task-list"
               size="24"
             />
-            <span class="flex-1 ms-3 whitespace-nowrap"
-              >Задачи сотрудников</span
-            >
+            <span class="flex-1 ms-3 whitespace-nowrap">Задачи сотрудников</span>
           </div>
         </li>
         <li>
@@ -769,9 +789,7 @@ let usersOfIssued = ref([
               name="material-symbols:table-chart-outline"
               size="24"
             />
-            <span class="flex-1 ms-3 whitespace-nowrap"
-              >Табель учёта времени</span
-            >
+            <span class="flex-1 ms-3 whitespace-nowrap">Табель учёта времени</span>
           </div>
         </li>
       </ul>
@@ -793,9 +811,9 @@ let usersOfIssued = ref([
           </div>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/spreadsheets/delivery'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/spreadsheets/delivery')"
             v-if="
               ((user.dataDelivery === 'READ' ||
                 user.dataDelivery === 'WRITE') &&
@@ -817,15 +835,13 @@ let usersOfIssued = ref([
               name="i-mdi-truck-delivery"
               size="24"
             />
-            <span class="flex-1 ms-3 whitespace-nowrap"
-              >Доставка и сортировка</span
-            >
-          </div>
+            <span class="flex-1 ms-3 whitespace-nowrap">Доставка и сортировка</span>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/summary-tables/delivery'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/summary-tables/delivery')"
             v-if="
               (user.dataDelivery === 'READ' || user.dataDelivery === 'WRITE') &&
               (user.role === 'ADMIN' || user.role === 'OPT') &&
@@ -840,7 +856,7 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Сводные таблицы</span>
-          </div>
+          </NuxtLink>
         </li>
       </ul>
     </div>
@@ -861,9 +877,9 @@ let usersOfIssued = ref([
           </div>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/admin/users'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/admin/users')"
             v-if="
               user.username === 'Директор' || user.username === 'Власенкова'
             "
@@ -874,12 +890,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Пользователи</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/admin/marketplaces'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/admin/marketplaces')"
             v-if="
               user.username === 'Директор' || user.username === 'Власенкова'
             "
@@ -890,12 +906,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Маркетплейсы</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/admin/phone-numbers'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/admin/phone-numbers')"
           >
             <Icon
               class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -903,12 +919,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Телефоны и адреса</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/admin/cells'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/admin/cells')"
             v-if="
               user.username === 'Директор' || user.username === 'Власенкова'
             "
@@ -919,12 +935,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Ячейки</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/admin/pvz'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/admin/pvz')"
             v-if="
               user.username === 'Директор' || user.username === 'Власенкова'
             "
@@ -935,12 +951,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">ПВЗ</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/admin/pvz-percent'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/admin/pvz-percent')"
             v-if="
               user.username === 'Директор' ||
               user.username === 'Власенкова' ||
@@ -953,12 +969,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Проценты ПВЗ</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/admin/sorting-centers'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/admin/sorting-centers')"
             v-if="
               user.username === 'Директор' || user.username === 'Власенкова'
             "
@@ -969,12 +985,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">СЦ</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/admin/pvz-delivery'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/admin/pvz-delivery')"
             v-if="
               user.username === 'Директор' || user.username === 'Власенкова'
             "
@@ -985,12 +1001,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">ПВЗ (Доставка)</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/admin/sorting-centers-delivery'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/admin/sorting-centers-delivery')"
             v-if="
               user.username === 'Директор' || user.username === 'Власенкова'
             "
@@ -1001,12 +1017,12 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">СЦ (Доставка)</span>
-          </div>
+          </NuxtLink>
         </li>
         <li>
-          <div
+          <NuxtLink
+            :to="'/admin/order-accounts'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="router.push('/admin/order-accounts')"
             v-if="
               user.username === 'Директор' ||
               user.username === 'Власенкова' ||
@@ -1019,9 +1035,10 @@ let usersOfIssued = ref([
               size="24"
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Аккаунты заказа</span>
-          </div>
+          </NuxtLink>
         </li>
       </ul>
     </div>
   </div>
 </template>
+

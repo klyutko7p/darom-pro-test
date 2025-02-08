@@ -24,6 +24,7 @@ onMounted(() => {
     <SidebarClient />
     <div class="mx-auto container px-3 mt-10">
       <slot />
+      <ChatWidget />
     </div>
   </div>
 </template>

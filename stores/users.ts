@@ -222,6 +222,17 @@ export const useUsersStore = defineStore("users", () => {
     }
   }
 
+  function getNormalizeTime(date: number | Date | string | null) {
+    if (date) {
+      const options: Intl.DateTimeFormatOptions = {
+        hour: "numeric",
+        minute: "2-digit",
+        timeZone: "Europe/Moscow",
+      };
+      return new Date(date).toLocaleString("ru-RU", options);
+    }
+  }
+
   function getISODateTime(dateData: Date | string | number) {
     const date = new Date(dateData);
     const year = date.getFullYear();
@@ -259,5 +270,6 @@ export const useUsersStore = defineStore("users", () => {
     getISODate,
     createTokenDevice,
     sendMessageToEmployee,
+    getNormalizeTime,
   };
 });

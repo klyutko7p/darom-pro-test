@@ -438,7 +438,7 @@ let isShowSecondAddInfo = ref(false);
       </div>
 
       <!-- Плавающий виджет в правом нижнем углу -->
-      <!-- <ChatWidget /> -->
+      <ChatWidget />
     </div>
 
     <UModal

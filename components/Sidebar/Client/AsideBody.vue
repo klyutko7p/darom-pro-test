@@ -18,58 +18,47 @@ let isShowInfo = ref(false);
     <div v-auto-animate class="px-3">
       <div v-auto-animate>
         <ul class="space-y-5 font-medium">
-          <!-- <li>
-            <div
-              class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 justify-center group cursor-pointer"
-              @click="router.push('/?home=true')"
-            >
-              <Icon
-                class="text-gray-500 transition duration-75 group-hover:text-gray-900"
-                name="material-symbols:home-and-garden-rounded"
-                size="24"
-              />
-              <span class="flex-1 ms-3 whitespace-nowrap">На главную</span>
-            </div>
-          </li> -->
-
           <li>
-            <div
+            <NuxtLink
+              :to="'/client/delivery/main'"
+              @click="editMenu()"
               class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 group cursor-pointer"
-              @click="router.push('/client/delivery/main'), editMenu()"
             >
               <Icon
                 class="text-gray-500 transition duration-75 group-hover:text-gray-900"
                 name="i-mdi-truck-delivery"
                 size="24"
               />
-              <span class="flex-1 ms-3 whitespace-nowrap"
-                >Оформить доставку Вашего
+              <span class="flex-1 ms-3 whitespace-nowrap">
+                Оформить доставку Вашего
                 <br class="max-[500px]:block hidden" />
                 заказа <br class="max-[500px]:hidden block" />
                 из интернет-магазина <br class="max-[500px]:block hidden" />
-                по Штрих-коду (QR) (* от 0%)</span
-              >
-            </div>
+                по Штрих-коду (QR) (* от 0%)
+              </span>
+            </NuxtLink>
           </li>
           <li>
-            <div
+            <NuxtLink
+              :to="'/client/order'"
+              @click="editMenu()"
               class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 group cursor-pointer"
-              @click="router.push('/client/order'), editMenu()"
             >
               <Icon
                 class="text-gray-500 transition duration-75 group-hover:text-gray-900"
                 name="i-material-symbols-order-approve-rounded"
                 size="24"
               />
-              <span class="flex-1 ms-3 whitespace-nowrap"
-                >Оформить заказ (* от 5%)</span
-              >
-            </div>
+              <span class="flex-1 ms-3 whitespace-nowrap">
+                Оформить заказ (* от 5%)
+              </span>
+            </NuxtLink>
           </li>
           <li>
-            <div
+            <NuxtLink
+              :to="'/client/my-orders'"
+              @click="editMenu()"
               class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 group cursor-pointer"
-              @click="router.push('/client/my-orders'), editMenu()"
             >
               <Icon
                 class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -77,14 +66,13 @@ let isShowInfo = ref(false);
                 size="24"
               />
               <span class="flex-1 ms-3 whitespace-nowrap">Мои заказы</span>
-            </div>
+            </NuxtLink>
           </li>
           <li>
-            <div
+            <NuxtLink
+              :to="'/client/order/accept-order?card=true'"
+              @click="editMenu()"
               class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 group cursor-pointer"
-              @click="
-                router.push('/client/order/accept-order?card=true'), editMenu()
-              "
             >
               <Icon
                 class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -92,27 +80,29 @@ let isShowInfo = ref(false);
                 size="24"
               />
               <span class="flex-1 ms-3 whitespace-nowrap">Моя корзина</span>
-            </div>
+            </NuxtLink>
           </li>
           <li>
-            <div
+            <NuxtLink
+              :to="'/client/goods'"
+              @click="editMenu()"
               class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-              @click="router.push('/client/goods'), editMenu()"
             >
               <Icon
                 class="text-gray-500 transition duration-75 group-hover:text-gray-900"
                 name="i-material-symbols-light-shopping-bag"
                 size="24"
               />
-              <span class="flex-1 ms-3 whitespace-nowrap"
-                >Купленные товары</span
-              >
-            </div>
+              <span class="flex-1 ms-3 whitespace-nowrap">
+                Купленные товары
+              </span>
+            </NuxtLink>
           </li>
           <li>
-            <div
+            <NuxtLink
+              :to="'/client/profile'"
+              @click="editMenu()"
               class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-              @click="router.push('/client/profile'), editMenu()"
             >
               <Icon
                 class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -120,7 +110,7 @@ let isShowInfo = ref(false);
                 size="24"
               />
               <span class="flex-1 ms-3 whitespace-nowrap">Личные данные</span>
-            </div>
+            </NuxtLink>
           </li>
           <li>
             <a
@@ -133,9 +123,9 @@ let isShowInfo = ref(false);
                 name="material-symbols:contact-support"
                 size="24"
               />
-              <span class="flex-1 ms-3 whitespace-nowrap"
-                >Служба поддержки</span
-              >
+              <span class="flex-1 ms-3 whitespace-nowrap">
+                Служба поддержки
+              </span>
             </a>
           </li>
           <li>
@@ -156,8 +146,9 @@ let isShowInfo = ref(false);
       <UIMainButton
         @click="isShowInfo = true"
         class="mt-5 w-full max-w-[300px] mx-auto"
-        >Важная информация</UIMainButton
       >
+        Важная информация
+      </UIMainButton>
     </div>
 
     <UINewModalEdit v-show="isShowInfo" @close-modal="isShowInfo = !isShowInfo">

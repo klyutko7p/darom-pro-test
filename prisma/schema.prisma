@@ -536,3 +536,27 @@ model DecommissionedAutoRow {
   autoRow              AutoRow   @relation(fields: [autoRowId], references: [id])
   deleted              DateTime?
 }
+
+enum ChatStatus {
+  OPEN
+  CLOSED
+}
+
+model ChatThread {
+  id        Int           @id @default(autoincrement())
+  subject   String
+  status    ChatStatus    @default(OPEN)
+  createdAt DateTime      @default(now())
+  messages  ChatMessage[]
+  name      String?
+  deleted   DateTime?
+}
+
+model ChatMessage {
+  id        Int        @id @default(autoincrement())
+  sender    String // например, "client" или "admin"
+  content   String
+  createdAt DateTime   @default(now())
+  threadId  Int
+  thread    ChatThread @relation(fields: [threadId], references: [id])
+}

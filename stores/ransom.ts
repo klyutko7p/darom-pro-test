@@ -761,7 +761,6 @@ export const useRansomStore = defineStore("ransom", () => {
     }
   }
 
-
   function mapBackToOriginalFields(row: any) {
     const originalRow = {} as IOurRansom;
 
@@ -1431,12 +1430,15 @@ export const useRansomStore = defineStore("ransom", () => {
 
   async function getAllSumDirector() {
     try {
-      const { data }: any = await useFetch("/api/advance-report/get-sum-director", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const { data }: any = await useFetch(
+        "/api/advance-report/get-sum-director",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       return data.value;
     } catch (error) {
       console.error(error);
@@ -1506,11 +1508,38 @@ export const useRansomStore = defineStore("ransom", () => {
   function announce(message: string) {
     const speech = new SpeechSynthesisUtterance(message);
 
-    speech.lang = "ru-RU";
-    speech.pitch = 1;
-    speech.rate = 1;
+    // Функция для установки нужного голоса и воспроизведения речи
+    function setVoiceAndSpeak() {
+      const voices = window.speechSynthesis.getVoices();
+      // Ищем голос, в имени которого содержится "Microsoft Pavel"
+      const selectedVoice = voices.find((voice) => {
+        return voice.name.includes("Microsoft Pavel");
+      });
 
-    window.speechSynthesis.speak(speech);
+      if (selectedVoice) {
+        speech.voice = selectedVoice;
+      } else {
+        console.warn(
+          "Голос 'Microsoft Pavel' не найден. Будет использован голос по умолчанию."
+        );
+      }
+
+      speech.lang = "ru-RU";
+      speech.pitch = 1;
+      speech.rate = 1;
+
+      window.speechSynthesis.speak(speech);
+    }
+
+    // Если голоса ещё не загружены, дождёмся события voiceschanged
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.addEventListener(
+        "voiceschanged",
+        setVoiceAndSpeak
+      );
+    } else {
+      setVoiceAndSpeak();
+    }
   }
 
   async function getRowsFilters(
