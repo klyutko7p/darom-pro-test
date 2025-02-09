@@ -149,15 +149,6 @@ watch(isOpen, (newValue) => {
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="dispatchPVZ1">Компания</label>
-                <USelectMenu
-                  class="w-full"
-                  v-model="rowData.company"
-                  :options="companies"
-                />
-              </div>
-
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="name">ФИО</label>
                 <UInput class="w-full" v-model="rowData.fullname" type="text" />
               </div>

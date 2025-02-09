@@ -6,17 +6,10 @@ let props = defineProps({
 const emit = defineEmits(["createUser", "updateSum"]);
 
 const roles = [
-  "USER",
-  "ADMIN",
-  "SORTIROVKA",
-  "PVZ",
-  "PPVZ",
-  "RMANAGER",
-  "ADMINISTRATOR",
-  "COURIER",
-  "DRIVER",
-  "SHVEDOVA",
-  "OFFICE",
+  { role: "PVZ", name: "ПВЗ" },
+  { role: "SORTIROVKA", name: "СОРТИРОВКА" },
+  { role: "ADMINISTRATOR", name: "УПРАВЛЯЮЩИЙ" },
+  { role: "ADMIN", name: "ДИРЕКТОР" },
 ];
 
 let username = ref("");
@@ -100,6 +93,8 @@ function updateSum() {
             class="min-w-40 max-sm:max-w-none max-sm:w-full"
             v-model="role"
             :options="roles"
+            value-attribute="role"
+            option-attribute="name"
           />
         </div>
       </div>

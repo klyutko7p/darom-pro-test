@@ -327,15 +327,6 @@ onUnmounted(() => {
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
-                  <label for="dispatchPVZ1">Компания</label>
-                  <USelectMenu
-                    class="w-full"
-                    v-model="rowData.company"
-                    :options="companies"
-                  />
-                </div>
-
-                <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">ФИО</label>
                   <UInputMenu
                     class="w-full"
@@ -375,15 +366,6 @@ onUnmounted(() => {
                 </div>
 
                 <div class="flex flex-col items-start text-left gap-2 mb-5">
-                  <label for="name">Аванс ФОССАН</label>
-                  <UInput
-                    class="w-full"
-                    v-model="rowData.advanceFourssan"
-                    type="number"
-                  />
-                </div>
-
-                <div class="flex flex-col items-start text-left gap-2 mb-5">
                   <label for="name">Аванс</label>
                   <UInput
                     class="w-full"
@@ -415,15 +397,6 @@ onUnmounted(() => {
                   <UInput
                     class="w-full"
                     v-model="rowData.additionalPayment"
-                    type="number"
-                  />
-                </div>
-
-                <div class="flex flex-col items-start text-left gap-2 mb-5">
-                  <label for="name">ЗП ФОССАН</label>
-                  <UInput
-                    class="w-full"
-                    v-model="rowData.salaryFourssan"
                     type="number"
                   />
                 </div>

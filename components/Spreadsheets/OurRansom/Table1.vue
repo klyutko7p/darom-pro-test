@@ -975,10 +975,6 @@ const columns = [
     key: "profit1",
     label: "Доход",
   },
-  {
-    key: "dp",
-    label: "Статус",
-  },
 ];
 </script>
 

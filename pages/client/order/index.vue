@@ -65,7 +65,7 @@ definePageMeta({
               <UIMainButton
                 class="w-full"
                 @click="router.push('order/accept-order')"
-                >Заказать через личный кабинет DAROM.PRO</UIMainButton
+                >Заказать через личный кабинет ТЕСТ</UIMainButton
               >
               <UIMainButton
                 class="w-full"

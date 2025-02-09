@@ -1010,12 +1010,7 @@ function getAllSum() {
 
       sum1.value = reduceArray(copyArrayOurRansom.value, "OurRansom");
       sum2.value = reduceArray(copyArrayClientRansom.value, "ClientRansom");
-      allSum.value =
-        sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ + 319610 - sumOfPVZ5;
-      allSum.value -= 11110;
-      allSum.value -= 1570;
-      allSum.value -= 2005;
-      allSum.value -= 13100;
+      allSum.value = sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ - sumOfPVZ5;
     } else if (selectedPVZ.value === "Все ППВЗ") {
       copyArrayOurRansom.value = ourRansomRows.value?.filter(
         (row) =>
@@ -1128,12 +1123,7 @@ function getAllSum() {
         user.value.username === "Сошников"
       ) {
         allSum.value =
-          sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ + 319610 - sumOfPVZ5;
-        allSum.value -= 11110;
-        allSum.value -= 1570;
-        allSum.value -= 2005;
-        allSum.value -= 13100;
-        allSum.value += 7340;
+          sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ - sumOfPVZ5;
       } else if (user.value.username === "Мешков") {
         allSum.value =
           sum1.value + sum2.value - sumOfPVZ3 - sumOfPVZ - sumOfPVZ5;
@@ -1206,14 +1196,6 @@ function getAllSum() {
 
       allSum.value =
         sum1.value + sum2.value - sumOfPVZ - sumOfPVZ2 + sumOfPVZ3 - sumOfPVZ5;
-      if (selectedPVZ.value === "НаДом") {
-        allSum.value -= 11110;
-      } else if (selectedPVZ.value === "ПВЗ_3") {
-        allSum.value -= 2005;
-      } else if (selectedPVZ.value === "ПВЗ_1") {
-        allSum.value -= 2330;
-        allSum.value += 15000;
-      }
     }
   } else if (selectedTypeOfTransaction.value === "Баланс безнал") {
     if (selectedPVZ.value === "Все ПВЗ") {
@@ -1688,15 +1670,6 @@ function getProfitRowsSum() {
     sum1.value = reduceArrayProfit(copyArrayOurRansom.value, "OurRansom");
     sum2.value = reduceArrayProfit(copyArrayClientRansom.value, "ClientRansom");
     allSumProfit.value = sum1.value + sum2.value - sumOfPVZ;
-
-    if (selectedPVZ.value === "ППВЗ_5") {
-      allSumProfit.value += 9413;
-    } else if (selectedPVZ.value === "ПВЗ_1") {
-      allSumProfit.value += 2125;
-      allSumProfit.value += 15000;
-      allSumProfit.value += 2367;
-      allSumProfit.value += 563;
-    }
   }
 }
 
@@ -2456,23 +2429,9 @@ const options = [
                         "
                         value="Доход"
                       >
-                        Доход DP (продажа)
+                        Доход (продажа)
                       </option>
-                      <option
-                        v-if="
-                          user.role !== 'ADMINISTRATOR' &&
-                          user.role !== 'PVZ' &&
-                          user.username !== 'Рейзвих' &&
-                          user.role !== 'PPVZ' &&
-                          user.role !== 'RMANAGER'
-                        "
-                        value="Доставка"
-                      >
-                        Доход D&S
-                      </option>
-                      <option value="Баланс наличные">
-                        Баланс наличные DP (фактический)
-                      </option>
+                      <option value="Баланс наличные">Баланс наличные</option>
                       <option
                         v-if="
                           user.role !== 'PVZ' &&
@@ -2481,67 +2440,7 @@ const options = [
                         "
                         value="Баланс безнал"
                       >
-                        Баланс онлайн DP
-                      </option>
-                      <option
-                        v-if="
-                          user.role !== 'ADMINISTRATOR' &&
-                          user.role !== 'PVZ' &&
-                          user.username !== 'Рейзвих' &&
-                          user.role !== 'PPVZ' &&
-                          user.role !== 'RMANAGER'
-                        "
-                        value="Постоплата WB"
-                      >
-                        Сумма товаров в заказе с постоплатой WB (до выдачи)
-                      </option>
-                      <option
-                        v-if="
-                          user.role !== 'ADMINISTRATOR' &&
-                          user.role !== 'PVZ' &&
-                          user.username !== 'Рейзвих' &&
-                          user.role !== 'PPVZ' &&
-                          user.role !== 'RMANAGER'
-                        "
-                        value="Заказано"
-                      >
-                        Сумма товаров в заказе (до выдачи)
-                      </option>
-                      <option
-                        v-if="
-                          user.role !== 'ADMINISTRATOR' &&
-                          user.role !== 'PVZ' &&
-                          user.username !== 'Рейзвих' &&
-                          user.role !== 'PPVZ' &&
-                          user.role !== 'RMANAGER'
-                        "
-                        value="Заказано1"
-                      >
-                        Сумма проданных товаров наличные (Выдано сумма)
-                      </option>
-                      <option
-                        v-if="
-                          user.role !== 'ADMINISTRATOR' &&
-                          user.role !== 'PVZ' &&
-                          user.username !== 'Рейзвих' &&
-                          user.role !== 'PPVZ' &&
-                          user.role !== 'RMANAGER'
-                        "
-                        value="Заказано2"
-                      >
-                        Сумма проданных товаров онлайн
-                      </option>
-                      <option
-                        v-if="
-                          user.role !== 'ADMINISTRATOR' &&
-                          user.role !== 'PVZ' &&
-                          user.username !== 'Рейзвих' &&
-                          user.role !== 'PPVZ' &&
-                          user.role !== 'RMANAGER'
-                        "
-                        value="Заказано3"
-                      >
-                        Сумма заказанных товаров (все записи)
+                        Баланс онлайн
                       </option>
                     </select>
                   </div>
@@ -3007,22 +2906,10 @@ const options = [
                         "
                         value="Доход"
                       >
-                        Доход DP (продажа)
-                      </option>
-                      <option
-                        v-if="
-                          user.role !== 'ADMINISTRATOR' &&
-                          user.role !== 'PVZ' &&
-                          user.username !== 'Рейзвих' &&
-                          user.role !== 'PPVZ' &&
-                          user.role !== 'RMANAGER'
-                        "
-                        value="Доставка"
-                      >
-                        Доход D&S
+                        Доход (продажа)
                       </option>
                       <option value="Баланс наличные">
-                        Баланс наличные DP (фактический)
+                        Баланс наличные (фактический)
                       </option>
                       <option
                         v-if="
@@ -3032,68 +2919,7 @@ const options = [
                         "
                         value="Баланс безнал"
                       >
-                        Баланс онлайн DP
-                      </option>
-                      <option
-                        v-if="
-                          user.role !== 'ADMINISTRATOR' &&
-                          user.role !== 'PVZ' &&
-                          user.username !== 'Рейзвих' &&
-                          user.role !== 'PPVZ' &&
-                          user.role !== 'RMANAGER'
-                        "
-                        value="Постоплата WB"
-                      >
-                        Сумма товаров в заказе с постоплатой WB (до выдачи,
-                        фактический)
-                      </option>
-                      <option
-                        v-if="
-                          user.role !== 'ADMINISTRATOR' &&
-                          user.role !== 'PVZ' &&
-                          user.username !== 'Рейзвих' &&
-                          user.role !== 'PPVZ' &&
-                          user.role !== 'RMANAGER'
-                        "
-                        value="Заказано"
-                      >
-                        Сумма товаров в заказе (до выдачи, фактический)
-                      </option>
-                      <option
-                        v-if="
-                          user.role !== 'ADMINISTRATOR' &&
-                          user.role !== 'PVZ' &&
-                          user.username !== 'Рейзвих' &&
-                          user.role !== 'PPVZ' &&
-                          user.role !== 'RMANAGER'
-                        "
-                        value="Заказано1"
-                      >
-                        Сумма проданных товаров наличные (Выдано сумма)
-                      </option>
-                      <option
-                        v-if="
-                          user.role !== 'ADMINISTRATOR' &&
-                          user.role !== 'PVZ' &&
-                          user.username !== 'Рейзвих' &&
-                          user.role !== 'PPVZ' &&
-                          user.role !== 'RMANAGER'
-                        "
-                        value="Заказано2"
-                      >
-                        Сумма проданных товаров онлайн
-                      </option>
-                      <option
-                        v-if="
-                          user.role !== 'ADMINISTRATOR' &&
-                          user.role !== 'PVZ' &&
-                          user.username !== 'Рейзвих' &&
-                          user.role !== 'PPVZ' &&
-                          user.role !== 'RMANAGER'
-                        "
-                        value="Заказано3"
-                      >
-                        Сумма заказанных товаров (все записи)
+                        Баланс онлайн
                       </option>
                     </select>
                   </div>

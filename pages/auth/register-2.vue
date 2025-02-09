@@ -266,8 +266,8 @@ const formattedBlockDuration = computed(() =>
 );
 
 useSeoMeta({
-  title: "DAROM.PRO — Регистрация клиента",
-  ogTitle: "DAROM.PRO — Регистрация клиента",
+  title: "ТЕСТ — Регистрация клиента",
+  ogTitle: "ТЕСТ — Регистрация клиента",
   description:
     "Получите доступ к заказу из любых интернет-магазинов и свой личный кабинет клиента!",
   ogDescription:
@@ -306,7 +306,7 @@ definePageMeta({
           <h1
             class="text-center text-secondary-color text-6xl max-sm:text-5xl font-bold"
           >
-            DAROM.PRO
+            ТЕСТ
           </h1>
         </div>
         <h2

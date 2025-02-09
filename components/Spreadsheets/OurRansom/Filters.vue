@@ -593,17 +593,6 @@ let dateFilter = ref("issued");
             placeholder="Выберите дополнительно"
           />
         </div>
-
-        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
-          <h1>Статус</h1>
-          <select
-            class="bg-transparent w-full min-h-[40px] px-3 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6 disabled:text-gray-400"
-            v-model="selectedDPStatus"
-          >
-            <option value="1">Предоплата</option>
-            <option value="0">Постоплата</option>
-          </select>
-        </div>
       </div>
       <div v-if="user?.role !== 'SORTIROVKA'">
         <div class="mt-10">

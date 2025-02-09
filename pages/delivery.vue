@@ -55,8 +55,6 @@ onMounted(async () => {
     showThirdModal();
   }
 
-  // 
-
   if (route.query.marketplace) {
     marketplaceData = route.query.marketplace;
   }

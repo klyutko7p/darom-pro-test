@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 const config = useRuntimeConfig();
-const secretKey = config.jwtSecretKey;
 
 interface IRequestBody {
   username: string;
@@ -36,18 +35,6 @@ export default defineEventHandler(async (event) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-
-    const tokenFourssan = jwt.sign({ userId: user.id, role: user.role }, secretKey, {
-      expiresIn: "1d",
-    });
-
-    setCookie(event, "tokenFourssan", tokenFourssan, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 1, // 1 день
-    });
 
     if (passwordMatch) {
       const token = generateToken(user);

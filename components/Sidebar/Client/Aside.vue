@@ -33,7 +33,7 @@ let isShowInfo = ref(false);
             @click="editMenu"
             class="text-3xl cursor-pointer text-secondary-color font-bold uppercase dark:text-gray-400"
           >
-            DAROM.PRO
+            ТЕСТ
           </NuxtLink>
           <div
             @click="editMenu"

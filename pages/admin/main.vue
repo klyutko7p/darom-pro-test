@@ -82,7 +82,7 @@ function requestPermission() {
               Приветствуем, {{ user.username }}!
             </h1>
             <h1 v-if="user.username === 'Директор'" class="text-xl">
-              Приветствуем, Император!
+              Приветствуем, Директор!
             </h1>
             <div
               @click="requestPermission"
@@ -95,11 +95,13 @@ function requestPermission() {
               />
             </div>
           </div>
-          <h1 v-if="rows.length" class="text-red-500 font-semibold text-base">У Вас есть невыполненные задачи!</h1>
+          <h1 v-if="rows.length" class="text-red-500 font-semibold text-base">
+            У Вас есть невыполненные задачи!
+          </h1>
           <h1
             class="font-bold text-6xl max-[400px]:text-4xl max-md:text-center text-secondary-color mb-5"
           >
-            DAROM.PRO
+            ТЕСТ
           </h1>
           <SidebarAsideBody :user="user" @sign-out="signOut" v-auto-animate />
         </div>

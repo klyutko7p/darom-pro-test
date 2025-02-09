@@ -59,10 +59,6 @@ let columns = [
     label: "Комментарий",
   },
   {
-    key: "company",
-    label: "Компания",
-  },
-  {
     key: "createdUser",
     label: "Создано",
   },
@@ -77,10 +73,6 @@ let columns = [
   {
     key: "received",
     label: "Получено",
-  },
-  {
-    key: "type",
-    label: "Тип",
   },
   {
     key: "created_at",
@@ -288,7 +280,11 @@ let isVisiblePages = ref(true);
         Столбцы
       </UButton>
     </USelectMenu>
-    <Icon class="hover:bg-secondary-color duration-200 cursor-pointer" name="pajamas:clear-all" @click="clearColumns" />
+    <Icon
+      class="hover:bg-secondary-color duration-200 cursor-pointer"
+      name="pajamas:clear-all"
+      @click="clearColumns"
+    />
   </div>
 
   <UTable
@@ -370,12 +366,6 @@ let isVisiblePages = ref(true);
       </p>
     </template>
 
-    <template #company-data="{ row }">
-      <p>
-        {{ row.company ? row.company : "—" }}
-      </p>
-    </template>
-
     <template #createdUser-data="{ row }">
       <p>
         {{ row.createdUser }}
@@ -419,14 +409,8 @@ let isVisiblePages = ref(true);
       <h1 v-if="!row.received && !row.issuedUser">—</h1>
     </template>
 
-    <template #type-data="{ row }">
-      <p v-if="user.username === 'Директор' || user.username === 'Власенкова'">
-        {{ row.type }}
-      </p>
-    </template>
-
     <template #created_at-data="{ row }">
-      <p v-if="user.username === 'Директор' || user.username === 'Власенкова'">
+      <p>
         {{ storeUsers.getNormalizedDate(row.created_at) }}
       </p>
     </template>

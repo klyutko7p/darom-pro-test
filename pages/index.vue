@@ -22,168 +22,168 @@ onMounted(async () => {
     router.push("/auth/login");
   }
 
-  await getPercents();
+  // await getPercents();
 });
 
-const addressItems = ref([
-  {
-    id: 1,
-    address: [47.98958366983051, 37.8955255423278],
-    text: "г. Донецк, ул. Антропова, 16",
-  },
-  {
-    id: 2,
-    address: [47.995839, 37.846517],
-    text: "г. Донецк, ул. Харитоново, 8",
-  },
-  {
-    id: 3,
-    address: [47.955214, 37.963109],
-    text: "г. Донецк, ул. Палладина, 16",
-  },
-  {
-    id: 4,
-    address: [47.945142, 37.960908],
-    text: "г. Донецк, ул. Нартова, 1",
-  },
-  {
-    id: 5,
-    address: [47.946192, 37.90365],
-    text: "г. Донецк, ул. Дудинская, д. 4, кв7",
-  },
-  {
-    id: 8,
-    address: [47.134833, 37.58217],
-    text: "г. Мариуполь, ул. Макара Мазая, 37А",
-  },
-  {
-    id: 9,
-    address: [47.160469, 37.587497],
-    text: "г. Мариуполь, ул. 8 Марта, 77",
-  },
-  {
-    id: 10,
-    address: [47.045055, 37.479126],
-    text: "г. Мариуполь, ул. Азовской Военной Флотилии, 2",
-  },
-  {
-    id: 11,
-    address: [47.100219, 37.66091],
-    text: "г. Мариуполь, ул. Азовстальская, 131",
-  },
-  {
-    id: 12,
-    address: [47.093065, 37.672873],
-    text: "г. Мариуполь, ул. Центральная, 43",
-  },
-  {
-    id: 14,
-    address: [47.161166, 37.490362],
-    text: "г. Мариуполь, пос. Старый Крым, павильон на центральном рынке",
-  },
-]);
+// const addressItems = ref([
+//   {
+//     id: 1,
+//     address: [47.98958366983051, 37.8955255423278],
+//     text: "г. Донецк, ул. Антропова, 16",
+//   },
+//   {
+//     id: 2,
+//     address: [47.995839, 37.846517],
+//     text: "г. Донецк, ул. Харитоново, 8",
+//   },
+//   {
+//     id: 3,
+//     address: [47.955214, 37.963109],
+//     text: "г. Донецк, ул. Палладина, 16",
+//   },
+//   {
+//     id: 4,
+//     address: [47.945142, 37.960908],
+//     text: "г. Донецк, ул. Нартова, 1",
+//   },
+//   {
+//     id: 5,
+//     address: [47.946192, 37.90365],
+//     text: "г. Донецк, ул. Дудинская, д. 4, кв7",
+//   },
+//   {
+//     id: 8,
+//     address: [47.134833, 37.58217],
+//     text: "г. Мариуполь, ул. Макара Мазая, 37А",
+//   },
+//   {
+//     id: 9,
+//     address: [47.160469, 37.587497],
+//     text: "г. Мариуполь, ул. 8 Марта, 77",
+//   },
+//   {
+//     id: 10,
+//     address: [47.045055, 37.479126],
+//     text: "г. Мариуполь, ул. Азовской Военной Флотилии, 2",
+//   },
+//   {
+//     id: 11,
+//     address: [47.100219, 37.66091],
+//     text: "г. Мариуполь, ул. Азовстальская, 131",
+//   },
+//   {
+//     id: 12,
+//     address: [47.093065, 37.672873],
+//     text: "г. Мариуполь, ул. Центральная, 43",
+//   },
+//   {
+//     id: 14,
+//     address: [47.161166, 37.490362],
+//     text: "г. Мариуполь, пос. Старый Крым, павильон на центральном рынке",
+//   },
+// ]);
 
 let selectedAddress = ref();
 
 let counter = ref(0);
-async function changeAddress(arrayCoordinates: Array<number>) {
-  if (!counter.value) {
-    zoomValue.value = 8;
-    coordinates.value = arrayCoordinates;
-    selectedAddress.value = addressItems.value.find(
-      (item) => item.address[0] === arrayCoordinates[0]
-    )?.address;
-  } else {
-    zoomValue.value = 8;
-    coordinates.value = arrayCoordinates;
-    selectedAddress.value = addressItems.value.find(
-      (item) => item.address[0] === arrayCoordinates[0]
-    )?.address;
-  }
-  counter.value++;
-}
+// async function changeAddress(arrayCoordinates: Array<number>) {
+//   if (!counter.value) {
+//     zoomValue.value = 8;
+//     coordinates.value = arrayCoordinates;
+//     selectedAddress.value = addressItems.value.find(
+//       (item) => item.address[0] === arrayCoordinates[0]
+//     )?.address;
+//   } else {
+//     zoomValue.value = 8;
+//     coordinates.value = arrayCoordinates;
+//     selectedAddress.value = addressItems.value.find(
+//       (item) => item.address[0] === arrayCoordinates[0]
+//     )?.address;
+//   }
+//   counter.value++;
+// }
 
-let markers = [
-  {
-    id: 1,
-    coords: [47.98958366983051, 37.8955255423278],
-    commentary:
-      "ул. Антропова 16. Вход «ремонт обуви». Нет примерочной. Пн-пт 09:00-17:00; Сб 09:00-14:00; Выходной - воскресенье",
-    workTime: "Пн-пт 09:00-17:00; Сб 09:00-14:00; Выходной - воскресенье",
-    info: "Вход «ремонт обуви». Нет примерочной",
-  },
-  {
-    id: 2,
-    coords: [47.995839, 37.846517],
-    commentary: "ул. Харитоново, 8. Есть примерочная. Ежедневно 9:00-18:00",
-    workTime: "Ежедневно 9:00-18:00",
-    info: "Есть примерочная",
-  },
-  {
-    id: 3,
-    coords: [47.955214, 37.963109],
-    commentary: "ул. Палладина, 16. Есть примерочная. Ежедневно 9:00-18:00",
-    workTime: "Ежедневно 9:00-18:00",
-    info: "Есть примерочная",
-  },
-  {
-    id: 4,
-    coords: [47.945142, 37.960908],
-    commentary:
-      "ул. Нартова, 1. Возле магазина «Добрый». Есть примерочная. Ежедневно 9:00-18:00",
-    workTime: "Ежедневно 9:00-18:00",
-    info: "Возле магазина «Добрый». Есть примерочная",
-  },
-  {
-    id: 5,
-    coords: [47.946192, 37.90365],
-    commentary: "ул. Дудинская 4. Домашний пункт. Ежедневно 10:00-21:00",
-    workTime: "Ежедневно 10:00-21:00",
-    info: "Домашний пункт",
-  },
-  {
-    id: 8,
-    coords: [47.134833, 37.58217],
-    commentary:
-      "ул. Макара Мазая, 37А. Есть примерочная. Ежедневно 09:00-18:00",
-    workTime: "Ежедневно 09:00-18:00",
-    info: "Есть примерочная",
-  },
-  {
-    id: 9,
-    coords: [47.160469, 37.587497],
-    commentary: "ул. 8 Марта, 77. Есть примерочная. Ежедневно 09:00-19:00",
-    workTime: "Ежедневно 09:00-19:00",
-    info: "Есть примерочная",
-  },
-  {
-    id: 10,
-    coords: [47.045055, 37.479126],
-    commentary:
-      "ул. Азовской Военной Флотилии, 2. Вход магазин «Радуга». Ежедневно 9:00-18:00",
-    workTime: "Ежедневно 9:00-18:00",
-    info: "Вход магазин «Радуга»",
-  },
-  {
-    id: 11,
-    coords: [47.100219, 37.66091],
-    commentary: "ул. Азовстальская, 131. Ежедневно 9:00-18:00",
-    workTime: "Ежедневно 09:00-18:00",
-    info: "Вход в магазин «Семейный»",
-  },
-  {
-    id: 12,
-    coords: [47.093065, 37.672873],
-    commentary: "ул. Центральная, 43. Ежедневно",
-    workTime: "Ежедневно",
-  },
-  {
-    id: 14,
-    coords: [47.161166, 37.490362],
-    commentary: "пос. Старый Крым, павильон на центральном рынке",
-    workTime: "Ежедневно 09:00-18:00",
-  },
-];
+// let markers = [
+//   {
+//     id: 1,
+//     coords: [47.98958366983051, 37.8955255423278],
+//     commentary:
+//       "ул. Антропова 16. Вход «ремонт обуви». Нет примерочной. Пн-пт 09:00-17:00; Сб 09:00-14:00; Выходной - воскресенье",
+//     workTime: "Пн-пт 09:00-17:00; Сб 09:00-14:00; Выходной - воскресенье",
+//     info: "Вход «ремонт обуви». Нет примерочной",
+//   },
+//   {
+//     id: 2,
+//     coords: [47.995839, 37.846517],
+//     commentary: "ул. Харитоново, 8. Есть примерочная. Ежедневно 9:00-18:00",
+//     workTime: "Ежедневно 9:00-18:00",
+//     info: "Есть примерочная",
+//   },
+//   {
+//     id: 3,
+//     coords: [47.955214, 37.963109],
+//     commentary: "ул. Палладина, 16. Есть примерочная. Ежедневно 9:00-18:00",
+//     workTime: "Ежедневно 9:00-18:00",
+//     info: "Есть примерочная",
+//   },
+//   {
+//     id: 4,
+//     coords: [47.945142, 37.960908],
+//     commentary:
+//       "ул. Нартова, 1. Возле магазина «Добрый». Есть примерочная. Ежедневно 9:00-18:00",
+//     workTime: "Ежедневно 9:00-18:00",
+//     info: "Возле магазина «Добрый». Есть примерочная",
+//   },
+//   {
+//     id: 5,
+//     coords: [47.946192, 37.90365],
+//     commentary: "ул. Дудинская 4. Домашний пункт. Ежедневно 10:00-21:00",
+//     workTime: "Ежедневно 10:00-21:00",
+//     info: "Домашний пункт",
+//   },
+//   {
+//     id: 8,
+//     coords: [47.134833, 37.58217],
+//     commentary:
+//       "ул. Макара Мазая, 37А. Есть примерочная. Ежедневно 09:00-18:00",
+//     workTime: "Ежедневно 09:00-18:00",
+//     info: "Есть примерочная",
+//   },
+//   {
+//     id: 9,
+//     coords: [47.160469, 37.587497],
+//     commentary: "ул. 8 Марта, 77. Есть примерочная. Ежедневно 09:00-19:00",
+//     workTime: "Ежедневно 09:00-19:00",
+//     info: "Есть примерочная",
+//   },
+//   {
+//     id: 10,
+//     coords: [47.045055, 37.479126],
+//     commentary:
+//       "ул. Азовской Военной Флотилии, 2. Вход магазин «Радуга». Ежедневно 9:00-18:00",
+//     workTime: "Ежедневно 9:00-18:00",
+//     info: "Вход магазин «Радуга»",
+//   },
+//   {
+//     id: 11,
+//     coords: [47.100219, 37.66091],
+//     commentary: "ул. Азовстальская, 131. Ежедневно 9:00-18:00",
+//     workTime: "Ежедневно 09:00-18:00",
+//     info: "Вход в магазин «Семейный»",
+//   },
+//   {
+//     id: 12,
+//     coords: [47.093065, 37.672873],
+//     commentary: "ул. Центральная, 43. Ежедневно",
+//     workTime: "Ежедневно",
+//   },
+//   {
+//     id: 14,
+//     coords: [47.161166, 37.490362],
+//     commentary: "пос. Старый Крым, павильон на центральном рынке",
+//     workTime: "Ежедневно 09:00-18:00",
+//   },
+// ];
 
 let zoomValue = ref(8);
 let isHiddenMenu = ref(true);
@@ -200,36 +200,36 @@ definePageMeta({
 const storePVZPercent = usePVZPercentStore();
 const rows = ref<Array<IPVZPercent>>();
 
-async function getPercents() {
-  const [rowsData] = await Promise.all([storePVZPercent.getPVZ()]);
+// async function getPercents() {
+//   const [rowsData] = await Promise.all([storePVZPercent.getPVZ()]);
 
-  rows.value = rowsData;
+//   rows.value = rowsData;
 
-  markers = markers.map((marker) => {
-    const row = rows.value?.find(
-      (r) =>
-        r.pvz.name.includes(marker.id.toString()) && r.flag === "ClientRansom"
-    );
-    if (row && row.wb) {
-      marker.commentary += `. Доставка Ваших заказов по QR-коду: Ozon - ${
-        row.ozon
-      }%, Wildberries - ${row.wb}%, ${
-        row.ozon === 0 ? `Ozon - 5%, если вес товара от 25кг,` : ""
-      } Другие интернет-магазины - ${row.ym}%`;
-    }
-    return marker;
-  });
+//   markers = markers.map((marker) => {
+//     const row = rows.value?.find(
+//       (r) =>
+//         r.pvz.name.includes(marker.id.toString()) && r.flag === "ClientRansom"
+//     );
+//     if (row && row.wb) {
+//       marker.commentary += `. Доставка Ваших заказов по QR-коду: Ozon - ${
+//         row.ozon
+//       }%, Wildberries - ${row.wb}%, ${
+//         row.ozon === 0 ? `Ozon - 5%, если вес товара от 25кг,` : ""
+//       } Другие интернет-магазины - ${row.ym}%`;
+//     }
+//     return marker;
+//   });
 
-  markers = markers.map((marker) => {
-    const row = rows.value?.find(
-      (r) => r.pvz.name.includes(marker.id.toString()) && r.flag === "OurRansom"
-    );
-    if (row && row.wb) {
-      marker.commentary += `. Доставка товаров по постоплате: 10%`;
-    }
-    return marker;
-  });
-}
+//   markers = markers.map((marker) => {
+//     const row = rows.value?.find(
+//       (r) => r.pvz.name.includes(marker.id.toString()) && r.flag === "OurRansom"
+//     );
+//     if (row && row.wb) {
+//       marker.commentary += `. Доставка товаров по постоплате: 10%`;
+//     }
+//     return marker;
+//   });
+// }
 
 const items = [
   {
@@ -241,8 +241,8 @@ const items = [
 ];
 
 useSeoMeta({
-  title: "DAROM.PRO — Доставка товаров",
-  ogTitle: "DAROM.PRO — Доставка товаров",
+  title: "ТЕСТ — Доставка товаров",
+  ogTitle: "ТЕСТ — Доставка товаров",
   description:
     "Доставка из интернет-магазинов WILDBERRIES, OZON, ЯНДЕКС МАРКЕТ И ДР. По всем вопросам и для оформления заказа звоните: +7(949)612-47-60",
   ogDescription:
@@ -251,23 +251,23 @@ useSeoMeta({
 
 let isShowModalInfo = ref(false);
 let selectedPVZ = ref({} as any);
-async function showInfo(arrayCoordinates: Array<number>) {
-  if (!counter.value) {
-    zoomValue.value = 8;
-    coordinates.value = arrayCoordinates;
-    selectedPVZ.value = markers.find(
-      (item) => item.coords[0] === arrayCoordinates[0]
-    );
-  } else {
-    zoomValue.value = 8;
-    coordinates.value = arrayCoordinates;
-    selectedPVZ.value = markers.find(
-      (item) => item.coords[0] === arrayCoordinates[0]
-    );
-  }
-  counter.value++;
-  isShowModalInfo.value = true;
-}
+// async function showInfo(arrayCoordinates: Array<number>) {
+//   if (!counter.value) {
+//     zoomValue.value = 8;
+//     coordinates.value = arrayCoordinates;
+//     selectedPVZ.value = markers.find(
+//       (item) => item.coords[0] === arrayCoordinates[0]
+//     );
+//   } else {
+//     zoomValue.value = 8;
+//     coordinates.value = arrayCoordinates;
+//     selectedPVZ.value = markers.find(
+//       (item) => item.coords[0] === arrayCoordinates[0]
+//     );
+//   }
+//   counter.value++;
+//   isShowModalInfo.value = true;
+// }
 
 let isShowFirstAddInfo = ref(false);
 let isShowSecondAddInfo = ref(false);
@@ -294,7 +294,7 @@ let isShowSecondAddInfo = ref(false);
           <h1
             class="text-secondary-color font-bold text-8xl max-lg:text-6xl mt-3"
           >
-            DAROM.PRO
+            ТЕСТ
           </h1>
           <h1
             class="text-secondary-color font-bold uppercase mt-3 max-md:text-center"
@@ -311,7 +311,7 @@ let isShowSecondAddInfo = ref(false);
                 class="text-secondary-color underline underline-offset-2 font-bold px-5 rounded-xl hover:opacity-50 duration-200 mr-2"
                 href="tel:+79496124760"
               >
-                +7 (949) 612-47-60
+                +XXXXXXXXXXX
               </a>
             </div>
             <br class="hidden max-[500px]:block" />
@@ -395,9 +395,9 @@ let isShowSecondAddInfo = ref(false);
             <div class="flex mb-3 items-center gap-3 text-xl">
               <h1>Выберите адрес</h1>
             </div>
+            <!-- @change="changeAddress" -->
+            <!-- :options="addressItems" -->
             <UInputMenu
-              @change="changeAddress"
-              :options="addressItems"
               v-model="selectedAddress"
               size="xl"
               placeholder="Поиск адреса..."
@@ -413,16 +413,16 @@ let isShowSecondAddInfo = ref(false);
                 :controls="controls"
                 :zoom="zoomValue"
               >
-                <YandexMarker
+                <!-- <YandexMarker
                   v-for="marker in markers"
-                  :coordinates="marker.coords"
                   @click="changeAddress(marker.coords), showInfo(marker.coords)"
+                  :coordinates="marker.coords"
                   :marker-id="marker.id"
                 >
-                  <!-- <template #component>
+                  <template #component>
                     <CustomBalloonMainPage :commentary="marker.commentary" />
-                  </template> -->
-                </YandexMarker>
+                  </template>
+                </YandexMarker> -->
               </YandexMap>
             </ClientOnly>
           </div>
@@ -438,10 +438,10 @@ let isShowSecondAddInfo = ref(false);
       </div>
 
       <!-- Плавающий виджет в правом нижнем углу -->
-      <ChatWidget />
+      <!-- <ChatWidget /> -->
     </div>
 
-    <UModal
+    <!-- <UModal
       :ui="{
         container: 'flex items-center justify-center text-center',
       }"
@@ -547,7 +547,7 @@ let isShowSecondAddInfo = ref(false);
               <ol class="italic list-decimal px-5 mt-1 space-y-1">
                 <li>
                   Вы заказываете товары используя ссылки на них через Ваш личный
-                  кабинет на сайте DAROM.PRO или через
+                  кабинет на сайте ТЕСТ или через
                   <a
                     class="text-secondary-color underline"
                     href="https://t.me/Svetlana_Darompro"
@@ -564,7 +564,7 @@ let isShowSecondAddInfo = ref(false);
           </div>
         </div>
       </UCard>
-    </UModal>
+    </UModal> -->
 
     <UINewModalEditNoPadding
       v-show="isShowModal"

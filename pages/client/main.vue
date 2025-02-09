@@ -163,8 +163,8 @@ function clearCookies() {
 }
 
 useSeoMeta({
-  title: "DAROM.PRO — Личный кабинет",
-  ogTitle: "DAROM.PRO — Личный кабинет",
+  title: "ТЕСТ — Личный кабинет",
+  ogTitle: "ТЕСТ — Личный кабинет",
   description:
     "Авторизуйтесь и получите доступ к заказу из любых интернет-магазинов!",
   ogDescription:
@@ -258,7 +258,7 @@ useSeoMeta({
         <h1
           class="font-bold text-6xl max-[400px]:text-4xl max-md:text-center text-secondary-color mb-5"
         >
-          DAROM.PRO
+          ТЕСТ
         </h1>
 
         <SidebarClientAsideBody

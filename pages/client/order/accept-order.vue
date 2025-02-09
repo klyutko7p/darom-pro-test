@@ -710,7 +710,7 @@ async function checkPercent() {
             <div class="flex items-center flex-col justify-center h-full gap-5">
               <h1 class="font-semibold text-base max-sm:text-lg">
                 Заказать через личный кабинет
-                <span class="uppercase text-secondary-color">darom.pro</span>
+                <span class="uppercase text-secondary-color">ТЕСТ</span>
                 можно только<br />
                 из интернет-магазинов OZON и WILDBERRIES
               </h1>

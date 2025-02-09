@@ -138,7 +138,7 @@ onMounted(async () => {
   ] = await Promise.all([
     await storeUsers.getUser(),
     storeUsers.getUsers(),
-    await storePVZ.getAllPVZ(),
+    await storePVZ.getPVZ(),
     await storeSC.getSortingCenters(),
     storeRansom.getSumOfRejection(),
   ]);
@@ -194,17 +194,10 @@ watch(isOpen, (newValue) => {
 });
 
 const roles = [
-  "USER",
-  "ADMIN",
-  "SORTIROVKA",
-  "PVZ",
-  "PPVZ",
-  "RMANAGER",
-  "ADMINISTRATOR",
-  "COURIER",
-  "DRIVER",
-  "SHVEDOVA",
-  "OFFICE",
+  { role: "PVZ", name: "ПВЗ" },
+  { role: "SORTIROVKA", name: "СОРТИРОВКА" },
+  { role: "ADMINISTRATOR", name: "УПРАВЛЯЮЩИЙ" },
+  { role: "ADMIN", name: "ДИРЕКТОР" },
 ];
 
 const userOptions = [
@@ -264,6 +257,8 @@ const userOptions = [
                   class="w-full"
                   v-model="userData.role"
                   :options="roles"
+                  value-attribute="role"
+                  option-attribute="name"
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
@@ -330,7 +325,9 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Дополнительно (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Дополнительно (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -360,7 +357,9 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Доставлено на СЦ (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Доставлено на СЦ (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -380,7 +379,9 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Доставлено на ПВЗ (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Доставлено на ПВЗ (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -400,7 +401,9 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Дополнительный доход (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Дополнительный доход (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -420,7 +423,9 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Отправка в ПВЗ (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Отправка в ПВЗ (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -513,7 +518,9 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Выдан клиенту (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Выдан клиенту (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -546,23 +553,14 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Заказано на СЦ (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Заказано на СЦ (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
                   option-attribute="text"
                   v-model="userData.orderPVZ2"
-                  :options="userOptions"
-                />
-              </div>
-
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Заказано на СЦ (Доставка)</label>
-                <USelectMenu
-                  class="w-full"
-                  value-attribute="value"
-                  option-attribute="text"
-                  v-model="userData.orderPVZ3"
                   :options="userOptions"
                 />
               </div>
@@ -579,7 +577,9 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Процент с клиента (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Процент с клиента (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -612,7 +612,9 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Примечание (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Примечание (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -669,7 +671,9 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Предоплата (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Предоплата (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -691,7 +695,9 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Маркетплейс (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Маркетплейс (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -713,7 +719,9 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Количество товаров (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Количество товаров (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -768,7 +776,9 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Сумма с клиента (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Сумма с клиента (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -801,7 +811,9 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Ссылка для клиента (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Ссылка для клиента (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"
@@ -834,7 +846,9 @@ const userOptions = [
               </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Прибыль (доход) (Доставка заказов по ШК (QR))</label>
+                <label for="cell"
+                  >Прибыль (доход) (Доставка заказов по ШК (QR))</label
+                >
                 <USelectMenu
                   class="w-full"
                   value-attribute="value"

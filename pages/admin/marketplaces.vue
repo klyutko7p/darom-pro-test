@@ -82,7 +82,7 @@ watch(isOpen, (newValue) => {
 
 <template>
   <Head>
-    <Title>Маркетплейсы</Title>
+    <Title>Интернет-магазины</Title>
   </Head>
 
   <div v-if="token && user.role === 'ADMIN'">

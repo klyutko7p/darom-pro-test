@@ -203,65 +203,6 @@ let usersOfIssued = ref([
         <li>
           <div
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="showDSList"
-            v-if="
-              ((user.dataDelivery === 'READ' ||
-                user.dataDelivery === 'WRITE') &&
-                (user.role === 'ADMIN' || user.role === 'OPT') &&
-                user.username !== 'Светлана1' &&
-                user.username !== 'Светлана3' &&
-                user.username !== 'Светлана2') ||
-              user.dataDelivery === 'READ' ||
-              (user.dataDelivery === 'WRITE' &&
-                user.role !== 'ADMINISTRATOR' &&
-                user.role !== 'RMANAGER' &&
-                user.username !== 'Светлана1' &&
-                user.username !== 'Светлана3' &&
-                user.username !== 'Светлана2')
-            "
-          >
-            <Icon
-              class="text-gray-500 transition duration-75 group-hover:text-gray-900"
-              name="i-mage-delivery-truck-fill"
-              size="24"
-            />
-            <span class="flex-1 ms-3 whitespace-nowrap"
-              >Доставка и сортировка</span
-            >
-          </div>
-        </li>
-        <li>
-          <div
-            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            @click="showEquipmentsList"
-            v-if="
-              user.username === 'Волошина' ||
-              user.username === 'Шарафаненко' ||
-              user.username === 'Кулешов' ||
-              user.username === 'Алиса' ||
-              user.username === 'Миллер' ||
-              user.username === 'Шведова' ||
-              user.username === 'Мешков' ||
-              user.username === 'Директор' ||
-              user.username === 'Горцуева' ||
-              user.role === 'ADMIN' ||
-              user.role === 'ADMINISTRATOR' ||
-              user.username === 'Власенкова' ||
-              user.username === 'Сошников' ||
-              usersOfIssued.includes(user.username)
-            "
-          >
-            <Icon
-              class="text-gray-500 transition duration-75 group-hover:text-gray-900"
-              name="i-material-symbols-contextual-token-add"
-              size="24"
-            />
-            <span class="flex-1 ms-3 whitespace-nowrap">Дополнительно</span>
-          </div>
-        </li>
-        <li>
-          <div
-            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             @click="showSettingsList"
             v-if="
               user.username === 'Директор' ||
@@ -276,28 +217,6 @@ let usersOfIssued = ref([
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Настройки</span>
           </div>
-        </li>
-        <li>
-          <NuxtLink
-            :to="'/tickets'"
-            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            v-if="
-              user.username === 'Директор' ||
-              user.username === 'Светлана' ||
-              user.username === 'Светлана1' ||
-              user.username === 'Светлана2' ||
-              user.username === 'Светлана3' ||
-              user.username === 'Шведова' ||
-              user.username === 'Власенкова'
-            "
-          >
-            <Icon
-              class="text-gray-500 transition duration-75 group-hover:text-gray-900"
-              name="material-symbols:contact-support"
-              size="24"
-            />
-            <span class="flex-1 ms-3 whitespace-nowrap">Чат поддержки</span>
-          </NuxtLink>
         </li>
         <li>
           <div
@@ -411,28 +330,6 @@ let usersOfIssued = ref([
               Доставка заказов <br />
               по ШК (QR)
             </span>
-          </NuxtLink>
-        </li>
-        <li>
-          <NuxtLink
-            :to="'/spreadsheets/distribution'"
-            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            v-if="
-              user.username === 'Директор' ||
-              user.username === 'Власенкова' ||
-              user.username === 'Горцуева' ||
-              user.username === 'Шведова' ||
-              user.username === 'Мешков' ||
-              user.role === 'COURIER' ||
-              user.role === 'SORTIROVKA'
-            "
-          >
-            <Icon
-              class="text-gray-500 transition duration-75 group-hover:text-gray-900"
-              name="i-material-symbols-move-to-inbox-rounded"
-              size="24"
-            />
-            <span class="flex-1 ms-3 whitespace-nowrap">Распределение товара</span>
           </NuxtLink>
         </li>
         <li>
@@ -600,27 +497,6 @@ let usersOfIssued = ref([
         </li>
         <li>
           <NuxtLink
-            :to="'/monthly-payments'"
-            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            v-if="
-              user.username === 'Директор' ||
-              user.username === 'Власенкова' ||
-              user.username === 'Шведова' ||
-              user.username === 'Мешков'
-            "
-          >
-            <Icon
-              class="text-gray-500 transition duration-75 group-hover:text-gray-900"
-              name="i-material-symbols-calendar-month"
-              size="24"
-            />
-            <span class="flex-1 ms-3 whitespace-nowrap"
-              >Ежемесячные платежи</span
-            >
-          </NuxtLink>
-        </li>
-        <li>
-          <NuxtLink
             :to="'/advance-report/summary-tables'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             v-if="
@@ -766,7 +642,9 @@ let usersOfIssued = ref([
               name="proicons:task-list"
               size="24"
             />
-            <span class="flex-1 ms-3 whitespace-nowrap">Задачи сотрудников</span>
+            <span class="flex-1 ms-3 whitespace-nowrap"
+              >Задачи сотрудников</span
+            >
           </div>
         </li>
         <li>
@@ -789,7 +667,9 @@ let usersOfIssued = ref([
               name="material-symbols:table-chart-outline"
               size="24"
             />
-            <span class="flex-1 ms-3 whitespace-nowrap">Табель учёта времени</span>
+            <span class="flex-1 ms-3 whitespace-nowrap"
+              >Табель учёта времени</span
+            >
           </div>
         </li>
       </ul>
@@ -809,34 +689,6 @@ let usersOfIssued = ref([
             />
             <span class="flex-1 ms-3 whitespace-nowrap">Назад</span>
           </div>
-        </li>
-        <li>
-          <NuxtLink
-            :to="'/spreadsheets/delivery'"
-            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            v-if="
-              ((user.dataDelivery === 'READ' ||
-                user.dataDelivery === 'WRITE') &&
-                (user.role === 'ADMIN' || user.role === 'OPT') &&
-                user.username !== 'Светлана1' &&
-                user.username !== 'Светлана3' &&
-                user.username !== 'Светлана2') ||
-              user.dataDelivery === 'READ' ||
-              (user.dataDelivery === 'WRITE' &&
-                user.role !== 'ADMINISTRATOR' &&
-                user.role !== 'RMANAGER' &&
-                user.username !== 'Светлана1' &&
-                user.username !== 'Светлана3' &&
-                user.username !== 'Светлана2')
-            "
-          >
-            <Icon
-              class="text-gray-500 transition duration-75 group-hover:text-gray-900"
-              name="i-mdi-truck-delivery"
-              size="24"
-            />
-            <span class="flex-1 ms-3 whitespace-nowrap">Доставка и сортировка</span>
-          </NuxtLink>
         </li>
         <li>
           <NuxtLink
@@ -905,7 +757,7 @@ let usersOfIssued = ref([
               name="i-solar-shop-2-bold"
               size="24"
             />
-            <span class="flex-1 ms-3 whitespace-nowrap">Маркетплейсы</span>
+            <span class="flex-1 ms-3 whitespace-nowrap">Интернет-магазины</span>
           </NuxtLink>
         </li>
         <li>
@@ -989,38 +841,6 @@ let usersOfIssued = ref([
         </li>
         <li>
           <NuxtLink
-            :to="'/admin/pvz-delivery'"
-            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
-            "
-          >
-            <Icon
-              class="text-gray-500 transition duration-75 group-hover:text-gray-900"
-              name="i-material-symbols-quick-reorder-rounded"
-              size="24"
-            />
-            <span class="flex-1 ms-3 whitespace-nowrap">ПВЗ (Доставка)</span>
-          </NuxtLink>
-        </li>
-        <li>
-          <NuxtLink
-            :to="'/admin/sorting-centers-delivery'"
-            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
-            "
-          >
-            <Icon
-              class="text-gray-500 transition duration-75 group-hover:text-gray-900"
-              name="i-heroicons-building-storefront-solid"
-              size="24"
-            />
-            <span class="flex-1 ms-3 whitespace-nowrap">СЦ (Доставка)</span>
-          </NuxtLink>
-        </li>
-        <li>
-          <NuxtLink
             :to="'/admin/order-accounts'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             v-if="
@@ -1041,4 +861,3 @@ let usersOfIssued = ref([
     </div>
   </div>
 </template>
-

@@ -43,7 +43,7 @@ definePageMeta({
               <UIMainButton
                 class="w-full min-w-[400px]"
                 @click="router.push('/client/delivery')"
-                >Через личный кабинет DAROM.PRO</UIMainButton
+                >Через личный кабинет ТЕСТ</UIMainButton
               >
               <a
                 href="https://t.me/darom_pro_bot"

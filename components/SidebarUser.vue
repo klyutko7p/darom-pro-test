@@ -179,7 +179,7 @@ function formatPhoneNumber(phoneNumber: string) {
       <h1 class="font-medium" v-if="user.username !== 'Директор'">
         {{ user.username }}
       </h1>
-      <h1 class="font-medium" v-if="user.username === 'Директор'">Император</h1>
+      <h1 class="font-medium" v-if="user.username === 'Директор'">Директор</h1>
     </div>
     <h1
       class="text-lg font-medium max-sm:text-sm"

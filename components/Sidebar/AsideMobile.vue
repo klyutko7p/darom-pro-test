@@ -93,7 +93,7 @@ function showSettingsList() {
       <h5
         class="text-4xl text-secondary-color font-bold uppercase dark:text-gray-400"
       >
-        DAROM.PRO
+        ТЕСТ
       </h5>
       <div
         @click="editMenu"

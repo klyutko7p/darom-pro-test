@@ -55,7 +55,7 @@ let showPassword = ref(false);
           <h1
             class="text-center text-secondary-color text-6xl max-sm:text-5xl font-bold"
           >
-            DAROM.PRO
+            ТЕСТ
           </h1>
         </div>
         <h2

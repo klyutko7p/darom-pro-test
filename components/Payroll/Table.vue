@@ -553,11 +553,6 @@ const columns = [
     sortable: true,
   },
   {
-    key: "company",
-    label: "Компания",
-    sortable: true,
-  },
-  {
     key: "fullname",
     label: "ФИО",
     sortable: true,
@@ -579,10 +574,6 @@ const columns = [
     label: "Оплата в час",
   },
   {
-    key: "advanceFourssan",
-    label: "Ав. ФОССАН",
-  },
-  {
     key: "advance",
     label: "Аванс",
   },
@@ -597,10 +588,6 @@ const columns = [
   {
     key: "additionalPayment",
     label: "Доплата",
-  },
-  {
-    key: "salaryFourssan",
-    label: "ЗП ФОССАН",
   },
   {
     key: "totalPayroll",
@@ -766,16 +753,6 @@ const toggleDropdown = (rowId: any) => {
     </div>
 
     <div class="w-full max-w-[500px] max-lg:max-w-none">
-      <div>
-        <h1 class="text-lg mb-1 font-bold">Фильтр по компании</h1>
-        <VueMultiselect
-          v-model="selectedCompany"
-          :options="uniqueCompany"
-          :multiple="true"
-          :close-on-select="true"
-          placeholder="Выберите компанию"
-        />
-      </div>
 
       <div>
         <h1 class="text-lg mb-1 font-bold mt-3">Фильтр по ПВЗ</h1>

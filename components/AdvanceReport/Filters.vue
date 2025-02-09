@@ -121,7 +121,6 @@ const selectedType = ref<Array<string>>([]);
 const selectedExpenditure = ref<Array<string>>([]);
 const selectedTypeOfExpenditure = ref<Array<string>>([]);
 const selectedNotation = ref<Array<string>>([]);
-const selectedCompany = ref<Array<string>>([]);
 const selectedCreatedUser = ref<Array<string>>([]);
 const startingDate = ref<Date | string | null>(null);
 const endDate = ref<Date | string | null>(null);
@@ -197,10 +196,6 @@ const uniqueTypeOfExpenditure = computed(() => {
   ];
 });
 
-const uniqueCompany = computed(() => {
-  return ["W/O/Я start", "Darom.pro", "Сортировка", "Доставка", "Чаевые"];
-});
-
 const filteredRows = ref<Array<IAdvanceReport>>();
 
 const emit = defineEmits(["filtered-rows"]);
@@ -234,8 +229,6 @@ const filterRows = () => {
               ? row.notation.toLowerCase().includes(notation.toLowerCase())
               : row.notation
           )) &&
-        (!selectedCompany.value.length ||
-          selectedCompany.value.includes(row.company)) &&
         (!selectedCreatedUser.value.length ||
           selectedCreatedUser.value.includes(row.createdUser)) &&
         (!selected.value.start ||
@@ -259,8 +252,6 @@ const filterRows = () => {
               ? row.notation.toLowerCase().includes(notation.toLowerCase())
               : row.notation
           )) &&
-        (!selectedCompany.value.length ||
-          selectedCompany.value.includes(row.company)) &&
         (!selectedCreatedUser.value.length ||
           selectedCreatedUser.value.includes(row.createdUser)) &&
         (!selected.value.start ||
@@ -280,7 +271,6 @@ function clearFields() {
   selectedType.value = [];
   selectedExpenditure.value = [];
   selectedTypeOfExpenditure.value = [];
-  selectedCompany.value = [];
   selectedNotation.value = [];
   selectedCreatedUser.value = [];
   startingDate.value = "";
@@ -315,7 +305,6 @@ const selectedArrays = [
   selectedExpenditure,
   selectedType,
   selectedTypeOfExpenditure,
-  selectedCompany,
   selectedCreatedUser,
   selectedNotation,
 ];
@@ -362,7 +351,6 @@ function saveFiltersToLocalStorage() {
   );
   saveToLocalStorage("selectedExpenditureAR", selectedExpenditure.value);
   saveToLocalStorage("selectedTypeAR", selectedType.value);
-  saveToLocalStorage("selectedCompanyAR", selectedCompany.value);
   saveToLocalStorage("selectedCreatedUserAR", selectedCreatedUser.value);
   saveToLocalStorage("selectedNotationAR", selectedNotation.value);
   saveToLocalStorage("startingDateAR", selected.value.start);
@@ -382,7 +370,6 @@ function clearLocalStorage() {
   selectedExpenditure.value = [];
   selectedTypeOfExpenditure.value = [];
   selectedType.value = [];
-  selectedCompany.value = [];
   selectedCreatedUser.value = [];
   selectedNotation.value = [];
   startingDate.value = null;
@@ -414,11 +401,6 @@ onMounted(() => {
   const storedSelectedType = loadFromLocalStorage("selectedTypeAR");
   if (storedSelectedType !== null) {
     selectedType.value = storedSelectedType;
-  }
-
-  const storedSelectedCompany = loadFromLocalStorage("selectedCompanyAR");
-  if (storedSelectedCompany !== null) {
-    selectedCompany.value = storedSelectedCompany;
   }
 
   const storedSelectedCreatedUser = loadFromLocalStorage(
@@ -484,16 +466,6 @@ onMounted(() => {
         class="grid grid-cols-2 max-xl:grid-cols-2 max-sm:grid-cols-1 gap-x-5"
       >
         <div class="flex items-start space-y-2 flex-col mt-5 text-center">
-          <h1>Компания</h1>
-          <VueMultiselect
-            v-model="selectedCompany"
-            :options="uniqueCompany"
-            :multiple="true"
-            :close-on-select="true"
-            placeholder="Выберите компанию"
-          />
-        </div>
-        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
           <h1>Показать для ПВЗ</h1>
           <VueMultiselect
             v-model="selectedPVZ"
@@ -501,16 +473,6 @@ onMounted(() => {
             :multiple="true"
             :close-on-select="true"
             placeholder="Выберите ПВЗ"
-          />
-        </div>
-        <div class="flex items-start space-y-2 flex-col mt-5 text-center">
-          <h1>Тип</h1>
-          <VueMultiselect
-            v-model="selectedType"
-            :options="uniqueType"
-            :multiple="true"
-            :close-on-select="true"
-            placeholder="Выберите тип"
           />
         </div>
         <div class="flex items-start space-y-2 flex-col mt-5 text-center">

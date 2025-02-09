@@ -38,7 +38,7 @@ const router = useRouter();
         @click="router.push('/client/main?notification=false'), editMenu()"
         class="text-6xl cursor-pointer max-[400px]:text-5xl text-center text-secondary-color font-bold uppercase dark:text-gray-400"
       >
-        DAROM.PRO
+        ТЕСТ
       </h5>
     </div>
 

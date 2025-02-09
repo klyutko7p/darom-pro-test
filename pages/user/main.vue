@@ -9,7 +9,7 @@ const token = Cookies.get("token");
 let isLoading = ref(false);
 let rows = ref<Array<Task>>([]);
 const storeTasks = useTasksStore();
-  
+
 onMounted(async () => {
   if (!token) {
     router.push("/auth/login");
@@ -94,7 +94,7 @@ function requestPermission() {
         <h1
           class="font-bold text-6xl max-[400px]:text-4xl max-md:text-center text-secondary-color mb-5"
         >
-          DAROM.PRO
+          ТЕСТ
         </h1>
         <SidebarAsideBody :user="user" @sign-out="signOut" v-auto-animate />
       </div>
