@@ -419,7 +419,7 @@ definePageMeta({
                 >Подтверждаю, что я ознакомлен и согласен с условиями
                 <a
                   class="text-secondary-color font-semibold duration-200 cursor-pointer hover:opacity-50"
-                  href="https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/files/docx/policy_info_dp.pdf"
+                  href="https://larlbqgiulcvtankbkot.supabase.co/storage/v1/object/public/files/docx/policy_info_dp.pdf"
                   target="_blank"
                   >Политики обработки персональных данных</a
                 ></label
@@ -439,7 +439,7 @@ definePageMeta({
                 >Подтверждаю, что я ознакомлен и согласен с условиями
                 <a
                   class="text-secondary-color font-semibold duration-200 cursor-pointer hover:opacity-50"
-                  href="https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/files/docx/policy_conf_dp.pdf"
+                  href="https://larlbqgiulcvtankbkot.supabase.co/storage/v1/object/public/files/docx/policy_conf_dp.pdf"
                   target="_blank"
                   >Политики конфиденциальности</a
                 ></label

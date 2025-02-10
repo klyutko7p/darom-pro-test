@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 const saltRounds = 10;
 
-
 interface IRequestBody {
   username: string;
   password: string;

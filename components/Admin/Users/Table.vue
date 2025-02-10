@@ -269,6 +269,17 @@ const toggleDropdown = (rowId: any) => {
 
   dropdownStates.value[rowId] = !dropdownStates.value[rowId];
 };
+
+const roles = [
+  { role: "PVZ", name: "ПВЗ" },
+  { role: "SORTIROVKA", name: "СОРТИРОВКА" },
+  { role: "ADMINISTRATOR", name: "УПРАВЛЯЮЩИЙ" },
+  { role: "ADMIN", name: "ДИРЕКТОР" },
+];
+
+function getRole(roleData: string) {
+  return roles.find((role) => role.role === roleData)?.name;
+}
 </script>
 
 <template>
@@ -305,6 +316,10 @@ const toggleDropdown = (rowId: any) => {
       >
         <span v-for="pvz in row.PVZ">{{ pvz }}</span>
       </div>
+    </template>
+
+    <template #role-data="{ row }">
+      <p>{{ getRole(row.role) }}</p>
     </template>
   </UTable>
 </template>

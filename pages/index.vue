@@ -619,7 +619,7 @@ let isShowSecondAddInfo = ref(false);
                 Просмотреть
                 <a
                   class="font-bold underline text-secondary-color duration-200 cursor-pointer hover:opacity-50"
-                  href="https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/files/docx/requisite.docx"
+                  href="https://larlbqgiulcvtankbkot.supabase.co/storage/v1/object/public/files/docx/requisite.docx"
                   >реквизиты юридического лица</a
                 >
               </p>

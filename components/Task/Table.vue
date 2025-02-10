@@ -6,8 +6,8 @@ import { useToast } from "vue-toastification";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
-  "https://fomoljxhkywsdgnchewy.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvbW9sanhoa3l3c2RnbmNoZXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM1ODMwMTksImV4cCI6MjAzOTE1OTAxOX0.ItZhBr3_OBP0nii6RX-jy9Q7hu2qvNQ2UBVZNJyZDFs"
+  "https://larlbqgiulcvtankbkot.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhcmxicWdpdWxjdnRhbmtia290Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTc0MDUwMDcsImV4cCI6MjAzMjk4MTAwN30.mg-Z1vzsO6RWfZCoND7yIGpSu_E9e5N7qZasGzqGurQ"
 );
 
 const toast = useToast();
@@ -325,7 +325,7 @@ const toggleShowDeletedRows = () => {
         <a
           target="_blank"
           class="text-secondary-color underline hover:opacity-60 duration-200 font-bold"
-          :href="`https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/tasks/img-${link}`"
+          :href="`https://larlbqgiulcvtankbkot.supabase.co/storage/v1/object/public/tasks/img-${link}`"
         >
           Фото {{ index + 1 }}
         </a>

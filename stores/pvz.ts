@@ -50,7 +50,7 @@ export const usePVZStore = defineStore("pvz", () => {
       if (name === "") {
         toast.warning("Название ПВЗ не должно быть пустым");
       } else {
-        let data = await useFetch("/api/pvz/create-pvz", {
+        let { data }: any = await useFetch("/api/pvz/create-pvz", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -59,6 +59,7 @@ export const usePVZStore = defineStore("pvz", () => {
         });
         cachedPVZ = null;
         toast.success("ПВЗ успешно добавлено!");
+        return data.value;
       }
     } catch (error) {
       if (error instanceof Error) {

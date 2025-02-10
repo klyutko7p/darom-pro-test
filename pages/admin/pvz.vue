@@ -5,6 +5,8 @@ import { usePVZStore } from "../../stores/pvz";
 const storeUsers = useUsersStore();
 const storePVZ = usePVZStore();
 const router = useRouter();
+const storeCells = useCellsStore();
+const storePVZPercent = usePVZPercentStore();
 
 const fields = ["название пвз", "изменение", "удаление"];
 
@@ -13,7 +15,28 @@ let pvzData = ref({} as PVZ);
 
 async function createPVZ(name: string) {
   isLoading.value = true;
-  await storePVZ.createPVZ(name);
+  let createdPVZ = await storePVZ.createPVZ(name);
+  await storeCells.createCells(name, 500);
+  await storeCells.createCellsClient(name, 100);
+  let pvzDataOurRansom = {
+    pvzId: createdPVZ.id,
+    wb: 10,
+    ozon: 10,
+    ym: 10,
+    flag: "OurRansom",
+  } as IPVZPercent;
+
+  let pvzDataClientRansom = {
+    pvzId: createdPVZ.id,
+    wb: 10,
+    ozon: 10,
+    ym: 10,
+    flag: "ClientRansom",
+  } as IPVZPercent;
+
+  await storePVZPercent.createPVZ(pvzDataOurRansom);
+  await storePVZPercent.createPVZ(pvzDataClientRansom);
+  
   pvz.value = await storePVZ.getPVZ();
   isLoading.value = false;
 }
@@ -88,10 +111,7 @@ watch(isOpen, (newValue) => {
 
   <div v-if="token && user.role === 'ADMIN'">
     <NuxtLayout name="admin">
-      <div
-        v-if="!isLoading"
-        class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5"
-      >
+      <div v-if="!isLoading" class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5">
         <AdminDataTable
           :fields="fields"
           :rows="pvz"

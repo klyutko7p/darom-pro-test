@@ -753,8 +753,8 @@ import { useToast } from "vue-toastification";
 import { useBanksStore } from "~/stores/banks";
 
 const supabase = createClient(
-  "https://fomoljxhkywsdgnchewy.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvbW9sanhoa3l3c2RnbmNoZXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM1ODMwMTksImV4cCI6MjAzOTE1OTAxOX0.ItZhBr3_OBP0nii6RX-jy9Q7hu2qvNQ2UBVZNJyZDFs"
+  "https://larlbqgiulcvtankbkot.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhcmxicWdpdWxjdnRhbmtia290Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTc0MDUwMDcsImV4cCI6MjAzMjk4MTAwN30.mg-Z1vzsO6RWfZCoND7yIGpSu_E9e5N7qZasGzqGurQ"
 );
 
 async function createRow() {
@@ -1321,7 +1321,7 @@ async function handleFileChange(fileList: FileList) {
     .from("image")
     .upload(`img-${randomDigits + selectedFile.name}`, selectedFile);
   rowData.value.supportingDocuments = randomDigits + selectedFile.name;
-  linkPhoto.value = `https://fomoljxhkywsdgnchewy.supabase.co/storage/v1/object/public/image/img-${
+  linkPhoto.value = `https://larlbqgiulcvtankbkot.supabase.co/storage/v1/object/public/image/img-${
     randomDigits + selectedFile.name
   }`;
   if (data) {
@@ -1721,13 +1721,13 @@ function showBankTransactions(id: number) {
           </div>
 
           <div>
-            <div class="text-center text-2xl my-5" v-if="user.role !== 'ADMIN'">
+            <div class="text-center text-2xl my-5" v-if="selectedUser !== 'Директор'">
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
                 {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
               </h1>
             </div>
-            <div v-if="user.role === 'ADMIN'">
+            <div v-if="user.role === 'ADMIN' && selectedUser === 'Директор'">
               <div class="flex items-center flex-col mb-3">
                 <div class="text-center text-xl my-3">
                   <h1>Баланс онлайн&наличные:</h1>
@@ -1805,12 +1805,7 @@ function showBankTransactions(id: number) {
           </div>
 
           <AdvanceReportTable
-            v-if="
-              selectedUser !== 'Директор (С)' &&
-              selectedUser !== 'Директор' &&
-              selectedUser !== 'Власенкова' &&
-              selectedUser !== 'Горцуева'
-            "
+            v-if="selectedUser !== 'Директор'"
             :rows="
               filteredRows?.filter(
                 (row) =>
@@ -1825,40 +1820,7 @@ function showBankTransactions(id: number) {
           />
 
           <AdvanceReportTable
-            v-if="selectedUser === 'Горцуева'"
-            :rows="
-              filteredRows?.filter(
-                (row) =>
-                  row.issuedUser === selectedUser ||
-                  row.createdUser === selectedUser ||
-                  (row.createdUser === 'Директор' && row.type === 'Безнал')
-              )
-            "
-            :user="user"
-            @open-modal="openModal"
-            @update-delivery-row="updateDeliveryRow"
-            @delete-row="deleteRow"
-          />
-
-          <AdvanceReportTable
-            v-if="selectedUser === 'Директор (С)'"
-            :rows="
-              filteredRows?.filter(
-                (row) =>
-                  row.issuedUser === 'Директор' ||
-                  row.createdUser === 'Директор' ||
-                  row.issuedUser === 'Директор (С)' ||
-                  row.createdUser === 'Директор (С)'
-              )
-            "
-            :user="user"
-            @open-modal="openModal"
-            @update-delivery-row="updateDeliveryRow"
-            @delete-row="deleteRow"
-          />
-
-          <AdvanceReportTable
-            v-if="selectedUser === 'Директор' || selectedUser === 'Власенкова'"
+            v-if="selectedUser === 'Директор'"
             :rows="filteredRows"
             :user="user"
             @open-modal="openModal"
@@ -2589,6 +2551,8 @@ function showBankTransactions(id: number) {
                   class="w-full"
                   v-model="rowData.issuedUser"
                   :options="usersOfIssued"
+                  value-attribute="name"
+                  option-attribute="name"
                 />
               </div>
 
@@ -3017,6 +2981,8 @@ function showBankTransactions(id: number) {
                   class="w-full"
                   v-model="rowData.issuedUser"
                   :options="usersOfIssued"
+                  value-attribute="name"
+                  option-attribute="name"
                 />
               </div>
 

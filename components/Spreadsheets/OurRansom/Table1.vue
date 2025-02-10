@@ -1,15 +1,9 @@
 <script setup lang="ts">
 import { read, utils, writeFile, write } from "xlsx";
-import { createClient } from "@supabase/supabase-js";
 import Cookies from "js-cookie";
 import { useToast } from "vue-toastification";
 
 const toast = useToast();
-
-const supabase = createClient(
-  "https://fomoljxhkywsdgnchewy.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvbW9sanhoa3l3c2RnbmNoZXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjM1ODMwMTksImV4cCI6MjAzOTE1OTAxOX0.ItZhBr3_OBP0nii6RX-jy9Q7hu2qvNQ2UBVZNJyZDFs"
-);
 
 const router = useRouter();
 const route = useRoute();

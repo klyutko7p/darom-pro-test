@@ -73,6 +73,7 @@ let userData = ref({} as User);
 function openModal(user: User) {
   isOpen.value = true;
   userData.value = JSON.parse(JSON.stringify(user));
+  userData.value.password = "";
 }
 
 function closeModal() {
@@ -248,6 +249,15 @@ const userOptions = [
                   color="white"
                   variant="outline"
                   v-model="userData.username"
+                  class="w-full"
+                />
+              </div>
+              <div class="flex flex-col items-start text-left gap-2 mb-5">
+                <label for="name">Новый пароль (необязательно)</label>
+                <UInput
+                  color="white"
+                  variant="outline"
+                  v-model="userData.password"
                   class="w-full"
                 />
               </div>
