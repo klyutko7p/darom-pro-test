@@ -376,37 +376,14 @@ function returnTotal(sum: number) {
           </div>
 
           <h1 class="text-xl font-bold mt-10">
-            Баланс чистой прибыли торговой империи за период:
+            Баланс чистой прибыли за период:
             <span class="text-secondary-color font-bold"
               >{{ formatNumber(sumOfArray3) }} ₽</span
             >
           </h1>
-
-          <div v-for="company in companies" class="mt-10 mb-10">
-            <h1 class="font-bold text-xl">
-              {{ company }}
-            </h1>
-            <div>
-              <AdvanceReportTableReport
-                :rows="filteredRows?.filter((row) => row.company === company)"
-                :user="user"
-                :rows-delivery="
-                  rowsDelivery?.filter((row) => row.nameOfAction === company)
-                "
-                :rows-balance="rowsBalance"
-                :rows-our-ransom="rowsOurRansom"
-                :company="company"
-                :selected="selected"
-                :type="selectedType"
-                :selected-type-of-expenditure="selectedTypeOfExpenditure"
-              />
-            </div>
-          </div>
-
           <div class="mt-10 mb-10">
             <h1 class="font-bold text-xl">
               Итог месяца прибыли <br class="hidden max-sm:block" />
-              по всем проектам
             </h1>
             <div>
               <AdvanceReportTableReport

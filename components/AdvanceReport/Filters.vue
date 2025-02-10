@@ -131,28 +131,7 @@ const uniqueNotation = ref<Array<string>>(props.uniqueNotation);
 const uniqueCreatedUser = ref<Array<string>>(props.uniqueCreatedUser);
 const uniqueExpenditure = ref<Array<string>>(props.uniqueExpenditure);
 
-let pvz = ref([
-  "Ряженое",
-  "Алексеевка",
-  "Латоново",
-  "Надежда",
-  "Александровка",
-  "Новониколаевка",
-  "Политотдельское",
-  "Мещерино",
-  "Коломенское ЯМ",
-  "Коломенское WB",
-  "Бессоново WB",
-  "Бессоново OZ",
-  "Новоандриановка",
-  "Офис",
-  "НаДом",
-]);
-
-pvz.value = pvz.value.sort((a, b) => a.localeCompare(b, "ru"));
-
-pvz.value.push("ПВЗ_1");
-pvz.value.push("ПВЗ_3");
+let pvz = ref([]);
 
 const uniquePVZ = computed(() => {
   // let array = storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "PVZ");
@@ -366,7 +345,13 @@ function clearLocalStorage() {
   endDate2.value = null;
 }
 
-onMounted(() => {
+const storePVZ = usePVZStore();
+onMounted(async () => {
+  pvz.value = await storePVZ.getPVZ();
+  pvz.value = pvz.value.sort((a: PVZ, b: PVZ) =>
+    a.name.localeCompare(b.name, "ru")
+  );
+
   const storedSelectedPVZ = loadFromLocalStorage("selectedPVZAR");
   if (storedSelectedPVZ !== null) {
     selectedPVZ.value = storedSelectedPVZ;

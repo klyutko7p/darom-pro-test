@@ -30,15 +30,17 @@ function returnTotal() {
   emit("returnTotal", sumOfArray3.value);
 }
 
-let pvz = ref<Array<string>>([]);
+let pvz = ref<Array<any>>([]);
 
 const filteredRows = ref(props.rows);
 
 const totalRows = computed(() => Math.ceil(props.rows?.length));
 let uniqueId = ref("q");
 
-onMounted(() => {
-  pvz.value = storeAdvanceReports.getPVZ();
+const storePVZ = usePVZStore();
+onMounted(async () => {
+  pvz.value = await storePVZ.getPVZ();
+  pvz.value = pvz.value.map((pvzDataValue) => pvzDataValue.name);
   updateCurrentPageData();
   getTotal();
 
@@ -192,8 +194,10 @@ function updateCurrentPageData() {
                   item.PVZ === row.PVZ &&
                   item.typeOfExpenditure === "Удержания с сотрудников"
               )
-              .reduce((sum, item) => sum + parseFloat(item.expenditure.toString()), 0) ||
-            0;
+              .reduce(
+                (sum, item) => sum + parseFloat(item.expenditure.toString()),
+                0
+              ) || 0;
 
           expenditureByPVZ[row.PVZ] += deductions;
 

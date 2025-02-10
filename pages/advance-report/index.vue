@@ -22,6 +22,7 @@ const uniqueNotation = ref<Array<string>>([]);
 const uniqueCreatedUser = ref<Array<string>>([]);
 const uniqueExpenditure = ref<Array<string>>([]);
 
+const storePVZ = usePVZStore();
 onMounted(async () => {
   // Если нет токена — переходим на страницу логина и выходим
   if (!token) {
@@ -33,6 +34,8 @@ onMounted(async () => {
   try {
     // Получаем данные пользователя
     user.value = await storeUsers.getUser();
+
+    pvz.value = await storePVZ.getPVZ();
 
     // Формируем список промисов для параллельного выполнения запросов
     const promises = [];
@@ -736,7 +739,7 @@ function closeModalYM() {
   rowData.value = {} as IAdvanceReport;
 }
 
-let pvz = ref(["ПВЗ_1", "ПВЗ_3"]);
+let pvz = ref([]);
 
 pvz.value = pvz.value.sort((a, b) => a.localeCompare(b, "ru"));
 
