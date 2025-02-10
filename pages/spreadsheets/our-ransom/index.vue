@@ -236,18 +236,8 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
       today.setHours(0, 0, 0, 0);
 
       filteredRows.value = filteredRows.value.filter((row) => {
-        const createdAt = new Date(row.created_at);
-        const deliveredSC = new Date(row.deliveredSC);
-        createdAt.setHours(0, 0, 0, 0);
-        deliveredSC.setHours(0, 0, 0, 0);
-        const timeDiff = today - createdAt;
-        const daysDiff = timeDiff / (1000 * 60 * 60 * 24);
-        const deliveredSCTimeDif = deliveredSC - today;
         return (
-          row.deliveredPVZ === null &&
-          user.value.PVZ.includes(row.dispatchPVZ) &&
-          daysDiff >= 1 &&
-          (deliveredSCTimeDif === 0 || !row.deliveredSC)
+          row.deliveredPVZ === null && user.value.PVZ.includes(row.dispatchPVZ)
         );
       });
     } else if (user.value.role === "PVZ" || user.value.role === "PPVZ") {
@@ -757,14 +747,6 @@ function watchQuantity() {
 
 let isShowModal = ref(false);
 
-function checkWB() {
-  rowData.value.dp = true;
-}
-
-function nonCheckWB() {
-  rowData.value.dp = false;
-}
-
 const pvzPercent = ref<Array<IPVZPercent[]>>();
 const storePVZPercent = usePVZPercentStore();
 async function checkPercent() {
@@ -845,12 +827,6 @@ let additionallies = [
                 v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
                 @click="openModal"
                 >Создать новую запись</UIMainButton
-              >
-              <UIMainButton
-                v-if="user.username === 'Директор'"
-                class="max-sm:w-full"
-                @click="updateCellStatusFull"
-                >Обновить статус ячеек</UIMainButton
               >
             </div>
           </div>
@@ -1717,16 +1693,6 @@ let additionallies = [
                     />
                   </div>
                 </div>
-
-                <div class="flex flex-col items-center gap-2 mr-5">
-                  <label>Предоплата</label>
-                  <input
-                    class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
-                    type="checkbox"
-                    required
-                    v-model="rowData.dp"
-                  />
-                </div>
               </div>
             </template>
             <template v-slot:footer>
@@ -1750,7 +1716,7 @@ let additionallies = [
                   :disabled="
                     rowData.fromName === '' || rowData.fromName === null
                   "
-                  @click="openModalShow"
+                  @click="createRow"
                   >Создать
                 </UISaveModalButton>
                 <UISaveModalButton
@@ -2261,16 +2227,6 @@ let additionallies = [
                     />
                   </div>
                 </div>
-
-                <div class="flex flex-col items-center gap-2 mr-5">
-                  <label>Предоплата</label>
-                  <input
-                    class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
-                    type="checkbox"
-                    required
-                    v-model="rowData.dp"
-                  />
-                </div>
               </div>
             </template>
             <template v-slot:footer>
@@ -2294,7 +2250,7 @@ let additionallies = [
                   :disabled="
                     rowData.fromName === '' || rowData.fromName === null
                   "
-                  @click="openModalShow"
+                  @click="createRow"
                   >Создать
                 </UISaveModalButton>
                 <UISaveModalButton
@@ -2320,42 +2276,5 @@ let additionallies = [
         </div>
       </NuxtLayout>
     </div>
-
-    <UINewModalEditNoPadding v-show="isShowModal" @close-modal="closeModalShow">
-      <template v-slot:icon-header> </template>
-      <template v-slot:header>
-        <div class="custom-header">Статус предоплаты</div>
-      </template>
-      <template v-slot:body>
-        <div class="flex items-center flex-col mb-5">
-          <h1
-            class="text-xl mt-3 max-w-[500px] text-center text-secondary-color font-semibold w-full max-sm:text-xl py-3 max-sm:mt-5"
-          >
-            Отметить предоплату?
-          </h1>
-          <div
-            v-if="!rowData.id"
-            class="flex items-center gap-3 max-sm:flex-col"
-          >
-            <UButton
-              @click="checkWB(), createRow()"
-              class="font-bold"
-              icon="material-symbols:check-rounded"
-              size="xl"
-              color="green"
-              >Да</UButton
-            >
-            <UButton
-              @click="nonCheckWB(), createRow()"
-              class="font-bold"
-              icon="akar-icons:cross"
-              size="xl"
-              color="red"
-              >Нет</UButton
-            >
-          </div>
-        </div>
-      </template>
-    </UINewModalEditNoPadding>
   </div>
 </template>

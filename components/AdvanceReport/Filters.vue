@@ -152,19 +152,7 @@ let pvz = ref([
 pvz.value = pvz.value.sort((a, b) => a.localeCompare(b, "ru"));
 
 pvz.value.push("ПВЗ_1");
-pvz.value.push("ПВЗ_2");
 pvz.value.push("ПВЗ_3");
-pvz.value.push("ПВЗ_4");
-pvz.value.push("ППВЗ_5");
-pvz.value.push("ППВЗ_7");
-pvz.value.push("ПВЗ_8");
-pvz.value.push("ППВЗ_9");
-pvz.value.push("ПВЗ_10");
-pvz.value.push("ПВЗ_11");
-pvz.value.push("ППВЗ_12");
-pvz.value.push("ПВЗ_13");
-pvz.value.push("ПВЗ_14");
-pvz.value.push("Магазин");
 
 const uniquePVZ = computed(() => {
   // let array = storeAdvanceReports.getUniqueNonEmptyValues(props.rows, "PVZ");

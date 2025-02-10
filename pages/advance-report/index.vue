@@ -55,6 +55,9 @@ onMounted(async () => {
     }
 
     usersOfIssued.value = await storeUsers.getUsers();
+    usersOfIssued.value = usersOfIssued.value.filter(
+      (user) => user.role === "ADMIN" || user.role === "ADMINISTRATOR"
+    );
 
     // Запросы для баланса (общие для всех)
     promises.push(
@@ -733,7 +736,7 @@ function closeModalYM() {
   rowData.value = {} as IAdvanceReport;
 }
 
-let pvz = ref(["ПВЗ_1", "ППВЗ_7"]);
+let pvz = ref(["ПВЗ_1", "ПВЗ_3"]);
 
 pvz.value = pvz.value.sort((a, b) => a.localeCompare(b, "ru"));
 
@@ -1721,7 +1724,10 @@ function showBankTransactions(id: number) {
           </div>
 
           <div>
-            <div class="text-center text-2xl my-5" v-if="selectedUser !== 'Директор'">
+            <div
+              class="text-center text-2xl my-5"
+              v-if="selectedUser !== 'Директор'"
+            >
               <h1>Баланс {{ selectedUser }}:</h1>
               <h1 class="font-bold text-secondary-color text-4xl text-center">
                 {{ formatNumber(getAllSumFromName(selectedUser)) }} ₽
@@ -2475,7 +2481,7 @@ function showBankTransactions(id: number) {
               Изменение: <b> {{ rowData.id }}</b>
             </div>
             <div class="custom-header" v-else-if="rowData.type === 'Нал'">
-              Создание аван. документа Нал
+              Создание аван. документа
             </div>
             <div class="custom-header" v-else-if="rowData.type === 'Безнал'">
               Создание аван. документа Безнал
@@ -2649,7 +2655,7 @@ function showBankTransactions(id: number) {
             <div class="custom-header" v-if="rowData.id">
               Изменение: <b> {{ rowData.id }}</b>
             </div>
-            <div class="custom-header" v-else>Пополнение баланса Нал</div>
+            <div class="custom-header" v-else>Пополнение баланса</div>
           </template>
           <template v-slot:body>
             <div class="text-black">
@@ -2905,7 +2911,7 @@ function showBankTransactions(id: number) {
               Изменение: <b> {{ rowData.id }}</b>
             </div>
             <div class="custom-header" v-else-if="rowData.type === 'Нал'">
-              Создание аван. документа Нал
+              Создание аван. документа
             </div>
             <div class="custom-header" v-else-if="rowData.type === 'Безнал'">
               Создание аван. документа Безнал

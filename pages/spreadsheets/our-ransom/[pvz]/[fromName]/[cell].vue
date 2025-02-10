@@ -1010,16 +1010,6 @@ function onDateInput(event: any) {
                     />
                   </div>
                 </div>
-
-                <div class="flex flex-col items-center gap-2 mr-5">
-                  <label>Предоплата</label>
-                  <input
-                    class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
-                    type="checkbox"
-                    required
-                    v-model="rowData.dp"
-                  />
-                </div>
               </div>
             </template>
             <template v-slot:footer>
@@ -1521,16 +1511,7 @@ function onDateInput(event: any) {
                     />
                   </div>
                 </div>
-
-                <div class="flex flex-col items-center gap-2 mr-5">
-                  <label>Предоплата</label>
-                  <input
-                    class="h-4 w-4 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-0 focus:ring-secondary-color checked:ring-[2px] checked:ring-secondary-color focus:ring-offset-transparent form-checkbox rounded bg-white border border-gray-300 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white text-orange-500 ring-[2px] ring-secondary-color bg-transparent"
-                    type="checkbox"
-                    required
-                    v-model="rowData.dp"
-                  />
-                </div>
+                
               </div>
             </template>
             <template v-slot:footer>

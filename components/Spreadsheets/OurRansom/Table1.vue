@@ -495,13 +495,7 @@ onMounted(async () => {
 
   if (
     props.user.username !== "Директор" &&
-    props.user.username !== "Власенкова" &&
-    props.user.username !== "Горцуева" &&
-    props.user.username !== "Шведова" &&
-    props.user.username !== "Светлана" &&
-    props.user.username !== "Светлана1" &&
-    props.user.username !== "Светлана2" &&
-    props.user.username !== "Светлана3"
+    props.user.role !== "ADMINISTRATOR"
   ) {
     const index = columns.findIndex((column) => column.key === "actions");
     const index2 = columns.findIndex((column) => column.key === "dp");
@@ -2228,19 +2222,6 @@ const columns = [
           </p>
         </template>
 
-        <template #dp-data="{ row }">
-          <p
-            v-if="
-              user.username.includes('Светлана') ||
-              user.username === 'Горцуева' ||
-              user.username === 'Власенкова' ||
-              user.username === 'Директор'
-            "
-          >
-            {{ row.dp ? "Предоплата" : "Постоплата" }}
-          </p>
-        </template>
-
         <template #profit1-data="{ row }">
           <p
             v-if="
@@ -2315,13 +2296,7 @@ const columns = [
         </template>
 
         <template
-          v-if="
-            user.username === 'Директор' ||
-            user.username === 'Власенкова' ||
-            user.username === 'Горцуева' ||
-            user.username === 'Шведова' ||
-            user.username.includes('Светлана')
-          "
+          v-if="user.username === 'Директор' || user.role === 'ADMINISTRATOR'"
           #actions-data="{ row }"
         >
           <UDropdown :open="dropdownStates[row.id]" :items="itemsTable(row)">
