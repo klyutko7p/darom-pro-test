@@ -578,11 +578,7 @@ function convertToURL(inputString: string) {
         >Удалить выделенные записи</UIActionButton
       >
       <UIActionButton
-        v-if="
-          user.deliveredPVZ2 === 'WRITE' &&
-          showButtonPVZ &&
-          user.role === 'ADMIN'
-        "
+        v-if="user.deliveredPVZ2 === 'WRITE' && showButtonPVZ"
         @click="updateDeliveryRows('PVZ')"
         >Доставить на пвз
       </UIActionButton>
@@ -634,6 +630,11 @@ function convertToURL(inputString: string) {
         (user.role === 'PVZ' || user.role === 'PPVZ')
       "
     >
+      <UIActionButton
+        v-if="user.deliveredPVZ2 === 'WRITE' && showButtonPVZ"
+        @click="updateDeliveryRows('PVZ')"
+        >Доставить на пвз
+      </UIActionButton>
       <UIActionButton
         v-if="user.issued2 === 'WRITE' && showButton"
         @click="showOthersVariants = !showOthersVariants"
