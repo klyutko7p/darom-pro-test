@@ -603,10 +603,15 @@ function convertToURL(inputString: string) {
           @click="updateDeliveryRows('additionally3')"
           >Оплата наличными
         </UIActionButton2>
-        <UIActionButton2
+        <!-- <UIActionButton2
           v-if="user.additionally2 === 'WRITE' && getAllSum > 0"
           @click="openModalQR"
           >Оплата онлайн (QR)
+        </UIActionButton2> -->
+        <UIActionButton2
+          v-if="user.additionally2 === 'WRITE'"
+          @click="updateDeliveryRows('additionally', getAllSum)"
+          >Оплата онлайн
         </UIActionButton2>
         <UIActionButton2
           v-if="user.additionally2 === 'WRITE'"
@@ -641,10 +646,15 @@ function convertToURL(inputString: string) {
           @click="updateDeliveryRows('additionally3')"
           >Оплата наличными
         </UIActionButton2>
-        <UIActionButton2
+        <!-- <UIActionButton2
           v-if="user.additionally2 === 'WRITE' && getAllSum > 0"
           @click="openModalQR"
           >Оплата онлайн (QR)
+        </UIActionButton2> -->
+        <UIActionButton2
+          v-if="user.additionally2 === 'WRITE'"
+          @click="updateDeliveryRows('additionally', getAllSum)"
+          >Оплата онлайн
         </UIActionButton2>
         <div v-if="showPayRejectClient" class="flex flex-col gap-3">
           <UIActionButton2 @click="updateDeliveryRows('additionally1-1')"

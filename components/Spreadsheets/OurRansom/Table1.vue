@@ -1124,23 +1124,15 @@ const columns = [
           @click="updateDeliveryRows('additionally3')"
           >Оплата наличными
         </UIActionButton2>
-        <UIActionButton2
+        <!-- <UIActionButton2
           v-if="user.additionally1 === 'WRITE'"
           @click="openModalQR('additionally')"
           >Оплата онлайн (QR)
-        </UIActionButton2>
+        </UIActionButton2> -->
         <UIActionButton2
-          v-if="
-            user.additionally1 === 'WRITE' &&
-            (user.username === 'Директор' ||
-              user.username === 'Горцуева' ||
-              user.username === 'Светлана1' ||
-              user.username === 'Светлана3' ||
-              user.username === 'Светлана2' ||
-              user.username === 'Власенкова')
-          "
+          v-if="user.additionally1 === 'WRITE'"
           @click="updateDeliveryRows('additionally', getAllSum)"
-          >Оплата онлайн (Старый метод)
+          >Оплата онлайн
         </UIActionButton2>
         <UIActionButton2
           v-if="user.additionally1 === 'WRITE'"
@@ -1192,23 +1184,15 @@ const columns = [
           @click="updateDeliveryRows('additionally3')"
           >Оплата наличными
         </UIActionButton2>
-        <UIActionButton2
+        <!-- <UIActionButton2
           v-if="user.additionally1 === 'WRITE'"
           @click="openModalQR('additionally')"
           >Оплата онлайн (QR)
-        </UIActionButton2>
+        </UIActionButton2> -->
         <UIActionButton2
-          v-if="
-            user.additionally1 === 'WRITE' &&
-            (user.username === 'Директор' ||
-              user.username === 'Горцуева' ||
-              user.username === 'Светлана1' ||
-              user.username === 'Светлана3' ||
-              user.username === 'Светлана2' ||
-              user.username === 'Власенкова')
-          "
+          v-if="user.additionally1 === 'WRITE'"
           @click="updateDeliveryRows('additionally', getAllSum)"
-          >Оплата онлайн (Старый метод)
+          >Оплата онлайн 
         </UIActionButton2>
         <UIActionButton2
           v-if="user.additionally1 === 'WRITE'"

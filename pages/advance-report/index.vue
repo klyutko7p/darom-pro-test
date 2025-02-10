@@ -1762,7 +1762,7 @@ function showBankTransactions(id: number) {
                   v-if="user.role === 'ADMIN'"
                   @click="openModalAdmin"
                 >
-                  Пополнение баланса (нал)
+                  Пополнение баланса
                 </UIMainButton>
               </div>
             </div>
@@ -1801,7 +1801,7 @@ function showBankTransactions(id: number) {
                 class="w-full max-sm:max-w-[400px] mx-auto"
                 @click="openModal(rowData, 'CASH')"
               >
-                Создание аван. документа (нал)
+                Создание аван. документа 
               </UIMainButton>
               <div class="max-sm:hidden">
                 <Icon
@@ -2879,7 +2879,7 @@ function showBankTransactions(id: number) {
                 class="w-full max-sm:max-w-[400px] mx-auto"
                 @click="openModal(rowData, 'CASH')"
               >
-                Создание аван. документа (нал)
+                Создание аван. документа 
               </UIMainButton>
               <div class="max-sm:hidden">
                 <Icon

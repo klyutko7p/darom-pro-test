@@ -149,17 +149,10 @@ const uniqueTypeOfExpenditure = computed(() => {
   return [
     "Передача денежных средств",
     "Сопутствующие расходы",
-    "Автомобили",
-    "Ежемесячные платежи",
-    "Оплата ФОТ",
-    "Удержания с сотрудников",
-    "Оплата Налоги. ПФР, СОЦ и т.д.",
-    "Вывод дивидендов",
     "Расходники для ПВЗ",
-    "Перевод в междубалансовый, кредитный баланс",
-    "Списание кредитной задолженности торговой империи",
-    "Новый кредит нал",
-    "Новый кредит безнал",
+    "Ежемесячные платежи",
+    "Списание кредитной задолженности",
+    "Оплата ФОТ",
   ];
 });
 
@@ -351,6 +344,7 @@ onMounted(async () => {
   pvz.value = pvz.value.sort((a: PVZ, b: PVZ) =>
     a.name.localeCompare(b.name, "ru")
   );
+  pvz.value = pvz.value.map((pvzDataValue) => pvzDataValue.name);
 
   const storedSelectedPVZ = loadFromLocalStorage("selectedPVZAR");
   if (storedSelectedPVZ !== null) {
