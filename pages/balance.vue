@@ -228,12 +228,21 @@ onMounted(async () => {
 
     getProfitRowsSum();
     getProfitManagerRowsSum();
+
+    usersOfIssued.value = await storeUsers.getUsers();
+    usersOfIssued.value = usersOfIssued.value.filter(
+      (user) =>
+        (user.role === "ADMIN" || user.role === "ADMINISTRATOR") &&
+        user.username !== "admin_160421"
+    );
   } catch (error) {
     console.error("An error occurred:", error);
   } finally {
     isLoading.value = false;
   }
 });
+
+let usersOfIssued = ref<Array<User>>([]);
 
 definePageMeta({
   layout: false,
@@ -2288,16 +2297,6 @@ async function deleteRow(id: number) {
     isLoading.value = false;
   }
 }
-
-const options = [
-  "Нет",
-  "Рейзвих",
-  "Шведова",
-  "Директор",
-  "Косой",
-  "Мешков",
-  "Сошников",
-];
 </script>
 
 <template>
@@ -2710,7 +2709,9 @@ const options = [
                   <USelectMenu
                     class="w-full"
                     v-model="rowData.recipient"
-                    :options="options"
+                    :options="usersOfIssued"
+                    value-attribute="name"
+                    option-attribute="name"
                   />
                 </div>
 
@@ -3184,7 +3185,9 @@ const options = [
                     :disabled="rowData.id > 0"
                     class="w-full"
                     v-model="rowData.recipient"
-                    :options="options"
+                    :options="usersOfIssued"
+                    value-attribute="name"
+                    option-attribute="name"
                   />
                 </div>
 
@@ -3267,7 +3270,9 @@ const options = [
                     :disabled="rowData.id > 0"
                     class="w-full"
                     v-model="rowData.recipient"
-                    :options="options"
+                    :options="usersOfIssued"
+                    value-attribute="name"
+                    option-attribute="name"
                   />
                 </div>
 

@@ -58,7 +58,9 @@ onMounted(async () => {
 
     usersOfIssued.value = await storeUsers.getUsers();
     usersOfIssued.value = usersOfIssued.value.filter(
-      (user) => user.role === "ADMIN" || user.role === "ADMINISTRATOR"
+      (user) =>
+        (user.role === "ADMIN" || user.role === "ADMINISTRATOR") &&
+        user.username !== "admin_160421"
     );
 
     // Запросы для баланса (общие для всех)
@@ -1377,7 +1379,6 @@ const typeOfOptions2 = [
   { value: "Новый кредит безнал", label: "Новый" },
   { value: "Пополнение баланса", label: "Нет" },
 ];
-
 </script>
 
 <template>
@@ -1569,7 +1570,6 @@ const typeOfOptions2 = [
             @delete-row="deleteRow"
           />
         </div>
-       
 
         <UINewModalEdit v-show="isOpen" @close-modal="closeModal">
           <template v-slot:icon-header>
@@ -1604,6 +1604,8 @@ const typeOfOptions2 = [
                   class="w-full"
                   v-model="rowData.PVZ"
                   :options="pvz"
+                  value-attribute="name"
+                  option-attribute="name"
                 />
               </div>
 
@@ -1799,6 +1801,8 @@ const typeOfOptions2 = [
                 class="w-full"
                 v-model="rowData.PVZ"
                 :options="pvz"
+                value-attribute="name"
+                option-attribute="name"
               />
             </div>
 
@@ -1897,6 +1901,8 @@ const typeOfOptions2 = [
                 class="w-full"
                 v-model="rowData.PVZ"
                 :options="pvz"
+                value-attribute="name"
+                option-attribute="name"
               />
             </div>
 
@@ -2034,6 +2040,8 @@ const typeOfOptions2 = [
                   class="w-full"
                   v-model="rowData.PVZ"
                   :options="pvz"
+                  value-attribute="name"
+                  option-attribute="name"
                 />
               </div>
 
