@@ -15,12 +15,12 @@ export default defineEventHandler(async (event) => {
     const formattedPhoneNumber = phoneNumber.replace("+", "");
 
     const postData = {
-      apiKey: "4nFBfMgZtcGIaNerL9olzNTpC7yz9aZHwkaVlMd3rOrVr095Lruha7avjQMo",
+      apiKey: "3KjSBEFaleNnuZTp7IRU0Lu9EhuYaAlmCvUZrkPN85JyYF8AhcMhBucaQ87G",
       sms: [
         {
           channel: "char",
           phone: formattedPhoneNumber,
-          text: `Код подтверждения: ${decryptedCode} Darom.pro`,
+          text: `Код подтверждения: ${decryptedCode} Доставка товаров DP`,
           sender: "VIRTA",
         },
       ],
