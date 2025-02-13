@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
       event
     );
 
-    const updateCell = await prisma.cell.update({
+    const updateCell = await prisma.cellClient.update({
       where: {
         id: cell.id,
       },

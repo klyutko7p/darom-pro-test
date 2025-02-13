@@ -88,6 +88,31 @@ export const useCellsStore = defineStore("cells", () => {
     }
   }
 
+  async function updateCellClientData(
+    cell: Cell,
+    status: string,
+    fromName: string
+  ) {
+    try {
+      let data = await useFetch("/api/cells/cell-update-status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cell: cell,
+          statusString: status,
+          fromNameString: fromName,
+        }),
+      });
+      cashedCells = null;
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function createCells(pvzName: string, quantity: number) {
     try {
       let { data }: any = await useFetch("/api/cells/create-cells", {
@@ -641,5 +666,6 @@ export const useCellsStore = defineStore("cells", () => {
     getCellsClient,
     createCells,
     createCellsClient,
+    updateCellClientData
   };
 });

@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import Cookies from "js-cookie";
-
 const storeUsers = useUsersStore();
 const storeClients = useClientsStore();
 const storeRansom = useRansomStore();
 const storePVZ = usePVZStore();
 const storeSortingCenters = useSortingCentersStore();
 const storeMarketplaces = useMarketplacesStore();
+
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const router = useRouter();
 
@@ -123,6 +126,15 @@ async function updateRow() {
     user.value.username,
     "ClientRansom"
   );
+
+  if (cellData.value) {
+    await storeCells.updateCellClientData(
+      cellData.value,
+      "Занято",
+      rowData.value.fromName
+    );
+  }
+
   closeModal();
   filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
   rows.value = filteredRows.value;
@@ -136,6 +148,15 @@ async function createRow() {
     user.value.username,
     "ClientRansom"
   );
+
+  if (cellData.value) {
+    await storeCells.updateCellClientData(
+      cellData.value,
+      "Занято",
+      rowData.value.fromName
+    );
+  }
+
   closeModal();
   filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
   rows.value = filteredRows.value;
@@ -270,6 +291,7 @@ function handleFilteredRows(filteredRowsData: IClientRansom[]) {
   }
 }
 
+const storeCells = useCellsStore();
 onMounted(async () => {
   if (!token || user.value.dataClientRansom === "NONE") {
     router.push("/auth/login");
@@ -278,6 +300,7 @@ onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   rows.value = await storeRansom.getRansomRows("ClientRansom");
+  cells.value = await storeCells.getCellsClient();
 
   deleteIssuedRowsTimer();
 
@@ -302,17 +325,165 @@ let showAddFields = ref(false);
 
 let isAutoCell = ref(true);
 let isAutoFromName = ref(true);
+let cells = ref<Array<Cell>>();
+let cellData = ref({} as Cell);
 
-function getCellFromName() {
+async function getCellFromName() {
+  if (rowData.value.fromName.trim().length === 4) {
+    let phoneNum = rowData.value.fromName.trim().toString().slice(-4);
+    let row = rows.value?.filter((row) =>
+      row.fromName ? row.fromName.slice(-4) === phoneNum : ""
+    );
+
+    if (row && row.length > 0) {
+      if (row.some((r) => r.fromName !== row[0].fromName)) {
+        toast.warning("Было найдено несколько номеров. Впишите полный номер");
+      } else {
+        rowData.value.fromName = row[0].fromName;
+      }
+    }
+  }
+
+  if (rowData.value.fromName.trim().length === 12) {
+    if (rowData.value.fromName === "+77000000000") {
+      rowData.value.cell = "0";
+      rowData.value.dispatchPVZ = "НаДом";
+      return;
+    } else {
+      let row = rows.value?.filter(
+        (row) =>
+          row.fromName === rowData.value.fromName && !row.cell.includes("-")
+      );
+      if (row && row.length > 0) {
+        if (row.some((r) => r.dispatchPVZ !== row[0].dispatchPVZ)) {
+          toast.warning(
+            "У клиента есть товары на разных ПВЗ! Выберите ПВЗ самостоятельно"
+          );
+        } else {
+          rowData.value.dispatchPVZ = row[0].dispatchPVZ;
+        }
+      }
+    }
+  }
+
   if (
     rowData.value.fromName.trim().length === 12 &&
     isAutoFromName.value === true
   ) {
-    let rowCell = rows.value?.filter(
-      (row) => row.fromName === rowData.value.fromName
+    let row = rows.value?.filter(
+      (row) =>
+        row.fromName === rowData.value.fromName &&
+        row.dispatchPVZ === rowData.value.dispatchPVZ &&
+        (row.deliveredPVZ === null ||
+          row.deliveredSC === null ||
+          row.issued === null) &&
+        !row.cell.includes("-")
     );
-    if (rowCell) {
-      rowData.value.cell = rowCell[0].cell;
+
+    if (row && row.length > 0) {
+      const unoccupiedCellsAndPVZ = cells.value?.sort(
+        (a, b) => a.name - b.name
+      );
+      const freeCell = unoccupiedCellsAndPVZ?.find(
+        (cell) =>
+          cell.PVZ === rowData.value.dispatchPVZ && cell.status === "Свободно"
+      );
+
+      const targetCell = row[0].cell;
+      const targetPVZ = row[0].dispatchPVZ;
+      const targetFromName = row[0].fromName;
+
+      const cellIsOccupied = unoccupiedCellsAndPVZ?.some(
+        (cell) =>
+          cell.name === targetCell &&
+          cell.PVZ === targetPVZ &&
+          cell.fromName !== targetFromName
+      );
+
+      if (cellIsOccupied) {
+        if (freeCell) {
+          rowData.value.cell = freeCell.name;
+          cellData.value = freeCell;
+        } else {
+          toast.warning("Нет свободных ячеек для выбранного ПВЗ");
+        }
+      } else {
+        rowData.value.cell = row[0].cell;
+      }
+    } else {
+      const unoccupiedCellsAndPVZ = cells.value
+        ?.filter((cell) => cell.status === "Свободно")
+        .sort((a, b) => a.name - b.name);
+      const freeCell = unoccupiedCellsAndPVZ?.find(
+        (cell) => cell.PVZ === rowData.value.dispatchPVZ
+      );
+      if (freeCell) {
+        rowData.value.cell = freeCell.name;
+        cellData.value = freeCell;
+      } else {
+        toast.warning("Нет свободных ячеек для выбранного ПВЗ");
+      }
+    }
+  }
+}
+
+async function changePVZ() {
+  if (
+    rowData.value.fromName.trim().length === 12 &&
+    isAutoFromName.value === true
+  ) {
+    let row = rows.value?.filter(
+      (row) =>
+        row.fromName === rowData.value.fromName &&
+        row.dispatchPVZ === rowData.value.dispatchPVZ &&
+        (row.deliveredPVZ === null ||
+          row.deliveredSC === null ||
+          row.issued === null) &&
+        !row.cell.includes("-")
+    );
+    if (row && row.length > 0) {
+      const unoccupiedCellsAndPVZ = cells.value?.sort(
+        (a, b) => a.name - b.name
+      );
+      const freeCell = unoccupiedCellsAndPVZ?.find(
+        (cell) =>
+          cell.PVZ === rowData.value.dispatchPVZ && cell.status === "Свободно"
+      );
+
+      const targetCell = row[0].cell;
+      const targetPVZ = row[0].dispatchPVZ;
+      const targetFromName = row[0].fromName;
+
+      const cellIsOccupied = unoccupiedCellsAndPVZ?.some(
+        (cell) =>
+          cell.name === targetCell &&
+          cell.PVZ === targetPVZ &&
+          cell.fromName !== targetFromName
+      );
+
+      if (cellIsOccupied) {
+        if (freeCell) {
+          rowData.value.cell = freeCell.name;
+          cellData.value = freeCell;
+        } else {
+          toast.warning("Нет свободных ячеек для выбранного ПВЗ");
+        }
+      } else {
+        rowData.value.cell = row[0].cell;
+      }
+    } else {
+      const unoccupiedCellsAndPVZ = cells.value
+        ?.filter((cell) => cell.status === "Свободно")
+        .sort((a, b) => a.name - b.name);
+      const freeCell = unoccupiedCellsAndPVZ?.find(
+        (cell) => cell.PVZ === rowData.value.dispatchPVZ
+      );
+      if (freeCell) {
+        rowData.value.cell = freeCell.name;
+        cellData.value = freeCell;
+      } else {
+        toast.warning("Нет свободных ячеек для выбранного ПВЗ");
+      }
     }
   }
 }
@@ -534,7 +705,7 @@ function checkForNumber() {
                 <select
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.dispatchPVZ"
-                  @change="checkPercent"
+                  @change="changePVZ(), checkPercent()"
                   :disabled="user.dispatchPVZ1 === 'READ'"
                 >
                   <option v-for="pvzData in pvz" :value="pvzData.name">
@@ -885,7 +1056,7 @@ function checkForNumber() {
                 <select
                   class="py-1 px-2 border-2 bg-transparent rounded-lg text-base disabled:text-gray-400"
                   v-model="rowData.dispatchPVZ"
-                  @change="checkPercent"
+                  @change="changePVZ(), checkPercent()"
                   :disabled="user.dispatchPVZ1 === 'READ'"
                 >
                   <option v-for="pvzData in pvz" :value="pvzData.name">

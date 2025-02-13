@@ -921,10 +921,10 @@ const columns = [
     key: "priceSite",
     label: "Стоимость",
   },
-  {
-    key: "prepayment",
-    label: "Предоплата",
-  },
+  // {
+  //   key: "prepayment",
+  //   label: "Предоплата",
+  // },
   {
     key: "percentClient",
     label: "Процент",
