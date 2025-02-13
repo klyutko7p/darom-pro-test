@@ -292,7 +292,7 @@ const nonEmptyCount = computed(() => {
   return count;
 });
 
-const uniqueType = ref(["Нал", "Безнал"]);
+const uniqueType = ref(["Нал"]);
 
 function saveToLocalStorage(key: string, value: any) {
   localStorage.setItem(key, JSON.stringify(value));

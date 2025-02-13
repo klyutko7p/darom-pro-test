@@ -85,7 +85,7 @@ onMounted(async () => {
   }
 
   if (rows.value) {
-    handleFilteredRows([rows.value, selected.value, ["Нал", "Безнал"], []]);
+    handleFilteredRows([rows.value, selected.value, ["Нал"], []]);
   }
 
   ourRansomRows.value = rowsOurRansom.value;

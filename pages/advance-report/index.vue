@@ -1857,7 +1857,7 @@ const typeOfOptions2 = [
             <div class="custom-header" v-if="rowData.id">
               Изменение: <b> {{ rowData.id }}</b>
             </div>
-            <div class="custom-header" v-else>Пополнение баланса Безнал</div>
+            <div class="custom-header" v-else>Пополнение баланса</div>
           </template>
           <template v-slot:body>
             <div class="text-black">
@@ -2019,7 +2019,7 @@ const typeOfOptions2 = [
               Создание аван. документа
             </div>
             <div class="custom-header" v-else-if="rowData.type === 'Безнал'">
-              Создание аван. документа Безнал
+              Создание аван. документа
             </div>
           </template>
           <template v-slot:body>

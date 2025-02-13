@@ -29,7 +29,7 @@ const startingDate = ref<Date | string | null>(null);
 const endDate = ref<Date | string | null>(null);
 
 const selectedTypeOfExpenditure = ref<Array<string>>([]);
-const selectedType = ref<Array<string>>(["Нал", "Безнал"]);
+const selectedType = ref<Array<string>>(["Нал"]);
 
 const uniqueTypeOfExpenditure = computed(() => {
   let array = storeAdvanceReports.getUniqueNonEmptyValues(
@@ -46,11 +46,11 @@ const uniqueTypeOfExpenditure = computed(() => {
   return Array.from(newArray);
 });
 
-const uniqueType = ref(["Нал", "Безнал"]);
+const uniqueType = ref(["Нал"]);
 
 function clearFields() {
   selectedTypeOfExpenditure.value = [];
-  selectedType.value = ["Нал", "Безнал"];
+  selectedType.value = ["Нал"];
   startingDate.value = "";
   endDate.value = "";
   selected.value.start = new Date(2024, 0, 1);
