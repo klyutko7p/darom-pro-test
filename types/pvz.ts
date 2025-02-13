@@ -1,5 +1,6 @@
 interface PVZ {
-    id: number;
-    name: string;
-    address?: string;
+  id: number;
+  name: string;
+  address?: string;
+  coordinates: number[];
 }

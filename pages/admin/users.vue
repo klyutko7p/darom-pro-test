@@ -445,46 +445,6 @@ const userOptions = [
                 />
               </div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Отправка в ПВЗ (Доставка)</label>
-                <USelectMenu
-                  class="w-full"
-                  value-attribute="value"
-                  option-attribute="text"
-                  v-model="userData.dispatchPVZ3"
-                  :options="userOptions"
-                />
-              </div>
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Отсортировано (Доставка)</label>
-                <USelectMenu
-                  class="w-full"
-                  value-attribute="value"
-                  option-attribute="text"
-                  v-model="userData.sorted"
-                  :options="userOptions"
-                />
-              </div>
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Оплачено (Доставка)</label>
-                <USelectMenu
-                  class="w-full"
-                  value-attribute="value"
-                  option-attribute="text"
-                  v-model="userData.paid"
-                  :options="userOptions"
-                />
-              </div>
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Имя (Доставка)</label>
-                <USelectMenu
-                  class="w-full"
-                  value-attribute="value"
-                  option-attribute="text"
-                  v-model="userData.name3"
-                  :options="userOptions"
-                />
-              </div>
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Телефон (Товары клиентов)</label>
                 <USelectMenu
                   class="w-full"
@@ -501,17 +461,6 @@ const userOptions = [
                   value-attribute="value"
                   option-attribute="text"
                   v-model="userData.fromName2"
-                  :options="userOptions"
-                />
-              </div>
-
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Телефон (Доставка)</label>
-                <USelectMenu
-                  class="w-full"
-                  value-attribute="value"
-                  option-attribute="text"
-                  v-model="userData.fromName3"
                   :options="userOptions"
                 />
               </div>
@@ -598,18 +547,6 @@ const userOptions = [
                   :options="userOptions"
                 />
               </div>
-
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Процент с клиента (Доставка)</label>
-                <USelectMenu
-                  class="w-full"
-                  value-attribute="value"
-                  option-attribute="text"
-                  v-model="userData.percentClient3"
-                  :options="userOptions"
-                />
-              </div>
-
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Примечание (Товары клиентов)</label>
                 <USelectMenu
@@ -647,16 +584,6 @@ const userOptions = [
                 />
               </div>
 
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Стоимость выкупа товара (Доставка) </label>
-                <USelectMenu
-                  class="w-full"
-                  value-attribute="value"
-                  option-attribute="text"
-                  v-model="userData.purchaseOfGoods"
-                  :options="userOptions"
-                />
-              </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Стоимость сайт (Товары клиентов)</label>
@@ -763,16 +690,6 @@ const userOptions = [
                 />
               </div>
 
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Данные (Доставка)</label>
-                <USelectMenu
-                  class="w-full"
-                  value-attribute="value"
-                  option-attribute="text"
-                  v-model="userData.dataDelivery"
-                  :options="userOptions"
-                />
-              </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Сумма с клиента (Товары клиентов)</label>
@@ -798,16 +715,6 @@ const userOptions = [
                 />
               </div>
 
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Сумма с клиента (Доставка)</label>
-                <USelectMenu
-                  class="w-full"
-                  value-attribute="value"
-                  option-attribute="text"
-                  v-model="userData.amountFromClient3"
-                  :options="userOptions"
-                />
-              </div>
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Ссылка для клиента (Товары клиентов)</label>
@@ -833,16 +740,6 @@ const userOptions = [
                 />
               </div>
 
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Ссылка для клиента (Доставка)</label>
-                <USelectMenu
-                  class="w-full"
-                  value-attribute="value"
-                  option-attribute="text"
-                  v-model="userData.clientLink3"
-                  :options="userOptions"
-                />
-              </div>
 
               <div v class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Прибыль (доход) (Товары клиентов)</label>
@@ -868,16 +765,6 @@ const userOptions = [
                 />
               </div>
 
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="cell">Прибыль (доход) (Доставка)</label>
-                <USelectMenu
-                  class="w-full"
-                  value-attribute="value"
-                  option-attribute="text"
-                  v-model="userData.profit3"
-                  :options="userOptions"
-                />
-              </div>
             </div>
           </template>
           <template v-slot:footer>

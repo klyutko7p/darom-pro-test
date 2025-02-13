@@ -21,7 +21,10 @@ let items = ref<Array<any>>([]);
 
 let isPersonalDataProcessingPolicyAgreed = ref(false);
 let isPrivacyPolicyAgreed = ref(false);
-
+const settings = ref<Array<any>>([]);
+const storePVZ = usePVZStore();
+const pvzs = ref<Array<PVZ>>([]);
+const storeUsers = useUsersStore();
 onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login?stay=true");
@@ -56,10 +59,11 @@ onMounted(async () => {
 
   pvzData.value = localStorage.getItem("addressData") || "";
   pvzData.value = pvzData.value.replace(/"/g, "");
-
   isLoading.value = true;
   client.value = await storeClients.getClient();
   clientData.value = await storeClients.getClientById(client.value.id);
+  settings.value = await storeUsers.getSettings();
+  pvzs.value = await storePVZ.getPVZ();
   isLoading.value = false;
 });
 
@@ -108,53 +112,6 @@ definePageMeta({
 
 let isShowInfo = ref(false);
 
-const pvzs = [
-  {
-    pvz: "ПВЗ_1",
-    name: "Тест адрес",
-  },
-  // {
-  //   pvz: "ПВЗ_2",
-  //   name: "ул. Харитоново, 8",
-  // },
-  // {
-  //   pvz: "ПВЗ_3",
-  //   name: "ул. Палладина, 16",
-  // },
-  // {
-  //   pvz: "ПВЗ_4",
-  //   name: "ул. Нартова, 1",
-  // },
-  // {
-  //   pvz: "ППВЗ_5",
-  //   name: "ул. Дудинская, д. 4, кв. 7",
-  // },
-  // {
-  //   pvz: "ПВЗ_8",
-  //   name: "ул. Макара Мазая, 37А",
-  // },
-  // {
-  //   pvz: "ППВЗ_9",
-  //   name: "ул. 8 Марта, 77",
-  // },
-  // {
-  //   pvz: "ПВЗ_10",
-  //   name: "ул. Азовской Военной Флотилии, 2",
-  // },
-  // {
-  //   pvz: "ПВЗ_11",
-  //   name: "ул. Азовстальская, 131",
-  // },
-  // {
-  //   pvz: "ППВЗ_12",
-  //   name: "ул. Центральная, 43",
-  // },
-  // {
-  //   pvz: "ПВЗ_14",
-  //   name: "пос. Старый Крым, павильон на центральном рынке",
-  // },
-];
-
 function clearCookies() {
   localStorage.removeItem("isNotAskingOZ");
   localStorage.removeItem("isNotAskingWB");
@@ -163,8 +120,8 @@ function clearCookies() {
 }
 
 useSeoMeta({
-  title: "ТЕСТ — Личный кабинет",
-  ogTitle: "ТЕСТ — Личный кабинет",
+  title: "Личный кабинет",
+  ogTitle: "Личный кабинет",
   description:
     "Авторизуйтесь и получите доступ к заказу из любых интернет-магазинов!",
   ogDescription:
@@ -195,8 +152,8 @@ useSeoMeta({
                   class="text-lg font-semibold cursor-pointer hover:text-secondary-color duration-200"
                 >
                   {{
-                    pvzs.find((pvz) => pvz.pvz === pvzData)?.name
-                      ? pvzs.find((pvz) => pvz.pvz === pvzData)?.name
+                    pvzs.find((pvz) => pvz.name === pvzData)?.address
+                      ? pvzs.find((pvz) => pvz.name === pvzData)?.address
                       : "Не выбран"
                   }}
                 </h1>
@@ -256,9 +213,10 @@ useSeoMeta({
         </div>
 
         <h1
+          v-if="settings[0]"
           class="font-bold text-6xl max-[400px]:text-4xl max-md:text-center text-secondary-color mb-5"
         >
-          ТЕСТ
+          {{ settings[0].title }}
         </h1>
 
         <SidebarClientAsideBody

@@ -59,7 +59,7 @@ async function register() {
 
   if (
     clients.value.some(
-      (client) => client.phoneNumber === phoneNumberData.value.trim()
+      (client: Client) => client.phoneNumber === phoneNumberData.value.trim()
     )
   ) {
     errorTextValidation.value = "Вы уже зарегистрированы!";
@@ -160,7 +160,7 @@ async function confirmationRegistration() {
     isPersonalDataProcessingPolicyAgreed:
       isPersonalDataProcessingPolicyAgreed.value,
     isPrivacyPolicyAgreed: isPrivacyPolicyAgreed.value,
-  });
+  } as Client);
 
   if (statusRegistration) {
     await storeClients.signIn(phoneNumberData.value, password.value, false);
@@ -190,12 +190,15 @@ const saveBlockState = () => {
 
 let clients = ref([] as any);
 let isIndex = ref(false);
+const settings = ref<Array<any>>([]);
+const storeUsers = useUsersStore();
 onMounted(async () => {
   isLoading.value = true;
   user.value = await storeClients.getClient();
   clients.value = await storeClients.getClients();
   isLoading.value = false;
 
+  settings.value = await storeUsers.getSettings();
   if (route.query.index) {
     isIndex.value = true;
   }
@@ -266,8 +269,8 @@ const formattedBlockDuration = computed(() =>
 );
 
 useSeoMeta({
-  title: "ТЕСТ — Регистрация клиента",
-  ogTitle: "ТЕСТ — Регистрация клиента",
+  title: "Регистрация клиента",
+  ogTitle: "Регистрация клиента",
   description:
     "Получите доступ к заказу из любых интернет-магазинов и свой личный кабинет клиента!",
   ogDescription:
@@ -304,9 +307,10 @@ definePageMeta({
       <div>
         <div class="flex items-center justify-center">
           <h1
+            v-if="settings[0]"
             class="text-center text-secondary-color text-6xl max-sm:text-5xl font-bold"
           >
-            ТЕСТ
+            {{ settings[0].title }}
           </h1>
         </div>
         <h2
@@ -317,7 +321,7 @@ definePageMeta({
       </div>
 
       <div class="space-y-3 mt-10">
-        <div class="flex items-center justify-center mt-3">
+        <!-- <div class="flex items-center justify-center mt-3">
           <UButton
             @click="
               (isShowTelegramMethod = !isShowTelegramMethod),
@@ -327,7 +331,7 @@ definePageMeta({
             class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
             >Зарегистрироваться через телеграм
           </UButton>
-        </div>
+        </div> -->
         <div class="flex items-center justify-center">
           <UButton
             @click="isShowRegistrationSMS = !isShowRegistrationSMS"

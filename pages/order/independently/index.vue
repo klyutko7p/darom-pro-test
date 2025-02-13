@@ -61,7 +61,7 @@ definePageMeta({
           />
         </div>
         <a
-          href="https://t.me/Svetlana_Darompro"
+          href="https://t.me/WBDok"
           target="_blank"
           class="bg-secondary-color h-[230px] max-sm:h-[200px] flex items-center justify-center cursor-pointer hover:opacity-70 duration-200"
         >

@@ -23,6 +23,9 @@ let originallyRows = ref<Array<IOurRansom>>();
 let cells = ref<Array<Cell>>();
 let cellData = ref({} as Cell);
 let marketplaceData = route.query.marketplace;
+const storePVZ = usePVZStore();
+const pvzs = ref<Array<PVZ>>([]);
+const settings = ref<Array<any>>([]);
 onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login?stay=true");
@@ -67,8 +70,11 @@ onMounted(async () => {
 
   setInterval(checkAvailability, 5 * 60 * 1000);
 
-  isLoading.value = true;
   user.value = await storeClients.getClient();
+
+  isLoading.value = true;
+  settings.value = await storeUsers.getSettings();
+  pvzs.value = await storePVZ.getPVZ();
   cells.value = await storeCells.getCellsClient();
 
   originallyRows.value = await storeRansom.getRansomRowsForModalClientRansom();
@@ -230,53 +236,6 @@ function handleFileUpload(e: any) {
 
 let isOpen = ref(true);
 
-const pvzs = [
-  {
-    pvz: "ПВЗ_1",
-    name: "Тест адрес",
-  },
-  // {
-  //   pvz: "ПВЗ_2",
-  //   name: "г. Донецк, ул. Харитоново, 8",
-  // },
-  // {
-  //   pvz: "ПВЗ_3",
-  //   name: "г. Донецк, ул. Палладина, 16",
-  // },
-  // {
-  //   pvz: "ПВЗ_4",
-  //   name: "г. Донецк, ул. Нартова, 1",
-  // },
-  // {
-  //   pvz: "ППВЗ_5",
-  //   name: "г. Донецк, ул. Дудинская, д. 4, кв. 7",
-  // },
-  // {
-  //   pvz: "ПВЗ_8",
-  //   name: "г. Мариуполь, ул. Макара Мазая, 37А",
-  // },
-  // {
-  //   pvz: "ППВЗ_9",
-  //   name: "г. Мариуполь, ул. 8 Марта, 77",
-  // },
-  // {
-  //   pvz: "ПВЗ_10",
-  //   name: "г. Мариуполь, ул. Азовской Военной Флотилии, 2",
-  // },
-  // {
-  //   pvz: "ПВЗ_11",
-  //   name: "г. Мариуполь, ул. Азовстальская, 131",
-  // },
-  // {
-  //   pvz: "ППВЗ_12",
-  //   name: "г. Мариуполь, ул. Центральная, 43",
-  // },
-  // {
-  //   pvz: "ПВЗ_14",
-  //   name: "г. Мариуполь, пос. Старый Крым, павильон на центральном рынке",
-  // },
-];
-
 const marketplaces = [
   {
     marketplace: "Ozon",
@@ -286,10 +245,6 @@ const marketplaces = [
     marketplace: "Wildberries",
     name: "WILDBERRIES",
   },
-  {
-    marketplace: "Яндекс Маркет",
-    name: "ЯНДЕКС МАРКЕТ",
-  },
 ];
 
 watch(() => pvzData.value, checkPercent);
@@ -297,7 +252,6 @@ watch(() => pvzData.value, checkPercent);
 async function submitForm() {
   try {
     if (pvzData.value) {
-      rowData.value.orderPVZ = "Ряженое";
       rowData.value.fromName = user.value.phoneNumber;
       rowData.value.productLink = marketplace.value;
       rowData.value.dispatchPVZ = pvzData.value;
@@ -330,12 +284,6 @@ async function submitForm() {
           rowData.value.fromName
         );
       }
-
-      await storeUsers.sendMessageToEmployee(
-        "Доставка заказов по ШК (QR): Darom.pro",
-        `Прикреплён новый штрих-код`,
-        "Волошина"
-      );
 
       localStorage.removeItem("fileName");
       localStorage.removeItem("marketplace");
@@ -425,8 +373,6 @@ async function writeClipboardText(text: any) {
     console.error(error.message);
   }
 }
-
-const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ_12", "ПВЗ_14"]);
 </script>
 
 <template>
@@ -440,7 +386,7 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
     <div v-if="token">
       <div v-if="isOpenFirstModal">
         <div
-          class="bg-[#0763f6cd] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200 relative"
+          class="bg-[#0763f6cd] w-screen flex items-center justify-center h-[330px] max-sm:h-[300px] cursor-pointer hover:opacity-70 duration-200 relative"
           @click="changeMarketplace('Ozon')"
         >
           <div
@@ -468,7 +414,7 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
           </div>
         </div>
         <div
-          class="bg-gradient-to-r from-[#7c2570] via-[#bb3c95] to-[#ec208b] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200 relative"
+          class="bg-gradient-to-r from-[#7c2570] via-[#bb3c95] to-[#ec208b] w-screen flex items-center justify-center h-[330px] max-sm:h-[300px] cursor-pointer hover:opacity-70 duration-200 relative"
           @click="changeMarketplace('Wildberries')"
         >
           <img
@@ -499,7 +445,7 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
             Выберите пункт выдачи, чтобы увидеть процент доставки
           </div>
         </div>
-        <div
+        <!-- <div
           class="bg-[#f8cf02] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200 relative"
           @click="changeMarketplace('Яндекс Маркет')"
         >
@@ -530,11 +476,11 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
           >
             Выберите пункт выдачи, чтобы увидеть процент доставки
           </div>
-        </div>
+        </div> -->
         <a
-          href="https://t.me/Svetlana_Darompro"
+          href="https://t.me/WBDok"
           target="_blank"
-          class="bg-secondary-color h-[230px] max-sm:h-[200px] flex items-center justify-center cursor-pointer hover:opacity-70 duration-200 flex-col"
+          class="bg-secondary-color h-[300px] max-sm:h-[250px] flex items-center justify-center cursor-pointer hover:opacity-70 duration-200 flex-col"
         >
           <h1
             class="uppercase text-5xl max-sm:text-3xl font-bold text-white text-center"
@@ -589,18 +535,10 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
             Если Вы верно указали адрес, то можете заказывать товар и после
             уведомления о доставке по адресу: <br />
             <span
-              v-if="!MPVZs.includes(pvzData)"
+              v-if="settings[0]"
               class="text-[#ec208b] font-semibold text-center"
             >
-              Ростовская область, Матвеево-Курганский район, Село Ряженое, Улица
-              Ленина 6
-            </span>
-            <span
-              v-if="MPVZs.includes(pvzData)"
-              class="text-[#ec208b] font-semibold text-center"
-            >
-              Ростовская область, Матвеево-Курганский район, Село Латоново,
-              Улица Ленина 67
+              {{ settings[0].address }}
             </span>
             <br />
             <span class="mt-1"
@@ -621,18 +559,10 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
             Если Вы верно указали адрес, то можете заказывать товар и после
             уведомления о доставке по адресу: <br />
             <span
-              v-if="!MPVZs.includes(pvzData)"
+              v-if="settings[0]"
               class="text-[#005df6] font-semibold text-center"
             >
-              Ростовская область, Матвеево-Курганский район, Село Ряженое, Улица
-              Ленина 6
-            </span>
-            <span
-              v-if="MPVZs.includes(pvzData)"
-              class="text-[#005df6] font-semibold text-center"
-            >
-              Ростовская область, Матвеево-Курганский район, Село Латоново,
-              Улица Ленина 67
+              {{ settings[0].address }}
             </span>
             <br />
             <span class="mt-1"
@@ -651,9 +581,11 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
             </h1>
             Если Вы верно указали адрес, то можете заказывать товар и после
             уведомления о доставке по адресу: <br />
-            <span class="text-[#f8cf02] font-semibold text-center">
-              Ростовская область, Матвеево-Курганский район, Село Ряженое, Улица
-              Ленина 6
+            <span
+              v-if="settings[0]"
+              class="text-[#f8cf02] font-semibold text-center"
+            >
+              {{ settings[0].address }}
             </span>
             <br />
             <span class="mt-1"
@@ -691,8 +623,8 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
             <div class="h-[120px]" v-if="isOpenSecondModal" v-auto-animate>
               <label>Пункт выдачи заказов</label>
               <USelectMenu
-                value-attribute="pvz"
-                option-attribute="name"
+                value-attribute="name"
+                option-attribute="address"
                 v-model="pvzData"
                 :options="pvzs"
                 class="mt-3"
@@ -781,8 +713,8 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
               >
                 <USelectMenu
                   @change="removeAskingHistory"
-                  value-attribute="pvz"
-                  option-attribute="name"
+                  value-attribute="name"
+                  option-attribute="address"
                   v-model="pvzData"
                   :options="pvzs"
                   class="w-full"
@@ -801,35 +733,14 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
                 </UButton>
 
                 <div
-                  v-if="!MPVZs.includes(pvzData)"
                   class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
                 >
-                  <h1 class="text-sm font-semibold">
-                    Село Ряженое, Улица Ленина 6
+                  <h1 v-if="settings[0]" class="text-sm font-semibold">
+                    {{ settings[0].address }}
                   </h1>
                   <UButton
-                    @click="writeClipboardText('Село Ряженое, Улица Ленина 6')"
-                    target="_blank"
-                    icon="i-material-symbols-content-copy"
-                    size="sm"
-                    color="pink"
-                    variant="solid"
-                    class="font-semibold duration-200 mt-3"
-                    :trailing="false"
-                    >Скопировать адрес</UButton
-                  >
-                </div>
-                <div
-                  v-if="MPVZs.includes(pvzData)"
-                  class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
-                >
-                  <h1 class="text-sm font-semibold">
-                    Село Латоново, Улица Ленина 67
-                  </h1>
-                  <UButton
-                    @click="
-                      writeClipboardText('Село Латоново, Улица Ленина 67')
-                    "
+                    v-if="settings[0]"
+                    @click="writeClipboardText(`${settings[0].address}`)"
                     target="_blank"
                     icon="i-material-symbols-content-copy"
                     size="sm"
@@ -852,19 +763,10 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
                 </UButton>
 
                 <div
-                  v-if="!MPVZs.includes(pvzData)"
                   class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
                 >
-                  <h1 class="text-sm font-semibold">
-                    Село Ряженое, Улица Ленина 6
-                  </h1>
-                </div>
-                <div
-                  v-if="MPVZs.includes(pvzData)"
-                  class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
-                >
-                  <h1 class="text-sm font-semibold">
-                    Село Латоново, Улица Ленина 67
+                  <h1 v-if="settings[0]" class="text-sm font-semibold">
+                    {{ settings[0].address }}
                   </h1>
                 </div>
               </div>
@@ -882,11 +784,11 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
                 <div
                   class="bg-gray-100 font-semibold rounded-xl p-3 flex items-center justify-center flex-col"
                 >
-                  <h1 class="text-sm font-semibold">
-                    Село Ряженое, Улица Ленина 6
+                  <h1 v-if="settings[0]" class="text-sm font-semibold">
+                    {{ settings[0].address }}
                   </h1>
                   <UButton
-                    @click="writeClipboardText('Село Ряженое, Улица Ленина 6')"
+                    @click="writeClipboardText(`${settings[0].address}`)"
                     target="_blank"
                     icon="i-material-symbols-content-copy"
                     size="sm"
@@ -997,19 +899,8 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
                 Чтобы мы доставили ваш заказ, он должен быть оформлен на адрес:
                 <br />
               </h1>
-              <h1
-                v-if="!MPVZs.includes(pvzData)"
-                class="italic font-bold text-left"
-              >
-                Ростовская область, Матвеево-Курганский район, <br />
-                с. Ряженое, ул Ленина 6*
-              </h1>
-              <h1
-                v-if="MPVZs.includes(pvzData)"
-                class="italic font-bold text-left"
-              >
-                Ростовская область, Матвеево-Курганский район, Село Латоново,
-                Улица Ленина 67*
+              <h1 v-if="settings[0]" class="italic font-bold text-left">
+                {{ settings[0].address }}
               </h1>
               <div class="space-y-3 my-5">
                 <h1
@@ -1024,7 +915,9 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
                 >
                   Пункт выдачи
                   <span>
-                    {{ pvzs.find((row) => row.pvz === pvzData)?.name }}</span
+                    {{
+                      pvzs.find((row) => row.name === pvzData)?.address
+                    }}</span
                   >
                 </h1>
               </div>

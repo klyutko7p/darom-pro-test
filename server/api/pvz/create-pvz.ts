@@ -3,15 +3,17 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 interface IRequestBody {
-  name: string;
+  pvzData: PVZ;
 }
 
 export default defineEventHandler(async (event) => {
   try {
-    const { name } = await readBody<IRequestBody>(event);
+    const { pvzData } = await readBody<IRequestBody>(event);
     const pvz = await prisma.pVZ.create({
       data: {
-        name: name,
+        name: pvzData.name,
+        address: pvzData.address,
+        coordinates: pvzData.coordinates,
       },
     });
     return pvz;

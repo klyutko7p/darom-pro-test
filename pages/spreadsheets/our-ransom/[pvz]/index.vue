@@ -88,6 +88,7 @@ function handleFilteredRows(filteredRowsData: IOurRansom[]) {
   }
 }
 
+const settings = ref<Array<any>>([]);
 onMounted(async () => {
   if (!token || user.value.dataOurRansom === "NONE") {
     router.push("/auth/login");
@@ -95,6 +96,7 @@ onMounted(async () => {
 
   isLoading.value = true;
   user.value = await storeUsers.getUser();
+  settings.value = await storeUsers.getSettings();
   rows.value = await storeRansom.getRansomRowsByPVZ(pvzString, "OurRansom");
 
   if (rows.value) {
@@ -170,8 +172,10 @@ function scanItem() {
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertUrl(scannedLink);
+    let link = window.location.href.split("/")[2].split("/")[0];
     window.location.href =
-      "https://darom.pro/spreadsheets/our-ransom/ПВЗ" + scannedLink;
+      `https://${link}/spreadsheets/our-ransom/ПВЗ` +
+      scannedLink;
     scanStringItem.value = "";
   }, 500);
 }

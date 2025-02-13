@@ -45,22 +45,18 @@ export const usePVZStore = defineStore("pvz", () => {
     }
   }
 
-  async function createPVZ(name: string) {
+  async function createPVZ(pvzData: PVZ) {
     try {
-      if (name === "") {
-        toast.warning("Название ПВЗ не должно быть пустым");
-      } else {
-        let { data }: any = await useFetch("/api/pvz/create-pvz", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name: name }),
-        });
-        cachedPVZ = null;
-        toast.success("ПВЗ успешно добавлено!");
-        return data.value;
-      }
+      let { data }: any = await useFetch("/api/pvz/create-pvz", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ pvzData }),
+      });
+      cachedPVZ = null;
+      toast.success("ПВЗ успешно добавлено!");
+      return data.value;
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -68,14 +64,14 @@ export const usePVZStore = defineStore("pvz", () => {
     }
   }
 
-  async function updatePVZ(pvz: PVZ) {
+  async function updatePVZ(pvzData: PVZ) {
     try {
       let data = await useFetch("/api/pvz/edit-pvz", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ pvz: pvz }),
+        body: JSON.stringify({ pvzData }),
       });
       cachedPVZ = null;
       toast.success("ПВЗ успешно обновлено!");

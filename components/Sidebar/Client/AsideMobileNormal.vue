@@ -8,6 +8,11 @@ function editMenu() {
 function signOut() {
   emits("signOut");
 }
+const storeUsers = useUsersStore();
+const settings = ref<Array<any>>([]);
+onMounted(async () => {
+  settings.value = await storeUsers.getSettings();
+});
 
 const router = useRouter();
 </script>
@@ -35,10 +40,11 @@ const router = useRouter();
   <div v-auto-animate class="h-full overflow-y-auto">
     <div class="px-3 justify-between mb-10 pb-2">
       <h5
+        v-if="settings[0]"
         @click="router.push('/client/main?notification=false'), editMenu()"
         class="text-6xl cursor-pointer max-[400px]:text-5xl text-center text-secondary-color font-bold uppercase dark:text-gray-400"
       >
-        ТЕСТ
+        {{ settings[0].title }}
       </h5>
     </div>
 

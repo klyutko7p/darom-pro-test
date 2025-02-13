@@ -113,7 +113,8 @@ function enableReceivedItems() {
 let phoneNumber = ref("");
 let dispatchPVZ = ref("");
 let cell = ref("");
-
+const storePVZ = usePVZStore();
+const pvzs = ref<Array<PVZ>>([]);
 onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login?stay=true");
@@ -122,6 +123,7 @@ onMounted(async () => {
   isLoading.value = true;
   user.value = await storeClients.getClient();
 
+  pvzs.value = await storePVZ.getPVZ();
   rowsOurRansom.value =
     await storeRansom.getRansomRowsByFromNameWithoutCellOurRansom(
       user.value.phoneNumber
@@ -189,61 +191,6 @@ let isShowModalValue = ref(false);
 function showModal(isShow: boolean) {
   isShowModalValue.value = isShow;
 }
-
-const pvzs = [
-  {
-    pvz: "ПВЗ_1",
-    name: "ул. Антропова 16",
-  },
-  {
-    pvz: "ПВЗ_2",
-    name: "ул. Харитоново, 8",
-  },
-  {
-    pvz: "ПВЗ_3",
-    name: "ул. Палладина, 16",
-  },
-  {
-    pvz: "ПВЗ_4",
-    name: "ул. Нартова, 1",
-  },
-  {
-    pvz: "ППВЗ_5",
-    name: "ул. Дудинская, д. 4, кв. 7",
-  },
-  {
-    pvz: "ППВЗ_7",
-    name: "ул. Жебелева, д. 7",
-  },
-  {
-    pvz: "ПВЗ_8",
-    name: "ул. Макара Мазая, 37А",
-  },
-  {
-    pvz: "ППВЗ_9",
-    name: "ул. 8 Марта, 77",
-  },
-  {
-    pvz: "ПВЗ_10",
-    name: "ул. Азовской Военной Флотилии, 2",
-  },
-  {
-    pvz: "ПВЗ_11",
-    name: "ул. Азовстальская, 131",
-  },
-  {
-    pvz: "ППВЗ_12",
-    name: "ул. Центральная, 43",
-  },
-  {
-    pvz: "ПВЗ_14",
-    name: "пос. Старый Крым, павильон на центральном рынке",
-  },
-  {
-    pvz: "НаДом",
-    name: "Домой",
-  },
-];
 
 let isOpenQRModal = ref(false);
 let flag = ref("");
@@ -342,7 +289,7 @@ function signOut() {
           <div
             class="border-[1px] shadow-xl rounded-lg bg-white max-sm:border-0 max-sm:shadow-none"
             v-if="
-              copyRowsOurRansom?.filter((row) => row.dispatchPVZ === pvz.pvz)
+              copyRowsOurRansom?.filter((row) => row.dispatchPVZ === pvz.name)
                 .length
             "
           >
@@ -353,12 +300,12 @@ function signOut() {
                   ПУНКТ ВЫДАЧИ ЗАКАЗОВ
                 </h1>
               </div>
-              <h1>{{ pvz.name }}</h1>
+              <h1>{{ pvz.address }}</h1>
             </div>
             <SpreadsheetsOrderTable
               :link="'1'"
               :rows="
-                copyRowsOurRansom?.filter((row) => row.dispatchPVZ === pvz.pvz)
+                copyRowsOurRansom?.filter((row) => row.dispatchPVZ === pvz.name)
               "
               :user="user"
               @showModal="showModal"
@@ -445,10 +392,11 @@ function signOut() {
           class="mt-5"
         >
           <div
-            class="border-[1px] shadow-xl rounded-lg bg-white max-sm:border-0 max-sm:shadow-none"
+            class="border-[1px] shadow-xl rounded-lg bg-white mb-10  max-sm:border-0 max-sm:shadow-none"
             v-if="
-              copyRowsClientRansom?.filter((row) => row.dispatchPVZ === pvz.pvz)
-                .length
+              copyRowsClientRansom?.filter(
+                (row) => row.dispatchPVZ === pvz.name
+              ).length
             "
           >
             <div class="px-5 py-3 max-sm:px-0">
@@ -458,13 +406,13 @@ function signOut() {
                   ПУНКТ ВЫДАЧИ ЗАКАЗОВ
                 </h1>
               </div>
-              <h1>{{ pvz.name }}</h1>
+              <h1>{{ pvz.address }}</h1>
             </div>
             <SpreadsheetsOrderTable
               :link="'2'"
               :rows="
                 copyRowsClientRansom?.filter(
-                  (row) => row.dispatchPVZ === pvz.pvz
+                  (row) => row.dispatchPVZ === pvz.name
                 )
               "
               :user="user"

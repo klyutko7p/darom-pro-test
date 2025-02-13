@@ -22,16 +22,15 @@ async function updateDeliveryRow(obj: any) {
   row.value = await storeRansom.getRansomRow(id, "OurRansom");
 }
 
+const settings = ref<Array<any>>([]);
 onMounted(async () => {
-   if (window.location.href.includes("soft-praline-633324.netlify.app")) {
-    window.location.href = `https://darom.pro${route.fullPath}`;
-  }
   if (!token) {
     router.push("/auth/login");
   }
 
   isLoading.value = true;
   user.value = await storeUsers.getUser();
+  settings.value = await storeUsers.getSettings();
   row.value = await storeRansom.getRansomRow(id, "OurRansom");
   isLoading.value = false;
 });
@@ -39,6 +38,11 @@ onMounted(async () => {
 definePageMeta({
   layout: false,
 });
+
+function getActualNameSite() {
+  let link = window.location.href.split("/")[2].split("/")[0];
+  return link;
+}
 
 const token = Cookies.get("token");
 </script>
@@ -52,10 +56,13 @@ const token = Cookies.get("token");
       <NuxtLayout name="admin">
         <div class="mt-5" v-if="!isLoading">
           <RecordBody
+            v-if="settings[0]"
             :link="link"
             :user="user"
             :row="row"
-            :value="`https://darom.pro/spreadsheets/record/1/${row.id}`"
+            :value="`https://${getActualNameSite()}/spreadsheets/record/1/${
+              row.id
+            }`"
             @update-delivery-row="updateDeliveryRow"
           />
         </div>
@@ -68,10 +75,13 @@ const token = Cookies.get("token");
       <NuxtLayout name="user">
         <div class="mt-5" v-if="!isLoading">
           <RecordBody
+            v-if="settings[0]"
             :link="link"
             :user="user"
             :row="row"
-            :value="`https://darom.pro/spreadsheets/record/1/${row.id}`"
+            :value="`https://${getActualNameSite()}/spreadsheets/record/1/${
+              row.id
+            }`"
             @update-delivery-row="updateDeliveryRow"
           />
         </div>

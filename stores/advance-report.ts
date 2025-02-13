@@ -7,37 +7,6 @@ const toast = useToast();
 export const useAdvanceReports = defineStore("advance-reports", () => {
   let cachedAdvanceReportRows: IAdvanceReport[] | null = null;
   let cachedAdvanceReportRowsSidebar: IAdvanceReport[] | null = null;
-  let pvz: string[] = [
-    "Ряженое",
-    "Алексеевка",
-    "Латоново",
-    "Надежда",
-    "Александровка",
-    "Новониколаевка",
-    "Политотдельское",
-    "Мещерино",
-    "Коломенское ЯМ",
-    "Коломенское WB",
-    "Бессоново WB",
-    "Бессоново OZ",
-    "ПВЗ_1",
-    "ПВЗ_2",
-    "ПВЗ_3",
-    "ПВЗ_4",
-    "ППВЗ_5",
-    "ППВЗ_6",
-    "ППВЗ_7",
-    "ПВЗ_8",
-    "ППВЗ_9",
-    "ПВЗ_10",
-    "ПВЗ_11",
-    "ППВЗ_12",
-    "ПВЗ_13",
-    "ПВЗ_14",
-    "Магазин",
-    "Офис",
-    "НаДом",
-  ];
 
   function getPVZ() {
     return pvz;

@@ -474,6 +474,7 @@ const restrictedKeys = [
   { key: "profit1", access: props.user.profit1 },
 ];
 
+const settings = ref<Array<any>>([]);
 onMounted(async () => {
   focusInput();
 
@@ -507,6 +508,8 @@ onMounted(async () => {
       columns.splice(index2, 1);
     }
   }
+
+  settings.value = await storeUsers.getSettings();
 
   showProcessingRows();
 
@@ -778,7 +781,10 @@ function unlockScroll() {
 
 async function writeClipboardText(text: any) {
   try {
-    await navigator.clipboard.writeText(text);
+    let link = window.location.href.split("/")[2].split("/")[0];
+    let finalLink = `https://${link}/spreadsheets/order/${text}`
+    
+    await navigator.clipboard.writeText(finalLink);
     toast.success("Вы успешно скопировали ссылку");
   } catch (error: any) {
     console.error(error.message);
@@ -1192,7 +1198,7 @@ const columns = [
         <UIActionButton2
           v-if="user.additionally1 === 'WRITE'"
           @click="updateDeliveryRows('additionally', getAllSum)"
-          >Оплата онлайн 
+          >Оплата онлайн
         </UIActionButton2>
         <UIActionButton2
           v-if="user.additionally1 === 'WRITE'"
@@ -1242,9 +1248,7 @@ const columns = [
     <div class="py-3 flex max-sm:flex-col gap-3 max-sm:w-full">
       <h1
         v-if="
-          (user.role === 'ADMIN' ||
-            user.role === 'ADMINISTRATOR' ||
-            user.role === 'RMANAGER') &&
+          (user.role === 'ADMIN' || user.role === 'ADMINISTRATOR') &&
           isShowButtonsRows
         "
         class="bg-red-500 px-5 py-1.5 text-white font-semibold rounded-md border-red-500 border-2 hover:bg-transparent hover:text-black duration-200 cursor-pointer"
@@ -1260,7 +1264,10 @@ const columns = [
         Ждут обработку {{ processingRows?.length }} товаров
       </h1>
       <h1
-        v-if="user.username === 'Горцуева' && isShowButtonsRows"
+        v-if="
+          (user.role === 'ADMIN' || user.role === 'ADMINISTRATOR') &&
+          isShowButtonsRows
+        "
         class="bg-green-400 px-5 py-1.5 text-white font-semibold rounded-md border-green-400 border-2 hover:bg-transparent hover:text-black duration-200 cursor-pointer"
         @click="changeWaitingRows(), showWaitingRows()"
       >
@@ -2032,13 +2039,11 @@ const columns = [
             </NuxtLink>
 
             <div
-              v-if="user.clientLink1 === 'READ' || user.clientLink1 === 'WRITE'"
-              class="cursor-pointer hover:opacity-50 duration-200 bg-secondary-color text-white font-bold w-6 h-6 rounded-full flex items-center justify-center"
-              @click="
-                writeClipboardText(
-                  `https://darom.pro/spreadsheets/order/${row.clientLink1}`
-                )
+              v-if="
+                (user.clientLink1 === 'READ' || user.clientLink1 === 'WRITE')
               "
+              class="cursor-pointer hover:opacity-50 duration-200 bg-secondary-color text-white font-bold w-6 h-6 rounded-full flex items-center justify-center"
+              @click="writeClipboardText(`${row.clientLink1}`)"
             >
               <Icon name="material-symbols:content-copy" class="font-bold" />
             </div>

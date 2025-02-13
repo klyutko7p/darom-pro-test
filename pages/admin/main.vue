@@ -2,15 +2,12 @@
 import Cookies from "js-cookie";
 const storeUsers = useUsersStore();
 const storeRansom = useRansomStore();
-const storeCells = useCellsStore();
 const router = useRouter();
 
 let user = ref({} as User);
 const token = Cookies.get("token");
 let isLoading = ref(false);
-let rows = ref<Array<Task>>([]);
-const storeTasks = useTasksStore();
-
+const settings = ref<Array<any>>([]);
 onMounted(async () => {
   if (!token) {
     router.push("/auth/login");
@@ -18,17 +15,8 @@ onMounted(async () => {
 
   isLoading.value = true;
   user.value = await storeUsers.getUser();
-  rows.value = await storeTasks.getTasks();
   isLoading.value = false;
-
-  if (rows.value) {
-    rows.value = rows.value.filter(
-      (row: Task) =>
-        row.responsible === user.value.username &&
-        new Date() > new Date(row.deadline)
-    );
-  }
-
+  settings.value = await storeUsers.getSettings();
   await storeRansom.getSumOfRejection();
 });
 
@@ -95,13 +83,11 @@ function requestPermission() {
               />
             </div>
           </div>
-          <h1 v-if="rows.length" class="text-red-500 font-semibold text-base">
-            У Вас есть невыполненные задачи!
-          </h1>
           <h1
+            v-if="settings[0]"
             class="font-bold text-6xl max-[400px]:text-4xl max-md:text-center text-secondary-color mb-5"
           >
-            ТЕСТ
+            {{ settings[0].title }}
           </h1>
           <SidebarAsideBody :user="user" @sign-out="signOut" v-auto-animate />
         </div>

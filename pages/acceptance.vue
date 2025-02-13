@@ -105,7 +105,7 @@ async function acceptItem(row: IOurRansom) {
         );
         if (client) {
           await storeClients.sendMessageToClient(
-            "Статус заказа: Darom.pro",
+            "Статус заказа",
             "Уважаемый клиент, Ваш заказ готов к получению.",
             row.fromName
           );
@@ -210,12 +210,6 @@ watch(scanStringItem, (newValue) => {
                 <option v-for="pvz in user.PVZ">{{ pvz }}</option>
               </select>
             </div>
-            <UButton
-              @click="router.push('/acceptance-box')"
-              icon="i-material-symbols-package-2"
-              class="font-semibold"
-              >Приёмка коробок</UButton
-            >
           </div>
           <div
             class="flex items-center flex-col justify-center gap-5 mt-10"

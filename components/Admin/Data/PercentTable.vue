@@ -61,10 +61,6 @@ const columns = [
     key: "ozon",
     label: "% Ozon",
   },
-  {
-    key: "ym",
-    label: "% Яндекс Маркет",
-  },
 ];
 
 const items = (row: Task) => [

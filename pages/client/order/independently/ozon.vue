@@ -10,7 +10,10 @@ const token = Cookies.get("token");
 let isLoading = ref(false);
 const selectedPVZClient = ref("");
 const address = ref("");
-
+const settings = ref<Array<any>>([]);
+const storeUsers = useUsersStore();
+const storePVZ = usePVZStore();
+const pvzs = ref<Array<PVZ>>([]);
 onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login?stay=true");
@@ -22,6 +25,10 @@ onMounted(async () => {
     isNotAskingOZ.value = true;
   }
   selectedPVZClient.value = address.value;
+  isLoading.value = true;
+  pvzs.value = await storePVZ.getPVZ();
+  settings.value = await storeUsers.getSettings();
+  isLoading.value = false;
 });
 
 definePageMeta({
@@ -68,9 +75,7 @@ function clearValue() {
 }
 
 let isShowWarning = ref(true);
-const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ_12", "ПВЗ_14"]);
 </script>
-
 
 <template>
   <Head>
@@ -85,9 +90,9 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
             class="flex items-center justify-center flex-col h-screen"
           >
             <UButton
-              v-if="!MPVZs.includes(address)"
+              v-if="settings[0]"
               @click="skipWindow()"
-              to="https://ozon.ru/point/443054"
+              to="https://ozon.ru/point/468539"
               target="_blank"
               icon="i-mdi-package-variant-closed-plus"
               size="xl"
@@ -96,21 +101,7 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
               class="font-semibold duration-200 w-full max-w-[500px]"
               :trailing="false"
               >Нажмите тут для подтверждения адреса пункта заказа
-              интернет-магазина «Село Ряженое, ул. Ленина 6»</UButton
-            >
-            <UButton
-              v-if="MPVZs.includes(address)"
-              @click="skipWindow()"
-              to="https://ozon.ru/point/491512"
-              target="_blank"
-              icon="i-mdi-package-variant-closed-plus"
-              size="xl"
-              color="blue"
-              variant="solid"
-              class="font-semibold duration-200 w-full max-w-[500px]"
-              :trailing="false"
-              >Нажмите тут для подтверждения адреса пункта заказа
-              интернет-магазина «Село Латоново, ул. Ленина 67»</UButton
+              интернет-магазина «{{ settings[0].address }}»</UButton
             >
           </div>
           <div class="h-screen flex items-center justify-center" v-else>
@@ -145,7 +136,11 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
           </div>
         </div>
         <div v-else>
-          <IndependentlyMap :marketplace="'OZON'" @save-address="saveAddress" />
+          <IndependentlyMap
+            :pvzs="pvzs"
+            :marketplace="'OZON'"
+            @save-address="saveAddress"
+          />
 
           <div>
             <UModal

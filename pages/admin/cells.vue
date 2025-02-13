@@ -5,7 +5,7 @@ const storeCells = useCellsStore();
 const router = useRouter();
 
 let user = ref({} as User);
-let cells = ref<Array<Cell[]>>();
+let cells = ref<Array<Cell>>([]);
 const token = Cookies.get("token");
 let isLoading = ref(false);
 const storePVZ = usePVZStore();
@@ -20,6 +20,7 @@ onMounted(async () => {
   user.value = await storeUsers.getUser();
   cells.value = await storeCells.getCells();
   pvzs.value = await storePVZ.getPVZ();
+  filterRows();
   isLoading.value = false;
 });
 
@@ -36,7 +37,22 @@ async function createCells() {
   isLoading.value = true;
   await storeCells.createCells(selectedPVZName.value, quantity.value);
   cells.value = await storeCells.getCells();
+  filterRows();
   isLoading.value = false;
+}
+
+const returnRows = ref<Array<Cell>>([]);
+
+watch([selectedPVZName], filterRows);
+
+function filterRows() {
+  if (selectedPVZName.value) {
+    returnRows.value = cells.value.filter(
+      (row) => row.PVZ === selectedPVZName.value
+    );
+  } else {
+    returnRows.value = cells.value;
+  }
 }
 </script>
 
@@ -80,21 +96,12 @@ async function createCells() {
             >Создать</UButton
           >
         </div>
-        <AdminDataTable3 :fields="fields" :rows="cells" />
+        <AdminDataTable3 :fields="fields" :rows="returnRows" />
       </div>
 
       <div class="w-screen" v-else>
         <UISpinner />
       </div>
-    </NuxtLayout>
-  </div>
-
-  <div v-else-if="user.role === 'USER'">
-    <NuxtLayout name="user">
-      <h1>
-        У вас недостаточно прав на просмотр этой информации. Обратитесь к
-        администратору
-      </h1>
     </NuxtLayout>
   </div>
 </template>

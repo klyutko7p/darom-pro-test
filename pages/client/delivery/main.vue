@@ -7,12 +7,13 @@ const router = useRouter();
 let user = ref({} as Client);
 const token = Cookies.get("token");
 let isLoading = ref(false);
-
+const settings = ref<Array<any>>([]);
+const storeUsers = useUsersStore();
 onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login?stay=true");
   }
-
+  settings.value = await storeUsers.getSettings();
   isLoading.value = true;
   user.value = await storeClients.getClient();
   isLoading.value = false;
@@ -43,9 +44,9 @@ definePageMeta({
               <UIMainButton
                 class="w-full min-w-[400px]"
                 @click="router.push('/client/delivery')"
-                >Через личный кабинет ТЕСТ</UIMainButton
+                >Через личный кабинет</UIMainButton
               >
-              <a
+              <!-- <a
                 href="https://t.me/darom_pro_bot"
                 target="_blank"
                 class="w-full"
@@ -55,7 +56,7 @@ definePageMeta({
                   @click="router.push('/client/main?notification=false')"
                   >Через телеграм-бота</UIMainButton
                 >
-              </a>
+              </a> -->
               <UIMainButton
                 class="w-full"
                 @click="router.push('/client/main?notification=false')"

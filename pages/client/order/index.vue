@@ -7,12 +7,13 @@ const router = useRouter();
 let user = ref({} as Client);
 const token = Cookies.get("token");
 let isLoading = ref(false);
-
+const settings = ref<Array<any>>([]);
+const storeUsers = useUsersStore();
 onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login?stay=true");
   }
-
+  settings.value = await storeUsers.getSettings();
   isLoading.value = true;
   user.value = await storeClients.getClient();
   isLoading.value = false;
@@ -41,17 +42,28 @@ definePageMeta({
             </h1>
             <div class="flex items-center gap-5 flex-col max-w-[500px]">
               <a
-                href="https://t.me/Svetlana_Darompro"
+                href="https://t.me/WBDok"
                 target="_blank"
                 class="w-full"
               >
                 <UIMainButton
                   class="w-full"
                   @click="router.push('/client/main?notification=false')"
-                  >Заказать через администратора</UIMainButton
+                  >Заказать через администратора (улица Ленина, 34/5)</UIMainButton
                 >
               </a>
               <a
+                href="https://t.me/WBsever"
+                target="_blank"
+                class="w-full"
+              >
+                <UIMainButton
+                  class="w-full"
+                  @click="router.push('/client/main?notification=false')"
+                  >Заказать через администратора (Центральная улица, 83)</UIMainButton
+                >
+              </a>
+              <!-- <a
                 href="https://t.me/darom_pro_bot"
                 target="_blank"
                 class="w-full"
@@ -61,11 +73,11 @@ definePageMeta({
                   @click="router.push('/client/main?notification=false')"
                   >Заказать через телеграм-бота</UIMainButton
                 >
-              </a>
+              </a> -->
               <UIMainButton
                 class="w-full"
                 @click="router.push('order/accept-order')"
-                >Заказать через личный кабинет ТЕСТ</UIMainButton
+                >Заказать через личный кабинет</UIMainButton
               >
               <UIMainButton
                 class="w-full"

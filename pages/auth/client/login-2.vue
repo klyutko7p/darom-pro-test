@@ -49,11 +49,14 @@ let user = ref({} as User);
 let code = ref("");
 const token = Cookies.get("token");
 let isIndex = ref(false);
+const settings = ref<Array<any>>([]);
+const storeUsers = useUsersStore();
 onMounted(async () => {
   isLoading.value = true;
   user.value = await storeClients.getClient();
   isLoading.value = false;
 
+  settings.value = await storeUsers.getSettings();
   if (route.query.phone) {
     phoneNumberTelegram.value = route.query.phone as string;
     isDisabledButtonInsertCode.value = true;
@@ -295,7 +298,7 @@ async function isValidateConfirmationCode() {
         isShowThirdConfirmationModal.value = true;
       } else {
         toast.error(
-          "Произошла ошибка при сбросе пароля. Напишите в поддержку Darom.pro!"
+          "Произошла ошибка при сбросе пароля. Напишите в поддержку!"
         );
       }
       isLoading.value = false;
@@ -320,8 +323,8 @@ const formattedBlockDuration = computed(() =>
 );
 
 useSeoMeta({
-  title: "ТЕСТ — Личный кабинет",
-  ogTitle: "ТЕСТ — Личный кабинет",
+  title: "Личный кабинет",
+  ogTitle: "Личный кабинет",
   description:
     "Получите доступ к заказу из любых интернет-магазинов и свой личный кабинет клиента!",
   ogDescription:
@@ -472,9 +475,10 @@ definePageMeta({
       <div class="">
         <div class="flex items-center justify-center">
           <h1
+            v-if="settings[0]"
             class="text-center text-secondary-color text-6xl max-sm:text-5xl font-bold"
           >
-            ТЕСТ
+            {{ settings[0].title }}
           </h1>
         </div>
         <h2
@@ -485,7 +489,7 @@ definePageMeta({
       </div>
 
       <div class="flex items-center justify-center flex-col gap-3 mt-10">
-        <UButton
+        <!-- <UButton
           @click="
             (isShowTelegramMethod = !isShowTelegramMethod),
               (isAuthWithPassword = false)
@@ -493,7 +497,7 @@ definePageMeta({
           icon="ic:baseline-telegram"
           class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
           >Войти через телеграм
-        </UButton>
+        </UButton> -->
         <UButton
           @click="isAuthWithPassword = !isAuthWithPassword"
           icon="material-symbols:person-book"

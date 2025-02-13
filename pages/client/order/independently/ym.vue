@@ -7,7 +7,8 @@ const token = Cookies.get("token");
 let isLoading = ref(false);
 const selectedPVZClient = ref("");
 const address = ref("");
-
+const settings = ref<Array<any>>([]);
+const storeUsers = useUsersStore();
 onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login?stay=true");
@@ -20,6 +21,7 @@ onMounted(async () => {
     showModal();
   }
   selectedPVZClient.value = address.value;
+  settings.value = await storeUsers.getSettings();
 });
 
 definePageMeta({
@@ -228,9 +230,9 @@ function clearValue() {
             <div>
               <div class="flex justify-center">
                 <UButton
+                  v-if="settings[0]"
                   @click="
-                    writeClipboardText('Село Ряженое, Улица Ленина 6'),
-                      skipWindow()
+                    writeClipboardText(`${settings[0].address}`), skipWindow()
                   "
                   target="_blank"
                   icon="i-mdi-package-variant-closed-check"

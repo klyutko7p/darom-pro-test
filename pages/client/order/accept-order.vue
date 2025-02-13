@@ -19,6 +19,9 @@ let cells = ref<Array<Cell>>();
 let cellData = ref({} as Cell);
 const addressData = ref("");
 
+const storePVZ = usePVZStore();
+const people = ref<Array<PVZ>>([]);
+const pvzs = ref<Array<PVZ>>([]);
 onMounted(async () => {
   const addressItem = localStorage.getItem("addressData");
   if (addressItem) {
@@ -55,6 +58,8 @@ onMounted(async () => {
 
   isLoading.value = true;
   user.value = await storeClients.getClient();
+  pvzs.value = await storePVZ.getPVZ();
+  people.value = await storePVZ.getPVZ();
   isLoading.value = false;
   await checkPercent();
   cells.value = await storeCells.getCells();
@@ -454,29 +459,6 @@ function showLastModal() {
 }
 let isOpen = ref(true);
 
-const people = [
-  {
-    pvz: "ПВЗ_1",
-    name: "Тест адрес",
-  },
-  // {
-  //   pvz: "ПВЗ_2",
-  //   name: "г. Донецк, ул. Харитоново, 8",
-  // },
-  // {
-  //   pvz: "ПВЗ_3",
-  //   name: "г. Донецк, ул. Палладина, 16",
-  // },
-  // {
-  //   pvz: "ПВЗ_4",
-  //   name: "г. Донецк, ул. Нартова, 1",
-  // },
-  // {
-  //   pvz: "ППВЗ_5",
-  //   name: "г. Донецк, ул. Дудинская, д. 4, кв. 7",
-  // },
-];
-
 async function parsePageByLink(itemData: IOurRansom) {
   isLoading.value = true;
 
@@ -598,61 +580,6 @@ function closeAcceptSecondModal() {
   isShowAcceptSecondModal.value = false;
 }
 
-const pvzs = [
-  {
-    pvz: "ПВЗ_1",
-    name: "Тест адрес",
-  },
-  // {
-  //   pvz: "ПВЗ_2",
-  //   name: "ул. Харитоново, 8",
-  // },
-  // {
-  //   pvz: "ПВЗ_3",
-  //   name: "ул. Палладина, 16",
-  // },
-  // {
-  //   pvz: "ПВЗ_4",
-  //   name: "ул. Нартова, 1",
-  // },
-  // {
-  //   pvz: "ППВЗ_5",
-  //   name: "ул. Дудинская, д. 4, кв. 7",
-  // },
-  // {
-  //   pvz: "ППВЗ_7",
-  //   name: "ул. Жебелева, д. 7",
-  // },
-  // {
-  //   pvz: "ПВЗ_8",
-  //   name: "ул. Макара Мазая, 37А",
-  // },
-  // {
-  //   pvz: "ППВЗ_9",
-  //   name: "ул. 8 Марта, 77",
-  // },
-  // {
-  //   pvz: "ПВЗ_10",
-  //   name: "ул. Азовской Военной Флотилии, 2",
-  // },
-  // {
-  //   pvz: "ПВЗ_11",
-  //   name: "ул. Азовстальская, 131",
-  // },
-  // {
-  //   pvz: "ППВЗ_12",
-  //   name: "ул. Центральная, 43",
-  // },
-  // {
-  //   pvz: "ПВЗ_14",
-  //   name: "пос. Старый Крым, павильон на центральном рынке",
-  // },
-  // {
-  //   pvz: "НаДом",
-  //   name: "Домой",
-  // },
-];
-
 function roundToNearestTen(num: number): number {
   const lastDigit = num % 10;
   if (lastDigit >= 5) {
@@ -709,9 +636,7 @@ async function checkPercent() {
           <template v-slot:body>
             <div class="flex items-center flex-col justify-center h-full gap-5">
               <h1 class="font-semibold text-base max-sm:text-lg">
-                Заказать через личный кабинет
-                <span class="uppercase text-secondary-color">ТЕСТ</span>
-                можно только<br />
+                Заказать через личный кабинет можно только<br />
                 из интернет-магазинов OZON и WILDBERRIES
               </h1>
               <div class="flex items-center gap-3">
@@ -839,8 +764,8 @@ async function checkPercent() {
             <div v-if="isOpenSecondModal" v-auto-animate>
               <label>Пункт выдачи заказов</label>
               <USelectMenu
-                value-attribute="pvz"
-                option-attribute="name"
+                value-attribute="name"
+                option-attribute="address"
                 v-model="address"
                 :options="people"
                 class="mt-3"
@@ -1447,8 +1372,8 @@ async function checkPercent() {
               на
               <span class="text-secondary-color font-bold">
                 {{
-                  pvzs.find((pvz) => pvz.pvz === addressData)?.name
-                    ? pvzs.find((pvz) => pvz.pvz === addressData)?.name
+                  pvzs.find((pvz) => pvz.name === addressData)?.address
+                    ? pvzs.find((pvz) => pvz.name === addressData)?.address
                     : "Не выбран"
                 }}
               </span>

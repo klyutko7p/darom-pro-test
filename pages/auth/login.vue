@@ -23,12 +23,12 @@ async function signIn() {
 
 let user = ref({} as User);
 const token = Cookies.get("token");
-
+const settings = ref<Array<any>>([]);
 onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
   isLoading.value = false;
-
+  settings.value = await storeUsers.getSettings();
   if (token && user.value.role === "ADMIN") {
     router.push("/admin/main");
   } else if (token && user.value.role === "USER") {
@@ -53,9 +53,10 @@ let showPassword = ref(false);
       <div class="">
         <div class="flex items-center justify-center">
           <h1
+            v-if="settings[0]"
             class="text-center text-secondary-color text-6xl max-sm:text-5xl font-bold"
           >
-            ТЕСТ
+            {{ settings[0].title }}
           </h1>
         </div>
         <h2

@@ -6,11 +6,6 @@ const props = defineProps({
   user: { type: Object as PropType<User>, required: true },
 });
 
-const storeBalance = useBalanceStore();
-const storeAdvanceReports = useAdvanceReports();
-let requestsBalance = ref<Array<IBalance>>([]);
-let requestsAdvanceReport = ref<Array<IAdvanceReport>>([]);
-
 const emits = defineEmits(["editMenu", "signOut"]);
 
 function editMenu() {
@@ -21,71 +16,15 @@ function signOut() {
   emits("signOut");
 }
 
-let quantityRequiredARRows = ref(0);
-let quantityRequiredARRowsAdmin = ref(0);
-let quantityRequiredBalanceRows = ref(0);
+const storeUsers = useUsersStore();
+const settings = ref<Array<any>>([]);
 onMounted(async () => {
   try {
-    const [balanceResult, advanceResult] = await Promise.all([
-      storeBalance.getBalanceRows(),
-      storeAdvanceReports.getAdvancedReportsForSidebar(),
-    ]);
-
-    requestsBalance.value = balanceResult;
-    requestsAdvanceReport.value = advanceResult;
-
-    quantityRequiredARRows.value = requestsAdvanceReport.value?.filter(
-      (row) =>
-        !row.received &&
-        row.issuedUser === props.user.username &&
-        row.notation !== "Пополнение баланса"
-    ).length;
-    quantityRequiredARRowsAdmin.value = requestsAdvanceReport.value?.filter(
-      (row) =>
-        !row.received &&
-        (row.issuedUser === props.user.username ||
-          row.issuedUser === "Директор (С)") &&
-        row.notation !== "Пополнение баланса"
-    ).length;
-    quantityRequiredBalanceRows.value = requestsBalance.value?.filter(
-      (row) =>
-        row.issued &&
-        !row.received &&
-        (row.receivedUser2 === props.user.username ||
-          row.receivedUser2 === "Нет")
-    ).length;
+    settings.value = await storeUsers.getSettings();
   } catch (error) {
     console.error("Ошибка:", error);
   }
 });
-
-const router = useRouter();
-
-let isShowGoodsList = ref(false);
-let isShowFinancesList = ref(false);
-let isShowEquipmentsList = ref(false);
-let isShowDSList = ref(false);
-let isShowSettingsList = ref(false);
-
-function showGoodsList() {
-  isShowGoodsList.value = !isShowGoodsList.value;
-}
-
-function showFinancesList() {
-  isShowFinancesList.value = !isShowFinancesList.value;
-}
-
-function showEquipmentsList() {
-  isShowEquipmentsList.value = !isShowEquipmentsList.value;
-}
-
-function showDSList() {
-  isShowDSList.value = !isShowDSList.value;
-}
-
-function showSettingsList() {
-  isShowSettingsList.value = !isShowSettingsList.value;
-}
 </script>
 <template>
   <div
@@ -97,9 +36,10 @@ function showSettingsList() {
   <div v-auto-animate class="h-full overflow-y-auto">
     <div class="px-3 justify-between mb-10 pb-2">
       <h5
+        v-if="settings[0]"
         class="text-6xl max-[400px]:text-5xl text-center text-secondary-color font-bold uppercase dark:text-gray-400"
       >
-        ТЕСТ
+        {{ settings[0].title }}
       </h5>
     </div>
 

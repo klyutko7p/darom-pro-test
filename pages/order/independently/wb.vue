@@ -10,12 +10,15 @@ let isLoading = ref(false);
 const selectedPVZClient = ref("");
 const address = ref("");
 
+const settings = ref<Array<any>>([]);
+const storeUsers = useUsersStore();
 onMounted(async () => {
   address.value =
     JSON.parse(localStorage.getItem("addressData") as string) || "";
   let isNotAsking = localStorage.getItem("isNotAskingWB");
   showModal();
   selectedPVZClient.value = address.value;
+  settings.value = await storeUsers.getSettings();
 });
 
 definePageMeta({
@@ -179,8 +182,6 @@ function clearValue() {
   isNotAskingWB.value = false;
   isShowModal.value = true;
 }
-
-const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ_12", "ПВЗ_14"]);
 </script>
 
 <template>
@@ -200,26 +201,9 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
             <div>
               <div class="flex justify-center">
                 <UButton
-                  v-if="!MPVZs.includes(address)"
+                  v-if="settings[0]"
                   @click="
-                    writeClipboardText('Село Ряженое, Улица Ленина 6'),
-                      skipWindow()
-                  "
-                  target="_blank"
-                  icon="i-mdi-package-variant-closed-check"
-                  size="sm"
-                  color="pink"
-                  variant="solid"
-                  class="font-semibold text-left duration-200 w-full max-w-[500px] mt-3"
-                  :trailing="false"
-                  >Нажмите сюда, чтобы указать скопированный адрес для заказа
-                  товара на WILDBERRIES</UButton
-                >
-                <UButton
-                  v-if="MPVZs.includes(address)"
-                  @click="
-                    writeClipboardText('Село Латоново, Улица Ленина 67'),
-                      skipWindow()
+                    writeClipboardText(`${settings[0].address}`), skipWindow()
                   "
                   target="_blank"
                   icon="i-mdi-package-variant-closed-check"

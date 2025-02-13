@@ -714,6 +714,20 @@ let usersOfIssued = ref([
         </li>
         <li>
           <NuxtLink
+            :to="'/admin/settings'"
+            class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
+            v-if="user.username === 'Директор'"
+          >
+            <Icon
+              class="text-gray-500 transition duration-75 group-hover:text-gray-900"
+              name="material-symbols:settings-b-roll"
+              size="24"
+            />
+            <span class="flex-1 ms-3 whitespace-nowrap">Настройки сайта</span>
+          </NuxtLink>
+        </li>
+        <li>
+          <NuxtLink
             :to="'/admin/users'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             v-if="

@@ -1,40 +1,51 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
-const storeUsers = useUsersStore();
 
-const emit = defineEmits(["openModal"]);
+const emit = defineEmits(["openModal", "deleteRow"]);
 
-function openModal(row: IPhoneNumber) {
+function openModal(row: any) {
   emit("openModal", row);
 }
 
+function deleteRow(id: number) {
+  emit("deleteRow", id);
+}
+
 defineProps({
-  user: { type: Object as PropType<User>, required: true },
-  rows: { type: Array as PropType<IPhoneNumber[]> },
+  rows: { type: Array as PropType<PVZ[]> },
 });
 
 const columns = [
   {
-    key: "number",
-    label: "Телефон",
-    sortable: true,
+    key: "name",
+    label: "Название",
   },
   {
     key: "address",
     label: "Адрес",
-    sortable: true,
+  },
+  {
+    key: "coordinates",
+    label: "Координаты",
   },
   {
     key: "actions",
   },
 ];
 
-const items = (row) => [
+const items = (row: PVZ) => [
   [
     {
       label: "Изменить",
       icon: "i-heroicons-pencil-square-20-solid",
       click: () => openModal(row),
+    },
+  ],
+  [
+    {
+      label: "Удалить",
+      icon: "i-heroicons-trash-20-solid",
+      click: () => deleteRow(row.id),
     },
   ],
 ];
@@ -47,6 +58,7 @@ const toggleDropdown = (rowId: any) => {
   dropdownStates.value[rowId] = !dropdownStates.value[rowId];
 };
 </script>
+
 <template>
   <UTable
     class="w-full text-center bg-white border-[1px] rounded-md"
@@ -54,14 +66,6 @@ const toggleDropdown = (rowId: any) => {
     :rows="rows"
     :columns="columns"
   >
-    <template #name-data="{ row }">
-      <span>{{ row.name }}</span>
-    </template>
-
-    <template #address-data="{ row }">
-      <span>{{ row.address }}</span>
-    </template>
-
     <template #actions-data="{ row }">
       <UDropdown :open="dropdownStates[row.id]" :items="items(row)">
         <UButton
@@ -76,13 +80,3 @@ const toggleDropdown = (rowId: any) => {
     </template>
   </UTable>
 </template>
-
-<style scoped>
-.hidden-row {
-  display: none !important;
-}
-
-tr:nth-child(even) {
-  background-color: #f2f2f2; /* Цвет для четных строк */
-}
-</style>

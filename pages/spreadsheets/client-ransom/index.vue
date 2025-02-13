@@ -175,7 +175,7 @@ async function deleteNotSortedRows() {
 
   const promises = uniqueFromNames.map((fromName) =>
     storeClients.sendMessageToClient(
-      "Статус заказа по штрих-коду: DAROM.PRO",
+      "Статус заказа по штрих-коду",
       "Уважаемый клиент, Ваш штрих-код не актуален. Замените штрих-код для получения вашего заказа",
       fromName
     )

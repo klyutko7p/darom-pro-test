@@ -8,10 +8,13 @@ const toast = useToast();
 const token = Cookies.get("token");
 let isLoading = ref(false);
 
+const settings = ref<Array<any>>([]);
+const storeUsers = useUsersStore();
 onMounted(async () => {
   if (!token) {
     router.push("/auth/client/login?stay=true");
   }
+  settings.value = await storeUsers.getSettings();
 });
 
 definePageMeta({
@@ -72,9 +75,8 @@ function skipWindow() {
             <h1>
               Если Вы верно указали адрес, то можете заказывать товар и после
               уведомления о доставке по адресу:
-              <span class="text-[#ec208b] font-semibold">
-                Ростовская область, Матвеево-Курганский район, Село Ряженое,
-                Улица Ленина 6
+              <span v-if="settings[0]" class="text-[#ec208b] font-semibold">
+               {{ settings[0].address }}
               </span>
               прикрепите Ваш Штрих-код (QR) в: <br />
               <UButton
@@ -83,8 +85,8 @@ function skipWindow() {
                 icon="i-mdi-truck-delivery"
                 size="xl"
                 color="pink"
-                >Оформить доставку Вашего <br class="hidden max-sm:block" /> заказа 
-                из интернет-магазина по QR</UButton
+                >Оформить доставку Вашего <br class="hidden max-sm:block" />
+                заказа из интернет-магазина по QR</UButton
               >
               <br />
               для оформления доставки на пункт выдачи заказов на территории ДНР

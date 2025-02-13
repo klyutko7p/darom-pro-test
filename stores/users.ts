@@ -8,6 +8,7 @@ const toast = useToast();
 export const useUsersStore = defineStore("users", () => {
   const router = useRouter();
 
+  let cashedSettings: any = null;
   let userData = {} as User;
 
   function getUser() {
@@ -162,6 +163,44 @@ export const useUsersStore = defineStore("users", () => {
     }
   }
 
+  async function getSettings() {
+    if (cashedSettings) {
+      return cashedSettings;
+    } else {
+      try {
+        let { data }: any = await useFetch("/api/settings/get-settings", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        cashedSettings = data.value;
+        return cashedSettings;
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        }
+      }
+    }
+  }
+
+  async function updateSettings(settings: any) {
+    try {
+      let data = await useFetch("/api/settings/edit-settings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ settings }),
+      });
+      toast.success("Настройки успешно обновлены!");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function updateUser(user: User) {
     try {
       let data = await useFetch("/api/users/edit-user", {
@@ -271,5 +310,7 @@ export const useUsersStore = defineStore("users", () => {
     createTokenDevice,
     sendMessageToEmployee,
     getNormalizeTime,
+    getSettings,
+    updateSettings,
   };
 });

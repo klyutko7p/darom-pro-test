@@ -76,61 +76,6 @@ function getStatus(row: IOurRansom | IClientRansom) {
   }
 }
 
-const pvzs = [
-  {
-    pvz: "ПВЗ_1",
-    name: "Тест адрес",
-  },
-  // {
-  //   pvz: "ПВЗ_2",
-  //   name: "ул. Харитоново, 8",
-  // },
-  // {
-  //   pvz: "ПВЗ_3",
-  //   name: "ул. Палладина, 16",
-  // },
-  // {
-  //   pvz: "ПВЗ_4",
-  //   name: "ул. Нартова, 1",
-  // },
-  // {
-  //   pvz: "ППВЗ_5",
-  //   name: "ул. Дудинская, д. 4, кв. 7",
-  // },
-  // {
-  //   pvz: "ППВЗ_7",
-  //   name: "ул. Жебелева, д. 7",
-  // },
-  // {
-  //   pvz: "ПВЗ_8",
-  //   name: "ул. Макара Мазая, 37А",
-  // },
-  // {
-  //   pvz: "ППВЗ_9",
-  //   name: "ул. 8 Марта, 77",
-  // },
-  // {
-  //   pvz: "ПВЗ_10",
-  //   name: "ул. Азовской Военной Флотилии, 2",
-  // },
-  // {
-  //   pvz: "ПВЗ_11",
-  //   name: "ул. Азовстальская, 131",
-  // },
-  // {
-  //   pvz: "ППВЗ_12",
-  //   name: "ул. Центральная, 43",
-  // },
-  // {
-  //   pvz: "ПВЗ_14",
-  //   name: "пос. Старый Крым, павильон на центральном рынке",
-  // },
-  // {
-  //   pvz: "НаДом",
-  //   name: "Домой",
-  // },
-];
-
 let isShowModal = ref(false);
 let rowStatus = ref({} as IOurRansom | IClientRansom);
 
@@ -625,7 +570,7 @@ function addMinutes(date: any, minutes: any) {
         </div>
         <div
           class="flex flex-col items-center gap-3 px-5 w-full"
-          v-if="!rowStatus.deliveredSC"
+          v-if="rowStatus.orderPVZ && !rowStatus.deliveredSC"
         >
           <Icon
             name="i-material-symbols-arrow-warm-up-rounded"
@@ -633,7 +578,7 @@ function addMinutes(date: any, minutes: any) {
             size="30"
           />
           <div
-            :class="{ 'animate-pulse': !rowStatus.deliveredSC }"
+            :class="{ 'animate-pulse': rowStatus.orderPVZ && !rowStatus.deliveredSC }"
             class="flex items-center w-full gap-5 text-gray-500 bg-gray-100 px-3 py-2 rounded-xl shadow-inner"
           >
             <Icon name="i-eos-icons-hourglass" size="24" />

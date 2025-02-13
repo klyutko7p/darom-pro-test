@@ -11,6 +11,8 @@ let isLoading = ref(false);
 const selectedPVZClient = ref("");
 const address = ref("");
 
+const settings = ref<Array<any>>([]);
+const storeUsers = useUsersStore();
 onMounted(async () => {
   address.value =
     JSON.parse(localStorage.getItem("addressData") as string) || "";
@@ -19,6 +21,7 @@ onMounted(async () => {
     isNotAskingOZ.value = true;
   }
   selectedPVZClient.value = address.value;
+  settings.value = await storeUsers.getSettings();
 });
 
 definePageMeta({
@@ -65,7 +68,6 @@ function clearValue() {
 }
 
 let isShowWarning = ref(true);
-const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ_12", "ПВЗ_14"]);
 </script>
 
 <template>
@@ -75,15 +77,18 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
   <div v-if="!isLoading">
     <div>
       <div class="flex items-center justify-center">
-        <div class="flex items-center justify-center" v-if="selectedPVZClient && route.query.change !== 'true'">
+        <div
+          class="flex items-center justify-center"
+          v-if="selectedPVZClient && route.query.change !== 'true'"
+        >
           <div
             v-if="!isNotAskingOZ"
             class="flex items-center justify-center w-screen px-3 flex-col h-screen"
           >
             <UButton
-              v-if="!MPVZs.includes(address)"
+              v-if="settings[0]"
               @click="skipWindow()"
-              to="https://ozon.ru/point/443054"
+              to="https://ozon.ru/point/468539"
               target="_blank"
               icon="i-mdi-package-variant-closed-plus"
               size="xl"
@@ -92,21 +97,7 @@ const MPVZs = ref(["ПВЗ_8", "ППВЗ_9", "ПВЗ_10", "ПВЗ_11", "ППВЗ
               class="font-semibold duration-200 w-full max-w-[500px]"
               :trailing="false"
               >Нажмите тут для подтверждения адреса пункта заказа
-              интернет-магазина «Село Ряженое, ул. Ленина 6»</UButton
-            >
-            <UButton
-              v-if="MPVZs.includes(address)"
-              @click="skipWindow()"
-              to="https://ozon.ru/point/491512"
-              target="_blank"
-              icon="i-mdi-package-variant-closed-plus"
-              size="xl"
-              color="blue"
-              variant="solid"
-              class="font-semibold duration-200 w-full max-w-[500px]"
-              :trailing="false"
-              >Нажмите тут для подтверждения адреса пункта заказа
-              интернет-магазина «Село Латоново, ул. Ленина 67»</UButton
+              интернет-магазина « {{ settings[0].address }} »</UButton
             >
           </div>
           <div class="h-screen flex items-center justify-center" v-else>

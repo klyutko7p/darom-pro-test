@@ -243,10 +243,11 @@ function handleFilteredRows(filteredRowsData: IClientRansom[]) {
 }
 
 let originallyRows = ref<Array<IClientRansom>>();
-
+const settings = ref<Array<any>>([]);
 onMounted(async () => {
   isLoading.value = true;
   user.value = await storeUsers.getUser();
+  settings.value = await storeUsers.getSettings();
   // rows.value = await storeRansom.getRansomRowsByPVZ(pvzString, "ClientRansom");
   originallyRows.value = await storeRansom.getRansomRows("ClientRansom");
   rows.value = originallyRows.value?.filter(
@@ -355,34 +356,55 @@ function scanItem() {
   timeoutId = setTimeout(async () => {
     let scannedLink = scanStringItem.value.trim();
     scannedLink = convertUrl(scannedLink);
-    let numberOfPVZ = scannedLink.split("/")[0];
 
-    if (numberOfPVZ.includes("1")) {
-      letterOfPVZ.value = "А";
-    } else if (numberOfPVZ.includes("2")) {
-      letterOfPVZ.value = "Б";
-    } else if (numberOfPVZ.includes("3")) {
-      letterOfPVZ.value = "В";
-    } else if (numberOfPVZ.includes("4")) {
-      letterOfPVZ.value = "Г";
-    } else if (numberOfPVZ.includes("5")) {
-      letterOfPVZ.value = "Д";
-    } else if (numberOfPVZ.includes("6")) {
-      letterOfPVZ.value = "Е";
-    } else if (numberOfPVZ.includes("7")) {
-      letterOfPVZ.value = "Ё";
-    } else if (numberOfPVZ.includes("8")) {
-      letterOfPVZ.value = "Ж";
-    } else if (numberOfPVZ.includes("9")) {
-      letterOfPVZ.value = "З";
-    } else if (numberOfPVZ.includes("10")) {
-      letterOfPVZ.value = "И";
-    } else if (numberOfPVZ.includes("11")) {
-      letterOfPVZ.value = "Й";
+    const letters = [
+      "А",
+      "Б",
+      "В",
+      "Г",
+      "Д",
+      "Е",
+      "Ж",
+      "З",
+      "И",
+      "Й",
+      "К",
+      "Л",
+      "М",
+      "Н",
+      "О",
+      "П",
+      "Р",
+      "С",
+      "Т",
+      "У",
+      "Ф",
+      "Х",
+      "Ц",
+      "Ч",
+      "Ш",
+      "Щ",
+      "Ъ",
+      "Ы",
+      "Ь",
+      "Э",
+      "Ю",
+      "Я",
+    ];
+
+    const numberStr = scannedLink.split("/")[0];
+    const number = parseInt(numberStr, 10);
+
+    if (number >= 1 && number <= letters.length) {
+      letterOfPVZ.value = letters[number - 1];
+    } else {
+      letterOfPVZ.value = "";
     }
 
+    let link = window.location.href.split("/")[2].split("/")[0];
+
     window.location.href =
-      "https://darom.pro/spreadsheets/client-ransom/ПВЗ" +
+      `https://${link}/spreadsheets/client-ransom/ПВЗ` +
       scannedLink.split("/")[0] +
       "/" +
       scannedLink.split("/")[1] +
@@ -421,7 +443,7 @@ function convertUrl(url: string): string {
               type="text"
             />
           </div>
-          
+
           <div class="flex items-center gap-5 mt-10">
             <div
               v-if="!isShowDeletedData"

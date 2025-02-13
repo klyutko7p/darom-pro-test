@@ -192,9 +192,11 @@ model BalanceDelivery {
 }
 
 model PVZ {
-  id         Int          @id @default(autoincrement())
-  name       String
-  PVZPercent PVZPercent[]
+  id          Int          @id @default(autoincrement())
+  name        String
+  address     String?
+  coordinates Float[]
+  PVZPercent  PVZPercent[]
 }
 
 model SortingCenter {
@@ -559,4 +561,12 @@ model ChatMessage {
   createdAt DateTime   @default(now())
   threadId  Int
   thread    ChatThread @relation(fields: [threadId], references: [id])
+}
+
+model MainSetting {
+  id          Int     @id @default(autoincrement())
+  title       String
+  mainNumber  String
+  mainNumber2 String?
+  address     String?
 }

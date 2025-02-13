@@ -304,14 +304,6 @@ function getAllSum() {
   }
 }
 
-let companies = ref([
-  "W/O/Я start",
-  "Darom.pro",
-  "Сортировка",
-  "Доставка",
-  "Чаевые",
-]);
-
 function formatNumber(number: number) {
   let numberString = Math.ceil(number).toString();
 

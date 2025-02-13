@@ -21,11 +21,15 @@ function signOut() {
   emits("signOut");
 }
 
+const storeUsers = useUsersStore();
+const settings = ref<Array<any>>([]);
 let quantityRequiredARRows = ref(0);
 let quantityRequiredARRowsAdmin = ref(0);
 let quantityRequiredBalanceRows = ref(0);
 onMounted(async () => {
   try {
+    settings.value = await storeUsers.getSettings();
+
     const [balanceResult, advanceResult] = await Promise.all([
       storeBalance.getBalanceRows(),
       storeAdvanceReports.getAdvancedReportsForSidebar(),
@@ -117,9 +121,10 @@ let usersOfIssued = ref([
         class="flex items-center px-3 justify-between mb-3 pb-2 border-b-[1px] border-black"
       >
         <h5
+          v-if="settings[0]"
           class="text-3xl text-secondary-color font-bold uppercase dark:text-gray-400"
         >
-          ТЕСТ
+          {{ settings[0].title }}
         </h5>
         <div
           @click="editMenu"
@@ -750,6 +755,22 @@ let usersOfIssued = ref([
                 />
                 <span class="flex-1 ms-3 whitespace-nowrap">Назад</span>
               </div>
+            </li>
+            <li>
+              <NuxtLink
+                :to="'/admin/settings'"
+                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
+                v-if="user.username === 'Директор'"
+              >
+                <Icon
+                  class="text-gray-500 transition duration-75 group-hover:text-gray-900"
+                  name="material-symbols:settings-b-roll"
+                  size="24"
+                />
+                <span class="flex-1 ms-3 whitespace-nowrap"
+                  >Настройки сайта</span
+                >
+              </NuxtLink>
             </li>
             <li>
               <NuxtLink
