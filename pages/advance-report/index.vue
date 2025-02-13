@@ -1658,8 +1658,8 @@ const typeOfOptions2 = [
                   class="w-full"
                   v-model="rowData.issuedUser"
                   :options="usersOfIssued"
-                  value-attribute="name"
-                  option-attribute="name"
+                  value-attribute="username"
+                  option-attribute="username"
                 />
               </div>
 
@@ -2094,8 +2094,8 @@ const typeOfOptions2 = [
                   class="w-full"
                   v-model="rowData.issuedUser"
                   :options="usersOfIssued"
-                  value-attribute="name"
-                  option-attribute="name"
+                  value-attribute="username"
+                  option-attribute="username"
                 />
               </div>
 

@@ -2710,8 +2710,8 @@ async function deleteRow(id: number) {
                     class="w-full"
                     v-model="rowData.recipient"
                     :options="usersOfIssued"
-                    value-attribute="name"
-                    option-attribute="name"
+                    value-attribute="username"
+                    option-attribute="username"
                   />
                 </div>
 
@@ -3186,8 +3186,8 @@ async function deleteRow(id: number) {
                     class="w-full"
                     v-model="rowData.recipient"
                     :options="usersOfIssued"
-                    value-attribute="name"
-                    option-attribute="name"
+                    value-attribute="username"
+                    option-attribute="username"
                   />
                 </div>
 
@@ -3271,8 +3271,8 @@ async function deleteRow(id: number) {
                     class="w-full"
                     v-model="rowData.recipient"
                     :options="usersOfIssued"
-                    value-attribute="name"
-                    option-attribute="name"
+                    value-attribute="username"
+                    option-attribute="username"
                   />
                 </div>
 
