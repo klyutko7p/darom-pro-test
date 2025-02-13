@@ -178,7 +178,7 @@ const flags = [
                   type="number"
                 />
               </div>
-              <div class="flex flex-col items-start text-left gap-2 mb-5">
+              <!-- <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="nameOfEquipment">% Яндекс Маркет</label>
                 <UInput
                   required
@@ -186,7 +186,7 @@ const flags = [
                   v-model="rowData.ym"
                   type="number"
                 />
-              </div>
+              </div> -->
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="nameOfEquipment">Тип</label>
                 <USelectMenu

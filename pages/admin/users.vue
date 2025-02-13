@@ -89,6 +89,7 @@ async function createUser(userData: User) {
     userData.role
   );
   users.value = await storeUsers.getUsers();
+  users.value = users.value.filter((user) => user.username !== 'admin_160421')
   isLoading.value = false;
 }
 
@@ -96,6 +97,7 @@ async function updateUser() {
   isLoading.value = true;
   await storeUsers.updateUser(userData.value);
   users.value = await storeUsers.getUsers();
+  users.value = users.value.filter((user) => user.username !== 'admin_160421')
   closeModal();
   isLoading.value = false;
 }
@@ -112,11 +114,12 @@ async function deleteUser(usernameData: string) {
   let answer = confirm("Вы точно хотите удалить данного пользователя?");
   if (answer) await storeUsers.deleteUser(usernameData);
   users.value = await storeUsers.getUsers();
+  users.value = users.value.filter((user) => user.username !== 'admin_160421')
   isLoading.value = false;
 }
 
 let user = ref({} as User);
-let users = ref<Array<User>>();
+let users = ref<Array<User>>([]);
 let pvz = ref<Array<PVZ>>();
 let allPVZ = ref<Array<PVZ>>();
 let sortingCenters = ref<Array<SortingCenter>>();
@@ -146,6 +149,7 @@ onMounted(async () => {
 
   user.value = userResponse;
   users.value = usersResponse;
+  users.value = users.value.filter((user) => user.username !== 'admin_160421')
   sortingCenters.value = prepareSCList(sortingCentersResponse);
   allPVZ.value = pvzResponse;
   pvz.value = preparePVZList(pvzResponse);

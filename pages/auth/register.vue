@@ -251,7 +251,7 @@ let confirmationCode = ref("");
 
 async function isValidateConfirmationCode() {
   confirmationCode.value = confirmationCode.value.trim();
-  if (confirmationCode.value.length === 5) {
+  if ((confirmationCode.value.length + 1) === 5) {
     if (confirmationCode.value === originallyConfirmationCode.value) {
       isLoading.value = true;
       await confirmationRegistration();

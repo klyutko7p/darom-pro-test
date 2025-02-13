@@ -295,7 +295,7 @@ let showPassword = ref(false);
 let confirmationCode = ref("");
 
 async function isValidateConfirmationCode() {
-  if (confirmationCode.value.length === 5) {
+  if ((confirmationCode.value.length + 1) === 5) {
     if (confirmationCode.value === originallyConfirmationCode.value) {
       isLoading.value = true;
       generateRandomPassword(6);
