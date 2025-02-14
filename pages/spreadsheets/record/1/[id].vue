@@ -32,6 +32,7 @@ onMounted(async () => {
   user.value = await storeUsers.getUser();
   settings.value = await storeUsers.getSettings();
   row.value = await storeRansom.getRansomRow(id, "OurRansom");
+  getActualNameSite()
   isLoading.value = false;
 });
 
@@ -39,9 +40,11 @@ definePageMeta({
   layout: false,
 });
 
+let linkData = ref("");
 function getActualNameSite() {
-  let link = window.location.href.split("/")[2].split("/")[0];
-  return link;
+  if (window) {
+    linkData.value = window.location.href.split("/")[2].split("/")[0];
+  }
 }
 
 const token = Cookies.get("token");
@@ -56,13 +59,10 @@ const token = Cookies.get("token");
       <NuxtLayout name="admin">
         <div class="mt-5" v-if="!isLoading">
           <RecordBody
-            v-if="settings[0]"
             :link="link"
             :user="user"
             :row="row"
-            :value="`https://${getActualNameSite()}/spreadsheets/record/1/${
-              row.id
-            }`"
+            :value="`https://${linkData}/spreadsheets/record/1/${row.id}`"
             @update-delivery-row="updateDeliveryRow"
           />
         </div>
@@ -75,13 +75,10 @@ const token = Cookies.get("token");
       <NuxtLayout name="user">
         <div class="mt-5" v-if="!isLoading">
           <RecordBody
-            v-if="settings[0]"
             :link="link"
             :user="user"
             :row="row"
-            :value="`https://${getActualNameSite()}/spreadsheets/record/1/${
-              row.id
-            }`"
+            :value="`https://${linkData}/spreadsheets/record/1/${row.id}`"
             @update-delivery-row="updateDeliveryRow"
           />
         </div>

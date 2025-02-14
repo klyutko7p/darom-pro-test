@@ -141,7 +141,10 @@ const currentPage = ref(1);
 const totalPages = computed(() =>
   Math.ceil((props.rows?.length || 0) / perPage.value)
 );
-const totalRows = computed(() => Math.ceil(props.rows?.length || 0));
+
+const totalRows = computed(() =>
+  Math.ceil(props.rows?.filter((row) => row.deleted === null).length || 0)
+);
 
 let returnRows = ref<Array<IClientRansom>>();
 
