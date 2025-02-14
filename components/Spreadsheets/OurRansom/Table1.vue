@@ -782,8 +782,8 @@ function unlockScroll() {
 async function writeClipboardText(text: any) {
   try {
     let link = window.location.href.split("/")[2].split("/")[0];
-    let finalLink = `https://${link}/spreadsheets/order/${text}`
-    
+    let finalLink = `https://${link}/spreadsheets/order/${text}`;
+
     await navigator.clipboard.writeText(finalLink);
     toast.success("Вы успешно скопировали ссылку");
   } catch (error: any) {
@@ -1013,7 +1013,11 @@ const columns = [
         >
           <h1
             class="text-xl"
-            v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
+            v-if="
+              user.role !== 'PVZ' &&
+              user.role !== 'PPVZ' &&
+              user.role !== 'SORTIROVKA'
+            "
           >
             Товаров в работе:
             <span class="text-secondary-color font-bold">{{ totalRows }}</span>
@@ -2039,9 +2043,7 @@ const columns = [
             </NuxtLink>
 
             <div
-              v-if="
-                (user.clientLink1 === 'READ' || user.clientLink1 === 'WRITE')
-              "
+              v-if="user.clientLink1 === 'READ' || user.clientLink1 === 'WRITE'"
               class="cursor-pointer hover:opacity-50 duration-200 bg-secondary-color text-white font-bold w-6 h-6 rounded-full flex items-center justify-center"
               @click="writeClipboardText(`${row.clientLink1}`)"
             >

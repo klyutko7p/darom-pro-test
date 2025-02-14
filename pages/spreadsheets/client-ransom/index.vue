@@ -79,6 +79,7 @@ async function updateDeliveryRows(obj: any) {
       );
       filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
       rows.value = filteredRows.value;
+      handleFilteredRows(filteredRows.value);
       isLoading.value = false;
     }
   } else {
@@ -91,6 +92,7 @@ async function updateDeliveryRows(obj: any) {
     );
     filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
     rows.value = filteredRows.value;
+    handleFilteredRows(filteredRows.value);
     isLoading.value = false;
   }
 }
@@ -102,6 +104,7 @@ async function deleteRow(id: number) {
     await storeRansom.deleteRansomRow(id, "ClientRansom");
     filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
     rows.value = filteredRows.value;
+    handleFilteredRows(filteredRows.value);
     isLoading.value = false;
   }
 }
@@ -115,6 +118,7 @@ async function deleteSelectedRows(idArray: number[]) {
     await storeRansom.deleteRansomSelectedRows(idArray, "ClientRansom");
     filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
     rows.value = filteredRows.value;
+    handleFilteredRows(filteredRows.value);
     isLoading.value = false;
   }
 }
@@ -138,6 +142,7 @@ async function updateRow() {
   closeModal();
   filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
   rows.value = filteredRows.value;
+  handleFilteredRows(filteredRows.value);
   isLoading.value = false;
 }
 
@@ -160,6 +165,7 @@ async function createRow() {
   closeModal();
   filteredRows.value = await storeRansom.getRansomRows("ClientRansom");
   rows.value = filteredRows.value;
+  handleFilteredRows(filteredRows.value);
   isLoading.value = false;
 }
 
@@ -222,7 +228,7 @@ function deleteIssuedRowsTimer() {
   }
 }
 
-const filteredRows = ref<Array<IClientRansom>>();
+const filteredRows = ref<Array<IClientRansom>>([]);
 function handleFilteredRows(filteredRowsData: IClientRansom[]) {
   if (user.value.visiblePVZ === "ВСЕ" && user.value.visibleSC === "ВСЕ") {
     filteredRows.value = filteredRowsData;

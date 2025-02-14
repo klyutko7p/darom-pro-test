@@ -479,7 +479,11 @@ function convertToURL(inputString: string) {
         >
           <h1
             class="text-xl"
-            v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
+            v-if="
+              user.role !== 'PVZ' &&
+              user.role !== 'PPVZ' &&
+              user.role !== 'SORTIROVKA'
+            "
           >
             Товаров в работе:
             <span class="text-secondary-color font-bold">{{ totalRows }}</span>
