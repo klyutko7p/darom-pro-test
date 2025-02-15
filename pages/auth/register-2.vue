@@ -426,7 +426,7 @@ const linkToDB = config.public.supabaseUrl as string;
                 >Подтверждаю, что я ознакомлен и согласен с условиями
                 <a
                   class="text-secondary-color font-semibold duration-200 cursor-pointer hover:opacity-50"
-                  :href="`https://${linkToDB}/storage/v1/object/public/files/docx/policy_info_dp.pdf`"
+                  :href="`${linkToDB}/storage/v1/object/public/files/docx/policy_info_dp.pdf`"
                   target="_blank"
                   >Политики обработки персональных данных</a
                 ></label

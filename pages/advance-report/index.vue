@@ -1278,7 +1278,7 @@ async function handleFileChange(fileList: FileList) {
     .from("image")
     .upload(`img-${randomDigits + selectedFile.name}`, selectedFile);
   rowData.value.supportingDocuments = randomDigits + selectedFile.name;
-  linkPhoto.value = `https://${linkToDB}/storage/v1/object/public/image/img-${
+  linkPhoto.value = `${linkToDB}/storage/v1/object/public/image/img-${
     randomDigits + selectedFile.name
   }`;
   if (data) {

@@ -386,7 +386,7 @@ let isVisiblePages = ref(true);
         target="_blank"
         class="text-secondary-color hover:opacity-60 duration-200 font-bold"
         v-if="row.supportingDocuments && row.supportingDocuments.length > 2"
-        :href="`https://${linkToDB}/storage/v1/object/public/image/img-${row.supportingDocuments}`"
+        :href="`${linkToDB}/storage/v1/object/public/image/img-${row.supportingDocuments}`"
       >
         Фото
       </a>

@@ -335,7 +335,7 @@ const linkToDB = config.public.supabaseUrl as string;
                     >Подтверждаю, что я ознакомлен и согласен с условиями
                     <a
                       class="underline text-secondary-color duration-200 cursor-pointer hover:opacity-50"
-                      :href="`https://${linkToDB}/storage/v1/object/public/files/docx/policy_info_dp.pdf`"
+                      :href="`${linkToDB}/storage/v1/object/public/files/docx/policy_info_dp.pdf`"
                       >Политики обработки персональных данных</a
                     ></label
                   >
@@ -354,7 +354,7 @@ const linkToDB = config.public.supabaseUrl as string;
                     >Подтверждаю, что я ознакомлен и согласен с условиями
                     <a
                       class="underline text-secondary-color duration-200 cursor-pointer hover:opacity-50"
-                      :href="`https://${linkToDB}/storage/v1/object/public/files/docx/policy_conf_dp.pdf`"
+                      :href="`${linkToDB}/storage/v1/object/public/files/docx/policy_conf_dp.pdf`"
                       >Политики конфиденциальности</a
                     ></label
                   >
