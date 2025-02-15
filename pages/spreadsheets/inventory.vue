@@ -4,11 +4,11 @@ import { useToast } from "vue-toastification";
 
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  "https://larlbqgiulcvtankbkot.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhcmxicWdpdWxjdnRhbmtia290Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTc0MDUwMDcsImV4cCI6MjAzMjk4MTAwN30.mg-Z1vzsO6RWfZCoND7yIGpSu_E9e5N7qZasGzqGurQ"
-);
+const config = useRuntimeConfig();
+const linkToDB = config.public.supabaseUrl as string;
+const dbKey = config.public.supabaseKey as string;
 
+const supabase = createClient(linkToDB, dbKey);
 const toast = useToast();
 
 const storeUsers = useUsersStore();

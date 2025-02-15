@@ -758,10 +758,11 @@ let usersOfIssued = ref<Array<User>>([]);
 import { createClient } from "@supabase/supabase-js";
 import { useToast } from "vue-toastification";
 
-const supabase = createClient(
-  "https://larlbqgiulcvtankbkot.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhcmxicWdpdWxjdnRhbmtia290Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTc0MDUwMDcsImV4cCI6MjAzMjk4MTAwN30.mg-Z1vzsO6RWfZCoND7yIGpSu_E9e5N7qZasGzqGurQ"
-);
+const config = useRuntimeConfig();
+const linkToDB = config.public.supabaseUrl as string;
+const dbKey = config.public.supabaseKey as string;
+
+const supabase = createClient(linkToDB, dbKey);
 
 async function createRow() {
   if (
@@ -1267,6 +1268,7 @@ function handleFilteredRows(obj: any) {
   }
 }
 
+
 let linkPhoto = ref("");
 async function handleFileChange(fileList: FileList) {
   isLoading.value = true;
@@ -1276,7 +1278,7 @@ async function handleFileChange(fileList: FileList) {
     .from("image")
     .upload(`img-${randomDigits + selectedFile.name}`, selectedFile);
   rowData.value.supportingDocuments = randomDigits + selectedFile.name;
-  linkPhoto.value = `https://larlbqgiulcvtankbkot.supabase.co/storage/v1/object/public/image/img-${
+  linkPhoto.value = `https://${linkToDB}/storage/v1/object/public/image/img-${
     randomDigits + selectedFile.name
   }`;
   if (data) {

@@ -16,6 +16,7 @@ const pvzs = ref<Array<PVZ>>([]);
 const storeUsers = useUsersStore();
 const settings = ref<Array<any>>([]);
 onMounted(async () => {
+  getActualNameSite();
   user.value = await storeClients.getClient();
 
   if (token && user.value.role === "CLIENT" && !route.query.home) {
@@ -32,6 +33,13 @@ onMounted(async () => {
 
   await getPercents();
 });
+
+let linkData = ref("");
+function getActualNameSite() {
+  if (window) {
+    linkData.value = window.location.href.split("/")[2].split("/")[0];
+  }
+}
 
 let selectedAddress = ref();
 
@@ -220,7 +228,10 @@ let isShowSecondAddInfo = ref(false);
           <h1 class="text-xl mt-5 max-md:text-center">
             По всем вопросам и для оформления заказа:
           </h1>
-          <h1 class="text-xl max-[500px]:mt-3 text-center">
+          <h1
+            v-if="linkData.includes('smartsklad.netlify.app')"
+            class="text-xl max-[500px]:mt-3 text-center"
+          >
             <br class="hidden max-[500px]:block" />
             <div class="mt-5 flex items-center space-x-5">
               <div class="inline-block text-center">
@@ -243,6 +254,31 @@ let isShowSecondAddInfo = ref(false);
               </div>
             </div>
           </h1>
+          <h1 v-else class="text-xl max-[500px]:mt-3 text-center">
+            <div v-if="settings[0]">
+              <a
+                class="text-secondary-color underline underline-offset-2 font-bold px-5 rounded-xl hover:opacity-50 duration-200 mr-2"
+                :href="`tel:${settings[0].mainNumber}`"
+              >
+                {{ settings[0].mainNumber }}
+              </a>
+            </div>
+            <br class="hidden max-[500px]:block" />
+            <div class="mt-5 space-x-5">
+              <a
+                class="hover:opacity-50 duration-200"
+                href="https://t.me/Svetlana_Darompro"
+              >
+                <Icon name="logos:telegram" size="32" />
+              </a>
+              <a
+                class="hover:opacity-50 duration-200"
+                href="https://wa.me/79496124760"
+              >
+                <Icon name="logos:whatsapp-icon" size="32" />
+              </a>
+            </div>
+          </h1>
         </div>
         <div
           class="flex items-center justify-center gap-5 mt-5 max-md:flex-col"
@@ -263,7 +299,7 @@ let isShowSecondAddInfo = ref(false);
         <div
           class="flex items-center justify-between mt-24 max-xl:flex-col-reverse max-xl:gap-10 max-xl:mt-10"
         >
-          <div class="mb-24">
+          <div v-if="linkData.includes('smartsklad.netlify.app')" class="mb-24">
             <h1 class="text-center text-xl">Мы в Вконтакте!</h1>
             <h1 class="text-center text-xl">Кликай и присоединяйся к нам!</h1>
             <div
@@ -300,6 +336,47 @@ let isShowSecondAddInfo = ref(false);
                   />
                 </a>
               </div> -->
+            </div>
+          </div>
+          <div v-else class="mb-24">
+            <h1 class="text-center text-xl">Мы в Вконтакте и Telegram!</h1>
+            <h1 class="text-center text-xl max-[500px]:hidden">
+              Сканируй и присоединяйся к нам!
+            </h1>
+            <h1 class="text-center text-xl hidden max-[500px]:block">
+              Кликай и присоединяйся к нам!
+            </h1>
+            <div
+              class="flex items-center gap-10 mt-6 max-[500px]:justify-center"
+            >
+              <div class="flex flex-col items-center">
+                <img
+                  class="max-w-[160px] max-[500px]:hidden"
+                  src="../assets/images/qr_vk.png"
+                  alt=""
+                />
+                <a href="https://vk.com/daromproforyou" target="_blank">
+                  <Icon
+                    name="mdi:vk"
+                    class="text-blue-500 hover:text-secondary-color duration-200"
+                    size="40"
+                  />
+                </a>
+              </div>
+              <div class="flex flex-col items-center">
+                <img
+                  class="max-w-[160px] max-[500px]:hidden"
+                  src="../assets/images/qr_tg.png"
+                  alt=""
+                />
+                <a href="https://t.me/DaromProForYou" target="_blank">
+                  <Icon
+                    name="ic:baseline-telegram"
+                    class="mt-1 text-blue-500 hover:text-secondary-color duration-200"
+                    size="40"
+                  />
+                </a>
+              </div>
             </div>
           </div>
           <div class="max-md:w-full w-[770px]">

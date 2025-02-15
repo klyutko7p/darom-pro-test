@@ -294,6 +294,9 @@ async function signInNoRegistration() {
   message.value = await storeClients.signIn("+70000000001", "001001", false);
   isLoading.value = false;
 }
+
+const config = useRuntimeConfig();
+const linkToDB = config.public.supabaseUrl as string;
 </script>
 
 <template>
@@ -452,7 +455,7 @@ async function signInNoRegistration() {
                 >Подтверждаю, что я ознакомлен и согласен с условиями
                 <a
                   class="text-secondary-color font-semibold duration-200 cursor-pointer hover:opacity-50"
-                  href="https://larlbqgiulcvtankbkot.supabase.co/storage/v1/object/public/files/docx/policy_info_dp.pdf"
+                  :href="`https://${linkToDB}/storage/v1/object/public/files/docx/policy_info_dp.pdf`"
                   target="_blank"
                   >Политики обработки персональных данных</a
                 ></label
@@ -472,7 +475,7 @@ async function signInNoRegistration() {
                 >Подтверждаю, что я ознакомлен и согласен с условиями
                 <a
                   class="text-secondary-color font-semibold duration-200 cursor-pointer hover:opacity-50"
-                  href="https://larlbqgiulcvtankbkot.supabase.co/storage/v1/object/public/files/docx/policy_conf_dp.pdf"
+                  :href="`https://${linkToDB}/storage/v1/object/public/files/docx/policy_conf_dp.pdf`"
                   target="_blank"
                   >Политики конфиденциальности</a
                 ></label

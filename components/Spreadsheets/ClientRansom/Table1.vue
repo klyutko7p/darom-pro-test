@@ -20,6 +20,9 @@ function updateDeliveryRows(flag: string) {
   getAllSum.value = 0;
 }
 
+const config = useRuntimeConfig();
+const linkToDB = config.public.supabaseUrl;
+
 function openModal(row: IClientRansom) {
   emit("openModal", row);
 }
@@ -997,7 +1000,7 @@ function convertToURL(inputString: string) {
                 target="_blank"
                 class="text-secondary-color hover:opacity-60 duration-200 font-bold"
                 v-if="row.img && row.img.length > 2"
-                :href="`https://larlbqgiulcvtankbkot.supabase.co/storage/v1/object/public/image/img-${row.img}`"
+                :href="`https://${linkToDB}/storage/v1/object/public/image/img-${row.img}`"
               >
                 Фото
               </a>

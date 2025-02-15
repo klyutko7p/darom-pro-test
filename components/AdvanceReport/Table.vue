@@ -3,6 +3,9 @@ import type { PropType } from "vue";
 const storeUsers = useUsersStore();
 import { read, utils, writeFile, write } from "xlsx";
 
+const config = useRuntimeConfig();
+const linkToDB = config.public.supabaseUrl;
+
 const emit = defineEmits(["openModal", "updateDeliveryRow", "deleteRow"]);
 
 function updateDeliveryRow(row: IAdvanceReport) {
@@ -383,7 +386,7 @@ let isVisiblePages = ref(true);
         target="_blank"
         class="text-secondary-color hover:opacity-60 duration-200 font-bold"
         v-if="row.supportingDocuments && row.supportingDocuments.length > 2"
-        :href="`https://larlbqgiulcvtankbkot.supabase.co/storage/v1/object/public/image/img-${row.supportingDocuments}`"
+        :href="`https://${linkToDB}/storage/v1/object/public/image/img-${row.supportingDocuments}`"
       >
         Фото
       </a>

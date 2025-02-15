@@ -127,6 +127,9 @@ useSeoMeta({
   ogDescription:
     "Авторизуйтесь и получите доступ к заказу из любых интернет-магазинов!",
 });
+
+const config = useRuntimeConfig();
+const linkToDB = config.public.supabaseUrl as string;
 </script>
 
 <template>
@@ -332,7 +335,7 @@ useSeoMeta({
                     >Подтверждаю, что я ознакомлен и согласен с условиями
                     <a
                       class="underline text-secondary-color duration-200 cursor-pointer hover:opacity-50"
-                      href="https://larlbqgiulcvtankbkot.supabase.co/storage/v1/object/public/files/docx/policy_info_dp.pdf"
+                      :href="`https://${linkToDB}/storage/v1/object/public/files/docx/policy_info_dp.pdf`"
                       >Политики обработки персональных данных</a
                     ></label
                   >
@@ -351,7 +354,7 @@ useSeoMeta({
                     >Подтверждаю, что я ознакомлен и согласен с условиями
                     <a
                       class="underline text-secondary-color duration-200 cursor-pointer hover:opacity-50"
-                      href="https://larlbqgiulcvtankbkot.supabase.co/storage/v1/object/public/files/docx/policy_conf_dp.pdf"
+                      :href="`https://${linkToDB}/storage/v1/object/public/files/docx/policy_conf_dp.pdf`"
                       >Политики конфиденциальности</a
                     ></label
                   >

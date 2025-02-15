@@ -117,10 +117,11 @@ definePageMeta({
 import { createClient } from "@supabase/supabase-js";
 import { useToast } from "vue-toastification";
 
-const supabase = createClient(
-  "https://larlbqgiulcvtankbkot.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhcmxicWdpdWxjdnRhbmtia290Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTc0MDUwMDcsImV4cCI6MjAzMjk4MTAwN30.mg-Z1vzsO6RWfZCoND7yIGpSu_E9e5N7qZasGzqGurQ"
-);
+const config = useRuntimeConfig();
+const linkToDB = config.public.supabaseUrl as string;
+const dbKey = config.public.supabaseKey as string;
+
+const supabase = createClient(linkToDB, dbKey);
 
 let rowData = ref({} as IClientRansom);
 let marketplace = ref("");
@@ -373,6 +374,13 @@ async function writeClipboardText(text: any) {
     console.error(error.message);
   }
 }
+
+let linkData = ref("");
+function getActualNameSite() {
+  if (window) {
+    linkData.value = window.location.href.split("/")[2].split("/")[0];
+  }
+}
 </script>
 
 <template>
@@ -384,7 +392,7 @@ async function writeClipboardText(text: any) {
   </Head>
   <div v-if="!isLoading">
     <div v-if="token">
-      <div v-if="isOpenFirstModal">
+      <div v-if="isOpenFirstModal && linkData.includes('smartsklad.netlify.app')">
         <div
           class="bg-[#0763f6cd] w-screen flex items-center justify-center h-[330px] max-sm:h-[300px] cursor-pointer hover:opacity-70 duration-200 relative"
           @click="changeMarketplace('Ozon')"
@@ -477,6 +485,114 @@ async function writeClipboardText(text: any) {
             Выберите пункт выдачи, чтобы увидеть процент доставки
           </div>
         </div> -->
+        <a
+          href="https://t.me/WBDok"
+          target="_blank"
+          class="bg-secondary-color h-[300px] max-sm:h-[250px] flex items-center justify-center cursor-pointer hover:opacity-70 duration-200 flex-col"
+        >
+          <h1
+            class="uppercase text-5xl max-sm:text-3xl font-bold text-white text-center"
+          >
+            Другой интернет-магазин
+          </h1>
+          <h1 class="text-2xl max-sm:text-lg text-white font-bold">
+            % уточните у администратора
+          </h1>
+        </a>
+      </div>
+      <div v-if="isOpenFirstModal && !linkData.includes('smartsklad.netlify.app')">
+        <div
+          class="bg-[#0763f6cd] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200 relative"
+          @click="changeMarketplace('Ozon')"
+        >
+          <div
+            class="w-[470px] max-sm:w-[300px] flex items-center justify-center"
+          >
+            <img
+              src="@/assets/images/ozon-bg-1.png"
+              class="max-w-[170px] max-sm:max-w-[130px] shadow-2xl shadow-black rounded-full"
+              alt=""
+            />
+          </div>
+
+          <div
+            v-if="percentPVZ.ozon || percentPVZ.ozon === 0"
+            class="relative text-2xl max-sm:text-2xl w-24 h-24 bg-[#f92160] rounded-full flex justify-center font-bold text-white items-center text-center p-5 shadow-xl max-[430px]:absolute max-[430px]:right-3 max-[430px]:top-4 max-[430px]:w-16 max-[430px]:h-16 max-[430px]:text-base max-[430px]:p-3"
+          >
+            {{ percentPVZ.ozon }} %
+          </div>
+
+          <div
+            v-if="!percentPVZ.ozon && percentPVZ.ozon !== 0"
+            class="relative text-sm w-60 rounded-full flex justify-center font-bold text-white items-center text-center p-5"
+          >
+            Выберите пункт выдачи, чтобы увидеть процент доставки
+          </div>
+        </div>
+        <div
+          class="bg-gradient-to-r from-[#7c2570] via-[#bb3c95] to-[#ec208b] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200 relative"
+          @click="changeMarketplace('Wildberries')"
+        >
+          <img
+            v-if="percentPVZ.wb || percentPVZ.wb === 0"
+            src="@/assets/images/wb.png"
+            class="max-w-[470px] max-sm:max-w-[300px] z-[10]"
+            alt=""
+          />
+
+          <img
+            v-if="!percentPVZ.wb && percentPVZ.wb !== 0"
+            src="@/assets/images/wb.png"
+            class="max-w-[470px] max-sm:max-w-[180px] z-[10]"
+            alt=""
+          />
+
+          <div
+            v-if="percentPVZ.wb || percentPVZ.wb === 0"
+            class="relative text-2xl max-sm:text-2xl w-24 h-24 bg-[#7b256f] rounded-full flex justify-center font-bold text-white items-center text-center p-5 shadow-xl max-[430px]:absolute max-[430px]:right-3 max-[430px]:top-2 max-[430px]:w-16 max-[430px]:h-16 max-[430px]:text-base max-[430px]:p-3"
+          >
+            {{ percentPVZ.wb }} %
+          </div>
+
+          <div
+            v-if="!percentPVZ.wb && percentPVZ.wb !== 0"
+            class="relative text-sm w-60 rounded-full flex justify-center font-bold text-white items-center text-center p-5"
+          >
+            Выберите пункт выдачи, чтобы увидеть процент доставки
+          </div>
+        </div>
+        <div
+          class="bg-[#f8cf02] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200 relative"
+          @click="changeMarketplace('Яндекс Маркет')"
+        >
+          <img
+            v-if="percentPVZ.ym || percentPVZ.ym === 0"
+            src="@/assets/images/ym.png"
+            class="max-w-[470px] max-sm:max-w-[300px] z-[10]"
+            alt=""
+          />
+
+          <img
+            v-if="!percentPVZ.ym && percentPVZ.ym !== 0"
+            src="@/assets/images/ym.png"
+            class="max-w-[470px] max-sm:max-w-[180px] z-[10]"
+            alt=""
+          />
+
+          <div
+            v-if="percentPVZ.ym || percentPVZ.ym === 0"
+            class="relative text-2xl max-sm:text-2xl w-24 h-24 bg-[#232323] rounded-full flex justify-center font-bold text-white items-center text-center p-5 shadow-xl max-[430px]:absolute max-[430px]:right-3 max-[430px]:top-4 max-[430px]:w-16 max-[430px]:h-16 max-[430px]:text-base max-[430px]:p-3"
+          >
+            {{ percentPVZ.ym }} %
+          </div>
+
+          <div
+            v-if="!percentPVZ.ym && percentPVZ.ym !== 0"
+            class="relative text-sm w-60 rounded-full flex justify-center font-bold text-white items-center text-center p-5"
+          >
+            Выберите пункт выдачи, чтобы увидеть процент доставки
+          </div>
+        </div>
         <a
           href="https://t.me/WBDok"
           target="_blank"

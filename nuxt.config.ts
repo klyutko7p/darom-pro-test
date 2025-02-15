@@ -11,6 +11,8 @@ export default defineNuxtConfig({
       adminToken:
         "WrZtQutpeGTBVvs6pJs2WoJ0ls4BXtf3RiyWwyBglFcCXiTBOMMY08gfJbQ8RGcIYmdxgJvjXrFcJOQgYsqAQlvX1e2LjmS57eOGXHrzSXhEkyrxEkld4tFfMBwFb8O2sDzEaow02p21raWfeJEW4X78SUzhHmcBHY836SbveuSF4cJTCMoELsMeojAEmpdEL2XZg5kSGM32AVbtXCqdbGjpcE8WQJUllzfYdUbAEwR1fFia155BpdEwkl43Tuex",
       encryptionKeyFourssan: process.env.ENCRYPTION_KEY_FOURSSAN,
+      supabaseUrl: process.env.SUPABASE_URL,
+      supabaseKey: process.env.SUPABASE_KEY,
     },
   },
   ssr: true,
