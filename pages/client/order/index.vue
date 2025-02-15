@@ -74,11 +74,11 @@ definePageMeta({
                   >Заказать через телеграм-бота</UIMainButton
                 >
               </a> -->
-              <UIMainButton
+              <!-- <UIMainButton
                 class="w-full"
                 @click="router.push('order/accept-order')"
                 >Заказать через личный кабинет</UIMainButton
-              >
+              > -->
               <UIMainButton
                 class="w-full"
                 @click="router.push('/client/main?notification=false')"
