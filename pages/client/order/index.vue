@@ -92,7 +92,6 @@ function getActualNameSite() {
             </div>
             <div v-else class="flex items-center gap-5 flex-col max-w-[500px]">
               <a
-                href="https://t.me/Svetlana_Darompro"
                 target="_blank"
                 class="w-full"
               >

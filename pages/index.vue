@@ -265,16 +265,10 @@ let isShowSecondAddInfo = ref(false);
             </div>
             <br class="hidden max-[500px]:block" />
             <div class="mt-5 space-x-5">
-              <a
-                class="hover:opacity-50 duration-200"
-                href="https://t.me/Svetlana_Darompro"
-              >
+              <a class="hover:opacity-50 duration-200">
                 <Icon name="logos:telegram" size="32" />
               </a>
-              <a
-                class="hover:opacity-50 duration-200"
-                href="https://wa.me/79496124760"
-              >
+              <a class="hover:opacity-50 duration-200">
                 <Icon name="logos:whatsapp-icon" size="32" />
               </a>
             </div>
@@ -369,7 +363,7 @@ let isShowSecondAddInfo = ref(false);
                   src="../assets/images/qr_tg.png"
                   alt=""
                 />
-                <a href="https://t.me/DaromProForYou" target="_blank">
+                <a target="_blank">
                   <Icon
                     name="ic:baseline-telegram"
                     class="mt-1 text-blue-500 hover:text-secondary-color duration-200"
