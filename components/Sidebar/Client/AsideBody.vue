@@ -142,7 +142,7 @@ let isShowInfo = ref(false);
         <div class="text-left px-0">
           <div>
             <h1 class="font-bold text-xl">Стоимость доставки:</h1>
-            <h1 class="italic text-base">≈10% от стоимости товара</h1>
+            <h1 class="italic text-base">≈7% от стоимости товара</h1>
           </div>
           <div class="mt-3">
             <h1 class="font-bold text-xl">Невозвратные товары:</h1>
