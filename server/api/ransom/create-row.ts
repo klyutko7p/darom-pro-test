@@ -69,6 +69,8 @@ export default defineEventHandler(async (event) => {
           createdUser: row.createdUser,
           updatedUser: row.updatedUser,
           img: row.img,
+          imgAdd1: row.imgAdd1,
+          imgAdd2: row.imgAdd2,
         },
       });
     } else if ("purchaseOfGoods" in row) {

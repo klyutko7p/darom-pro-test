@@ -203,6 +203,8 @@ function showLastModal() {
 }
 
 let fileQRPhoto = ref({} as any);
+let fileAdd1Photo = ref({} as any);
+let fileAdd2Photo = ref({} as any);
 
 function clearQRPhoto() {
   rowData.value.img = "";
@@ -211,7 +213,19 @@ function clearQRPhoto() {
   localStorage.removeItem("marketplace");
 }
 
+function clearAdd1Photo() {
+  rowData.value.imgAdd1 = "";
+  fileAdd1Photo.value = {};
+}
+
+function clearAdd2Photo() {
+  rowData.value.imgAdd2 = "";
+  fileAdd2Photo.value = {};
+}
+
 const randomDigits = Math.floor(10000 + Math.random() * 90000);
+const randomDigits1 = Math.floor(10000 + Math.random() * 90000);
+const randomDigits2 = Math.floor(10000 + Math.random() * 90000);
 
 async function handleFile(bucketName: string, file: any) {
   const { data, error } = await supabase.storage
@@ -219,8 +233,28 @@ async function handleFile(bucketName: string, file: any) {
     .upload(`img-${rowData.value.img}`, file);
 }
 
+async function handleFileAdd1(bucketName: string, file: any) {
+  const { data, error } = await supabase.storage
+    .from(bucketName)
+    .upload(`img-${rowData.value.imgAdd1}`, file);
+}
+
+async function handleFileAdd2(bucketName: string, file: any) {
+  const { data, error } = await supabase.storage
+    .from(bucketName)
+    .upload(`img-${rowData.value.imgAdd2}`, file);
+}
+
 function uploadQRFile(e: Event) {
   handleFileUpload(e);
+}
+
+function uploadAdd1File(e: Event) {
+  handleFileUploadAdd1(e);
+}
+
+function uploadAdd2File(e: Event) {
+  handleFileUploadAdd2(e);
 }
 
 function handleFileUpload(e: any) {
@@ -232,6 +266,26 @@ function handleFileUpload(e: any) {
     fileQRPhoto.value = e[0];
     localStorage.setItem("fileName", JSON.stringify(rowData.value.img));
     localStorage.setItem("marketplace", JSON.stringify(marketplace.value));
+  }
+}
+
+function handleFileUploadAdd1(e: any) {
+  let fileName = e[0].name;
+  if (fileName.includes(".mp4") || fileName.includes(".mov")) {
+    toast.error("Вставьте скриншот, а не файл видео-формата!");
+  } else {
+    rowData.value.imgAdd1 = `${randomDigits1}-${fileName}`;
+    fileAdd1Photo.value = e[0];
+  }
+}
+
+function handleFileUploadAdd2(e: any) {
+  let fileName = e[0].name;
+  if (fileName.includes(".mp4") || fileName.includes(".mov")) {
+    toast.error("Вставьте скриншот, а не файл видео-формата!");
+  } else {
+    rowData.value.imgAdd2 = `${randomDigits2}-${fileName}`;
+    fileAdd2Photo.value = e[0];
   }
 }
 
@@ -267,9 +321,11 @@ async function submitForm() {
 
       getCellFromName();
 
-      const filePromises = [handleFile("image", fileQRPhoto.value)];
+      const filePromiseQR = handleFile("image", fileQRPhoto.value);
+      const filePromiseAdd1 = handleFileAdd1("image", fileAdd1Photo.value);
+      const filePromiseAdd2 = handleFileAdd2("image", fileAdd2Photo.value);
 
-      await Promise.all(filePromises);
+      await Promise.all([filePromiseQR, filePromiseAdd1, filePromiseAdd2]);
 
       await storeRansom.createRansomRow(
         rowData.value,
@@ -917,45 +973,47 @@ function getActualNameSite() {
                 </div>
               </div>
               <h1 class="mt-2">Прикрепите скриншот Штрих-кода*</h1>
-              <div v-if="!rowData.img" class="h-[44px]">
-                <UInput
-                  @change="uploadQRFile"
-                  class="w-full mt-3"
-                  type="file"
-                  color="gray"
-                  variant="outline"
-                  size="sm"
-                  icon="i-heroicons-folder"
-                  accept="image/*"
-                />
-              </div>
-              <div
-                v-else
-                class="flex items-center justify-between gap-3 relative w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 file:font-medium file:text-gray-500 dark:file:text-gray-400 file:bg-transparent file:border-0 file:p-0 file:outline-none text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 mt-3"
-              >
-                <div class="flex items-center gap-3">
-                  <Icon
-                    name="icon-park-solid:folder-success"
-                    size="24"
-                    class="text-green-500"
+              <div>
+                <div v-if="!rowData.img" class="h-[44px]">
+                  <UInput
+                    @change="uploadQRFile"
+                    class="w-full mt-3"
+                    type="file"
+                    color="gray"
+                    variant="outline"
+                    size="sm"
+                    icon="i-heroicons-folder"
+                    accept="image/*"
                   />
-                  <h1>Файл загружен</h1>
                 </div>
-                <div class="flex justify-end">
-                  <UButton
-                    v-if="rowData.img"
-                    @click="clearQRPhoto"
-                    class="font-bold"
-                    size="xs"
-                    color="red"
-                  >
-                    <template #trailing>
-                      <UIcon
-                        name="bitcoin-icons:cross-filled"
-                        class="w-4 h-4"
-                      />
-                    </template>
-                  </UButton>
+                <div
+                  v-else
+                  class="flex items-center justify-between gap-3 relative w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 file:font-medium file:text-gray-500 dark:file:text-gray-400 file:bg-transparent file:border-0 file:p-0 file:outline-none text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 mt-3"
+                >
+                  <div class="flex items-center gap-3">
+                    <Icon
+                      name="icon-park-solid:folder-success"
+                      size="24"
+                      class="text-green-500"
+                    />
+                    <h1>Файл загружен</h1>
+                  </div>
+                  <div class="flex justify-end">
+                    <UButton
+                      v-if="rowData.img"
+                      @click="clearQRPhoto"
+                      class="font-bold"
+                      size="xs"
+                      color="red"
+                    >
+                      <template #trailing>
+                        <UIcon
+                          name="bitcoin-icons:cross-filled"
+                          class="w-4 h-4"
+                        />
+                      </template>
+                    </UButton>
+                  </div>
                 </div>
               </div>
               <h1 class="text-sm text-center mt-2">
@@ -970,6 +1028,94 @@ function getActualNameSite() {
               >
                 *Ozon - 5%, если вес товара от 25кг
               </h1>
+              <h1 class="mt-2">Прикрепите дополнительный скриншот (1)</h1>
+              <div>
+                <div v-if="!rowData.imgAdd1" class="h-[44px]">
+                  <UInput
+                    @change="uploadAdd1File"
+                    class="w-full mt-3"
+                    type="file"
+                    color="gray"
+                    variant="outline"
+                    size="sm"
+                    icon="i-heroicons-folder"
+                    accept="image/*"
+                  />
+                </div>
+                <div
+                  v-else
+                  class="flex items-center justify-between gap-3 relative w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 file:font-medium file:text-gray-500 dark:file:text-gray-400 file:bg-transparent file:border-0 file:p-0 file:outline-none text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 mt-3"
+                >
+                  <div class="flex items-center gap-3">
+                    <Icon
+                      name="icon-park-solid:folder-success"
+                      size="24"
+                      class="text-green-500"
+                    />
+                    <h1>Файл загружен</h1>
+                  </div>
+                  <div class="flex justify-end">
+                    <UButton
+                      v-if="rowData.imgAdd1"
+                      @click="clearAdd1Photo"
+                      class="font-bold"
+                      size="xs"
+                      color="red"
+                    >
+                      <template #trailing>
+                        <UIcon
+                          name="bitcoin-icons:cross-filled"
+                          class="w-4 h-4"
+                        />
+                      </template>
+                    </UButton>
+                  </div>
+                </div>
+              </div>
+              <h1 class="mt-2">Прикрепите дополнительный скриншот (2)</h1>
+              <div>
+                <div v-if="!rowData.imgAdd2" class="h-[44px]">
+                  <UInput
+                    @change="uploadAdd2File"
+                    class="w-full mt-3"
+                    type="file"
+                    color="gray"
+                    variant="outline"
+                    size="sm"
+                    icon="i-heroicons-folder"
+                    accept="image/*"
+                  />
+                </div>
+                <div
+                  v-else
+                  class="flex items-center justify-between gap-3 relative w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 file:font-medium file:text-gray-500 dark:file:text-gray-400 file:bg-transparent file:border-0 file:p-0 file:outline-none text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 mt-3"
+                >
+                  <div class="flex items-center gap-3">
+                    <Icon
+                      name="icon-park-solid:folder-success"
+                      size="24"
+                      class="text-green-500"
+                    />
+                    <h1>Файл загружен</h1>
+                  </div>
+                  <div class="flex justify-end">
+                    <UButton
+                      v-if="rowData.imgAdd2"
+                      @click="clearAdd2Photo"
+                      class="font-bold"
+                      size="xs"
+                      color="red"
+                    >
+                      <template #trailing>
+                        <UIcon
+                          name="bitcoin-icons:cross-filled"
+                          class="w-4 h-4"
+                        />
+                      </template>
+                    </UButton>
+                  </div>
+                </div>
+              </div>
               <div class="mt-5 flex justify-end gap-3" v-auto-animate>
                 <UButton
                   v-if="!pvzData"

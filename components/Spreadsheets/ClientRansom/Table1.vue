@@ -548,7 +548,7 @@ function convertToURL(inputString: string) {
           :popper="{ placement: 'right' }"
         >
           <div
-            class="bg-secondary-color cursor-pointer border-2 border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
+            class="bg-secondary-color cursor-pointer border border-secondary-color text-white hover:text-secondary-color hover:bg-transparent duration-200 px-2 pt-2 pb-1 rounded-full"
             @click="exportToExcel"
           >
             <Icon class="duration-200" size="32" name="bi:filetype-xlsx" />
@@ -562,7 +562,7 @@ function convertToURL(inputString: string) {
       v-if="getAllSum > 0"
     >
       <h1
-        class="text-base text-center backdrop-blur-xl p-2 rounded-xl border-2 text-secondary-color font-bold"
+        class="text-base text-center backdrop-blur-xl p-2 rounded-xl border text-secondary-color font-bold"
       >
         К оплате: {{ getAllSum }} <br />
         Количество товаров: {{ checkedRows.length }}
@@ -678,7 +678,7 @@ function convertToURL(inputString: string) {
     <div class="py-3 flex max-sm:flex-col gap-5 max-sm:w-full">
       <span
         v-if="user.role === 'ADMIN' || user.role === 'ADMINISTRATOR'"
-        class="bg-yellow-400 px-5 py-3 text-white font-bold rounded-full border-yellow-400 border-2 hover:bg-transparent hover:text-black duration-200 cursor-pointer"
+        class="bg-yellow-400 px-5 py-3 text-white font-bold rounded-full border-yellow-400 border hover:bg-transparent hover:text-black duration-200 cursor-pointer"
         @click="changeProcessingRows(), showProcessingRows()"
       >
         Ждут обработку {{ processingRows?.length }} товаров
@@ -703,14 +703,14 @@ function convertToURL(inputString: string) {
           <tr>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="user.dataClientRansom === 'WRITE'"
             >
               Выделение
             </th>
             <th
               scope="col"
-              class="exclude-row border-2 text-[10px]"
+              class="exclude-row border text-[10px]"
               v-if="
                 (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
                 user.role === 'SORTIROVKA' ||
@@ -721,32 +721,32 @@ function convertToURL(inputString: string) {
             >
               изменение
             </th>
-            <th scope="col" class="border-2 px-3">id</th>
-            <th scope="col" class="border-2 px-3">Штрих-код</th>
+            <th scope="col" class="border px-3">id</th>
+            <th scope="col" class="border px-3">Фото</th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="user.clientLink2 === 'READ' || user.clientLink2 === 'WRITE'"
             >
               ссылка для клиента
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="user.cell2 === 'READ' || user.cell2 === 'WRITE'"
             >
               ячейка
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="user.fromName2 === 'READ' || user.fromName2 === 'WRITE'"
             >
               телефон
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.productLink2 === 'READ' || user.productLink2 === 'WRITE'
               "
@@ -755,7 +755,7 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.productName2 === 'READ' || user.productName2 === 'WRITE'
               "
@@ -764,7 +764,7 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.priceProgram === 'READ' || user.priceProgram === 'WRITE'
               "
@@ -773,14 +773,14 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="user.prepayment2 === 'READ' || user.prepayment2 === 'WRITE'"
             >
               предоплата
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.percentClient2 === 'READ' ||
                 user.percentClient2 === 'WRITE'
@@ -790,7 +790,7 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'
               "
@@ -799,7 +799,7 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.amountFromClient2 === 'READ' ||
                 user.amountFromClient2 === 'WRITE'
@@ -809,7 +809,7 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.dispatchPVZ2 === 'READ' || user.dispatchPVZ2 === 'WRITE'
               "
@@ -818,14 +818,14 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="user.orderPVZ2 === 'READ' || user.orderPVZ2 === 'WRITE'"
             >
               заказано на сц
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.deliveredSC2 === 'READ' || user.deliveredSC2 === 'WRITE'
               "
@@ -834,7 +834,7 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.deliveredPVZ2 === 'READ' || user.deliveredPVZ2 === 'WRITE'
               "
@@ -843,14 +843,14 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="user.issued2 === 'READ' || user.issued2 === 'WRITE'"
             >
               выдан клиенту
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.additionally2 === 'READ' || user.additionally2 === 'WRITE'
               "
@@ -859,14 +859,14 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="user.profit2 === 'READ' || user.profit2 === 'WRITE'"
             >
               прибыль (доход)
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.role === 'ADMIN' ||
                 user.role === 'ADMINISTRATOR' ||
@@ -877,7 +877,7 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.role === 'ADMIN' ||
                 user.role === 'ADMINISTRATOR' ||
@@ -888,7 +888,7 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.role === 'ADMIN' ||
                 user.role === 'ADMINISTRATOR' ||
@@ -899,7 +899,7 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.role === 'ADMIN' ||
                 user.role === 'ADMINISTRATOR' ||
@@ -910,7 +910,7 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="border-2"
+              class="border"
               v-if="
                 user.role === 'ADMIN' ||
                 user.role === 'ADMINISTRATOR' ||
@@ -921,7 +921,7 @@ function convertToURL(inputString: string) {
             </th>
             <th
               scope="col"
-              class="exclude-row border-2"
+              class="exclude-row border"
               v-if="
                 (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
                 user.username === 'Шведова' ||
@@ -944,7 +944,7 @@ function convertToURL(inputString: string) {
           >
             <td
               v-if="user.dataClientRansom === 'WRITE'"
-              class="border-2 text-secondary-color"
+              class="border text-secondary-color"
             >
               <input
                 type="checkbox"
@@ -954,7 +954,7 @@ function convertToURL(inputString: string) {
               />
             </td>
             <td
-              class="border-2"
+              class="border"
               v-if="
                 (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
                 user.role === 'SORTIROVKA' ||
@@ -976,7 +976,7 @@ function convertToURL(inputString: string) {
             </td>
             <th
               scope="row"
-              class="border-2 font-medium underline text-secondary-color whitespace-nowrap"
+              class="border font-medium underline text-secondary-color whitespace-nowrap"
             >
               <NuxtLink
                 v-if="
@@ -994,7 +994,7 @@ function convertToURL(inputString: string) {
             </th>
             <td
               scope="row"
-              class="border-2 font-medium underline text-secondary-color whitespace-nowrap"
+              class="flex py-3 flex-col px-5 font-medium underline text-secondary-color whitespace-nowrap"
             >
               <a
                 target="_blank"
@@ -1002,11 +1002,27 @@ function convertToURL(inputString: string) {
                 v-if="row.img && row.img.length > 2"
                 :href="`${linkToDB}/storage/v1/object/public/image/img-${row.img}`"
               >
-                Фото
+                Штрих-код
+              </a>
+              <a
+                target="_blank"
+                class="text-secondary-color hover:opacity-60 duration-200 font-bold"
+                v-if="row.imgAdd1 && row.imgAdd1.length > 2"
+                :href="`${linkToDB}/storage/v1/object/public/image/img-${row.imgAdd1}`"
+              >
+                Доп. фото (1)
+              </a>
+              <a
+                target="_blank"
+                class="text-secondary-color hover:opacity-60 duration-200 font-bold"
+                v-if="row.imgAdd2 && row.imgAdd2.length > 2"
+                :href="`${linkToDB}/storage/v1/object/public/image/img-${row.imgAdd2}`"
+              >
+                Доп. фото (2)
               </a>
             </td>
             <td
-              class="px-3 py-4 border-2 underline text-secondary-color whitespace-nowrap uppercase overflow-hidden max-w-[50px]"
+              class="px-3 py-4 border underline text-secondary-color whitespace-nowrap uppercase overflow-hidden max-w-[50px]"
               v-if="user.clientLink2 === 'READ' || user.clientLink2 === 'WRITE'"
             >
               <NuxtLink
@@ -1019,13 +1035,13 @@ function convertToURL(inputString: string) {
             </td>
             <td
               v-if="user.cell2 === 'READ' || user.cell2 === 'WRITE'"
-              class="border-2"
+              class="border"
             >
               {{ row.cell }}
             </td>
             <td
               v-if="user.fromName2 === 'READ' || user.fromName2 === 'WRITE'"
-              class="py-4 border-2 text-secondary-color underline"
+              class="py-4 border text-secondary-color underline"
             >
               <NuxtLink
                 v-if="user.role !== 'PVZ' && user.role !== 'PPVZ'"
@@ -1036,7 +1052,7 @@ function convertToURL(inputString: string) {
               </NuxtLink>
             </td>
             <td
-              class="border-2 whitespace-nowrap overflow-hidden max-w-[30px]"
+              class="border whitespace-nowrap overflow-hidden max-w-[30px]"
               v-if="
                 user.productLink2 === 'READ' || user.productLink2 === 'WRITE'
               "
@@ -1044,7 +1060,7 @@ function convertToURL(inputString: string) {
               {{ row.productLink }}
             </td>
             <td
-              class="border-2"
+              class="border"
               v-if="
                 user.productName2 === 'READ' || user.productName2 === 'WRITE'
               "
@@ -1052,7 +1068,7 @@ function convertToURL(inputString: string) {
               {{ row.productName }}
             </td>
             <td
-              class="border-2"
+              class="border"
               v-if="
                 user.priceProgram === 'READ' || user.priceProgram === 'WRITE'
               "
@@ -1060,13 +1076,13 @@ function convertToURL(inputString: string) {
               {{ row.priceProgram }}
             </td>
             <td
-              class="border-2"
+              class="border"
               v-if="user.prepayment2 === 'READ' || user.prepayment2 === 'WRITE'"
             >
               {{ row.prepayment }}
             </td>
             <td
-              class="border-2"
+              class="border"
               v-if="
                 user.percentClient2 === 'READ' ||
                 user.percentClient2 === 'WRITE'
@@ -1075,7 +1091,7 @@ function convertToURL(inputString: string) {
               {{ row.percentClient }}
             </td>
             <td
-              class="border-2"
+              class="border"
               v-if="
                 user.deliveredKGT2 === 'READ' || user.deliveredKGT2 === 'WRITE'
               "
@@ -1083,7 +1099,7 @@ function convertToURL(inputString: string) {
               {{ row.deliveredKGT }}
             </td>
             <td
-              class="border-2"
+              class="border"
               v-if="
                 user.amountFromClient2 === 'READ' ||
                 user.amountFromClient2 === 'WRITE'
@@ -1092,7 +1108,7 @@ function convertToURL(inputString: string) {
               {{ row.amountFromClient2 }}
             </td>
             <td
-              class="border-2"
+              class="border"
               v-if="
                 user.dispatchPVZ2 === 'READ' || user.dispatchPVZ2 === 'WRITE'
               "
@@ -1100,13 +1116,13 @@ function convertToURL(inputString: string) {
               {{ row.dispatchPVZ }}
             </td>
             <td
-              class="border-2"
+              class="border"
               v-if="user.orderPVZ2 === 'READ' || user.orderPVZ2 === 'WRITE'"
             >
               {{ row.orderPVZ }}
             </td>
             <td
-              class="border-2"
+              class="border"
               v-if="
                 user.deliveredSC2 === 'READ' || user.deliveredSC2 === 'WRITE'
               "
@@ -1120,7 +1136,7 @@ function convertToURL(inputString: string) {
               </h1>
             </td>
             <td
-              class="border-2"
+              class="border"
               v-if="
                 user.deliveredPVZ2 === 'READ' || user.deliveredPVZ2 === 'WRITE'
               "
@@ -1134,7 +1150,7 @@ function convertToURL(inputString: string) {
               </h1>
             </td>
             <td
-              class="border-2"
+              class="border"
               v-if="user.issued2 === 'READ' || user.issued2 === 'WRITE'"
             >
               <h1 class="font-bold text-green-500">
@@ -1142,7 +1158,7 @@ function convertToURL(inputString: string) {
               </h1>
             </td>
             <td
-              class="border-2"
+              class="border"
               v-if="
                 user.additionally2 === 'READ' || user.additionally2 === 'WRITE'
               "
@@ -1151,7 +1167,7 @@ function convertToURL(inputString: string) {
             </td>
 
             <td
-              class="border-2"
+              class="border"
               v-if="
                 (user.profit2 === 'READ' || user.profit2 === 'WRITE') &&
                 row.additionally !== 'Отказ клиент' &&
@@ -1164,7 +1180,7 @@ function convertToURL(inputString: string) {
               {{ row.profit2 }}
             </td>
             <td
-              class="border-2"
+              class="border"
               v-if="
                 (user.profit2 === 'READ' || user.profit2 === 'WRITE') &&
                 (row.additionally === 'Отказ клиент' ||
@@ -1178,7 +1194,7 @@ function convertToURL(inputString: string) {
             </td>
 
             <td
-              class="px-6 border-2"
+              class="px-6 border"
               v-if="
                 user.role === 'ADMIN' ||
                 user.role === 'ADMINISTRATOR' ||
@@ -1188,7 +1204,7 @@ function convertToURL(inputString: string) {
               {{ storeUsers.getNormalizedDate(row.created_at) }}
             </td>
             <td
-              class="px-6 border-2"
+              class="px-6 border"
               v-if="
                 user.role === 'ADMIN' ||
                 user.role === 'ADMINISTRATOR' ||
@@ -1198,7 +1214,7 @@ function convertToURL(inputString: string) {
               {{ storeUsers.getNormalizedDate(row.updated_at) }}
             </td>
             <td
-              class="px-6 border-2"
+              class="px-6 border"
               v-if="
                 user.role === 'ADMIN' ||
                 user.role === 'ADMINISTRATOR' ||
@@ -1208,7 +1224,7 @@ function convertToURL(inputString: string) {
               {{ storeUsers.getNormalizedDate(row.deleted) }}
             </td>
             <td
-              class="px-6 border-2"
+              class="px-6 border"
               v-if="
                 user.role === 'ADMIN' ||
                 user.role === 'ADMINISTRATOR' ||
@@ -1218,7 +1234,7 @@ function convertToURL(inputString: string) {
               {{ row.createdUser }}
             </td>
             <td
-              class="px-6 border-2"
+              class="px-6 border"
               v-if="
                 user.role === 'ADMIN' ||
                 user.role === 'ADMINISTRATOR' ||
@@ -1229,7 +1245,7 @@ function convertToURL(inputString: string) {
             </td>
 
             <td
-              class="px-6 py-4 border-2"
+              class="px-6 py-4 border"
               v-if="
                 (user.dataClientRansom === 'WRITE' && user.role === 'ADMIN') ||
                 user.role === 'ADMINISTRATOR' ||

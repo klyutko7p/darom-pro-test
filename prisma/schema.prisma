@@ -142,6 +142,8 @@ model ClientRansom {
   createdUser       String
   updatedUser       String
   img               String?
+  imgAdd1           String?
+  imgAdd2           String?
 }
 
 model Delivery {
