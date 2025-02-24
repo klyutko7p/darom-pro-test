@@ -171,7 +171,7 @@ async function validatePhoneTelegram() {
     const isAndroid = /Android/i.test(navigator.userAgent);
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    const url = `https://t.me/darom_pro_bot?start=${phoneNumber}and${encryptCode}`;
+    const url = `https://t.me/punkt1off_bot?start=${phoneNumber}and${encryptCode}`;
 
     if (isAndroid) {
       window.open(url, "_blank");
@@ -413,7 +413,7 @@ async function openTelegramBot() {
     const isAndroid = /Android/i.test(navigator.userAgent);
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    const url = `https://t.me/darom_pro_bot?start=${phoneNumber}`;
+    const url = `https://t.me/punkt1off_bot?start=${phoneNumber}`;
 
     if (isAndroid) {
       window.open(url, "_blank");
@@ -489,7 +489,7 @@ definePageMeta({
       </div>
 
       <div class="flex items-center justify-center flex-col gap-3 mt-10">
-        <!-- <UButton
+        <UButton
           @click="
             (isShowTelegramMethod = !isShowTelegramMethod),
               (isAuthWithPassword = false)
@@ -497,7 +497,7 @@ definePageMeta({
           icon="ic:baseline-telegram"
           class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
           >Войти через телеграм
-        </UButton> -->
+        </UButton>
         <UButton
           @click="isAuthWithPassword = !isAuthWithPassword"
           icon="material-symbols:person-book"

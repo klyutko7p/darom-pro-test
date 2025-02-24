@@ -324,7 +324,7 @@ const linkToDB = config.public.supabaseUrl as string;
       </div>
 
       <div class="space-y-3 mt-10">
-        <!-- <div class="flex items-center justify-center mt-3">
+        <div class="flex items-center justify-center mt-3">
           <UButton
             @click="
               (isShowTelegramMethod = !isShowTelegramMethod),
@@ -334,7 +334,7 @@ const linkToDB = config.public.supabaseUrl as string;
             class="w-full max-sm:max-w-[400px] flex items-center justify-center uppercase font-bold rounded-xl duration-200"
             >Зарегистрироваться через телеграм
           </UButton>
-        </div> -->
+        </div>
         <div class="flex items-center justify-center">
           <UButton
             @click="isShowRegistrationSMS = !isShowRegistrationSMS"
@@ -446,7 +446,7 @@ const linkToDB = config.public.supabaseUrl as string;
                 >Подтверждаю, что я ознакомлен и согласен с условиями
                 <a
                   class="text-secondary-color font-semibold duration-200 cursor-pointer hover:opacity-50"
-                  :href="`https://${linkDB}/storage/v1/object/public/files/docx/policy_conf_dp.pdf`"
+                  :href="`https://${linkToDB}/storage/v1/object/public/files/docx/policy_conf_dp.pdf`"
                   target="_blank"
                   >Политики конфиденциальности</a
                 ></label
@@ -506,11 +506,11 @@ const linkToDB = config.public.supabaseUrl as string;
           Для регистрации через Telegram перейдите в наш официальный
           <a
             class="font-semibold text-secondary-color underline"
-            href="https://t.me/darom_pro_bot?start=register"
+            href="https://t.me/punkt1off_bot?start=register"
             target="_blank"
             >Телеграм-бот</a
           >
-          (@darom_pro_bot)
+          (@punkt1off_bot)
         </div>
         <h1 class="my-3 text-sm italic text-center">
           Если у вас нет телеграма или нужно зарегистрировать другой номер

@@ -68,8 +68,8 @@ function getActualNameSite() {
                   83)</UIMainButton
                 >
               </a>
-              <!-- <a
-                href="https://t.me/darom_pro_bot"
+              <a
+                href="https://t.me/punkt1off_bot"
                 target="_blank"
                 class="w-full"
               >
@@ -78,7 +78,7 @@ function getActualNameSite() {
                   @click="router.push('/client/main?notification=false')"
                   >Заказать через телеграм-бота</UIMainButton
                 >
-              </a> -->
+              </a>
               <!-- <UIMainButton
                 class="w-full"
                 @click="router.push('order/accept-order')"
@@ -101,8 +101,8 @@ function getActualNameSite() {
                   >Заказать через администратора</UIMainButton
                 >
               </a>
-              <!-- <a
-                href="https://t.me/darom_pro_bot"
+              <a
+                href="https://t.me/punkt1off_bot"
                 target="_blank"
                 class="w-full"
               >
@@ -111,7 +111,7 @@ function getActualNameSite() {
                   @click="router.push('/client/main?notification=false')"
                   >Заказать через телеграм-бота</UIMainButton
                 >
-              </a> -->
+              </a>
               <UIMainButton
                 class="w-full"
                 @click="router.push('order/accept-order')"

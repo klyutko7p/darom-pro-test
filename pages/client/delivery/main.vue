@@ -46,8 +46,8 @@ definePageMeta({
                 @click="router.push('/client/delivery')"
                 >Через личный кабинет</UIMainButton
               >
-              <!-- <a
-                href="https://t.me/darom_pro_bot"
+              <a
+                href="https://t.me/punkt1off_bot"
                 target="_blank"
                 class="w-full"
               >
@@ -56,7 +56,7 @@ definePageMeta({
                   @click="router.push('/client/main?notification=false')"
                   >Через телеграм-бота</UIMainButton
                 >
-              </a> -->
+              </a>
               <UIMainButton
                 class="w-full"
                 @click="router.push('/client/main?notification=false')"
