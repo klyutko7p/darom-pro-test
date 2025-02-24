@@ -77,6 +77,7 @@ const checkedRows: Ref<number[]> = ref([]);
 
 const getAllSum: Ref<number> = ref(0);
 const showButton: Ref<boolean> = ref(true);
+const showButtonQuantity: Ref<boolean> = ref(true);
 const showButtonPVZ: Ref<boolean> = ref(true);
 const showButtonSC: Ref<boolean> = ref(true);
 
@@ -87,6 +88,7 @@ const isChecked = (rowId: number): boolean => {
 interface RowData {
   rowId: number;
   amount: number;
+  productName: string;
   issued: Date | null | string | number;
   deliveredPVZ: Date | null | string | number;
   deliveredSC: Date | null | string | number;
@@ -124,6 +126,7 @@ const handleCheckboxChange = (row: IClientRansom): void => {
       rowId: row.id,
       amount: Math.ceil(row.amountFromClient2 / 10) * 10,
       issued: row.issued,
+      productName: row.productName,
       deliveredPVZ: row.deliveredPVZ,
       orderPVZ: row.orderPVZ,
       deliveredSC: row.deliveredSC,
@@ -133,6 +136,7 @@ const handleCheckboxChange = (row: IClientRansom): void => {
     .filter((obj) => obj.issued === null)
     .reduce((sum, obj) => sum + obj.amount, 0);
   showButton.value = allSum.value.every((obj) => obj.issued === null);
+  showButtonQuantity.value = allSum.value.every((obj) => obj.productName);
   showButtonPVZ.value = allSum.value.every((obj) => obj.deliveredPVZ === null);
   showButtonSC.value = allSum.value.every((obj) => obj.deliveredSC === null);
 };
@@ -598,7 +602,7 @@ function convertToURL(inputString: string) {
         >Доставить на сц
       </UIActionButton>
       <UIActionButton
-        v-if="user.issued2 === 'WRITE' && showButton"
+        v-if="user.issued2 === 'WRITE' && showButton && showButtonQuantity"
         @click="showOthersVariants = !showOthersVariants"
       >
         Выдать клиенту
@@ -646,7 +650,7 @@ function convertToURL(inputString: string) {
         >Доставить на пвз
       </UIActionButton>
       <UIActionButton
-        v-if="user.issued2 === 'WRITE' && showButton"
+        v-if="user.issued2 === 'WRITE' && showButton && showButtonQuantity"
         @click="showOthersVariants = !showOthersVariants"
       >
         Выдать клиенту
@@ -664,7 +668,7 @@ function convertToURL(inputString: string) {
         </UIActionButton2> -->
         <UIActionButton2
           v-if="user.additionally2 === 'WRITE'"
-          @click="updateDeliveryRows('additionally', getAllSum)"
+          @click="updateDeliveryRows('additionally')"
           >Оплата онлайн
         </UIActionButton2>
         <div v-if="showPayRejectClient" class="flex flex-col gap-3">

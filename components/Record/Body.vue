@@ -5,7 +5,7 @@ const toast = useToast();
 const router = useRouter();
 const storeUsers = useUsersStore();
 const props = defineProps({
-  row: { type: Object as PropType<IOurRansom | IClientRansom>, required: true },
+  row: { type: Object as any, required: true },
   user: { type: Object as PropType<User>, required: true },
   link: { type: String },
   value: { type: String },
@@ -40,6 +40,23 @@ onMounted(async () => {
       }
     }
   }
+
+  if (props.link?.includes("1")) {
+    const storedValue = localStorage.getItem(
+      `attemptsOnPrint-${props.row.id}-1`
+    );
+    attemptsOnPrint.value = storedValue
+      ? JSON.parse(storedValue)
+      : { id: 0, linkNumber: 1, attempts: 0 };
+  } else {
+    const storedValue = localStorage.getItem(
+      `attemptsOnPrint-${props.row.id}-2`
+    );
+    attemptsOnPrint.value = storedValue
+      ? JSON.parse(storedValue)
+      : { id: 0, linkNumber: 1, attempts: 0 };
+  }
+  console.log(attemptsOnPrint.value);
 });
 
 function formatPhoneNumber(phoneNumber: string) {
@@ -59,13 +76,31 @@ function formatPhoneNumber(phoneNumber: string) {
   return maskedPhoneNumber;
 }
 
+const attemptsOnPrint = ref({ id: 0, linkNumber: 1, attempts: 0 });
+
 function printPage() {
-  if (
-    props.user.role === "SORTIROVKA" ||
-    props.user.role === "ADMIN" ||
-    props.user.username === "Шведова"
-  ) {
-    window.print();
+  if (props.user.role === "SORTIROVKA" || props.user.role === "ADMIN") {
+    if (
+      attemptsOnPrint.value.attempts === 2 &&
+      attemptsOnPrint.value.linkNumber === 1
+    ) {
+      toast.error("Доступ к печати запрещён. Исчерпан лимит попыток");
+    } else if (
+      attemptsOnPrint.value.attempts === 2 &&
+      attemptsOnPrint.value.linkNumber === 2 &&
+      props.row.productName === "1"
+    ) {
+      toast.error("Доступ к печати запрещён. Исчерпан лимит попыток");
+    } else {
+      window.print();
+      attemptsOnPrint.value.id = props.row.id;
+      attemptsOnPrint.value.linkNumber = props.link?.includes("1") ? 1 : 2;
+      attemptsOnPrint.value.attempts += 1;
+      localStorage.setItem(
+        `attemptsOnPrint-${attemptsOnPrint.value.id}-${attemptsOnPrint.value.linkNumber}`,
+        JSON.stringify(attemptsOnPrint.value)
+      );
+    }
   } else {
     toast.error("Доступ к печати запрещён");
   }
@@ -256,7 +291,8 @@ function printPage() {
       v-if="row.productName"
       class="grid grid-cols-2 border-2 border-black p-3 border-dashed text-center max-lg:order-3"
     >
-      <h1>Название товара:</h1>
+      <h1 v-if="link?.includes('1')">Название товара:</h1>
+      <h1 v-if="link?.includes('2')">Количество товара:</h1>
       <h1>{{ row.productName }}</h1>
     </div>
 
