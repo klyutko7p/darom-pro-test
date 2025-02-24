@@ -243,7 +243,7 @@ let confirmationCode = ref("");
 
 async function isValidateConfirmationCode() {
   confirmationCode.value = confirmationCode.value.trim();
-  if ((confirmationCode.value.length + 1)) {
+  if (confirmationCode.value.length === 5) {
     if (confirmationCode.value === originallyConfirmationCode.value) {
       isLoading.value = true;
       await confirmationRegistration();
@@ -568,16 +568,21 @@ const linkToDB = config.public.supabaseUrl as string;
               <div class="flex justify-center">
                 <UInput
                   type="text"
-                  @input="isValidateConfirmationCode"
+                  @blur="isValidateConfirmationCode"
                   v-model="confirmationCode"
                 />
               </div>
-              <div class="flex justify-center flex-col items-center gap-3">
+              <div class="flex items-center justify-center gap-3">
                 <UIMainButton
                   :disabled="isButtonDisabled || isBlocked"
                   @click="register"
                   >Отправить код ещё раз</UIMainButton
                 >
+                <UIMainButton @click="isValidateConfirmationCode"
+                  >Проверить код</UIMainButton
+                >
+              </div>
+              <div class="flex items-center justify-center gap-3">
                 {{ formattedBlockDuration }}
               </div>
               <h1 class="text-center italic text-base">

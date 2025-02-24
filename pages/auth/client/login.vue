@@ -295,7 +295,7 @@ let showPassword = ref(false);
 let confirmationCode = ref("");
 
 async function isValidateConfirmationCode() {
-  if ((confirmationCode.value.length + 1) === 5) {
+  if (confirmationCode.value.length === 5) {
     if (confirmationCode.value === originallyConfirmationCode.value) {
       isLoading.value = true;
       generateRandomPassword(6);
@@ -877,29 +877,40 @@ async function waitingForAuth() {
             <input
               class="bg-transparent rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-yellow-600 sm:text-sm sm:leading-6"
               type="text"
-              @input="isValidateConfirmationCode"
+              @blur="isValidateConfirmationCode"
               v-model="confirmationCode"
             />
           </div>
           <div
             v-if="!isTelegramConfirm"
-            class="flex justify-center items-center gap-3 mt-5"
+            class="flex items-center justify-center gap-3"
           >
             <UIMainButton
               :disabled="isButtonDisabled || isBlocked"
               @click="validatePhone"
               >Отправить код ещё раз</UIMainButton
             >
+            <UIMainButton @click="isValidateConfirmationCode"
+              >Проверить код</UIMainButton
+            >
+          </div>
+          <div
+            v-if="!isTelegramConfirm"
+            class="flex items-center justify-center gap-3"
+          >
             {{ formattedBlockDuration }}
           </div>
           <div
             v-if="isTelegramConfirm"
-            class="flex justify-center items-center gap-3 mt-5"
+            class="flex items-center justify-center gap-3"
           >
             <UIMainButton
               :disabled="isButtonDisabled || isBlocked"
               @click="validatePhoneTelegram"
               >Отправить код ещё раз</UIMainButton
+            >
+            <UIMainButton @click="isValidateConfirmationCode"
+              >Проверить код</UIMainButton
             >
           </div>
           <h1 class="text-center italic text-base">
