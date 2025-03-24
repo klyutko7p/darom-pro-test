@@ -10,6 +10,6 @@
   <div
     class="fixed text-lg bottom-2 left-1/2 transform -translate-x-1/2 text-muted-color font-bold opacity-30 text-center max-sm:text-sm z-[100]"
   >
-    Работает на основе SMARTSKLAD
+    Работает на основе Trackbiz
   </div>
 </template>
