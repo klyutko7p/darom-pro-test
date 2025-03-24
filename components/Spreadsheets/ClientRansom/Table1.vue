@@ -755,7 +755,7 @@ function convertToURL(inputString: string) {
                 user.productLink2 === 'READ' || user.productLink2 === 'WRITE'
               "
             >
-              маркетплейс
+              интернет-магазин
             </th>
             <th
               scope="col"

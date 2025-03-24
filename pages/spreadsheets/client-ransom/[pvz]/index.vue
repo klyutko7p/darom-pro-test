@@ -525,7 +525,7 @@ function convertUrl(url: string): string {
                 "
               >
                 <label for="productLink1" class="max-sm:text-sm"
-                  >Маркетплейс</label
+                  >Интернет-магазин</label
                 >
                 <select
                   :disabled="user.productLink2 === 'READ'"
@@ -889,7 +889,7 @@ function convertUrl(url: string): string {
                 "
               >
                 <label for="productLink1" class="max-sm:text-sm"
-                  >Маркетплейс</label
+                  >Интернет-магазин</label
                 >
                 <select
                   :disabled="user.productLink2 === 'READ'"

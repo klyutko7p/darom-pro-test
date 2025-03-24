@@ -195,7 +195,7 @@ function addMinutes(date: any, minutes: any) {
             class="border-[1px] px-2"
             v-if="link?.startsWith('2')"
           >
-            маркетплейс
+          интернет-магазин
           </th>
           <th
             scope="col"

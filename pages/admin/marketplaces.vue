@@ -5,7 +5,7 @@ const storeUsers = useUsersStore();
 const storeMarketplaces = useMarketplacesStore();
 const router = useRouter();
 
-const fields = ["название маркетплейса", "изменение", "удаление"];
+const fields = ["название интернет-магазина", "изменение", "удаление"];
 
 let marketplaces = ref<Array<Marketplace>>();
 let marketplaceData = ref({} as Marketplace);
@@ -99,7 +99,7 @@ watch(isOpen, (newValue) => {
         />
 
         <AdminDataCreate
-          :title="'Маркетплейс'"
+          :title="'интернет-магазин'"
           @create-data="createMarketplace"
         />
 
@@ -115,7 +115,7 @@ watch(isOpen, (newValue) => {
           <template v-slot:body>
             <div>
               <div class="flex flex-col items-start text-left gap-2 mb-5">
-                <label for="name">Название маркетплейса</label>
+                <label for="name">Название интернет-магазина</label>
                 <UInput
                   class="w-full"
                   v-model="marketplaceData.name"

@@ -33,7 +33,7 @@ export const useMarketplacesStore = defineStore("marketplaces", () => {
   async function createMarketPlace(name: string) {
     try {
       if (name === "") {
-        toast.warning("Название маркетплейса не должно быть пустым");
+        toast.warning("Название интернет-магазина не должно быть пустым");
       } else {
         let data = await useFetch("/api/marketplaces/create-marketplace", {
           method: "POST",
@@ -43,7 +43,7 @@ export const useMarketplacesStore = defineStore("marketplaces", () => {
           body: JSON.stringify({ name: name }),
         });
         cachedMarketplaces = null;
-        toast.success("Маркетплейс успешно добавлен!");
+        toast.success("Интернет-магазин успешно добавлен!");
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -62,7 +62,7 @@ export const useMarketplacesStore = defineStore("marketplaces", () => {
         body: JSON.stringify({ marketplace: marketplace }),
       });
       cachedMarketplaces = null;
-      toast.success("Маркетплейс успешно обновлен!");
+      toast.success("Интернет-магазин успешно обновлен!");
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -80,7 +80,7 @@ export const useMarketplacesStore = defineStore("marketplaces", () => {
         body: JSON.stringify({ id: id }),
       });
       cachedMarketplaces = null;
-      toast.success("Маркетплейс успешно удален!");
+      toast.success("Интернет-магазин успешно удален!");
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

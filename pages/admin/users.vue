@@ -637,7 +637,7 @@ const userOptions = [
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell"
-                  >Маркетплейс (Доставка заказов по ШК (QR))</label
+                  >Интернет-магазин (Доставка заказов по ШК (QR))</label
                 >
                 <USelectMenu
                   class="w-full"

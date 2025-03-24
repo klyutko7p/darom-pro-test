@@ -207,7 +207,8 @@ let usersOfIssued = ref([
             v-if="
               user.username === 'Директор' ||
               user.username === 'Горцуева' ||
-              user.username === 'Власенкова'
+              user.username === 'Власенкова' ||
+              user.username === 'admin_160421'
             "
           >
             <Icon
@@ -716,7 +717,9 @@ let usersOfIssued = ref([
           <NuxtLink
             :to="'/admin/settings'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            v-if="user.username === 'Директор'"
+            v-if="
+              user.username === 'Директор' || user.username === 'admin_160421'
+            "
           >
             <Icon
               class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -731,7 +734,9 @@ let usersOfIssued = ref([
             :to="'/admin/users'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
+              user.username === 'Директор' ||
+              user.username === 'Власенкова' ||
+              user.username === 'admin_160421'
             "
           >
             <Icon
@@ -747,7 +752,9 @@ let usersOfIssued = ref([
             :to="'/admin/marketplaces'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
+              user.username === 'Директор' ||
+              user.username === 'Власенкова' ||
+              user.username === 'admin_160421'
             "
           >
             <Icon
@@ -763,7 +770,9 @@ let usersOfIssued = ref([
             :to="'/admin/cells'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
+              user.username === 'Директор' ||
+              user.username === 'Власенкова' ||
+              user.username === 'admin_160421'
             "
           >
             <Icon
@@ -779,7 +788,9 @@ let usersOfIssued = ref([
             :to="'/admin/pvz'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
+              user.username === 'Директор' ||
+              user.username === 'Власенкова' ||
+              user.username === 'admin_160421'
             "
           >
             <Icon
@@ -797,7 +808,8 @@ let usersOfIssued = ref([
             v-if="
               user.username === 'Директор' ||
               user.username === 'Власенкова' ||
-              user.username === 'Горцуева'
+              user.username === 'Горцуева' ||
+              user.username === 'admin_160421'
             "
           >
             <Icon
@@ -813,7 +825,9 @@ let usersOfIssued = ref([
             :to="'/admin/sorting-centers'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
             v-if="
-              user.username === 'Директор' || user.username === 'Власенкова'
+              user.username === 'Директор' ||
+              user.username === 'Власенкова' ||
+              user.username === 'admin_160421'
             "
           >
             <Icon
@@ -831,7 +845,8 @@ let usersOfIssued = ref([
             v-if="
               user.username === 'Директор' ||
               user.username === 'Власенкова' ||
-              user.username === 'Горцуева'
+              user.username === 'Горцуева' ||
+              user.username === 'admin_160421'
             "
           >
             <Icon
