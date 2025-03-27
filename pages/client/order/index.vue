@@ -49,7 +49,7 @@ function getActualNameSite() {
               Выберите как оформить заказ
             </h1>
             <div
-              v-if="linkData.includes('trackbiz.netlify.app')"
+              v-if="linkData.includes('smartsklad.netlify.app')"
               class="flex items-center gap-5 flex-col max-w-[500px]"
             >
               <a href="https://t.me/WBDok" target="_blank" class="w-full">

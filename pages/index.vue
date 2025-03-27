@@ -229,7 +229,7 @@ let isShowSecondAddInfo = ref(false);
             По всем вопросам и для оформления заказа:
           </h1>
           <h1
-            v-if="linkData.includes('trackbiz.netlify.app')"
+            v-if="linkData.includes('smartsklad.netlify.app')"
             class="text-xl max-[500px]:mt-3 text-center"
           >
             <br class="hidden max-[500px]:block" />
@@ -293,7 +293,7 @@ let isShowSecondAddInfo = ref(false);
         <div
           class="flex items-center justify-between mt-24 max-xl:flex-col-reverse max-xl:gap-10 max-xl:mt-10"
         >
-          <div v-if="linkData.includes('trackbiz.netlify.app')" class="mb-24">
+          <div v-if="linkData.includes('smartsklad.netlify.app')" class="mb-24">
             <h1 class="text-center text-xl">Мы в Вконтакте!</h1>
             <h1 class="text-center text-xl">Кликай и присоединяйся к нам!</h1>
             <div
