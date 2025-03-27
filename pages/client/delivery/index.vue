@@ -556,7 +556,7 @@ function getActualNameSite() {
           </h1>
         </a>
       </div>
-      <!-- <div v-if="isOpenFirstModal && !linkData.includes('smartsklad.netlify.app')">
+      <!-- <div v-if="isOpenFirstModal && !linkData.includes('trackbiz.netlify.app')">
         <div
           class="bg-[#0763f6cd] w-screen flex items-center justify-center h-[230px] max-sm:h-[200px] cursor-pointer hover:opacity-70 duration-200 relative"
           @click="changeMarketplace('Ozon')"
