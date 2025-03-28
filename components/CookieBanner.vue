@@ -14,7 +14,7 @@ const acceptCookies = () => {
 <template>
   <div
     v-if="!accepted"
-    class="fixed flex items-center justify-between mx-auto w-full bottom-4 bg-gray-800 text-white p-4 rounded-lg shadow-lg max-w-[900px] max-lg:flex-col max-lg:gap-5 font-bold"
+    class="fixed flex items-center justify-between mx-auto w-full max-sm:bottom-14 max-sm:rounded-t-lg bottom-4 bg-gray-800 text-white p-4 rounded-e-lg shadow-lg max-w-[900px] max-lg:flex-col max-lg:gap-5 font-bold"
   >
     <span class="text-sm"
       >Для улучшения работы сайта и его взаимодействия с пользователями мы
