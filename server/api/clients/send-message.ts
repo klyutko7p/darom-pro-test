@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
         {
           channel: "char",
           phone: formattedPhoneNumber,
-          text: `Код подтверждения: ${decryptedCode} smartsklad.netlify.app`,
+          text: `Код подтверждения: ${decryptedCode} trackbis.ru`,
           sender: "VIRTA",
         },
       ],
