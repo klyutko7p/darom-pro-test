@@ -12,6 +12,7 @@
   >
     Работает на основе Trackbiz
   </div>
+  <CookieBanner />
 </template>
 
 <script setup lang="ts"></script>

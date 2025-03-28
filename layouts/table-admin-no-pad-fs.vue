@@ -33,4 +33,5 @@ onMounted(() => {
   >
     Работает на основе Trackbiz
   </div>
+  <CookieBanner />
 </template>

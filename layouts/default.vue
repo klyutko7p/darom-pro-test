@@ -6,9 +6,9 @@ onMounted(() => {
 
   if (isIOS) {
     PullToRefresh.init({
-      instructionsRefreshing: 'Обновляем',
-      instructionsPullToRefresh: 'Потяните вниз, чтобы обновить',
-      instructionsReleaseToRefresh: 'Отпустите, чтобы обновить',
+      instructionsRefreshing: "Обновляем",
+      instructionsPullToRefresh: "Потяните вниз, чтобы обновить",
+      instructionsReleaseToRefresh: "Отпустите, чтобы обновить",
       onRefresh() {
         window.location.reload();
       },
@@ -19,8 +19,9 @@ onMounted(() => {
 
 <template>
   <NuxtPwaManifest />
-  <NuxtLoadingIndicator  />
-    <div class="mx-auto container">
-      <slot />
-    </div>
+  <NuxtLoadingIndicator />
+  <div class="mx-auto container">
+    <slot />
+  </div>
+  <CookieBanner />
 </template>
