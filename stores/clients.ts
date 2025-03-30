@@ -305,6 +305,7 @@ export const useClientsStore = defineStore("clients", () => {
   async function clearCookies(phoneNumber: string, password: string) {
     const cookies = Object.keys(Cookies.get());
     cookies.forEach((cookie) => Cookies.remove(cookie));
+    Cookies.set("cookiesAccepted", "true", { expires: 365, path: "/" });
     await localStorage.clear();
     userData = {} as Client;
     setTimeout(async () => {
