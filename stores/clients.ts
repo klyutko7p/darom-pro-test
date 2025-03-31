@@ -624,6 +624,23 @@ export const useClientsStore = defineStore("clients", () => {
     }
   }
 
+  async function acceptInfo(client: Client) {
+    try {
+      let { data } = await useFetch("/api/clients/accept-info", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ client }),
+      });
+      toast.success("Вы успешно подтвердили информацию!");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  }
+
   async function resetPassword(phoneNumber: string, newPassword: string) {
     try {
       let { data } = await useFetch("/api/clients/reset-password", {
@@ -737,5 +754,6 @@ export const useClientsStore = defineStore("clients", () => {
     getClientPhone,
     encryptCode,
     decryptCode,
+    acceptInfo
   };
 });

@@ -317,6 +317,8 @@ model Client {
   dateOfPrivacyPolicyAgreement                DateTime       @default(now())
   referedIDs                                  Int[]
   ClientTicket                                ClientTicket[]
+  gender                                      String?
+  age                                         Int?
 }
 
 model ClientReferral {

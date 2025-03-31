@@ -17,10 +17,19 @@ let isShowModalYM = ref(false);
 let isShowModal = ref(false);
 let isShowModal2 = ref(false);
 let isShowModal3 = ref(false);
+let isShowModal4 = ref(false);
 let items = ref<Array<any>>([]);
 
 let isPersonalDataProcessingPolicyAgreed = ref(false);
 let isPrivacyPolicyAgreed = ref(false);
+let gender = ref("");
+
+const genders = ref([
+  { id: 1, name: "Мужской" },
+  { id: 2, name: "Женский" },
+]);
+let age = ref("");
+
 const settings = ref<Array<any>>([]);
 const storePVZ = usePVZStore();
 const pvzs = ref<Array<PVZ>>([]);
@@ -31,9 +40,23 @@ onMounted(async () => {
   }
   requestPermission();
 
+  client.value = await storeClients.getClient();
+  clientData.value = await storeClients.getClientById(client.value.id);
+
   const storedItems = localStorage.getItem("cardItems");
   if (storedItems) {
     items.value = JSON.parse(storedItems);
+  }
+
+  if (!clientData.value.age || !clientData.value.gender) {
+    isShowModal4.value = true;
+  }
+
+  if (
+    !clientData.value.isPersonalDataProcessingPolicyAgreed ||
+    !clientData.value.isPrivacyPolicyAgreed
+  ) {
+    isShowModal3.value = true;
   }
 
   const storeFileName = localStorage.getItem("fileName");
@@ -60,8 +83,6 @@ onMounted(async () => {
   pvzData.value = localStorage.getItem("addressData") || "";
   pvzData.value = pvzData.value.replace(/"/g, "");
   isLoading.value = true;
-  client.value = await storeClients.getClient();
-  clientData.value = await storeClients.getClientById(client.value.id);
   settings.value = await storeUsers.getSettings();
   pvzs.value = await storePVZ.getPVZ();
   isLoading.value = false;
@@ -75,6 +96,15 @@ async function updateClient() {
   isLoading.value = true;
   await storeClients.acceptDocs(client.value);
   isShowModal3.value = false;
+  isLoading.value = false;
+}
+
+async function updateClientInfo() {
+  isLoading.value = true;
+  client.value.age = Number(age.value);
+  client.value.gender = gender.value;
+  await storeClients.acceptInfo(client.value);
+  isShowModal4.value = false;
   isLoading.value = false;
 }
 
@@ -300,6 +330,57 @@ const linkToDB = config.public.supabaseUrl as string;
                 >ПРОДОЛЖИТЬ</UButton
               >
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        v-if="isShowModal4"
+        v-auto-animate
+        class="fixed top-0 bottom-0 left-0 bg-black bg-opacity-70 right-0 z-[100]"
+      >
+        <div
+          class="flex items-center justify-center h-screen text-black font-semibold"
+        >
+          <div
+            class="bg-white relative p-10 max-sm:p-3 rounded-lg flex items-center flex-col gap-3"
+          >
+            <h1
+              class="text-2xl text-center text-secondary-color font-bold w-full max-sm:text-xl py-3 max-sm:mt-5"
+            >
+              Пожалуйста, укажите Ваши персональные данные
+            </h1>
+            <div class="flex items-center gap-24">
+              <div class="space-y-1">
+                <h1>Укажите свой пол</h1>
+
+                <USelect
+                  class="w-full"
+                  v-model="gender"
+                  :options="genders"
+                  option-attribute="name"
+                  value-attribute="name"
+                />
+              </div>
+
+              <div class="space-y-1">
+                <h1>Укажите свой возраст</h1>
+                <input
+                  type="number"
+                  class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                  v-model="age"
+                  required
+                  min="13"
+                  max="100"
+                />
+              </div>
+            </div>
+            <UButton
+              class="mt-5 font-bold"
+              :disabled="!gender || Number(age) < 13 || Number(age) > 100"
+              @click="updateClientInfo"
+              >ПОДТВЕРДИТЬ</UButton
+            >
           </div>
         </div>
       </div>

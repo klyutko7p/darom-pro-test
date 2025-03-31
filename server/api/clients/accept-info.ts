@@ -14,10 +14,8 @@ export default defineEventHandler(async (event) => {
         id: client.id,
       },
       data: {
-        dateOfPersonalDataProcessingPolicyAgreement: new Date(),
-        dateOfPrivacyPolicyAgreement: new Date(),
-        isPersonalDataProcessingPolicyAgreed: true,
-        isPrivacyPolicyAgreed: true,
+        age: Number(client.age),
+        gender: client.gender,
       },
     });
   } catch (error) {
