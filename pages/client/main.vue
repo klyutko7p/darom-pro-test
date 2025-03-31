@@ -350,7 +350,7 @@ const linkToDB = config.public.supabaseUrl as string;
             >
               Пожалуйста, укажите Ваши персональные данные
             </h1>
-            <div class="flex items-center gap-24">
+            <div class="flex max-sm:flex-col max-sm:gap-5 items-center gap-24">
               <div class="space-y-1">
                 <h1>Укажите свой пол</h1>
 
