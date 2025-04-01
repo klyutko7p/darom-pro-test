@@ -27,6 +27,7 @@ let quantityRequiredARRows = ref(0);
 let quantityRequiredARRowsAdmin = ref(0);
 let quantityRequiredBalanceRows = ref(0);
 onMounted(async () => {
+  getActualNameSite();
   try {
     settings.value = await storeUsers.getSettings();
 
@@ -89,6 +90,13 @@ function showDSList() {
 
 function showSettingsList() {
   isShowSettingsList.value = !isShowSettingsList.value;
+}
+
+let linkData = ref("");
+function getActualNameSite() {
+  if (window) {
+    linkData.value = window.location.href.split("/")[2].split("/")[0];
+  }
 }
 
 let usersOfIssued = ref([
@@ -490,7 +498,7 @@ let usersOfIssued = ref([
                 </span>
               </NuxtLink>
             </li>
-            <li>
+            <li v-if="!linkData.includes('zabotlivaya-dostavka.trackbis.ru')">
               <NuxtLink
                 :to="'/advance-report'"
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
@@ -538,7 +546,7 @@ let usersOfIssued = ref([
                 </span>
               </NuxtLink>
             </li>
-            <li>
+            <li v-if="!linkData.includes('zabotlivaya-dostavka.trackbis.ru')">
               <NuxtLink
                 :to="'/advance-report/summary-tables'"
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
@@ -721,7 +729,7 @@ let usersOfIssued = ref([
                 <span class="flex-1 ms-3 whitespace-nowrap">Назад</span>
               </div>
             </li>
-            <li>
+            <li v-if="!linkData.includes('zabotlivaya-dostavka.trackbis.ru')">
               <NuxtLink
                 :to="'/summary-tables/delivery'"
                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"

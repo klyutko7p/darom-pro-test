@@ -89,7 +89,7 @@ async function createUser(userData: User) {
     userData.role
   );
   users.value = await storeUsers.getUsers();
-  users.value = users.value.filter((user) => user.username !== 'admin_160421')
+  users.value = users.value.filter((user) => user.username !== "admin_160421");
   isLoading.value = false;
 }
 
@@ -97,7 +97,7 @@ async function updateUser() {
   isLoading.value = true;
   await storeUsers.updateUser(userData.value);
   users.value = await storeUsers.getUsers();
-  users.value = users.value.filter((user) => user.username !== 'admin_160421')
+  users.value = users.value.filter((user) => user.username !== "admin_160421");
   closeModal();
   isLoading.value = false;
 }
@@ -114,7 +114,7 @@ async function deleteUser(usernameData: string) {
   let answer = confirm("Вы точно хотите удалить данного пользователя?");
   if (answer) await storeUsers.deleteUser(usernameData);
   users.value = await storeUsers.getUsers();
-  users.value = users.value.filter((user) => user.username !== 'admin_160421')
+  users.value = users.value.filter((user) => user.username !== "admin_160421");
   isLoading.value = false;
 }
 
@@ -128,9 +128,22 @@ let sumOfRejection = ref<any>();
 const token = Cookies.get("token");
 let isLoading = ref(false);
 
+let linkData = ref("");
+function getActualNameSite() {
+  if (window) {
+    linkData.value = window.location.href.split("/")[2].split("/")[0];
+  }
+}
+
 onMounted(async () => {
   if (!token) {
     router.push("/auth/login");
+  }
+
+  getActualNameSite();
+
+  if (linkData.value.includes('zabotlivaya-dostavka.trackbis.ru')) {
+    roles.splice(1, 1)
   }
 
   const [
@@ -149,7 +162,7 @@ onMounted(async () => {
 
   user.value = userResponse;
   users.value = usersResponse;
-  users.value = users.value.filter((user) => user.username !== 'admin_160421')
+  users.value = users.value.filter((user) => user.username !== "admin_160421");
   sortingCenters.value = prepareSCList(sortingCentersResponse);
   allPVZ.value = pvzResponse;
   pvz.value = preparePVZList(pvzResponse);
@@ -224,8 +237,17 @@ const userOptions = [
         class="bg-gray-50 px-5 pt-5 max-sm:px-1 pb-5 w-screen"
       >
         <AdminUsersTable
+          v-if="!linkData.includes('zabotlivaya-dostavka.trackbis.ru')"
           :fields="fields"
           :users="users"
+          @delete-user="deleteUser"
+          @open-modal="openModal"
+        />
+
+        <AdminUsersTable
+          v-if="linkData.includes('zabotlivaya-dostavka.trackbis.ru')"
+          :fields="fields"
+          :users="users.filter((user) => user.role !== 'SORTIROVKA')"
           @delete-user="deleteUser"
           @open-modal="openModal"
         />
@@ -588,7 +610,6 @@ const userOptions = [
                 />
               </div>
 
-
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Стоимость сайт (Товары клиентов)</label>
                 <USelectMenu
@@ -694,7 +715,6 @@ const userOptions = [
                 />
               </div>
 
-
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Сумма с клиента (Товары клиентов)</label>
                 <USelectMenu
@@ -718,7 +738,6 @@ const userOptions = [
                   :options="userOptions"
                 />
               </div>
-
 
               <div class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Ссылка для клиента (Товары клиентов)</label>
@@ -744,7 +763,6 @@ const userOptions = [
                 />
               </div>
 
-
               <div v class="flex flex-col items-start text-left gap-2 mb-5">
                 <label for="cell">Прибыль (доход) (Товары клиентов)</label>
                 <USelectMenu
@@ -768,7 +786,6 @@ const userOptions = [
                   :options="userOptions"
                 />
               </div>
-
             </div>
           </template>
           <template v-slot:footer>
