@@ -233,7 +233,8 @@ onMounted(async () => {
     usersOfIssued.value = usersOfIssued.value.filter(
       (user) =>
         (user.role === "ADMIN" || user.role === "ADMINISTRATOR") &&
-        user.username !== "admin_160421"
+        user.username !== "admin_160421" &&
+        user.username !== "admin_mik12412s1"
     );
   } catch (error) {
     console.error("An error occurred:", error);

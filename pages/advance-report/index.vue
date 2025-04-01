@@ -60,7 +60,8 @@ onMounted(async () => {
     usersOfIssued.value = usersOfIssued.value.filter(
       (user) =>
         (user.role === "ADMIN" || user.role === "ADMINISTRATOR") &&
-        user.username !== "admin_160421"
+        user.username !== "admin_160421" &&
+        user.username !== "admin_mik12412s1"
     );
 
     // Запросы для баланса (общие для всех)
@@ -1267,7 +1268,6 @@ function handleFilteredRows(obj: any) {
     });
   }
 }
-
 
 let linkPhoto = ref("");
 async function handleFileChange(fileList: FileList) {

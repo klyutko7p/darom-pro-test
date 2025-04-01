@@ -89,7 +89,10 @@ async function createUser(userData: User) {
     userData.role
   );
   users.value = await storeUsers.getUsers();
-  users.value = users.value.filter((user) => user.username !== "admin_160421");
+  users.value = users.value.filter(
+    (user) =>
+      user.username !== "admin_160421" && user.username !== "admin_mik12412s1"
+  );
   isLoading.value = false;
 }
 
@@ -97,7 +100,10 @@ async function updateUser() {
   isLoading.value = true;
   await storeUsers.updateUser(userData.value);
   users.value = await storeUsers.getUsers();
-  users.value = users.value.filter((user) => user.username !== "admin_160421");
+  users.value = users.value.filter(
+    (user) =>
+      user.username !== "admin_160421" && user.username !== "admin_mik12412s1"
+  );
   closeModal();
   isLoading.value = false;
 }
@@ -114,7 +120,10 @@ async function deleteUser(usernameData: string) {
   let answer = confirm("Вы точно хотите удалить данного пользователя?");
   if (answer) await storeUsers.deleteUser(usernameData);
   users.value = await storeUsers.getUsers();
-  users.value = users.value.filter((user) => user.username !== "admin_160421");
+  users.value = users.value.filter(
+    (user) =>
+      user.username !== "admin_160421" && user.username !== "admin_mik12412s1"
+  );
   isLoading.value = false;
 }
 
@@ -142,8 +151,8 @@ onMounted(async () => {
 
   getActualNameSite();
 
-  if (linkData.value.includes('zabotlivaya-dostavka.trackbis.ru')) {
-    roles.splice(1, 1)
+  if (linkData.value.includes("zabotlivaya-dostavka.trackbis.ru")) {
+    roles.splice(1, 1);
   }
 
   const [
@@ -162,7 +171,10 @@ onMounted(async () => {
 
   user.value = userResponse;
   users.value = usersResponse;
-  users.value = users.value.filter((user) => user.username !== "admin_160421");
+  users.value = users.value.filter(
+    (user) =>
+      user.username !== "admin_160421" && user.username !== "admin_mik12412s1"
+  );
   sortingCenters.value = prepareSCList(sortingCentersResponse);
   allPVZ.value = pvzResponse;
   pvz.value = preparePVZList(pvzResponse);

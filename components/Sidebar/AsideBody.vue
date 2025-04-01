@@ -216,7 +216,7 @@ function getActualNameSite() {
               user.username === 'Директор' ||
               user.username === 'Горцуева' ||
               user.username === 'Власенкова' ||
-              user.username === 'admin_160421'
+              user.role === 'ДИРЕКТОР'
             "
           >
             <Icon
@@ -725,9 +725,7 @@ function getActualNameSite() {
           <NuxtLink
             :to="'/admin/settings'"
             class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer"
-            v-if="
-              user.username === 'Директор' || user.username === 'admin_160421'
-            "
+            v-if="user.username === 'Директор' || user.role === 'ДИРЕКТОР'"
           >
             <Icon
               class="text-gray-500 transition duration-75 group-hover:text-gray-900"
@@ -744,7 +742,7 @@ function getActualNameSite() {
             v-if="
               user.username === 'Директор' ||
               user.username === 'Власенкова' ||
-              user.username === 'admin_160421'
+              user.role === 'ДИРЕКТОР'
             "
           >
             <Icon
@@ -762,7 +760,7 @@ function getActualNameSite() {
             v-if="
               user.username === 'Директор' ||
               user.username === 'Власенкова' ||
-              user.username === 'admin_160421'
+              user.role === 'ДИРЕКТОР'
             "
           >
             <Icon
@@ -780,7 +778,7 @@ function getActualNameSite() {
             v-if="
               user.username === 'Директор' ||
               user.username === 'Власенкова' ||
-              user.username === 'admin_160421'
+              user.role === 'ДИРЕКТОР'
             "
           >
             <Icon
@@ -798,7 +796,7 @@ function getActualNameSite() {
             v-if="
               user.username === 'Директор' ||
               user.username === 'Власенкова' ||
-              user.username === 'admin_160421'
+              user.role === 'ДИРЕКТОР'
             "
           >
             <Icon
@@ -817,7 +815,7 @@ function getActualNameSite() {
               user.username === 'Директор' ||
               user.username === 'Власенкова' ||
               user.username === 'Горцуева' ||
-              user.username === 'admin_160421'
+              user.role === 'ДИРЕКТОР'
             "
           >
             <Icon
@@ -835,7 +833,7 @@ function getActualNameSite() {
             v-if="
               user.username === 'Директор' ||
               user.username === 'Власенкова' ||
-              user.username === 'admin_160421'
+              user.role === 'ДИРЕКТОР'
             "
           >
             <Icon
@@ -854,7 +852,7 @@ function getActualNameSite() {
               user.username === 'Директор' ||
               user.username === 'Власенкова' ||
               user.username === 'Горцуева' ||
-              user.username === 'admin_160421'
+              user.role === 'ДИРЕКТОР'
             "
           >
             <Icon

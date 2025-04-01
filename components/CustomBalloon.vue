@@ -6,7 +6,7 @@
     <UIActionButton
       v-if="
         user.username === 'Директор' ||
-        user.username === 'admin_160421' ||
+        user.role === 'ДИРЕКТОР' ||
         user.username === 'Шведова' ||
         user.username === 'Власенкова' ||
         user.username === 'Мешков'
