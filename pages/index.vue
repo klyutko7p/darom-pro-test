@@ -353,6 +353,7 @@ let isShowSecondAddInfo = ref(false);
             >
               <div class="flex flex-col items-center">
                 <img
+                  v-if="!linkData.includes('zabotlivaya-dostavka.trackbis.ru')"
                   class="max-w-[160px] max-[500px]:hidden"
                   src="../assets/images/qr_vk.png"
                   alt=""
@@ -367,6 +368,7 @@ let isShowSecondAddInfo = ref(false);
               </div>
               <div class="flex flex-col items-center">
                 <img
+                  v-if="!linkData.includes('zabotlivaya-dostavka.trackbis.ru')"
                   class="max-w-[160px] max-[500px]:hidden"
                   src="../assets/images/qr_tg.png"
                   alt=""
